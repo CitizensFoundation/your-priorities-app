@@ -734,6 +734,8 @@ export class YpPostsList extends YpBaseElement {
       if (postsInfo) {
         this.postsCount = postsInfo.totalPostsCount;
 
+        window.appGlobals.cache.setPostCountsForGroup(this.group.id, this.postsCount);
+
         this.fire("yp-post-count", {
           type: this.statusFilter,
           count: this.searchingFor ? undefined : this.postsCount,

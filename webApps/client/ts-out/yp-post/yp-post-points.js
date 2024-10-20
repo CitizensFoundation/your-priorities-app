@@ -155,7 +155,6 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
 
         yp-user-image {
           margin-bottom: 12px;
-          margin-left: 4px;
         }
 
         .topContainer {

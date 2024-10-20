@@ -16,6 +16,8 @@ export declare class YpPost extends YpCollection {
     photosCount: string | undefined;
     currentPostIndex: number | undefined;
     totalPosts: number | undefined;
+    postPositionCounter: string;
+    scrollToCollectionItemSubClass(): void;
     constructor();
     scrollToCollection_processIncomingPostItemSubClass(): void;
     setupTheme(): void;
@@ -52,7 +54,8 @@ export declare class YpPost extends YpCollection {
     collectionIdChanged(): void;
     _processIncomingPost(fromCache?: boolean): void;
     updatePostPosition(postsList: YpPostData[]): void;
-    get postPositionCounter(): string;
+    fetchGroupPosts(): Promise<void>;
+    setPostPositionCounter(): void;
     _processRecommendation(recommendedPost: YpPostData): void;
     refresh(): void;
 }

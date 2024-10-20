@@ -627,6 +627,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             const postsInfo = (await window.serverApi.getGroupPosts(url));
             if (postsInfo) {
                 this.postsCount = postsInfo.totalPostsCount;
+                window.appGlobals.cache.setPostCountsForGroup(this.group.id, this.postsCount);
                 this.fire("yp-post-count", {
                     type: this.statusFilter,
                     count: this.searchingFor ? undefined : this.postsCount,

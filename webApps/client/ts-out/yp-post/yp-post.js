@@ -27,6 +27,9 @@ export const PostTabTypes = {
     Photos: 3,
 };
 let YpPost = class YpPost extends YpCollection {
+    scrollToCollectionItemSubClass() {
+        this.scrollToPointId = undefined;
+    }
     constructor() {
         super("post", null, "lightbulb_outline", "post.create");
         this.isAdmin = false;
@@ -37,6 +40,7 @@ let YpPost = class YpPost extends YpCollection {
         this.photosCount = undefined;
         this.currentPostIndex = undefined;
         this.totalPosts = undefined;
+        this.postPositionCounter = "";
     }
     scrollToCollection_processIncomingPostItemSubClass() {
         //TODO: Do we need this
@@ -472,6 +476,12 @@ let YpPost = class YpPost extends YpCollection {
         if (changedProperties.has("selectedTab")) {
             this._selectedTabChanged();
         }
+        if (changedProperties.has("post") && this.post) {
+            if (window.appGlobals.cache.getPostCountsForGroup(this.post.group_id) === undefined) {
+                this.fetchGroupPosts();
+            }
+            this.setPostPositionCounter();
+        }
     }
     get isPostPage() {
         return this.currentPage === "post";
@@ -623,12 +633,28 @@ let YpPost = class YpPost extends YpCollection {
         console.error("Error fetching posts list for group:", error);
       }
     }*/
-    get postPositionCounter() {
-        if (this.currentPostIndex !== undefined && this.totalPosts !== undefined) {
-            return `${this.currentPostIndex} / ${this.totalPosts}`;
+    async fetchGroupPosts() {
+        const url = `/api/groups/${this.post.group_id}/posts/newest/null/open?offset=0`;
+        const postsInfo = (await window.serverApi.getGroupPosts(url));
+        if (postsInfo) {
+            const postCount = postsInfo.totalPostsCount;
+            window.appGlobals.cache.setPostCountsForGroup(this.post.group_id, postCount);
+            if (postsInfo.posts.length != 0) {
+                window.appGlobals.cache.setCurrentPostListForGroup(this.post.group_id, postsInfo.posts);
+            }
+            this._processIncomingPost();
+            this.setPostPositionCounter();
+            this.requestUpdate();
+        }
+    }
+    setPostPositionCounter() {
+        if (this.currentPostIndex !== undefined &&
+            window.appGlobals.cache.getPostCountsForGroup(this.post.group_id) !==
+                undefined) {
+            this.postPositionCounter = `${this.currentPostIndex} / ${window.appGlobals.cache.getPostCountsForGroup(this.post.group_id)}`;
         }
         else {
-            return "";
+            this.postPositionCounter = "";
         }
     }
     _processRecommendation(recommendedPost) {
@@ -799,6 +825,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpPost.prototype, "totalPosts", void 0);
+__decorate([
+    property({ type: String })
+], YpPost.prototype, "postPositionCounter", void 0);
 YpPost = __decorate([
     customElement("yp-post")
 ], YpPost);

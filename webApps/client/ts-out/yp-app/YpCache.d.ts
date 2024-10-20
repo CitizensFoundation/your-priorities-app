@@ -8,6 +8,9 @@ export declare class YpCache extends YpCodeBase {
     groupItemsCache: Record<number, YpGroupData>;
     postItemsCache: Record<number, YpPostData>;
     currentPostListForGroup: Record<number, Array<YpPostData>>;
+    postCountsForGroup: Record<number, number>;
+    setPostCountsForGroup(groupId: number, postCount: number): void;
+    getPostCountsForGroup(groupId: number): number;
     setCurrentPostListForGroup(groupId: number, posts: Array<YpPostData>): void;
     getPostPositionInTheGroupList(groupId: number, postId: number): number;
     getPreviousPostInGroupList(groupId: number, postId: number): YpPostData | undefined;

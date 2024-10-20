@@ -8,7 +8,14 @@ export class YpCache extends YpCodeBase {
         this.groupItemsCache = {};
         this.postItemsCache = {};
         this.currentPostListForGroup = {};
+        this.postCountsForGroup = {};
         this.autoTranslateCache = {};
+    }
+    setPostCountsForGroup(groupId, postCount) {
+        this.postCountsForGroup[groupId] = postCount;
+    }
+    getPostCountsForGroup(groupId) {
+        return this.postCountsForGroup[groupId];
     }
     setCurrentPostListForGroup(groupId, posts) {
         this.currentPostListForGroup[groupId] = posts;

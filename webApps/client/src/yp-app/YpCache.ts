@@ -17,6 +17,16 @@ export class YpCache extends YpCodeBase {
 
   currentPostListForGroup: Record<number, Array<YpPostData>> = {};
 
+  postCountsForGroup: Record<number, number> = {};
+
+  setPostCountsForGroup(groupId: number, postCount: number) {
+    this.postCountsForGroup[groupId] = postCount;
+  }
+
+  getPostCountsForGroup(groupId: number) {
+    return this.postCountsForGroup[groupId];
+  }
+
   setCurrentPostListForGroup(groupId: number, posts: Array<YpPostData>) {
     this.currentPostListForGroup[groupId] = posts;
   }

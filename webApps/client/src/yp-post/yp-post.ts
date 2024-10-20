@@ -69,6 +69,13 @@ export class YpPost extends YpCollection {
   @property({ type: Number })
   totalPosts: number | undefined = undefined;
 
+  @property({ type: String })
+  postPositionCounter = "";
+
+  override scrollToCollectionItemSubClass(): void {
+    this.scrollToPointId = undefined;
+  }
+
   constructor() {
     super("post", null, "lightbulb_outline", "post.create");
   }
@@ -550,6 +557,14 @@ export class YpPost extends YpCollection {
     if (changedProperties.has("selectedTab")) {
       this._selectedTabChanged();
     }
+
+    if (changedProperties.has("post") && this.post) {
+      if (window.appGlobals.cache.getPostCountsForGroup(this.post!.group_id) === undefined) {
+        this.fetchGroupPosts();
+      }
+
+      this.setPostPositionCounter();
+    }
   }
 
   get isPostPage(): boolean {
@@ -673,7 +688,8 @@ export class YpPost extends YpCollection {
       if (!fromCache) window.appGlobals.cache.addPostsToCacheLater([this.post]);
 
       // Check if the posts list for the group is already in the cache
-      const postsList = window.appGlobals.cache.currentPostListForGroup[this.post.group_id];
+      const postsList =
+        window.appGlobals.cache.currentPostListForGroup[this.post.group_id];
 
       if (postsList && postsList.length > 0) {
         // Use the cached list to calculate the position
@@ -731,12 +747,52 @@ export class YpPost extends YpCollection {
     }
   }*/
 
+  async fetchGroupPosts() {
+    const url = `/api/groups/${
+      this.post!.group_id
+    }/posts/newest/null/open?offset=0`;
 
-  get postPositionCounter() {
-    if (this.currentPostIndex !== undefined && this.totalPosts !== undefined) {
-      return `${this.currentPostIndex} / ${this.totalPosts}`;
+    const postsInfo = (await window.serverApi.getGroupPosts(
+      url
+    )) as YpPostsInfoInterface | void;
+
+    if (postsInfo) {
+      const postCount = postsInfo.totalPostsCount;
+
+      window.appGlobals.cache.setPostCountsForGroup(
+        this.post!.group_id,
+        postCount
+      );
+
+      if (postsInfo.posts.length != 0) {
+        window.appGlobals.cache.setCurrentPostListForGroup(
+          this.post!.group_id,
+          postsInfo.posts
+        );
+      }
+
+      this._processIncomingPost();
+
+
+      this.setPostPositionCounter();
+
+      this.requestUpdate();
+    }
+  }
+
+  setPostPositionCounter() {
+    if (
+      this.currentPostIndex !== undefined &&
+      window.appGlobals.cache.getPostCountsForGroup(this.post!.group_id) !==
+        undefined
+    ) {
+      this.postPositionCounter = `${
+        this.currentPostIndex
+      } / ${window.appGlobals.cache.getPostCountsForGroup(
+        this.post!.group_id
+      )}`;
     } else {
-      return "";
+      this.postPositionCounter = "";
     }
   }
 
