@@ -368,7 +368,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             if (posts) {
                 for (let i = 0; i < posts.length; i++) {
                     if (posts[i].id == postId) {
-                        this.$$("#list").scrollToIndex(i);
+                        this.$$("#list").scrollToIndex(i, "center");
                         if (posts.length < i + 3) {
                             console.error(`Loading more data for group ${groupId} to scroll to post ${postId} at index ${i} length ${posts.length}`);
                             this._loadMoreData();
@@ -498,7 +498,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             console.info("Scrolling to post: " + post.id);
             for (let i = 0; i < this.posts.length; i++) {
                 if (this.posts[i] == post) {
-                    this.$$("#list").scrollToIndex(i);
+                    this.$$("#list").scrollToIndex(i, "center");
                     break;
                 }
             }

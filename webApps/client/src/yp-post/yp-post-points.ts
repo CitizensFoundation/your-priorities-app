@@ -319,6 +319,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           height: 24px;
           padding-left: 4px;
           padding-right: 4px;
+          vertical-align: middle;
         }
 
         .point {
