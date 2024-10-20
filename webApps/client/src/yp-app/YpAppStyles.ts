@@ -138,6 +138,10 @@ export const YpAppStyles = css`
     margin-right: 4px;
   }
 
+  #navIconButton[has-no-organizations] {
+    margin-right: 8px;
+  }
+
   .activeBadge {
     --md-badge-color: var(--yp-sys-color-down);
     --md-badge-text-color: var(--yp-sys-color-down);

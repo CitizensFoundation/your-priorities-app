@@ -75,7 +75,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
               >
                 ${domain.name}
               </md-menu-item>
-              ${index < this.myDomains.length - 1
+              ${this.myDomains && index < this.myDomains.length - 1
                 ? html `<md-divider></md-divider>`
                 : ""}
             `)}

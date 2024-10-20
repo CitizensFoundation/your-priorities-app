@@ -25,6 +25,7 @@ export declare class YpLogin extends YpBaseElement {
     redirectToURL: string | undefined;
     forgotPasswordOpen: boolean;
     heading: string | undefined;
+    createEnabled: boolean;
     customUserRegistrationText: string | undefined;
     opened: boolean;
     dialogMode: boolean;
@@ -53,7 +54,7 @@ export declare class YpLogin extends YpBaseElement {
     renderLoginInput(): import("lit-html").TemplateResult<1>;
     renderSamlInfo(): import("lit-html").TemplateResult<1>;
     renderCustomUserRegistrationText(): import("lit-html").TemplateResult<1>;
-    renderDomainImage(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderDomainImage(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderLanguage(): import("lit-html").TemplateResult<1>;
     renderLoginSurface(): import("lit-html").TemplateResult<1>;
     renderCreateUserButton(): import("lit-html").TemplateResult<1>;
@@ -101,6 +102,7 @@ export declare class YpLogin extends YpBaseElement {
     _forgotPassword(): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    setupCreateOptions(): void;
     setup(onLoginFunction: Function, domain: YpDomainData): void;
     _setTexts(): void;
     emailValue(registerMode?: boolean | undefined): string;

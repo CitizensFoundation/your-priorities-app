@@ -323,6 +323,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
+          text: "onlyAllowCreateUserOnInvite",
+          type: "checkbox",
+        },
+        {
           text: "useFixedTopAppBar",
           type: "checkbox",
         },

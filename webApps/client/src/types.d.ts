@@ -435,6 +435,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   useLoginOnDomainIfNotLoggedIn?: boolean;
   disableArrowBasedTopNavigation?: boolean;
   useFixedTopAppBar?: boolean;
+  onlyAllowCreateUserOnInvite?: boolean;
 }
 
 interface YpHelpPageData {

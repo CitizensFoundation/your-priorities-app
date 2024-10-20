@@ -39,6 +39,11 @@ export class YpDomain extends YpCollection {
           background-color: var(--md-sys-color-surface);
         }
 
+        .outerContainer[is-login-active] {
+          width: 100%;
+          max-width: 100%;
+        }
+
         .loginSurface {
           max-width: 410px;
           background-color: var(--md-sys-color-surface);
@@ -209,7 +214,12 @@ export class YpDomain extends YpCollection {
   renderDomainLogin() {
     return html`
       <div class="layout vertical center-center">
-        <div class="layout vertical center-center outerContainer">
+        <div
+          ?is-login-active="${this.collection &&
+          (this.collection.configuration as YpDomainConfiguration)
+            .useLoginOnDomainIfNotLoggedIn}"
+          class="layout vertical center-center outerContainer"
+        >
           <yp-login
             id="userLogin"
             class="loginSurface"

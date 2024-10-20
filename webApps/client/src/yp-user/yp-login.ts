@@ -62,6 +62,9 @@ export class YpLogin extends YpBaseElement {
   @property({ type: String })
   heading: string | undefined;
 
+  @property({ type: Boolean })
+  createEnabled = false;
+
   @property({ type: String })
   customUserRegistrationText: string | undefined;
 
@@ -138,9 +141,14 @@ export class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        .userCreateInfo {
+          color: var(--md-sys-color-tertiary);
+        }
+
         .languageSelector {
           margin-bottom: 16px;
           margin-top: 16px;
+          width: 100%;
         }
 
         .loginField {
@@ -157,8 +165,8 @@ export class YpLogin extends YpBaseElement {
         }
 
         .domainImage {
-          width: 170px;
-          height: 96px;
+          width: 130px;
+          height: 73px;
           margin-bottom: 32px;
         }
 
@@ -181,10 +189,12 @@ export class YpLogin extends YpBaseElement {
         .resetPasswordButton {
           width: fit-content;
           margin-left: -10px;
+          --md-text-button-label-text-color: var(--md-sys-color-tertiary);
         }
 
         .loginButton[fullWithLoginButton] {
           width: 100%;
+          --md-filled-button-container-shadow-color: transparent;
           --md-filled-button-container-shape: 4px;
         }
 
@@ -808,8 +818,12 @@ export class YpLogin extends YpBaseElement {
         </div>
         <div class="login-button-row layout vertical center-center">
           ${this.renderLoginButton()}
-          <div class="layout horizontal dontHaveAccountInfo">
-            ${this.t("dontHaveAnAccount")} ${this.renderCreateUserButton()}
+          <div
+            class="layout horizontal dontHaveAccountInfo"
+            ?hidden="${!this.createEnabled}"
+          >
+            <span class="userCreateInfo">${this.t("dontHaveAnAccount")}</span>
+            ${this.renderCreateUserButton()}
           </div>
         </div>
         <div class="orContainer" ?hidden="${!this.hasAdditionalAuthMethods}">
@@ -1561,6 +1575,7 @@ export class YpLogin extends YpBaseElement {
     this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
     this.addGlobalListener("yp-language-loaded", this._setTexts.bind(this));
     this._setTexts();
+    this.setupCreateOptions();
   }
 
   override disconnectedCallback() {
@@ -1572,6 +1587,20 @@ export class YpLogin extends YpBaseElement {
       this.close.bind(this)
     );
     this.removeGlobalListener("yp-language-loaded", this._setTexts.bind(this));
+  }
+
+  setupCreateOptions() {
+    if (window.appUser.loginForAcceptInviteParams) {
+      this.createEnabled = true;
+    } else if (
+      this.domain &&
+      this.domain.configuration &&
+      this.domain.configuration.onlyAllowCreateUserOnInvite
+    ) {
+      this.createEnabled = false;
+    } else {
+      this.createEnabled = true;
+    }
   }
 
   setup(onLoginFunction: Function, domain: YpDomainData) {

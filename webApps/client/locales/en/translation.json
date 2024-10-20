@@ -1,4 +1,5 @@
 {
+  "onlyAllowCreateUserOnInvite": "Only allow create user on invite",
   "newOrganization": "New organization",
   "editOrganization": "Edit organization",
   "addOrganization": "Create organization",

@@ -327,7 +327,7 @@ export class YpAppUser extends YpCodeBase {
       this.getMemberShips();
       this.toastLoginTextCombined =
         this.t("user.loginCompleteFor") + " " + this.user?.name;
-      this.fireGlobal("yp-open-toast", { text: this.toastLoginTextCombined });
+      //this.fireGlobal("yp-open-toast", { text: this.toastLoginTextCombined });
     }
     this._checkLoginForParameters();
 

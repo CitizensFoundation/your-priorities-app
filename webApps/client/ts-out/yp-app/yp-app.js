@@ -312,8 +312,11 @@ let YpApp = class YpApp extends YpBaseElement {
     renderNavigationIcon() {
         return html `
       <md-filled-tonal-icon-button
-        id="helpIconButton"
+        id="navIconButton"
+        ?has-no-organizations="${!window.appGlobals.myDomains ||
+            window.appGlobals.myDomains.length < 2}"
         slot="actionItems"
+        ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn}"
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("navigationMenu")}"
