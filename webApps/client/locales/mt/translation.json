@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Aħbi l-bar tal-app jekk Welcome HTML",
   "policySynthAgentsWorkflow": "Fluss tax-Xogħol tal-Aġenti",
   "generateWithAi": "Ġenera b'AI",
-  "hidePointFor": "Aħbi punt kontra kaxxa"
+  "hidePointFor": "Aħbi punt kontra kaxxa",
+  "newOrganization": "Organizzazzjoni ġdida",
+  "editOrganization": "Editja organizzazzjoni",
+  "addOrganization": "Oħloq organizzazzjoni",
+  "onlyAdminsCanCreateOrganizations": "Biss amministraturi jistgħu joħolqu organizzazzjonijiet",
+  "navigationMenu": "Menu ta' navigazzjoni",
+  "useFixedTopAppBar": "Uża bar tal-app fiss fuq nett",
+  "disableArrowBasedTopNavigation": "Itfi n-navigazzjoni ta' fuq ibbażata fuq vleġeġ",
+  "multiModalModels": "Mudelli Multi-modali",
+  "reasoningModels": "Mudelli ta' raġunament",
+  "selectSmallReasoningModel": "Mudell ta' raġunament żgħir",
+  "selectMediumReasoningModel": "Mudell ta' raġunament medju",
+  "selectLargeReasoningModel": "Mudell ta' raġunament kbir"
 }

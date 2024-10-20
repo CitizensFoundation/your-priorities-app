@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Апп бар кывбур",
   "policySynthAgentsWorkflow": "Агентӧд тӧдӧм",
   "generateWithAi": "AI-ӧн вӧдӧм",
-  "hidePointFor": "Точка кывбур"
+  "hidePointFor": "Точка кывбур",
+  "newOrganization": "Вӧв организация",
+  "editOrganization": "Править организация",
+  "addOrganization": "Создать организация",
+  "onlyAdminsCanCreateOrganizations": "Тӧдьысь администраторъяс могӧтлы создать организацияъяс",
+  "navigationMenu": "Навигация меню",
+  "useFixedTopAppBar": "Использовать фиксированный верхний бар",
+  "disableArrowBasedTopNavigation": "Отключить стрелочную навигацию",
+  "multiModalModels": "Мультимодальные модели",
+  "reasoningModels": "Модели рассуждения",
+  "selectSmallReasoningModel": "Маленькая модель рассуждения",
+  "selectMediumReasoningModel": "Средняя модель рассуждения",
+  "selectLargeReasoningModel": "Большая модель рассуждения"
 }

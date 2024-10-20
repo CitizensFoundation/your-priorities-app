@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Nëbb app bar bu Welcome HTML",
   "policySynthAgentsWorkflow": "Jëfandikukat Jëfandikukat",
   "generateWithAi": "Sos ak AI",
-  "hidePointFor": "Nëbb bopp ci boyet"
+  "hidePointFor": "Nëbb bopp ci boyet",
+  "newOrganization": "Jëfandikukat bu bees",
+  "editOrganization": "Soppi jëfandikukat",
+  "addOrganization": "Sos jëfandikukat",
+  "onlyAdminsCanCreateOrganizations": "Seetal yi ci kanam rekk lañu sos jëfandikukat",
+  "navigationMenu": "Menu jubluwaay",
+  "useFixedTopAppBar": "Jëfandikoo bar app bu kawe",
+  "disableArrowBasedTopNavigation": "Neenal jubluwaay bu kawe",
+  "multiModalModels": "Modèles multi-modal",
+  "reasoningModels": "Modèles de raisonnement",
+  "selectSmallReasoningModel": "Modèle ndaw",
+  "selectMediumReasoningModel": "Modèle digg",
+  "selectLargeReasoningModel": "Modèle mag"
 }

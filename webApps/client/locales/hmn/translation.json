@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Nkaum app bar yog tias Zoo Siab Tos Txais HTML",
   "policySynthAgentsWorkflow": "Cov txheej txheem neeg sawv cev",
   "generateWithAi": "Tsim nrog AI",
-  "hidePointFor": "Nkaum taw tes tiv thaiv lub thawv"
+  "hidePointFor": "Nkaum taw tes tiv thaiv lub thawv",
+  "newOrganization": "Lub koom haum tshiab",
+  "editOrganization": "Kho lub koom haum",
+  "addOrganization": "Tsim lub koom haum",
+  "onlyAdminsCanCreateOrganizations": "Tsuas yog cov tswj hwm thiaj tsim tau cov koom haum",
+  "navigationMenu": "Ntawv qhia kev",
+  "useFixedTopAppBar": "Siv bar saum app",
+  "disableArrowBasedTopNavigation": "Tua kev taw qhia saum",
+  "multiModalModels": "Qauv ntau hom",
+  "reasoningModels": "Qauv xav",
+  "selectSmallReasoningModel": "Qauv xav me",
+  "selectMediumReasoningModel": "Qauv xav nruab nrab",
+  "selectLargeReasoningModel": "Qauv xav loj"
 }

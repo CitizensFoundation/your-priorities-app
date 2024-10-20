@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Kaŝez aplika baro se Welcome HTML",
   "policySynthAgentsWorkflow": "Laborfluo di agantos",
   "generateWithAi": "Gener-igar kun AI",
-  "hidePointFor": "Kaŝez punkto kontre kesto"
+  "hidePointFor": "Kaŝez punkto kontre kesto",
+  "newOrganization": "Nova organizo",
+  "editOrganization": "Redaktar organizo",
+  "addOrganization": "Krear organizo",
+  "onlyAdminsCanCreateOrganizations": "Nur admini povas krear organizi",
+  "navigationMenu": "Navigado menuo",
+  "useFixedTopAppBar": "Uzar fiksita supro app baro",
+  "disableArrowBasedTopNavigation": "Desactivar sagobazita supro navigado",
+  "multiModalModels": "Multimodala Modeli",
+  "reasoningModels": "Razonado Modeli",
+  "selectSmallReasoningModel": "Malgranda Razonado modeli",
+  "selectMediumReasoningModel": "Meza Razonado modeli",
+  "selectLargeReasoningModel": "Granda Razonado modeli"
 }

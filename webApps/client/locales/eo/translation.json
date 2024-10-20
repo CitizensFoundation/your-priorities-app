@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Kaŝi aplikaĵan stangon se Bonvenon HTML",
   "policySynthAgentsWorkflow": "Agentoj Fluokurado",
   "generateWithAi": "Generi kun AI",
-  "hidePointFor": "Kaŝi punkton kontraŭ skatolo"
+  "hidePointFor": "Kaŝi punkton kontraŭ skatolo",
+  "newOrganization": "Nova organizo",
+  "editOrganization": "Redakti organizon",
+  "addOrganization": "Krei organizon",
+  "onlyAdminsCanCreateOrganizations": "Nur administrantoj povas krei organizojn",
+  "navigationMenu": "Navigada menuo",
+  "useFixedTopAppBar": "Uzi fiksitan supran aplikan stangon",
+  "disableArrowBasedTopNavigation": "Malŝalti sagon bazitan supran navigadon",
+  "multiModalModels": "Multimodaj Modeloj",
+  "reasoningModels": "Rezonado Modeloj",
+  "selectSmallReasoningModel": "Malgranda Rezona modelo",
+  "selectMediumReasoningModel": "Meza Rezona modelo",
+  "selectLargeReasoningModel": "Granda Rezona modelo"
 }

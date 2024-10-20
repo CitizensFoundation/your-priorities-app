@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "隐藏应用栏如果欢迎HTML",
   "policySynthAgentsWorkflow": "代理流程",
   "generateWithAi": "AI生成",
-  "hidePointFor": "隐藏点对框"
+  "hidePointFor": "隐藏点对框",
+  "newOrganization": "Ciengz saem",
+  "editOrganization": "Baj saem",
+  "addOrganization": "Ciengz saem",
+  "onlyAdminsCanCreateOrganizations": "Daih gvanh cawq ciengz saem",
+  "navigationMenu": "Dohcieng",
+  "useFixedTopAppBar": "Cwngz gvaqdingh",
+  "disableArrowBasedTopNavigation": "Mienh cawqdingh",
+  "multiModalModels": "Daihmoq moq",
+  "reasoningModels": "Daihmoq gyae",
+  "selectSmallReasoningModel": "Daihmoq lai",
+  "selectMediumReasoningModel": "Daihmoq mbouj",
+  "selectLargeReasoningModel": "Daihmoq daih"
 }

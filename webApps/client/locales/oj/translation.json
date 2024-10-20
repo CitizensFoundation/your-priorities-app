@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Gego waabandaan app",
   "policySynthAgentsWorkflow": "Ogimaa Aanishinaabewin",
   "generateWithAi": "Gashkitoon AI",
-  "hidePointFor": "Bagooshin"
+  "hidePointFor": "Bagooshin",
+  "newOrganization": "Ogimaawiwin ozhibii'igewin",
+  "editOrganization": "Ogimaawiwin izhichigewin",
+  "addOrganization": "Ogimaawiwin ojibii'igewin",
+  "onlyAdminsCanCreateOrganizations": "Ogimaawiwin ojibii'igewin ogimaag",
+  "navigationMenu": "Bimosewin mazina'igan",
+  "useFixedTopAppBar": "Aabajitoon giiwe'igan",
+  "disableArrowBasedTopNavigation": "Gagwejiminan giiwe'igan",
+  "multiModalModels": "Aabajitoon",
+  "reasoningModels": "Inaadiziwin",
+  "selectSmallReasoningModel": "Aabajitoon inaadiziwin",
+  "selectMediumReasoningModel": "Aabajitoon inaadiziwin",
+  "selectLargeReasoningModel": "Aabajitoon inaadiziwin"
 }

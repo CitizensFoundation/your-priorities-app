@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Қош келдіңіз HTML болса, қолданба жолағын жасыру",
   "policySynthAgentsWorkflow": "Агенттер жұмысы",
   "generateWithAi": "AI арқылы жасау",
-  "hidePointFor": "Қорапқа қарсы нүктені жасыру"
+  "hidePointFor": "Қорапқа қарсы нүктені жасыру",
+  "newOrganization": "Жаңа ұйым",
+  "editOrganization": "Ұйымды өңдеу",
+  "addOrganization": "Ұйым құру",
+  "onlyAdminsCanCreateOrganizations": "Ұйымдарды тек әкімшілер құра алады",
+  "navigationMenu": "Навигация мәзірі",
+  "useFixedTopAppBar": "Тұрақты жоғарғы қолданба жолағын пайдалану",
+  "disableArrowBasedTopNavigation": "Жоғарғы навигацияны өшіру",
+  "multiModalModels": "Көпмодальды модельдер",
+  "reasoningModels": "Ойлау модельдері",
+  "selectSmallReasoningModel": "Кіші ойлау моделі",
+  "selectMediumReasoningModel": "Орта ойлау моделі",
+  "selectLargeReasoningModel": "Үлкен ойлау моделі"
 }

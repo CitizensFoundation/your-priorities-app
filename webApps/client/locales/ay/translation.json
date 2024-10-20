@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "App barra imt'aña kunawsati Bienvenido HTML",
   "policySynthAgentsWorkflow": "Yatiqirinaka Luraña",
   "generateWithAi": "AI ukanakampi lurasiña",
-  "hidePointFor": "K'uchu imaña"
+  "hidePointFor": "K'uchu imaña",
+  "newOrganization": "Mäkip suma",
+  "editOrganization": "Uñt'awi suma",
+  "addOrganization": "Kamisma suma",
+  "onlyAdminsCanCreateOrganizations": "Jilïr jaqinakakiw suma kamisma",
+  "navigationMenu": "Saräwi menú",
+  "useFixedTopAppBar": "Aka app bar apnaqaña",
+  "disableArrowBasedTopNavigation": "Flecha saräwi janiwa",
+  "multiModalModels": "Multi-modal Modelunak",
+  "reasoningModels": "Amuyt'awi Modelunak",
+  "selectSmallReasoningModel": "Jisk'a Amuyt'awi modelu",
+  "selectMediumReasoningModel": "Taypi Amuyt'awi modelu",
+  "selectLargeReasoningModel": "Jach'a Amuyt'awi modelu"
 }

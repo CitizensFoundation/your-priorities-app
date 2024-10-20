@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Апп бар ахьӡыртәар, ааԥхьара HTML",
   "policySynthAgentsWorkflow": "Агентцәа аусура",
   "generateWithAi": "AI ала иӡырнагар",
-  "hidePointFor": "Ақәгылара иҿагылартәар"
+  "hidePointFor": "Ақәгылара иҿагылартәар",
+  "newOrganization": "Аиҿкаара ҿыц",
+  "editOrganization": "Аиҿкаара аредакциақәа",
+  "addOrganization": "Аиҿкаара аԥҵара",
+  "onlyAdminsCanCreateOrganizations": "Администраторцәа роуп аиҿкаарақәа аԥырҵо",
+  "navigationMenu": "Анавигациа амениу",
+  "useFixedTopAppBar": "Иаҿакны икыдуп апп бар",
+  "disableArrowBasedTopNavigation": "Анавигациа астрелкақәа арҽеира",
+  "multiModalModels": "Мульти-модалтә Моделқәа",
+  "reasoningModels": "Аиашареи Моделқәа",
+  "selectSmallReasoningModel": "Иҵегьы Иаашареи амодель",
+  "selectMediumReasoningModel": "Аиашареи амодель амедиум",
+  "selectLargeReasoningModel": "Аиашареи амодель аҵакыра"
 }

@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Domeinbedrog Bestuur",
   "Access": "Toegang",
   "openOrganizationMenu": "Open organisasie kieslys",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Lysversameling Reykjavíkur",
   "Override theme": "Oorskryf tema",
   "Analytics & Marketing": "Analise & Bemarking",
   "Promote your survey": "Bevorder jou opname",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Versteek appbalk as Welkom HTML",
   "policySynthAgentsWorkflow": "Agente Werkvloei",
   "generateWithAi": "Genereer met KI",
-  "hidePointFor": "Versteek punt teen boks"
+  "hidePointFor": "Versteek punt teen boks",
+  "newOrganization": "Nuwe organisasie",
+  "editOrganization": "Wysig organisasie",
+  "addOrganization": "Skep organisasie",
+  "onlyAdminsCanCreateOrganizations": "Slegs admins kan organisasies skep",
+  "navigationMenu": "Navigasie kieslys",
+  "useFixedTopAppBar": "Gebruik vaste boonste appbalk",
+  "disableArrowBasedTopNavigation": "Deaktiveer pylnavigasie",
+  "multiModalModels": "Multi-modale Modelle",
+  "reasoningModels": "Redenering Modelle",
+  "selectSmallReasoningModel": "Klein Redenering model",
+  "selectMediumReasoningModel": "Medium Redenering model",
+  "selectLargeReasoningModel": "Groot Redenering model"
 }

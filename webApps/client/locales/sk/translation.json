@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Skryť panel aplikácie, ak je Welcome HTML",
   "policySynthAgentsWorkflow": "Pracovný tok agentov",
   "generateWithAi": "Generovať s AI",
-  "hidePointFor": "Skryť bod proti boxu"
+  "hidePointFor": "Skryť bod proti boxu",
+  "newOrganization": "Nová organizácia",
+  "editOrganization": "Upraviť organizáciu",
+  "addOrganization": "Vytvoriť organizáciu",
+  "onlyAdminsCanCreateOrganizations": "Iba administrátori môžu vytvárať organizácie",
+  "navigationMenu": "Navigačné menu",
+  "useFixedTopAppBar": "Použiť pevnú hornú lištu",
+  "disableArrowBasedTopNavigation": "Zakázať navigáciu šípkami",
+  "multiModalModels": "Multimodálne modely",
+  "reasoningModels": "Modely uvažovania",
+  "selectSmallReasoningModel": "Malý model uvažovania",
+  "selectMediumReasoningModel": "Stredný model uvažovania",
+  "selectLargeReasoningModel": "Veľký model uvažovania"
 }

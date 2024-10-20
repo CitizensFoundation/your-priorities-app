@@ -1400,7 +1400,7 @@
   "forgotPassword": "Kɔdinin bɔ?",
   "useLoginOnDomainIfNotLoggedIn": "Taga login kan ka bɔ a kɔrɔ",
   "confirmLoadAndOverrideMemory": "I ni kɛra ka jɛra memori ni ka jɛra memori kɔrɔ?",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "Agent kɛlɛ jɛya",
   "upvote": "Kɔrɔ",
   "orDownvote": "walima dɔrɔn",
   "pointsByPressingTheArrows": "fɛn bɛ sɛbɛn",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fɛnɛ app bar ni Welcome HTML",
   "policySynthAgentsWorkflow": "Jɔli Kalanfili",
   "generateWithAi": "AI fɛ",
-  "hidePointFor": "Fɛnɛ kɔrɔ bɔ"
+  "hidePointFor": "Fɛnɛ kɔrɔ bɔ",
+  "newOrganization": "Kɔrɔsi kɛla",
+  "editOrganization": "Kɔrɔsi jɛya",
+  "addOrganization": "Kɔrɔsi dɔ",
+  "onlyAdminsCanCreateOrganizations": "Ka bɛɛ kɛ kɔrɔsi dɔ",
+  "navigationMenu": "Jɛgɛ menu",
+  "useFixedTopAppBar": "Fanga barakɛ jɛya",
+  "disableArrowBasedTopNavigation": "Ka bɔra ɲɛgɛn jɛya",
+  "multiModalModels": "Modɛli bɛɛ",
+  "reasoningModels": "Modɛli kɛlɛ",
+  "selectSmallReasoningModel": "Modɛli kɛlɛ kɔnɔ",
+  "selectMediumReasoningModel": "Modɛli kɛlɛ jɛgɛ",
+  "selectLargeReasoningModel": "Modɛli kɛlɛ bɛɛ"
 }

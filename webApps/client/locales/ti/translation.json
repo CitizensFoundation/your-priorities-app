@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ኣፍልስ ኣፕ ኣስታ እንተ እቶም እንቋዕ HTML",
   "policySynthAgentsWorkflow": "ስርዓት ኣገልጋሊ",
   "generateWithAi": "ብ AI ኣመልክት",
-  "hidePointFor": "ነጥቢ ኣብ ሳጥን ኣፍልስ"
+  "hidePointFor": "ነጥቢ ኣብ ሳጥን ኣፍልስ",
+  "newOrganization": "ሓድሽ ውዳበ",
+  "editOrganization": "ኣርትዕ ውዳበ",
+  "addOrganization": "ፍጠር ውዳበ",
+  "onlyAdminsCanCreateOrganizations": "ንስራሕተኛታት ብቻ ውዳበታት ክፍጠሩ ይኽእሉ",
+  "navigationMenu": "ዝውዳበ ምስል",
+  "useFixedTopAppBar": "ተሰርዐ ላዕለዋይ መተግበሪ መርበብ ተጠቐመ",
+  "disableArrowBasedTopNavigation": "ተሰርዐ ብምልክት ላዕለዋይ ንዝውዳበ ኣይተገብረን",
+  "multiModalModels": "ብዙሕ መዓልቲ ሞዴላት",
+  "reasoningModels": "ምስላ ሞዴላት",
+  "selectSmallReasoningModel": "ንእሽቶ ምስላ ሞዴል",
+  "selectMediumReasoningModel": "መንገዲ ምስላ ሞዴል",
+  "selectLargeReasoningModel": "ዓብይ ምስላ ሞዴል"
 }

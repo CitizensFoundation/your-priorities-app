@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fjal app bjálka um Vælkomin HTML",
   "policySynthAgentsWorkflow": "Umboð Arbeiðsgongd",
   "generateWithAi": "Ger við AI",
-  "hidePointFor": "Fjal punkt móti kassa"
+  "hidePointFor": "Fjal punkt móti kassa",
+  "newOrganization": "Nýggj felagsskapur",
+  "editOrganization": "Rætta felagsskap",
+  "addOrganization": "Stovna felagsskap",
+  "onlyAdminsCanCreateOrganizations": "Bert admin kunnu stovna felagsskapir",
+  "navigationMenu": "Navigatiónsvalmynd",
+  "useFixedTopAppBar": "Nýt fastan topp app bar",
+  "disableArrowBasedTopNavigation": "Sløkk pílgrundaða topp navigatión",
+  "multiModalModels": "Fleiri-modal Modellir",
+  "reasoningModels": "Grundgevingar Modellir",
+  "selectSmallReasoningModel": "Lítil Grundgevingar model",
+  "selectMediumReasoningModel": "Miðal Grundgevingar model",
+  "selectLargeReasoningModel": "Stór Grundgevingar model"
 }

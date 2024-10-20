@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fitha app bar kape na Welcome HTML",
   "policySynthAgentsWorkflow": "Omukalo wa Mupainu",
   "generateWithAi": "Landa na AI",
-  "hidePointFor": "Fanda okukwata epata"
+  "hidePointFor": "Fanda okukwata epata",
+  "newOrganization": "Oshikandjo shisha",
+  "editOrganization": "Hwepopala oshikandjo",
+  "addOrganization": "Tunga oshikandjo",
+  "onlyAdminsCanCreateOrganizations": "Aayehe aalanditho ye nawa okutunga iikandjo",
+  "navigationMenu": "Omenu yomboka",
+  "useFixedTopAppBar": "Shanga omboka yopa top",
+  "disableArrowBasedTopNavigation": "Thika omboka yopa top yaa arrow",
+  "multiModalModels": "Iimwene yopa multi-modal",
+  "reasoningModels": "Iimwene yopa reasoning",
+  "selectSmallReasoningModel": "Iimwene yopa reasoning yontoko",
+  "selectMediumReasoningModel": "Iimwene yopa reasoning yopaandjika",
+  "selectLargeReasoningModel": "Iimwene yopa reasoning yongushu"
 }

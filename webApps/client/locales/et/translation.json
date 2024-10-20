@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Peida rakenduse riba, kui Tere HTML",
   "policySynthAgentsWorkflow": "Agentide töövoog",
   "generateWithAi": "Loo AI-ga",
-  "hidePointFor": "Peida punkt kasti vastu"
+  "hidePointFor": "Peida punkt kasti vastu",
+  "newOrganization": "Uus organisatsioon",
+  "editOrganization": "Muuda organisatsiooni",
+  "addOrganization": "Loo organisatsioon",
+  "onlyAdminsCanCreateOrganizations": "Ainult adminnid saavad organisatsioone luua",
+  "navigationMenu": "Navigeerimismenüü",
+  "useFixedTopAppBar": "Kasuta fikseeritud ülemist rakenduseriba",
+  "disableArrowBasedTopNavigation": "Keela noolepõhine ülanavigatsioon",
+  "multiModalModels": "Multimodaalsed mudelid",
+  "reasoningModels": "Põhjendusmudelid",
+  "selectSmallReasoningModel": "Väike põhjendusmudel",
+  "selectMediumReasoningModel": "Keskmine põhjendusmudel",
+  "selectLargeReasoningModel": "Suur põhjendusmudel"
 }

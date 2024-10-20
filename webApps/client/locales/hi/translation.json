@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "यदि स्वागत HTML है तो ऐप बार छुपाएं",
   "policySynthAgentsWorkflow": "एजेंट्स कार्यप्रवाह",
   "generateWithAi": "AI से उत्पन्न करें",
-  "hidePointFor": "बॉक्स के खिलाफ बिंदु छुपाएं"
+  "hidePointFor": "बॉक्स के खिलाफ बिंदु छुपाएं",
+  "newOrganization": "नई संस्था",
+  "editOrganization": "संपादित संस्था",
+  "addOrganization": "संस्था बनाएं",
+  "onlyAdminsCanCreateOrganizations": "केवल एडमिन्स संस्थाएं बना सकते हैं",
+  "navigationMenu": "नेविगेशन मेनू",
+  "useFixedTopAppBar": "स्थिर शीर्ष ऐप बार का उपयोग करें",
+  "disableArrowBasedTopNavigation": "तीर आधारित शीर्ष नेविगेशन अक्षम करें",
+  "multiModalModels": "मल्टी-मोडल मॉडल",
+  "reasoningModels": "तर्क मॉडल",
+  "selectSmallReasoningModel": "छोटा तर्क मॉडल",
+  "selectMediumReasoningModel": "मध्यम तर्क मॉडल",
+  "selectLargeReasoningModel": "बड़ा तर्क मॉडल"
 }

@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Сокриј лента ако е Welcome HTML",
   "policySynthAgentsWorkflow": "Работен тек на агенти",
   "generateWithAi": "Генерирај со AI",
-  "hidePointFor": "Сокриј точка против кутија"
+  "hidePointFor": "Сокриј точка против кутија",
+  "newOrganization": "Нова организација",
+  "editOrganization": "Уреди организација",
+  "addOrganization": "Креирај организација",
+  "onlyAdminsCanCreateOrganizations": "Само администратори можат да креираат организации",
+  "navigationMenu": "Мени за навигација",
+  "useFixedTopAppBar": "Користи фиксна горна лента",
+  "disableArrowBasedTopNavigation": "Оневозможи навигација со стрели",
+  "multiModalModels": "Мултимодални модели",
+  "reasoningModels": "Модели за резонирање",
+  "selectSmallReasoningModel": "Мал модел за резонирање",
+  "selectMediumReasoningModel": "Среден модел за резонирање",
+  "selectLargeReasoningModel": "Голем модел за резонирање"
 }

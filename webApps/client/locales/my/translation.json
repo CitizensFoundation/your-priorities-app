@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Welcome HTML ရှိပါက app ဘားဖျောက်ပါ",
   "policySynthAgentsWorkflow": "Agent လုပ်ငန်းစဉ်",
   "generateWithAi": "AI ဖြင့် ဖန်တီးပါ",
-  "hidePointFor": "ဘောက်စ်ဆန့်ကျင် အမှတ်ဖျောက်ပါ"
+  "hidePointFor": "ဘောက်စ်ဆန့်ကျင် အမှတ်ဖျောက်ပါ",
+  "newOrganization": "အဖွဲ့အစည်းအသစ်",
+  "editOrganization": "အဖွဲ့အစည်းတည်းဖြတ်ရန်",
+  "addOrganization": "အဖွဲ့အစည်းဖန်တီးရန်",
+  "onlyAdminsCanCreateOrganizations": "အုပ်ချုပ်သူများသာ အဖွဲ့အစည်းများ ဖန်တီးနိုင်သည်",
+  "navigationMenu": "လမ်းညွှန်မီနူး",
+  "useFixedTopAppBar": "အပေါ်ဘားကို တည်ငြိမ်ထားပါ",
+  "disableArrowBasedTopNavigation": "အပေါ်လမ်းညွှန်အတွက် မြှားကို ပိတ်ပါ",
+  "multiModalModels": "မျိုးစုံမော်ဒယ်များ",
+  "reasoningModels": "အကြောင်းအရာမော်ဒယ်များ",
+  "selectSmallReasoningModel": "အသေးစား အကြောင်းအရာမော်ဒယ်",
+  "selectMediumReasoningModel": "အလတ်စား အကြောင်းအရာမော်ဒယ်",
+  "selectLargeReasoningModel": "အကြီးစား အကြောင်းအရာမော်ဒယ်"
 }

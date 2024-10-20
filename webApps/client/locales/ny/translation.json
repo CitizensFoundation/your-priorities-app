@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Bisani kapamwamba ngati Welcome HTML",
   "policySynthAgentsWorkflow": "Ntchito za Othandizira",
   "generateWithAi": "Pangani ndi AI",
-  "hidePointFor": "Bisani mfundo motsutsana ndi bokosi"
+  "hidePointFor": "Bisani mfundo motsutsana ndi bokosi",
+  "newOrganization": "Bungwe latsopano",
+  "editOrganization": "Sinthani bungwe",
+  "addOrganization": "Pangani bungwe",
+  "onlyAdminsCanCreateOrganizations": "Okhawo oyang'anira angapange mabungwe",
+  "navigationMenu": "Menyu yoyendetsa",
+  "useFixedTopAppBar": "Gwiritsani ntchito kapamwamba wokhazikika",
+  "disableArrowBasedTopNavigation": "Letsani kuyenda pamwamba potengera muvi",
+  "multiModalModels": "Mitundu Yosiyanasiyana",
+  "reasoningModels": "Mitundu Yoganiza",
+  "selectSmallReasoningModel": "Chitsanzo Chaching'ono Choganiza",
+  "selectMediumReasoningModel": "Chitsanzo Chapakati Choganiza",
+  "selectLargeReasoningModel": "Chitsanzo Chachikulu Choganiza"
 }

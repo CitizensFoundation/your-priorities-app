@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "App bar dhoksuu yoo Welcome HTML",
   "policySynthAgentsWorkflow": "Hojii Ejenootaa",
   "generateWithAi": "AI'n uumuu",
-  "hidePointFor": "Dhoksuu"
+  "hidePointFor": "Dhoksuu",
+  "newOrganization": "Waldaa haaraa",
+  "editOrganization": "Waldaa gulaali",
+  "addOrganization": "Waldaa uumi",
+  "onlyAdminsCanCreateOrganizations": "Waldaaleen kan uumaman qofa",
+  "navigationMenu": "Menuu deemsaa",
+  "useFixedTopAppBar": "Bara app gubbaa sirrii fayyadami",
+  "disableArrowBasedTopNavigation": "Deemsa gubbaa seera muraa dhaabi",
+  "multiModalModels": "Modeloota Multi-modal",
+  "reasoningModels": "Modeloota yaad-rimee",
+  "selectSmallReasoningModel": "Model yaad-rimee xiqqaa",
+  "selectMediumReasoningModel": "Model yaad-rimee giddugaleessa",
+  "selectLargeReasoningModel": "Model yaad-rimee guddaa"
 }

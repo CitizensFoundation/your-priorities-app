@@ -1400,7 +1400,7 @@
   "forgotPassword": "Udi ne tshisumbu?",
   "useLoginOnDomainIfNotLoggedIn": "Sebenzisa tshikondo tsha login ku domain soki udi ne login",
   "confirmLoadAndOverrideMemory": "Udi ne tshisumbu tsha ku tula tshisumbu eyo ne ku tula tshisumbu tshia lelu?",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "Mokanda wa memori ya agent",
   "upvote": "Tshia",
   "orDownvote": "tshia tshia",
   "pointsByPressingTheArrows": "bimanyina ku tshia tshia",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fihila app bar soki Welcome HTML",
   "policySynthAgentsWorkflow": "Misangu ya Bakemanyi",
   "generateWithAi": "Bumbula na AI",
-  "hidePointFor": "Fihisa nsonga ku bokisi"
+  "hidePointFor": "Fihisa nsonga ku bokisi",
+  "newOrganization": "Lupanda mupya",
+  "editOrganization": "Lomba lupanda",
+  "addOrganization": "Teya lupanda",
+  "onlyAdminsCanCreateOrganizations": "Bene bakulu badi teya lupanda",
+  "navigationMenu": "Menu ya kulongolola",
+  "useFixedTopAppBar": "Sebenzisa bar ya likolo",
+  "disableArrowBasedTopNavigation": "Leka miso ya likolo",
+  "multiModalModels": "Bimodela ya multimodal",
+  "reasoningModels": "Bimodela ya mayele",
+  "selectSmallReasoningModel": "Modela ya mayele muke",
+  "selectMediumReasoningModel": "Modela ya mayele ya katikati",
+  "selectLargeReasoningModel": "Modela ya mayele monene"
 }

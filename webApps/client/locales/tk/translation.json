@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "HTML hoş geldiňiz bolsa, app panelini gizle",
   "policySynthAgentsWorkflow": "Agentleriň iş akymy",
   "generateWithAi": "AI bilen döret",
-  "hidePointFor": "Gutyny gizle"
+  "hidePointFor": "Gutyny gizle",
+  "newOrganization": "Täze gurama",
+  "editOrganization": "Guramany üýtget",
+  "addOrganization": "Gurama döret",
+  "onlyAdminsCanCreateOrganizations": "Diňe adminler guramalar döredip biler",
+  "navigationMenu": "Nawigasiýa menýusy",
+  "useFixedTopAppBar": "Durnukly ýokarky app panelini ulanyň",
+  "disableArrowBasedTopNavigation": "Ok esasly ýokarky nawigasiýany öçüriň",
+  "multiModalModels": "Köp-modal Modellar",
+  "reasoningModels": "Pikirleniş Modelleri",
+  "selectSmallReasoningModel": "Kiçi Pikirleniş modeli",
+  "selectMediumReasoningModel": "Orta Pikirleniş modeli",
+  "selectLargeReasoningModel": "Uly Pikirleniş modeli"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Zobe mmanya ngwa ma ọ bụrụ na Welcome HTML",
   "policySynthAgentsWorkflow": "Usoro Ọrụ Ndị nnọchite",
   "generateWithAi": "Mepụta na AI",
-  "hidePointFor": "Zochie isi megide igbe"
+  "hidePointFor": "Zochie isi megide igbe",
+  "newOrganization": "Ọhụụ nzukọ",
+  "editOrganization": "Dezie nzukọ",
+  "addOrganization": "Mepụta nzukọ",
+  "onlyAdminsCanCreateOrganizations": "Naanị ndị nchịkwa nwere ike ịmepụta nzukọ",
+  "navigationMenu": "Nduzi menu",
+  "useFixedTopAppBar": "Jiri ogwe elu ngwa kwụ ọtọ",
+  "disableArrowBasedTopNavigation": "Gbanyụọ ntụgharị ntụziaka elu",
+  "multiModalModels": "Ụdị Multi-modal",
+  "reasoningModels": "Ụdị Ntụle",
+  "selectSmallReasoningModel": "Ntụle obere",
+  "selectMediumReasoningModel": "Ntụle etiti",
+  "selectLargeReasoningModel": "Ntụle nnukwu"
 }

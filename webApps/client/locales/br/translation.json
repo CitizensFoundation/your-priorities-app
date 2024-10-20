@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Kuzhat bar arloañs ma HTML Degemer",
   "policySynthAgentsWorkflow": "Fluks Labour Ezelez",
   "generateWithAi": "Sevel gant AI",
-  "hidePointFor": "Kuzhat poent a-enep boest"
+  "hidePointFor": "Kuzhat poent a-enep boest",
+  "newOrganization": "Kevredigezh nevez",
+  "editOrganization": "Embann kevredigezh",
+  "addOrganization": "Krouiñ kevredigezh",
+  "onlyAdminsCanCreateOrganizations": "Nemet an merourien a c'hall krouiñ kevredigezhioù",
+  "navigationMenu": "Lañser merdeiñ",
+  "useFixedTopAppBar": "Implij barraenn benveg uhel stank",
+  "disableArrowBasedTopNavigation": "Diweredekaat merdeiñ uhel diazezet war saezh",
+  "multiModalModels": "Modeloù lies-mod",
+  "reasoningModels": "Modeloù preder",
+  "selectSmallReasoningModel": "Model preder bihan",
+  "selectMediumReasoningModel": "Model preder keitat",
+  "selectLargeReasoningModel": "Model preder bras"
 }

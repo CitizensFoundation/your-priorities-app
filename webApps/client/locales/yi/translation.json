@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "באַהאַלטן אַפּ באַר אויב באַגריסונג HTML",
   "policySynthAgentsWorkflow": "אַגענטן אַרבעטפֿלוס",
   "generateWithAi": "גענערירן מיט AI",
-  "hidePointFor": "באַהאַלטן פונט קעגן קעסטל"
+  "hidePointFor": "באַהאַלטן פונט קעגן קעסטל",
+  "newOrganization": "נייע אָרגאַניזאַציע",
+  "editOrganization": "רעדאַקטירן אָרגאַניזאַציע",
+  "addOrganization": "שאַפֿן אָרגאַניזאַציע",
+  "onlyAdminsCanCreateOrganizations": "נאָר אַדמינס קענען שאַפֿן אָרגאַניזאַציעס",
+  "navigationMenu": "נאַוויגאַציע מעניו",
+  "useFixedTopAppBar": "נוצן פאַרפעסטיקט שפּיץ אַפּ באַר",
+  "disableArrowBasedTopNavigation": "דיסייבאַל פייַל-באזירט שפּיץ נאַוויגאַציע",
+  "multiModalModels": "מולטי-מאָדאַל מאָדעלס",
+  "reasoningModels": "רעזאַנינג מאָדעלס",
+  "selectSmallReasoningModel": "קליין רעזאַנינג מאָדעל",
+  "selectMediumReasoningModel": "מיטל רעזאַנינג מאָדעל",
+  "selectLargeReasoningModel": "גרויס רעזאַנינג מאָדעל"
 }

@@ -1401,7 +1401,7 @@
   "useLoginOnDomainIfNotLoggedIn": "Login Ecran um Domain benotzen wann net ageloggt",
   "confirmLoadAndOverrideMemory": "Sidd Dir sécher datt Dir dës Erënnerung lueden an déi aktuell iwwerschreiwe wëllt?",
   "agentMemoryExplorer": "Agent Erënnerung Explorer",
-  "upvote": "Upvote",
+  "upvote": "Hochstëmmen",
   "orDownvote": "oder downvote",
   "pointsByPressingTheArrows": "Punkten duerch d'Drécken vun den Pfeilen",
   "workflow": "Aarbechtsfloss",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "App Bar verstoppen wann Welcome HTML",
   "policySynthAgentsWorkflow": "Agenten Workflow",
   "generateWithAi": "Generéieren mat AI",
-  "hidePointFor": "Punkt géint Këscht verstoppen"
+  "hidePointFor": "Punkt géint Këscht verstoppen",
+  "newOrganization": "Nei Organisatioun",
+  "editOrganization": "Organisatioun änneren",
+  "addOrganization": "Organisatioun erstellen",
+  "onlyAdminsCanCreateOrganizations": "Nëmmen Admins kënnen Organisatiounen erstellen",
+  "navigationMenu": "Navigatiounsmenü",
+  "useFixedTopAppBar": "Fixéiert Top-App-Bar benotzen",
+  "disableArrowBasedTopNavigation": "Pfeilbaséiert Top-Navigatioun deaktivéieren",
+  "multiModalModels": "Multi-modal Modeller",
+  "reasoningModels": "Argumentatiounsmodeller",
+  "selectSmallReasoningModel": "Klengen Argumentatiounsmodell",
+  "selectMediumReasoningModel": "Mëttleren Argumentatiounsmodell",
+  "selectLargeReasoningModel": "Grousse Argumentatiounsmodell"
 }

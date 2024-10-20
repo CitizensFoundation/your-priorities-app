@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "اگر ویلکم HTML ہو تو ایپ بار چھپائیں",
   "policySynthAgentsWorkflow": "ایجنٹس ورک فلو",
   "generateWithAi": "AI کے ساتھ تیار کریں",
-  "hidePointFor": "باکس کے خلاف پوائنٹ چھپائیں"
+  "hidePointFor": "باکس کے خلاف پوائنٹ چھپائیں",
+  "newOrganization": "نئی تنظیم",
+  "editOrganization": "تنظیم میں ترمیم کریں",
+  "addOrganization": "تنظیم بنائیں",
+  "onlyAdminsCanCreateOrganizations": "صرف ایڈمنز تنظیمیں بنا سکتے ہیں",
+  "navigationMenu": "نیویگیشن مینو",
+  "useFixedTopAppBar": "مستقل اوپر ایپ بار استعمال کریں",
+  "disableArrowBasedTopNavigation": "تیر پر مبنی اوپر نیویگیشن غیر فعال کریں",
+  "multiModalModels": "کثیر ماڈل ماڈلز",
+  "reasoningModels": "استدلال ماڈلز",
+  "selectSmallReasoningModel": "چھوٹا استدلال ماڈل",
+  "selectMediumReasoningModel": "درمیانہ استدلال ماڈل",
+  "selectLargeReasoningModel": "بڑا استدلال ماڈل"
 }

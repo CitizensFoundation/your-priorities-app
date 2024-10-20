@@ -1400,7 +1400,7 @@
   "forgotPassword": "Puiguqtuq uqauhiliuq?",
   "useLoginOnDomainIfNotLoggedIn": "Atuqtuk login screen domain-mi",
   "confirmLoadAndOverrideMemory": "Qanuippit aturniaqpit una qaujimajuk?",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ",
   "upvote": "Pivalliajut",
   "orDownvote": "imaaluunniit piqalliajut",
   "pointsByPressingTheArrows": "ikumaqtuq ikona",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "App bar piqujaq piqujaq HTML",
   "policySynthAgentsWorkflow": "Ikajuqtiirniq suliqatigiinniq",
   "generateWithAi": "AI-kut piqujaq",
-  "hidePointFor": "Piqujaq piqujaq piqujaq"
+  "hidePointFor": "Piqujaq piqujaq piqujaq",
+  "newOrganization": "ᐅᑕᖅᑭᑎᑦᑎᓂᖅ ᐃᓕᓴᐃᑦ",
+  "editOrganization": "ᑎᑎᕋᕐᓂᖅ ᐃᓕᓴᐃᑦ",
+  "addOrganization": "ᐊᑐᖅᑕᐅᓂᖅ ᐃᓕᓴᐃᑦ",
+  "onlyAdminsCanCreateOrganizations": "ᐃᓕᓴᐃᑦ ᐊᑐᖅᑕᐅᓂᖅ ᐊᒻᒪ ᐊᑦᑕᓇᕐᓂᖅ",
+  "navigationMenu": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ",
+  "useFixedTopAppBar": "ᐃᓚᒌᑦᑎᓂᖅ ᐃᓕᓴᐃᑦ ᐊᑐᖅ",
+  "disableArrowBasedTopNavigation": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ ᐊᓯᓕᖅᑯᑦ",
+  "multiModalModels": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ",
+  "reasoningModels": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ",
+  "selectSmallReasoningModel": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ",
+  "selectMediumReasoningModel": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ",
+  "selectLargeReasoningModel": "ᐊᓯᓕᖅᑯᑦ ᐊᑐᖅ"
 }

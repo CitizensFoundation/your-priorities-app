@@ -1428,7 +1428,7 @@
   "dataAnalysis": "Onínọmbà Data",
   "databaseManagement": "Isakoso Database",
   "digitalMarketing": "Titaja Dijitalu",
-  "ecommerce": "E-commerce",
+  "ecommerce": "Ìṣòwò-òwò",
   "educationAndTraining": "Ẹkọ ati Ikẹkọ",
   "emailManagement": "Isakoso Imeeli",
   "eventPlanning": "Eto Àtúnṣe",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Tọju igi app ti Welcome HTML ba wa",
   "policySynthAgentsWorkflow": "Ilọsiwaju Awọn aṣoju",
   "generateWithAi": "Ṣe agbejade pẹlu AI",
-  "hidePointFor": "Tọju aaye lodi si apoti"
+  "hidePointFor": "Tọju aaye lodi si apoti",
+  "newOrganization": "Ẹgbẹ tuntun",
+  "editOrganization": "Ṣatunkọ ẹgbẹ",
+  "addOrganization": "Ṣẹda ẹgbẹ",
+  "onlyAdminsCanCreateOrganizations": "Awọn alakoso nikan le ṣẹda awọn ẹgbẹ",
+  "navigationMenu": "Àkójọ aṣàyan lilọ",
+  "useFixedTopAppBar": "Lo igi app oke ti o wa titi",
+  "disableArrowBasedTopNavigation": "Mu lilọ oke orita kuro",
+  "multiModalModels": "Àwọn àwòrán oníṣe",
+  "reasoningModels": "Àwọn àwòrán ìrònú",
+  "selectSmallReasoningModel": "Àwòrán ìrònú kékeré",
+  "selectMediumReasoningModel": "Àwòrán ìrònú arin",
+  "selectLargeReasoningModel": "Àwòrán ìrònú ńlá"
 }

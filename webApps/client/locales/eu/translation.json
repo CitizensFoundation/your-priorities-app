@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Ezkutatu aplikazio barra Ongietorri HTML bada",
   "policySynthAgentsWorkflow": "Agentearen lan-fluxua",
   "generateWithAi": "Sortu AI-rekin",
-  "hidePointFor": "Ezkutatu puntu kaxa aurka"
+  "hidePointFor": "Ezkutatu puntu kaxa aurka",
+  "newOrganization": "Erakunde berria",
+  "editOrganization": "Editatu erakundea",
+  "addOrganization": "Sortu erakundea",
+  "onlyAdminsCanCreateOrganizations": "Erakundeak sortzea administratzaileentzat bakarrik",
+  "navigationMenu": "Nabigazio menua",
+  "useFixedTopAppBar": "Erabili goiko barra finkoa",
+  "disableArrowBasedTopNavigation": "Desgaitu gezi bidezko goiko nabigazioa",
+  "multiModalModels": "Modalitate anitzeko ereduak",
+  "reasoningModels": "Arrazoibide ereduak",
+  "selectSmallReasoningModel": "Arrazoibide eredu txikia",
+  "selectMediumReasoningModel": "Arrazoibide eredu ertaina",
+  "selectLargeReasoningModel": "Arrazoibide eredu handia"
 }

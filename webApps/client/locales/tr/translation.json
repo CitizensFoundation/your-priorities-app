@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "Hoşgeldiniz HTML ise uygulama çubuğunu gizle",
   "policySynthAgentsWorkflow": "Ajanlar İş Akışı",
   "generateWithAi": "AI ile oluştur",
-  "hidePointFor": "Kutunun karşısındaki noktayı gizle"
+  "hidePointFor": "Kutunun karşısındaki noktayı gizle",
+  "newOrganization": "Yeni organizasyon",
+  "editOrganization": "Organizasyonu düzenle",
+  "addOrganization": "Organizasyon oluştur",
+  "onlyAdminsCanCreateOrganizations": "Sadece yöneticiler organizasyon oluşturabilir",
+  "navigationMenu": "Gezinme menüsü",
+  "useFixedTopAppBar": "Sabit üst uygulama çubuğunu kullan",
+  "disableArrowBasedTopNavigation": "Ok tabanlı üst gezinmeyi devre dışı bırak",
+  "multiModalModels": "Çok modlu Modeller",
+  "reasoningModels": "Akıl Yürütme Modelleri",
+  "selectSmallReasoningModel": "Küçük Akıl Yürütme modeli",
+  "selectMediumReasoningModel": "Orta Akıl Yürütme modeli",
+  "selectLargeReasoningModel": "Büyük Akıl Yürütme modeli"
 }

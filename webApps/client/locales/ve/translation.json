@@ -1221,7 +1221,7 @@
   "Content": "Zwino",
   "Neutral": "Ṅwaha",
   "Monochrome": "Monochrome",
-  "Fidelity": "Fidelity",
+  "Fidelity": "Kutendeka",
   "Tonal Spot": "Tonal Spot",
   "Rainbow": "Ṱhani",
   "Fruit Salad": "Furutsa Salad",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fhisa barasi ya app arali Hu amba HTML",
   "policySynthAgentsWorkflow": "Mushumo wa Vhashumeli",
   "generateWithAi": "Dzudzanya nga AI",
-  "hidePointFor": "Fihla pfumbudzi kha bokisi"
+  "hidePointFor": "Fihla pfumbudzi kha bokisi",
+  "newOrganization": "Tshisima tshiswa",
+  "editOrganization": "U edzisa tshisima",
+  "addOrganization": "U sika tshisima",
+  "onlyAdminsCanCreateOrganizations": "Vha-Admin fhedzi vha nga sika tshisima",
+  "navigationMenu": "Menu ya vhuendi",
+  "useFixedTopAppBar": "Shumisa baro ya ntha yo dzikaho",
+  "disableArrowBasedTopNavigation": "Thivhela vhuendi ha ntha ho thewaho kha misevhe",
+  "multiModalModels": "Mifhungo ya modal",
+  "reasoningModels": "Mifhungo ya u humbula",
+  "selectSmallReasoningModel": "Mufhungo muṱuku wa u humbula",
+  "selectMediumReasoningModel": "Mufhungo wa vhukati wa u humbula",
+  "selectLargeReasoningModel": "Mufhungo muhulu wa u humbula"
 }

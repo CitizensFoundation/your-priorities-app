@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Пинҳон кардани панҷараи барнома агар HTML истиқбол",
   "policySynthAgentsWorkflow": "Ҷараёни кории агентҳо",
   "generateWithAi": "Тавлид бо AI",
-  "hidePointFor": "Пинҳон кардани нуқта бар зидди қуттӣ"
+  "hidePointFor": "Пинҳон кардани нуқта бар зидди қуттӣ",
+  "newOrganization": "Созмони нав",
+  "editOrganization": "Таҳрири созмон",
+  "addOrganization": "Эҷоди созмон",
+  "onlyAdminsCanCreateOrganizations": "Танҳо админҳо метавонанд созмонҳо эҷод кунанд",
+  "navigationMenu": "Менюи паймоиш",
+  "useFixedTopAppBar": "Истифодаи панели болоии собит",
+  "disableArrowBasedTopNavigation": "Хомӯш кардани паймоиши болоии тирчаҳо",
+  "multiModalModels": "Моделҳои бисёрмодалӣ",
+  "reasoningModels": "Моделҳои мантиқӣ",
+  "selectSmallReasoningModel": "Модели мантиқии хурд",
+  "selectMediumReasoningModel": "Модели мантиқии миёна",
+  "selectLargeReasoningModel": "Модели мантиқии калон"
 }

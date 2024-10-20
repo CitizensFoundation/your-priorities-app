@@ -1495,5 +1495,17 @@
   "hideAppBarIfWelcomeHtml": "Skondi barra di app si HTML di Boas-vindas",
   "policySynthAgentsWorkflow": "Trabadju di ajentis",
   "generateWithAi": "Djéra ku AI",
-  "hidePointFor": "Skondi pontu kontra kaxa"
+  "hidePointFor": "Skondi pontu kontra kaxa",
+  "newOrganization": "Nobo organizason",
+  "editOrganization": "Edita organizason",
+  "addOrganization": "Kre organizason",
+  "onlyAdminsCanCreateOrganizations": "Somenti admin pode kre organizason",
+  "navigationMenu": "Menu di navigason",
+  "useFixedTopAppBar": "Usa bar fixu na top",
+  "disableArrowBasedTopNavigation": "Disativa seti na top navigason",
+  "multiModalModels": "Modelus Multi-modal",
+  "reasoningModels": "Modelus di Razonamentu",
+  "selectSmallReasoningModel": "Modelu pikinoti di Razonamentu",
+  "selectMediumReasoningModel": "Modelu medi di Razonamentu",
+  "selectLargeReasoningModel": "Modelu grandi di Razonamentu"
 }

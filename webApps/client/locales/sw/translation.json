@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Ficha upau wa programu ikiwa Karibu HTML",
   "policySynthAgentsWorkflow": "Mtiririko wa Mawakala",
   "generateWithAi": "Tengeneza na AI",
-  "hidePointFor": "Ficha alama dhidi ya kisanduku"
+  "hidePointFor": "Ficha alama dhidi ya kisanduku",
+  "newOrganization": "Shirika jipya",
+  "editOrganization": "Hariri shirika",
+  "addOrganization": "Unda shirika",
+  "onlyAdminsCanCreateOrganizations": "Ni wasimamizi pekee wanaoweza kuunda mashirika",
+  "navigationMenu": "Menyu ya urambazaji",
+  "useFixedTopAppBar": "Tumia upau wa juu uliowekwa",
+  "disableArrowBasedTopNavigation": "Zima urambazaji wa juu wa mishale",
+  "multiModalModels": "Mifano ya Multi-modal",
+  "reasoningModels": "Mifano ya Ufafanuzi",
+  "selectSmallReasoningModel": "Mfano mdogo wa Ufafanuzi",
+  "selectMediumReasoningModel": "Mfano wa Kati wa Ufafanuzi",
+  "selectLargeReasoningModel": "Mfano mkubwa wa Ufafanuzi"
 }

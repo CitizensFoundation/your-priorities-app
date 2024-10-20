@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Скрий лентата ако е Welcome HTML",
   "policySynthAgentsWorkflow": "Процес на агентите",
   "generateWithAi": "Генерирай с AI",
-  "hidePointFor": "Скрий точка срещу кутия"
+  "hidePointFor": "Скрий точка срещу кутия",
+  "newOrganization": "Нова организация",
+  "editOrganization": "Редактиране на организация",
+  "addOrganization": "Създаване на организация",
+  "onlyAdminsCanCreateOrganizations": "Само администратори могат да създават организации",
+  "navigationMenu": "Навигационно меню",
+  "useFixedTopAppBar": "Фиксиран горен панел",
+  "disableArrowBasedTopNavigation": "Деактивиране на стрелкова навигация",
+  "multiModalModels": "Мултимодални модели",
+  "reasoningModels": "Модели за разсъждение",
+  "selectSmallReasoningModel": "Малък модел за разсъждение",
+  "selectMediumReasoningModel": "Среден модел за разсъждение",
+  "selectLargeReasoningModel": "Голям модел за разсъждение"
 }
