@@ -443,6 +443,11 @@ export class YpAppGlobals extends YpCodeBase {
     sessionStorage.setItem("dontPromptForAutoTranslation", "1");
   }
 
+  setCurrentDomain(domain: YpDomainData) {
+    this.domain = domain;
+    this.fireGlobal("yp-domain-changed", { domain: domain });
+  }
+
   async boot() {
     const results = (await this.serverApi.boot()) as YpDomainGetResponse | void;
     if (results) {

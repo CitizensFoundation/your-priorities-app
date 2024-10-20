@@ -88,6 +88,8 @@ export class YpDomain extends YpCollection {
       }
 
       window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
+
+      window.appGlobals.setCurrentDomain(domain);
     }
 
     if (domain && domain.configuration && domain.configuration.hideAllTabs) {

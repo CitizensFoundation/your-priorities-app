@@ -83,6 +83,7 @@ export declare class YpAppGlobals extends YpCodeBase {
     setupTranslationSystem(loadPathPrefix?: string): void;
     startTranslation(): void;
     stopTranslation(): void;
+    setCurrentDomain(domain: YpDomainData): void;
     boot(): Promise<void>;
     setupGroupConfigOverride(groupId: number, configOverride: string): void;
     overrideGroupConfigIfNeeded(groupId: number, configuration: YpGroupConfiguration): YpGroupConfiguration;

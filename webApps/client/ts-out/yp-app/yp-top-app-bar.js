@@ -14,11 +14,23 @@ import { YpBaseElement } from "../common/yp-base-element";
 import { Corner } from "@material/web/menu/menu.js";
 import { YpNavHelpers } from "../common/YpNavHelpers";
 let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
+    get computedBreadcrumbs() {
+        const domain = this.domain;
+        if (!domain) {
+            return this.breadcrumbs;
+        }
+        const domainUrl = `/domain/${domain.id}`;
+        const domainName = domain.name;
+        // Remove any existing domain entries from breadcrumbs
+        const breadcrumbsWithoutDomain = this.breadcrumbs.filter((crumb) => !(crumb.url === domainUrl || crumb.name === domainName));
+        // Return breadcrumbs with domain prepended
+        return [{ name: domainName, url: domainUrl }, ...breadcrumbsWithoutDomain];
+    }
     renderBreadcrumbsDropdown() {
-        if (this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
+        if (this.computedBreadcrumbs.length > 1 && !this.hideBreadcrumbs) {
             return html `
         <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
-          <md-icon>stat_minus_1</md-icon>
+          <md-icon>unfold_more</md-icon>
         </md-icon-button>
         <md-menu
           id="breadcrumbMenu"
@@ -28,11 +40,11 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           @closed="${this._onMenuClosed}"
           .menuCorner="${Corner.START_END}"
         >
-          ${this.breadcrumbs.map((crumb, index) => html `
+          ${this.computedBreadcrumbs.map((crumb, index) => html `
               <md-menu-item @click=${() => this.navigateTo(crumb.url)}>
                 ${crumb.name}
               </md-menu-item>
-              ${index < this.breadcrumbs.length - 1
+              ${index < this.computedBreadcrumbs.length - 1
                 ? html `<md-divider></md-divider>`
                 : ""}
             `)}
@@ -46,27 +58,29 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     renderMyDomainsDropdown() {
         if (this.myDomains && this.myDomains.length > 1) {
             return html `
-      <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
-        <md-icon>unfold_more</md-icon>
-      </md-icon-button>
-      <md-menu
-        id="breadcrumbMenu"
-        anchor="breadCrumbTrigger"
-        positioning="popover"
-        .open="${this.isMenuOpen}"
-        @closed="${this._onMenuClosed}"
-        .menuCorner="${Corner.START_END}"
-      >
-        ${this.myDomains.map((domain, index) => html `
-            <md-menu-item @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}>
-              ${domain.name}
-            </md-menu-item>
-            ${index < this.breadcrumbs.length - 1
+        <md-icon-button id="domainTrigger" @click="${this._toggleMenu}">
+          <md-icon>unfold_more</md-icon>
+        </md-icon-button>
+        <md-menu
+          id="domainMenu"
+          anchor="domainTrigger"
+          positioning="popover"
+          .open="${this.isMenuOpen}"
+          @closed="${this._onMenuClosed}"
+          .menuCorner="${Corner.START_END}"
+        >
+          ${this.myDomains.map((domain, index) => html `
+              <md-menu-item
+                @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}
+              >
+                ${domain.name}
+              </md-menu-item>
+              ${index < this.myDomains.length - 1
                 ? html `<md-divider></md-divider>`
                 : ""}
-          `)}
-      </md-menu>
-    `;
+            `)}
+        </md-menu>
+      `;
         }
         else {
             return nothing;
@@ -140,7 +154,6 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           justify-content: center;
           align-items: center;
         }
-
 
         .titleText {
           margin-right: 4px;
@@ -221,9 +234,9 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         this.hideBreadcrumbs = false;
         this.restrictWidth = false;
         this.disableArrowBasedNavigation = false;
+        this.breadcrumbs = [];
         this.fixed = false;
         this.titleString = "";
-        this.breadcrumbs = [];
         this.lastScrollY = 0;
     }
     updated(changedProperties) {
@@ -235,12 +248,22 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     connectedCallback() {
         super.connectedCallback();
         window.addEventListener("scroll", this.handleScroll.bind(this));
+        this.addGlobalListener("yp-domain-changed", this._onDomainChanged.bind(this));
         this.addGlobalListener("yp-my-domains-loaded", this._onMyDomainsLoaded.bind(this));
     }
     disconnectedCallback() {
         window.removeEventListener("scroll", this.handleScroll.bind(this));
+        this.removeGlobalListener("yp-domain-changed", this._onDomainChanged.bind(this));
         this.removeGlobalListener("yp-my-domains-loaded", this._onMyDomainsLoaded.bind(this));
         super.disconnectedCallback();
+    }
+    _onDomainChanged(event) {
+        if (event.detail &&
+            event.detail.domain &&
+            event.detail.domain.id &&
+            event.detail.domain.id !== this.domain?.id) {
+            this.domain = event.detail.domain;
+        }
     }
     _onMyDomainsLoaded(event) {
         this.myDomains = event.detail.domains;
@@ -260,22 +283,16 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             this.lastScrollY = currentScrollY;
         }
     }
-    get lastBreadcrumbItem() {
-        if (this.breadcrumbs.length > 0) {
-            return this.breadcrumbs[this.breadcrumbs.length - 1];
-        }
-        else {
-            return null;
-        }
-    }
-    goToUrl(e) {
-        e.preventDefault();
-        YpNavHelpers.redirectTo(this.lastBreadcrumbItem.url);
-    }
     render() {
         const appBarClass = this.isTitleLong
             ? "top-app-bar expanded"
             : "top-app-bar";
+        const computedBreadcrumbs = this.computedBreadcrumbs.map(crumb => ({ ...crumb, isLink: true }));
+        let breadcrumbsWithTitle = [...computedBreadcrumbs];
+        const lastBreadcrumbName = computedBreadcrumbs.length > 0 ? computedBreadcrumbs[computedBreadcrumbs.length - 1].name : null;
+        if (this.titleString && this.titleString !== lastBreadcrumbName) {
+            breadcrumbsWithTitle.push({ name: this.titleString, url: '', isLink: false });
+        }
         return html `
       <div
         class="${appBarClass} layout"
@@ -283,17 +300,26 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
       >
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
-          ${this.renderMyDomainsDropdown()}
+          ${this.renderBreadcrumbsDropdown()}
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
-            ${this.lastBreadcrumbItem
-            ? html `<a class="titleText" @click="${this.goToUrl}" href="${this.lastBreadcrumbItem.url}"
-                  >${this.lastBreadcrumbItem.name}</a
-                >`
+            ${breadcrumbsWithTitle.map((crumb, index) => html `
+                ${crumb.isLink
+            ? html `
+                      <a
+                        class="titleText"
+                        @click="${() => this.navigateTo(crumb.url)}"
+                        href="${crumb.url}"
+                      >
+                        ${crumb.name}
+                      </a>
+                    `
+            : html `
+                      <span class="titleText">${crumb.name}</span>
+                    `}
+                ${index < breadcrumbsWithTitle.length - 1
+            ? html `<md-icon class="chevronIcon">chevron_right</md-icon>`
             : ""}
-            ${this.breadcrumbs.length > 0
-            ? html `<md-icon class="chevronIcon">chevron_right</md-icon> `
-            : ""}
-            ${this.titleString}
+              `)}
           </div>
           <div class="flex"></div>
           <slot name="action"></slot>
@@ -309,6 +335,9 @@ __decorate([
     state()
 ], YpTopAppBar.prototype, "isMenuOpen", void 0);
 __decorate([
+    state()
+], YpTopAppBar.prototype, "domain", void 0);
+__decorate([
     property({ type: Boolean })
 ], YpTopAppBar.prototype, "hideBreadcrumbs", void 0);
 __decorate([
@@ -319,7 +348,7 @@ __decorate([
 ], YpTopAppBar.prototype, "disableArrowBasedNavigation", void 0);
 __decorate([
     property({ type: Array })
-], YpTopAppBar.prototype, "myDomains", void 0);
+], YpTopAppBar.prototype, "breadcrumbs", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpTopAppBar.prototype, "fixed", void 0);
@@ -331,7 +360,7 @@ __decorate([
 ], YpTopAppBar.prototype, "titleString", void 0);
 __decorate([
     property({ type: Array })
-], YpTopAppBar.prototype, "breadcrumbs", void 0);
+], YpTopAppBar.prototype, "myDomains", void 0);
 YpTopAppBar = __decorate([
     customElement("yp-top-app-bar")
 ], YpTopAppBar);

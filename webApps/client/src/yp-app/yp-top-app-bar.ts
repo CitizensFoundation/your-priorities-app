@@ -26,6 +26,9 @@ export class YpTopAppBar extends YpBaseElement {
   @state()
   private isMenuOpen: boolean = false;
 
+  @state()
+  private domain: YpDomainData | undefined;
+
   @property({ type: Boolean })
   hideBreadcrumbs = false;
 
@@ -36,7 +39,7 @@ export class YpTopAppBar extends YpBaseElement {
   disableArrowBasedNavigation = false;
 
   @property({ type: Array })
-  myDomains: Array<YpShortDomainList> | undefined;
+  breadcrumbs: Array<{ name: string; url: string }> = [];
 
   @property({ type: Boolean })
   fixed = false;
@@ -48,13 +51,28 @@ export class YpTopAppBar extends YpBaseElement {
   titleString: string = "";
 
   @property({ type: Array })
-  breadcrumbs: Array<{ name: string; url: string }> = [];
+  myDomains: Array<YpShortDomainList> | undefined;
+
+  get computedBreadcrumbs() {
+    const domain = this.domain;
+    if (!domain) {
+      return this.breadcrumbs;
+    }
+    const domainUrl = `/domain/${domain.id}`;
+    const domainName = domain.name;
+    // Remove any existing domain entries from breadcrumbs
+    const breadcrumbsWithoutDomain = this.breadcrumbs.filter(
+      (crumb) => !(crumb.url === domainUrl || crumb.name === domainName)
+    );
+    // Return breadcrumbs with domain prepended
+    return [{ name: domainName, url: domainUrl }, ...breadcrumbsWithoutDomain];
+  }
 
   renderBreadcrumbsDropdown() {
-    if (this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
+    if (this.computedBreadcrumbs.length > 1 && !this.hideBreadcrumbs) {
       return html`
         <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
-          <md-icon>stat_minus_1</md-icon>
+          <md-icon>unfold_more</md-icon>
         </md-icon-button>
         <md-menu
           id="breadcrumbMenu"
@@ -64,12 +82,12 @@ export class YpTopAppBar extends YpBaseElement {
           @closed="${this._onMenuClosed}"
           .menuCorner="${Corner.START_END}"
         >
-          ${this.breadcrumbs.map(
+          ${this.computedBreadcrumbs.map(
             (crumb, index) => html`
               <md-menu-item @click=${() => this.navigateTo(crumb.url)}>
                 ${crumb.name}
               </md-menu-item>
-              ${index < this.breadcrumbs.length - 1
+              ${index < this.computedBreadcrumbs.length - 1
                 ? html`<md-divider></md-divider>`
                 : ""}
             `
@@ -84,29 +102,31 @@ export class YpTopAppBar extends YpBaseElement {
   renderMyDomainsDropdown() {
     if (this.myDomains && this.myDomains.length > 1) {
       return html`
-      <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
-        <md-icon>unfold_more</md-icon>
-      </md-icon-button>
-      <md-menu
-        id="breadcrumbMenu"
-        anchor="breadCrumbTrigger"
-        positioning="popover"
-        .open="${this.isMenuOpen}"
-        @closed="${this._onMenuClosed}"
-        .menuCorner="${Corner.START_END}"
-      >
-        ${this.myDomains.map(
-          (domain, index) => html`
-            <md-menu-item @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}>
-              ${domain.name}
-            </md-menu-item>
-            ${index < this.breadcrumbs.length - 1
-              ? html`<md-divider></md-divider>`
-              : ""}
-          `
-        )}
-      </md-menu>
-    `;
+        <md-icon-button id="domainTrigger" @click="${this._toggleMenu}">
+          <md-icon>unfold_more</md-icon>
+        </md-icon-button>
+        <md-menu
+          id="domainMenu"
+          anchor="domainTrigger"
+          positioning="popover"
+          .open="${this.isMenuOpen}"
+          @closed="${this._onMenuClosed}"
+          .menuCorner="${Corner.START_END}"
+        >
+          ${this.myDomains.map(
+            (domain, index) => html`
+              <md-menu-item
+                @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}
+              >
+                ${domain.name}
+              </md-menu-item>
+              ${index < this.myDomains.length - 1
+                ? html`<md-divider></md-divider>`
+                : ""}
+            `
+          )}
+        </md-menu>
+      `;
     } else {
       return nothing;
     }
@@ -183,7 +203,6 @@ export class YpTopAppBar extends YpBaseElement {
           justify-content: center;
           align-items: center;
         }
-
 
         .titleText {
           margin-right: 4px;
@@ -274,16 +293,41 @@ export class YpTopAppBar extends YpBaseElement {
   override connectedCallback(): void {
     super.connectedCallback();
     window.addEventListener("scroll", this.handleScroll.bind(this));
-    this.addGlobalListener("yp-my-domains-loaded", this._onMyDomainsLoaded.bind(this));
+    this.addGlobalListener(
+      "yp-domain-changed",
+      this._onDomainChanged.bind(this)
+    );
+    this.addGlobalListener(
+      "yp-my-domains-loaded",
+      this._onMyDomainsLoaded.bind(this)
+    );
   }
 
   override disconnectedCallback(): void {
     window.removeEventListener("scroll", this.handleScroll.bind(this));
-    this.removeGlobalListener("yp-my-domains-loaded", this._onMyDomainsLoaded.bind(this));
+    this.removeGlobalListener(
+      "yp-domain-changed",
+      this._onDomainChanged.bind(this)
+    );
+    this.removeGlobalListener(
+      "yp-my-domains-loaded",
+      this._onMyDomainsLoaded.bind(this)
+    );
     super.disconnectedCallback();
   }
 
-  _onMyDomainsLoaded(event: CustomEvent) {
+  private _onDomainChanged(event: CustomEvent) {
+    if (
+      event.detail &&
+      event.detail.domain &&
+      event.detail.domain.id &&
+      event.detail.domain.id !== this.domain?.id
+    ) {
+      this.domain = event.detail.domain;
+    }
+  }
+
+  private _onMyDomainsLoaded(event: CustomEvent) {
     this.myDomains = event.detail.domains;
   }
 
@@ -307,23 +351,19 @@ export class YpTopAppBar extends YpBaseElement {
     }
   }
 
-  get lastBreadcrumbItem() {
-    if (this.breadcrumbs.length > 0) {
-     return this.breadcrumbs[this.breadcrumbs.length - 1];
-    } else {
-      return null;
-    }
-  }
-
-  goToUrl(e: Event) {
-    e.preventDefault();
-    YpNavHelpers.redirectTo(this.lastBreadcrumbItem!.url);
-  }
-
   override render(): TemplateResult {
     const appBarClass = this.isTitleLong
       ? "top-app-bar expanded"
       : "top-app-bar";
+
+    const computedBreadcrumbs = this.computedBreadcrumbs.map(crumb => ({ ...crumb, isLink: true }));
+    let breadcrumbsWithTitle = [...computedBreadcrumbs];
+
+    const lastBreadcrumbName = computedBreadcrumbs.length > 0 ? computedBreadcrumbs[computedBreadcrumbs.length -1].name : null;
+
+    if (this.titleString && this.titleString !== lastBreadcrumbName) {
+      breadcrumbsWithTitle.push({ name: this.titleString, url: '', isLink: false });
+    }
 
     return html`
       <div
@@ -332,17 +372,28 @@ export class YpTopAppBar extends YpBaseElement {
       >
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
-          ${this.renderMyDomainsDropdown()}
+          ${this.renderBreadcrumbsDropdown()}
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
-            ${this.lastBreadcrumbItem
-              ? html`<a class="titleText" @click="${this.goToUrl}" href="${this.lastBreadcrumbItem.url}"
-                  >${this.lastBreadcrumbItem.name}</a
-                >`
-              : ""}
-            ${this.breadcrumbs.length > 0
-              ? html`<md-icon class="chevronIcon">chevron_right</md-icon> `
-              : ""}
-            ${this.titleString}
+            ${breadcrumbsWithTitle.map(
+              (crumb, index) => html`
+                ${crumb.isLink
+                  ? html`
+                      <a
+                        class="titleText"
+                        @click="${() => this.navigateTo(crumb.url)}"
+                        href="${crumb.url}"
+                      >
+                        ${crumb.name}
+                      </a>
+                    `
+                  : html`
+                      <span class="titleText">${crumb.name}</span>
+                    `}
+                ${index < breadcrumbsWithTitle.length - 1
+                  ? html`<md-icon class="chevronIcon">chevron_right</md-icon>`
+                  : ""}
+              `
+            )}
           </div>
           <div class="flex"></div>
           <slot name="action"></slot>

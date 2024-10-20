@@ -69,6 +69,7 @@ let YpDomain = class YpDomain extends YpCollection {
                 this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(domain.DomainHeaderImages, 0);
             }
             window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
+            window.appGlobals.setCurrentDomain(domain);
         }
         if (domain && domain.configuration && domain.configuration.hideAllTabs) {
             this.tabsHidden = true;
