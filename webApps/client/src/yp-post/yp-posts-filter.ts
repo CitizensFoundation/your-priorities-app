@@ -177,7 +177,7 @@ export class YpPostsFilter extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="layout horizontal mainContainer wrap">
+      <div class="layout horizontal mainContainer">
         ${this.showFilter
           ? html`
               <div>

@@ -78,6 +78,10 @@ export class YpPostsList extends YpBaseElement {
     return [
       super.styles,
       css`
+        .topMost {
+          width: 100%;
+        }
+
         .cardContainer {
           width: 100%;
           margin: 8px;
@@ -116,6 +120,7 @@ export class YpPostsList extends YpBaseElement {
           //TODO: Check this !important usage
           max-width: 1012px !important;
           min-width: 1012px !important;
+          width: 100%;
         }
 
         yp-posts-filter {
@@ -270,10 +275,10 @@ export class YpPostsList extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="layout vertical center-centser topMost">
+      <div class="layout vertical topMost">
         ${this.noPosts
           ? html`
-              <div class="layout horiztonal center-center">
+              <div class="layout center-center">
                 <div
                   class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
                   ?hidden="${this.group.configuration.allPostsBlockedByDefault}"
@@ -316,36 +321,37 @@ export class YpPostsList extends YpBaseElement {
               ><md-icon>search</md-icon></md-icon-button
             >
           </div>
-          <div class="layout horizontal">
-            <yp-posts-filter
-              @click="${this._tapOnFilter}"
-              .subTitle="${this.subTitle ? this.subTitle : ""}"
-              class="filter"
-              id="postsFilter"
-              .tabName="${this.statusFilter}"
-              @refresh-group="${this.refreshGroupFromFilter}"
-              .group="${this.group}"
-              .filter="${this.filter}"
-              .statusFilter="${this.statusFilter}"
-              .searchingFor="${this.searchingFor}"
-              .categoryId="${this.categoryId}"
-              .postsCount="${this.postsCount}"
-            >
-            </yp-posts-filter>
-          </div>
+          <yp-posts-filter
+            @click="${this._tapOnFilter}"
+            .subTitle="${this.subTitle ? this.subTitle : ""}"
+            class="filter"
+            id="postsFilter"
+            .tabName="${this.statusFilter}"
+            @refresh-group="${this.refreshGroupFromFilter}"
+            .group="${this.group}"
+            .filter="${this.filter}"
+            .statusFilter="${this.statusFilter}"
+            .searchingFor="${this.searchingFor}"
+            .categoryId="${this.categoryId}"
+            .postsCount="${this.postsCount}"
+          >
+          </yp-posts-filter>
+          <div class="flex"></div>
         </div>
-        ${this.posts
-          ? html`
-              <lit-virtualizer
-                id="list"
-                .items=${this.posts}
-                .layout="${flow()}"
-                .scrollTarget="${window}"
-                .renderItem=${this.renderPostItem.bind(this)}
-                @rangeChanged=${this.scrollEvent}
-              ></lit-virtualizer>
-            `
-          : nothing}
+        <div class="layout horizontal center-center">
+          ${this.posts
+            ? html`
+                <lit-virtualizer
+                  id="list"
+                  .items=${this.posts}
+                  .layout="${flow()}"
+                  .scrollTarget="${window}"
+                  .renderItem=${this.renderPostItem.bind(this)}
+                  @rangeChanged=${this.scrollEvent}
+                ></lit-virtualizer>
+              `
+            : nothing}
+        </div>
       </div>
     `;
   }
@@ -734,7 +740,10 @@ export class YpPostsList extends YpBaseElement {
       if (postsInfo) {
         this.postsCount = postsInfo.totalPostsCount;
 
-        window.appGlobals.cache.setPostCountsForGroup(this.group.id, this.postsCount);
+        window.appGlobals.cache.setPostCountsForGroup(
+          this.group.id,
+          this.postsCount
+        );
 
         this.fire("yp-post-count", {
           type: this.statusFilter,

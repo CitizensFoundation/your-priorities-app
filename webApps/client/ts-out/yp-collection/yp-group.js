@@ -829,7 +829,21 @@ let YpGroup = class YpGroup extends YpCollection {
         return groupType;
     }
     static get styles() {
-        return [super.styles, css ``];
+        return [
+            super.styles,
+            //TODO: Fix this hack below
+            css `
+        yp-posts-list {
+          width: calc(100% - 66px);
+        }
+
+        @media (max-width: 768px) {
+          yp-posts-list {
+            width: 100%;
+          }
+        }
+      `,
+        ];
     }
     renderAgentsOps() {
         return html `<ps-operations-manager
