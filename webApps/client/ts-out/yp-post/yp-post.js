@@ -138,6 +138,8 @@ let YpPost = class YpPost extends YpCollection {
           top: 500px;
           transform: translateY(-50%);
           z-index: 20;
+          --md-filled-tonal-icon-button-disabled-container-opacity: 1.0;
+          --md-filled-tonal-icon-button-disabled-container-color: var(--md-sys-color-outline-variant);
         }
 
         .leftArrowNavigationButton {

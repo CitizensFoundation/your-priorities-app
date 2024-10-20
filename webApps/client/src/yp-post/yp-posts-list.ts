@@ -757,8 +757,9 @@ export class YpPostsList extends YpBaseElement {
         if (!this.posts) {
           this.posts = postsInfo.posts;
         } else {
-          for (let i = 0; i < postsInfo.posts.length; i++) {
-            this.posts.push(postsInfo.posts[i]);
+          const newPost = postsInfo.posts[i];
+          if (!this.posts.some((p) => p.id === newPost.id)) {
+            this.posts.push(newPost);
           }
         }
 
