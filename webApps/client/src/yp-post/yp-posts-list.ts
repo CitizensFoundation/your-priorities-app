@@ -296,30 +296,32 @@ export class YpPostsList extends YpBaseElement {
           <div class="layout horizontal center-center">
             <md-outlined-text-field
               id="searchInput"
+              hasTrailingIcon
               @keydown="${this._searchKey}"
               .label="${this.t("searchFor")}"
               .value="${this.searchingFor ? this.searchingFor : ""}"
               class="searchBox"
             >
+              ${this.searchingFor
+                ? html`
+                    <md-icon-button
+                      slot="trailing-icon"
+                      aria-label="${this.t("clearSearchInput")}"
+                      @click="${this._clearSearch}"
+                      class="clear-search-trigger"
+                      ><md-icon>clear</md-icon></md-icon-button
+                    >
+                  `
+                : html`
+                    <md-icon-button
+                      slot="trailing-icon"
+                      .label="${this.t("startSearch")}"
+                      @click="${this._search}"
+                      ?hiddsen="${!this.showSearchIcon}"
+                      ><md-icon>search</md-icon></md-icon-button
+                    >
+                  `}
             </md-outlined-text-field>
-
-            ${this.searchingFor
-              ? html`
-                  <md-icon-button
-                    aria-label="${this.t("clearSearchInput")}"
-                    @click="${this._clearSearch}"
-                    class="clear-search-trigger"
-                    ><md-icon>clear</md-icon></md-icon-button
-                  >
-                `
-              : nothing}
-
-            <md-icon-button
-              .label="${this.t("startSearch")}"
-              @click="${this._search}"
-              ?hiddsen="${!this.showSearchIcon}"
-              ><md-icon>search</md-icon></md-icon-button
-            >
           </div>
           <yp-posts-filter
             @click="${this._tapOnFilter}"
