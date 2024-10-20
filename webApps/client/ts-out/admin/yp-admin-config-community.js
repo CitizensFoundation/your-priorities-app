@@ -431,6 +431,10 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 is_community_folder: this.collectionId == "newFolder" ? true : false,
             };
             await this.checkDomainName(this.parentCollectionId);
+            if (this.parentCollection && this.parentCollection.configuration.theme) {
+                this.collection.configuration.theme =
+                    this.parentCollection.configuration.theme;
+            }
         }
         else {
             this.action = `/communities/${this.collectionId}`;

@@ -133,6 +133,10 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                     useFixedTopAppBar: true,
                 },
             };
+            if (this.parentCollection && this.parentCollection.configuration.theme) {
+                this.collection.configuration.theme =
+                    this.parentCollection.configuration.theme;
+            }
         }
         else {
             this.action = `/domains/${this.collectionId}`;

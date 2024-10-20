@@ -533,6 +533,7 @@ export class YpAdminApp extends YpBaseElement {
       .collection="${this.collection}"
       .collectionId="${this.collectionId}"
       .subRoute="${this.subRoute}"
+      .parentCollection="${this.parentCollection}"
       @yp-request-update-on-parent="${this.updateFromCollection}"
       .parentCollectionId="${this.parentCollectionId}"
     >
@@ -545,6 +546,7 @@ export class YpAdminApp extends YpBaseElement {
         .collectionType="${this.collectionType}"
         .collection="${this.collection}"
         .collectionId="${this.collectionId}"
+        .parentCollection="${this.parentCollection}"
         .parentCollectionId="${this.parentCollectionId}"
       >
       </yp-admin-config-community>
@@ -557,6 +559,7 @@ export class YpAdminApp extends YpBaseElement {
         .collectionType="${this.collectionType}"
         .collection="${this.collection}"
         .collectionId="${this.collectionId}"
+        .parentCollection="${this.parentCollection}"
         .parentCollectionId="${this.parentCollectionId}"
       >
       </yp-admin-config-domain>
@@ -601,7 +604,9 @@ export class YpAdminApp extends YpBaseElement {
         case "communities":
           return html`
             ${this.collection
-              ? html`<yp-admin-communities .domain="${this.collection}">
+              ? html`<yp-admin-communities
+                  .domain="${this.collection}"
+                >
                 </yp-admin-communities>`
               : nothing}
           `;
@@ -881,6 +886,8 @@ export class YpAdminApp extends YpBaseElement {
       if (!adminConfirmed) {
         this.fire("yp-network-error", { message: this.t("unauthorized") });
       }
+
+      this.parentCollection = collection;
     }
   }
 

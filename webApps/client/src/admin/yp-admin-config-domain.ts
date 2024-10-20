@@ -173,6 +173,11 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           useFixedTopAppBar: true,
         } as YpDomainConfiguration,
       } as YpDomainData;
+
+      if (this.parentCollection && this.parentCollection.configuration.theme) {
+        this.collection.configuration.theme =
+          this.parentCollection.configuration.theme;
+      }
     } else {
       this.action = `/domains/${this.collectionId}`;
     }

@@ -556,6 +556,10 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
       await this.checkDomainName(this.parentCollectionId!);
 
+      if (this.parentCollection && this.parentCollection.configuration.theme) {
+        this.collection.configuration.theme =
+          this.parentCollection.configuration.theme;
+      }
     } else {
       this.action = `/communities/${this.collectionId}`;
       await this.checkDomainName((this.collection as YpCommunityData).Domain!.id);

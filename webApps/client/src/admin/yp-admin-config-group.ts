@@ -491,6 +491,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         is_group_folder: this.collectionId == "newFolder" ? true : false,
       } as YpGroupData;
       this.group = this.collection as YpGroupData;
+
+      if (this.parentCollection && this.parentCollection.configuration.theme) {
+        this.collection.configuration.theme =
+          this.parentCollection.configuration.theme;
+      }
     } else {
       this.action = `/groups/${this.collectionId}`;
     }
@@ -747,7 +752,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         {
           text: "canAddNewPosts",
           type: "checkbox",
-          value: this.group.configuration.canAddNewPosts===undefined ? true : this.group.configuration.canAddNewPosts,
+          value:
+            this.group.configuration.canAddNewPosts === undefined
+              ? true
+              : this.group.configuration.canAddNewPosts,
           translationToken: "group.canAddNewPosts",
         },
         {
@@ -1277,7 +1285,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   _endorsementButtonsSelected(event: CustomEvent) {
     const index = (event.target as MdOutlinedSelect).selectedIndex;
     this.endorsementButtons = this.endorsementButtonsOptions[index].name;
-    debugger;
     this._configChanged();
   }
 
