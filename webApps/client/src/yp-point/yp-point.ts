@@ -225,11 +225,13 @@ export class YpPoint extends YpBaseElement {
         .pointTopContainer {
           min-width: 384px;
           max-width: 384px;
-          margin-top: 32px;
-          margin-bottom: 32px;
+          margin-top: 16px;
+          margin-bottom: 16px;
           padding: 16px;
           border-radius: 4px;
           line-height: 25px;
+          padding-left: 0;
+          padding-top: 0;
           border: 2px solid var(--md-sys-color-outline-variant);
         }
 

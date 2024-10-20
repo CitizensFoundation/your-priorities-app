@@ -90,6 +90,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
 
         .searchContainer {
           margin-top: 8px;
+          margin-left: 22px;
         }
 
         yp-posts-filter {
@@ -195,6 +196,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         #searchInput {
           margin-left: 8px;
           margin-top: 14px;
+          margin-right: 12px;
         }
 
         [hidden] {
