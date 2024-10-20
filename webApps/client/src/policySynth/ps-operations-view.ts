@@ -733,26 +733,17 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           margin: 0 0;
           width: 100%;
           position: absolute;
-          top: 120px;
+          top: 198px;
           left: 0;
           width: 100%;
           padding: 0;
           opacity: 1;
           height: 52px;
+          z-index: 1000;
           background: transparent;
           color: var(--md-sys-color-on-surface-variant);
         }
 
-        .controlPanelContainer {
-          margin: 0 0;
-          position: absolute;
-          top: 120px;
-          left: 0;
-          width: 100%;
-          height: 52px;
-          opacity: 0.65;
-          background: var(--md-sys-color-surface-variant);
-        }
 
         md-filled-tonal-icon-button {
           margin-left: 8px;
@@ -862,7 +853,6 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
         </div>
 
         <div class="flex"></div>
-
 
 
         <div class="masterPlayConfigButtons">

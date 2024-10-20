@@ -319,7 +319,14 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages, 0)}"
           class="agentHeaderImage"
         />
-        <div class="layout vertical agentHeaderText">${this.group.name}</div>
+        <div class="layout vertical agentHeaderText">
+          <div class="workflowName">
+            ${this.t('workflow')}
+          </div>
+          <div class="">
+          ${this.group.name}
+        </div>
+        </div>
       </div>
     `;
     }
@@ -391,13 +398,14 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
               ><md-icon>monitoring</md-icon>
             </md-filled-tonal-icon-button>
             <md-filled-tonal-icon-button
+              class="configIconButton"
               @click="${this.openConfig}"
               title="${this.t("openGroupMenu")}"
               ><md-icon>settings</md-icon>
             </md-filled-tonal-icon-button>
           </div>
-          <md-divider></md-divider>
         </div>
+        <md-divider></md-divider>
         ${this.activeTabIndex === 0
                 ? html `
               <ps-operations-view
@@ -407,10 +415,10 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
               ></ps-operations-view>
             `
                 : ""}
-        ${this.activeTabIndex === 1
+        ${this.activeTabIndex === 2
                 ? html ` <!-- Render Audit Log tab content here --> `
                 : ""}
-        ${this.activeTabIndex === 2 ? this.renderDetailedCostsTab() : ""}
+        ${this.activeTabIndex === 1 ? this.renderDetailedCostsTab() : ""}
         ${this.renderThemeToggle()}
       `;
         }
@@ -425,11 +433,29 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         return [
             super.styles,
             css `
+
+
         .agentHeaderImage {
           max-width: 72px;
           align-self: self-start;
           border-radius: 4px;
           margin-top: 8px;
+        }
+
+
+        .workflowName {
+          font-size: 14px;
+          font-weight: 400;
+          color: var(--md-sys-color-tertiary);
+          text-transform: uppercase;
+        }
+
+        md-filled-tonal-icon-button {
+          margin-right: 24px;
+        }
+
+        .configIconButton {
+          margin-right: 64px;
         }
 
         md-filled-tonal-icon-button {
@@ -441,27 +467,29 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
 
         .agentHeaderText {
           align-self: self-start;
-          font-size: 17px;
-          padding: 8px;
-          margin-top: 8px;
-          margin-left: 16px;
-          margin-right: 16px;
+          font-size: 24px;
+          font-weight: 700;
+          margin-top: 16px;
+          margin-left: 24px;
+          margin-right: 24px;
           font-family: var(--md-ref-typeface-brand);
         }
 
         .agentHeader {
-          width: 300px;
+          width: 500px;
         }
 
         .tabsContainer {
           background-color: var(--md-sys-color-surface);
-          width: 100%;
+          width: 100vw;
           padding: 0;
           margin: 0;
+          padding-top: 16px;
+          padding-bottom: 16px;
+          margin-top: 12px
         }
 
         md-tabs {
-          margin-bottom: 64px;
           align-self: flex-start;
           align-items: flex-start;
           max-width: 600px;
@@ -580,7 +608,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         md-tabs,
         agent-tab,
         configure-tab {
-          width: 100%;
+          width: 100vw;
         }
 
         .themeToggle {
