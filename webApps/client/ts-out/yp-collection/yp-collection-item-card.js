@@ -106,7 +106,9 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collectionItemCount {
-          padding-left: 8px;
+          padding-left: 12px;
+          font-size: 18px;
+          padding-top: 4px;
         }
 
         yp-image[archived] {

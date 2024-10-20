@@ -311,13 +311,13 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     renderNavigationIcon() {
         return html `
-      <md-icon-button
+      <md-filled-tonal-icon-button
         id="helpIconButton"
         slot="actionItems"
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("navigationMenu")}"
-        ><md-icon>apps</md-icon></md-icon-button
+        ><md-icon>apps</md-icon></md-filled-tonal-icon-button
       >
     `;
     }
@@ -404,13 +404,13 @@ let YpApp = class YpApp extends YpBaseElement {
         slot="actionItems"
       >
         <span style="position: relative">
-          <md-icon-button
+          <md-filled-tonal-icon-button
             id="helpIconButton"
             class="topActionItem"
             @click="${this._openHelpMenu}"
             title="${this.t("menu.help")}"
             ><md-icon>help_outline</md-icon>
-          </md-icon-button>
+          </md-filled-tonal-icon-button>
           <md-menu
             id="helpMenu"
             positioning="popover"
@@ -431,13 +431,14 @@ let YpApp = class YpApp extends YpBaseElement {
 
       ${this.user
             ? html `
-            <md-icon-button
-              class="layout horizontal"
-              @click="${this._openNotificationDrawer}"
-              slot="actionItems"
-            >
-              <md-icon>notifications</md-icon>
-
+        <div style="position: relative;">
+              <md-filled-tonal-icon-button
+                class="layout horizontal topActionItem"
+                @click="${this._openNotificationDrawer}"
+                slot="actionItems"
+              >
+                <md-icon>notifications</md-icon>
+              </md-filled-tonal-icon-button>
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
@@ -446,7 +447,8 @@ let YpApp = class YpApp extends YpBaseElement {
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >
               </md-badge>
-            </md-icon-button>
+
+        </div>
             <md-icon-button
               class="userImageNotificationContainer layout horizontal"
               @click="${this._openUserDrawer}"
@@ -585,11 +587,12 @@ let YpApp = class YpApp extends YpBaseElement {
         ?hidden="${!this.notificationDrawerOpened}"
         @closed="${this._closeNotificationDrawer}"
       >
-        ${this.notificationDrawerOpened && this.user
+        ${this.user
             ? html `
               <ac-notification-list
                 @yp-close-notification-list="${this._closeNotificationDrawer}"
                 id="acNotificationsList"
+                ?hidden="${!this.notificationDrawerOpened}"
                 .user="${this.user}"
                 opened="${this.userDrawerOpened}"
                 .route="${this.route}"

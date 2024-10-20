@@ -17,8 +17,13 @@ export const YpAppStyles = css`
     flex-grow: 1;
   }
 
-  md-icon-button.topActionItem {
-    --md-icon-button-icon-color: var(--md-sys-color-on-surface);
+  md-filled-tonal-icon-button.topActionItem {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .activeBadge {
+
   }
 
   yp-user-info {
@@ -134,19 +139,17 @@ export const YpAppStyles = css`
   }
 
   .activeBadge {
-    margin-left: -16px;
-    margin-top: 2px;
-    --md-badge-color: var(--md-sys-color-primary);
-    --md-badge-text-color: var(--md-sys-color-on-primary);
-    --md-badge-large-color: var(--md-sys-color-primary);
-    --md-badge-large-text-color: var(--md-sys-color-on-primary);
+    --md-badge-color: var(--yp-sys-color-down);
+    --md-badge-text-color: var(--yp-sys-color-down);
+    --md-badge-large-color: var(--yp-sys-color-down);
+    --md-badge-large-text-color: var(--yp-sys-color-down);
   }
 
   .activeBadge[has-static-theme] {
-    --md-badge-color: var(--md-sys-color-primary-container);
-    --md-badge-text-color: var(--md-sys-color-on-primary-container);
-    --md-badge-large-color: var(--md-sys-color-primary-container);
-    --md-badge-large-label-text-color: var(--md-sys-color-on-primary-container);
+    --md-badge-color: var(--yp-sys-color-down);
+    --md-badge-text-color: var(--yp-sys-color-down);
+    --md-badge-large-color: var(--yp-sys-color-down);
+    --md-badge-large-text-color: var(--yp-sys-color-down);
   }
 
   .closeButton {
