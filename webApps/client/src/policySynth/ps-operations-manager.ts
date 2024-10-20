@@ -652,7 +652,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           margin: 0;
           padding-top: 16px;
           padding-bottom: 16px;
-          margin-top: 12px
+          margin-top: 12px;
         }
 
         md-tabs {
