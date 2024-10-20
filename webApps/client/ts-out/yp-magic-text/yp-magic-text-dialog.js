@@ -57,7 +57,7 @@ let YpMagicTextDialog = class YpMagicTextDialog extends YpMagicText {
     }
     render() {
         return html `
-      <md-dialog id="dialog" aria-label="${this.t("textDialog")}">
+      <md-dialog  @keydown="${this._onKeyDown}" id="dialog" aria-label="${this.t("textDialog")}">
         <div slot="content" class="content">
           ${this.finalContent
             ? html ` <div>${unsafeHTML(this.finalContent)}</div> `
@@ -72,6 +72,13 @@ let YpMagicTextDialog = class YpMagicTextDialog extends YpMagicText {
         </div>
       </md-dialog>
     `;
+    }
+    _onKeyDown(event) {
+        if (event.key === 'Escape' || event.key === 'Esc' || event.keyCode === 27) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.$$('#dialog').open = false;
+        }
     }
     subClassProcessing() {
         this.processedContent = this.processedContent?.replace(/\n/g, "<br />");

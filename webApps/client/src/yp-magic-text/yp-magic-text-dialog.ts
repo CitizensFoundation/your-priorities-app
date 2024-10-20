@@ -58,7 +58,7 @@ export class YpMagicTextDialog extends YpMagicText {
 
   override render() {
     return html`
-      <md-dialog id="dialog" aria-label="${this.t("textDialog")}">
+      <md-dialog  @keydown="${this._onKeyDown}" id="dialog" aria-label="${this.t("textDialog")}">
         <div slot="content" class="content">
           ${this.finalContent
             ? html` <div>${unsafeHTML(this.finalContent)}</div> `
@@ -73,6 +73,14 @@ export class YpMagicTextDialog extends YpMagicText {
         </div>
       </md-dialog>
     `;
+  }
+
+  private _onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape' || event.key === 'Esc' || event.keyCode === 27) {
+      event.preventDefault();
+      event.stopPropagation();
+      (this.$$('#dialog') as MdDialog).open = false;
+    }
   }
 
   override subClassProcessing() {

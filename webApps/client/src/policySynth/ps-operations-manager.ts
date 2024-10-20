@@ -633,7 +633,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
 
         .agentHeaderText {
           align-self: self-start;
-          font-size: 24px;
+          font-size: 22px;
           font-weight: 700;
           margin-top: 16px;
           margin-left: 24px;
@@ -642,7 +642,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
         }
 
         .agentHeader {
-          width: 500px;
+          width: 560px;
         }
 
         .tabsContainer {

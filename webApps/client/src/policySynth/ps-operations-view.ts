@@ -691,6 +691,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           border: 1px solid var(--md-sys-color-surface-container-high);
         }
 
+        .agentContainer[has-static-theme] {
+          border-radius: 4px;
+        }
 
         .agentContainerRunning {
           color: var(--md-sys-color-on-surface);
@@ -704,11 +707,19 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           border: 1px solid var(--md-sys-color-surface-container-highest);
         }
 
+        .connectorContainer[has-static-theme] {
+          border-radius: 4px;
+        }
+
         .connectorContainer {
           color: var(--md-sys-color-on-surface);
           background-color: var(--md-sys-color-surface-container-low);
           border-radius: 16px;
           padding: 0;
+        }
+
+        .connectorContainer[has-static-theme] {
+          border-radius: 4px;
         }
 
         .connectorContainer {

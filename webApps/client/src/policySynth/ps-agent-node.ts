@@ -513,9 +513,10 @@ export class PsAgentNode extends PsOperationsBaseNode {
     if (!this.agent) return nothing;
 
     return html`
-      <div class="mainContainer">
+      <div class="mainContainer" ?has-static-theme=${this.hasStaticTheme}>
         <img
           class="image"
+          ?has-static-theme=${this.hasStaticTheme}
           src="${this.agent.Class?.configuration.imageUrl}"
           alt="${this.agent.Class?.name}"
         />
@@ -620,6 +621,15 @@ export class PsAgentNode extends PsOperationsBaseNode {
           height: 113px;
           object-fit: cover;
           border-radius: 16px 16px 0 0;
+        }
+
+        .image[has-static-theme] {
+          border-radius: 4px;
+        }
+
+
+        .mainContainer[has-static-theme] {
+          border-radius: 4px;
         }
 
         .contentContainer {

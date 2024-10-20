@@ -50,6 +50,10 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
           border-radius: 16px 16px 0 0;
         }
 
+        .image[has-static-theme] {
+          border-radius: 4px;
+        }
+
         .linkIcon {
           margin: 4px;
         }
@@ -120,6 +124,7 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
       <div class="layout horizontal center-center">
         <img
           class="image"
+          ?has-static-theme=${this.hasStaticTheme}
           src="${this.connector.Class?.configuration.imageUrl}"
         />
       </div>
