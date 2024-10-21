@@ -234,9 +234,13 @@ export class YpApp extends YpBaseElement {
     window.app = this;
     window.serverApi = new YpServerApi();
     window.adminServerApi = new YpServerApiAdmin();
-    window.appGlobals = new YpAppGlobals(window.serverApi);
+    this.setupAppGlobals();
     window.appUser = new YpAppUser(window.serverApi);
     window.appGlobals.setupTranslationSystem();
+  }
+
+  setupAppGlobals() {
+    window.appGlobals = new YpAppGlobals(window.serverApi);
   }
 
   override connectedCallback() {

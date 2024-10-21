@@ -206,6 +206,7 @@ export class YpTopAppBar extends YpBaseElement {
 
         .titleText {
           margin-right: 4px;
+          cursor: pointer;
         }
 
         .chevronIcon {
@@ -356,13 +357,23 @@ export class YpTopAppBar extends YpBaseElement {
       ? "top-app-bar expanded"
       : "top-app-bar";
 
-    const computedBreadcrumbs = this.computedBreadcrumbs.map(crumb => ({ ...crumb, isLink: true }));
+    const computedBreadcrumbs = this.computedBreadcrumbs.map((crumb) => ({
+      ...crumb,
+      isLink: true,
+    }));
     let breadcrumbsWithTitle = [...computedBreadcrumbs];
 
-    const lastBreadcrumbName = computedBreadcrumbs.length > 0 ? computedBreadcrumbs[computedBreadcrumbs.length -1].name : null;
+    const lastBreadcrumbName =
+      computedBreadcrumbs.length > 0
+        ? computedBreadcrumbs[computedBreadcrumbs.length - 1].name
+        : null;
 
     if (this.titleString && this.titleString !== lastBreadcrumbName) {
-      breadcrumbsWithTitle.push({ name: this.titleString, url: '', isLink: false });
+      breadcrumbsWithTitle.push({
+        name: this.titleString,
+        url: "",
+        isLink: false,
+      });
     }
 
     return html`
@@ -378,17 +389,14 @@ export class YpTopAppBar extends YpBaseElement {
               (crumb, index) => html`
                 ${crumb.isLink
                   ? html`
-                      <a
+                      <div
                         class="titleText"
                         @click="${() => this.navigateTo(crumb.url)}"
-                        href="${crumb.url}"
                       >
                         ${crumb.name}
-                      </a>
+                      </div>
                     `
-                  : html`
-                      <span class="titleText">${crumb.name}</span>
-                    `}
+                  : html` <span class="titleText">${crumb.name}</span> `}
                 ${index < breadcrumbsWithTitle.length - 1
                   ? html`<md-icon class="chevronIcon">chevron_right</md-icon>`
                   : ""}
