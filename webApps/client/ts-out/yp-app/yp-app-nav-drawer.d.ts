@@ -10,15 +10,16 @@ export declare class YpAppNavDrawer extends YpBaseElement {
     opened: boolean;
     spinner: boolean;
     route: string | undefined;
-    myAdminGroups: YpGroupData[] | undefined;
-    myAdminCommunities: YpCommunityData[] | undefined;
     myGroups: YpGroupData[] | undefined;
     myCommunities: YpCommunityData[] | undefined;
     myDomains: YpDomainData[] | undefined;
     adminRights: YpAdminRights | undefined;
     memberships: YpMemberships | undefined;
+    communitiesCount: number;
+    groupsCount: number;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     connectedCallback(): void;
+    getGroupTypeName(group: YpGroupData): string;
     _openChanged(): Promise<void>;
     _selectedLocale(): string;
     _goBack(): void;
@@ -26,6 +27,7 @@ export declare class YpAppNavDrawer extends YpBaseElement {
     _goToCommunity(event: CustomEvent): void;
     _goToDomain(event: CustomEvent): void;
     _userChanged(): void;
+    _deduplicateById(array: any[]): any[];
     _reset(): void;
     static get styles(): any[];
     render(): import("lit-html").TemplateResult<1>;

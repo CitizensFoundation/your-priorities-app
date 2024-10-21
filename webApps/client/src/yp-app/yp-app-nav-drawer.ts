@@ -13,6 +13,7 @@ import "@material/web/progress/linear-progress.js";
 import "../common/languages/yp-language-selector.js";
 
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpGroupType } from "../yp-collection/ypGroupType.js";
 
 @customElement("yp-app-nav-drawer")
 export class YpAppNavDrawer extends YpBaseElement {
@@ -32,12 +33,6 @@ export class YpAppNavDrawer extends YpBaseElement {
   route: string | undefined;
 
   @property({ type: Array })
-  myAdminGroups: YpGroupData[] | undefined;
-
-  @property({ type: Array })
-  myAdminCommunities: YpCommunityData[] | undefined;
-
-  @property({ type: Array })
   myGroups: YpGroupData[] | undefined;
 
   @property({ type: Array })
@@ -51,6 +46,12 @@ export class YpAppNavDrawer extends YpBaseElement {
 
   @property({ type: Object })
   memberships: YpMemberships | undefined;
+
+  @property({ type: Number })
+  communitiesCount = 0;
+
+  @property({ type: Number })
+  groupsCount = 0;
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
@@ -66,6 +67,31 @@ export class YpAppNavDrawer extends YpBaseElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
+  }
+
+  getGroupTypeName(group: YpGroupData) {
+    if (
+      group &&
+      group.configuration &&
+      group.configuration.hideGroupType === true
+    ) {
+      return "";
+    } else if (group && group.configuration && group.configuration.groupType) {
+      switch (parseInt(group.configuration.groupType as unknown as string)) {
+        case YpGroupType.AllOurIdeas:
+          return this.t("pairwiseVoting");
+        case YpGroupType.IdeaGenerationAndDebate:
+          return this.t("ideas");
+        case YpGroupType.PsAgentWorkflow:
+          return this.t("workflow");
+        case YpGroupType.StaticHtml:
+          return this.t("html");
+        default:
+          return this.t("ideas");
+      }
+    } else {
+      return this.t("ideas");
+    }
   }
 
   async _openChanged() {
@@ -118,65 +144,119 @@ export class YpAppNavDrawer extends YpBaseElement {
     }
   }
 
+  _deduplicateById(array: any[]) {
+    const ids = new Set();
+    const deduplicated = [];
+    for (const item of array) {
+      if (!ids.has(item.id)) {
+        ids.add(item.id);
+        deduplicated.push(item);
+      }
+    }
+    return deduplicated;
+  }
+
   _reset() {
+    let groupUsers: YpGroupData[] = [];
+    let adminGroups: YpGroupData[] = [];
+    let communityUsers: YpCommunityData[] = [];
+    let adminCommunities: YpCommunityData[] = [];
+
     if (this.memberships) {
-      const groupUsers = this.memberships.GroupUsers.filter((item) => {
+      groupUsers = this.memberships.GroupUsers.filter((item) => {
         return item.name != "hidden_public_group_for_domain_level_points";
-      });
-      this.myGroups = groupUsers.slice(0, 1000) as YpGroupData[];
-      this.myCommunities = this.memberships.CommunityUsers.slice(
+      }) as YpGroupData[];
+
+      communityUsers = this.memberships.CommunityUsers.slice(
         0,
         500
       ) as YpCommunityData[];
+
       this.myDomains = this.memberships.DomainUsers.slice(
         0,
         3
       ) as YpDomainData[];
-    } else {
-      this.myGroups = undefined;
-      this.myCommunities = undefined;
-      this.myDomains = undefined;
     }
 
-    if (
-      this.adminRights &&
-      this.adminRights.CommunityAdmins &&
-      this.adminRights.CommunityAdmins.length > 0
-    ) {
-      this.myAdminCommunities = this.adminRights
-        .CommunityAdmins as YpCommunityData[];
-    } else {
-      this.myAdminCommunities = undefined;
+    if (this.adminRights) {
+      if (
+        this.adminRights.GroupAdmins &&
+        this.adminRights.GroupAdmins.length > 0
+      ) {
+        adminGroups = this.adminRights.GroupAdmins.filter((item) => {
+          return item.name != "hidden_public_group_for_domain_level_points";
+        }) as YpGroupData[];
+      }
+
+      if (
+        this.adminRights.CommunityAdmins &&
+        this.adminRights.CommunityAdmins.length > 0
+      ) {
+        adminCommunities = this.adminRights
+          .CommunityAdmins as YpCommunityData[];
+      }
     }
 
-    if (
-      this.adminRights &&
-      this.adminRights.GroupAdmins &&
-      this.adminRights.GroupAdmins.length > 0
-    ) {
-      const groupAdmins = this.adminRights.GroupAdmins.filter((item) => {
-        return item.name != "hidden_public_group_for_domain_level_points";
-      });
-      this.myAdminGroups = groupAdmins as YpGroupData[];
-    } else {
-      this.myAdminGroups = undefined;
-    }
+    // Combine and deduplicate groups
+    const combinedGroups = [...groupUsers, ...adminGroups];
+    this.myGroups = this._deduplicateById(combinedGroups).slice(0, 1000);
+    this.groupsCount = this.myGroups ? this.myGroups.length : 0;
+
+    // Combine and deduplicate communities
+    const combinedCommunities = [...communityUsers, ...adminCommunities];
+    this.myCommunities = this._deduplicateById(combinedCommunities).slice(
+      0,
+      500
+    );
+    this.communitiesCount = this.myCommunities ? this.myCommunities.length : 0;
   }
 
   static override get styles() {
     return [
       super.styles,
       css`
+        :host {
+          z-index: 5000;
+        }
 
-      :host {
-        z-index: 5000;
-      }
+        .count {
+          font-size: 18px;
+        }
+
+        .groupName {
+          border-bottom: 3px solid transparent;
+        }
+
+        .groupName:hover {
+          border-bottom: 3px solid var(--md-sys-color-primary-container);
+        }
+
+        .communityName {
+          border-bottom: 3px solid transparent;
+        }
+
+        .communityName:hover {
+          border-bottom: 3px solid var(--md-sys-color-primary-container);
+        }
+
+        .groupTypeName {
+          font-size: 12px;
+          text-align: left;
+          line-height: 18px;
+          font-weight: 500;
+          margin-top: 8px;
+          margin-left: 8px;
+          color: var(--md-sys-color-tertiary);
+        }
+
         .header {
           padding-top: 16px;
-          font-weight: bold;
+          font-weight: 700;
           padding-bottom: 8px;
-          font-size: 18px;
+          font-size: 20px;
           padding-left: 8px;
+          line-height: 22px;
+          font-family: var(--md-ref-typeface-brand);
         }
 
         md-linear-progress {
@@ -211,13 +291,14 @@ export class YpAppNavDrawer extends YpBaseElement {
         }
 
         .material {
-          background-color: var(--md-sys-color-surface-container);
-          color: var(--md-sys-color-on-surface);
+          background-color: var(--md-sys-color-surface);
         }
 
         .item {
           cursor: pointer;
           padding: 8px;
+          padding-top: 4px;
+          padding-bottom: 4px;
         }
 
         .languageSelector {
@@ -250,7 +331,6 @@ export class YpAppNavDrawer extends YpBaseElement {
               </div>
             `
           : nothing}
-
         ${this.spinner
           ? html`<div class="layout horizontal center-center">
               <md-linear-progress indeterminate></md-linear-progress>
@@ -262,50 +342,15 @@ export class YpAppNavDrawer extends YpBaseElement {
           role="navigation"
           aria-label="Community & Group navigation"
         >
-          ${this.myAdminCommunities
+          ${this.myCommunities && this.myCommunities.length > 0
             ? html`
-                <div class="header">${this.t("myAdminCommunities")}</div>
-                ${this.myAdminCommunities.map(
-                  (community) => html`
-                    <div class="layout horizontal">
-                      <div
-                        role="button"
-                        class="item"
-                        data-args="${community.id}"
-                        @click="${this._goToCommunity}"
-                      >
-                        ${community.name}
-                      </div>
-                    </div>
-                  `
-                )}
-              `
-            : nothing}
-          ${this.myAdminGroups
-            ? html`
-                <div class="header">${this.t("myAdminGroups")}</div>
-                ${this.myAdminGroups.map(
-                  (group) => html`
-                    <div class="layout horizontal">
-                      <div
-                        role="button"
-                        class="item"
-                        data-args="${group.id}"
-                        @click="${this._goToGroup}"
-                      >
-                        ${group.name}
-                      </div>
-                    </div>
-                  `
-                )}
-              `
-            : nothing}
-          ${this.myCommunities
-            ? html`
-                <div class="header">${this.t("myCommunities")}</div>
+                <div class="header">
+                  ${this.t("Communities")}
+                  <span class="count">(${this.communitiesCount})</span>
+                </div>
                 ${this.myCommunities.map(
                   (community) => html`
-                    <div class="layout horizontal">
+                    <div class="layout horizontal communityName">
                       <div
                         role="button"
                         class="item"
@@ -319,19 +364,27 @@ export class YpAppNavDrawer extends YpBaseElement {
                 )}
               `
             : nothing}
-          ${this.myGroups
+          ${this.myGroups && this.myGroups.length > 0
             ? html`
-                <div class="header">${this.t("myGroups")}</div>
+                <div class="header">
+                  ${this.t("Groups")}
+                  <span class="count">(${this.groupsCount})</span>
+                </div>
                 ${this.myGroups.map(
                   (group) => html`
-                    <div class="layout horizontal">
-                      <div
-                        role="button"
-                        class="item"
-                        data-args="${group.id}"
-                        @click="${this._goToGroup}"
-                      >
-                        ${group.name}
+                    <div class="layout vertical">
+                      <div class="groupTypeName">
+                        ${this.getGroupTypeName(group)}
+                      </div>
+                      <div class="layout horizontal groupName">
+                        <div
+                          role="button"
+                          class="item"
+                          data-args="${group.id}"
+                          @click="${this._goToGroup}"
+                        >
+                          ${group.name}
+                        </div>
                       </div>
                     </div>
                   `

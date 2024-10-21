@@ -36,7 +36,7 @@ export class YpDrawer extends YpBaseElement {
           bottom: 0;
           overflow-y: auto;
           transform: translateX(-100%);
-          background-color: var(--md-sys-color-surface-container);
+          background-color: var(--md-sys-color-surface);
           z-index: 2;
           transition: opacity 0.3s ease, transform 0.3s ease;
         }
