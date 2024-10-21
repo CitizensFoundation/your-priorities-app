@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Cuddio bar ap os HTML Croeso",
   "policySynthAgentsWorkflow": "Gweithdrefn Asiantau",
   "generateWithAi": "Cynhyrchu gyda AI",
-  "hidePointFor": "Cuddio pwynt yn erbyn blwch"
+  "hidePointFor": "Cuddio pwynt yn erbyn blwch",
+  "newOrganization": "Sefydliad newydd",
+  "editOrganization": "Golygu sefydliad",
+  "addOrganization": "Creu sefydliad",
+  "onlyAdminsCanCreateOrganizations": "Dim ond gweinyddwyr sy'n gallu creu sefydliadau",
+  "navigationMenu": "Dewislen llywio",
+  "useFixedTopAppBar": "Defnyddio bar ap pen sefydlog",
+  "disableArrowBasedTopNavigation": "Analluogi llywio pen saeth",
+  "multiModalModels": "Modelau Aml-foddol",
+  "reasoningModels": "Modelau Rhesymu",
+  "selectSmallReasoningModel": "Model Rhesymu Bach",
+  "selectMediumReasoningModel": "Model Rhesymu Canolig",
+  "selectLargeReasoningModel": "Model Rhesymu Mawr"
 }

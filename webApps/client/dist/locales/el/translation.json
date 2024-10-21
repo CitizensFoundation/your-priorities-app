@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Απόκρυψη γραμμής εφαρμογής αν Καλώς ήρθατε HTML",
   "policySynthAgentsWorkflow": "Ροή εργασίας πρακτόρων",
   "generateWithAi": "Δημιουργία με AI",
-  "hidePointFor": "Απόκρυψη σημείου κατά κουτί"
+  "hidePointFor": "Απόκρυψη σημείου κατά κουτί",
+  "newOrganization": "Νέα οργάνωση",
+  "editOrganization": "Επεξεργασία οργάνωσης",
+  "addOrganization": "Δημιουργία οργάνωσης",
+  "onlyAdminsCanCreateOrganizations": "Μόνο οι διαχειριστές μπορούν να δημιουργούν οργανώσεις",
+  "navigationMenu": "Μενού πλοήγησης",
+  "useFixedTopAppBar": "Χρήση σταθερής επάνω μπάρας εφαρμογής",
+  "disableArrowBasedTopNavigation": "Απενεργοποίηση πλοήγησης με βέλη",
+  "multiModalModels": "Πολυτροπικά Μοντέλα",
+  "reasoningModels": "Μοντέλα Λογικής",
+  "selectSmallReasoningModel": "Μικρό Μοντέλο Λογικής",
+  "selectMediumReasoningModel": "Μεσαίο Μοντέλο Λογικής",
+  "selectLargeReasoningModel": "Μεγάλο Μοντέλο Λογικής"
 }

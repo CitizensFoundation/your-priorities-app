@@ -843,7 +843,7 @@
     "add": "Fa'aopopo nu'u",
     "alternativeHeader": "Ulutala Fa'aopoopo",
     "edit": "Fa'atonu nu'u",
-    "hostname": "Hostname",
+    "hostname": "Igoa o le talimalo",
     "admins": "Pulega o le nu'u",
     "users": "Tagata fa'aoga o le nu'u",
     "delete": "Tape le nu'u",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Natia le pa polokalama pe a HTML Fa'afeiloa'i",
   "policySynthAgentsWorkflow": "Galuega a Sui",
   "generateWithAi": "Fausia ma le AI",
-  "hidePointFor": "Natia le manatu fa'asaga i le pusa"
+  "hidePointFor": "Natia le manatu fa'asaga i le pusa",
+  "newOrganization": "Faalapotopotoga fou",
+  "editOrganization": "Teuteu faalapotopotoga",
+  "addOrganization": "Fausia faalapotopotoga",
+  "onlyAdminsCanCreateOrganizations": "Na'o pule e mafai ona fausia faalapotopotoga",
+  "navigationMenu": "Lisi folauga",
+  "useFixedTopAppBar": "Fa'aoga fa'amau tumau i luga",
+  "disableArrowBasedTopNavigation": "Fa'amuta fa'ailoga fa'ailoga i luga",
+  "multiModalModels": "Fa'ata'ita'iga Tele",
+  "reasoningModels": "Fa'ata'ita'iga Mafaufauga",
+  "selectSmallReasoningModel": "Fa'ata'ita'iga Laiti Mafaufauga",
+  "selectMediumReasoningModel": "Fa'ata'ita'iga Feololo Mafaufauga",
+  "selectLargeReasoningModel": "Fa'ata'ita'iga Tetele Mafaufauga"
 }

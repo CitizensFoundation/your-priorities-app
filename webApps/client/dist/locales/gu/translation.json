@@ -824,7 +824,7 @@
     "createOrganization": "સંસ્થા બનાવો",
     "edit": "ડોમેન સંપાદિત કરો",
     "info": "સેટિંગ્સ",
-    "apis": "APIs",
+    "apis": "એપીઆઈઝ",
     "settings": "વધારાનું",
     "onlyAdminsCanCreateCommunities": "ફક્ત એડમિન્સ જ સમુદાયો બનાવી શકે છે"
   },
@@ -1314,7 +1314,7 @@
   "Page Visits": "પૃષ્ઠ મુલાકાતો",
   "Page": "પૃષ્ઠ",
   "Top Sources": "ટોચના સ્ત્રોતો",
-  "UTM": "UTM",
+  "UTM": "યુટીએમ",
   "All": "બધા",
   "duplicate": "નકલ",
   "New category": "નવી શ્રેણી",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "વેલકમ HTML હોય તો એપ બાર છુપાવો",
   "policySynthAgentsWorkflow": "એજન્ટ્સ વર્કફ્લો",
   "generateWithAi": "AI સાથે જનરેટ કરો",
-  "hidePointFor": "બોક્સ સામે પોઈન્ટ છુપાવો"
+  "hidePointFor": "બોક્સ સામે પોઈન્ટ છુપાવો",
+  "newOrganization": "નવું સંસ્થા",
+  "editOrganization": "સંસ્થા સંપાદિત કરો",
+  "addOrganization": "સંસ્થા બનાવો",
+  "onlyAdminsCanCreateOrganizations": "માત્ર એડમિન સંસ્થાઓ બનાવી શકે છે",
+  "navigationMenu": "નૅવિગેશન મેનુ",
+  "useFixedTopAppBar": "ફિક્સ્ડ ટોપ એપ બાર વાપરો",
+  "disableArrowBasedTopNavigation": "એરો આધારિત ટોપ નૅવિગેશન નિષ્ક્રિય કરો",
+  "multiModalModels": "મલ્ટી-મોડલ મોડલ્સ",
+  "reasoningModels": "રીઝનિંગ મોડલ્સ",
+  "selectSmallReasoningModel": "નાનું રીઝનિંગ મોડલ",
+  "selectMediumReasoningModel": "મધ્યમ રીઝનિંગ મોડલ",
+  "selectLargeReasoningModel": "મોટું રીઝનિંગ મોડલ"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Welcome HTML بولسا قوللىنىش سىتونىنى يوشۇرۇڭ",
   "policySynthAgentsWorkflow": "ۋاكالەتچىلەر جەريانى",
   "generateWithAi": "AI بىلەن پەيدا قىلىش",
-  "hidePointFor": "قۇتىغا قارشى نۇقتىنى يوشۇرۇش"
+  "hidePointFor": "قۇتىغا قارشى نۇقتىنى يوشۇرۇش",
+  "newOrganization": "يېڭى تەشكىلات",
+  "editOrganization": "تەھرىرلەش تەشكىلات",
+  "addOrganization": "قۇرۇش تەشكىلات",
+  "onlyAdminsCanCreateOrganizations": "پەقەت باشقۇرغۇچىلارلا تەشكىلات قۇرالايدۇ",
+  "navigationMenu": "يول باشلاش تىزىملىكى",
+  "useFixedTopAppBar": "تۇراقلىق ئۈستى بەلۋاغى ئىشلىتىش",
+  "disableArrowBasedTopNavigation": "يۆنىلىش ئوقىنى چەكلەش",
+  "multiModalModels": "كۆپ مودېل",
+  "reasoningModels": "پەرەز مودېللىرى",
+  "selectSmallReasoningModel": "كىچىك پەرەز مودېلى",
+  "selectMediumReasoningModel": "ئوتتۇرا پەرەز مودېلى",
+  "selectLargeReasoningModel": "چوڭ پەرەز مودېلى"
 }

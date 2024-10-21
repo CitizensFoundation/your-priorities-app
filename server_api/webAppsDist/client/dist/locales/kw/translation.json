@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Kudh bar app mar ny wra Dynnargh HTML",
   "policySynthAgentsWorkflow": "Flows Agents",
   "generateWithAi": "Geni gans AI",
-  "hidePointFor": "Kudha poynt orth kist"
+  "hidePointFor": "Kudha poynt orth kist",
+  "newOrganization": "Kesunyans nowydh",
+  "editOrganization": "Golyga kesunyans",
+  "addOrganization": "Gwruthyl kesunyans",
+  "onlyAdminsCanCreateOrganizations": "Nyns yll nemet arludhya gwruthyl kesunyansow",
+  "navigationMenu": "Menu lywya",
+  "useFixedTopAppBar": "Devnydh bar app uhel stynnys",
+  "disableArrowBasedTopNavigation": "Dilemel lywya uhel avel saethau",
+  "multiModalModels": "Modelow lies-furv",
+  "reasoningModels": "Modelow preder",
+  "selectSmallReasoningModel": "Model preder byghan",
+  "selectMediumReasoningModel": "Model preder krev",
+  "selectLargeReasoningModel": "Model preder meur"
 }

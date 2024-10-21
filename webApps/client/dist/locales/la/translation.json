@@ -1423,7 +1423,7 @@
   "careerCoaching": "Curriculum Consilium",
   "contentCreation": "Contentus Creatio",
   "crisisManagement": "Crisis Administratio",
-  "customerService": "Customer Service",
+  "customerService": "Ministerium Clientium",
   "cyberSecurity": "Securitas Cybernetica",
   "dataAnalysis": "Data Analysis",
   "databaseManagement": "Database Administratio",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Occulta app vectis si Welcome HTML",
   "policySynthAgentsWorkflow": "Agentes Fluxus",
   "generateWithAi": "Generare cum AI",
-  "hidePointFor": "Occulta punctum contra cistam"
+  "hidePointFor": "Occulta punctum contra cistam",
+  "newOrganization": "Nova organizatio",
+  "editOrganization": "Recensere organizationem",
+  "addOrganization": "Creare organizationem",
+  "onlyAdminsCanCreateOrganizations": "Solum administratores possunt creare organizationes",
+  "navigationMenu": "Menu navigationis",
+  "useFixedTopAppBar": "Utere fixa summo app vecte",
+  "disableArrowBasedTopNavigation": "Disable sagittam fundatam summo navigationem",
+  "multiModalModels": "Multi-modales Exempla",
+  "reasoningModels": "Rationes Exempla",
+  "selectSmallReasoningModel": "Parvum Rationis exemplar",
+  "selectMediumReasoningModel": "Medium Rationis exemplar",
+  "selectLargeReasoningModel": "Magnum Rationis exemplar"
 }

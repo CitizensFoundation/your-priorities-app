@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "که د ښه راغلاست HTML وي د اپ بار پټ کړئ",
   "policySynthAgentsWorkflow": "د استازو کاري بهیر",
   "generateWithAi": "د AI سره تولید کړئ",
-  "hidePointFor": "د بکس پر وړاندې ټکی پټ کړئ"
+  "hidePointFor": "د بکس پر وړاندې ټکی پټ کړئ",
+  "newOrganization": "نوې اداره",
+  "editOrganization": "اداره سمول",
+  "addOrganization": "اداره جوړول",
+  "onlyAdminsCanCreateOrganizations": "یوازې مدیران ادارې جوړولی شي",
+  "navigationMenu": "لارښود مینو",
+  "useFixedTopAppBar": "ثابت سر اپ بار وکاروئ",
+  "disableArrowBasedTopNavigation": "د غشي پر بنسټ سر لارښود غیر فعال کړئ",
+  "multiModalModels": "چند حالته ماډلونه",
+  "reasoningModels": "استدلال ماډلونه",
+  "selectSmallReasoningModel": "وړه استدلال ماډل",
+  "selectMediumReasoningModel": "منځنۍ استدلال ماډل",
+  "selectLargeReasoningModel": "لویه استدلال ماډل"
 }

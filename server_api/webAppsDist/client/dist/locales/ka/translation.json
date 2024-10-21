@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "დამალეთ აპლიკაციის ზოლი თუ Welcome HTML",
   "policySynthAgentsWorkflow": "აგენტების სამუშაო პროცესი",
   "generateWithAi": "გენერირება AI-ით",
-  "hidePointFor": "დამალეთ წერტილი ყუთის წინააღმდეგ"
+  "hidePointFor": "დამალეთ წერტილი ყუთის წინააღმდეგ",
+  "newOrganization": "ახალი ორგანიზაცია",
+  "editOrganization": "რედაქტირება ორგანიზაცია",
+  "addOrganization": "შექმნა ორგანიზაცია",
+  "onlyAdminsCanCreateOrganizations": "მხოლოდ ადმინებს შეუძლიათ ორგანიზაციების შექმნა",
+  "navigationMenu": "ნავიგაციის მენიუ",
+  "useFixedTopAppBar": "გამოიყენეთ ფიქსირებული ზედა აპ ბარი",
+  "disableArrowBasedTopNavigation": "ისრის დაფუძნებული ზედა ნავიგაციის გამორთვა",
+  "multiModalModels": "მულტიმოდალური მოდელები",
+  "reasoningModels": "ლოგიკური მოდელები",
+  "selectSmallReasoningModel": "პატარა ლოგიკური მოდელი",
+  "selectMediumReasoningModel": "საშუალო ლოგიკური მოდელი",
+  "selectLargeReasoningModel": "დიდი ლოგიკური მოდელი"
 }

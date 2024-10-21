@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "پنهان‌کردن نوار برنامه اگر HTML خوش‌آمد",
   "policySynthAgentsWorkflow": "جریان‌کار نمایندگان",
   "generateWithAi": "تولید با AI",
-  "hidePointFor": "پنهان‌کردن نقطه مقابل جعبه"
+  "hidePointFor": "پنهان‌کردن نقطه مقابل جعبه",
+  "newOrganization": "سازمان جدید",
+  "editOrganization": "ویرایش سازمان",
+  "addOrganization": "ایجاد سازمان",
+  "onlyAdminsCanCreateOrganizations": "فقط مدیران می‌توانند سازمان‌ها را ایجاد کنند",
+  "navigationMenu": "منوی ناوبری",
+  "useFixedTopAppBar": "استفاده از نوار بالای ثابت",
+  "disableArrowBasedTopNavigation": "غیرفعال کردن ناوبری بالای مبتنی بر فلش",
+  "multiModalModels": "مدل‌های چندحالته",
+  "reasoningModels": "مدل‌های استدلال",
+  "selectSmallReasoningModel": "مدل استدلال کوچک",
+  "selectMediumReasoningModel": "مدل استدلال متوسط",
+  "selectLargeReasoningModel": "مدل استدلال بزرگ"
 }

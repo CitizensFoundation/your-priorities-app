@@ -827,7 +827,7 @@
     "createOrganization": "ادارو ٺاهيو",
     "edit": "ڊومين ميڙيو",
     "info": "سیٽنگون",
-    "apis": "APIs",
+    "apis": "اي پي آئيز",
     "settings": "واڌي",
     "onlyAdminsCanCreateCommunities": "صرف منتظمین ڪميونٽي تخليق ڪري سگھن ٿا"
   },
@@ -1317,7 +1317,7 @@
   "Page Visits": "صفحا جا دورا",
   "Page": "صفحو",
   "Top Sources": "اولهن ذرائع",
-  "UTM": "UTM",
+  "UTM": "يو ٽي ايم",
   "All": "سڀ",
   "duplicate": "نقل",
   "New category": "نئون زمرو",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ايپ بار لڪايو جيڪڏهن Welcome HTML",
   "policySynthAgentsWorkflow": "ايجنٽس جو ڪم",
   "generateWithAi": "AI سان ٺاهيو",
-  "hidePointFor": "پوائنٽ خلاف باڪس لڪايو"
+  "hidePointFor": "پوائنٽ خلاف باڪس لڪايو",
+  "newOrganization": "نئين تنظيم",
+  "editOrganization": "ترميم تنظيم",
+  "addOrganization": "تنظيم ٺاهيو",
+  "onlyAdminsCanCreateOrganizations": "صرف منتظمين تنظيمون ٺاهي سگهن ٿا",
+  "navigationMenu": "نيويگيشن مينيو",
+  "useFixedTopAppBar": "مقرر مٿيون ايپ بار استعمال ڪريو",
+  "disableArrowBasedTopNavigation": "تير تي ٻڌل مٿيون نيويگيشن غير فعال ڪريو",
+  "multiModalModels": "ملٽي موڊل ماڊلز",
+  "reasoningModels": "استدلال ماڊلز",
+  "selectSmallReasoningModel": "ننڍو استدلال ماڊل",
+  "selectMediumReasoningModel": "وچولو استدلال ماڊل",
+  "selectLargeReasoningModel": "وڏو استدلال ماڊل"
 }

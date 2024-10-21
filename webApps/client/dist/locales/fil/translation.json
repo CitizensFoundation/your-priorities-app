@@ -724,7 +724,7 @@
   "recentlyUsedEmoji": "Kamakailan ginamit",
   "findAnEmoji": "Hanapin ang emoji",
   "cancel": "Kanselahin",
-  "ok": "Ok",
+  "ok": "Sige",
   "next": "Susunod",
   "create": "Lumikha",
   "confirm": "Kumpirmahin",
@@ -969,7 +969,7 @@
     "inProgress": "Nag-a-upload..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Sige",
     "deleteConfirmation": "Nais mo bang tanggalin ang grupong ito?"
   },
   "maps": {
@@ -1329,11 +1329,11 @@
   "openEdit": "Buksan ang Edit",
   "groupFraudManagement": "Pamamahala sa Pandaraya ng Grupo",
   "domainFraudManagement": "Pamamahala sa Pandaraya ng Domain",
-  "Access": "Access",
+  "Access": "Pag-access",
   "openOrganizationMenu": "Buksan ang menu ng organisasyon",
   "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
   "Override theme": "Palitan ang tema",
-  "Analytics & Marketing": "Analytics & Marketing",
+  "Analytics & Marketing": "Analitika at Marketing",
   "Promote your survey": "I-promote ang iyong survey",
   "Survey Administration": "Pamamahala ng Survey",
   "Administer this survey": "Pamahalaan ang survey na ito",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Itago ang app bar kung Welcome HTML",
   "policySynthAgentsWorkflow": "Daloy ng Trabaho ng mga Ahente",
   "generateWithAi": "Gumawa gamit ang AI",
-  "hidePointFor": "Itago ang punto laban sa kahon"
+  "hidePointFor": "Itago ang punto laban sa kahon",
+  "newOrganization": "Bagong organisasyon",
+  "editOrganization": "I-edit ang organisasyon",
+  "addOrganization": "Lumikha ng organisasyon",
+  "onlyAdminsCanCreateOrganizations": "Tanging mga admin lang ang makakalikha ng mga organisasyon",
+  "navigationMenu": "Menu ng nabigasyon",
+  "useFixedTopAppBar": "Gamitin ang nakapirming top app bar",
+  "disableArrowBasedTopNavigation": "I-disable ang arrow-based na top navigation",
+  "multiModalModels": "Multi-modal na Modelo",
+  "reasoningModels": "Mga Modelong Pangangatwiran",
+  "selectSmallReasoningModel": "Maliit na Modelong Pangangatwiran",
+  "selectMediumReasoningModel": "Katamtamang Modelong Pangangatwiran",
+  "selectLargeReasoningModel": "Malaking Modelong Pangangatwiran"
 }

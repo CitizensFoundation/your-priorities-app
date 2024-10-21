@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Fitantanana Fisandohana Domain",
   "Access": "Fidirana",
   "openOrganizationMenu": "Sokafy ny menio fikambanana",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Lisitra Reykjavíkur",
   "Override theme": "Hanova lohahevitra",
   "Analytics & Marketing": "Fanadihadiana & Varotra",
   "Promote your survey": "Ampiroborobo ny fanadihadiana",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Afeno ny bara fampiharana raha HTML Fiarahabana",
   "policySynthAgentsWorkflow": "Fizotran'ny mpandraharaha",
   "generateWithAi": "Amboary amin'ny AI",
-  "hidePointFor": "Afeno ny teboka manohitra ny boaty"
+  "hidePointFor": "Afeno ny teboka manohitra ny boaty",
+  "newOrganization": "Fikambanana vaovao",
+  "editOrganization": "Hanova fikambanana",
+  "addOrganization": "Mametraha fikambanana",
+  "onlyAdminsCanCreateOrganizations": "Ireo mpitantana ihany no afaka mamorona fikambanana",
+  "navigationMenu": "Sakafo fitetezana",
+  "useFixedTopAppBar": "Ampiasao ny bara ambony raikitra",
+  "disableArrowBasedTopNavigation": "Atsaharo ny fitetezana ambony mifototra amin'ny zana-tsipìka",
+  "multiModalModels": "Modely Multi-modal",
+  "reasoningModels": "Modely Fisainana",
+  "selectSmallReasoningModel": "Modely Fisainana Kely",
+  "selectMediumReasoningModel": "Modely Fisainana Antonony",
+  "selectLargeReasoningModel": "Modely Fisainana Lehibe"
 }

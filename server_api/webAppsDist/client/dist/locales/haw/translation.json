@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Hoʻoponopono Wahaheʻe Wahi",
   "Access": "Komohewa",
   "openOrganizationMenu": "Wehe i ke kahua hui",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Hale Hōʻikeʻike o Reykjavik",
   "Override theme": "Kāpae i ke kumuhana",
   "Analytics & Marketing": "ʻIkepili & Kūʻai aku",
   "Promote your survey": "Hoʻolaha i kāu nīnau",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Hūnā pākuʻi app inā Welina HTML",
   "policySynthAgentsWorkflow": "Hana ʻelele",
   "generateWithAi": "Hana me AI",
-  "hidePointFor": "Hūnā i ka helu kūʻē i ka pahu"
+  "hidePointFor": "Hūnā i ka helu kūʻē i ka pahu",
+  "newOrganization": "Hui hou",
+  "editOrganization": "Hoʻoponopono hui",
+  "addOrganization": "Hana hui",
+  "onlyAdminsCanCreateOrganizations": "Nā luna wale nō e hiki ke hana i nā hui",
+  "navigationMenu": "Pākuʻi hoʻokele",
+  "useFixedTopAppBar": "E hoʻohana i ka pā app luna paʻa",
+  "disableArrowBasedTopNavigation": "Hoʻopau i ka hoʻokele luna me nā pua",
+  "multiModalModels": "Nā Kumu Hoʻohālikelike ʻElua",
+  "reasoningModels": "Nā Kumu Hoʻohālikelike Manaʻo",
+  "selectSmallReasoningModel": "Kumu Manaʻo Liʻiliʻi",
+  "selectMediumReasoningModel": "Kumu Manaʻo Waena",
+  "selectLargeReasoningModel": "Kumu Manaʻo Nui"
 }

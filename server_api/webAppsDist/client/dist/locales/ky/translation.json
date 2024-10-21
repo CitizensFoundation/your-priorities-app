@@ -1489,5 +1489,17 @@
   "hideAppBarIfWelcomeHtml": "Кош келиңиз HTML болсо, колдонмо тилкесин жашыруу",
   "policySynthAgentsWorkflow": "Агенттердин иш агымы",
   "generateWithAi": "AI менен түзүү",
-  "hidePointFor": "Кутуга каршы чекитти жашыруу"
+  "hidePointFor": "Кутуга каршы чекитти жашыруу",
+  "newOrganization": "Жаңы уюм",
+  "editOrganization": "Уюмду түзөтүү",
+  "addOrganization": "Уюм түзүү",
+  "onlyAdminsCanCreateOrganizations": "Уюмдарды түзүү админдерге гана мүмкүн",
+  "navigationMenu": "Навигация менюсу",
+  "useFixedTopAppBar": "Туруктуу жогорку тилке колдонуу",
+  "disableArrowBasedTopNavigation": "Жогорку навигацияны өчүрүү",
+  "multiModalModels": "Көп модалдуу моделдер",
+  "reasoningModels": "Талдоо моделдери",
+  "selectSmallReasoningModel": "Кичи талдоо модели",
+  "selectMediumReasoningModel": "Орто талдоо модели",
+  "selectLargeReasoningModel": "Чоң талдоо модели"
 }

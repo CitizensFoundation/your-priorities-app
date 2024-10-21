@@ -843,7 +843,7 @@
     "add": "Samājaṃ yojehi",
     "alternativeHeader": "Vikalpa Siras",
     "edit": "Samājaṃ sampādaya",
-    "hostname": "Hostname",
+    "hostname": "Nāmakāya",
     "admins": "Samāja pālakā",
     "users": "Samāja upayogī",
     "delete": "Samāja māraṇa",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Appaṃ paṭicchādetu sace Svāgata HTML",
   "policySynthAgentsWorkflow": "Dūtānaṃ Kammavādhāna",
   "generateWithAi": "AIhi janetu",
-  "hidePointFor": "Paññāṇaṃ paṭicchādetu"
+  "hidePointFor": "Paññāṇaṃ paṭicchādetu",
+  "newOrganization": "Nava saṅghāṭa",
+  "editOrganization": "Saṅghāṭa sampādeti",
+  "addOrganization": "Saṅghāṭa karoti",
+  "onlyAdminsCanCreateOrganizations": "Kevalaṃ adhipati saṅghāṭaṃ karonti",
+  "navigationMenu": "Nāvika menu",
+  "useFixedTopAppBar": "Niccala upari app barāya",
+  "disableArrowBasedTopNavigation": "Tiriyā upari nāvikaṃ nivāreti",
+  "multiModalModels": "Bahumukha Modelāni",
+  "reasoningModels": "Vīmaṃsā Modelāni",
+  "selectSmallReasoningModel": "Khuddaka Vīmaṃsā modela",
+  "selectMediumReasoningModel": "Majjhima Vīmaṃsā modela",
+  "selectLargeReasoningModel": "Mahanta Vīmaṃsā modela"
 }

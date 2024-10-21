@@ -1334,7 +1334,7 @@
   "domainFraudManagement": "Manajemén Panipuan Domain",
   "Access": "Aksés",
   "openOrganizationMenu": "Muka ménu organisasi",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Daptar Reykjavíkur",
   "Override theme": "Ngagantikeun téma",
   "Analytics & Marketing": "Analitik & Pamasaran",
   "Promote your survey": "Promosikeun survey anjeun",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Sumputkeun bilah aplikasi lamun Wilujeng Sumping HTML",
   "policySynthAgentsWorkflow": "Alur Kerja Agén",
   "generateWithAi": "Ngahasilkeun ku AI",
-  "hidePointFor": "Sumputkeun titik ngalawan kotak"
+  "hidePointFor": "Sumputkeun titik ngalawan kotak",
+  "newOrganization": "Organisasi anyar",
+  "editOrganization": "Édit organisasi",
+  "addOrganization": "Jieun organisasi",
+  "onlyAdminsCanCreateOrganizations": "Ngan admin anu tiasa nyieun organisasi",
+  "navigationMenu": "Menu navigasi",
+  "useFixedTopAppBar": "Gunakeun bilah aplikasi luhur tetep",
+  "disableArrowBasedTopNavigation": "Pareuman navigasi luhur dumasar panah",
+  "multiModalModels": "Modél multi-modal",
+  "reasoningModels": "Modél pamikiran",
+  "selectSmallReasoningModel": "Modél pamikiran leutik",
+  "selectMediumReasoningModel": "Modél pamikiran sedeng",
+  "selectLargeReasoningModel": "Modél pamikiran gedé"
 }

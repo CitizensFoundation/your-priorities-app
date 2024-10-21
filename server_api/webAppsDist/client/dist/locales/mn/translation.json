@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Welcome HTML бол аппын мөрийг нуух",
   "policySynthAgentsWorkflow": "Төлөөлөгчдийн ажлын урсгал",
   "generateWithAi": "AI-ээр үүсгэх",
-  "hidePointFor": "Хайрцагийн эсрэг цэгийг нуух"
+  "hidePointFor": "Хайрцагийн эсрэг цэгийг нуух",
+  "newOrganization": "Шинэ байгууллага",
+  "editOrganization": "Байгууллага засах",
+  "addOrganization": "Байгууллага үүсгэх",
+  "onlyAdminsCanCreateOrganizations": "Зөвхөн админ байгууллага үүсгэж болно",
+  "navigationMenu": "Навигацийн цэс",
+  "useFixedTopAppBar": "Тогтмол дээд апп цэс ашиглах",
+  "disableArrowBasedTopNavigation": "Суманд суурилсан дээд навигацийг идэвхгүй болгох",
+  "multiModalModels": "Олон төрлийн загварууд",
+  "reasoningModels": "Учир шалтгааны загварууд",
+  "selectSmallReasoningModel": "Жижиг учир шалтгааны загвар",
+  "selectMediumReasoningModel": "Дунд учир шалтгааны загвар",
+  "selectLargeReasoningModel": "Том учир шалтгааны загвар"
 }

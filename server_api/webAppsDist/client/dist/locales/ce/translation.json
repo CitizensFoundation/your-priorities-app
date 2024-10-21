@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "App бар хьажарг, хьалха HTML",
   "policySynthAgentsWorkflow": "Агенташ теченийн",
   "generateWithAi": "AI-лла тӀехь",
-  "hidePointFor": "Точка хьажарг кутан хьалха"
+  "hidePointFor": "Точка хьажарг кутан хьалха",
+  "newOrganization": "Керла цlе",
+  "editOrganization": "Цlе тlетар",
+  "addOrganization": "Цlе тlеха",
+  "onlyAdminsCanCreateOrganizations": "Текхачанаш цlе тlеха",
+  "navigationMenu": "Навигаци кхоллар",
+  "useFixedTopAppBar": "Топ бар бекхаллар",
+  "disableArrowBasedTopNavigation": "Топ навигаци хlара",
+  "multiModalModels": "Мулти-модал моделаш",
+  "reasoningModels": "Тlетар моделаш",
+  "selectSmallReasoningModel": "Кхеташ тlетар модел",
+  "selectMediumReasoningModel": "Юккъер тlетар модел",
+  "selectLargeReasoningModel": "Долуш тlетар модел"
 }

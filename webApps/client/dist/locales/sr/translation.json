@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "Sakrij traku ako je Welcome HTML",
   "policySynthAgentsWorkflow": "Tok agenata",
   "generateWithAi": "Generiši sa AI",
-  "hidePointFor": "Sakrij tačku protiv okvira"
+  "hidePointFor": "Sakrij tačku protiv okvira",
+  "newOrganization": "Nova organizacija",
+  "editOrganization": "Izmeni organizaciju",
+  "addOrganization": "Kreiraj organizaciju",
+  "onlyAdminsCanCreateOrganizations": "Samo admini mogu kreirati organizacije",
+  "navigationMenu": "Navigacioni meni",
+  "useFixedTopAppBar": "Koristi fiksnu gornju traku",
+  "disableArrowBasedTopNavigation": "Onemogući navigaciju strelicama",
+  "multiModalModels": "Multimodalni modeli",
+  "reasoningModels": "Modeli zaključivanja",
+  "selectSmallReasoningModel": "Mali model zaključivanja",
+  "selectMediumReasoningModel": "Srednji model zaključivanja",
+  "selectLargeReasoningModel": "Veliki model zaključivanja"
 }

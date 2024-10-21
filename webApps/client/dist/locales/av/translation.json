@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Бар къулдахь хъилдахь HTML",
   "policySynthAgentsWorkflow": "Агент иш",
   "generateWithAi": "AI-л хъилдахь",
-  "hidePointFor": "Кутал къулдахь хъилдахь"
+  "hidePointFor": "Кутал къулдахь хъилдахь",
+  "newOrganization": "ЦӀер организация",
+  "editOrganization": "Хьакъ организация",
+  "addOrganization": "Бец организация",
+  "onlyAdminsCanCreateOrganizations": "ТӀолько админы цӀерал организациял",
+  "navigationMenu": "Навигация меню",
+  "useFixedTopAppBar": "Фиксир бар хъизе",
+  "disableArrowBasedTopNavigation": "Стрелка навигация хъизе",
+  "multiModalModels": "Мулти-модал Моделал",
+  "reasoningModels": "Моделал разума",
+  "selectSmallReasoningModel": "КӀван разума модел",
+  "selectMediumReasoningModel": "Орта разума модел",
+  "selectLargeReasoningModel": "Бол разума модел"
 }

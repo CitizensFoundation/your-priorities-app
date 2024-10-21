@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "Ocultar barra si HTML de bienvenida",
   "policySynthAgentsWorkflow": "Flujo de agentes",
   "generateWithAi": "Generar con AI",
-  "hidePointFor": "Ocultar punto contra caja"
+  "hidePointFor": "Ocultar punto contra caja",
+  "newOrganization": "Nueva organización",
+  "editOrganization": "Editar organización",
+  "addOrganization": "Crear organización",
+  "onlyAdminsCanCreateOrganizations": "Solo los administradores pueden crear organizaciones",
+  "navigationMenu": "Menú de navegación",
+  "useFixedTopAppBar": "Usar barra superior fija",
+  "disableArrowBasedTopNavigation": "Desactivar navegación superior con flechas",
+  "multiModalModels": "Modelos multimodales",
+  "reasoningModels": "Modelos de razonamiento",
+  "selectSmallReasoningModel": "Modelo de razonamiento pequeño",
+  "selectMediumReasoningModel": "Modelo de razonamiento mediano",
+  "selectLargeReasoningModel": "Modelo de razonamiento grande"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "स्वागत HTML असल्यास अॅप बार लपवा",
   "policySynthAgentsWorkflow": "एजंट्स कार्यप्रवाह",
   "generateWithAi": "AI सह तयार करा",
-  "hidePointFor": "बॉक्सविरुद्ध बिंदू लपवा"
+  "hidePointFor": "बॉक्सविरुद्ध बिंदू लपवा",
+  "newOrganization": "नवीन संस्था",
+  "editOrganization": "संस्था संपादित करा",
+  "addOrganization": "संस्था तयार करा",
+  "onlyAdminsCanCreateOrganizations": "फक्त प्रशासक संस्था तयार करू शकतात",
+  "navigationMenu": "नेव्हिगेशन मेनू",
+  "useFixedTopAppBar": "स्थिर शीर्ष अॅप बार वापरा",
+  "disableArrowBasedTopNavigation": "बाण आधारित शीर्ष नेव्हिगेशन अक्षम करा",
+  "multiModalModels": "मल्टी-मोडल मॉडेल्स",
+  "reasoningModels": "युक्तिवाद मॉडेल्स",
+  "selectSmallReasoningModel": "लहान युक्तिवाद मॉडेल",
+  "selectMediumReasoningModel": "मध्यम युक्तिवाद मॉडेल",
+  "selectLargeReasoningModel": "मोठे युक्तिवाद मॉडेल"
 }

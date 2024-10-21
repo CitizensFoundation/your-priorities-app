@@ -1,4 +1,4 @@
-import{n as t,t as e,Y as i,x as a,T as o,a as s}from"./nGY7z-EO.js";var d=function(t,e,i,a){for(var o,s=arguments.length,d=s<3?e:null===a?a=Object.getOwnPropertyDescriptor(e,i):a,r=t.length-1;r>=0;r--)(o=t[r])&&(d=(s<3?o(d):s>3?o(e,i,d):o(e,i))||d);return s>3&&d&&Object.defineProperty(e,i,d),d};let r=class extends i{constructor(){super(...arguments),this.new=!1,this.action="/images"}updated(t){super.updated(t),t.has("image")&&this._imageChanged(),t.has("post")&&this._postChanged()}render(){return a`
+import{n as t,t as e,Y as i,x as a,T as o,a as s}from"./CpIJGDr3.js";var d=function(t,e,i,a){for(var o,s=arguments.length,d=s<3?e:null===a?a=Object.getOwnPropertyDescriptor(e,i):a,r=t.length-1;r>=0;r--)(o=t[r])&&(d=(s<3?o(d):s>3?o(e,i,d):o(e,i))||d);return s>3&&d&&Object.defineProperty(e,i,d),d};let r=class extends i{constructor(){super(...arguments),this.new=!1,this.action="/images"}updated(t){super.updated(t),t.has("image")&&this._imageChanged(),t.has("post")&&this._postChanged()}render(){return a`
       <yp-edit-dialog
         doubleWidth
         id="editDialog"

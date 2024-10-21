@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Gøym appfelt om Velkomst-HTML",
   "policySynthAgentsWorkflow": "Agentar arbeidsflyt",
   "generateWithAi": "Generer med AI",
-  "hidePointFor": "Gøym punkt mot boks"
+  "hidePointFor": "Gøym punkt mot boks",
+  "newOrganization": "Ny organisasjon",
+  "editOrganization": "Rediger organisasjon",
+  "addOrganization": "Opprett organisasjon",
+  "onlyAdminsCanCreateOrganizations": "Berre admin kan opprette organisasjonar",
+  "navigationMenu": "Navigasjonsmeny",
+  "useFixedTopAppBar": "Bruk fast toppmeny",
+  "disableArrowBasedTopNavigation": "Deaktiver pilbasert toppnavigasjon",
+  "multiModalModels": "Multimodale Modellar",
+  "reasoningModels": "Resonneringsmodellar",
+  "selectSmallReasoningModel": "Liten resonneringsmodell",
+  "selectMediumReasoningModel": "Middels resonneringsmodell",
+  "selectLargeReasoningModel": "Stor resonneringsmodell"
 }

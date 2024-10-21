@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Bainistíocht Calaoise Fearainn",
   "Access": "Rochtain",
   "openOrganizationMenu": "Oscail roghchlár na heagraíochta",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Gailearaí Reykjavíkur",
   "Override theme": "Sáraigh téama",
   "Analytics & Marketing": "Anailís & Margaíocht",
   "Promote your survey": "Cuir chun cinn do shuirbhé",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Folaigh barra aip má HTML Fáilte",
   "policySynthAgentsWorkflow": "Sreabhadh Oibre Gníomhairí",
   "generateWithAi": "Gineann le AI",
-  "hidePointFor": "Folaigh pointe i gcoinne bosca"
+  "hidePointFor": "Folaigh pointe i gcoinne bosca",
+  "newOrganization": "Eagraíocht nua",
+  "editOrganization": "Eagraíocht a chur in eagar",
+  "addOrganization": "Cruthaigh eagraíocht",
+  "onlyAdminsCanCreateOrganizations": "Ní féidir ach le riarthóirí eagraíochtaí a chruthú",
+  "navigationMenu": "Roghchlár nascleanúna",
+  "useFixedTopAppBar": "Úsáid barra barr seasta",
+  "disableArrowBasedTopNavigation": "Díchumasaigh nascleanúint barr bunaithe ar shaighead",
+  "multiModalModels": "Samhail Ilmhódúil",
+  "reasoningModels": "Samhail Réasúnaíochta",
+  "selectSmallReasoningModel": "Samhail Réasúnaíochta Bheag",
+  "selectMediumReasoningModel": "Samhail Réasúnaíochta Mheánach",
+  "selectLargeReasoningModel": "Samhail Réasúnaíochta Mhór"
 }

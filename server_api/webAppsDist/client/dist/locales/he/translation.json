@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "הסתר סרגל אם HTML ברוך הבא",
   "policySynthAgentsWorkflow": "תהליך סוכנים",
   "generateWithAi": "צור עם AI",
-  "hidePointFor": "הסתר נקודה נגד תיבה"
+  "hidePointFor": "הסתר נקודה נגד תיבה",
+  "newOrganization": "ארגון חדש",
+  "editOrganization": "ערוך ארגון",
+  "addOrganization": "צור ארגון",
+  "onlyAdminsCanCreateOrganizations": "רק מנהלים יכולים ליצור ארגונים",
+  "navigationMenu": "תפריט ניווט",
+  "useFixedTopAppBar": "השתמש בסרגל עליון קבוע",
+  "disableArrowBasedTopNavigation": "השבת ניווט עליון מבוסס חצים",
+  "multiModalModels": "מודלים רב-מודליים",
+  "reasoningModels": "מודלים של הסקה",
+  "selectSmallReasoningModel": "מודל הסקה קטן",
+  "selectMediumReasoningModel": "מודל הסקה בינוני",
+  "selectLargeReasoningModel": "מודל הסקה גדול"
 }

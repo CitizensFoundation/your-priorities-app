@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "സ്വാഗതം HTML ആണെങ്കിൽ ആപ്പ് ബാർ മറയ്ക്കുക",
   "policySynthAgentsWorkflow": "ഏജന്റുമാരുടെ പ്രവാഹം",
   "generateWithAi": "AI ഉപയോഗിച്ച് സൃഷ്ടിക്കുക",
-  "hidePointFor": "ബോക്സിനെതിരെ പോയിന്റ് മറയ്ക്കുക"
+  "hidePointFor": "ബോക്സിനെതിരെ പോയിന്റ് മറയ്ക്കുക",
+  "newOrganization": "പുതിയ സംഘടന",
+  "editOrganization": "സംഘടന തിരുത്തുക",
+  "addOrganization": "സംഘടന സൃഷ്ടിക്കുക",
+  "onlyAdminsCanCreateOrganizations": "അഡ്മിന്മാർക്ക് മാത്രമേ സംഘടനകൾ സൃഷ്ടിക്കാൻ കഴിയൂ",
+  "navigationMenu": "നാവിഗേഷൻ മെനു",
+  "useFixedTopAppBar": "സ്ഥിരമായ മുകളിൽ ആപ്പ് ബാർ ഉപയോഗിക്കുക",
+  "disableArrowBasedTopNavigation": "അമ്പ് അടിസ്ഥാനമാക്കിയുള്ള മുകളിൽ നാവിഗേഷൻ അപ്രാപ്തമാക്കുക",
+  "multiModalModels": "മൾട്ടി-മോഡൽ മോഡലുകൾ",
+  "reasoningModels": "കാരണ മോഡലുകൾ",
+  "selectSmallReasoningModel": "ചെറിയ കാരണ മോഡൽ",
+  "selectMediumReasoningModel": "ഇടത്തരം കാരണ മോഡൽ",
+  "selectLargeReasoningModel": "വലിയ കാരണ മോഡൽ"
 }

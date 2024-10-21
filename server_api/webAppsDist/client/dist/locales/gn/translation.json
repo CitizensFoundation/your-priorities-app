@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Ñomi app bar Welcome HTML",
   "policySynthAgentsWorkflow": "Flujo de agentes",
   "generateWithAi": "Japo AI ndive",
-  "hidePointFor": "Ñomi punto kóntra kája"
+  "hidePointFor": "Ñomi punto kóntra kája",
+  "newOrganization": "Organización pyahu",
+  "editOrganization": "Mboheko organización",
+  "addOrganization": "Mboja organización",
+  "onlyAdminsCanCreateOrganizations": "Admins añoite ikatu ojapo organizaciones",
+  "navigationMenu": "Menú navegación",
+  "useFixedTopAppBar": "Embohasa app bar yvate",
+  "disableArrowBasedTopNavigation": "Emokañy flecha navegación yvate",
+  "multiModalModels": "Modelos multi-modal",
+  "reasoningModels": "Modelos razonamiento",
+  "selectSmallReasoningModel": "Modelo razonamiento michĩ",
+  "selectMediumReasoningModel": "Modelo razonamiento mbyte",
+  "selectLargeReasoningModel": "Modelo razonamiento guasu"
 }

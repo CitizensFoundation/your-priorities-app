@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "如果是歡迎HTML則隱藏應用欄",
   "policySynthAgentsWorkflow": "代理工作流程",
   "generateWithAi": "AI生成",
-  "hidePointFor": "隱藏點對框"
+  "hidePointFor": "隱藏點對框",
+  "newOrganization": "新組織",
+  "editOrganization": "編輯組織",
+  "addOrganization": "創建組織",
+  "onlyAdminsCanCreateOrganizations": "僅管理員可創建組織",
+  "navigationMenu": "導航菜單",
+  "useFixedTopAppBar": "使用固定頂部應用欄",
+  "disableArrowBasedTopNavigation": "禁用箭頭導航",
+  "multiModalModels": "多模態模型",
+  "reasoningModels": "推理模型",
+  "selectSmallReasoningModel": "小型推理模型",
+  "selectMediumReasoningModel": "中型推理模型",
+  "selectLargeReasoningModel": "大型推理模型"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Amagar barra d'aplicacion se Benvenguda HTML",
   "policySynthAgentsWorkflow": "Flux de trabalh dels agents",
   "generateWithAi": "Generar amb AI",
-  "hidePointFor": "Amagar punt contra bóstia"
+  "hidePointFor": "Amagar punt contra bóstia",
+  "newOrganization": "Novèla organizacion",
+  "editOrganization": "Editar organizacion",
+  "addOrganization": "Crear organizacion",
+  "onlyAdminsCanCreateOrganizations": "Solament los administrators pòdon crear d'organizacions",
+  "navigationMenu": "Menú de navigacion",
+  "useFixedTopAppBar": "Utilizar barra superior fixa",
+  "disableArrowBasedTopNavigation": "Desactivar navigacion superior amb fletchas",
+  "multiModalModels": "Modèls multi-modals",
+  "reasoningModels": "Modèls de rasonament",
+  "selectSmallReasoningModel": "Pichon modèl de rasonament",
+  "selectMediumReasoningModel": "Mejan modèl de rasonament",
+  "selectLargeReasoningModel": "Grand modèl de rasonament"
 }

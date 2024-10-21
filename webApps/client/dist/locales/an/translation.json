@@ -1441,7 +1441,7 @@
   "itSupport": "Suport IT",
   "legalAssistance": "Asisten legal",
   "marketResearch": "Investigación de mercado",
-  "marketing": "Marketing",
+  "marketing": "Mercadotecnia",
   "meetingFacilitation": "Facilitación de reuniones",
   "personalAssistant": "Asistente personal",
   "presentationCreation": "Creación de presentaciones",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Amagar barra d'aplicación si Bienvenida HTML",
   "policySynthAgentsWorkflow": "Flujo de treballo d'agentes",
   "generateWithAi": "Generar con AI",
-  "hidePointFor": "Amagar punto contra caxa"
+  "hidePointFor": "Amagar punto contra caxa",
+  "newOrganization": "Nueva organización",
+  "editOrganization": "Editar organización",
+  "addOrganization": "Crear organización",
+  "onlyAdminsCanCreateOrganizations": "Nomás os admins pueden crear organizaciones",
+  "navigationMenu": "Menú de navegación",
+  "useFixedTopAppBar": "Usar barra d'aplicación fixa",
+  "disableArrowBasedTopNavigation": "Desactivar navegación superior con flechas",
+  "multiModalModels": "Models multi-modals",
+  "reasoningModels": "Models de razonamiento",
+  "selectSmallReasoningModel": "Model de razonamiento chicot",
+  "selectMediumReasoningModel": "Model de razonamiento median",
+  "selectLargeReasoningModel": "Model de razonamiento gran"
 }

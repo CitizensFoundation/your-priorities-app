@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "شاردنەوەی بارنامەکە ئەگەر HTML بەخێربایی",
   "policySynthAgentsWorkflow": "جێبەجێکردنی کارگێڕەکان",
   "generateWithAi": "دروستکردن بە AI",
-  "hidePointFor": "شاردنەوەی خاڵ لە دژایەتی بۆکس"
+  "hidePointFor": "شاردنەوەی خاڵ لە دژایەتی بۆکس",
+  "newOrganization": "ڕێکخراوی نوێ",
+  "editOrganization": "دەستکاری ڕێکخراو",
+  "addOrganization": "دروستکردنی ڕێکخراو",
+  "onlyAdminsCanCreateOrganizations": "تەنها بەڕێوەبەرەکان دەتوانن ڕێکخراو دروست بکەن",
+  "navigationMenu": "مێنیوی ڕێنیشاندن",
+  "useFixedTopAppBar": "بەکارهێنانی ستی بەرز",
+  "disableArrowBasedTopNavigation": "ناچالاککردنی ڕێنیشانی سەرەوە",
+  "multiModalModels": "مۆدێلی چەند ڕوونکردنەوە",
+  "reasoningModels": "مۆدێلی هەڵسەنگاندن",
+  "selectSmallReasoningModel": "مۆدێلی هەڵسەنگاندنی بچووک",
+  "selectMediumReasoningModel": "مۆدێلی هەڵسەنگاندنی ناوەند",
+  "selectLargeReasoningModel": "مۆدێلی هەڵسەنگاندنی گەورە"
 }

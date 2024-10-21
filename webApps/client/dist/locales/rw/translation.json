@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Hisha akabari ka app niba HTML y'Ikaze",
   "policySynthAgentsWorkflow": "Akazi k'Abakozi",
   "generateWithAi": "Kora na AI",
-  "hidePointFor": "Hisha ingingo ku gasanduku"
+  "hidePointFor": "Hisha ingingo ku gasanduku",
+  "newOrganization": "Umuryango mushya",
+  "editOrganization": "Hindura umuryango",
+  "addOrganization": "Tegura umuryango",
+  "onlyAdminsCanCreateOrganizations": "Abayobozi gusa nibo bashobora gukora imiryango",
+  "navigationMenu": "Menu y'ubuyobozi",
+  "useFixedTopAppBar": "Koresha akabaho k'ibanze",
+  "disableArrowBasedTopNavigation": "Habuza kugendera ku mishusho",
+  "multiModalModels": "Icyitegererezo cy'imikorere myinshi",
+  "reasoningModels": "Icyitegererezo cy'ubwenge",
+  "selectSmallReasoningModel": "Icyitegererezo gito cy'ubwenge",
+  "selectMediumReasoningModel": "Icyitegererezo cy'ubwenge buringaniye",
+  "selectLargeReasoningModel": "Icyitegererezo kinini cy'ubwenge"
 }

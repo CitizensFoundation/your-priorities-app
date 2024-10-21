@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Fshih shiritin e aplikacionit nëse është HTML i mirëseardhjes",
   "policySynthAgentsWorkflow": "Rrjedha e punës së agjentëve",
   "generateWithAi": "Gjenero me AI",
-  "hidePointFor": "Fshih pikën kundër kutisë"
+  "hidePointFor": "Fshih pikën kundër kutisë",
+  "newOrganization": "Organizatë e re",
+  "editOrganization": "Redakto organizatën",
+  "addOrganization": "Krijo organizatë",
+  "onlyAdminsCanCreateOrganizations": "Vetëm adminët mund të krijojnë organizata",
+  "navigationMenu": "Menyja e navigimit",
+  "useFixedTopAppBar": "Përdor shiritin e sipërm fiks",
+  "disableArrowBasedTopNavigation": "Çaktivizo navigimin me shigjeta",
+  "multiModalModels": "Modele multi-modale",
+  "reasoningModels": "Modele arsyetimi",
+  "selectSmallReasoningModel": "Model i vogël arsyetimi",
+  "selectMediumReasoningModel": "Model i mesëm arsyetimi",
+  "selectLargeReasoningModel": "Model i madh arsyetimi"
 }

@@ -1400,7 +1400,7 @@
   "forgotPassword": "U ninga elaka?",
   "useLoginOnDomainIfNotLoggedIn": "Shanga elaka pa domain kape nawa",
   "confirmLoadAndOverrideMemory": "O nawa oku vule oku ninga iikulya osho?",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "Oshikandjo shokulongithwa",
   "upvote": "Tumbula",
   "orDownvote": "o hwepo",
   "pointsByPressingTheArrows": "iipointa na iikona",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fitha app bar ka Welcome HTML",
   "policySynthAgentsWorkflow": "Onghaluka yompokati",
   "generateWithAi": "Tunga na AI",
-  "hidePointFor": "Fanda okapeke komba"
+  "hidePointFor": "Fanda okapeke komba",
+  "newOrganization": "Oshikandjo shisha",
+  "editOrganization": "Shiitapo oshikandjo",
+  "addOrganization": "Shikoko oshikandjo",
+  "onlyAdminsCanCreateOrganizations": "Aayehe aalanditho ye naashoka ooshikandjo",
+  "navigationMenu": "Omenu yoonkalo",
+  "useFixedTopAppBar": "Shanga omushanga kutya app bar",
+  "disableArrowBasedTopNavigation": "Thiminikile okuholola omushanga",
+  "multiModalModels": "Oshikandjo shomumwe",
+  "reasoningModels": "Oshikandjo shokulongithwa",
+  "selectSmallReasoningModel": "Oshikandjo shokulongithwa shihupi",
+  "selectMediumReasoningModel": "Oshikandjo shokulongithwa shihwapo",
+  "selectLargeReasoningModel": "Oshikandjo shokulongithwa shihulile"
 }

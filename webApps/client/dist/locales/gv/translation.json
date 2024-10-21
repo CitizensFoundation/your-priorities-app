@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Follaght bar app my ta Failt HTML",
   "policySynthAgentsWorkflow": "Co-obbraghey Ferroikyn",
   "generateWithAi": "Giney lesh AI",
-  "hidePointFor": "Follaghey point noi box"
+  "hidePointFor": "Follaghey point noi box",
+  "newOrganization": "Arraghey ard-ghientyn",
+  "editOrganization": "Reaghey ard-ghientyn",
+  "addOrganization": "Croo ard-ghientyn",
+  "onlyAdminsCanCreateOrganizations": "Ny lomarcan reireyderyn oddys croo ard-ghientyn",
+  "navigationMenu": "Clane stiuree",
+  "useFixedTopAppBar": "Ymmyd bar app heose",
+  "disableArrowBasedTopNavigation": "Foayshey stiurey heose",
+  "multiModalModels": "Modilyn ymmodee-ynnydagh",
+  "reasoningModels": "Modilyn smooinaghtyn",
+  "selectSmallReasoningModel": "Modil smooinaghtyn beg",
+  "selectMediumReasoningModel": "Modil smooinaghtyn meanagh",
+  "selectLargeReasoningModel": "Modil smooinaghtyn mooar"
 }

@@ -1400,7 +1400,7 @@
   "forgotPassword": "Wacire nywamu?",
   "useLoginOnDomainIfNotLoggedIn": "Tumia screen ya login",
   "confirmLoadAndOverrideMemory": "Wi na uhoro wenda kuheana memory na kuheana ya riria?",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "Mũtĩrĩrĩ wa Kũhũthĩra wa Agent",
   "upvote": "Thamaka",
   "orDownvote": "kana thamaka",
   "pointsByPressingTheArrows": "pointi na kuheana mishale",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Hīthīra app bar kana Welcome HTML",
   "policySynthAgentsWorkflow": "Mūcekereria wa Mīthuri",
   "generateWithAi": "Thondeka na AI",
-  "hidePointFor": "Hitha pointi"
+  "hidePointFor": "Hitha pointi",
+  "newOrganization": "Thondeka kĩrĩganĩro gĩkĩa",
+  "editOrganization": "Rũthondeka kĩrĩganĩro",
+  "addOrganization": "Thondeka kĩrĩganĩro",
+  "onlyAdminsCanCreateOrganizations": "Aminĩ tu nĩo mathondeka kĩrĩganĩro",
+  "navigationMenu": "Menyu ya ũthũũrũ",
+  "useFixedTopAppBar": "Tũmĩa barĩ ya app ya mũtwe",
+  "disableArrowBasedTopNavigation": "Thĩnĩkĩra ũthũũrũ wa mũtwe wa arrow",
+  "multiModalModels": "Mĩtĩrĩrĩ ya Mũtĩrĩrĩrĩ",
+  "reasoningModels": "Mĩtĩrĩrĩ ya Kũhũthĩra",
+  "selectSmallReasoningModel": "Mũtĩrĩrĩ mũnene wa Kũhũthĩra",
+  "selectMediumReasoningModel": "Mũtĩrĩrĩ wa Gatagatĩ wa Kũhũthĩra",
+  "selectLargeReasoningModel": "Mũtĩrĩrĩ mũnene wa Kũhũthĩra"
 }

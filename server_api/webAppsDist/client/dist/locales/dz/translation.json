@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "བདེ་སྐྱིད HTML ཡིག་ཆ་ཡོལ་ནི་སྒེར་སྒོ་སྦས",
   "policySynthAgentsWorkflow": "སྤྱོད་མཁན་ལས་འགུལ",
   "generateWithAi": "AI དང་བཟོ་བཅོས",
-  "hidePointFor": "གོང་འགྲེལ་སྒེར་སྒོ་སྦས"
+  "hidePointFor": "གོང་འགྲེལ་སྒེར་སྒོ་སྦས",
+  "newOrganization": "དུས་གསར་ཚོགས་པ།",
+  "editOrganization": "ཚོགས་པ་ཞུན་དག",
+  "addOrganization": "ཚོགས་པ་བཟོ་བ།",
+  "onlyAdminsCanCreateOrganizations": "དྲུང་དངུལ་ལས་ཚོགས་པ་བཟོ་བ་ཆོག",
+  "navigationMenu": "འགྲུལ་ལམ་ཐོ་བཀོད",
+  "useFixedTopAppBar": "གཙོ་སྒོ་སྒོ་བཀག",
+  "disableArrowBasedTopNavigation": "མགྱོགས་རྒྱུག་སྒོ་བཀག",
+  "multiModalModels": "མང་ཚོགས་སྒྲིག་སྟངས།",
+  "reasoningModels": "རིགས་སྒྲིག་སྟངས།",
+  "selectSmallReasoningModel": "ཆུང་རིགས་སྒྲིག",
+  "selectMediumReasoningModel": "བར་རིགས་སྒྲིག",
+  "selectLargeReasoningModel": "ཆེན་རིགས་སྒྲིག"
 }

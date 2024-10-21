@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Slēpt lietotnes joslu, ja Welcome HTML",
   "policySynthAgentsWorkflow": "Aģentu darbplūsma",
   "generateWithAi": "Ģenerēt ar AI",
-  "hidePointFor": "Slēpt punktu pret lodziņu"
+  "hidePointFor": "Slēpt punktu pret lodziņu",
+  "newOrganization": "Jauna organizācija",
+  "editOrganization": "Rediģēt organizāciju",
+  "addOrganization": "Izveidot organizāciju",
+  "onlyAdminsCanCreateOrganizations": "Tikai administratori var izveidot organizācijas",
+  "navigationMenu": "Navigācijas izvēlne",
+  "useFixedTopAppBar": "Fiksēta augšējā josla",
+  "disableArrowBasedTopNavigation": "Atspējot bultiņu navigāciju",
+  "multiModalModels": "Vairāku modalitāšu modeļi",
+  "reasoningModels": "Loģikas modeļi",
+  "selectSmallReasoningModel": "Mazs loģikas modelis",
+  "selectMediumReasoningModel": "Vidējs loģikas modelis",
+  "selectLargeReasoningModel": "Liels loģikas modelis"
 }

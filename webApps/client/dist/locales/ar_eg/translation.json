@@ -1494,5 +1494,17 @@
   "hideAppBarIfWelcomeHtml": "إخفاء شريط التطبيق إذا كان HTML الترحيب",
   "policySynthAgentsWorkflow": "سير عمل الوكلاء",
   "generateWithAi": "توليد باستخدام AI",
-  "hidePointFor": "إخفاء النقطة ضد الصندوق"
+  "hidePointFor": "إخفاء النقطة ضد الصندوق",
+  "newOrganization": "منظمة جديدة",
+  "editOrganization": "تعديل المنظمة",
+  "addOrganization": "إنشاء منظمة",
+  "onlyAdminsCanCreateOrganizations": "فقط المسؤولون يمكنهم إنشاء المنظمات",
+  "navigationMenu": "قائمة التنقل",
+  "useFixedTopAppBar": "استخدام شريط علوي ثابت",
+  "disableArrowBasedTopNavigation": "تعطيل التنقل العلوي بالأسهم",
+  "multiModalModels": "نماذج متعددة الوسائط",
+  "reasoningModels": "نماذج التفكير",
+  "selectSmallReasoningModel": "نموذج تفكير صغير",
+  "selectMediumReasoningModel": "نموذج تفكير متوسط",
+  "selectLargeReasoningModel": "نموذج تفكير كبير"
 }

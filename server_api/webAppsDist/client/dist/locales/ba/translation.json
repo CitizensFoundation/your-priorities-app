@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Әгәр Welcome HTML булһа, ҡушымта панелен йәшерергә",
   "policySynthAgentsWorkflow": "Агенттар эш ағымы",
   "generateWithAi": "AI менән булдырырға",
-  "hidePointFor": "Ҡаршы йәшниккә нөктәне йәшерергә"
+  "hidePointFor": "Ҡаршы йәшниккә нөктәне йәшерергә",
+  "newOrganization": "Яңы ойошма",
+  "editOrganization": "Ойошманы үҙгәртергә",
+  "addOrganization": "Ойошма булдырырға",
+  "onlyAdminsCanCreateOrganizations": "Ойошмаларҙы тик админдар ғына булдыра ала",
+  "navigationMenu": "Навигация менюһы",
+  "useFixedTopAppBar": "Тотороҡло өҫкө ҡушымта таҡтаһын ҡулланырға",
+  "disableArrowBasedTopNavigation": "Өҫкө навигацияны уҡ менән һүндерергә",
+  "multiModalModels": "Күп модаль моделдәр",
+  "reasoningModels": "Фекерләү моделдәре",
+  "selectSmallReasoningModel": "Бәләкәй фекерләү моделе",
+  "selectMediumReasoningModel": "Уртаса фекерләү моделе",
+  "selectLargeReasoningModel": "Ҙур фекерләү моделе"
 }

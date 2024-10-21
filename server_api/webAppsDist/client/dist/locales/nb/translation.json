@@ -1409,7 +1409,7 @@
   "pairwiseVoting": "Parvis avstemning",
   "useLowestContainerSurface": "Bruk laveste beholderflate",
   "hideGroupType": "Skjul gruppetype",
-  "smarterCrowdsourcing": "Smarter Crowdsourcing",
+  "smarterCrowdsourcing": "Smartere folkefinansiering",
   "problems": "Problemer",
   "solutions": "Løsninger",
   "policies": "Retningslinjer",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Skjul appfelt hvis Velkomst-HTML",
   "policySynthAgentsWorkflow": "Agenters arbeidsflyt",
   "generateWithAi": "Generer med AI",
-  "hidePointFor": "Skjul poeng mot boks"
+  "hidePointFor": "Skjul poeng mot boks",
+  "newOrganization": "Ny organisasjon",
+  "editOrganization": "Rediger organisasjon",
+  "addOrganization": "Opprett organisasjon",
+  "onlyAdminsCanCreateOrganizations": "Kun administratorer kan opprette organisasjoner",
+  "navigationMenu": "Navigasjonsmeny",
+  "useFixedTopAppBar": "Bruk fast toppmeny",
+  "disableArrowBasedTopNavigation": "Deaktiver pilbasert toppnavigasjon",
+  "multiModalModels": "Multimodale modeller",
+  "reasoningModels": "Resonneringsmodeller",
+  "selectSmallReasoningModel": "Liten resonneringsmodell",
+  "selectMediumReasoningModel": "Middels resonneringsmodell",
+  "selectLargeReasoningModel": "Stor resonneringsmodell"
 }

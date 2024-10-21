@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Rianachd Meirle Domain",
   "Access": "Ruigsinneachd",
   "openOrganizationMenu": "Fosgail clàr na buidhne",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Gailearaidh Reykjavíkur",
   "Override theme": "Cuir thairis cuspair",
   "Analytics & Marketing": "Mion-sgrùdadh & Margaidheachd",
   "Promote your survey": "Adhartachadh do chunntas-bheachd",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Falaich bàr app ma tha Fàilte HTML",
   "policySynthAgentsWorkflow": "Sruth-obrach Riochdairean",
   "generateWithAi": "Cruthaich le AI",
-  "hidePointFor": "Falaich puing an aghaidh bogsa"
+  "hidePointFor": "Falaich puing an aghaidh bogsa",
+  "newOrganization": "Buidheann ùr",
+  "editOrganization": "Deasaich buidheann",
+  "addOrganization": "Cruthaich buidheann",
+  "onlyAdminsCanCreateOrganizations": "Chan urrainn ach rianairean buidhnean a chruthachadh",
+  "navigationMenu": "Clàr seòlaidh",
+  "useFixedTopAppBar": "Cleachd bàr app àrd stèidhichte",
+  "disableArrowBasedTopNavigation": "Cuir à comas seòladh àrd stèidhichte air saighead",
+  "multiModalModels": "Modalan ioma-mhodh",
+  "reasoningModels": "Modalan reusanachaidh",
+  "selectSmallReasoningModel": "Modail reusanachaidh beag",
+  "selectMediumReasoningModel": "Modail reusanachaidh meadhanach",
+  "selectLargeReasoningModel": "Modail reusanachaidh mòr"
 }

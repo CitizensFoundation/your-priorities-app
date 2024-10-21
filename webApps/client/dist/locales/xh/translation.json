@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fihla ibha yesicelo ukuba i-Welcome HTML",
   "policySynthAgentsWorkflow": "Umsebenzi wamagosa",
   "generateWithAi": "Yenza nge-AI",
-  "hidePointFor": "Fihla inqaku ngokuchasene nebhokisi"
+  "hidePointFor": "Fihla inqaku ngokuchasene nebhokisi",
+  "newOrganization": "Umbutho omtsha",
+  "editOrganization": "Hlela umbutho",
+  "addOrganization": "Yenza umbutho",
+  "onlyAdminsCanCreateOrganizations": "Zonke ii-admins kuphela ezinokwenza imibutho",
+  "navigationMenu": "Imenyu yokuhamba",
+  "useFixedTopAppBar": "Sebenzisa ibha ephezulu esisigxina",
+  "disableArrowBasedTopNavigation": "Khubaza ukuhamba okuphezulu okusekwe kutolo",
+  "multiModalModels": "Iimodeli ezininzi",
+  "reasoningModels": "Iimodeli zokucinga",
+  "selectSmallReasoningModel": "Imodeli encinci yokucinga",
+  "selectMediumReasoningModel": "Imodeli ephakathi yokucinga",
+  "selectLargeReasoningModel": "Imodeli enkulu yokucinga"
 }

@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "App-Leiste ausblenden, wenn Willkommen-HTML",
   "policySynthAgentsWorkflow": "Agenten-Workflow",
   "generateWithAi": "Mit KI erzeugen",
-  "hidePointFor": "Punkt gegen Kasten verbergen"
+  "hidePointFor": "Punkt gegen Kasten verbergen",
+  "newOrganization": "Neue Organisation",
+  "editOrganization": "Organisation bearbeiten",
+  "addOrganization": "Organisation erstellen",
+  "onlyAdminsCanCreateOrganizations": "Nur Admins können Organisationen erstellen",
+  "navigationMenu": "Navigationsmenü",
+  "useFixedTopAppBar": "Feste obere App-Leiste verwenden",
+  "disableArrowBasedTopNavigation": "Pfeilbasierte obere Navigation deaktivieren",
+  "multiModalModels": "Multimodale Modelle",
+  "reasoningModels": "Denkmodelle",
+  "selectSmallReasoningModel": "Kleines Denkmodell",
+  "selectMediumReasoningModel": "Mittleres Denkmodell",
+  "selectLargeReasoningModel": "Großes Denkmodell"
 }

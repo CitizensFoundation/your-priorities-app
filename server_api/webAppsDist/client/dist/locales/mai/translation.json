@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "डोमेन धोखाधड़ी प्रबंधन",
   "Access": "पहुँच",
   "openOrganizationMenu": "संगठन मेनू खोलू",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "रेयक्जाविकर सूची संग्रह",
   "Override theme": "थीम ओवरराइड",
   "Analytics & Marketing": "विश्लेषण एवं विपणन",
   "Promote your survey": "अपन सर्वेक्षण प्रोमोट करू",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "जँ स्वागत HTML हो त ऐप बार छुपाऊ",
   "policySynthAgentsWorkflow": "एजेंट्स कार्यप्रवाह",
   "generateWithAi": "AI सँ उत्पन्न करू",
-  "hidePointFor": "बॉक्स विरुद्ध बिंदु छुपाऊ"
+  "hidePointFor": "बॉक्स विरुद्ध बिंदु छुपाऊ",
+  "newOrganization": "नव संस्था",
+  "editOrganization": "संस्था संपादित करू",
+  "addOrganization": "संस्था बनाउ",
+  "onlyAdminsCanCreateOrganizations": "केवल प्रशासक संस्था बना सकैत अछि",
+  "navigationMenu": "नेविगेशन मेनू",
+  "useFixedTopAppBar": "स्थिर शीर्ष ऐप बार उपयोग करू",
+  "disableArrowBasedTopNavigation": "तीर आधारित शीर्ष नेविगेशन अक्षम करू",
+  "multiModalModels": "बहु-मोडल मॉडल",
+  "reasoningModels": "तर्क मॉडल",
+  "selectSmallReasoningModel": "छोट तर्क मॉडल",
+  "selectMediumReasoningModel": "मध्यम तर्क मॉडल",
+  "selectLargeReasoningModel": "बड़का तर्क मॉडल"
 }

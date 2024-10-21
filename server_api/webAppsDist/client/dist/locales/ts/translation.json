@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fihla bar ya app loko ku ri na HTML ya Xewani",
   "policySynthAgentsWorkflow": "Ntirho wa Vachumamisi",
   "generateWithAi": "Endla hi AI",
-  "hidePointFor": "Fihla pfumala"
+  "hidePointFor": "Fihla pfumala",
+  "newOrganization": "Nhlangano lowuntshwa",
+  "editOrganization": "Hlela nhlangano",
+  "addOrganization": "Vumba nhlangano",
+  "onlyAdminsCanCreateOrganizations": "Vafambisi ntsena va nga vumba nhlangano",
+  "navigationMenu": "Menu ya ku navigejitha",
+  "useFixedTopAppBar": "Sebelisa bar ya app ya le henhla leyi nga cinciwiki",
+  "disableArrowBasedTopNavigation": "Tima navigejitha ya le henhla leyi sekeriweke hi miseve",
+  "multiModalModels": "Swikombiso swa Multi-modal",
+  "reasoningModels": "Swikombiso swa ku anakanya",
+  "selectSmallReasoningModel": "Xikombiso lexitsongo xa ku anakanya",
+  "selectMediumReasoningModel": "Xikombiso lexikulu xa ku anakanya",
+  "selectLargeReasoningModel": "Xikombiso lexikulu swinene xa ku anakanya"
 }

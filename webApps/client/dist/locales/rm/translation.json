@@ -1400,7 +1400,7 @@
   "forgotPassword": "Emblidà pled-clav?",
   "useLoginOnDomainIfNotLoggedIn": "Dovra scherm da login sin domeni sch'i betg es envidà",
   "confirmLoadAndOverrideMemory": "Es ti segir che ti vuls chargiar questa memoria e surscriver la memoria actuala?",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "Exploratur da memoria d'agents",
   "upvote": "Votaziun positiva",
   "orDownvote": "ni votaziun negativa",
   "pointsByPressingTheArrows": "puncts cun smatgar las frizzas",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Zuppentar la bara d'app sch'i dat HTML da bainvegni",
   "policySynthAgentsWorkflow": "Flux da lavur d'agents",
   "generateWithAi": "Generar cun AI",
-  "hidePointFor": "Zuppentar punct cunter box"
+  "hidePointFor": "Zuppentar punct cunter box",
+  "newOrganization": "Nova organisaziun",
+  "editOrganization": "Modifitgar organisaziun",
+  "addOrganization": "Crear organisaziun",
+  "onlyAdminsCanCreateOrganizations": "Be admins pon crear organisaziuns",
+  "navigationMenu": "Menu da navigaziun",
+  "useFixedTopAppBar": "Utilisar bar d'app fixada",
+  "disableArrowBasedTopNavigation": "Deactivar navigaziun cun frizza",
+  "multiModalModels": "Models multi-modals",
+  "reasoningModels": "Models da raschunament",
+  "selectSmallReasoningModel": "Model pitschen da raschunament",
+  "selectMediumReasoningModel": "Model mesaun da raschunament",
+  "selectLargeReasoningModel": "Model grond da raschunament"
 }

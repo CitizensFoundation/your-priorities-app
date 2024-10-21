@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Skrýt lištu aplikace, pokud je HTML uvítání",
   "policySynthAgentsWorkflow": "Pracovní postup agentů",
   "generateWithAi": "Generovat s AI",
-  "hidePointFor": "Skrýt bod proti boxu"
+  "hidePointFor": "Skrýt bod proti boxu",
+  "newOrganization": "Nová organizace",
+  "editOrganization": "Upravit organizaci",
+  "addOrganization": "Vytvořit organizaci",
+  "onlyAdminsCanCreateOrganizations": "Pouze administrátoři mohou vytvářet organizace",
+  "navigationMenu": "Navigační menu",
+  "useFixedTopAppBar": "Použít pevný horní panel",
+  "disableArrowBasedTopNavigation": "Zakázat šipkovou navigaci",
+  "multiModalModels": "Multimodální modely",
+  "reasoningModels": "Modely uvažování",
+  "selectSmallReasoningModel": "Malý model uvažování",
+  "selectMediumReasoningModel": "Střední model uvažování",
+  "selectLargeReasoningModel": "Velký model uvažování"
 }

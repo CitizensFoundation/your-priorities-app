@@ -102,6 +102,7 @@ export declare class YpApp extends YpBaseElement {
     haveLoadedAdminApp: boolean;
     haveLoadedPromotionApp: boolean;
     constructor();
+    setupAppGlobals(): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _handleScroll(): void;

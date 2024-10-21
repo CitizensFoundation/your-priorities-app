@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Доменлă Хулăшăвлăх",
   "Access": "Кир",
   "openOrganizationMenu": "Организаци пăлăртакăн кăтарт",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Рейкьявиксем Листасафн",
   "Override theme": "Темине улăштар",
   "Analytics & Marketing": "Аналитика & Маркетинг",
   "Promote your survey": "Сарлавăнне пиарла",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "App панельне кĕмĕ Welcome HTML",
   "policySynthAgentsWorkflow": "Агентсем Workflow",
   "generateWithAi": "AI пурнăштар",
-  "hidePointFor": "Кутăлăмăшăн кĕмĕ"
+  "hidePointFor": "Кутăлăмăшăн кĕмĕ",
+  "newOrganization": "Çĕнĕ пĕрлĕк",
+  "editOrganization": "Пĕрлĕк тăрăл",
+  "addOrganization": "Пĕрлĕк ятă",
+  "onlyAdminsCanCreateOrganizations": "Пĕрлĕксем ятать админсем пĕлĕ",
+  "navigationMenu": "Навигация меню",
+  "useFixedTopAppBar": "Тĕпĕр апп барă тăвăр",
+  "disableArrowBasedTopNavigation": "Стрелка навигация çăкăр",
+  "multiModalModels": "Кулаç моделсем",
+  "reasoningModels": "Анализ моделсем",
+  "selectSmallReasoningModel": "Кĕçĕ анализ модель",
+  "selectMediumReasoningModel": "Ортанча анализ модель",
+  "selectLargeReasoningModel": "Вăл анализ модель"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ಸ್ವಾಗತ HTML ಇದ್ದರೆ ಆಪ್ ಬಾರ್ ಮರೆಮಾಡಿ",
   "policySynthAgentsWorkflow": "ಏಜೆಂಟ್‌ಗಳ ಕಾರ್ಯಪ್ರವಾಹ",
   "generateWithAi": "AI ಮೂಲಕ ರಚಿಸಿ",
-  "hidePointFor": "ಬಾಕ್ಸ್ ವಿರುದ್ಧ ಬಿಂದು ಮರೆಮಾಡಿ"
+  "hidePointFor": "ಬಾಕ್ಸ್ ವಿರುದ್ಧ ಬಿಂದು ಮರೆಮಾಡಿ",
+  "newOrganization": "ಹೊಸ ಸಂಸ್ಥೆ",
+  "editOrganization": "ಸಂಸ್ಥೆಯನ್ನು ಸಂಪಾದಿಸಿ",
+  "addOrganization": "ಸಂಸ್ಥೆಯನ್ನು ರಚಿಸಿ",
+  "onlyAdminsCanCreateOrganizations": "ಸಂಸ್ಥೆಗಳನ್ನು ರಚಿಸಲು ನಿರ್ವಾಹಕರು ಮಾತ್ರ",
+  "navigationMenu": "ನಾವಿಗೇಶನ್ ಮೆನು",
+  "useFixedTopAppBar": "ಸ್ಥಿರ ಮೇಲ್ಭಾಗದ ಆಪ್ ಬಾರ್ ಬಳಸಿ",
+  "disableArrowBasedTopNavigation": "ಬಾಣ ಆಧಾರಿತ ಮೇಲ್ಭಾಗದ ನಾವಿಗೇಶನ್ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ",
+  "multiModalModels": "ಬಹು-ಮೋಡಲ್ ಮಾದರಿಗಳು",
+  "reasoningModels": "ತರ್ಕ ಮಾದರಿಗಳು",
+  "selectSmallReasoningModel": "ಸಣ್ಣ ತರ್ಕ ಮಾದರಿ",
+  "selectMediumReasoningModel": "ಮಧ್ಯಮ ತರ್ಕ ಮಾದರಿ",
+  "selectLargeReasoningModel": "ದೊಡ್ಡ ತರ್ಕ ಮಾದರಿ"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Natia pa app kapau 'oku Welcome HTML",
   "policySynthAgentsWorkflow": "Ngaue Mataotao",
   "generateWithAi": "Fakatupu 'aki AI",
-  "hidePointFor": "Fufuu fakafepaki ki he puha"
+  "hidePointFor": "Fufuu fakafepaki ki he puha",
+  "newOrganization": "Fokotu'u kulupu fo'ou",
+  "editOrganization": "Fakatonutonu kulupu",
+  "addOrganization": "Fai ha kulupu",
+  "onlyAdminsCanCreateOrganizations": "Ko e kau pule pe 'e lava 'o fai ha kulupu",
+  "navigationMenu": "Ngaahi menu faka'ata",
+  "useFixedTopAppBar": "Ngaue'aki pa fa'o 'i 'olunga",
+  "disableArrowBasedTopNavigation": "Ta'ofi ngaue'aki heleti 'i 'olunga",
+  "multiModalModels": "Ngaahi Fakamālohi Tokoni",
+  "reasoningModels": "Ngaahi Fakamālohi Fakakaukau",
+  "selectSmallReasoningModel": "Fakamālohi Fakakaukau Si'i",
+  "selectMediumReasoningModel": "Fakamālohi Fakakaukau Lotoloto",
+  "selectLargeReasoningModel": "Fakamālohi Fakakaukau Lahi"
 }

@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "App sáv elrejtése, ha Üdvözlő HTML",
   "policySynthAgentsWorkflow": "Ügynökök munkafolyamata",
   "generateWithAi": "Generálás AI-val",
-  "hidePointFor": "Pont elrejtése a doboz ellen"
+  "hidePointFor": "Pont elrejtése a doboz ellen",
+  "newOrganization": "Új szervezet",
+  "editOrganization": "Szervezet szerkesztése",
+  "addOrganization": "Szervezet létrehozása",
+  "onlyAdminsCanCreateOrganizations": "Csak adminok hozhatnak létre szervezeteket",
+  "navigationMenu": "Navigációs menü",
+  "useFixedTopAppBar": "Rögzített felső sáv használata",
+  "disableArrowBasedTopNavigation": "Nyíl alapú navigáció letiltása",
+  "multiModalModels": "Multi-modális modellek",
+  "reasoningModels": "Következtetési modellek",
+  "selectSmallReasoningModel": "Kis következtetési modell",
+  "selectMediumReasoningModel": "Közepes következtetési modell",
+  "selectLargeReasoningModel": "Nagy következtetési modell"
 }

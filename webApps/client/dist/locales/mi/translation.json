@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Huna pae taupānga mēnā HTML Nau Mai",
   "policySynthAgentsWorkflow": "Mahi āpiha",
   "generateWithAi": "Hangaia ki AI",
-  "hidePointFor": "Huna ira ki te pouaka"
+  "hidePointFor": "Huna ira ki te pouaka",
+  "newOrganization": "Whakahaere hou",
+  "editOrganization": "Whakatika whakahaere",
+  "addOrganization": "Waihanga whakahaere",
+  "onlyAdminsCanCreateOrganizations": "Mā ngā kaiwhakahaere anake e waihanga whakahaere",
+  "navigationMenu": "Rārangi whakatere",
+  "useFixedTopAppBar": "Whakamahia te pae taupānga runga pūmau",
+  "disableArrowBasedTopNavigation": "Monokia te whakatere runga pere",
+  "multiModalModels": "Tauira Maha-arotau",
+  "reasoningModels": "Tauira Whakaaro",
+  "selectSmallReasoningModel": "Tauira Whakaaro Iti",
+  "selectMediumReasoningModel": "Tauira Whakaaro Waenga",
+  "selectLargeReasoningModel": "Tauira Whakaaro Nui"
 }

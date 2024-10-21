@@ -1447,7 +1447,7 @@
   "itSupport": "IT podpora",
   "legalAssistance": "Pravna pomoč",
   "marketResearch": "Tržne raziskave",
-  "marketing": "Marketing",
+  "marketing": "Trženje",
   "meetingFacilitation": "Vodenje sestankov",
   "personalAssistant": "Osebni asistent",
   "presentationCreation": "Ustvarjanje predstavitev",
@@ -1487,5 +1487,17 @@
   "hideAppBarIfWelcomeHtml": "Skrij vrstico aplikacije, če je Welcome HTML",
   "policySynthAgentsWorkflow": "Potek dela agentov",
   "generateWithAi": "Ustvari z AI",
-  "hidePointFor": "Skrij točko proti polju"
+  "hidePointFor": "Skrij točko proti polju",
+  "newOrganization": "Nova organizacija",
+  "editOrganization": "Uredi organizacijo",
+  "addOrganization": "Ustvari organizacijo",
+  "onlyAdminsCanCreateOrganizations": "Samo admini lahko ustvarjajo organizacije",
+  "navigationMenu": "Navigacijski meni",
+  "useFixedTopAppBar": "Uporabi fiksno zgornjo vrstico",
+  "disableArrowBasedTopNavigation": "Onemogoči puščično navigacijo",
+  "multiModalModels": "Večmodalni modeli",
+  "reasoningModels": "Modeli sklepanja",
+  "selectSmallReasoningModel": "Majhen model sklepanja",
+  "selectMediumReasoningModel": "Srednji model sklepanja",
+  "selectLargeReasoningModel": "Velik model sklepanja"
 }

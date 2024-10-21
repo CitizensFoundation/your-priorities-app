@@ -1618,5 +1618,17 @@
   "hideAppBarIfWelcomeHtml": "Fela appstiku ef Velkomin HTML",
   "policySynthAgentsWorkflow": "Umboðsmannavinnuflæði",
   "generateWithAi": "Búa til með AI",
-  "hidePointFor": "Fela punkt gegn kassa"
+  "hidePointFor": "Fela punkt gegn kassa",
+  "newOrganization": "Ný samtök",
+  "editOrganization": "Breyta samtökum",
+  "addOrganization": "Búa til samtök",
+  "onlyAdminsCanCreateOrganizations": "Aðeins stjórnendur geta búið til samtök",
+  "navigationMenu": "Leiðsögustika",
+  "useFixedTopAppBar": "Nota fasta efri stikuna",
+  "disableArrowBasedTopNavigation": "Slökkva á örvabundinni efri leiðsögn",
+  "multiModalModels": "Fjölþætt líkön",
+  "reasoningModels": "Röksemdalíkön",
+  "selectSmallReasoningModel": "Lítið röksemdalíkan",
+  "selectMediumReasoningModel": "Miðlungs röksemdalíkan",
+  "selectLargeReasoningModel": "Stórt röksemdalíkan"
 }

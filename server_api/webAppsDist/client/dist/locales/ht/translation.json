@@ -655,7 +655,7 @@
   "disableNameAutoTranslation": "Dezaktive tradiksyon otomatik pou non",
   "hideDownVoteForPost": "Kache vòt negatif pou pòs",
   "newVersionAvailable": "Nouvo vèsyon sit la disponib",
-  "reload": "Reload",
+  "reload": "Rechaje",
   "moreContactInformation": "Mande plis enfòmasyon kontak",
   "attachmentsEnabled": "Atachman dosye pèmèt",
   "downloadAttachment": "Telechaje atachman",
@@ -1495,5 +1495,17 @@
   "hideAppBarIfWelcomeHtml": "Kache ba app si Byenveni HTML",
   "policySynthAgentsWorkflow": "Workflow Ajan",
   "generateWithAi": "Jenere ak AI",
-  "hidePointFor": "Kache pwen kont bwat"
+  "hidePointFor": "Kache pwen kont bwat",
+  "newOrganization": "Nouvo òganizasyon",
+  "editOrganization": "Modifye òganizasyon",
+  "addOrganization": "Kreye òganizasyon",
+  "onlyAdminsCanCreateOrganizations": "Sèlman admin ka kreye òganizasyon",
+  "navigationMenu": "Meni navigasyon",
+  "useFixedTopAppBar": "Sèvi ak ba app fiks anwo",
+  "disableArrowBasedTopNavigation": "Dezaktive navigasyon anwo ak flèch",
+  "multiModalModels": "Modèl Multi-modal",
+  "reasoningModels": "Modèl Rezonman",
+  "selectSmallReasoningModel": "Ti Modèl Rezonman",
+  "selectMediumReasoningModel": "Mwayen Modèl Rezonman",
+  "selectLargeReasoningModel": "Gwo Modèl Rezonman"
 }

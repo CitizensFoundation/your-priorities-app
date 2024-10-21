@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Схаваць панэль праграмы, калі Welcome HTML",
   "policySynthAgentsWorkflow": "Працоўны працэс агентаў",
   "generateWithAi": "Генераваць з AI",
-  "hidePointFor": "Схаваць пункт супраць скрынкі"
+  "hidePointFor": "Схаваць пункт супраць скрынкі",
+  "newOrganization": "Новая арганізацыя",
+  "editOrganization": "Рэдагаваць арганізацыю",
+  "addOrganization": "Стварыць арганізацыю",
+  "onlyAdminsCanCreateOrganizations": "Толькі адміністратары могуць ствараць арганізацыі",
+  "navigationMenu": "Меню навігацыі",
+  "useFixedTopAppBar": "Выкарыстоўваць фіксаваную верхнюю панэль",
+  "disableArrowBasedTopNavigation": "Адключыць навігацыю на аснове стрэлак",
+  "multiModalModels": "Мультымадэльныя мадэлі",
+  "reasoningModels": "Мадэлі разважанняў",
+  "selectSmallReasoningModel": "Малая мадэль разважанняў",
+  "selectMediumReasoningModel": "Сярэдняя мадэль разважанняў",
+  "selectLargeReasoningModel": "Вялікая мадэль разважанняў"
 }

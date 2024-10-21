@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Fâ app bar sô ayeke Welcome HTML",
   "policySynthAgentsWorkflow": "Kombûtra ti agêni",
   "generateWithAi": "Généré na AI",
-  "hidePointFor": "Finda point na bokilo"
+  "hidePointFor": "Finda point na bokilo",
+  "newOrganization": "Kété nzönî",
+  "editOrganization": "Sûngö nzönî",
+  "addOrganization": "Fâ nzönî",
+  "onlyAdminsCanCreateOrganizations": "Bê ti admin pâa fâ nzönî",
+  "navigationMenu": "Menu ti ngâ",
+  "useFixedTopAppBar": "Kâa top app bar",
+  "disableArrowBasedTopNavigation": "Kûê arrow ti ngâ",
+  "multiModalModels": "Model multi-modal",
+  "reasoningModels": "Model ti reasoning",
+  "selectSmallReasoningModel": "Model reasoning ti ngû",
+  "selectMediumReasoningModel": "Model reasoning ti ndâ",
+  "selectLargeReasoningModel": "Model reasoning ti kêtê"
 }

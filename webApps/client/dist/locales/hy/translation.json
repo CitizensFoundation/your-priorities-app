@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Թաքցնել հավելվածի գոտին, եթե Welcome HTML",
   "policySynthAgentsWorkflow": "Գործակալների աշխատանքային հոսք",
   "generateWithAi": "Ստեղծել AI-ով",
-  "hidePointFor": "Թաքցնել կետը տուփի դեմ"
+  "hidePointFor": "Թաքցնել կետը տուփի դեմ",
+  "newOrganization": "Նոր կազմակերպություն",
+  "editOrganization": "Խմբագրել կազմակերպությունը",
+  "addOrganization": "Ստեղծել կազմակերպություն",
+  "onlyAdminsCanCreateOrganizations": "Միայն ադմինները կարող են ստեղծել կազմակերպություններ",
+  "navigationMenu": "Նավիգացիոն մենյու",
+  "useFixedTopAppBar": "Օգտագործել ֆիքսված վերին հավելվածի գոտի",
+  "disableArrowBasedTopNavigation": "Անջատել սլաքով վերին նավիգացիան",
+  "multiModalModels": "Բազմամոդել Մոդելներ",
+  "reasoningModels": "Հիմնավորման Մոդելներ",
+  "selectSmallReasoningModel": "Փոքր Հիմնավորման մոդել",
+  "selectMediumReasoningModel": "Միջին Հիմնավորման մոդել",
+  "selectLargeReasoningModel": "Մեծ Հիմնավորման մոդել"
 }

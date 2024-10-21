@@ -1,4 +1,6 @@
 {
+  "endorsementThumbsWithColor": "Thumbs with color",
+  "onlyAllowCreateUserOnInvite": "Only allow create user on invite",
   "newOrganization": "New organization",
   "editOrganization": "Edit organization",
   "addOrganization": "Create organization",
@@ -881,7 +883,7 @@
   "create": "Create",
   "confirm": "Confirm",
   "access": "Access",
-  "searchFor": "Search for...",
+  "searchFor": "Search...",
   "title": "Title",
   "selectLanguage": "Select language",
   "update": "Update",

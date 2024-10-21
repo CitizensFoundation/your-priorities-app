@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ເຊື່ອງແຖບແອັບຖ້າ Welcome HTML",
   "policySynthAgentsWorkflow": "ການເຮັດວຽກຂອງຕົວແທນ",
   "generateWithAi": "ສ້າງດ້ວຍ AI",
-  "hidePointFor": "ເຊື່ອງຈຸດຕໍ່ກັບກ່ອງ"
+  "hidePointFor": "ເຊື່ອງຈຸດຕໍ່ກັບກ່ອງ",
+  "newOrganization": "ອົງການໃໝ່",
+  "editOrganization": "ແກ້ໄຂອົງການ",
+  "addOrganization": "ສ້າງອົງການ",
+  "onlyAdminsCanCreateOrganizations": "ມີແຕ່ຜູ້ດູແລທີ່ສາມາດສ້າງອົງການ",
+  "navigationMenu": "ເມນູນຳທາງ",
+  "useFixedTopAppBar": "ໃຊ້ແຖບແອັບທີ່ຢູ່ຂ້າງເທິງ",
+  "disableArrowBasedTopNavigation": "ປິດການນຳທາງຂ້າງເທິງດ້ວຍລູກສອນ",
+  "multiModalModels": "ແບບຈຳລອງຫຼາຍ",
+  "reasoningModels": "ແບບຕັດສິນ",
+  "selectSmallReasoningModel": "ແບບຕັດສິນນ້ອຍ",
+  "selectMediumReasoningModel": "ແບບຕັດສິນກາງ",
+  "selectLargeReasoningModel": "ແບບຕັດສິນໃຫຍ່"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "លាក់របារកម្មវិធីប្រសិនបើ HTML ស្វាគមន៍",
   "policySynthAgentsWorkflow": "លំហូរការងារភ្នាក់ងារ",
   "generateWithAi": "បង្កើតដោយ AI",
-  "hidePointFor": "លាក់ចំណុចប្រឆាំងប្រអប់"
+  "hidePointFor": "លាក់ចំណុចប្រឆាំងប្រអប់",
+  "newOrganization": "អង្គការ​ថ្មី",
+  "editOrganization": "កែសម្រួល​អង្គការ",
+  "addOrganization": "បង្កើត​អង្គការ",
+  "onlyAdminsCanCreateOrganizations": "មានតែ​អ្នកគ្រប់គ្រង​ប៉ុណ្ណោះ​អាច​បង្កើត​អង្គការ",
+  "navigationMenu": "ម៉ឺនុយ​រុករក",
+  "useFixedTopAppBar": "ប្រើរបារកម្មវិធីខាងលើ",
+  "disableArrowBasedTopNavigation": "បិទការរុករកដោយព្រួញ",
+  "multiModalModels": "ម៉ូដែល​ច្រើនមុខ",
+  "reasoningModels": "ម៉ូដែល​វិភាគ",
+  "selectSmallReasoningModel": "ម៉ូដែល​វិភាគ​តូច",
+  "selectMediumReasoningModel": "ម៉ូដែល​វិភាគ​មធ្យម",
+  "selectLargeReasoningModel": "ម៉ូដែល​វិភាគ​ធំ"
 }

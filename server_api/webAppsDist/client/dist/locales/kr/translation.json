@@ -133,7 +133,7 @@
   "samlAuth": "SAML Shiga",
   "basic": "Asali",
   "webApp": "Yanar Gizo",
-  "authApis": "Auth APIs",
+  "authApis": "APIs na Tantancewa",
   "dontHaveAccount": "Account ngolol?",
   "cantRememberPassword": "Kalmar sirri ngolol?",
   "loginAndRegistration": "Shiga da Rijista",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Boye app bar idan Barka da HTML",
   "policySynthAgentsWorkflow": "Aikin Wakilai",
   "generateWithAi": "Ƙirƙira da AI",
-  "hidePointFor": "Boyé makari a gefe"
+  "hidePointFor": "Boyé makari a gefe",
+  "newOrganization": "Sabuwar kungiya",
+  "editOrganization": "Gyara kungiya",
+  "addOrganization": "Ƙirƙiri kungiya",
+  "onlyAdminsCanCreateOrganizations": "Sai masu gudanarwa ne za su iya ƙirƙirar kungiyoyi",
+  "navigationMenu": "Jerin hanyoyi",
+  "useFixedTopAppBar": "Yi amfani da sandar app mai tsayi",
+  "disableArrowBasedTopNavigation": "Kashe kewayawa bisa alamar kibiya",
+  "multiModalModels": "Samfuran Multi-modal",
+  "reasoningModels": "Samfuran Tunanin",
+  "selectSmallReasoningModel": "Ƙaramin Samfurin Tunanin",
+  "selectMediumReasoningModel": "Matsakaicin Samfurin Tunanin",
+  "selectLargeReasoningModel": "Babban Samfurin Tunanin"
 }

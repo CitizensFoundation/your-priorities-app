@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Itago ang app bar kung Welcome HTML",
   "policySynthAgentsWorkflow": "Daloy ng mga Ahente",
   "generateWithAi": "Gumawa gamit ang AI",
-  "hidePointFor": "Itago ang punto laban sa kahon"
+  "hidePointFor": "Itago ang punto laban sa kahon",
+  "newOrganization": "Bagong organisasyon",
+  "editOrganization": "I-edit ang organisasyon",
+  "addOrganization": "Lumikha ng organisasyon",
+  "onlyAdminsCanCreateOrganizations": "Tanging mga admin lang ang makakalikha ng mga organisasyon",
+  "navigationMenu": "Menu ng nabigasyon",
+  "useFixedTopAppBar": "Gamitin ang nakapirming top app bar",
+  "disableArrowBasedTopNavigation": "I-disable ang arrow-based na top navigation",
+  "multiModalModels": "Multi-modal na Modelo",
+  "reasoningModels": "Mga Modelong Pangangatwiran",
+  "selectSmallReasoningModel": "Maliit na Modelong Pangangatwiran",
+  "selectMediumReasoningModel": "Katamtamang Modelong Pangangatwiran",
+  "selectLargeReasoningModel": "Malaking Modelong Pangangatwiran"
 }

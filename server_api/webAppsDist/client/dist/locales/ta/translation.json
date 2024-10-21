@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "வரவேற்கும் HTML என்றால் பயன்பாட்டு பட்டியை மறைக்கவும்",
   "policySynthAgentsWorkflow": "முகவர்கள் பணியியல்",
   "generateWithAi": "AI மூலம் உருவாக்கவும்",
-  "hidePointFor": "பெட்டிக்கு எதிராக புள்ளியை மறைக்கவும்"
+  "hidePointFor": "பெட்டிக்கு எதிராக புள்ளியை மறைக்கவும்",
+  "newOrganization": "புதிய அமைப்பு",
+  "editOrganization": "அமைப்பை திருத்து",
+  "addOrganization": "அமைப்பை உருவாக்கு",
+  "onlyAdminsCanCreateOrganizations": "நிர்வாகிகள் மட்டுமே அமைப்புகளை உருவாக்க முடியும்",
+  "navigationMenu": "வழிசெலுத்தல் மெனு",
+  "useFixedTopAppBar": "நிலையான மேல் பயன்பாட்டு பட்டியை பயன்படுத்தவும்",
+  "disableArrowBasedTopNavigation": "அம்பு அடிப்படையிலான மேல் வழிசெலுத்தலை முடக்கு",
+  "multiModalModels": "பலவகை மாதிரிகள்",
+  "reasoningModels": "காரண மாதிரிகள்",
+  "selectSmallReasoningModel": "சிறிய காரண மாதிரி",
+  "selectMediumReasoningModel": "நடுத்தர காரண மாதிரி",
+  "selectLargeReasoningModel": "பெரிய காரண மாதிரி"
 }

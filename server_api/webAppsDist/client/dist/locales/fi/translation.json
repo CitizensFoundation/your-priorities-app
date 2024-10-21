@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Piilota sovelluspalkki, jos Tervetuloa HTML",
   "policySynthAgentsWorkflow": "Agenttien työnkulku",
   "generateWithAi": "Luo AI:lla",
-  "hidePointFor": "Piilota piste laatikkoa vastaan"
+  "hidePointFor": "Piilota piste laatikkoa vastaan",
+  "newOrganization": "Uusi organisaatio",
+  "editOrganization": "Muokkaa organisaatiota",
+  "addOrganization": "Luo organisaatio",
+  "onlyAdminsCanCreateOrganizations": "Vain ylläpitäjät voivat luoda organisaatioita",
+  "navigationMenu": "Navigointivalikko",
+  "useFixedTopAppBar": "Käytä kiinteää ylävalikkoa",
+  "disableArrowBasedTopNavigation": "Poista nuolinavigointi käytöstä",
+  "multiModalModels": "Monimodaaliset mallit",
+  "reasoningModels": "Päätösmallit",
+  "selectSmallReasoningModel": "Pieni päätösmalli",
+  "selectMediumReasoningModel": "Keskikokoinen päätösmalli",
+  "selectLargeReasoningModel": "Suuri päätösmalli"
 }

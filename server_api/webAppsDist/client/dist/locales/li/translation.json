@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Verberg appbalk bie Welcome HTML",
   "policySynthAgentsWorkflow": "Agentsworkflow",
   "generateWithAi": "Genereer mit AI",
-  "hidePointFor": "Verberg punt tegen box"
+  "hidePointFor": "Verberg punt tegen box",
+  "newOrganization": "Nuj organisatie",
+  "editOrganization": "Bewirk organisatie",
+  "addOrganization": "Maak organisatie",
+  "onlyAdminsCanCreateOrganizations": "Allein beheerders kinne organisaties make",
+  "navigationMenu": "Navigatiemenu",
+  "useFixedTopAppBar": "Vast top appbalk gebruike",
+  "disableArrowBasedTopNavigation": "Pijlgebaseerde topnavigatie uitschakelen",
+  "multiModalModels": "Multimodale Modellen",
+  "reasoningModels": "Redeneermodellen",
+  "selectSmallReasoningModel": "Klein Redeneermodel",
+  "selectMediumReasoningModel": "Middel Redeneermodel",
+  "selectLargeReasoningModel": "Groot Redeneermodel"
 }

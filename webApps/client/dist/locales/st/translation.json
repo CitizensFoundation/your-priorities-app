@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Pata bar ya app ha e le Welcome HTML",
   "policySynthAgentsWorkflow": "Tshebetso ya Baemedi",
   "generateWithAi": "Etsa ka AI",
-  "hidePointFor": "Pata ntlha khahlanong lebokose"
+  "hidePointFor": "Pata ntlha khahlanong lebokose",
+  "newOrganization": "Mokhatlo o mocha",
+  "editOrganization": "Fetola mokhatlo",
+  "addOrganization": "Theha mokhatlo",
+  "onlyAdminsCanCreateOrganizations": "Batsamaisi feela ba ka theha mekhatlo",
+  "navigationMenu": "Lenane la ho tsamaisa",
+  "useFixedTopAppBar": "Sebelisa bareng e kaholimo e tsitsitseng",
+  "disableArrowBasedTopNavigation": "Tima motsamao o thehiloeng metsu",
+  "multiModalModels": "Mehlala e mengata",
+  "reasoningModels": "Mehlala ea ho nahana",
+  "selectSmallReasoningModel": "Mohlala o monyenyane oa ho nahana",
+  "selectMediumReasoningModel": "Mohlala o mahareng oa ho nahana",
+  "selectLargeReasoningModel": "Mohlala o moholo oa ho nahana"
 }

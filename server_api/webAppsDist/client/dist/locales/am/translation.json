@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "እንክብካቤ HTML ከሆነ መተግበሪያ አሞሌ ደብቅ",
   "policySynthAgentsWorkflow": "የወኪሎች ሥራ እንቅስቃሴ",
   "generateWithAi": "በAI ይፍጠሩ",
-  "hidePointFor": "ነጥብ በሳጥን ላይ ደብቅ"
+  "hidePointFor": "ነጥብ በሳጥን ላይ ደብቅ",
+  "newOrganization": "አዲስ ድርጅት",
+  "editOrganization": "ድርጅት አርትዕ",
+  "addOrganization": "ድርጅት ፍጠር",
+  "onlyAdminsCanCreateOrganizations": "ብቻ አስተዳዳሪዎች ድርጅቶችን ማፍራት ይችላሉ",
+  "navigationMenu": "የእርምጃ ምናሌ",
+  "useFixedTopAppBar": "ተስተካክለ የላይ መተግበሪያ አሞሌ አጠቀም",
+  "disableArrowBasedTopNavigation": "በቀስት የተመረጠ የላይ እርምጃ አሰናክል",
+  "multiModalModels": "ባለብዙ አሞሌ ሞዴሎች",
+  "reasoningModels": "አስተሳሰብ ሞዴሎች",
+  "selectSmallReasoningModel": "ትንሽ አስተሳሰብ ሞዴል",
+  "selectMediumReasoningModel": "መካከለኛ አስተሳሰብ ሞዴል",
+  "selectLargeReasoningModel": "ትልቅ አስተሳሰብ ሞዴል"
 }

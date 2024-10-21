@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "స్వాగత HTML ఉంటే యాప్ బార్ దాచండి",
   "policySynthAgentsWorkflow": "ఏజెంట్ల ప్రవాహం",
   "generateWithAi": "AI తో సృష్టించండి",
-  "hidePointFor": "బాక్స్ వ్యతిరేకంగా పాయింట్ దాచండి"
+  "hidePointFor": "బాక్స్ వ్యతిరేకంగా పాయింట్ దాచండి",
+  "newOrganization": "కొత్త సంస్థ",
+  "editOrganization": "సంస్థ సవరించు",
+  "addOrganization": "సంస్థ సృష్టించు",
+  "onlyAdminsCanCreateOrganizations": "కేవలం నిర్వాహకులు సంస్థలను సృష్టించగలరు",
+  "navigationMenu": "నావిగేషన్ మెనూ",
+  "useFixedTopAppBar": "స్థిరమైన టాప్ యాప్ బార్ ఉపయోగించండి",
+  "disableArrowBasedTopNavigation": "బాణం ఆధారిత టాప్ నావిగేషన్ నిలిపివేయి",
+  "multiModalModels": "బహుళ-మోడల్ మోడల్స్",
+  "reasoningModels": "తర్క మోడల్స్",
+  "selectSmallReasoningModel": "చిన్న తర్క మోడల్",
+  "selectMediumReasoningModel": "మధ్యస్థ తర్క మోడల్",
+  "selectLargeReasoningModel": "పెద్ద తర్క మోడల్"
 }

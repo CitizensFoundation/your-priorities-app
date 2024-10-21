@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Ẩn thanh ứng dụng nếu HTML chào mừng",
   "policySynthAgentsWorkflow": "Quy trình đại lý",
   "generateWithAi": "Tạo với AI",
-  "hidePointFor": "Ẩn điểm chống hộp"
+  "hidePointFor": "Ẩn điểm chống hộp",
+  "newOrganization": "Tổ chức mới",
+  "editOrganization": "Chỉnh sửa tổ chức",
+  "addOrganization": "Tạo tổ chức",
+  "onlyAdminsCanCreateOrganizations": "Chỉ quản trị viên có thể tạo tổ chức",
+  "navigationMenu": "Menu điều hướng",
+  "useFixedTopAppBar": "Sử dụng thanh ứng dụng cố định",
+  "disableArrowBasedTopNavigation": "Vô hiệu hóa điều hướng mũi tên",
+  "multiModalModels": "Mô hình đa phương thức",
+  "reasoningModels": "Mô hình lý luận",
+  "selectSmallReasoningModel": "Mô hình lý luận nhỏ",
+  "selectMediumReasoningModel": "Mô hình lý luận trung bình",
+  "selectLargeReasoningModel": "Mô hình lý luận lớn"
 }

@@ -1400,7 +1400,7 @@
   "forgotPassword": "གསང་ཚིག་བརྗེད་སོང་།",
   "useLoginOnDomainIfNotLoggedIn": "ཐོ་འགོད་མ་བྱས་ན་དུས་ཚོད་གནས་སྒོ་ལུ་བཀོལ་",
   "confirmLoadAndOverrideMemory": "ཁྱོད་ཀྱིས་དེ་དྲན་དང་ད་ལྟོའི་དྲན་དོན་བཅོས་རྒྱུ་ཡིན་ནམ།",
-  "agentMemoryExplorer": "Agent Memory Explorer",
+  "agentMemoryExplorer": "བརྩེགས་དྲན་རྙིང་མ",
   "upvote": "ཡར་བསྐྱར་",
   "orDownvote": "ཡང་ན་མར་བསྐྱར་",
   "pointsByPressingTheArrows": "མགོན་མོ་བརྒྱུད་ནས་དོན་ཚད་",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ཕྱིར་སྒོ་བཀག་ནི་ཡིག་ཆ་བཀྲམ་ནི་ཡང་ན",
   "policySynthAgentsWorkflow": "སྤྱི་ཚན་ལས་ཀའི་རིམ",
   "generateWithAi": "རིག་གནས་དང་བསྐྲུན",
-  "hidePointFor": "རྒྱབ་སྐོར་རྒྱབ་སྐོར་སྦས"
+  "hidePointFor": "རྒྱབ་སྐོར་རྒྱབ་སྐོར་སྦས",
+  "newOrganization": "དུས་གསར་ཚོགས་པ།",
+  "editOrganization": "ཚོགས་པ་ཞུན་དག",
+  "addOrganization": "ཚོགས་པ་བཟོ་བ།",
+  "onlyAdminsCanCreateOrganizations": "དགོས་མཁན་རྣམས་རྒྱུན་ཚོགས་པ་བཟོ་ཆོག",
+  "navigationMenu": "འགྲུལ་ལམ་ཐོ་བཀོད",
+  "useFixedTopAppBar": "གཙོ་སྒོ་རྒྱབ་སྐྱོར་བཀོད",
+  "disableArrowBasedTopNavigation": "མགྱོགས་རྒྱབ་འགྲུལ་ལམ་སྤྱོད་མི་ཆོག",
+  "multiModalModels": "མང་ཚོགས་སྒྲིག་སྟངས",
+  "reasoningModels": "རིགས་བརྟག",
+  "selectSmallReasoningModel": "ཆུང་རིགས་བརྟག",
+  "selectMediumReasoningModel": "བར་བརྟག",
+  "selectLargeReasoningModel": "ཆེན་རིགས་བརྟག"
 }

@@ -1336,7 +1336,7 @@
   "domainFraudManagement": "Zarządzanie Oszustwami Domenowymi",
   "Access": "Dostęp",
   "openOrganizationMenu": "Otwórz menu organizacji",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Galeria Reykjavíku",
   "Override theme": "Nadpisz motyw",
   "Analytics & Marketing": "Analityka i Marketing",
   "Promote your survey": "Promuj swoją ankietę",
@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "Ukryj pasek aplikacji, jeśli HTML powitalny",
   "policySynthAgentsWorkflow": "Przepływ agentów",
   "generateWithAi": "Generuj z AI",
-  "hidePointFor": "Ukryj punkt przeciwko polu"
+  "hidePointFor": "Ukryj punkt przeciwko polu",
+  "newOrganization": "Nowa organizacja",
+  "editOrganization": "Edytuj organizację",
+  "addOrganization": "Utwórz organizację",
+  "onlyAdminsCanCreateOrganizations": "Tylko admini mogą tworzyć organizacje",
+  "navigationMenu": "Menu nawigacji",
+  "useFixedTopAppBar": "Użyj stałego górnego paska",
+  "disableArrowBasedTopNavigation": "Wyłącz nawigację strzałkami",
+  "multiModalModels": "Modele multimodalne",
+  "reasoningModels": "Modele rozumowania",
+  "selectSmallReasoningModel": "Mały model rozumowania",
+  "selectMediumReasoningModel": "Średni model rozumowania",
+  "selectLargeReasoningModel": "Duży model rozumowania"
 }

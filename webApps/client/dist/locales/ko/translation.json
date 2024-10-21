@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "환영 HTML 시 앱 바 숨기기",
   "policySynthAgentsWorkflow": "에이전트 워크플로",
   "generateWithAi": "AI로 생성",
-  "hidePointFor": "상자에 대한 포인트 숨기기"
+  "hidePointFor": "상자에 대한 포인트 숨기기",
+  "newOrganization": "새 조직",
+  "editOrganization": "조직 편집",
+  "addOrganization": "조직 생성",
+  "onlyAdminsCanCreateOrganizations": "관리자만 조직 생성 가능",
+  "navigationMenu": "탐색 메뉴",
+  "useFixedTopAppBar": "고정 상단 앱 바 사용",
+  "disableArrowBasedTopNavigation": "화살표 기반 상단 탐색 비활성화",
+  "multiModalModels": "다중 모달 모델",
+  "reasoningModels": "추론 모델",
+  "selectSmallReasoningModel": "소형 추론 모델",
+  "selectMediumReasoningModel": "중형 추론 모델",
+  "selectLargeReasoningModel": "대형 추론 모델"
 }

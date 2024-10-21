@@ -832,7 +832,7 @@
   "lookAndFeel": "Isikkoq takujuk",
   "samlAuth": "SAML Akuerisaq",
   "basic": "Aallaqqaataa",
-  "webApp": "Web App",
+  "webApp": "Nittartagaq App",
   "authApis": "Akuerisaq API-t",
   "dontHaveAccount": "Akaaaniarpit?",
   "cantRememberPassword": "Isertuussinnaanngilatit?",
@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "App bar isertoruk HTML tikilluarit",
   "policySynthAgentsWorkflow": "Agentit Suliassaat",
   "generateWithAi": "AI-mik pilersitsineq",
-  "hidePointFor": "Punkti isiginngitsuukkat"
+  "hidePointFor": "Punkti isiginngitsuukkat",
+  "newOrganization": "Ilagiit nutaat",
+  "editOrganization": "Ilagiit iluarsaakkit",
+  "addOrganization": "Ilagiit pilersikkit",
+  "onlyAdminsCanCreateOrganizations": "Naagga, aqutsisut kisimik ilagiinnik pilersitsisinnaapput",
+  "navigationMenu": "Navigationsmenu",
+  "useFixedTopAppBar": "App bar qaffasissumik atussaaq",
+  "disableArrowBasedTopNavigation": "Arlaatigut qaffasissumik navigationsip unitsinneqarnissaa",
+  "multiModalModels": "Multi-modalitut Modelit",
+  "reasoningModels": "Paasissutissiisartut Modelit",
+  "selectSmallReasoningModel": "Paasissutissiisartut mikisut modelit",
+  "selectMediumReasoningModel": "Paasissutissiisartut akuttunngitsumik modelit",
+  "selectLargeReasoningModel": "Paasissutissiisartut angisuut modelit"
 }

@@ -1409,7 +1409,7 @@
   "pairwiseVoting": "Guovttiid mielde jienastan",
   "useLowestContainerSurface": "Geavaha unnimus kontenera bajágeahččat",
   "hideGroupType": "Čiehka joavkku láhki",
-  "smarterCrowdsourcing": "Smarter Crowdsourcing",
+  "smarterCrowdsourcing": "Jierpmálaš Fáddásearvvaheapmi",
   "problems": "Problemat",
   "solutions": "Ráhkkanat",
   "policies": "Politihkat",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Čiehkka appa bárra jos Bures boahtin HTML",
   "policySynthAgentsWorkflow": "Ágensat Fálaldat",
   "generateWithAi": "Generere AI:n",
-  "hidePointFor": "Čiehka geahččaldui"
+  "hidePointFor": "Čiehka geahččaldui",
+  "newOrganization": "Ođđa organisašuvdna",
+  "editOrganization": "Ráhkadit organisašuvnna",
+  "addOrganization": "Ráhkadit organisašuvnna",
+  "onlyAdminsCanCreateOrganizations": "Dušše adminat sáhttet ráhkadit organisašuvnna",
+  "navigationMenu": "Navigašuvdna menny",
+  "useFixedTopAppBar": "Geavahit gitta bajil app bárra",
+  "disableArrowBasedTopNavigation": "Heaittihit čuovga vuolggus navigašuvnna",
+  "multiModalModels": "Máŋggabealat Máddagat",
+  "reasoningModels": "Jierpmálaš Máddagat",
+  "selectSmallReasoningModel": "Unni Jierpmálaš máddag",
+  "selectMediumReasoningModel": "Gaska Jierpmálaš máddag",
+  "selectLargeReasoningModel": "Stuorra Jierpmálaš máddag"
 }

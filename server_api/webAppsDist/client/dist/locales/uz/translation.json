@@ -1490,5 +1490,17 @@
   "hideAppBarIfWelcomeHtml": "Agar Welcome HTML bo'lsa, ilova panelini yashirish",
   "policySynthAgentsWorkflow": "Agentlar ish jarayoni",
   "generateWithAi": "AI bilan yaratish",
-  "hidePointFor": "Qutiga qarshi nuqtani yashirish"
+  "hidePointFor": "Qutiga qarshi nuqtani yashirish",
+  "newOrganization": "Yangi tashkilot",
+  "editOrganization": "Tashkilotni tahrirlash",
+  "addOrganization": "Tashkilot yaratish",
+  "onlyAdminsCanCreateOrganizations": "Faqat adminlar tashkilotlar yaratishi mumkin",
+  "navigationMenu": "Navigatsiya menyusi",
+  "useFixedTopAppBar": "Qotirilgan yuqori ilova panelidan foydalanish",
+  "disableArrowBasedTopNavigation": "Strelkali yuqori navigatsiyani o'chirish",
+  "multiModalModels": "Ko'p modal Modellar",
+  "reasoningModels": "Mantiqiy Modellar",
+  "selectSmallReasoningModel": "Kichik Mantiqiy model",
+  "selectMediumReasoningModel": "O'rta Mantiqiy model",
+  "selectLargeReasoningModel": "Katta Mantiqiy model"
 }

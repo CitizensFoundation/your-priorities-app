@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Slėpti programos juostą, jei yra Welcome HTML",
   "policySynthAgentsWorkflow": "Agentų darbo eiga",
   "generateWithAi": "Generuoti su AI",
-  "hidePointFor": "Slėpti tašką prieš langelį"
+  "hidePointFor": "Slėpti tašką prieš langelį",
+  "newOrganization": "Nauja organizacija",
+  "editOrganization": "Redaguoti organizaciją",
+  "addOrganization": "Sukurti organizaciją",
+  "onlyAdminsCanCreateOrganizations": "Tik administratoriai gali kurti organizacijas",
+  "navigationMenu": "Navigacijos meniu",
+  "useFixedTopAppBar": "Naudoti fiksuotą viršutinę juostą",
+  "disableArrowBasedTopNavigation": "Išjungti rodyklių navigaciją",
+  "multiModalModels": "Daugiarūšiai modeliai",
+  "reasoningModels": "Samprotavimo modeliai",
+  "selectSmallReasoningModel": "Mažas samprotavimo modelis",
+  "selectMediumReasoningModel": "Vidutinis samprotavimo modelis",
+  "selectLargeReasoningModel": "Didelis samprotavimo modelis"
 }

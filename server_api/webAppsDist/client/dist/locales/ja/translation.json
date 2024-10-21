@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Welcome HTMLの場合はアプリバーを非表示",
   "policySynthAgentsWorkflow": "エージェントワークフロー",
   "generateWithAi": "AIで生成",
-  "hidePointFor": "ボックスに対するポイントを非表示"
+  "hidePointFor": "ボックスに対するポイントを非表示",
+  "newOrganization": "新しい組織",
+  "editOrganization": "組織を編集",
+  "addOrganization": "組織を作成",
+  "onlyAdminsCanCreateOrganizations": "管理者のみ組織を作成可能",
+  "navigationMenu": "ナビゲーションメニュー",
+  "useFixedTopAppBar": "固定トップバーを使用",
+  "disableArrowBasedTopNavigation": "矢印ナビゲーションを無効化",
+  "multiModalModels": "マルチモーダルモデル",
+  "reasoningModels": "推論モデル",
+  "selectSmallReasoningModel": "小型推論モデル",
+  "selectMediumReasoningModel": "中型推論モデル",
+  "selectLargeReasoningModel": "大型推論モデル"
 }

@@ -1489,5 +1489,17 @@
   "hideAppBarIfWelcomeHtml": "Ascunde bara aplicației dacă Welcome HTML",
   "policySynthAgentsWorkflow": "Flux agenți",
   "generateWithAi": "Generează cu AI",
-  "hidePointFor": "Ascunde punct împotriva casetei"
+  "hidePointFor": "Ascunde punct împotriva casetei",
+  "newOrganization": "Organizație nouă",
+  "editOrganization": "Editează organizația",
+  "addOrganization": "Creează organizație",
+  "onlyAdminsCanCreateOrganizations": "Doar adminii pot crea organizații",
+  "navigationMenu": "Meniu navigare",
+  "useFixedTopAppBar": "Folosește bara superioară fixă",
+  "disableArrowBasedTopNavigation": "Dezactivează navigarea cu săgeți",
+  "multiModalModels": "Modele multi-modale",
+  "reasoningModels": "Modele de raționament",
+  "selectSmallReasoningModel": "Model mic de raționament",
+  "selectMediumReasoningModel": "Model mediu de raționament",
+  "selectLargeReasoningModel": "Model mare de raționament"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Әгәр Welcome HTML булса, кушымта панелен яшерү",
   "policySynthAgentsWorkflow": "Агентлар эш агымы",
   "generateWithAi": "AI белән тудыру",
-  "hidePointFor": "Күрсәтмә яшерү"
+  "hidePointFor": "Күрсәтмә яшерү",
+  "newOrganization": "Яңа оешма",
+  "editOrganization": "Оешманы үзгәртү",
+  "addOrganization": "Оешма булдыру",
+  "onlyAdminsCanCreateOrganizations": "Оешмаларны бары тик админнар гына булдыра ала",
+  "navigationMenu": "Навигация менюсы",
+  "useFixedTopAppBar": "Тотрыклы өске панель куллану",
+  "disableArrowBasedTopNavigation": "Уклар нигезендә өске навигацияне сүндерү",
+  "multiModalModels": "Күпмодаль модельләр",
+  "reasoningModels": "Фикерләү модельләре",
+  "selectSmallReasoningModel": "Кечкенә фикерләү моделе",
+  "selectMediumReasoningModel": "Уртача фикерләү моделе",
+  "selectLargeReasoningModel": "Зур фикерләү моделе"
 }

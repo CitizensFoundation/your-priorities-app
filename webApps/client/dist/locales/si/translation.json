@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ආපයෝජන තීරුව සඟවන්න",
   "policySynthAgentsWorkflow": "නියෝජිත වැඩ ප්‍රවාහය",
   "generateWithAi": "AI සමඟ ජනනය කරන්න",
-  "hidePointFor": "පෙට්ටියට එරෙහිව ලකුණ සඟවන්න"
+  "hidePointFor": "පෙට්ටියට එරෙහිව ලකුණ සඟවන්න",
+  "newOrganization": "නව සංවිධානය",
+  "editOrganization": "සංවිධානය සංස්කරණය",
+  "addOrganization": "සංවිධානය නිර්මාණය",
+  "onlyAdminsCanCreateOrganizations": "සංවිධාන නිර්මාණය කළ හැක්කේ පරිපාලකයින්ට පමණි",
+  "navigationMenu": "සංචරණ මෙනුව",
+  "useFixedTopAppBar": "ස්ථිර ඉහළ යෙදුම් තීරුව භාවිතා කරන්න",
+  "disableArrowBasedTopNavigation": "ඊතල මත පදනම් වූ ඉහළ සංචරණය අක්‍රිය කරන්න",
+  "multiModalModels": "බහු-මාදිලි ආකෘති",
+  "reasoningModels": "තර්ක ආකෘති",
+  "selectSmallReasoningModel": "කුඩා තර්ක ආකෘතිය",
+  "selectMediumReasoningModel": "මධ්‍යම තර්ක ආකෘතිය",
+  "selectLargeReasoningModel": "විශාල තර්ක ආකෘතිය"
 }

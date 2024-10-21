@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Скрити приложениѥ ако Приветъ HTML",
   "policySynthAgentsWorkflow": "Посланици Тѹкъ",
   "generateWithAi": "Создати съ AI",
-  "hidePointFor": "Скрити точкѹ противъ коробки"
+  "hidePointFor": "Скрити точкѹ противъ коробки",
+  "newOrganization": "Нова организациꙗ",
+  "editOrganization": "Правити организациꙗ",
+  "addOrganization": "Создати организациꙗ",
+  "onlyAdminsCanCreateOrganizations": "Тѣкъ администратори мѫгутъ создати организациѩ",
+  "navigationMenu": "Навигациѩ меню",
+  "useFixedTopAppBar": "Употребити фиксированъ врьхъ апликациѩ",
+  "disableArrowBasedTopNavigation": "Отключити стрѣлъчьную навигациѩ",
+  "multiModalModels": "Многомодални образци",
+  "reasoningModels": "Разсуждениѩ образци",
+  "selectSmallReasoningModel": "Малъ разсуждениѩ образецъ",
+  "selectMediumReasoningModel": "Средьнъ разсуждениѩ образецъ",
+  "selectLargeReasoningModel": "Великъ разсуждениѩ образецъ"
 }

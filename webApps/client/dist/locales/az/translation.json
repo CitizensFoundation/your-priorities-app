@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Xoş gəlmisiniz HTML varsa tətbiq çubuğunu gizlət",
   "policySynthAgentsWorkflow": "Agentlər iş axını",
   "generateWithAi": "AI ilə yarat",
-  "hidePointFor": "Qutuya qarşı nöqtəni gizlət"
+  "hidePointFor": "Qutuya qarşı nöqtəni gizlət",
+  "newOrganization": "Yeni təşkilat",
+  "editOrganization": "Təşkilatı redaktə et",
+  "addOrganization": "Təşkilat yarat",
+  "onlyAdminsCanCreateOrganizations": "Yalnız adminlər təşkilat yarada bilər",
+  "navigationMenu": "Naviqasiya menyusu",
+  "useFixedTopAppBar": "Sabit üst tətbiq çubuğunu istifadə et",
+  "disableArrowBasedTopNavigation": "Ox əsaslı üst naviqasiyanı söndür",
+  "multiModalModels": "Çoxmodallı Modellər",
+  "reasoningModels": "Məntiqi Modellər",
+  "selectSmallReasoningModel": "Kiçik Məntiqi model",
+  "selectMediumReasoningModel": "Orta Məntiqi model",
+  "selectLargeReasoningModel": "Böyük Məntiqi model"
 }

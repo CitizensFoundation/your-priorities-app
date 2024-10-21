@@ -1488,5 +1488,17 @@
   "hideAppBarIfWelcomeHtml": "Dölj appfält om Välkomst-HTML",
   "policySynthAgentsWorkflow": "Agenters arbetsflöde",
   "generateWithAi": "Generera med AI",
-  "hidePointFor": "Dölj poäng mot ruta"
+  "hidePointFor": "Dölj poäng mot ruta",
+  "newOrganization": "Ny organisation",
+  "editOrganization": "Redigera organisation",
+  "addOrganization": "Skapa organisation",
+  "onlyAdminsCanCreateOrganizations": "Endast admin kan skapa organisationer",
+  "navigationMenu": "Navigationsmeny",
+  "useFixedTopAppBar": "Använd fast toppmeny",
+  "disableArrowBasedTopNavigation": "Inaktivera pilbaserad toppnavigering",
+  "multiModalModels": "Multimodala modeller",
+  "reasoningModels": "Resonemangsmodeller",
+  "selectSmallReasoningModel": "Liten resonemangsmodell",
+  "selectMediumReasoningModel": "Mellan resonemangsmodell",
+  "selectLargeReasoningModel": "Stor resonemangsmodell"
 }

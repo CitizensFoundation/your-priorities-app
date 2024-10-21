@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "অ্যাপ বার লুকান যদি স্বাগতম HTML",
   "policySynthAgentsWorkflow": "এজেন্ট কর্মপ্রবাহ",
   "generateWithAi": "AI দিয়ে তৈরি করুন",
-  "hidePointFor": "বক্সের বিরুদ্ধে পয়েন্ট লুকান"
+  "hidePointFor": "বক্সের বিরুদ্ধে পয়েন্ট লুকান",
+  "newOrganization": "নতুন সংস্থা",
+  "editOrganization": "সংস্থা সম্পাদনা",
+  "addOrganization": "সংস্থা তৈরি করুন",
+  "onlyAdminsCanCreateOrganizations": "শুধুমাত্র অ্যাডমিনরা সংস্থা তৈরি করতে পারে",
+  "navigationMenu": "নেভিগেশন মেনু",
+  "useFixedTopAppBar": "স্থির শীর্ষ অ্যাপ বার ব্যবহার করুন",
+  "disableArrowBasedTopNavigation": "তীর ভিত্তিক শীর্ষ নেভিগেশন অক্ষম করুন",
+  "multiModalModels": "মাল্টি-মোডাল মডেল",
+  "reasoningModels": "যুক্তি মডেল",
+  "selectSmallReasoningModel": "ছোট যুক্তি মডেল",
+  "selectMediumReasoningModel": "মাঝারি যুক্তি মডেল",
+  "selectLargeReasoningModel": "বড় যুক্তি মডেল"
 }

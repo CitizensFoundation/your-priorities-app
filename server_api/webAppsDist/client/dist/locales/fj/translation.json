@@ -1428,7 +1428,7 @@
   "dataAnalysis": "Vakadidike ni Data",
   "databaseManagement": "Veiliutaki ni Katokatoni",
   "digitalMarketing": "Makete ni Vunilagi",
-  "ecommerce": "E-commerce",
+  "ecommerce": "Volivolitaki e na initaneti",
   "educationAndTraining": "Vuli kei na Vakarautaki",
   "emailManagement": "Veiliutaki ni Imeli",
   "eventPlanning": "Vakarautaki ni Soqo",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Vunitaka na ba ni app ke HTML ni Kidavaki",
   "policySynthAgentsWorkflow": "Cakacaka ni Dairekita",
   "generateWithAi": "Vakarautaka vata kei AI",
-  "hidePointFor": "Vunitaka na ivakaraitaki"
+  "hidePointFor": "Vunitaka na ivakaraitaki",
+  "newOrganization": "Sosomi ni isoqosoqo",
+  "editOrganization": "Veisautaka na isoqosoqo",
+  "addOrganization": "Tauyavutaka na isoqosoqo",
+  "onlyAdminsCanCreateOrganizations": "O ira ga na daunivakatulewa e rawa ni bulia na isoqosoqo",
+  "navigationMenu": "Menu ni veitosoyaki",
+  "useFixedTopAppBar": "Vakayagataka na ba ni app e cake",
+  "disableArrowBasedTopNavigation": "Tamusuka na veitosoyaki e cake e yavutaki ena gasau",
+  "multiModalModels": "iTuvatuva Levu Levu",
+  "reasoningModels": "iTuvatuva ni Vakasama",
+  "selectSmallReasoningModel": "iTuvatuva Lailai ni Vakasama",
+  "selectMediumReasoningModel": "iTuvatuva Vakatagedegede ni Vakasama",
+  "selectLargeReasoningModel": "iTuvatuva Levu ni Vakasama"
 }

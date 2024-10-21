@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Ɓoye sandar app idan Barka da HTML",
   "policySynthAgentsWorkflow": "Gudanar da Wakilai",
   "generateWithAi": "Ƙirƙira da AI",
-  "hidePointFor": "Ɓoye maki a kan akwatin"
+  "hidePointFor": "Ɓoye maki a kan akwatin",
+  "newOrganization": "Sabuwar kungiya",
+  "editOrganization": "Gyara kungiya",
+  "addOrganization": "Ƙirƙiri kungiya",
+  "onlyAdminsCanCreateOrganizations": "Masu gudanarwa kawai za su iya ƙirƙirar kungiyoyi",
+  "navigationMenu": "Menu na kewayawa",
+  "useFixedTopAppBar": "Yi amfani da sandar app mai tsayi",
+  "disableArrowBasedTopNavigation": "Kashe kewayawa bisa alamar kibiya",
+  "multiModalModels": "Samfuran Multi-modal",
+  "reasoningModels": "Samfuran Tunanin",
+  "selectSmallReasoningModel": "Ƙaramin Samfurin Tunanin",
+  "selectMediumReasoningModel": "Matsakaicin Samfurin Tunanin",
+  "selectLargeReasoningModel": "Babban Samfurin Tunanin"
 }

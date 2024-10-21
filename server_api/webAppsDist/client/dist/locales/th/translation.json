@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ซ่อนแถบแอปถ้า Welcome HTML",
   "policySynthAgentsWorkflow": "การทำงานของตัวแทน",
   "generateWithAi": "สร้างด้วย AI",
-  "hidePointFor": "ซ่อนจุดกับกล่อง"
+  "hidePointFor": "ซ่อนจุดกับกล่อง",
+  "newOrganization": "องค์กรใหม่",
+  "editOrganization": "แก้ไของค์กร",
+  "addOrganization": "สร้างองค์กร",
+  "onlyAdminsCanCreateOrganizations": "เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถสร้างองค์กรได้",
+  "navigationMenu": "เมนูนำทาง",
+  "useFixedTopAppBar": "ใช้แถบแอปด้านบนคงที่",
+  "disableArrowBasedTopNavigation": "ปิดการนำทางด้วยลูกศรด้านบน",
+  "multiModalModels": "โมเดลหลายรูปแบบ",
+  "reasoningModels": "โมเดลการให้เหตุผล",
+  "selectSmallReasoningModel": "โมเดลการให้เหตุผลขนาดเล็ก",
+  "selectMediumReasoningModel": "โมเดลการให้เหตุผลขนาดกลาง",
+  "selectLargeReasoningModel": "โมเดลการให้เหตุผลขนาดใหญ่"
 }

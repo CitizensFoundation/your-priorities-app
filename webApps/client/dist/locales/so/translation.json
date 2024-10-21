@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Qari barnaamijka haddii HTML soo dhaweyn",
   "policySynthAgentsWorkflow": "Hawlaha Wakiilada",
   "generateWithAi": "Soo saar AI",
-  "hidePointFor": "Qari dhibic ka soo horjeeda sanduuqa"
+  "hidePointFor": "Qari dhibic ka soo horjeeda sanduuqa",
+  "newOrganization": "Urur cusub",
+  "editOrganization": "Tafatir urur",
+  "addOrganization": "Abuur urur",
+  "onlyAdminsCanCreateOrganizations": "Kaliya maamulayaasha ayaa abuuri kara ururada",
+  "navigationMenu": "Liiska hagidda",
+  "useFixedTopAppBar": "Isticmaal bar sare oo go'an",
+  "disableArrowBasedTopNavigation": "Dami hagidda sare ee fallaarta ku saleysan",
+  "multiModalModels": "Qaababka Multi-modal",
+  "reasoningModels": "Qaababka Sababaha",
+  "selectSmallReasoningModel": "Qaabka Sababaha Yar",
+  "selectMediumReasoningModel": "Qaabka Sababaha Dhexdhexaad",
+  "selectLargeReasoningModel": "Qaabka Sababaha Weyn"
 }

@@ -1406,7 +1406,7 @@
   "pointsByPressingTheArrows": "mga puntos pinaagi sa pag-press sa mga arrow",
   "workflow": "Workflow",
   "ideas": "Mga Ideya",
-  "pairwiseVoting": "Pairwise Voting",
+  "pairwiseVoting": "Pagboto",
   "useLowestContainerSurface": "Gamiton ang labing ubos nga container surface",
   "hideGroupType": "Itago ang klase sa grupo",
   "smarterCrowdsourcing": "Mas Maalam nga Crowdsourcing",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Tagoa ang app bar kung Welcome HTML",
   "policySynthAgentsWorkflow": "Workflow sa mga Ahente",
   "generateWithAi": "Paghimo gamit ang AI",
-  "hidePointFor": "Tago punto batok kahon"
+  "hidePointFor": "Tago punto batok kahon",
+  "newOrganization": "Bag-ong organisasyon",
+  "editOrganization": "Usba ang organisasyon",
+  "addOrganization": "Paghimo og organisasyon",
+  "onlyAdminsCanCreateOrganizations": "Mga admin ra ang makapaghimo og mga organisasyon",
+  "navigationMenu": "Menu sa nabigasyon",
+  "useFixedTopAppBar": "Gamiton ang fixed top app bar",
+  "disableArrowBasedTopNavigation": "I-disable ang arrow based top navigation",
+  "multiModalModels": "Multi-modal nga Modelo",
+  "reasoningModels": "Mga Modelo sa Paghunahuna",
+  "selectSmallReasoningModel": "Gamay nga Modelo sa Paghunahuna",
+  "selectMediumReasoningModel": "Medium nga Modelo sa Paghunahuna",
+  "selectLargeReasoningModel": "Dako nga Modelo sa Paghunahuna"
 }

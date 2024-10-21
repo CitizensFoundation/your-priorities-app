@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Sembunyikan bilah aplikasi jika Selamat Datang HTML",
   "policySynthAgentsWorkflow": "Alur Kerja Agen",
   "generateWithAi": "Hasilkan dengan AI",
-  "hidePointFor": "Sembunyikan poin melawan kotak"
+  "hidePointFor": "Sembunyikan poin melawan kotak",
+  "newOrganization": "Organisasi baru",
+  "editOrganization": "Edit organisasi",
+  "addOrganization": "Buat organisasi",
+  "onlyAdminsCanCreateOrganizations": "Hanya admin yang bisa membuat organisasi",
+  "navigationMenu": "Menu navigasi",
+  "useFixedTopAppBar": "Gunakan bilah atas tetap",
+  "disableArrowBasedTopNavigation": "Nonaktifkan navigasi atas berbasis panah",
+  "multiModalModels": "Model Multi-modal",
+  "reasoningModels": "Model Penalaran",
+  "selectSmallReasoningModel": "Model Penalaran Kecil",
+  "selectMediumReasoningModel": "Model Penalaran Sedang",
+  "selectLargeReasoningModel": "Model Penalaran Besar"
 }

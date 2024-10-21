@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "ਜੇਕਰ Welcome HTML ਹੈ ਤਾਂ ਐਪ ਬਾਰ ਲੁਕਾਓ",
   "policySynthAgentsWorkflow": "ਏਜੰਟ ਵਰਕਫਲੋ",
   "generateWithAi": "AI ਨਾਲ ਤਿਆਰ ਕਰੋ",
-  "hidePointFor": "ਬਾਕਸ ਦੇ ਖਿਲਾਫ ਬਿੰਦੂ ਲੁਕਾਓ"
+  "hidePointFor": "ਬਾਕਸ ਦੇ ਖਿਲਾਫ ਬਿੰਦੂ ਲੁਕਾਓ",
+  "newOrganization": "ਨਵੀਂ ਸੰਗਠਨਾ",
+  "editOrganization": "ਸੰਗਠਨਾ ਸੋਧੋ",
+  "addOrganization": "ਸੰਗਠਨਾ ਬਣਾਓ",
+  "onlyAdminsCanCreateOrganizations": "ਕੇਵਲ ਐਡਮਿਨ ਸੰਗਠਨ ਬਣਾ ਸਕਦੇ ਹਨ",
+  "navigationMenu": "ਨੇਵੀਗੇਸ਼ਨ ਮੀਨੂ",
+  "useFixedTopAppBar": "ਸਥਿਰ ਉੱਪਰਲਾ ਐਪ ਬਾਰ ਵਰਤੋ",
+  "disableArrowBasedTopNavigation": "ਤੀਰ ਅਧਾਰਿਤ ਉੱਪਰਲੇ ਨੇਵੀਗੇਸ਼ਨ ਨੂੰ ਅਸਮਰੱਥ ਕਰੋ",
+  "multiModalModels": "ਮਲਟੀ-ਮੋਡਲ ਮਾਡਲ",
+  "reasoningModels": "ਤਰਕ ਮਾਡਲ",
+  "selectSmallReasoningModel": "ਛੋਟਾ ਤਰਕ ਮਾਡਲ",
+  "selectMediumReasoningModel": "ਦਰਮਿਆਨਾ ਤਰਕ ਮਾਡਲ",
+  "selectLargeReasoningModel": "ਵੱਡਾ ਤਰਕ ਮਾਡਲ"
 }

@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "स्वागत HTML चेत् अनुप्रयोगपट्टिका गुह्यताम्",
   "policySynthAgentsWorkflow": "अभिकर्ता कार्यप्रवाहः",
   "generateWithAi": "AI सह उत्पादय",
-  "hidePointFor": "विरोधकपेटिकायाः विरुद्धं बिन्दुं गुह्यताम्"
+  "hidePointFor": "विरोधकपेटिकायाः विरुद्धं बिन्दुं गुह्यताम्",
+  "newOrganization": "नवसंस्था",
+  "editOrganization": "संस्थां सम्पादय",
+  "addOrganization": "संस्थां निर्मित",
+  "onlyAdminsCanCreateOrganizations": "केवलं प्रशासकाः संस्थाः निर्मातुं शक्नुवन्ति",
+  "navigationMenu": "सञ्चालनसूची",
+  "useFixedTopAppBar": "नियतं शीर्षपट्टं उपयुज्यताम्",
+  "disableArrowBasedTopNavigation": "बाणाधारितं शीर्षसञ्चालनं निष्क्रियं कुरु",
+  "multiModalModels": "बहुविधमॉडलाः",
+  "reasoningModels": "युक्तिमॉडलाः",
+  "selectSmallReasoningModel": "लघुयुक्तिमॉडलः",
+  "selectMediumReasoningModel": "मध्यमयुक्तिमॉडलः",
+  "selectLargeReasoningModel": "वृहद्युक्तिमॉडलः"
 }

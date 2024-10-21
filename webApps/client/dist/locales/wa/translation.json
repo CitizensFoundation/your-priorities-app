@@ -1441,7 +1441,7 @@
   "itSupport": "Soutien IT",
   "legalAssistance": "Assistance légale",
   "marketResearch": "Rijhaedje di marcê",
-  "marketing": "Marketing",
+  "marketing": "Mårtchandèdje",
   "meetingFacilitation": "Facilitation di rénconter",
   "personalAssistant": "Assistent personnel",
   "presentationCreation": "Création di présentåcion",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Cacher bar d'app si Welcome HTML",
   "policySynthAgentsWorkflow": "Flux d'agents",
   "generateWithAi": "Générer avou AI",
-  "hidePointFor": "Cacher pont contra boesse"
+  "hidePointFor": "Cacher pont contra boesse",
+  "newOrganization": "Novele organizåcion",
+  "editOrganization": "Candjî organizåcion",
+  "addOrganization": "Ahiver organizåcion",
+  "onlyAdminsCanCreateOrganizations": "Nole k' les admines pôront ahiver des organizåcions",
+  "navigationMenu": "Menyu di navigåcion",
+  "useFixedTopAppBar": "Eployî l' bar d' aplicåcion fixe",
+  "disableArrowBasedTopNavigation": "Dèsactiver l' navigåcion ås flèches",
+  "multiModalModels": "Modèles multi-modåls",
+  "reasoningModels": "Modèles di rèsònêye",
+  "selectSmallReasoningModel": "P'tit modèle di rèsònêye",
+  "selectMediumReasoningModel": "Moyén modèle di rèsònêye",
+  "selectLargeReasoningModel": "Grand modèle di rèsònêye"
 }

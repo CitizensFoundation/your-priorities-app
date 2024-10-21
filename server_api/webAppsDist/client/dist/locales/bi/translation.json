@@ -191,7 +191,7 @@
   "customFilterText": "Kastom faelta text",
   "orderGroupsByRandom": "Odem grup long wei we i rendom",
   "customCategoryQuestionText": "Kastom kategori kwestin",
-  "plausibleDataDomains": "Plausible data domains",
+  "plausibleDataDomains": "Ol data blong ples",
   "customTabTitleNewLocation": "Kastom tab taetol blong niu ples",
   "cloneGroup": "Klonem grup",
   "areYouSureCloneGroup": "Yu sua yu wantem klone grup ya?",
@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Haedem app bar sipos Welcome HTML",
   "policySynthAgentsWorkflow": "Wokflo blong ol Ejent",
   "generateWithAi": "Jeneret wetem AI",
-  "hidePointFor": "Haedem point agensem bokis"
+  "hidePointFor": "Haedem point agensem bokis",
+  "newOrganization": "Niu ogenaesesen",
+  "editOrganization": "Editim ogenaesesen",
+  "addOrganization": "Krietem ogenaesesen",
+  "onlyAdminsCanCreateOrganizations": "Olgeta admin nomo oli save krietem ogenaesesen",
+  "navigationMenu": "Navigation menu",
+  "useFixedTopAppBar": "Yusum top app bar",
+  "disableArrowBasedTopNavigation": "Diseblem arrow top navigation",
+  "multiModalModels": "Multi-modal Models",
+  "reasoningModels": "Reasoning Models",
+  "selectSmallReasoningModel": "Smal Reasoning model",
+  "selectMediumReasoningModel": "Medium Reasoning model",
+  "selectLargeReasoningModel": "Bigfala Reasoning model"
 }

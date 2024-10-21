@@ -1481,5 +1481,17 @@
   "hideAppBarIfWelcomeHtml": "Piattà barra app se Benvenutu HTML",
   "policySynthAgentsWorkflow": "Flussu di Agenti",
   "generateWithAi": "Generà cù AI",
-  "hidePointFor": "Piattà puntu contr'à scatula"
+  "hidePointFor": "Piattà puntu contr'à scatula",
+  "newOrganization": "Nova urganizazione",
+  "editOrganization": "Edità urganizazione",
+  "addOrganization": "Crea urganizazione",
+  "onlyAdminsCanCreateOrganizations": "Solu amministratori ponu creà urganizazioni",
+  "navigationMenu": "Menu di navigazione",
+  "useFixedTopAppBar": "Aduprà barra app fissa",
+  "disableArrowBasedTopNavigation": "Disattivà navigazione cù frecce",
+  "multiModalModels": "Mudelli Multi-modali",
+  "reasoningModels": "Mudelli di Ragiunamentu",
+  "selectSmallReasoningModel": "Mudellu di Ragiunamentu Chjucu",
+  "selectMediumReasoningModel": "Mudellu di Ragiunamentu Mediu",
+  "selectLargeReasoningModel": "Mudellu di Ragiunamentu Grande"
 }
