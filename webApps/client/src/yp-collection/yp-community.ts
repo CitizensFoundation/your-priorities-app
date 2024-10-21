@@ -231,6 +231,15 @@ export class YpCommunity extends YpCollection {
     }
   }
 
+  override async getCollection() {
+    await super.getCollection();
+    if (this.collection && (this.collection as YpCommunityData).Domain) {
+      window.appGlobals.setCurrentDomain(
+        (this.collection as YpCommunityData).Domain!
+      );
+    }
+  }
+
   _openHelpPageIfNeededOnce() {
     if (
       this.collection &&

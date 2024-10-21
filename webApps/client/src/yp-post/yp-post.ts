@@ -656,6 +656,12 @@ export class YpPost extends YpCollection {
         this.setupTheme();
         this._processIncomingPost();
         this._getHelpPages("group", this.post.group_id);
+
+        if (this.post.Group.Community && this.post.Group.Community.Domain) {
+          window.appGlobals.setCurrentDomain(
+            this.post.Group.Community.Domain!
+          );
+        }
       }
     } else {
       console.error("No collection id for _getPost");

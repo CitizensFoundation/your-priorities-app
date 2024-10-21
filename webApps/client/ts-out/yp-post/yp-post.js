@@ -555,6 +555,9 @@ let YpPost = class YpPost extends YpCollection {
                 this.setupTheme();
                 this._processIncomingPost();
                 this._getHelpPages("group", this.post.group_id);
+                if (this.post.Group.Community && this.post.Group.Community.Domain) {
+                    window.appGlobals.setCurrentDomain(this.post.Group.Community.Domain);
+                }
             }
         }
         else {

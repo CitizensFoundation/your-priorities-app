@@ -181,6 +181,12 @@ let YpCommunity = class YpCommunity extends YpCollection {
                 undefined;
         }
     }
+    async getCollection() {
+        await super.getCollection();
+        if (this.collection && this.collection.Domain) {
+            window.appGlobals.setCurrentDomain(this.collection.Domain);
+        }
+    }
     _openHelpPageIfNeededOnce() {
         if (this.collection &&
             !sessionStorage.getItem("yp-welcome-for-community-" + this.collection.id)) {

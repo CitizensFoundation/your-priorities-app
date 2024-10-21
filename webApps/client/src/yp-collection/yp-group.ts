@@ -315,6 +315,16 @@ export class YpGroup extends YpCollection {
       }
     }
     window.appGlobals.retryMethodAfter401Login = undefined;
+
+    if (
+      this.collection &&
+      (this.collection as YpGroupData).Community &&
+      (this.collection as YpGroupData).Community!.Domain
+    ) {
+      window.appGlobals.setCurrentDomain(
+        (this.collection as YpGroupData).Community!.Domain!
+      );
+    }
   }
 
   _selectGroupTab(event: CustomEvent) {

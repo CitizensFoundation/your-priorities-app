@@ -408,6 +408,13 @@ router.get("/:id", auth.can("view post"), function (req, res) {
                       "only_admins_can_create_groups",
                     ],
                     required: true,
+                    //TODO: See if this is slowing things down
+                    include: [
+                      {
+                        model: models.Domain,
+                        attributes: ["id","name"],
+                      },
+                    ],
                   },
                 ],
               },

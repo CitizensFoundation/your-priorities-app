@@ -7,6 +7,7 @@ export declare class YpCommunity extends YpCollection {
     scrollToGroupItem(): void;
     _setupCommunityBackPath(community: YpCommunityData): void;
     scrollToCollectionItemSubClass(): void;
+    getCollection(): Promise<void>;
     _openHelpPageIfNeededOnce(): void;
     _hideMapIfNotUsedByGroups(): void;
 }

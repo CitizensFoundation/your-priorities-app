@@ -223,6 +223,11 @@ let YpGroup = class YpGroup extends YpCollection {
             }
         }
         window.appGlobals.retryMethodAfter401Login = undefined;
+        if (this.collection &&
+            this.collection.Community &&
+            this.collection.Community.Domain) {
+            window.appGlobals.setCurrentDomain(this.collection.Community.Domain);
+        }
     }
     _selectGroupTab(event) {
         this.selectedGroupTab = event.currentTarget.activeTabIndex;
