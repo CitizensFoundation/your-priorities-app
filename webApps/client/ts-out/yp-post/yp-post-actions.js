@@ -226,6 +226,16 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         action-up[only-up-vote-showing] {
           margin-right: -16px;
         }
+
+        md-filled-icon-button.thumbs-with-color-up {
+          --md-sys-color-primary: var(--yp-sys-color-up);
+          --md-sys-color-on-primary: var(--yp-sys-color-up-on);
+        }
+
+        md-filled-icon-button.thumbs-with-color-down {
+          --md-sys-color-primary: var(--yp-sys-color-down);
+          --md-sys-color-on-primary: var(--yp-sys-color-down-on);
+        }
       `,
         ];
     }
@@ -274,7 +284,10 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
               .smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
               .title="${this.customVoteUpHoverText}"
-              class="action-icon up-vote-icon mainIcons"
+              class="action-icon up-vote-icon mainIcons ${this
+                .endorsementButtons == "thumbsWithColor"
+                ? "thumbs-with-color-up"
+                : ""}"
               @click="${this.upVote}"
               ><md-icon slot="selected"
                 >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
@@ -302,7 +315,10 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
               smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
               title="${this.customVoteDownHoverText}"
-              class="action-icon down-vote-icon mainIcons"
+              class="action-icon down-vote-icon mainIcons ${this
+                .endorsementButtons == "thumbsWithColor"
+                ? "thumbs-with-color-down"
+                : ""}"
               @click="${this.downVote}"
               ><md-icon slot="selected">${this.endorseModeIconDown}</md-icon
               ><md-icon
@@ -470,6 +486,12 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
             return "thumb_up";
         }
         else if (endorsementButtons == "thumbs" && upDown == "down") {
+            return "thumb_down";
+        }
+        else if (endorsementButtons == "thumbsWithColor" && upDown == "up") {
+            return "thumb_up";
+        }
+        else if (endorsementButtons == "thumbsWithColor" && upDown == "down") {
             return "thumb_down";
         }
         else if (endorsementButtons == "hearts" && upDown == "up") {

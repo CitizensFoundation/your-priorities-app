@@ -1132,6 +1132,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 { name: "arrows", translatedName: this.t("endorsementArrows") },
                 { name: "thumbs", translatedName: this.t("endorsementThumbs") },
                 { name: "hats", translatedName: this.t("endorsementHats") },
+                { name: "thumbsWithColor", translatedName: this.t("endorsementThumbsWithColor") },
             ];
         }
         else {
