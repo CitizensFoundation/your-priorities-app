@@ -41,7 +41,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           .menuCorner="${Corner.START_END}"
         >
           ${this.computedBreadcrumbs.map((crumb, index) => html `
-              <md-menu-item @click=${() => this.navigateTo(crumb.url)}>
+              <md-menu-item @click=${() => this.redirectTo(crumb.url)}>
                 ${crumb.name}
               </md-menu-item>
               ${index < this.computedBreadcrumbs.length - 1
@@ -54,6 +54,11 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         else {
             return nothing;
         }
+    }
+    redirectTo(url) {
+        YpNavHelpers.redirectTo(url);
+        this.fireGlobal("yp-close-all-drawers");
+        this.isMenuOpen = false;
     }
     renderMyDomainsDropdown() {
         if (this.myDomains && this.myDomains.length > 1) {
@@ -71,7 +76,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         >
           ${this.myDomains.map((domain, index) => html `
               <md-menu-item
-                @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}
+                @click=${() => this.redirectTo(`/domain/${domain.id}`)}
               >
                 ${domain.name}
               </md-menu-item>
@@ -85,11 +90,6 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         else {
             return nothing;
         }
-    }
-    navigateTo(url) {
-        window.history.pushState({}, "", url);
-        window.dispatchEvent(new CustomEvent("location-changed"));
-        this.isMenuOpen = false;
     }
     _toggleMenu(e) {
         e.stopPropagation();
@@ -157,6 +157,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
 
         .titleText {
           margin-right: 4px;
+          margin-left: 8px;
           cursor: pointer;
         }
 
@@ -310,14 +311,14 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
       >
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
-          ${this.renderBreadcrumbsDropdown()}
+          ${this.renderMyDomainsDropdown()}
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
             ${breadcrumbsWithTitle.map((crumb, index) => html `
                 ${crumb.isLink
             ? html `
                       <div
                         class="titleText"
-                        @click="${() => this.navigateTo(crumb.url)}"
+                        @click="${() => this.redirectTo(crumb.url)}"
                       >
                         ${crumb.name}
                       </div>

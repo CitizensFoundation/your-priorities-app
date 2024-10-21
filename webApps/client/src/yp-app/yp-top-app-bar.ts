@@ -84,7 +84,7 @@ export class YpTopAppBar extends YpBaseElement {
         >
           ${this.computedBreadcrumbs.map(
             (crumb, index) => html`
-              <md-menu-item @click=${() => this.navigateTo(crumb.url)}>
+              <md-menu-item @click=${() => this.redirectTo(crumb.url)}>
                 ${crumb.name}
               </md-menu-item>
               ${index < this.computedBreadcrumbs.length - 1
@@ -97,6 +97,12 @@ export class YpTopAppBar extends YpBaseElement {
     } else {
       return nothing;
     }
+  }
+
+  redirectTo(url: string) {
+    YpNavHelpers.redirectTo(url);
+    this.fireGlobal("yp-close-all-drawers");
+    this.isMenuOpen = false;
   }
 
   renderMyDomainsDropdown() {
@@ -116,7 +122,7 @@ export class YpTopAppBar extends YpBaseElement {
           ${this.myDomains.map(
             (domain, index) => html`
               <md-menu-item
-                @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}
+                @click=${() => this.redirectTo(`/domain/${domain.id}`)}
               >
                 ${domain.name}
               </md-menu-item>
@@ -130,12 +136,6 @@ export class YpTopAppBar extends YpBaseElement {
     } else {
       return nothing;
     }
-  }
-
-  navigateTo(url: string) {
-    window.history.pushState({}, "", url);
-    window.dispatchEvent(new CustomEvent("location-changed"));
-    this.isMenuOpen = false;
   }
 
   private _toggleMenu(e: Event) {
@@ -206,6 +206,7 @@ export class YpTopAppBar extends YpBaseElement {
 
         .titleText {
           margin-right: 4px;
+          margin-left: 8px;
           cursor: pointer;
         }
 
@@ -383,7 +384,7 @@ export class YpTopAppBar extends YpBaseElement {
       >
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
-          ${this.renderBreadcrumbsDropdown()}
+          ${this.renderMyDomainsDropdown()}
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
             ${breadcrumbsWithTitle.map(
               (crumb, index) => html`
@@ -391,7 +392,7 @@ export class YpTopAppBar extends YpBaseElement {
                   ? html`
                       <div
                         class="titleText"
-                        @click="${() => this.navigateTo(crumb.url)}"
+                        @click="${() => this.redirectTo(crumb.url)}"
                       >
                         ${crumb.name}
                       </div>

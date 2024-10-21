@@ -33,6 +33,14 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
     }
     connectedCallback() {
         super.connectedCallback();
+        this.addGlobalListener("yp-close-all-drawers", this._closeAllDrawers);
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeGlobalListener("yp-close-all-drawers", this._closeAllDrawers);
+    }
+    _closeAllDrawers() {
+        this.opened = false;
     }
     getGroupTypeName(group) {
         if (group &&
@@ -75,18 +83,22 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
             YpNavHelpers.redirectTo("/" + this.homeLink.type + "/" + this.homeLink.id);
             this.fire("yp-toggle-nav-drawer");
         }
+        this.fireGlobal("yp-close-all-drawers");
     }
     _goToGroup(event) {
         YpNavHelpers.redirectTo("/group/" + event.target.getAttribute("data-args"));
         this.fire("yp-toggle-nav-drawer");
+        this.fireGlobal("yp-close-all-drawers");
     }
     _goToCommunity(event) {
         YpNavHelpers.redirectTo("/community/" + event.target.getAttribute("data-args"));
         this.fire("yp-toggle-nav-drawer");
+        this.fireGlobal("yp-close-all-drawers");
     }
     _goToDomain(event) {
         YpNavHelpers.redirectTo("/domain/" + event.target.getAttribute("data-args"));
         this.fire("yp-toggle-nav-drawer");
+        this.fireGlobal("yp-close-all-drawers");
     }
     _userChanged() {
         if (this.user) {
@@ -150,21 +162,14 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
           font-size: 18px;
         }
 
-        .groupName {
+        .item {
           border-bottom: 3px solid transparent;
         }
 
-        .groupName:hover {
+        .item:hover {
           border-bottom: 3px solid var(--md-sys-color-primary-container);
         }
 
-        .communityName {
-          border-bottom: 3px solid transparent;
-        }
-
-        .communityName:hover {
-          border-bottom: 3px solid var(--md-sys-color-primary-container);
-        }
 
         .groupTypeName {
           font-size: 12px;

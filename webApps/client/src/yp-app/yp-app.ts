@@ -384,6 +384,7 @@ export class YpApp extends YpBaseElement {
     this.addGlobalListener("yp-refresh-group", this._refreshGroup.bind(this));
 
     this.addListener("yp-close-right-drawer", this._closeUserDrawer, this);
+    this.addGlobalListener("yp-close-all-drawers", this._closeNavDrawer);
     this.addListener(
       "yp-set-number-of-un-viewed-notifications",
       this._setNumberOfUnViewedNotifications,
@@ -438,6 +439,10 @@ export class YpApp extends YpBaseElement {
       "yp-reset-keep-open-for-page",
       this._resetKeepOpenForPage,
       this
+    );
+    this.removeGlobalListener(
+      "yp-close-all-drawers",
+      this._closeNavDrawer
     );
     this.removeListener("yp-open-login", this._login, this);
     this.removeListener("yp-open-page", this._openPageFromEvent, this);
@@ -1644,7 +1649,8 @@ export class YpApp extends YpBaseElement {
     return (
       window.appGlobals.domain &&
       window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn &&
-      this.page === "domain"
+      this.page === "domain" &&
+      !this.user
     );
   }
 

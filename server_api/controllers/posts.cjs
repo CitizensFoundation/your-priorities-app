@@ -412,7 +412,7 @@ router.get("/:id", auth.can("view post"), function (req, res) {
                     include: [
                       {
                         model: models.Domain,
-                        attributes: ["id","name"],
+                        attributes: models.Domain.defaultAttributesPublic,
                       },
                     ],
                   },

@@ -67,6 +67,19 @@ export class YpAppNavDrawer extends YpBaseElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
+    this.addGlobalListener("yp-close-all-drawers", this._closeAllDrawers);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeGlobalListener(
+      "yp-close-all-drawers",
+      this._closeAllDrawers
+    );
+  }
+
+  _closeAllDrawers() {
+    this.opened = false;
   }
 
   getGroupTypeName(group: YpGroupData) {
@@ -115,6 +128,7 @@ export class YpAppNavDrawer extends YpBaseElement {
       );
       this.fire("yp-toggle-nav-drawer");
     }
+    this.fireGlobal("yp-close-all-drawers");
   }
 
   _goToGroup(event: CustomEvent) {
@@ -122,6 +136,7 @@ export class YpAppNavDrawer extends YpBaseElement {
       "/group/" + (event.target as HTMLElement).getAttribute("data-args")
     );
     this.fire("yp-toggle-nav-drawer");
+    this.fireGlobal("yp-close-all-drawers");
   }
 
   _goToCommunity(event: CustomEvent) {
@@ -129,6 +144,7 @@ export class YpAppNavDrawer extends YpBaseElement {
       "/community/" + (event.target as HTMLElement).getAttribute("data-args")
     );
     this.fire("yp-toggle-nav-drawer");
+    this.fireGlobal("yp-close-all-drawers");
   }
 
   _goToDomain(event: CustomEvent) {
@@ -136,6 +152,7 @@ export class YpAppNavDrawer extends YpBaseElement {
       "/domain/" + (event.target as HTMLElement).getAttribute("data-args")
     );
     this.fire("yp-toggle-nav-drawer");
+    this.fireGlobal("yp-close-all-drawers");
   }
 
   _userChanged() {
@@ -223,21 +240,14 @@ export class YpAppNavDrawer extends YpBaseElement {
           font-size: 18px;
         }
 
-        .groupName {
+        .item {
           border-bottom: 3px solid transparent;
         }
 
-        .groupName:hover {
+        .item:hover {
           border-bottom: 3px solid var(--md-sys-color-primary-container);
         }
 
-        .communityName {
-          border-bottom: 3px solid transparent;
-        }
-
-        .communityName:hover {
-          border-bottom: 3px solid var(--md-sys-color-primary-container);
-        }
 
         .groupTypeName {
           font-size: 12px;

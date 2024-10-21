@@ -19,6 +19,8 @@ export declare class YpAppNavDrawer extends YpBaseElement {
     groupsCount: number;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     connectedCallback(): void;
+    disconnectedCallback(): void;
+    _closeAllDrawers(): void;
     getGroupTypeName(group: YpGroupData): string;
     _openChanged(): Promise<void>;
     _selectedLocale(): string;

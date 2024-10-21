@@ -27,6 +27,7 @@ export class YpDrawer extends YpBaseElement {
           height: 100%;
           z-index: 9999;
         }
+
         .drawer-content {
           width: var(--drawer-width);
           height: 100%;
@@ -36,7 +37,7 @@ export class YpDrawer extends YpBaseElement {
           bottom: 0;
           overflow-y: auto;
           transform: translateX(-100%);
-          background-color: var(--md-sys-color-surface);
+          background-color: var(--md-sys-color-surface-container-lowest);
           z-index: 2;
           transition: opacity 0.3s ease, transform 0.3s ease;
         }
