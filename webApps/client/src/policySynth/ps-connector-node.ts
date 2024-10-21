@@ -13,6 +13,9 @@ import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 
 @customElement("ps-connector-node")
 export class PsAgentConnector extends PsOperationsBaseNode {
+  @property({ type: Boolean, reflect: true })
+  override hasStaticTheme!: boolean;
+
   @property({ type: Object })
   connector!: PsAgentConnectorAttributes;
 
@@ -93,6 +96,10 @@ export class PsAgentConnector extends PsOperationsBaseNode {
         .mainContainer {
           border-radius: 16px;
           height: 100%;
+        }
+
+        .mainContainer[has-static-theme] {
+          border-radius: 4px;
         }
 
         .connectorType {
@@ -184,7 +191,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
     //TODO: Add typedefs for the different configurations
     if (this.connector) {
       return html`
-        <div class="layout vertical mainContainer">
+        <div class="layout vertical mainContainer" ?has-static-theme=${this.hasStaticTheme}>
           ${this.renderImage()}
           <div class="name connectorType">${this.connector.Class?.name}</div>
           ${this.connector.configuration["name"]
