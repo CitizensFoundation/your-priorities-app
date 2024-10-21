@@ -5,6 +5,7 @@ import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 export declare class PsAgentConnector extends PsOperationsBaseNode {
+    hasStaticTheme: boolean;
     connector: PsAgentConnectorAttributes;
     connectorId: number;
     groupId: number;

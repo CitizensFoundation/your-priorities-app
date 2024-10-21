@@ -71,6 +71,10 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
           height: 100%;
         }
 
+        .mainContainer[has-static-theme] {
+          border-radius: 4px;
+        }
+
         .connectorType {
           font-size: 10px;
           text-align: left;
@@ -154,7 +158,7 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
         //TODO: Add typedefs for the different configurations
         if (this.connector) {
             return html `
-        <div class="layout vertical mainContainer">
+        <div class="layout vertical mainContainer" ?has-static-theme=${this.hasStaticTheme}>
           ${this.renderImage()}
           <div class="name connectorType">${this.connector.Class?.name}</div>
           ${this.connector.configuration["name"]
@@ -197,6 +201,9 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
         }
     }
 };
+__decorate([
+    property({ type: Boolean, reflect: true })
+], PsAgentConnector.prototype, "hasStaticTheme", void 0);
 __decorate([
     property({ type: Object })
 ], PsAgentConnector.prototype, "connector", void 0);

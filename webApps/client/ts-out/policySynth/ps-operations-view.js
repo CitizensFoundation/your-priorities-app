@@ -588,7 +588,6 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         .connectorContainer {
           color: var(--md-sys-color-on-surface);
           background-color: var(--md-sys-color-surface-container-low);
-          border-radius: 16px;
           padding: 0;
         }
 
