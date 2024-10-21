@@ -33,9 +33,18 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
         }
 
         .innerContainer {
-          background-color: var(--md-sys-color-surface-container-low);
           border-radius: 4px;
-          padding: 32px;
+          padding: 16px;
+        }
+
+        .outerContainer {
+          border-radius: 4px;
+          padding: 16px;
+          cursor: pointer;
+        }
+
+        .outerContainer:hover {
+          background-color: var(--md-sys-color-surface-container);
         }
 
         .post-name {
@@ -59,8 +68,8 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
         }
 
         .actionsBar {
-          margin-left: 372px;
-          margin-top: -12px;
+          margin-left: -4px;
+          margin-top: 4px;
         }
 
         .postCardCursor {
@@ -312,9 +321,6 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
                           .contentId="${this.post.id}"
                         >
                         </yp-magic-text>
-                        <div class="flex"></div>
-                        ${this.renderDebate()}
-                        ${this.renderShare()}
                       </div>
                       ${this.post.Group.configuration?.usePostTagsForPostCards
                 ? this.renderTags()
@@ -322,12 +328,16 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
                     </div>
                   </div>
                 </a>
-                <div
-                  ?hidden="${this.post.Group.configuration?.hidePostActionsInGrid}"
+              </div>
+              <div
+                class="layout horizontal end"
+                ?hidden="${this.post.Group.configuration?.hidePostActionsInGrid}"
                   @click="${this._onBottomClick}"
                 >
                   ${this.renderActions()}
-                </div>
+                  <div class="flex"></div>
+                        ${this.renderDebate()}
+                        ${this.renderShare()}
               </div>
             </div>
         </div>
@@ -361,7 +371,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
     `;
     }
     renderActions() {
-        return html `<div class="layout horizontal actionsBar">
+        return html `<div class="layout horizontal start actionsBar">
       ${this.post.Group.configuration?.customRatings
             ? html `
             <yp-post-ratings-info
