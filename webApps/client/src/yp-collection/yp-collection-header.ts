@@ -495,7 +495,7 @@ export class YpCollectionHeader extends YpBaseElement {
       <div class="menuButton">
         <div class="layout horizontal">
           <md-filled-tonal-icon-button
-            ?hidden="${this.collectionType === "group" || this.collectionType === "community"}"
+            ?hidden="${this.collectionType === "domain" || this.collectionType === "group"}"
             @click="${this._openCreateGroupFolder}"
             title="${this.openMenuLabel}"
             ><md-icon>create_new_folder</md-icon>

@@ -1593,8 +1593,12 @@ export class YpApp extends YpBaseElement {
   }
 
   async _closeNavDrawer() {
-    (this.$$("#leftDrawer") as any).open = false;
-    (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = false;
+    if (this.$$("#leftDrawer")) {
+      (this.$$("#leftDrawer") as any).open = false;
+    }
+    if (this.$$("#ypNavDrawer")) {
+      (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = false;
+    }
     await new Promise((resolve) => setTimeout(resolve, 300));
     this.navDrawerOpened = false;
   }

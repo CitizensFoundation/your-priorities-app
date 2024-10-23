@@ -1207,8 +1207,12 @@ let YpApp = class YpApp extends YpBaseElement {
         this.$$("#ypNavDrawer").opened = true;
     }
     async _closeNavDrawer() {
-        this.$$("#leftDrawer").open = false;
-        this.$$("#ypNavDrawer").opened = false;
+        if (this.$$("#leftDrawer")) {
+            this.$$("#leftDrawer").open = false;
+        }
+        if (this.$$("#ypNavDrawer")) {
+            this.$$("#ypNavDrawer").opened = false;
+        }
         await new Promise((resolve) => setTimeout(resolve, 300));
         this.navDrawerOpened = false;
     }
