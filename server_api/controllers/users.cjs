@@ -292,8 +292,19 @@ router.post('/register_anonymously', function (req, res) {
             req.logIn(user, function (error, detail) {
               log.info("Have logged in Anon 2", { error: error ? error : null, user: req.user });
               log.info("Anon debug Session 2", { sessionID: req.sessionID, session: req.session });
-              sendUserOrError(res, user, 'register_anonymous', error, 401);
-            });
+              if (error) {
+                log.error("Error logging in user", { error });
+                sendUserOrError(res, null, 'registerUser', error, 401);
+              } else {
+                req.session.save(function (err) {
+                  if (err) {
+                    log.error("Error saving session after login", { err });
+                    res.status(500).send({ status: 500, message: err.message, type: 'internal' });
+                  } else {
+                    sendUserOrError(res, user, 'registerUser', null, 401);
+                  }
+                });
+              }            });
           }).catch(function (error) {
             if (error && error.name=='SequelizeUniqueConstraintError') {
               log.error("User Error", { context: 'SequelizeUniqueConstraintError', user: user, err: error,
