@@ -295,7 +295,7 @@ router.post('/register_anonymously', async function (req, res) {
             });
         });
         //TODO: Without this hack the user session is recreated each time
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 70));
         log.info("Successfully logged in anonymous user", {
             sessionID: req.sessionID,
             user: toJson(user)
