@@ -231,94 +231,98 @@ router.post('/register', function (req, res) {
     });
 });
 // Register anonymous
-router.post('/register_anonymously', function (req, res) {
-    log.info("Anon debug in register_anonymously");
-    const groupId = req.body.groupId;
-    const oneTimeLoginName = req.body.oneTimeLoginName;
-    models.Group.findOne({
-        where: {
-            id: groupId
-        }
-    }).then(function (group) {
-        if (group &&
-            group.configuration &&
-            (group.configuration.allowAnonymousUsers ||
+router.post('/register_anonymously', async function (req, res) {
+    try {
+        log.info("Anon debug in register_anonymously");
+        const groupId = req.body.groupId;
+        const oneTimeLoginName = req.body.oneTimeLoginName;
+        const group = await models.Group.findOne({
+            where: { id: groupId }
+        });
+        if (!group || !group.configuration ||
+            !(group.configuration.allowAnonymousUsers ||
                 group.configuration.allowOneTimeLoginWithName)) {
-            var anonEmail = req.sessionID + "_anonymous@citizens.is";
-            models.User.findOne({
-                where: {
-                    email: anonEmail
-                }
-            }).then(function (existingUser) {
-                if (existingUser && existingUser.profile_data && existingUser.profile_data.isAnonymousUser) {
-                    log.info('Found Already Registered Anonymous', { user: toJson(existingUser), context: 'register_anonymous' });
-                    req.logIn(existingUser, function (error, detail) {
-                        log.info("Have logged in Anon 1", { error: error ? error : null, user: req.user });
-                        sendUserOrError(res, existingUser, 'register_anonymous', error, 401);
-                    });
-                }
-                else {
-                    var user = models.User.build({
-                        email: anonEmail,
-                        name: oneTimeLoginName ? oneTimeLoginName : "Anonymous User",
-                        notifications_settings: models.AcNotification.anonymousNotificationSettings,
-                        status: 'active'
-                    });
-                    user.set('profile_data', {});
-                    user.set('profile_data.isAnonymousUser', true);
-                    user.set('profile_data.trackingParameters', req.body.trackingParameters);
-                    if (req.body.registration_answers) {
-                        setUserProfileData(user, req.body.registration_answers);
-                        user.dataValues.hasRegistrationAnswers = true;
-                    }
-                    else {
-                        user.dataValues.hasRegistrationAnswers = false;
-                    }
-                    user.save().then(function () {
-                        log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
-                        req.logIn(user, function (error, detail) {
-                            log.info("Have logged in Anon 2", { error: error ? error : null, user: req.user });
-                            log.info("Anon debug Session 2", { sessionID: req.sessionID, session: req.session });
-                            if (error) {
-                                log.error("Error logging in user", { error });
-                                sendUserOrError(res, null, 'registerUser', error, 401);
-                            }
-                            else {
-                                req.session.save(function (err) {
-                                    if (err) {
-                                        log.error("Error saving session after login", { err });
-                                        res.status(500).send({ status: 500, message: err.message, type: 'internal' });
-                                    }
-                                    else {
-                                        sendUserOrError(res, user, 'registerUser', null, 401);
-                                    }
-                                });
-                            }
-                        });
-                    }).catch(function (error) {
-                        if (error && error.name == 'SequelizeUniqueConstraintError') {
-                            log.error("User Error", { context: 'SequelizeUniqueConstraintError', user: user, err: error,
-                                errorStatus: 500 });
-                            res.status(500).send({ status: 500, message: error.name, type: 'internal' });
-                        }
-                        else {
-                            sendUserOrError(res, null, 'register_anonymous', error);
-                        }
-                    });
-                }
-            }).catch(function (error) {
-                log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
-                res.status(500).send({ status: 500, message: error.name, type: 'internal' });
+            log.error("Tried to register to a group anonymously", {
+                context: 'register_anonymous',
+                err: "Group not found or anonymous users not allowed",
+                errorStatus: 401
+            });
+            return res.sendStatus(401);
+        }
+        const anonEmail = req.sessionID + "_anonymous@citizens.is";
+        let user = await models.User.findOne({
+            where: { email: anonEmail }
+        });
+        if (user && user.profile_data && user.profile_data.isAnonymousUser) {
+            log.info('Found Already Registered Anonymous', {
+                user: toJson(user),
+                context: 'register_anonymous'
             });
         }
         else {
-            log.error("Tried ot register to a group anonymously", { context: 'register_anonymous', err: "", errorStatus: 401 });
-            res.sendStatus(401);
+            user = models.User.build({
+                email: anonEmail,
+                name: oneTimeLoginName ? oneTimeLoginName : "Anonymous User",
+                notifications_settings: models.AcNotification.anonymousNotificationSettings,
+                status: 'active',
+                profile_data: {
+                    isAnonymousUser: true,
+                    trackingParameters: req.body.trackingParameters
+                }
+            });
+            if (req.body.registration_answers) {
+                setUserProfileData(user, req.body.registration_answers);
+                user.dataValues.hasRegistrationAnswers = true;
+            }
+            else {
+                user.dataValues.hasRegistrationAnswers = false;
+            }
+            await user.save();
+            log.info('User Created Anonymous', {
+                user: toJson(user),
+                context: 'register_anonymous'
+            });
         }
-    }).catch(function (error) {
-        log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
-        res.status(500).send({ status: 500, message: error.name, type: 'internal' });
-    });
+        // Handle login with proper session management
+        await new Promise((resolve, reject) => {
+            req.logIn(user, function (error) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    req.session.user = user;
+                    req.session.save((err) => {
+                        if (err)
+                            reject(err);
+                        else
+                            resolve();
+                    });
+                }
+            });
+        });
+        log.info("Successfully logged in anonymous user", {
+            sessionID: req.sessionID,
+            user: toJson(user)
+        });
+        sendUserOrError(res, user, 'registerUser', null, 401);
+    }
+    catch (error) {
+        log.error("Error in anonymous registration", {
+            context: 'register_anonymous',
+            err: error,
+            errorStatus: 500
+        });
+        if (error.name == 'SequelizeUniqueConstraintError') {
+            res.status(500).send({
+                status: 500,
+                message: error.name,
+                type: 'internal'
+            });
+        }
+        else {
+            sendUserOrError(res, null, 'register_anonymous', error);
+        }
+    }
 });
 // Moderation
 router.delete('/:userId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit user'), (req, res) => {
