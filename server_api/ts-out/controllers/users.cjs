@@ -283,24 +283,19 @@ router.post('/register_anonymously', async function (req, res) {
                 context: 'register_anonymous'
             });
         }
+        // Handle login with proper session management
         await new Promise((resolve, reject) => {
-            req.session.regenerate((err) => {
-                if (err) {
-                    reject(err);
-                    return;
+            req.logIn(user, function (error) {
+                if (error) {
+                    reject(error);
                 }
-                // Now do login with fresh session
-                req.logIn(user, (loginErr) => {
-                    if (loginErr) {
-                        reject(loginErr);
-                        return;
-                    }
+                else {
                     resolve();
-                });
+                }
             });
         });
-        // Uncomment to make _anonymous login work each time
-        //await new Promise(resolve => setTimeout(resolve, 1000));
+        //TODO: Without this hack the user session is recreated each time
+        await new Promise(resolve => setTimeout(resolve, 50));
         log.info("Successfully logged in anonymous user", {
             sessionID: req.sessionID,
             user: toJson(user)
