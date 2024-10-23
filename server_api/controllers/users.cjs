@@ -279,12 +279,13 @@ router.post('/register_anonymously', async function (req, res) {
         email: anonEmail,
         name: oneTimeLoginName ? oneTimeLoginName : "Anonymous User",
         notifications_settings: models.AcNotification.anonymousNotificationSettings,
-        status: 'active',
-        profile_data: {
-          isAnonymousUser: true,
-          trackingParameters: req.body.trackingParameters
-        }
+        status: 'active'
       });
+
+      // Match original profile_data setting pattern
+      user.set('profile_data', {});
+      user.set('profile_data.isAnonymousUser', true);
+      user.set('profile_data.trackingParameters', req.body.trackingParameters);
 
       if (req.body.registration_answers) {
         setUserProfileData(user, req.body.registration_answers);
@@ -315,6 +316,9 @@ router.post('/register_anonymously', async function (req, res) {
       });
     });
 
+    // Wait for 10 seconds
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
     log.info("Successfully logged in anonymous user", {
       sessionID: req.sessionID,
       user: toJson(user)
@@ -326,12 +330,12 @@ router.post('/register_anonymously', async function (req, res) {
     log.error("Error in anonymous registration", {
       context: 'register_anonymous',
       err: error,
-      errorStatus: 500
+      errorStatus: error.name == 'SequelizeUniqueConstraintError' ? 401 : 500
     });
 
     if (error.name == 'SequelizeUniqueConstraintError') {
-      res.status(500).send({
-        status: 500,
+      res.status(401).send({
+        status: 401,
         message: error.name,
         type: 'internal'
       });
