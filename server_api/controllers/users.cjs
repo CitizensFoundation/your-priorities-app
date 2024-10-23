@@ -301,23 +301,26 @@ router.post('/register_anonymously', async function (req, res) {
       });
     }
 
-    // Handle login with proper session management
     await new Promise((resolve, reject) => {
-      req.logIn(user, function(error) {
-        if (error) {
-          reject(error);
-        } else {
-          req.session.user = user;
-          req.session.save((err) => {
-            if (err) reject(err);
-            else resolve();
-          });
+      req.session.regenerate((err) => {
+        if (err) {
+          reject(err);
+          return;
         }
+
+        // Now do login with fresh session
+        req.logIn(user, (loginErr) => {
+          if (loginErr) {
+            reject(loginErr);
+            return;
+          }
+          resolve();
+        });
       });
     });
 
-    // Wait for 10 seconds
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    // Uncomment to make _anonymous login work each time
+    //await new Promise(resolve => setTimeout(resolve, 1000));
 
     log.info("Successfully logged in anonymous user", {
       sessionID: req.sessionID,
