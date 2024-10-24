@@ -144,7 +144,7 @@ router.post('/login', function (req, res) {
     log.info('User Login start', { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
     req.sso.authenticate('local-strategy', {}, req, res, function (err, user) {
         log.info(`User Login before get ${req.user ? "HASUSER" : "NOUSER"}`, { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
-        getUserWithAll(req.user.id, true, function (error, user) {
+        getUserWithAll(req.user.id, true, async function (error, user) {
             log.info('User Login completed', { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
             if (error || !user) {
                 log.error("User Login Error", { context: 'login', user: user ? user.id : null, err: error, errorStatus: 500 });
@@ -164,6 +164,8 @@ router.post('/login', function (req, res) {
                     user.dataValues.hasRegistrationAnswers = false;
                 }
                 delete user.private_profile_data;
+                //TODO: Without this hack there is a small chance the session is recreated each time due to some new Redis timing issue
+                await new Promise(resolve => setTimeout(resolve, 50));
                 res.send(user);
             }
         });
@@ -216,7 +218,9 @@ router.post('/register', function (req, res) {
     }
     user.save().then(function () {
         log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
-        req.logIn(user, function (error, detail) {
+        req.logIn(user, async function (error, detail) {
+            //TODO: Without this hack there is a small chance the session is recreated each time due to some new Redis timing issue
+            await new Promise(resolve => setTimeout(resolve, 50));
             sendUserOrError(res, user, 'registerUser', error, 401);
         });
     }).catch(function (error) {
@@ -294,7 +298,7 @@ router.post('/register_anonymously', async function (req, res) {
                 }
             });
         });
-        //TODO: Without this hack the user session is recreated each time
+        //TODO: Without this hack the user session is recreated each time due to some new Redis timing issue
         await new Promise(resolve => setTimeout(resolve, 70));
         log.info("Successfully logged in anonymous user", {
             sessionID: req.sessionID,
