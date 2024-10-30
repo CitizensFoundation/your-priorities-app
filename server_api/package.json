@@ -95,12 +95,14 @@
     "sharp": "^0.33.2",
     "sitemap": "^7.1.2",
     "socket.io": "^4.0.0",
+    "stripe": "^17.3.0",
     "striptags": "^3.2.0",
     "uuid": "^10.0.0",
     "weaviate-ts-client": "^2.0.0",
     "ws": "^8.15.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
     "@maxmind/geoip2-node": "^5.0.0",
     "@tsconfig/node18": "^18.2.0",
     "@types/bunyan": "^1.8.11",
@@ -134,10 +136,11 @@
     "socket.io": "^4.0.0",
     "temp": "^0.9.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.5.4",
+    "typescript": "^5.6.3",
     "uuid": "^10.0.0",
     "winston": "^3.11.0",
     "wordwrap": "^1.0.0",
+    "wrangler": "^3.83.0",
     "ws": "^8.15.1",
     "yamljs": "^0.3.0"
   },

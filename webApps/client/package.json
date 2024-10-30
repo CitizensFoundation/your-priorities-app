@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.4.2",
+    "@heygen/streaming-avatar": "^2.0.7",
     "@joint/core": "^4.0.4",
     "@kano/twemoji": "^1.0.0",
     "@lit-labs/motion": "^1.0.7",

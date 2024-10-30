@@ -48,6 +48,7 @@ interface YpRequest extends express.Request {
   redisClient?: any;
   user?: any;
 }
+
 export class PolicySynthAgentsController {
   public path = "/api/agents";
   public router = express.Router();
