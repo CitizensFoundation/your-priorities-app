@@ -8,6 +8,11 @@ import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
 import "@material/web/progress/circular-progress.js";
 
+// Extended interface for API response that includes relationships
+interface YpSubscriptionPlanWithRelations extends YpSubscriptionPlanAttributes {
+  AgentProduct?: YpAgentProductAttributes;
+}
+
 interface BundleGroup {
   bundleId: number;
   name: string;
@@ -18,8 +23,13 @@ interface BundleGroup {
 
 interface AgentProductWithPlan {
   id: number;
-  name: string;
+  user_id: number;
+  group_id: number;
+  domain_id: number;
+  name?: string;
   description?: string;
+  configuration?: YpAgentProductConfiguration;
+  status?: YpAgentProductStatus;
   plans: YpSubscriptionPlanAttributes[];
 }
 
@@ -58,135 +68,210 @@ export class YpSubscriptions extends YpBaseElement {
       css`
         :host {
           display: block;
-          padding: 24px;
+          padding: 32px;
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
-        .bundle-group {
-          margin-bottom: 32px;
-          padding: 24px;
-          border-radius: 8px;
-          border: 1px solid var(--md-sys-color-outline);
+        .header {
+          margin-bottom: 48px;
+          text-align: center;
         }
 
-        .bundle-header {
-          display: flex;
-          align-items: center;
-          gap: 16px;
+        .main-title {
+          font-size: 48px;
+          font-weight: 800;
           margin-bottom: 16px;
-        }
-
-        .bundle-image {
-          width: 64px;
-          height: 64px;
-          border-radius: 8px;
-          object-fit: cover;
-        }
-
-        .bundle-title {
-          margin: 0;
           color: var(--md-sys-color-on-surface);
+          line-height: 1.2;
         }
 
-        .bundle-description {
-          margin: 0;
+        .main-title .highlight {
+          color: #2ecc71;
+        }
+
+        .subtitle {
+          font-size: 20px;
           color: var(--md-sys-color-on-surface-variant);
+          margin: 0;
         }
 
-        .product-list {
-          display: grid;
-          gap: 16px;
-          margin-top: 16px;
+        .agents-container {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
         }
 
-        .product-item {
+        .agent-card {
           display: flex;
           align-items: center;
-          gap: 16px;
-          padding: 16px;
-          border-radius: 8px;
-          border: 1px solid var(--md-sys-color-outline-variant);
+          gap: 24px;
+          padding: 24px;
+          border-radius: 16px;
+          background: var(--md-sys-color-surface-container);
+          transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
         }
 
-        .product-details {
+        .agent-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-card:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #2ecc71, #3498db);
+          opacity: 0;
+          transition: opacity 0.2s ease-in-out;
+        }
+
+        .agent-card:hover:before {
+          opacity: 1;
+        }
+
+        .agent-number {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #f1c40f;
+          color: black;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 20px;
+          flex-shrink: 0;
+          transition: transform 0.3s ease-in-out;
+        }
+
+        .agent-card:hover .agent-number {
+          transform: rotate(360deg);
+        }
+
+        .agent-image {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          object-fit: cover;
+          flex-shrink: 0;
+          border: 3px solid var(--md-sys-color-outline);
+          transition: border-color 0.2s ease-in-out;
+        }
+
+        .agent-card:hover .agent-image {
+          border-color: #2ecc71;
+        }
+
+        .agent-content {
           flex-grow: 1;
         }
 
-        .product-name {
-          margin: 0;
-          font-weight: 500;
+        .agent-title {
+          font-size: 24px;
+          font-weight: 600;
+          margin: 0 0 8px 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
 
-        .product-description {
-          margin: 4px 0 0;
+        .agent-type {
+          color: var(--md-sys-color-outline);
+          font-weight: normal;
+          font-size: 0.8em;
+          padding: 2px 8px;
+          background: var(--md-sys-color-surface-variant);
+          border-radius: 12px;
+        }
+
+        .agent-description {
           color: var(--md-sys-color-on-surface-variant);
+          margin: 0;
+          font-size: 16px;
+          line-height: 1.5;
         }
 
-        .price {
+        .selection-control {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          align-items: flex-end;
+        }
+
+        .pricing-tag {
+          background: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+          padding: 4px 12px;
+          border-radius: 16px;
+          font-size: 14px;
           font-weight: 500;
-          color: var(--md-sys-color-primary);
+        }
+
+        .free-tag {
+          background: #2ecc71;
+          color: white;
         }
 
         .payment-section {
-          margin-top: 24px;
-          padding-top: 24px;
-          border-top: 1px solid var(--md-sys-color-outline-variant);
+          margin-top: 32px;
+          padding: 24px;
+          border-radius: 16px;
+          background: var(--md-sys-color-surface-container-high);
         }
 
-        #payment-element {
-          margin-top: 16px;
-          margin-bottom: 24px;
+        .action-button {
+          width: 100%;
+          max-width: 320px;
+          margin: 32px auto 0;
+          display: block;
         }
 
-        .error-message {
-          color: var(--md-sys-color-error);
-          margin: 8px 0;
-        }
+        @media (max-width: 768px) {
+          .agent-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 16px;
+          }
 
-        .loading-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 200px;
+          .selection-control {
+            align-items: center;
+            margin-top: 16px;
+          }
+
+          .agent-content {
+            text-align: center;
+          }
+
+          .agent-title {
+            justify-content: center;
+            flex-wrap: wrap;
+          }
         }
       `
     ];
   }
 
-  constructor() {
-    super();
-    this.initializeStripe();
+  private renderHeader() {
+    return html`
+      <div class="header">
+        <h1 class="main-title">
+          AI agents that make the
+          <span class="highlight">impossible</span>
+          possible
+        </h1>
+        <p class="subtitle">You pick the Agents you need and run them on your schedule</p>
+      </div>
+    `;
   }
 
-  async initializeStripe() {
-    const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-    if (!stripeKey) {
-      console.error('Stripe public key not found');
-      return;
-    }
-
-    this.stripe = await loadStripe(stripeKey);
-  }
-
-  override async firstUpdated() {
-    try {
-      await this.loadSubscriptionPlans();
-    } catch (error) {
-      console.error('Error loading subscription plans:', error);
-      this.error = 'Failed to load subscription plans';
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  private async loadSubscriptionPlans() {
-    const response = await fetch('/api/subscriptions/plans');
-    if (!response.ok) throw new Error('Failed to fetch subscription plans');
-
-    const plans = await response.json();
-    this.processPlanData(plans);
-  }
-
-  private processPlanData(plans: YpSubscriptionPlanAttributes[]) {
+  private processPlanData(plans: YpSubscriptionPlanWithRelations[]) {
     const bundleMap = new Map<number, BundleGroup>();
 
     plans.forEach(plan => {
@@ -212,8 +297,13 @@ export class YpSubscriptions extends YpBaseElement {
         } else {
           bundleGroup.products.push({
             id: product.id,
-            name: product.name || '',
+            user_id: product.user_id,
+            group_id: product.group_id,
+            domain_id: product.domain_id,
+            name: product.name,
             description: product.description,
+            configuration: product.configuration,
+            status: product.status,
             plans: [plan]
           });
         }
@@ -221,6 +311,130 @@ export class YpSubscriptions extends YpBaseElement {
     });
 
     this.bundleGroups = Array.from(bundleMap.values());
+  }
+
+  private renderAgent(product: AgentProductWithPlan, index: number) {
+    const freePlan = product.plans.find(plan => plan.configuration.type === 'free');
+    const paidPlans = product.plans.filter(plan => plan.configuration.type === 'paid');
+
+    return html`
+      <div class="agent-card" @click=${() => this.handleProductSelect(product.id, freePlan !== undefined)}>
+        <div class="agent-number">${index + 1}</div>
+        <img
+          class="agent-image"
+          src="${product.configuration?.imageUrl || '/default-agent-image.jpg'}"
+          alt="${product.name || ''}"
+        >
+        <div class="agent-content">
+          <h3 class="agent-title">
+            ${product.name}
+            <span class="agent-type">Agent</span>
+          </h3>
+          <p class="agent-description">${product.description}</p>
+        </div>
+        <div class="selection-control">
+          ${freePlan
+            ? html`
+                <md-checkbox
+                  ?checked=${this.selectedFreeProductId === product.id}
+                  @change=${() => this.handleFreeProductSelect(product.id)}
+                ></md-checkbox>
+                <div class="pricing-tag free-tag">Free Trial</div>
+              `
+            : html`
+                <md-radio
+                  ?checked=${this.selectedPaidProductIds.has(product.id)}
+                  @change=${() => this.handlePaidProductSelect(product.id)}
+                ></md-radio>
+                ${paidPlans.map(plan => html`
+                  <div class="pricing-tag">
+                    ${plan.configuration.amount} ${plan.configuration.currency}/${plan.configuration.billing_cycle}
+                  </div>
+                `)}
+              `
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  override render() {
+    if (this.loading) {
+      return html`
+        <div class="loading-container">
+          <md-circular-progress indeterminate></md-circular-progress>
+        </div>
+      `;
+    }
+
+    if (this.error) {
+      return html`
+        <div class="error-message">
+          ${this.error}
+        </div>
+      `;
+    }
+
+    const allProducts = this.bundleGroups.flatMap(group => group.products);
+
+    return html`
+      ${this.renderHeader()}
+      <div class="agents-container">
+        ${allProducts.map((product, index) => this.renderAgent(product, index))}
+      </div>
+
+      ${this.selectedPaidProductIds.size > 0 ? html`
+        <div class="payment-section">
+          <div id="payment-element"></div>
+        </div>
+      ` : nothing}
+
+      <md-filled-button
+        class="action-button"
+        ?disabled=${this.processingPayment ||
+          (!this.selectedFreeProductId && this.selectedPaidProductIds.size === 0)}
+        @click=${this.handleSubscribe}
+      >
+        ${this.processingPayment
+          ? html`<md-circular-progress indeterminate></md-circular-progress>`
+          : 'Get Started'}
+      </md-filled-button>
+    `;
+  }
+
+
+  constructor() {
+    super();
+    this.initializeStripe();
+  }
+
+  async initializeStripe() {
+    /*const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+    if (!stripeKey) {
+      console.error('Stripe public key not found');
+      return;
+    }
+
+    this.stripe = await loadStripe(stripeKey);*/
+  }
+
+  override async firstUpdated() {
+    try {
+      await this.loadSubscriptionPlans();
+    } catch (error) {
+      console.error('Error loading subscription plans:', error);
+      this.error = 'Failed to load subscription plans';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private async loadSubscriptionPlans() {
+    const response = await fetch('/api/subscriptions/plans');
+    if (!response.ok) throw new Error('Failed to fetch subscription plans');
+
+    const plans = await response.json();
+    this.processPlanData(plans);
   }
 
   private handleFreeProductSelect(productId: number) {
@@ -336,8 +550,8 @@ export class YpSubscriptions extends YpBaseElement {
   }
 
   private renderProduct(product: AgentProductWithPlan, group: BundleGroup) {
-    const freePlan = product.plans.find(plan => plan.type === 'free');
-    const paidPlans = product.plans.filter(plan => plan.type === 'paid');
+    const freePlan = product.plans.find(plan => plan.configuration.type === 'free');
+    const paidPlans = product.plans.filter(plan => plan.configuration.type === 'paid');
 
     return html`
       <div class="product-item">
@@ -364,49 +578,9 @@ export class YpSubscriptions extends YpBaseElement {
         <div class="price">
           ${freePlan
             ? 'Free Trial'
-            : paidPlans.map(plan => html`${plan.amount} ${plan.currency}/
-              ${plan.billing_cycle}`)}
+            : paidPlans.map(plan => html`${plan.configuration.amount} ${plan.configuration.currency}/
+              ${plan.configuration.billing_cycle}`)}
         </div>
-      </div>
-    `;
-  }
-
-  override render() {
-    if (this.loading) {
-      return html`
-        <div class="loading-container">
-          <md-circular-progress indeterminate></md-circular-progress>
-        </div>
-      `;
-    }
-
-    if (this.error) {
-      return html`
-        <div class="error-message">
-          ${this.error}
-        </div>
-      `;
-    }
-
-    return html`
-      <div>
-        ${this.bundleGroups.map(group => this.renderBundleGroup(group))}
-
-        ${this.selectedPaidProductIds.size > 0 ? html`
-          <div class="payment-section">
-            <div id="payment-element"></div>
-          </div>
-        ` : nothing}
-
-        <md-filled-button
-          ?disabled=${this.processingPayment ||
-            (!this.selectedFreeProductId && this.selectedPaidProductIds.size === 0)}
-          @click=${this.handleSubscribe}
-        >
-          ${this.processingPayment
-            ? html`<md-circular-progress indeterminate></md-circular-progress>`
-            : 'Subscribe'}
-        </md-filled-button>
       </div>
     `;
   }

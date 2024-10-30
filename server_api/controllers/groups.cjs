@@ -2979,7 +2979,7 @@ const createGroup = async (req, res) => {
                 "medium"
               );
               if (group.configuration.groupType == 3) {
-                import("./policySynthAgents.js").then(
+                import("../agents/controllers/policySynthAgents.js").then(
                   ({ PolicySynthAgentsController }) => {
                     PolicySynthAgentsController.setupApiKeysForGroup(group)
                       .then(() => {
@@ -3117,7 +3117,7 @@ router.put("/:id", auth.can("edit group"), function (req, res) {
                 "medium"
               );
               if (group.configuration.groupType == 3) {
-                import("./policySynthAgents.js").then(
+                import("../agents/controllers/policySynthAgents.js").then(
                   ({ PolicySynthAgentsController }) => {
                     PolicySynthAgentsController.setupApiKeysForGroup(group)
                       .then(() => {

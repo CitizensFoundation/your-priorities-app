@@ -505,7 +505,7 @@ export class YourPrioritiesApi {
     this.app.use(aoiController.path, aoiController.router);
 
     const { PolicySynthAgentsController } = await import(
-      "./controllers/policySynthAgents.js"
+      "./agents/controllers/policySynthAgents.js"
     );
 
     const policySynthAgentsController = new PolicySynthAgentsController(

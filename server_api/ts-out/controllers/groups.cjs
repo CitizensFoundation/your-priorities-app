@@ -2143,7 +2143,7 @@ const createGroup = async (req, res) => {
                             collectionType: "group",
                         }, "medium");
                         if (group.configuration.groupType == 3) {
-                            import("./policySynthAgents.js").then(({ PolicySynthAgentsController }) => {
+                            import("../agents/controllers/policySynthAgents.js").then(({ PolicySynthAgentsController }) => {
                                 PolicySynthAgentsController.setupApiKeysForGroup(group)
                                     .then(() => {
                                     log.info("Policy Synth Agents Api Keys Created", {
@@ -2255,7 +2255,7 @@ router.put("/:id", auth.can("edit group"), function (req, res) {
                         collectionType: "group",
                     }, "medium");
                     if (group.configuration.groupType == 3) {
-                        import("./policySynthAgents.js").then(({ PolicySynthAgentsController }) => {
+                        import("../agents/controllers/policySynthAgents.js").then(({ PolicySynthAgentsController }) => {
                             PolicySynthAgentsController.setupApiKeysForGroup(group)
                                 .then(() => {
                                 log.info("Policy Synth Agents Api Keys Created", {

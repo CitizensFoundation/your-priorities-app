@@ -9,8 +9,11 @@ interface YpAgentProductAttributes extends YpBaseModelAttributes {
   user_id: number;
   group_id: number;
   domain_id: number;
+  name: string;
+  description?: string;
   configuration?: YpAgentProductConfiguration;
   status?: YpAgentProductStatus;
+  Bundles?: YpAgentProductBundleAttributes[];
 }
 
 interface YpAgentProductConfiguration {
@@ -118,11 +121,14 @@ interface YpBaseModelAttributes {
 }
 
 // Interface for YpAgentProductBundle attributes
-interface YpAgentProductBundleAttributes extends YpBaseModelAttributes {
-  name: string;
-  description?: string;
-}
 
 interface YpAgentProductBundleConfiguration {
   imageUrl?: string;
 }
+
+interface YpAgentProductBundleAttributes extends YpBaseModelAttributes {
+  name: string;
+  description?: string;
+  configuration?: YpAgentProductBundleConfiguration;
+}
+
