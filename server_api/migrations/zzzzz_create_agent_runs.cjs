@@ -2,6 +2,50 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    // Create the 'agent_product_bundles' table
+    await queryInterface.createTable("agent_product_bundles", {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      uuid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+      },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      configuration: {
+        type: Sequelize.JSONB,
+        allowNull: true,
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+    });
+
+    await queryInterface.addIndex("agent_product_bundles", ["uuid"], {
+      unique: true,
+    });
+
+    await queryInterface.addIndex("agent_product_bundles", ["name"]);
+
+
+
     // Create the 'agent_products' table
     await queryInterface.createTable("agent_products", {
       id: {
@@ -568,6 +612,90 @@ module.exports = {
       "subscription_id",
     ]);
     await queryInterface.addIndex("subscription_discounts", ["discount_id"]);
+
+    // Create the 'agent_product_bundles' table
+    await queryInterface.createTable("agent_product_bundles", {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      uuid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+      },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      configuration: {
+        type: Sequelize.JSONB,
+        allowNull: true,
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+    });
+
+    await queryInterface.addIndex("agent_product_bundles", ["uuid"], {
+      unique: true,
+    });
+    await queryInterface.addIndex("agent_product_bundles", ["name"]);
+
+    // Create the join table for agent_products and agent_product_bundles
+    await queryInterface.createTable("agent_product_bundles_products", {
+      agent_product_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "agent_products",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      agent_product_bundle_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "agent_product_bundles",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+    });
+
+    // Add composite primary key
+    await queryInterface.addConstraint("agent_product_bundles_products", {
+      fields: ["agent_product_id", "agent_product_bundle_id"],
+      type: "primary key",
+      name: "agent_product_bundles_products_pkey",
+    });
+
+    // Add indexes for better query performance
+    await queryInterface.addIndex("agent_product_bundles_products", ["agent_product_id"]);
+    await queryInterface.addIndex("agent_product_bundles_products", ["agent_product_bundle_id"]);
   },
 
   down: async (queryInterface, Sequelize) => {},

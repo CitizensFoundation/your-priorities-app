@@ -1,8 +1,10 @@
 // SubscriptionManager.ts
 import { YpSubscriptionPlan } from './models/subscriptionPlan.js';
 import { YpSubscription } from './models/subscription.js';
+import { YpAgentProduct } from './models/agentProduct.js';
 import { YpAgentProductRun } from './models/agentProductRun.js';
 import Stripe from 'stripe';
+import { YpAgentProductBundle } from './models/agentProductBundle.js';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2024-09-30.acacia',
 });
@@ -13,7 +15,27 @@ export class SubscriptionManager {
     // Get available subscription plans
     async getPlans() {
         try {
-            const plans = await YpSubscriptionPlan.findAll();
+            const plans = await YpSubscriptionPlan.findAll({
+                attributes: {
+                    exclude: ['created_at', 'updated_at']
+                },
+                include: [
+                    {
+                        model: YpAgentProduct,
+                        as: 'AgentProduct',
+                        attributes: {
+                            exclude: ['created_at', 'updated_at']
+                        },
+                        include: [{
+                                model: YpAgentProductBundle,
+                                as: 'Bundles',
+                                attributes: {
+                                    exclude: ['created_at', 'updated_at']
+                                }
+                            }]
+                    }
+                ],
+            });
             return plans;
         }
         catch (error) {

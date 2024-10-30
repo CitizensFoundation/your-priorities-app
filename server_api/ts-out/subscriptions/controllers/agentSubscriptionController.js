@@ -5,7 +5,7 @@ import auth from '../../authorization.cjs';
 import { YpSubscription } from '../models/subscription.js';
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-export class SubscriptionController {
+export class AgentSubscriptionController {
     constructor() {
         this.path = '/api/subscriptions';
         this.router = express.Router();
