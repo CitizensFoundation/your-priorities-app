@@ -1,3 +1,4 @@
+import { param } from "controllers/index.cjs";
 import { ToolExecutionResult } from "./baseAssistant.js";
 
 import { YpBaseAssistant } from "./baseAssistant.js";
@@ -5,6 +6,23 @@ import { ChatbotMode } from "./baseAssistant.js";
 
 export class YpAgentAssistant extends YpBaseAssistant {
   private currentAgentId?: number;
+  private currentAgent?: YpAgentAssistantRunningAgent;
+  private currentWorkflow?: YpWorkflowConfiguration;
+  private availableAgents: YpAgentAssistantAgent[] = [];
+  private runningAgents: YpAgentAssistantRunningAgent[] = [];
+
+  renderAllAgentsStatus() {
+    return `<availableAgents>${JSON.stringify(this.availableAgents, null, 2)}</availableAgents>
+    <runningAgents>${JSON.stringify(this.runningAgents, null, 2)}</runningAgents>  `;
+  }
+
+  renderCurrentWorkflowStatus() {
+    return `<currentWorkflow>${JSON.stringify(this.currentWorkflow, null, 2)}</currentWorkflow>`;
+  }
+
+  renderCurrentAgent() {
+    return `<currentAgent>${JSON.stringify(this.currentAgent, null, 2)}</currentAgent>`;
+  }
 
   protected defineAvailableModes(): ChatbotMode[] {
     return [
@@ -16,7 +34,9 @@ Available commands:
 - Check running agents
 - Select an agent to work with
 - Get agent status
-Current system status and available agents are provided via functions.`,
+Current system status and available agents are provided via functions.
+
+${this.renderAllAgentsStatus()}`,
         description: "Browse and select available agents",
         functions: [
           {
@@ -116,7 +136,9 @@ Current system status and available agents are provided via functions.`,
       {
         name: "agent_configuration",
         systemPrompt: `Help the user configure the selected agent by collecting required information.
-Review the required questions and guide the user through answering them.`,
+Review the required questions and guide the user through answering them.
+
+${this.renderCurrentAgent()}`,
         description: "Configure agent parameters and requirements",
         functions: [
           {
@@ -169,7 +191,12 @@ Available commands:
 - Start/stop agent
 - Get current status
 - Handle engagement requests
-Current agent status and workflow state are provided via functions.`,
+- Show workflow
+- Show workflow step details
+Current agent status and workflow state are provided via functions.
+${this.renderAllAgentsStatus()}
+${this.renderCurrentAgent()}
+${this.renderCurrentWorkflowStatus()}`,
         description: "Manage agent operations",
         functions: [
           {
@@ -212,8 +239,7 @@ Current agent status and workflow state are provided via functions.`,
             parameters: {
               type: "object",
               properties: {
-                groupId: { type: "number" },
-                configuration: { type: "object" },
+                groupId: { type: "number" }
               },
               required: ["groupId"],
             },
@@ -243,6 +269,184 @@ Current agent status and workflow state are provided via functions.`,
               }
             },
           },
+          {
+            name: 'stop_agent',
+            description: 'Stop the currently running agent',
+            parameters: {
+              type: 'object',
+              properties: {
+                reason: { type: 'string' }
+              }
+            },
+            resultSchema: {
+              type: 'object',
+              properties: {
+                agentId: { type: 'number' },
+                stopTime: { type: 'string' },
+                finalStatus: { type: 'string' }
+              }
+            },
+            handler: async (params): Promise<ToolExecutionResult> => {
+              try {
+                if (!this.currentAgentId) {
+                  throw new Error('No agent selected');
+                }
+
+                const result = await this.stopAgent(this.currentAgentId, params.reason);
+                return {
+                  success: true,
+                  data: {
+                    agentId: this.currentAgentId,
+                    stopTime: new Date().toISOString(),
+                    finalStatus: result.status
+                  },
+                  metadata: {
+                    reason: params.reason
+                  }
+                };
+              } catch (error) {
+                return {
+                  success: false,
+                  error: error instanceof Error ? error.message : 'Failed to stop agent'
+                };
+              }
+            }
+          },
+          {
+            name: 'show_workflow',
+            description: 'Display the current workflow status and steps',
+            parameters: {
+              type: 'object',
+              properties: {
+                includeHistory: { type: 'boolean' },
+                showDetails: { type: 'boolean' }
+              }
+            },
+            resultSchema: {
+              type: 'object',
+              properties: {
+                workflow: {
+                  type: 'object',
+                  properties: {
+                    steps: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'number' },
+                          name: { type: 'string' },
+                          status: { type: 'string' },
+                          type: { type: 'string' },
+                          completed: { type: 'boolean' },
+                          currentStep: { type: 'boolean' }
+                        }
+                      }
+                    },
+                    currentStepId: { type: 'number' },
+                    progress: { type: 'number' }
+                  }
+                },
+                visualizationHtml: { type: 'string' }
+              }
+            },
+            handler: async (params): Promise<ToolExecutionResult> => {
+              try {
+                if (!this.currentAgentId) {
+                  throw new Error('No agent selected');
+                }
+
+                const workflow = await this.getWorkflowStatus(this.currentAgentId);
+
+                // Create visualization HTML
+                const workflowHtml = `
+                  <yp-group
+                    .groupId="${workflow.steps[params.currentStepId].groupId}"
+                  ></yp-group>
+                `;
+
+                return {
+                  success: true,
+                  data: {
+                    workflow,
+                    visualizationHtml: workflowHtml
+                  },
+                  metadata: {
+                    lastUpdated: new Date().toISOString(),
+                    includesHistory: params.includeHistory,
+                    showingDetails: params.showDetails
+                  }
+                };
+              } catch (error) {
+                return {
+                  success: false,
+                  error: error instanceof Error ? error.message : 'Failed to show workflow'
+                };
+              }
+            }
+          },
+
+          {
+            name: 'get_workflow_step_details',
+            description: 'Get detailed information about a specific workflow step',
+            parameters: {
+              type: 'object',
+              properties: {
+                stepId: { type: 'number' },
+                includeArtifacts: { type: 'boolean' }
+              },
+              required: ['stepId']
+            },
+            resultSchema: {
+              type: 'object',
+              properties: {
+                step: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'number' },
+                    name: { type: 'string' },
+                    type: { type: 'string' },
+                    status: { type: 'string' },
+                    startTime: { type: 'string' },
+                    endTime: { type: 'string' },
+                    duration: { type: 'number' },
+                    artifacts: {
+                      type: 'array',
+                      items: { type: 'object' }
+                    }
+                  }
+                }
+              }
+            },
+            handler: async (params): Promise<ToolExecutionResult> => {
+              try {
+                if (!this.currentAgentId) {
+                  throw new Error('No agent selected');
+                }
+
+                const stepDetails = await this.getWorkflowStepDetails(
+                  this.currentAgentId,
+                  params.stepId,
+                  params.includeArtifacts
+                );
+
+                return {
+                  success: true,
+                  data: {
+                    step: stepDetails
+                  },
+                  metadata: {
+                    requestedAt: new Date().toISOString(),
+                    includesArtifacts: params.includeArtifacts
+                  }
+                };
+              } catch (error) {
+                return {
+                  success: false,
+                  error: error instanceof Error ? error.message : 'Failed to get step details'
+                };
+              }
+            }
+          }
         ],
         allowedTransitions: ["agent_selection"],
       },
@@ -303,5 +507,95 @@ Current agent status and workflow state are provided via functions.`,
         "Configuration completed"
       );
     }
+  }
+
+  private async stopAgent(agentId: number, reason?: string): Promise<any> {
+    // Implement agent stop logic
+    // This should communicate with your backend API
+    const status = await this.loadAgentStatus();
+    const runningAgent = status.runningAgents.find(a => a.id === agentId);
+
+    if (!runningAgent) {
+      throw new Error('Agent is not running');
+    }
+
+    // Call your backend API to stop the agent
+    // This is a placeholder - implement actual API call
+    const stopResult = { status: 'stopped', timestamp: new Date() };
+
+    // Update Redis status
+    runningAgent.status = 'cancelled';
+    await this.redis.set('agent_status', JSON.stringify(status));
+
+    return stopResult;
+  }
+
+  private async getWorkflowStatus(agentId: number): Promise<YpWorkflowConfiguration & {
+    currentStepId: number;
+    progress: number;
+    steps: Array<YpWorkflowStep & {
+      status: string;
+      completed: boolean;
+      currentStep: boolean;
+    }>;
+  }> {
+    // Get workflow configuration and current status
+    const configKey = `agent:${agentId}:workflow_config`;
+    const statusKey = `agent:${agentId}:workflow_status`;
+
+    const [configStr, statusStr] = await Promise.all([
+      this.redis.get(configKey),
+      this.redis.get(statusKey)
+    ]);
+
+    const config: YpWorkflowConfiguration = configStr ? JSON.parse(configStr) : { steps: [] };
+    const status = statusStr ? JSON.parse(statusStr) : {
+      currentStepId: config.steps[0]?.id,
+      progress: 0
+    };
+
+    // Enhance steps with status information
+    const enhancedSteps = config.steps.map(step => ({
+      ...step,
+      status: step.id === status.currentStepId ? 'active' :
+              step.id < status.currentStepId ? 'completed' : 'pending',
+      completed: step.id < status.currentStepId,
+      currentStep: step.id === status.currentStepId
+    }));
+
+    return {
+      ...config,
+      steps: enhancedSteps,
+      currentStepId: status.currentStepId,
+      progress: status.progress
+    };
+  }
+
+  private async getWorkflowStepDetails(
+    agentId: number,
+    stepId: number,
+    includeArtifacts: boolean
+  ): Promise<any> {
+    const key = `agent:${agentId}:step:${stepId}`;
+    const detailsStr = await this.redis.get(key);
+    const details = detailsStr ? JSON.parse(detailsStr) : null;
+
+    if (!details) {
+      throw new Error('Step details not found');
+    }
+
+    if (includeArtifacts) {
+      const artifactsKey = `agent:${agentId}:step:${stepId}:artifacts`;
+      const artifactsStr = await this.redis.get(artifactsKey);
+      details.artifacts = artifactsStr ? JSON.parse(artifactsStr) : [];
+    }
+
+    return details;
+  }
+
+  private handleWorkflowStepSelected(event: any): void {
+    const stepId = event.detail.stepId;
+    // Handle step selection - could trigger get_workflow_step_details
+    // or show specific UI components based on step type
   }
 }

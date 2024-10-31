@@ -141,6 +141,7 @@ interface YpBaseChatBotMemoryData extends PsAgentBaseMemoryData {
 interface YpWorkflowStep {
   id: number;
   name: string;
+  groupId?: number;
   description: string;
   agentClassUuid: string;
   type: "agentOps" | "engagmentFromOutputConnector";
