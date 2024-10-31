@@ -5,12 +5,7 @@ import { OpenAI } from "openai";
  */
 export var CommonModes;
 (function (CommonModes) {
-    CommonModes["Initial"] = "initial";
-    CommonModes["GatheringInfo"] = "gathering_info";
-    CommonModes["ExecutingTask"] = "executing_task";
-    CommonModes["AnalyzingResults"] = "analyzing_results";
     CommonModes["ErrorRecovery"] = "error_recovery";
-    CommonModes["Completed"] = "completed";
 })(CommonModes || (CommonModes = {}));
 export class YpBaseAssistant extends YpBaseChatBot {
     constructor(wsClientId, wsClients, redis) {
@@ -28,6 +23,94 @@ export class YpBaseAssistant extends YpBaseChatBot {
         });
         this.initializeModes();
         this.registerCoreFunctions();
+    }
+    /**
+     * Convert tool result to message format
+     */
+    convertToolResultToMessage(toolCall, result) {
+        return {
+            role: "tool",
+            content: JSON.stringify(result.data),
+            tool_call_id: toolCall.id,
+            name: toolCall.name,
+        };
+    }
+    /**
+     * Handle executing tool calls with results
+     */
+    async handleToolCalls(toolCalls) {
+        const toolResponses = [];
+        for (const toolCall of toolCalls.values()) {
+            try {
+                const func = this.availableFunctions.get(toolCall.name);
+                if (!func) {
+                    throw new Error(`Unknown function: ${toolCall.name}`);
+                }
+                let parsedArgs;
+                try {
+                    parsedArgs = JSON.parse(toolCall.arguments);
+                }
+                catch (e) {
+                    throw new Error(`Invalid function arguments: ${toolCall.arguments}`);
+                }
+                // Execute the function and get result
+                const result = await func.handler(parsedArgs);
+                // Store the result in memory for context
+                if (result.success && result.data) {
+                    await this.setModeData(`${toolCall.name}_result`, result.data);
+                }
+                // Convert result to message
+                const responseMessage = this.convertToolResultToMessage(toolCall, result);
+                toolResponses.push(responseMessage);
+                // If error, throw it after recording the result
+                if (!result.success) {
+                    throw new Error(result.error || "Unknown error in tool execution");
+                }
+            }
+            catch (error) {
+                console.error(`Error executing tool ${toolCall.name}:`, error);
+                throw error;
+            }
+        }
+        // Create a new completion with tool results
+        if (toolResponses.length > 0) {
+            await this.handleToolResponses(toolResponses);
+        }
+    }
+    /**
+     * Handle tool responses by creating a new completion
+     */
+    async handleToolResponses(toolResponses) {
+        // Get existing chat messages
+        const messages = [
+            {
+                role: "system",
+                content: this.getCurrentSystemPrompt(),
+            },
+            ...this.convertToOpenAIMessages(this.memory.chatLog || []),
+            ...toolResponses,
+        ];
+        try {
+            const stream = await this.openaiClient.chat.completions.create({
+                model: this.modelName,
+                messages,
+                tools: this.getCurrentModeFunctions().map((f) => ({
+                    type: "function",
+                    function: {
+                        name: f.name,
+                        description: f.description,
+                        parameters: f.parameters,
+                    },
+                })),
+                tool_choice: "auto",
+                stream: true,
+            });
+            await this.streamWebSocketResponses(stream);
+        }
+        catch (error) {
+            console.error("Error handling tool responses:", error);
+            throw error;
+        }
     }
     /**
      * Initialize modes from subclass definitions
@@ -51,22 +134,56 @@ export class YpBaseAssistant extends YpBaseChatBot {
      */
     registerCoreFunctions() {
         const switchModeFunction = {
-            name: 'switch_mode',
-            description: 'Switch to a different conversation mode',
+            name: "switch_mode",
+            description: "Switch to a different conversation mode",
             parameters: {
-                type: 'object',
+                type: "object",
                 properties: {
                     mode: {
-                        type: 'string',
-                        enum: Array.from(this.modes.keys())
+                        type: "string",
+                        enum: Array.from(this.modes.keys()),
                     },
-                    reason: { type: 'string' }
+                    reason: { type: "string" },
                 },
-                required: ['mode']
+                required: ["mode"],
+            },
+            resultSchema: {
+                type: "object",
+                properties: {
+                    previousMode: { type: "string" },
+                    newMode: { type: "string" },
+                    timestamp: { type: "string" },
+                    transitionReason: { type: "string" },
+                },
             },
             handler: async (params) => {
-                await this.handleModeSwitch(params.mode, params.reason);
-            }
+                try {
+                    const previousMode = this.memory.currentMode;
+                    await this.handleModeSwitch(params.mode, params.reason);
+                    return {
+                        success: true,
+                        data: {
+                            previousMode,
+                            newMode: params.mode,
+                            timestamp: new Date().toISOString(),
+                            transitionReason: params.reason || "No reason provided",
+                        },
+                        metadata: {
+                            modeHistoryLength: this.memory.modeHistory?.length || 0,
+                        },
+                    };
+                }
+                catch (error) {
+                    return {
+                        success: false,
+                        error: error instanceof Error ? error.message : "Failed to switch mode",
+                        metadata: {
+                            attemptedMode: params.mode,
+                            currentMode: this.memory.currentMode,
+                        },
+                    };
+                }
+            },
         };
         this.availableFunctions.set(switchModeFunction.name, switchModeFunction);
     }
@@ -80,7 +197,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         // Combine mode-specific functions with core functions
         return [
             ...currentMode.functions,
-            this.availableFunctions.get('switch_mode')
+            this.availableFunctions.get("switch_mode"),
         ];
     }
     /**
@@ -89,7 +206,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     getCurrentSystemPrompt() {
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode)
-            return 'You are a helpful assistant.';
+            return "You are a helpful assistant.";
         return currentMode.systemPrompt;
     }
     /**
@@ -150,25 +267,25 @@ export class YpBaseAssistant extends YpBaseChatBot {
         const messages = [
             {
                 role: "system",
-                content: this.getCurrentSystemPrompt()
+                content: this.getCurrentSystemPrompt(),
             },
-            ...this.convertToOpenAIMessages(chatLog)
+            ...this.convertToOpenAIMessages(chatLog),
         ];
         try {
             // Convert functions to tools format
-            const tools = this.getCurrentModeFunctions().map(f => ({
-                type: 'function',
+            const tools = this.getCurrentModeFunctions().map((f) => ({
+                type: "function",
                 function: {
                     name: f.name,
                     description: f.description,
                     parameters: f.parameters,
-                }
+                },
             }));
             const stream = await this.openaiClient.chat.completions.create({
                 model: this.modelName,
                 messages,
                 tools,
-                tool_choice: 'auto',
+                tool_choice: "auto",
                 stream: true,
             });
             await this.streamWebSocketResponses(stream);
@@ -182,7 +299,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Convert chat log to OpenAI message format
      */
     convertToOpenAIMessages(chatLog) {
-        return chatLog.map(message => ({
+        return chatLog.map((message) => ({
             role: message.sender === "bot" ? "assistant" : "user",
             content: message.message,
         }));
@@ -209,12 +326,12 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.memory.modeHistory.push({
             mode: newMode,
             timestamp: Date.now(),
-            reason
+            reason,
         });
         this.memory.currentMode = newMode;
         this.memory.modeData = undefined; // Clear mode data
         await this.saveMemory();
-        this.sendToClient("bot", `Switching from ${oldMode} to ${newMode}${reason ? ': ' + reason : ''}`);
+        this.sendToClient("bot", `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`);
     }
     /**
      * Handle streaming responses and function calls
@@ -231,16 +348,16 @@ export class YpBaseAssistant extends YpBaseChatBot {
                         continue;
                     }
                     const delta = part.choices[0].delta;
-                    if ('tool_calls' in delta && delta.tool_calls) {
+                    if ("tool_calls" in delta && delta.tool_calls) {
                         for (const toolCall of delta.tool_calls) {
                             if (toolCall.id) {
                                 const now = Date.now();
                                 if (!toolCalls.has(toolCall.id)) {
                                     toolCalls.set(toolCall.id, {
                                         id: toolCall.id,
-                                        name: toolCall.function?.name ?? '',
-                                        arguments: toolCall.function?.arguments ?? '',
-                                        startTime: now
+                                        name: toolCall.function?.name ?? "",
+                                        arguments: toolCall.function?.arguments ?? "",
+                                        startTime: now,
                                     });
                                 }
                                 else {
@@ -250,17 +367,19 @@ export class YpBaseAssistant extends YpBaseChatBot {
                                         throw new Error(`Tool call timeout for ${existingCall.name}`);
                                     }
                                     if (toolCall.function?.name) {
-                                        existingCall.name = existingCall.name + toolCall.function.name;
+                                        existingCall.name =
+                                            existingCall.name + toolCall.function.name;
                                     }
                                     if (toolCall.function?.arguments) {
-                                        existingCall.arguments = existingCall.arguments + toolCall.function.arguments;
+                                        existingCall.arguments =
+                                            existingCall.arguments + toolCall.function.arguments;
                                     }
                                 }
                             }
                         }
                     }
-                    else if ('content' in delta && delta.content) {
-                        const content = delta.content ?? '';
+                    else if ("content" in delta && delta.content) {
+                        const content = delta.content ?? "";
                         this.sendToClient("bot", content);
                         botMessage += content;
                     }
@@ -284,7 +403,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 console.error("Stream processing error:", error);
                 // Attempt to switch to error recovery mode
                 try {
-                    await this.handleModeSwitch(CommonModes.ErrorRecovery, error instanceof Error ? error.message : 'Unknown error');
+                    await this.handleModeSwitch(CommonModes.ErrorRecovery, error instanceof Error ? error.message : "Unknown error");
                 }
                 catch (e) {
                     console.error("Failed to switch to error recovery mode:", e);
@@ -297,30 +416,5 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 resolve();
             }
         });
-    }
-    /**
-     * Handle executing tool calls with error recovery
-     */
-    async handleToolCalls(toolCalls) {
-        for (const toolCall of toolCalls.values()) {
-            try {
-                const func = this.availableFunctions.get(toolCall.name);
-                if (!func) {
-                    throw new Error(`Unknown function: ${toolCall.name}`);
-                }
-                let parsedArgs;
-                try {
-                    parsedArgs = JSON.parse(toolCall.arguments);
-                }
-                catch (e) {
-                    throw new Error(`Invalid function arguments: ${toolCall.arguments}`);
-                }
-                await func.handler(parsedArgs);
-            }
-            catch (error) {
-                console.error(`Error executing tool ${toolCall.name}:`, error);
-                throw error;
-            }
-        }
     }
 }

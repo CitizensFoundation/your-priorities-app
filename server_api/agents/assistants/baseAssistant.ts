@@ -7,23 +7,43 @@ import ioredis from "ioredis";
 import {
   type ChatCompletionMessageParam,
   type ChatCompletionCreateParams,
-  ChatCompletionTool
+  ChatCompletionTool,
 } from "openai/resources/chat/completions";
 import { FunctionDefinition } from "openai/resources/shared.mjs";
 
-// Enhanced types for better type safety
+export interface ToolExecutionResult<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Enhanced ChatbotFunction interface with result type
+ */
 export interface ChatbotFunction {
   name: string;
   description: string;
-  parameters: FunctionDefinition['parameters'];
-  handler: (params: any) => Promise<void>;
+  parameters: FunctionDefinition["parameters"];
+  handler: (params: any) => Promise<ToolExecutionResult>;
+  resultSchema?: FunctionDefinition["parameters"]; // Schema for the result data
+}
+
+/**
+ * Message format for tool results
+ */
+interface ToolResponseMessage {
+  role: "tool";
+  content: string;
+  tool_call_id: string;
+  name: string;
 }
 
 interface ToolCall {
   id: string;
   name: string;
   arguments: string;
-  startTime?: number;  // For timeout tracking
+  startTime?: number; // For timeout tracking
 }
 
 export interface AssistantModeData<T = unknown> {
@@ -37,15 +57,10 @@ export interface AssistantModeData<T = unknown> {
  * Common modes that implementations might use
  */
 export enum CommonModes {
-  Initial = 'initial',
-  GatheringInfo = 'gathering_info',
-  ExecutingTask = 'executing_task',
-  AnalyzingResults = 'analyzing_results',
-  ErrorRecovery = 'error_recovery',
-  Completed = 'completed'
+  ErrorRecovery = "error_recovery",
 }
 
-interface ChatbotMode {
+export interface ChatbotMode {
   name: string;
   systemPrompt: string;
   functions: ChatbotFunction[];
@@ -80,7 +95,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
   modelName = "gpt-4o";
 
-  constructor(wsClientId: string, wsClients: Map<string, WebSocket>, redis: ioredis.Redis) {
+  constructor(
+    wsClientId: string,
+    wsClients: Map<string, WebSocket>,
+    redis: ioredis.Redis
+  ) {
     super(wsClientId, wsClients);
     this.redis = redis;
     this.wsClientId = wsClientId;
@@ -94,6 +113,113 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   }
 
   /**
+   * Convert tool result to message format
+   */
+  protected convertToolResultToMessage(
+    toolCall: ToolCall,
+    result: ToolExecutionResult
+  ): ToolResponseMessage {
+    return {
+      role: "tool",
+      content: JSON.stringify(result.data),
+      tool_call_id: toolCall.id,
+      name: toolCall.name,
+    };
+  }
+
+  /**
+   * Handle executing tool calls with results
+   */
+  async handleToolCalls(
+    toolCalls: Map<string, ToolCall>
+  ): Promise<void> {
+    const toolResponses: ToolResponseMessage[] = [];
+
+    for (const toolCall of toolCalls.values()) {
+      try {
+        const func = this.availableFunctions.get(toolCall.name);
+        if (!func) {
+          throw new Error(`Unknown function: ${toolCall.name}`);
+        }
+
+        let parsedArgs;
+        try {
+          parsedArgs = JSON.parse(toolCall.arguments);
+        } catch (e) {
+          throw new Error(`Invalid function arguments: ${toolCall.arguments}`);
+        }
+
+        // Execute the function and get result
+        const result = await func.handler(parsedArgs);
+
+        // Store the result in memory for context
+        if (result.success && result.data) {
+          await this.setModeData(`${toolCall.name}_result`, result.data);
+        }
+
+        // Convert result to message
+        const responseMessage = this.convertToolResultToMessage(
+          toolCall,
+          result
+        );
+        toolResponses.push(responseMessage);
+
+        // If error, throw it after recording the result
+        if (!result.success) {
+          throw new Error(result.error || "Unknown error in tool execution");
+        }
+      } catch (error) {
+        console.error(`Error executing tool ${toolCall.name}:`, error);
+        throw error;
+      }
+    }
+
+    // Create a new completion with tool results
+    if (toolResponses.length > 0) {
+      await this.handleToolResponses(toolResponses);
+    }
+  }
+
+  /**
+   * Handle tool responses by creating a new completion
+   */
+  async handleToolResponses(
+    toolResponses: ToolResponseMessage[]
+  ): Promise<void> {
+    // Get existing chat messages
+    const messages: ChatCompletionMessageParam[] = [
+      {
+        role: "system",
+        content: this.getCurrentSystemPrompt(),
+      },
+      ...this.convertToOpenAIMessages(this.memory.chatLog || []),
+      ...toolResponses,
+    ];
+
+    try {
+      const stream = await this.openaiClient.chat.completions.create({
+        model: this.modelName,
+        messages,
+        tools: this.getCurrentModeFunctions().map((f) => ({
+          type: "function",
+          function: {
+            name: f.name,
+            description: f.description,
+            parameters: f.parameters,
+          },
+        })),
+        tool_choice: "auto",
+        stream: true,
+      });
+
+      await this.streamWebSocketResponses(stream);
+    } catch (error) {
+      console.error("Error handling tool responses:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Abstract method that subclasses must implement to define their modes
    */
   protected abstract defineAvailableModes(): ChatbotMode[];
@@ -101,7 +227,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Initialize modes from subclass definitions
    */
-  private initializeModes(): void {
+  initializeModes(): void {
     const modes = this.defineAvailableModes();
 
     for (const mode of modes) {
@@ -122,24 +248,60 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Register core functions available in all modes
    */
-  private registerCoreFunctions(): void {
+  registerCoreFunctions(): void {
     const switchModeFunction: ChatbotFunction = {
-      name: 'switch_mode',
-      description: 'Switch to a different conversation mode',
+      name: "switch_mode",
+      description: "Switch to a different conversation mode",
       parameters: {
-        type: 'object',
+        type: "object",
         properties: {
           mode: {
-            type: 'string',
-            enum: Array.from(this.modes.keys())
+            type: "string",
+            enum: Array.from(this.modes.keys()),
           },
-          reason: { type: 'string' }
+          reason: { type: "string" },
         },
-        required: ['mode']
+        required: ["mode"],
       },
-      handler: async (params) => {
-        await this.handleModeSwitch(params.mode, params.reason);
-      }
+
+      resultSchema: {
+        type: "object",
+        properties: {
+          previousMode: { type: "string" },
+          newMode: { type: "string" },
+          timestamp: { type: "string" },
+          transitionReason: { type: "string" },
+        },
+      },
+      handler: async (params): Promise<ToolExecutionResult> => {
+        try {
+          const previousMode = this.memory.currentMode;
+          await this.handleModeSwitch(params.mode, params.reason);
+
+          return {
+            success: true,
+            data: {
+              previousMode,
+              newMode: params.mode,
+              timestamp: new Date().toISOString(),
+              transitionReason: params.reason || "No reason provided",
+            },
+            metadata: {
+              modeHistoryLength: this.memory.modeHistory?.length || 0,
+            },
+          };
+        } catch (error) {
+          return {
+            success: false,
+            error:
+              error instanceof Error ? error.message : "Failed to switch mode",
+            metadata: {
+              attemptedMode: params.mode,
+              currentMode: this.memory.currentMode,
+            },
+          };
+        }
+      },
     };
 
     this.availableFunctions.set(switchModeFunction.name, switchModeFunction);
@@ -155,7 +317,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     // Combine mode-specific functions with core functions
     return [
       ...currentMode.functions,
-      this.availableFunctions.get('switch_mode')!
+      this.availableFunctions.get("switch_mode")!,
     ];
   }
 
@@ -164,7 +326,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    */
   protected getCurrentSystemPrompt(): string {
     const currentMode = this.modes.get(this.memory.currentMode!);
-    if (!currentMode) return 'You are a helpful assistant.';
+    if (!currentMode) return "You are a helpful assistant.";
 
     return currentMode.systemPrompt;
   }
@@ -177,8 +339,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     if (!currentMode) return false;
 
     // Check if transition is allowed
-    if (currentMode.allowedTransitions &&
-        !currentMode.allowedTransitions.includes(toMode)) {
+    if (
+      currentMode.allowedTransitions &&
+      !currentMode.allowedTransitions.includes(toMode)
+    ) {
       return false;
     }
 
@@ -235,27 +399,29 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: this.getCurrentSystemPrompt()
+        content: this.getCurrentSystemPrompt(),
       },
-      ...this.convertToOpenAIMessages(chatLog)
+      ...this.convertToOpenAIMessages(chatLog),
     ];
 
     try {
       // Convert functions to tools format
-      const tools: ChatCompletionTool[] = this.getCurrentModeFunctions().map(f => ({
-        type: 'function',
-        function: {
-          name: f.name,
-          description: f.description,
-          parameters: f.parameters,
-        }
-      }));
+      const tools: ChatCompletionTool[] = this.getCurrentModeFunctions().map(
+        (f) => ({
+          type: "function",
+          function: {
+            name: f.name,
+            description: f.description,
+            parameters: f.parameters,
+          },
+        })
+      );
 
       const stream = await this.openaiClient.chat.completions.create({
         model: this.modelName,
         messages,
         tools,
-        tool_choice: 'auto',
+        tool_choice: "auto",
         stream: true,
       });
 
@@ -269,8 +435,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Convert chat log to OpenAI message format
    */
-  protected convertToOpenAIMessages(chatLog: PsSimpleChatLog[]): ChatCompletionMessageParam[] {
-    return chatLog.map(message => ({
+  protected convertToOpenAIMessages(
+    chatLog: PsSimpleChatLog[]
+  ): ChatCompletionMessageParam[] {
+    return chatLog.map((message) => ({
       role: message.sender === "bot" ? "assistant" : "user",
       content: message.message,
     })) as ChatCompletionMessageParam[];
@@ -279,7 +447,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Handle mode switching
    */
-  private async handleModeSwitch(newMode: string, reason?: string): Promise<void> {
+  async handleModeSwitch(
+    newMode: string,
+    reason?: string
+  ): Promise<void> {
     const oldMode = this.memory.currentMode;
 
     if (!this.modes.has(newMode)) {
@@ -287,9 +458,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     }
 
     if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
-      throw new Error(
-        `Invalid mode transition from ${oldMode} to ${newMode}`
-      );
+      throw new Error(`Invalid mode transition from ${oldMode} to ${newMode}`);
     }
 
     // Perform cleanup of old mode
@@ -304,7 +473,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.memory.modeHistory.push({
       mode: newMode,
       timestamp: Date.now(),
-      reason
+      reason,
     });
 
     this.memory.currentMode = newMode;
@@ -314,7 +483,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.sendToClient(
       "bot",
-      `Switching from ${oldMode} to ${newMode}${reason ? ': ' + reason : ''}`
+      `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`
     );
   }
 
@@ -338,36 +507,40 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
           const delta = part.choices[0].delta;
 
-          if ('tool_calls' in delta && delta.tool_calls) {
+          if ("tool_calls" in delta && delta.tool_calls) {
             for (const toolCall of delta.tool_calls) {
               if (toolCall.id) {
                 const now = Date.now();
                 if (!toolCalls.has(toolCall.id)) {
                   toolCalls.set(toolCall.id, {
                     id: toolCall.id,
-                    name: toolCall.function?.name ?? '',
-                    arguments: toolCall.function?.arguments ?? '',
-                    startTime: now
+                    name: toolCall.function?.name ?? "",
+                    arguments: toolCall.function?.arguments ?? "",
+                    startTime: now,
                   });
                 } else {
                   const existingCall = toolCalls.get(toolCall.id)!;
 
                   // Check for timeout
                   if (now - existingCall.startTime! > this.toolCallTimeout) {
-                    throw new Error(`Tool call timeout for ${existingCall.name}`);
+                    throw new Error(
+                      `Tool call timeout for ${existingCall.name}`
+                    );
                   }
 
                   if (toolCall.function?.name) {
-                    existingCall.name = existingCall.name + toolCall.function.name;
+                    existingCall.name =
+                      existingCall.name + toolCall.function.name;
                   }
                   if (toolCall.function?.arguments) {
-                    existingCall.arguments = existingCall.arguments + toolCall.function.arguments;
+                    existingCall.arguments =
+                      existingCall.arguments + toolCall.function.arguments;
                   }
                 }
               }
             }
-          } else if ('content' in delta && delta.content) {
-            const content = delta.content ?? '';
+          } else if ("content" in delta && delta.content) {
+            const content = delta.content ?? "";
             this.sendToClient("bot", content);
             botMessage += content;
           }
@@ -393,44 +566,22 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         try {
           await this.handleModeSwitch(
             CommonModes.ErrorRecovery,
-            error instanceof Error ? error.message : 'Unknown error'
+            error instanceof Error ? error.message : "Unknown error"
           );
         } catch (e) {
           console.error("Failed to switch to error recovery mode:", e);
         }
 
-        this.sendToClient("bot", "There has been an error, please retry", "error");
+        this.sendToClient(
+          "bot",
+          "There has been an error, please retry",
+          "error"
+        );
         reject(error);
       } finally {
         this.sendToClient("bot", "", "end");
         resolve();
       }
     });
-  }
-
-  /**
-   * Handle executing tool calls with error recovery
-   */
-  private async handleToolCalls(toolCalls: Map<string, ToolCall>): Promise<void> {
-    for (const toolCall of toolCalls.values()) {
-      try {
-        const func = this.availableFunctions.get(toolCall.name);
-        if (!func) {
-          throw new Error(`Unknown function: ${toolCall.name}`);
-        }
-
-        let parsedArgs;
-        try {
-          parsedArgs = JSON.parse(toolCall.arguments);
-        } catch (e) {
-          throw new Error(`Invalid function arguments: ${toolCall.arguments}`);
-        }
-
-        await func.handler(parsedArgs);
-      } catch (error) {
-        console.error(`Error executing tool ${toolCall.name}:`, error);
-        throw error;
-      }
-    }
   }
 }

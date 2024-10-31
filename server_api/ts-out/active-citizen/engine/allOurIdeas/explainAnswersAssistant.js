@@ -23,7 +23,7 @@ export class ExplainAnswersAssistant extends YpBaseChatBot {
                 model: this.llmModel,
                 messages,
                 max_tokens: this.maxTokens,
-                temperature: this.tempeture,
+                temperature: this.temperature,
                 stream: true,
             });
             this.streamWebSocketResponses(stream);
