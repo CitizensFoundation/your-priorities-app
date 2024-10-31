@@ -29,14 +29,16 @@ async function createAgentProductsAndPlans() {
                 subscriptionPlan: {
                     name: 'Competition Agent Free Trial',
                     description: 'Free trial for the Competition Agent.',
-                    type: 'free',
-                    amount: 0.0,
-                    currency: 'USD',
-                    billing_cycle: 'monthly',
-                    max_runs_per_cycle: 1,
-                    booster_runs: 0,
-                    booster_price: 0.0,
-                    booster_currency: 'USD',
+                    configuration: {
+                        type: 'free',
+                        amount: 0.0,
+                        currency: 'USD',
+                        billing_cycle: 'monthly',
+                        max_runs_per_cycle: 1,
+                        booster_runs: 0,
+                        booster_price: 0.0,
+                        booster_currency: 'USD',
+                    }
                 },
             },
             {
@@ -50,14 +52,16 @@ async function createAgentProductsAndPlans() {
                 subscriptionPlan: {
                     name: 'Competition Agent Plan',
                     description: 'Competition Agent Plan',
-                    type: 'paid',
-                    amount: 150.0,
-                    currency: 'USD',
-                    billing_cycle: 'monthly',
-                    max_runs_per_cycle: 1,
-                    booster_runs_available: 4,
-                    booster_price: 120.0,
-                    booster_currency: 'USD',
+                    configuration: {
+                        type: 'paid',
+                        amount: 150.0,
+                        currency: 'USD',
+                        billing_cycle: 'monthly',
+                        max_runs_per_cycle: 1,
+                        booster_runs: 4,
+                        booster_price: 120.0,
+                        booster_currency: 'USD',
+                    }
                 },
             },
             {
@@ -88,14 +92,16 @@ async function createAgentProductsAndPlans() {
                 subscriptionPlan: {
                     name: 'Production Innovation Agent Plan',
                     description: 'Monthly plan for the Production Innovation Agent.',
-                    type: 'paid',
-                    amount: 150.00,
-                    currency: 'USD',
-                    billing_cycle: 'monthly',
-                    max_runs_per_cycle: 2,
-                    booster_runs_available: 4,
-                    booster_price: 120.0,
-                    booster_currency: 'USD',
+                    configuration: {
+                        type: 'paid',
+                        amount: 150.00,
+                        currency: 'USD',
+                        billing_cycle: 'monthly',
+                        max_runs_per_cycle: 2,
+                        booster_runs: 4,
+                        booster_price: 120.0,
+                        booster_currency: 'USD',
+                    }
                 },
             },
             {
@@ -107,14 +113,16 @@ async function createAgentProductsAndPlans() {
                 subscriptionPlan: {
                     name: 'Marketing Ops Agent Plan',
                     description: 'Monthly plan for the Marketing Ops Agent.',
-                    type: 'paid',
-                    amount: 350.00,
-                    currency: 'USD',
-                    billing_cycle: 'monthly',
-                    max_runs_per_cycle: 4,
-                    booster_runs_available: 10,
-                    booster_price: 250.0,
-                    booster_currency: 'USD',
+                    configuration: {
+                        type: 'paid',
+                        amount: 350.00,
+                        currency: 'USD',
+                        billing_cycle: 'monthly',
+                        max_runs_per_cycle: 4,
+                        booster_runs: 10,
+                        booster_price: 250.0,
+                        booster_currency: 'USD',
+                    }
                 },
             },
             {
@@ -126,14 +134,16 @@ async function createAgentProductsAndPlans() {
                 subscriptionPlan: {
                     name: 'Funding Agent Plan',
                     description: 'Monthly plan for the Funding Agent.',
-                    type: 'paid',
-                    amount: 150.00,
-                    currency: 'USD',
-                    billing_cycle: 'monthly',
-                    max_runs_per_cycle: 2,
-                    booster_runs_available: 4,
-                    booster_price: 120.0,
-                    booster_currency: 'USD',
+                    configuration: {
+                        type: 'paid',
+                        amount: 150.00,
+                        currency: 'USD',
+                        billing_cycle: 'monthly',
+                        max_runs_per_cycle: 2,
+                        booster_runs: 4,
+                        booster_price: 120.0,
+                        booster_currency: 'USD',
+                    }
                 },
             },
         ];
@@ -166,9 +176,9 @@ async function createAgentProductsAndPlans() {
                 currency: planData.currency,
                 billing_cycle: planData.billing_cycle,
                 max_runs_per_cycle: planData.max_runs_per_cycle,
-                booster_runs: planData.booster_runs,
-                booster_price: planData.booster_price,
-                booster_currency: planData.booster_currency,
+                booster_runs: planData.configuration?.booster_runs,
+                booster_price: planData.configuration?.booster_price,
+                booster_currency: planData.configuration?.booster_currency,
             });
             console.log(`Created Subscription Plan: ${planData.name} (ID: ${subscriptionPlan.id})`);
         }

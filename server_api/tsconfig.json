@@ -14,7 +14,7 @@
     "types": [
       "./server.d.ts",
       "../webApps/client/src/types.d.ts",
-      "../webApps/client/src/agentSubscriptions.d.ts",
+      "../webApps/client/src/agents.d.ts",
       "../webApps/client/src/typesAoi.d.ts",
       "../webApps/client/src/typesLlms.d.ts"
     ]

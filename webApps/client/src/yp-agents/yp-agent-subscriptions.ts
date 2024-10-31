@@ -313,6 +313,14 @@ export class YpSubscriptions extends YpBaseElement {
     this.bundleGroups = Array.from(bundleMap.values());
   }
 
+  private handleProductSelect(productId: number, isFree: boolean) {
+    if (isFree) {
+      this.handleFreeProductSelect(productId);
+    } else {
+      this.handlePaidProductSelect(productId);
+    }
+  }
+
   private renderAgent(product: AgentProductWithPlan, index: number) {
     const freePlan = product.plans.find(plan => plan.configuration.type === 'free');
     const paidPlans = product.plans.filter(plan => plan.configuration.type === 'paid');
@@ -322,7 +330,7 @@ export class YpSubscriptions extends YpBaseElement {
         <div class="agent-number">${index + 1}</div>
         <img
           class="agent-image"
-          src="${product.configuration?.imageUrl || '/default-agent-image.jpg'}"
+          src="${product.configuration?.imageUrl}"
           alt="${product.name || ''}"
         >
         <div class="agent-content">
@@ -401,7 +409,6 @@ export class YpSubscriptions extends YpBaseElement {
       </md-filled-button>
     `;
   }
-
 
   constructor() {
     super();
@@ -527,61 +534,5 @@ export class YpSubscriptions extends YpBaseElement {
     } finally {
       this.processingPayment = false;
     }
-  }
-
-  private renderBundleGroup(group: BundleGroup) {
-    return html`
-      <div class="bundle-group">
-        <div class="bundle-header">
-          ${group.imageUrl
-            ? html`<img src="${group.imageUrl}" alt="${group.name}" class="bundle-image">`
-            : nothing}
-          <div>
-            <h2 class="bundle-title">${group.name}</h2>
-            <p class="bundle-description">${group.description}</p>
-          </div>
-        </div>
-
-        <div class="product-list">
-          ${group.products.map(product => this.renderProduct(product, group))}
-        </div>
-      </div>
-    `;
-  }
-
-  private renderProduct(product: AgentProductWithPlan, group: BundleGroup) {
-    const freePlan = product.plans.find(plan => plan.configuration.type === 'free');
-    const paidPlans = product.plans.filter(plan => plan.configuration.type === 'paid');
-
-    return html`
-      <div class="product-item">
-        ${freePlan
-          ? html`
-            <md-checkbox
-              ?checked=${this.selectedFreeProductId === product.id}
-              @change=${() => this.handleFreeProductSelect(product.id)}
-            ></md-checkbox>`
-          : html`
-            <md-radio
-              ?checked=${this.selectedPaidProductIds.has(product.id)}
-              @change=${() => this.handlePaidProductSelect(product.id)}
-            ></md-radio>`
-        }
-
-        <div class="product-details">
-          <h3 class="product-name">${product.name}</h3>
-          ${product.description
-            ? html`<p class="product-description">${product.description}</p>`
-            : nothing}
-        </div>
-
-        <div class="price">
-          ${freePlan
-            ? 'Free Trial'
-            : paidPlans.map(plan => html`${plan.configuration.amount} ${plan.configuration.currency}/
-              ${plan.configuration.billing_cycle}`)}
-        </div>
-      </div>
-    `;
   }
 }

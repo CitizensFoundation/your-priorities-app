@@ -132,3 +132,8 @@ interface YpAgentProductBundleAttributes extends YpBaseModelAttributes {
   configuration?: YpAgentProductBundleConfiguration;
 }
 
+
+interface YpBaseChatBotMemoryData  extends PsAgentBaseMemoryData {
+  chatLog?: PsSimpleChatLog[];
+}
+

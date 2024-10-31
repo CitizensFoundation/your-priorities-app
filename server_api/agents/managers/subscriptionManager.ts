@@ -1,13 +1,13 @@
 // SubscriptionManager.ts
 
-import { YpSubscriptionPlan } from './models/subscriptionPlan.js';
-import { YpSubscription } from './models/subscription.js';
-import { YpAgentProduct } from './models/agentProduct.js';
-import { YpAgentProductRun } from './models/agentProductRun.js';
+import { YpSubscriptionPlan } from '../models/subscriptionPlan.js';
+import { YpSubscription } from '../models/subscription.js';
+import { YpAgentProduct } from '../models/agentProduct.js';
+import { YpAgentProductRun } from '../models/agentProductRun.js';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 
 import Stripe from 'stripe';
-import { YpAgentProductBundle } from './models/agentProductBundle.js';
+import { YpAgentProductBundle } from '../models/agentProductBundle.js';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-09-30.acacia',
 });

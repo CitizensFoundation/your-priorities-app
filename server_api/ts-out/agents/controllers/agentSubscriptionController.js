@@ -1,6 +1,6 @@
 // SubscriptionController.ts
 import express from 'express';
-import { SubscriptionManager } from '../subscriptionManager.js';
+import { SubscriptionManager } from '../managers/subscriptionManager.js';
 import auth from '../../authorization.cjs';
 import { YpSubscription } from '../models/subscription.js';
 import Stripe from 'stripe';

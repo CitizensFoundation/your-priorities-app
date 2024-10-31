@@ -1,11 +1,6 @@
 import { OpenAI } from "openai";
 import { v4 as uuidv4 } from "uuid";
 import ioredis from "ioredis";
-//TODO: Fix those imports, sync API with @policysynth/agents
-//import { PolicySynthAgentBase } from "@policysynth/agents/baseAgent.js";
-//import { IEngineConstants } from "@policysynth/agents/constants.js";
-//TODO: Use tiktoken
-const WORDS_TO_TOKENS_MAGIC_CONSTANT = 1.3;
 let tlsConfig = {
     rejectUnauthorized: false,
 };
@@ -40,18 +35,6 @@ export class YpBaseChatBot {
             }
         });
     }
-    static getFullCostOfMemory(memory) {
-        let totalCost = undefined;
-        if (memory && memory.stages) {
-            totalCost = 0;
-            Object.values(memory.stages).forEach((stage) => {
-                if (stage.tokensInCost && stage.tokensOutCost) {
-                    totalCost += stage.tokensInCost + stage.tokensOutCost;
-                }
-            });
-        }
-        return totalCost;
-    }
     loadMemory() {
         return new Promise(async (resolve, reject) => {
             try {
@@ -71,37 +54,11 @@ export class YpBaseChatBot {
         });
     }
     constructor(wsClientId, wsClients, memoryId = undefined) {
-        this.broadcastingLiveCosts = false;
-        this.liveCostsBroadcastInterval = 1000;
-        this.liveCostsInactivityTimeout = 1000 * 60 * 10;
-        this.tempeture = 0.7;
-        this.maxTokens = 4000;
+        this.temperature = 0.7;
+        this.maxTokens = 16000;
         this.llmModel = "gpt-4o";
         this.persistMemory = false;
         this.memoryId = undefined;
-        this.liveCostsBroadcastTimeout = undefined;
-        this.conversation = async (chatLog) => {
-            this.setChatLog(chatLog);
-            let messages = chatLog.map((message) => {
-                return {
-                    role: message.sender,
-                    content: message.message,
-                };
-            });
-            const systemMessage = {
-                role: "system",
-                content: this.renderSystemPrompt(),
-            };
-            messages.unshift(systemMessage);
-            const stream = await this.openaiClient.chat.completions.create({
-                model: this.llmModel,
-                messages,
-                max_tokens: this.maxTokens,
-                temperature: this.tempeture,
-                stream: true,
-            });
-            this.streamWebSocketResponses(stream);
-        };
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
         this.openaiClient = new OpenAI({
@@ -126,14 +83,6 @@ export class YpBaseChatBot {
             else {
                 console.error("No wsClientSocket found");
             }
-        }
-    }
-    get fullLLMCostsForMemory() {
-        if (this.memory && this.memory.stages) {
-            return YpBaseChatBot.getFullCostOfMemory(this.memory);
-        }
-        else {
-            return undefined;
         }
     }
     async getLoadedMemory() {
@@ -198,93 +147,9 @@ export class YpBaseChatBot {
         };
         this.wsClientSocket.send(JSON.stringify(botMessage));
     }
-    startBroadcastingLiveCosts() {
-        this.stopBroadcastingLiveCosts();
-        this.liveCostsBoadcastStartAt = new Date();
-        this.lastBroacastedCosts = undefined;
-        this.broadcastingLiveCosts = true;
-        this.broadCastLiveCosts();
-    }
-    broadCastLiveCosts() {
-        if (this.broadcastingLiveCosts) {
-            if (this.memory) {
-                if (this.lastBroacastedCosts != this.fullLLMCostsForMemory) {
-                    console.log(`Broadcasting live costs: ${this.fullLLMCostsForMemory}`);
-                    const botMessage = {
-                        sender: "bot",
-                        type: "liveLlmCosts",
-                        data: this.fullLLMCostsForMemory,
-                    };
-                    this.wsClientSocket.send(JSON.stringify(botMessage));
-                    this.lastBroacastedCosts = this.fullLLMCostsForMemory;
-                }
-            }
-            let timePassedSinceBroadcastStartActivity = 0;
-            if (this.liveCostsBoadcastStartAt && this.lastSentToUserAt) {
-                timePassedSinceBroadcastStartActivity =
-                    this.lastSentToUserAt.getTime() -
-                        this.liveCostsBoadcastStartAt.getTime();
-            }
-            if (timePassedSinceBroadcastStartActivity < this.liveCostsInactivityTimeout) {
-                this.liveCostsBroadcastTimeout = setTimeout(() => {
-                    this.broadCastLiveCosts();
-                }, this.liveCostsBroadcastInterval);
-            }
-        }
-        else {
-            this.stopBroadcastingLiveCosts();
-        }
-    }
-    stopBroadcastingLiveCosts() {
-        if (this.liveCostsBroadcastTimeout) {
-            clearTimeout(this.liveCostsBroadcastTimeout);
-        }
-        this.broadcastingLiveCosts = false;
-        console.log("Stopped broadcasting live costs");
-    }
-    get emptyChatBotStagesData() {
-        return {
-            "chatbot-conversation": {
-                tokensInCost: 0,
-                tokensOutCost: 0,
-                tokensIn: 0,
-                tokensOut: 0,
-            },
-        };
-    }
     getEmptyMemory() {
         return {
             redisKey: this.redisKey,
-            currentStage: "chatbot-conversation",
-            stages: {
-                //  ...PolicySynthAgentBase.emptyDefaultStages,
-                ...this.emptyChatBotStagesData,
-            },
-            timeStart: Date.now(),
-            chatLog: [],
-            groupId: 1,
-            communityId: 1,
-            domainId: 1,
-            totalCost: 0,
-            customInstructions: {},
-            problemStatement: {
-                description: "",
-                searchQueries: {
-                    general: [],
-                    scientific: [],
-                    news: [],
-                    openData: [],
-                },
-                searchResults: {
-                    pages: {
-                        general: [],
-                        scientific: [],
-                        news: [],
-                        openData: [],
-                    },
-                },
-            },
-            subProblems: [],
         };
     }
     sendToClient(sender, message, type = "stream") {
@@ -310,7 +175,6 @@ export class YpBaseChatBot {
                 for await (const part of stream) {
                     this.sendToClient("bot", part.choices[0].delta.content);
                     botMessage += part.choices[0].delta.content;
-                    this.addToExternalSolutionsMemoryCosts(part.choices[0].delta.content, "out");
                     if (part.choices[0].finish_reason == "stop") {
                         this.memory.chatLog.push({
                             sender: "bot",
@@ -331,57 +195,6 @@ export class YpBaseChatBot {
             resolve();
         });
     }
-    getTokenCosts(estimateTokens, type) {
-        return 0;
-        /*if (type == "in") {
-          return (
-            IEngineConstants.analyseExternalSolutionsModel.inTokenCostUSD *
-            estimateTokens
-          );
-        } else {
-          return (
-            IEngineConstants.analyseExternalSolutionsModel.outTokenCostUSD *
-            estimateTokens
-          );
-        }*/
-    }
-    addToExternalSolutionsMemoryCosts(text, type) {
-        if (text) {
-            const parts = text.split(" ").filter((part) => part != "");
-            const estimateTokens = parts.length * WORDS_TO_TOKENS_MAGIC_CONSTANT;
-            if (this.memory) {
-                if (type == "in") {
-                    if (this.memory.stages["chatbot-conversation"].tokensInCost ===
-                        undefined ||
-                        this.memory.stages["chatbot-conversation"].tokensIn === undefined) {
-                        this.memory.stages["chatbot-conversation"].tokensInCost = 0;
-                        this.memory.stages["chatbot-conversation"].tokensIn = 0;
-                    }
-                    this.memory.stages["chatbot-conversation"].tokensIn += estimateTokens;
-                    this.memory.stages["chatbot-conversation"].tokensInCost +=
-                        this.getTokenCosts(estimateTokens, type);
-                }
-                else {
-                    if (this.memory.stages["chatbot-conversation"].tokensOutCost ===
-                        undefined ||
-                        this.memory.stages["chatbot-conversation"].tokensOut === undefined) {
-                        this.memory.stages["chatbot-conversation"].tokensOutCost = 0;
-                        this.memory.stages["chatbot-conversation"].tokensOut = 0;
-                    }
-                    this.memory.stages["chatbot-conversation"].tokensOut +=
-                        estimateTokens;
-                    this.memory.stages["chatbot-conversation"].tokensOutCost +=
-                        this.getTokenCosts(estimateTokens, type);
-                }
-            }
-            else {
-                console.warn(`No memory found to add external solutions costs`);
-            }
-        }
-        else {
-            console.warn(`No text found to add external solutions costs`);
-        }
-    }
     async saveMemoryIfNeeded() {
         if (this.persistMemory) {
             await this.saveMemory();
@@ -391,5 +204,28 @@ export class YpBaseChatBot {
         this.memory.chatLog = chatLog;
         await this.saveMemoryIfNeeded();
     }
+    async conversation(chatLog) {
+        this.setChatLog(chatLog);
+        let messages = chatLog.map((message) => {
+            return {
+                role: message.sender,
+                content: message.message,
+            };
+        });
+        const systemMessage = {
+            role: "system",
+            content: this.renderSystemPrompt(),
+        };
+        messages.unshift(systemMessage);
+        const stream = await this.openaiClient.chat.completions.create({
+            model: this.llmModel,
+            messages,
+            max_tokens: this.maxTokens,
+            temperature: this.temperature,
+            stream: true,
+        });
+        this.streamWebSocketResponses(stream);
+    }
+    ;
 }
 YpBaseChatBot.redisMemoryKeyPrefix = "yp-chatbot-memory";

@@ -1,7 +1,7 @@
 // AgentProductController.ts
 
 import express from 'express';
-import { AgentProductManager } from '../agentProductManager.js';
+import { AgentProductManager } from '../managers/agentProductManager.js';
 import auth from '../../authorization.cjs';
 
 interface YpRequest extends express.Request {
