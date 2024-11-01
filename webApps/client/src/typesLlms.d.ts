@@ -1,18 +1,17 @@
 //TODO: Get this from @policysynth/agents
-interface PsAiChatWsMessage {
+interface YpAssistantMessage {
   sender: string;
   type:
     | "hello_message"
     | "moderation_error"
     | "start"
+    | "component"
     | "message"
     | "end"
     | "stream"
     | "noStreaming"
     | "error"
     | "info"
-    | "agentStart"
-    | "agentCompleted"
     | "agentStart"
     | "agentCompleted"
     | "agentUpdated"
@@ -26,6 +25,7 @@ interface PsAiChatWsMessage {
   message: string;
   data?: string | number | object;
   rawMessage?: string;
+  html?: string;
   refinedCausesSuggestions?: string[];
   hidden?: boolean;
 }

@@ -20,7 +20,7 @@ export declare class AoiStreamingAnalysis extends YpStreamingLlmBase {
     disconnectedCallback(): void;
     streamAnalysis(): Promise<void>;
     renderChoice(index: number, result: AoiChoiceData): import("lit-html").TemplateResult<1>;
-    addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
+    addChatBotElement(wsMessage: YpAssistantMessage): Promise<void>;
     static get styles(): any[];
     render(): import("lit-html").TemplateResult<1>;
 }

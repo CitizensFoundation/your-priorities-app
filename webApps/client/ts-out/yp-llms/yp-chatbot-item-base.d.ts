@@ -18,6 +18,7 @@ export declare class YpAiChatbotItemBase extends YpBaseElement {
     followUpQuestionsRaw: string;
     followUpQuestions: string[];
     jsonLoading: boolean;
+    isSpeaking: boolean;
     constructor();
     connectedCallback(): void;
     disconnectedCallback(): void;

@@ -278,7 +278,7 @@ export class YpSubscriptions extends YpBaseElement {
       const product = plan.AgentProduct;
       if (!product) return;
 
-      product.Bundles?.forEach(bundle => {
+      product.AgentBundles?.forEach(bundle => {
         if (!bundleMap.has(bundle.id)) {
           bundleMap.set(bundle.id, {
             bundleId: bundle.id,
@@ -330,7 +330,7 @@ export class YpSubscriptions extends YpBaseElement {
         <div class="agent-number">${index + 1}</div>
         <img
           class="agent-image"
-          src="${product.configuration?.imageUrl}"
+          src="${product.plans[0].configuration?.imageUrl}"
           alt="${product.name || ''}"
         >
         <div class="agent-content">

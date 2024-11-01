@@ -42,7 +42,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     getChoices(): Promise<void>;
     createGroupObserver(): void;
     handleGroupChange(): void;
-    addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
+    addChatBotElement(wsMessage: YpAssistantMessage): Promise<void>;
     get answers(): string[];
     hasMoreThanOneIdea(): void;
     openMenuFor(answer: AoiChoiceData): void;

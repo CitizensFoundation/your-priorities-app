@@ -160,7 +160,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     console.error("Group changed", this.group);
   }
 
-  async addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void> {
+  async addChatBotElement(wsMessage: YpAssistantMessage): Promise<void> {
     switch (wsMessage.type) {
       case "start":
         break;

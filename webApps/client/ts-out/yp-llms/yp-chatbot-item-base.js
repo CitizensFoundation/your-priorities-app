@@ -23,6 +23,7 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
         this.followUpQuestionsRaw = "";
         this.followUpQuestions = [];
         this.jsonLoading = false;
+        this.isSpeaking = false;
         this.handleJsonLoadingStart = () => {
             console.log("JSON loading start event triggered");
             this.jsonLoading = true;
@@ -437,6 +438,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAiChatbotItemBase.prototype, "jsonLoading", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAiChatbotItemBase.prototype, "isSpeaking", void 0);
 YpAiChatbotItemBase = __decorate([
     customElement("yp-chatbot-item-base")
 ], YpAiChatbotItemBase);

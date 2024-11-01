@@ -58,6 +58,9 @@ export class YpAiChatbotItemBase extends YpBaseElement {
   @property({ type: Boolean })
   jsonLoading = false;
 
+  @property({ type: Boolean })
+  isSpeaking = false;
+
   constructor() {
     super();
   }

@@ -37,9 +37,9 @@ export declare abstract class YpChatbotBase extends YpStreamingLlmBase {
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     disconnectedCallback(): void;
-    addToChatLogWithMessage(data: PsAiChatWsMessage, message?: string | undefined, changeButtonDisabledState?: boolean | undefined, changeButtonLabelTo?: string | undefined, refinedCausesSuggestions?: string[] | undefined, rawMessage?: string | undefined): void;
+    addToChatLogWithMessage(data: YpAssistantMessage, message?: string | undefined, changeButtonDisabledState?: boolean | undefined, changeButtonLabelTo?: string | undefined, refinedCausesSuggestions?: string[] | undefined, rawMessage?: string | undefined): void;
     get lastChatUiElement(): YpAiChatbotItemBase;
-    addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
+    addChatBotElement(wsMessage: YpAssistantMessage): Promise<void>;
     abstract sendChatMessage(): Promise<void>;
     static get styles(): any[];
     followUpQuestion(event: CustomEvent): void;

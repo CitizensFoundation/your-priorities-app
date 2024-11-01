@@ -139,7 +139,7 @@ ${this.renderCurrentAgent()}`,
                             try {
                                 const questions = await this.getRequiredQuestions(params.agentId);
                                 // Create HTML element for questions
-                                let formHtml = questions.map(question => `
+                                let html = questions.map(question => `
                   <yp-structured-question
                     .question="${JSON.stringify(question)}"
                   ></yp-structured-question>
@@ -148,7 +148,7 @@ ${this.renderCurrentAgent()}`,
                                     success: true,
                                     data: {
                                         questions,
-                                        formHtml,
+                                        html,
                                     },
                                 };
                             }
@@ -223,7 +223,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                         handler: async (params) => {
                             try {
                                 // Create HTML element for group
-                                const groupHtml = `<yp-group
+                                const html = `<yp-group
                   .groupId="${params.groupId}"
                   .configuration="${JSON.stringify(params.configuration)}"
                 ></yp-group>`;
@@ -231,7 +231,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                                     success: true,
                                     data: {
                                         groupId: params.groupId,
-                                        groupHtml,
+                                        html,
                                     },
                                 };
                             }
@@ -334,7 +334,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                                 }
                                 const workflow = await this.getWorkflowStatus(this.currentAgentId);
                                 // Create visualization HTML
-                                const workflowHtml = `
+                                const html = `
                   <yp-group
                     .groupId="${workflow.steps[params.currentStepId].groupId}"
                   ></yp-group>
@@ -343,7 +343,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                                     success: true,
                                     data: {
                                         workflow,
-                                        visualizationHtml: workflowHtml,
+                                        html,
                                     },
                                     metadata: {
                                         lastUpdated: new Date().toISOString(),

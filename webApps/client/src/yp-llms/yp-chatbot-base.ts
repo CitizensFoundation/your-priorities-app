@@ -11,6 +11,7 @@ import '@material/web/button/filled-button.js';
 import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/icon/icon.js';
 
+
 import '@material/web/iconbutton/outlined-icon-button.js';
 
 import '../common/yp-image.js';
@@ -129,7 +130,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
   }
 
   addToChatLogWithMessage(
-    data: PsAiChatWsMessage,
+    data: YpAssistantMessage,
     message: string | undefined = undefined,
     changeButtonDisabledState: boolean | undefined = undefined,
     changeButtonLabelTo: string | undefined = undefined,
@@ -155,7 +156,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     return this.chatElements![this.chatElements!.length - 1];
   }
 
-  async addChatBotElement(wsMessage: PsAiChatWsMessage) {
+  async addChatBotElement(wsMessage: YpAssistantMessage) {
     switch (wsMessage.type) {
       case 'hello_message':
         this.addToChatLogWithMessage(wsMessage);
