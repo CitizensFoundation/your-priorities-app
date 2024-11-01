@@ -13,7 +13,13 @@ interface YpAgentProductAttributes extends YpBaseModelAttributes {
   description?: string;
   configuration: YpAgentProductConfiguration;
   status?: YpAgentProductStatus;
-  Bundles?: YpAgentProductBundleAttributes[];
+  User?: YpUserData;
+  Group?: YpGroupData;
+  BoosterPurchases?: YpAgentProductBoosterPurchaseAttributes[];
+  Subscriptions?: YpSubscriptionAttributes[];
+  SubscriptionPlans?: YpSubscriptionPlanAttributes[];
+  Runs?: YpAgentProductRunAttributes[];
+  AgentBundles?: YpAgentProductBundleAttributes[];
 }
 
 interface YpAgentProductConfiguration {
@@ -44,6 +50,10 @@ interface YpAgentProductBoosterPurchaseAttributes
   transaction_id?: string;
   metadata?: Record<string, any>;
   discount_id?: number;
+  User?: YpUserData;
+  AgentProduct?: YpAgentProductAttributes;
+  SubscriptionPlan?: YpSubscriptionPlanAttributes;
+  Discount?: YpDiscountAttributes;
 }
 
 type YpSubscriptionPlanType = "free" | "paid" | "coming_soon";
@@ -74,6 +84,9 @@ interface YpSubscriptionPlanAttributes extends YpBaseModelAttributes {
   name: string;
   description?: string;
   configuration: YpSubscriptionPlanConfiguration;
+  AgentProduct?: YpAgentProductAttributes;
+  Subscriptions?: YpSubscriptionAttributes[];
+  BoosterPurchases?: YpAgentProductBoosterPurchaseAttributes[];
 }
 
 interface YpSubscriptionConfiguration {}
@@ -91,6 +104,11 @@ interface YpSubscriptionAttributes extends YpBaseModelAttributes {
   payment_method?: string;
   transaction_id?: string;
   metadata?: Record<string, any>;
+  User?: YpUserData;
+  AgentProduct?: YpAgentProductAttributes;
+  Plan?: YpSubscriptionPlanAttributes;
+  Runs?: YpAgentProductRunAttributes[];
+  Discounts?: YpDiscountAttributes[];
 }
 
 // YpDiscountAttributes Interface
@@ -104,6 +122,8 @@ interface YpDiscountAttributes extends YpBaseModelAttributes {
   start_date?: Date;
   end_date?: Date;
   applicable_to: "agent_product" | "booster" | "subscription" | "both";
+  Subscriptions?: YpSubscriptionAttributes[];
+  BoosterPurchases?: YpAgentProductBoosterPurchaseAttributes[];
 }
 
 //TODO: Add fixed values
@@ -123,12 +143,13 @@ interface YpAgentProductRunAttributes extends YpBaseModelAttributes {
   end_time?: Date;
   duration?: number; // Duration in seconds
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
-  workflow?: YpWorkflowConfiguration;
+  workflow: YpWorkflowConfiguration;
   input_data?: YpAgentProductRunInputData;
   output_data?: YpAgentProductRunOutputData;
   error_message?: string;
   run_type?: string; // e.g., 'scheduled', 'manual', 'triggered'
   metadata?: Record<string, any>;
+  Subscription?: YpSubscriptionAttributes;
 }
 
 // Interface for base model attributes
