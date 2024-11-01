@@ -209,7 +209,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                         parameters: {
                             type: "object",
                             properties: {
-                                groupId: { type: "number" }
+                                groupId: { type: "number" },
                             },
                             required: ["groupId"],
                         },
@@ -239,26 +239,26 @@ ${this.renderCurrentWorkflowStatus()}`,
                         },
                     },
                     {
-                        name: 'stop_agent',
-                        description: 'Stop the currently running agent',
+                        name: "stop_agent",
+                        description: "Stop the currently running agent",
                         parameters: {
-                            type: 'object',
+                            type: "object",
                             properties: {
-                                reason: { type: 'string' }
-                            }
+                                reason: { type: "string" },
+                            },
                         },
                         resultSchema: {
-                            type: 'object',
+                            type: "object",
                             properties: {
-                                agentId: { type: 'number' },
-                                stopTime: { type: 'string' },
-                                finalStatus: { type: 'string' }
-                            }
+                                agentId: { type: "number" },
+                                stopTime: { type: "string" },
+                                finalStatus: { type: "string" },
+                            },
                         },
                         handler: async (params) => {
                             try {
                                 if (!this.currentAgentId) {
-                                    throw new Error('No agent selected');
+                                    throw new Error("No agent selected");
                                 }
                                 const result = await this.stopAgent(this.currentAgentId, params.reason);
                                 return {
@@ -266,62 +266,64 @@ ${this.renderCurrentWorkflowStatus()}`,
                                     data: {
                                         agentId: this.currentAgentId,
                                         stopTime: new Date().toISOString(),
-                                        finalStatus: result.status
+                                        finalStatus: result.status,
                                     },
                                     metadata: {
-                                        reason: params.reason
-                                    }
+                                        reason: params.reason,
+                                    },
                                 };
                             }
                             catch (error) {
                                 return {
                                     success: false,
-                                    error: error instanceof Error ? error.message : 'Failed to stop agent'
+                                    error: error instanceof Error
+                                        ? error.message
+                                        : "Failed to stop agent",
                                 };
                             }
-                        }
+                        },
                     },
                     {
-                        name: 'show_workflow',
-                        description: 'Display the current workflow status and steps',
+                        name: "show_workflow",
+                        description: "Display the current workflow status and steps",
                         parameters: {
-                            type: 'object',
+                            type: "object",
                             properties: {
-                                includeHistory: { type: 'boolean' },
-                                showDetails: { type: 'boolean' }
-                            }
+                                includeHistory: { type: "boolean" },
+                                showDetails: { type: "boolean" },
+                            },
                         },
                         resultSchema: {
-                            type: 'object',
+                            type: "object",
                             properties: {
                                 workflow: {
-                                    type: 'object',
+                                    type: "object",
                                     properties: {
                                         steps: {
-                                            type: 'array',
+                                            type: "array",
                                             items: {
-                                                type: 'object',
+                                                type: "object",
                                                 properties: {
-                                                    id: { type: 'number' },
-                                                    name: { type: 'string' },
-                                                    status: { type: 'string' },
-                                                    type: { type: 'string' },
-                                                    completed: { type: 'boolean' },
-                                                    currentStep: { type: 'boolean' }
-                                                }
-                                            }
+                                                    id: { type: "number" },
+                                                    name: { type: "string" },
+                                                    status: { type: "string" },
+                                                    type: { type: "string" },
+                                                    completed: { type: "boolean" },
+                                                    currentStep: { type: "boolean" },
+                                                },
+                                            },
                                         },
-                                        currentStepId: { type: 'number' },
-                                        progress: { type: 'number' }
-                                    }
+                                        currentStepId: { type: "number" },
+                                        progress: { type: "number" },
+                                    },
                                 },
-                                visualizationHtml: { type: 'string' }
-                            }
+                                visualizationHtml: { type: "string" },
+                            },
                         },
                         handler: async (params) => {
                             try {
                                 if (!this.currentAgentId) {
-                                    throw new Error('No agent selected');
+                                    throw new Error("No agent selected");
                                 }
                                 const workflow = await this.getWorkflowStatus(this.currentAgentId);
                                 // Create visualization HTML
@@ -334,80 +336,84 @@ ${this.renderCurrentWorkflowStatus()}`,
                                     success: true,
                                     data: {
                                         workflow,
-                                        visualizationHtml: workflowHtml
+                                        visualizationHtml: workflowHtml,
                                     },
                                     metadata: {
                                         lastUpdated: new Date().toISOString(),
                                         includesHistory: params.includeHistory,
-                                        showingDetails: params.showDetails
-                                    }
+                                        showingDetails: params.showDetails,
+                                    },
                                 };
                             }
                             catch (error) {
                                 return {
                                     success: false,
-                                    error: error instanceof Error ? error.message : 'Failed to show workflow'
+                                    error: error instanceof Error
+                                        ? error.message
+                                        : "Failed to show workflow",
                                 };
                             }
-                        }
+                        },
                     },
                     {
-                        name: 'get_workflow_step_details',
-                        description: 'Get detailed information about a specific workflow step',
+                        name: "get_workflow_step_details",
+                        description: "Get detailed information about a specific workflow step",
                         parameters: {
-                            type: 'object',
+                            type: "object",
                             properties: {
-                                stepId: { type: 'number' },
-                                includeArtifacts: { type: 'boolean' }
+                                stepId: { type: "number" },
+                                includeArtifacts: { type: "boolean" },
                             },
-                            required: ['stepId']
+                            required: ["stepId"],
                         },
                         resultSchema: {
-                            type: 'object',
+                            type: "object",
                             properties: {
                                 step: {
-                                    type: 'object',
+                                    type: "object",
                                     properties: {
-                                        id: { type: 'number' },
-                                        name: { type: 'string' },
-                                        type: { type: 'string' },
-                                        status: { type: 'string' },
-                                        startTime: { type: 'string' },
-                                        endTime: { type: 'string' },
-                                        duration: { type: 'number' },
+                                        id: { type: "number" },
+                                        name: { type: "string" },
+                                        type: { type: "string" },
+                                        status: { type: "string" },
+                                        startTime: { type: "string" },
+                                        endTime: { type: "string" },
+                                        duration: { type: "number" },
                                         artifacts: {
-                                            type: 'array',
-                                            items: { type: 'object' }
-                                        }
-                                    }
-                                }
-                            }
+                                            type: "array",
+                                            items: { type: "object" },
+                                        },
+                                    },
+                                },
+                            },
                         },
                         handler: async (params) => {
                             try {
                                 if (!this.currentAgentId) {
-                                    throw new Error('No agent selected');
+                                    throw new Error("No agent selected");
                                 }
                                 const stepDetails = await this.getWorkflowStepDetails(this.currentAgentId, params.stepId, params.includeArtifacts);
                                 return {
                                     success: true,
                                     data: {
-                                        step: stepDetails
+                                        step: stepDetails,
                                     },
                                     metadata: {
                                         requestedAt: new Date().toISOString(),
-                                        includesArtifacts: params.includeArtifacts
-                                    }
+                                        includesArtifacts: params.includeArtifacts,
+                                    },
                                 };
                             }
                             catch (error) {
                                 return {
                                     success: false,
-                                    error: error instanceof Error ? error.message : 'Failed to get step details'
+                                    error: error instanceof Error
+                                        ? error.message
+                                        : "Failed to get step details",
                                 };
                             }
-                        }
-                    }
+                        },
+                    },
                 ],
                 allowedTransitions: ["agent_selection"],
             },
@@ -436,6 +442,22 @@ ${this.renderCurrentWorkflowStatus()}`,
         }
         return agent;
     }
+    async stopAgent(agentId, reason) {
+        // Implement agent stop logic
+        // This should communicate with your backend API
+        const status = await this.loadAgentStatus();
+        const runningAgent = status.runningAgents.find((a) => a.agentId === agentId);
+        if (!runningAgent) {
+            throw new Error("Agent is not running");
+        }
+        // Call your backend API to stop the agent
+        // This is a placeholder - implement actual API call
+        const stopResult = { status: "stopped", timestamp: new Date() };
+        // Update Redis status
+        runningAgent.status = "cancelled";
+        await this.redis.set("agent_status", JSON.stringify(status));
+        return stopResult;
+    }
     async getRequiredQuestions(agentId) {
         // Implement required questions loading logic
         const key = `agent:${agentId}:required_questions`;
@@ -454,48 +476,39 @@ ${this.renderCurrentWorkflowStatus()}`,
             await this.handleModeSwitch("agent_operations", "Configuration completed");
         }
     }
-    async stopAgent(agentId, reason) {
-        // Implement agent stop logic
-        // This should communicate with your backend API
-        const status = await this.loadAgentStatus();
-        const runningAgent = status.runningAgents.find(a => a.id === agentId);
-        if (!runningAgent) {
-            throw new Error('Agent is not running');
-        }
-        // Call your backend API to stop the agent
-        // This is a placeholder - implement actual API call
-        const stopResult = { status: 'stopped', timestamp: new Date() };
-        // Update Redis status
-        runningAgent.status = 'cancelled';
-        await this.redis.set('agent_status', JSON.stringify(status));
-        return stopResult;
-    }
     async getWorkflowStatus(agentId) {
         // Get workflow configuration and current status
         const configKey = `agent:${agentId}:workflow_config`;
         const statusKey = `agent:${agentId}:workflow_status`;
         const [configStr, statusStr] = await Promise.all([
             this.redis.get(configKey),
-            this.redis.get(statusKey)
+            this.redis.get(statusKey),
         ]);
-        const config = configStr ? JSON.parse(configStr) : { steps: [] };
-        const status = statusStr ? JSON.parse(statusStr) : {
-            currentStepId: config.steps[0]?.id,
-            progress: 0
-        };
+        const config = configStr
+            ? JSON.parse(configStr)
+            : { steps: [] };
+        const status = statusStr
+            ? JSON.parse(statusStr)
+            : {
+                currentStepId: config.steps[0]?.id,
+                progress: 0,
+            };
         // Enhance steps with status information
-        const enhancedSteps = config.steps.map(step => ({
+        const enhancedSteps = config.steps.map((step) => ({
             ...step,
-            status: step.id === status.currentStepId ? 'active' :
-                step.id < status.currentStepId ? 'completed' : 'pending',
+            status: step.id === status.currentStepId
+                ? "active"
+                : step.id < status.currentStepId
+                    ? "completed"
+                    : "pending",
             completed: step.id < status.currentStepId,
-            currentStep: step.id === status.currentStepId
+            currentStep: step.id === status.currentStepId,
         }));
         return {
             ...config,
             steps: enhancedSteps,
             currentStepId: status.currentStepId,
-            progress: status.progress
+            progress: status.progress,
         };
     }
     async getWorkflowStepDetails(agentId, stepId, includeArtifacts) {
@@ -503,7 +516,7 @@ ${this.renderCurrentWorkflowStatus()}`,
         const detailsStr = await this.redis.get(key);
         const details = detailsStr ? JSON.parse(detailsStr) : null;
         if (!details) {
-            throw new Error('Step details not found');
+            throw new Error("Step details not found");
         }
         if (includeArtifacts) {
             const artifactsKey = `agent:${agentId}:step:${stepId}:artifacts`;

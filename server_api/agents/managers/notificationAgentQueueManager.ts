@@ -4,6 +4,7 @@ import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueMana
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
 import WebSocket from "ws";
+import { YpAgentProductRun } from "agents/models/agentProductRun.js";
 
 export class NotificationAgentQueueManager extends AgentQueueManager {
   redisClient!: Redis;
@@ -18,23 +19,87 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     this.wsClients = wsClients;
   }
 
-  async sendNotification(agent: PsAgent, action: string, wsClientId: string, status: string, result: any) {
+  async sendNotification(
+    agent: PsAgent,
+    action: string,
+    wsClientId: string,
+    status: string,
+    result: any,
+    agentRunId?: number,
+    updatedWorkflow?: YpWorkflowConfiguration
+  ) {
     const wsClient = this.wsClients.get(wsClientId);
     if (wsClient) {
-      wsClient.send(JSON.stringify({ action, status, result }));
+      wsClient.send(
+        JSON.stringify({ action, status, result, agentRunId, updatedWorkflow })
+      );
+    }
+
+    //TODO: Send email notification
+  }
+
+  async advanceWorkflowStepOrCompleteAgentRun(
+    agentRunId: number,
+    status: string,
+    wsClientId: string,
+    result: any
+  ) {
+    try {
+      // Get the agent run record
+      const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
+        attributes: ["id", "workflow"],
+      });
+
+      if (!agentRun || !agentRun.workflow) {
+        console.error(
+          `NotificationAgentQueueManager: Agent run ${agentRunId} or its workflow not found`
+        );
+        return;
+      }
+
+      const workflowConfig = agentRun.workflow as YpWorkflowConfiguration;
+
+      if (status === "failed") {
+        // Mark the workflow as failed
+        await agentRun.update({ status: "failed", completedAt: new Date() });
+        return;
+      }
+
+      // Check if there are more steps
+      if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
+        workflowConfig.currentStepIndex++;
+        await agentRun.update({ workflow: workflowConfig });
+      } else {
+        // This was the last step, mark the workflow as completed
+        await agentRun.update({ status: "completed", completedAt: new Date() });
+      }
+
+      return workflowConfig;
+    } catch (error) {
+      console.error(
+        `NotificationAgentQueueManager: Error in advanceWorkflowStepOrCompleteAgentRun:`,
+        error
+      );
     }
   }
 
   getQueue(queueName: string): Queue {
-    console.log(`NotificationAgentQueueManager: Getting queue for ${queueName}`);
+    console.log(
+      `NotificationAgentQueueManager: Getting queue for ${queueName}`
+    );
     if (!this.queues.has(queueName)) {
-      console.log(`NotificationAgentQueueManager: Creating new queue for ${queueName}`);
+      console.log(
+        `NotificationAgentQueueManager: Creating new queue for ${queueName}`
+      );
       const newQueue = new Queue(queueName, {
         connection: this.redisClient,
       });
 
       newQueue.on("error", (error) => {
-        console.log(`NotificationAgentQueueManager: Error in queue ${queueName}:`, error);
+        console.log(
+          `NotificationAgentQueueManager: Error in queue ${queueName}:`,
+          error
+        );
       });
 
       newQueue.on("waiting", (jobId) => {
@@ -47,50 +112,89 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       });
 
       // Add event listeners for debugging
-      queueEvents.on('waiting', ({ jobId }) => {
+      queueEvents.on("waiting", ({ jobId }) => {
         console.log(`Job ${jobId} is waiting in queue ${queueName}`);
       });
 
-      queueEvents.on('active', ({ jobId, prev }) => {
-        console.log(`Job ${jobId} is active in queue ${queueName} (prev state: ${prev})`);
+      queueEvents.on("active", ({ jobId, prev }) => {
+        console.log(
+          `Job ${jobId} is active in queue ${queueName} (prev state: ${prev})`
+        );
       });
 
-      queueEvents.on('completed', async ({ jobId, returnvalue }) => {
-        console.log(`Job ${jobId} completed in queue ${queueName}. Result:`, returnvalue);
+      queueEvents.on("completed", async ({ jobId, returnvalue }) => {
+        console.log(
+          `Job ${jobId} completed in queue ${queueName}. Result:`,
+          returnvalue
+        );
 
         try {
           // Retrieve the job instance
           const job = await newQueue.getJob(jobId);
           if (job) {
-            const { agentId, type, wsClientId } = job.data;
+            const { agentId, type, wsClientId, agentRunId } = job.data;
 
             // Load the agent database record
             const agent = await PsAgent.findByPk(agentId, {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
+            let updatedWorkflow;
+
+            if (agentRunId) {
+              updatedWorkflow =
+                await this.advanceWorkflowStepOrCompleteAgentRun(
+                  agentRunId,
+                  "completed",
+                  wsClientId,
+                  returnvalue
+                );
+            } else {
+              console.error(
+                `NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`
+              );
+            }
+
             if (agent) {
               // Send notification email
-              await this.sendNotification(agent, type, wsClientId, 'completed', returnvalue);
+              await this.sendNotification(
+                agent,
+                type,
+                wsClientId,
+                "completed",
+                returnvalue,
+                agentRunId,
+                updatedWorkflow
+              );
             } else {
-              console.error(`NotificationAgentQueueManager: Agent with ID ${agentId} not found.`);
+              console.error(
+                `NotificationAgentQueueManager: Agent with ID ${agentId} not found.`
+              );
             }
           } else {
-            console.error(`NotificationAgentQueueManager: Job with ID ${jobId} not found.`);
+            console.error(
+              `NotificationAgentQueueManager: Job with ID ${jobId} not found.`
+            );
           }
         } catch (error) {
-          console.error(`NotificationAgentQueueManager: Error handling job completion for job ${jobId}:`, error);
+          console.error(
+            `NotificationAgentQueueManager: Error handling job completion for job ${jobId}:`,
+            error
+          );
         }
       });
 
-      queueEvents.on('failed', async ({ jobId, failedReason }) => {
-        console.log(`Job ${jobId} failed in queue ${queueName}. Reason:`, failedReason);
+      queueEvents.on("failed", async ({ jobId, failedReason }) => {
+        console.log(
+          `Job ${jobId} failed in queue ${queueName}. Reason:`,
+          failedReason
+        );
 
         try {
           // Retrieve the job instance
           const job = await newQueue.getJob(jobId);
           if (job) {
-            const { agentId, type, wsClientId } = job.data;
+            const { agentId, type, wsClientId, agentRunId } = job.data;
 
             // Load the agent database record
             const agent = await PsAgent.findByPk(agentId, {
@@ -99,9 +203,18 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
 
             if (agent) {
               // Send notification email
-              await this.sendNotification(agent, type, wsClientId, 'failed', failedReason);
+              await this.sendNotification(
+                agent,
+                type,
+                wsClientId,
+                "failed",
+                failedReason,
+                agentRunId
+              );
             } else {
-              console.error(`NotificationAgentQueueManager: Agent with ID ${agentId} not found.`);
+              console.error(
+                `NotificationAgentQueueManager: Agent with ID ${agentId} not found.`
+              );
             }
           } else {
             console.error(`Job with ID ${jobId} not found.`);
@@ -111,19 +224,22 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         }
       });
 
-      queueEvents.on('progress', ({ jobId, data }) => {
-        console.log(`Job ${jobId} reported progress in queue ${queueName}:`, data);
+      queueEvents.on("progress", ({ jobId, data }) => {
+        console.log(
+          `Job ${jobId} reported progress in queue ${queueName}:`,
+          data
+        );
       });
 
-      queueEvents.on('removed', ({ jobId }) => {
+      queueEvents.on("removed", ({ jobId }) => {
         console.log(`Job ${jobId} was removed from queue ${queueName}`);
       });
 
-      queueEvents.on('drained', () => {
+      queueEvents.on("drained", () => {
         console.log(`Queue ${queueName} was drained`);
       });
 
-      queueEvents.on('error', (error) => {
+      queueEvents.on("error", (error) => {
         console.log(`Error in queue ${queueName}:`, error);
       });
 
@@ -169,9 +285,13 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     return message;
   }
 
-  async startAgentProcessing(agentId: number): Promise<boolean> {
+  async startAgentProcessingWithWsClient(
+    agentId: number,
+    agentRunId: number,
+    wsClientId: string
+  ): Promise<boolean> {
     console.log(
-      `AgentQueueManager: Starting agent processing for agent ${agentId}`
+      `NotificationAgentQueueManager: Starting agent processing for agent ${agentId}`
     );
     const agent = await PsAgent.findByPk(agentId, {
       include: [{ model: PsAgentClass, as: "Class" }],
@@ -179,7 +299,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
 
     if (!agent || !agent.Class) {
       console.error(
-        `AgentQueueManager: Agent or Agent Class not found for agent ${agentId}`
+        `NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`
       );
       return false;
     }
@@ -187,14 +307,16 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);
     console.log(
-      `AgentQueueManager: Adding start-processing job to queue ${queueName} for agent ${agentId}`
+      `NotificationAgentQueueManager: Adding start-processing job to queue ${queueName} for agent ${agentId}`
     );
     await queue.add("control-message", {
       type: "start-processing",
       agentId: agent.id,
+      wsClientId: wsClientId,
+      agentRunId: agentRunId,
     });
     console.log(
-      `AgentQueueManager: Updating agent ${agentId} status to running`
+      `NotificationAgentQueueManager: Updating agent ${agentId} status to running`
     );
     await this.updateAgentStatus(agent.id, "running");
     return true;

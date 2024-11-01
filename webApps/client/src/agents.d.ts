@@ -172,40 +172,6 @@ interface YpWorkflowStep {
 
 interface YpWorkflowConfiguration {
   steps: YpWorkflowStep[];
+  currentStepIndex: number;
   timeoutTotal?: number;
-}
-
-// Enhanced Agent interfaces
-interface YpAgentAssistantAgent {
-  id: number;
-  name: string;
-  description: string;
-  imageUrl: string;
-  capabilities?: string[]; // List of capabilities this agent has
-  requiredPermissions?: string[];
-  version?: string;
-}
-
-interface YpAgentAssistantRunningAgent extends YpAgentAssistantAgent {
-  status: "running" | "paused" | "completed" | "failed" | "cancelled" | "error";
-  currentStep: number;
-  progress?: number;
-  startTime?: Date;
-  estimatedCompletion?: Date;
-  currentStepId?: number;
-  errors?: Array<{
-    step: string;
-    message: string;
-    timestamp: Date;
-  }>;
-}
-
-interface YpAgentAssistantAgentStatus {
-  availableAgents: YpAgentAssistantAgent[];
-  runningAgents: YpAgentAssistantRunningAgent[];
-  systemStatus: {
-    healthy: boolean;
-    message?: string;
-    lastUpdated: Date;
-  };
 }

@@ -27,37 +27,33 @@ async function createAgentProductsAndPlans() {
             },
         };
         const competitionAgentWorkflow = {
+            currentStepIndex: 1,
             steps: [
                 {
-                    id: 1,
                     name: "Competition Analysis Wide Search",
                     description: "Wide search for competitor strategies and market positions.",
                     agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
                     type: "agentOps",
                 },
                 {
-                    id: 2,
                     name: "Competition Analysis Human Prioritization",
                     description: "Human prioritization of the wide search results.",
                     agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
                     type: "engagmentFromOutputConnector",
                 },
                 {
-                    id: 3,
                     name: "Competition Analysis Detailed Search",
                     description: "Detailed search for competitor strategies and market positions.",
                     agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
                     type: "agentOps",
                 },
                 {
-                    id: 4,
                     name: "Competition Analysis Detailed Search Human Prioritization",
                     description: "Human prioritization of the detailed search results.",
                     agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
                     type: "engagmentFromOutputConnector",
                 },
                 {
-                    id: 5,
                     name: "State of the Market Report",
                     description: "Report on the state of the market based on the competition analysis.",
                     agentClassUuid: "1cf3af64-a5f6-a7c1-91c1-51fb13c72f1a",

@@ -1,10 +1,12 @@
 // SubscriptionController.ts
 
-import express from 'express';
-import { SubscriptionManager } from '../managers/subscriptionManager.js';
-import auth from '../../authorization.cjs';
-import { YpSubscription } from '../models/subscription.js';
-import Stripe from 'stripe';
+import express from "express";
+import { SubscriptionManager } from "../managers/subscriptionManager.js";
+import auth from "../../authorization.cjs";
+import { YpSubscription } from "../models/subscription.js";
+import Stripe from "stripe";
+import WebSocket from "ws";
+import { NotificationAgentQueueManager } from "agents/managers/notificationAgentQueueManager.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 interface YpRequest extends express.Request {
@@ -16,30 +18,90 @@ interface YpRequest extends express.Request {
 }
 
 export class AgentSubscriptionController {
-  public path = '/api/subscriptions';
+  public path = "/api/subscriptions";
   public router = express.Router();
   private subscriptionManager: SubscriptionManager;
+  private wsClients: Map<string, WebSocket>;
 
-  constructor() {
+  constructor(wsClients: Map<string, WebSocket>) {
     this.subscriptionManager = new SubscriptionManager();
+    this.wsClients = wsClients;
     this.initializeRoutes();
   }
 
   public initializeRoutes() {
-    this.router.get('/plans', auth.can('view subscriptions'), this.getPlans);
-    this.router.post('/', auth.can('create subscriptions'), this.createSubscriptions);
-    this.router.post('/:subscriptionId/start', auth.can('edit subscriptions'), this.startAgentRun);
-    this.router.post('/:subscriptionId/stop', auth.can('edit subscriptions'), this.stopAgentRun);
+    this.router.get("/plans", this.getPlans);
+    this.router.post("/", this.createSubscriptions);
+    this.router.post("/:subscriptionId/start", this.startAgentRun);
+    this.router.post("/:subscriptionId/stop", this.stopAgentRun);
 
     // Additional routes
-    this.router.get('/', auth.can('view subscriptions'), this.getSubscriptions);
+    this.router.get("/", auth.can("view subscriptions"), this.getSubscriptions);
 
-    this.router.delete('/:subscriptionId', auth.can('edit subscriptions'), this.cancelSubscription);
-    this.router.put('/:subscriptionId', auth.can('edit subscriptions'), this.updateSubscription);
+    this.router.delete(
+      "/:subscriptionId",
+      this.cancelSubscription
+    );
+    this.router.put(
+      "/:subscriptionId",
+      this.updateSubscription
+    );
 
     // Add new payment-related routes
-    this.router.post('/stripe-create-payment-intent', auth.can('create subscriptions'), this.createPaymentIntent);
-    this.router.post('/stripe-webhook', express.raw({type: 'application/json'}), this.handleWebhook);
+    this.router.post(
+      "/stripe-create-payment-intent",
+      this.createPaymentIntent
+    );
+    this.router.post(
+      "/stripe-webhook",
+      express.raw({ type: "application/json" }),
+      this.handleWebhook
+    );
+  }
+
+  public initializeRoutesSecure() {
+    this.router.get("/plans", auth.can("view subscriptions"), this.getPlans);
+    this.router.post(
+      "/",
+      auth.can("create subscriptions"),
+      this.createSubscriptions
+    );
+    this.router.post(
+      "/:subscriptionId/start",
+      auth.can("edit subscriptions"),
+      this.startAgentRun
+    );
+    this.router.post(
+      "/:subscriptionId/stop",
+      auth.can("edit subscriptions"),
+      this.stopAgentRun
+    );
+
+    // Additional routes
+    this.router.get("/", auth.can("view subscriptions"), this.getSubscriptions);
+
+    this.router.delete(
+      "/:subscriptionId",
+      auth.can("edit subscriptions"),
+      this.cancelSubscription
+    );
+    this.router.put(
+      "/:subscriptionId",
+      auth.can("edit subscriptions"),
+      this.updateSubscription
+    );
+
+    // Add new payment-related routes
+    this.router.post(
+      "/stripe-create-payment-intent",
+      auth.can("create subscriptions"),
+      this.createPaymentIntent
+    );
+    this.router.post(
+      "/stripe-webhook",
+      express.raw({ type: "application/json" }),
+      this.handleWebhook
+    );
   }
 
   getPlans = async (req: YpRequest, res: express.Response) => {
@@ -47,7 +109,7 @@ export class AgentSubscriptionController {
       const plans = await this.subscriptionManager.getPlans();
       res.json(plans);
     } catch (error: any) {
-      console.error('Error fetching plans:', error);
+      console.error("Error fetching plans:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -60,14 +122,15 @@ export class AgentSubscriptionController {
       // If not a free trial request, redirect to payment intent endpoint
       if (!isFreeTrialRequest) {
         return res.status(400).json({
-          error: 'For paid subscriptions, please use /stripe-create-payment-intent instead'
+          error:
+            "For paid subscriptions, please use /stripe-create-payment-intent instead",
         });
       }
 
       // Handle free trial subscription
       if (!planIds) {
         return res.status(400).json({
-          error: 'agentProductIds and planIds are required'
+          error: "agentProductIds and planIds are required",
         });
       }
 
@@ -79,10 +142,10 @@ export class AgentSubscriptionController {
 
       res.status(201).json({
         subscriptionId: result.subscriptionId,
-        message: 'Free trial subscription created successfully'
+        message: "Free trial subscription created successfully",
       });
     } catch (error: any) {
-      console.error('Error creating free trial subscription:', error);
+      console.error("Error creating free trial subscription:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -91,11 +154,17 @@ export class AgentSubscriptionController {
     try {
       const agentProductId = parseInt(req.body.agentProductId);
       const subscriptionId = parseInt(req.params.subscriptionId);
+      const wsClientId = req.body.wsClientId;
+      const agentRun = await this.subscriptionManager.startAgentRun(
+        agentProductId,
+        subscriptionId,
+        this.wsClients,
+        wsClientId
+      );
 
-      const agentRun = await this.subscriptionManager.startAgentRun(agentProductId, subscriptionId);
       res.status(201).json(agentRun);
     } catch (error: any) {
-      console.error('Error starting agent run:', error);
+      console.error("Error starting agent run:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -105,9 +174,9 @@ export class AgentSubscriptionController {
       const agentProductRunId = parseInt(req.body.agentProductRunId);
 
       await this.subscriptionManager.stopAgentRun(agentProductRunId);
-      res.status(200).json({ message: 'Agent run stopped successfully' });
+      res.status(200).json({ message: "Agent run stopped successfully" });
     } catch (error: any) {
-      console.error('Error stopping agent run:', error);
+      console.error("Error stopping agent run:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -117,10 +186,12 @@ export class AgentSubscriptionController {
   getSubscriptions = async (req: YpRequest, res: express.Response) => {
     try {
       const userId = req.user.id;
-      const subscriptions = await YpSubscription.findAll({ where: { user_id: userId } });
+      const subscriptions = await YpSubscription.findAll({
+        where: { user_id: userId },
+      });
       res.json(subscriptions);
     } catch (error: any) {
-      console.error('Error fetching subscriptions:', error);
+      console.error("Error fetching subscriptions:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -134,15 +205,15 @@ export class AgentSubscriptionController {
         where: { id: subscriptionId, user_id: userId },
       });
       if (!subscription) {
-        return res.status(404).json({ error: 'Subscription not found' });
+        return res.status(404).json({ error: "Subscription not found" });
       }
 
-      subscription.status = 'cancelled';
+      subscription.status = "cancelled";
       await subscription.save();
 
-      res.status(200).json({ message: 'Subscription cancelled successfully' });
+      res.status(200).json({ message: "Subscription cancelled successfully" });
     } catch (error: any) {
-      console.error('Error cancelling subscription:', error);
+      console.error("Error cancelling subscription:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -157,7 +228,7 @@ export class AgentSubscriptionController {
         where: { id: subscriptionId, user_id: userId },
       });
       if (!subscription) {
-        return res.status(404).json({ error: 'Subscription not found' });
+        return res.status(404).json({ error: "Subscription not found" });
       }
 
       // Apply updates (validate as necessary)
@@ -166,7 +237,7 @@ export class AgentSubscriptionController {
 
       res.status(200).json(subscription);
     } catch (error: any) {
-      console.error('Error updating subscription:', error);
+      console.error("Error updating subscription:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -174,11 +245,11 @@ export class AgentSubscriptionController {
   createPaymentIntent = async (req: YpRequest, res: express.Response) => {
     try {
       const userId = req.user.id;
-      const {planIds, paymentMethodId } = req.body;
+      const { planIds, paymentMethodId } = req.body;
 
       if (!planIds || !paymentMethodId) {
         return res.status(400).json({
-          error: 'planIds, and paymentMethodId are required'
+          error: "planIds, and paymentMethodId are required",
         });
       }
 
@@ -190,20 +261,20 @@ export class AgentSubscriptionController {
 
       res.status(200).json({
         clientSecret: result.clientSecret,
-        subscriptionId: result.subscriptionId
+        subscriptionId: result.subscriptionId,
       });
     } catch (error: any) {
-      console.error('Error creating payment intent:', error);
+      console.error("Error creating payment intent:", error);
       res.status(500).json({ error: error.message });
     }
   };
 
   handleWebhook = async (req: YpRequest, res: express.Response) => {
-    const sig = req.headers['stripe-signature'];
+    const sig = req.headers["stripe-signature"];
 
     try {
       if (!sig) {
-        throw new Error('No Stripe signature found');
+        throw new Error("No Stripe signature found");
       }
 
       const event = stripe.webhooks.constructEvent(
@@ -213,15 +284,17 @@ export class AgentSubscriptionController {
       );
 
       switch (event.type) {
-        case 'payment_intent.succeeded':
+        case "payment_intent.succeeded":
           const paymentIntent = event.data.object as Stripe.PaymentIntent;
-          await this.subscriptionManager.handleSuccessfulPayment(paymentIntent.id);
+          await this.subscriptionManager.handleSuccessfulPayment(
+            paymentIntent.id
+          );
           break;
 
-        case 'payment_intent.payment_failed':
+        case "payment_intent.payment_failed":
           const failedPayment = event.data.object as Stripe.PaymentIntent;
           // You might want to implement handling failed payments
-          console.error('Payment failed:', failedPayment.id);
+          console.error("Payment failed:", failedPayment.id);
           break;
 
         // Add other event types as needed
@@ -229,7 +302,7 @@ export class AgentSubscriptionController {
 
       res.json({ received: true });
     } catch (error: any) {
-      console.error('Webhook error:', error);
+      console.error("Webhook error:", error);
       res.status(400).json({ error: error.message });
     }
   };

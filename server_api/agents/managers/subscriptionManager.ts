@@ -13,7 +13,9 @@ import { YpAgentProductBundle } from "../models/agentProductBundle.js";
 import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/index.js";
-import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
+import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
+import WebSocket from "ws";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-09-30.acacia",
 });
@@ -390,7 +392,9 @@ export class SubscriptionManager {
   // Start an agent run
   async startAgentRun(
     agentProductId: number,
-    subscriptionId: number
+    subscriptionId: number,
+    wsClients: Map<string, WebSocket>,
+    wsClientId: string
   ): Promise<YpAgentProductRun> {
     try {
       // Check if the subscription is active
@@ -442,7 +446,11 @@ export class SubscriptionManager {
       });
 
       // Actually start the agent through the queue
-      await this.startFirstAgent(agentProductRun);
+      await this.startFirstAgent(
+        agentProductRun,
+        wsClients,
+        wsClientId
+      );
 
       // Update runs used
       await this.incrementRunsUsed(subscription);
@@ -451,9 +459,14 @@ export class SubscriptionManager {
     } catch (error: any) {
       throw new Error(`Error starting agent run: ${error.message}`);
     }
+
   }
 
-  async startFirstAgent(agentProductRun: YpAgentProductRun): Promise<boolean> {
+  async startFirstAgent(
+    agentProductRun: YpAgentProductRun,
+    wsClients: Map<string, WebSocket>,
+    wsClientId: string
+  ): Promise<boolean> {
     const workflow = agentProductRun.workflow;
     if (!workflow) {
       throw new Error("Workflow not found");
@@ -464,11 +477,13 @@ export class SubscriptionManager {
       throw new Error("Agent ID not found in the first step");
     }
 
-    const agentQueueManager = new AgentQueueManager();
+    const agentQueueManager = new NotificationAgentQueueManager(wsClients);
 
     try {
-      const success = await agentQueueManager.startAgentProcessing(
-        agentId
+      const success = await agentQueueManager.startAgentProcessingWithWsClient(
+        agentId,
+        agentProductRun.id,
+        wsClientId
       );
       if (success) {
         return true;
