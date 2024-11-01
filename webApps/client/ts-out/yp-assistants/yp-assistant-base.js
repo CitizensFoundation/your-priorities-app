@@ -86,7 +86,7 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
             sender="bot"
           ></yp-assistant-item-base>
           ${this.chatLog
-            .filter(chatElement => !chatElement.hidden)
+            .filter(chatElement => !chatElement.hidden && chatElement.type !== 'hiddenContextMessage')
             .map(chatElement => html `
                 <yp-assistant-item-base
                   ?thinking="${chatElement.type === 'thinking' ||
@@ -96,6 +96,7 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
                   class="chatElement ${chatElement.sender}-chat-element"
                   .detectedLanguage="${this.language}"
                   .message="${chatElement.message}"
+
                   .htmlToRender="${chatElement.html}"
                   @scroll-down-enabled="${() => (this.userScrolled = false)}"
                   .type="${chatElement.type}"

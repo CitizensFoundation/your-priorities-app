@@ -76,7 +76,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 // Generate a user-friendly message based on the tool result
                 const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
                 if (result.data) {
-                    this.sendToClient("bot", resultMessage, "stream", true);
+                    this.sendToClient("bot", resultMessage, "hiddenContextMessage", true);
                     this.memory.chatLog.push({
                         sender: "bot",
                         hiddenContextMessage: true,

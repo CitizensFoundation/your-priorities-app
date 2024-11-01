@@ -8,6 +8,7 @@ interface YpAssistantMessage {
     | "component"
     | "html"
     | "message"
+    | "hiddenContextMessage"
     | "end"
     | "stream"
     | "noStreaming"

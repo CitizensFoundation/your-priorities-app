@@ -265,6 +265,14 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         this.sendButton!.innerHTML = this.t('Send');
         this.infoMessage = this.defaultInfoMessage;
         break;
+      case 'hiddenContextMessage':
+        this.addToChatLogWithMessage(
+          wsMessage,
+          wsMessage.message,
+          undefined,
+          undefined
+        );
+        break;
       case 'message':
       case 'html':
         if (this.lastChatUiElement) {
