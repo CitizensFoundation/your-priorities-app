@@ -276,6 +276,81 @@ module.exports = {
     await queryInterface.addIndex("subscriptions", ["agent_product_id"]);
     await queryInterface.addIndex("subscriptions", ["subscription_plan_id"]);
 
+    // Create the 'discounts' table
+    await queryInterface.createTable("discounts", {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      uuid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+      },
+      code: {
+        type: Sequelize.STRING(50),
+        allowNull: false,
+        unique: true,
+      },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      discount_type: {
+        type: Sequelize.ENUM("percentage", "fixed"),
+        allowNull: false,
+      },
+      discount_value: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      max_uses: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      uses: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      start_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      end_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      applicable_to: {
+        type: Sequelize.ENUM(
+          "agent_product",
+          "booster",
+          "subscription",
+          "both"
+        ),
+        allowNull: false,
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal("NOW()"),
+      },
+    });
+
+    await queryInterface.addIndex("discounts", ["uuid"], {
+      unique: true,
+    });
+    await queryInterface.addIndex("discounts", ["code"], {
+      unique: true,
+    });
+
+
     // Create the 'agent_product_booster_purchases' table
     await queryInterface.createTable("agent_product_booster_purchases", {
       id: {
@@ -388,79 +463,6 @@ module.exports = {
       "discount_id",
     ]);
 
-    // Create the 'discounts' table
-    await queryInterface.createTable("discounts", {
-      id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      uuid: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-      },
-      code: {
-        type: Sequelize.STRING(50),
-        allowNull: false,
-        unique: true,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      discount_type: {
-        type: Sequelize.ENUM("percentage", "fixed"),
-        allowNull: false,
-      },
-      discount_value: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      max_uses: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      uses: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      start_date: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      end_date: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      applicable_to: {
-        type: Sequelize.ENUM(
-          "agent_product",
-          "booster",
-          "subscription",
-          "both"
-        ),
-        allowNull: false,
-      },
-      created_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal("NOW()"),
-      },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal("NOW()"),
-      },
-    });
-
-    await queryInterface.addIndex("discounts", ["uuid"], {
-      unique: true,
-    });
-    await queryInterface.addIndex("discounts", ["code"], {
-      unique: true,
-    });
 
     // Create the 'agent_product_runs' table
     await queryInterface.createTable("agent_product_runs", {

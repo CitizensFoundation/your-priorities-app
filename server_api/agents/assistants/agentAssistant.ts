@@ -12,6 +12,7 @@ import { YpSubscription } from "../models/subscription.js";
 import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { LexRuntime } from "aws-sdk";
+import { DEBUG } from "bunyan";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private currentAgentId?: number;
@@ -49,6 +50,10 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     )}</currentAgent>`;
   }
 
+  renderCommon() {
+    return `<currentMode>${this.memory.currentMode}</currentMode>`;
+  }
+
   defineAvailableModes(): ChatbotMode[] {
     return [
       {
@@ -60,12 +65,12 @@ Available commands:
 - Select an agent to work with
 - Get agent status
 Current system status and available agents are provided via functions.
-
+${this.renderCommon()}
 ${this.renderAllAgentsStatus()}`,
-        description: "Browse and select available agents",
+        description: "List, browse and select available agents",
         functions: [
           {
-            name: "get_agent_status",
+            name: "get_agents_status",
             description: "Get status of all available and running agents",
             parameters: {
               type: "object",
@@ -82,9 +87,12 @@ ${this.renderAllAgentsStatus()}`,
               },
             },
             handler: async (params): Promise<ToolExecutionResult<any>> => {
-              console.log(`handler: get_agent_status: ${JSON.stringify(params, null, 2)}`);
+              console.log(`handler: get_agents_status: ${JSON.stringify(params, null, 2)}`);
               try {
                 const status = await this.loadAgentStatus();
+                if (DEBUG ) {
+                  console.log(`get_agents_status: ${JSON.stringify(status, null, 2)}`);
+                }
                 return {
                   success: true,
                   data: status,
@@ -163,7 +171,7 @@ ${this.renderAllAgentsStatus()}`,
         name: "agent_configuration",
         systemPrompt: `Help the user configure the selected agent by collecting required information.
 Review the required questions and guide the user through answering them.
-
+${this.renderCommon()}
 ${this.renderCurrentAgent()}`,
         description: "Configure agent parameters and requirements",
         functions: [
@@ -222,6 +230,7 @@ Available commands:
 - Show workflow
 - Show workflow step details
 Current agent status and workflow state are provided via functions.
+${this.renderCommon()}
 ${this.renderAllAgentsStatus()}
 ${this.renderCurrentAgent()}
 ${this.renderCurrentWorkflowStatus()}`,
