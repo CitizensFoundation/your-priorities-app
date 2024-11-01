@@ -81,31 +81,20 @@ module.exports = {
             domain_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                // You can add a reference if a 'domains' table exists
+                references: {
+                    model: "domains",
+                    key: "id",
+                },
+                onDelete: "CASCADE",
             },
             configuration: {
                 type: Sequelize.JSONB,
-                allowNull: true,
-                defaultValue: {},
+                allowNull: false
             },
             status: {
                 type: Sequelize.JSONB,
                 allowNull: true,
                 defaultValue: {},
-            },
-            max_runs_per_month: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-            },
-            runs_used: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                defaultValue: 0,
-            },
-            extra_runs_purchased: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                defaultValue: 0,
             },
             created_at: {
                 type: Sequelize.DATE,
@@ -146,7 +135,7 @@ module.exports = {
                 onDelete: "CASCADE",
             },
             name: {
-                type: Sequelize.STRING(100),
+                type: Sequelize.STRING(256),
                 allowNull: false,
             },
             description: {
@@ -216,7 +205,7 @@ module.exports = {
                 type: Sequelize.JSONB,
                 allowNull: true,
             },
-            plan_id: {
+            subscription_plan_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
@@ -272,7 +261,7 @@ module.exports = {
         });
         await queryInterface.addIndex("subscriptions", ["user_id"]);
         await queryInterface.addIndex("subscriptions", ["agent_product_id"]);
-        await queryInterface.addIndex("subscriptions", ["plan_id"]);
+        await queryInterface.addIndex("subscriptions", ["subscription_plan_id"]);
         // Create the 'agent_product_booster_purchases' table
         await queryInterface.createTable("agent_product_booster_purchases", {
             id: {
@@ -462,11 +451,11 @@ module.exports = {
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
             },
-            agent_product_id: {
+            subscription_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "agent_products",
+                    model: "subscriptions",
                     key: "id",
                 },
                 onDelete: "CASCADE",
@@ -488,6 +477,10 @@ module.exports = {
                 type: Sequelize.ENUM("pending", "running", "completed", "failed", "cancelled"),
                 allowNull: false,
                 defaultValue: "pending",
+            },
+            workflow: {
+                type: Sequelize.JSONB,
+                allowNull: false
             },
             input_data: {
                 type: Sequelize.JSONB,
@@ -526,11 +519,11 @@ module.exports = {
         await queryInterface.addIndex("agent_product_runs", ["uuid"], {
             unique: true,
         });
-        await queryInterface.addIndex("agent_product_runs", ["agent_product_id"]);
+        await queryInterface.addIndex("agent_product_runs", ["subscription_id"]);
         await queryInterface.addIndex("agent_product_runs", ["status"]);
         await queryInterface.createTable("subscription_discounts", {
             subscription_id: {
-                type: DataTypes.INTEGER,
+                type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
                     model: "subscriptions",
@@ -539,7 +532,7 @@ module.exports = {
                 onDelete: "CASCADE",
             },
             discount_id: {
-                type: DataTypes.INTEGER,
+                type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
                     model: "discounts",
@@ -548,14 +541,14 @@ module.exports = {
                 onDelete: "CASCADE",
             },
             created_at: {
-                type: DataTypes.DATE,
+                type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: DataTypes.NOW,
+                defaultValue: Sequelize.NOW,
             },
             updated_at: {
-                type: DataTypes.DATE,
+                type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: DataTypes.NOW,
+                defaultValue: Sequelize.NOW,
             },
         });
         // Add composite primary key
@@ -568,45 +561,6 @@ module.exports = {
             "subscription_id",
         ]);
         await queryInterface.addIndex("subscription_discounts", ["discount_id"]);
-        // Create the 'agent_product_bundles' table
-        await queryInterface.createTable("agent_product_bundles", {
-            id: {
-                type: Sequelize.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
-            },
-            uuid: {
-                type: Sequelize.UUID,
-                defaultValue: Sequelize.UUIDV4,
-                allowNull: false,
-            },
-            name: {
-                type: Sequelize.STRING,
-                allowNull: false,
-            },
-            description: {
-                type: Sequelize.TEXT,
-                allowNull: true,
-            },
-            configuration: {
-                type: Sequelize.JSONB,
-                allowNull: true,
-            },
-            created_at: {
-                type: Sequelize.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.literal("NOW()"),
-            },
-            updated_at: {
-                type: Sequelize.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.literal("NOW()"),
-            },
-        });
-        await queryInterface.addIndex("agent_product_bundles", ["uuid"], {
-            unique: true,
-        });
-        await queryInterface.addIndex("agent_product_bundles", ["name"]);
         // Create the join table for agent_products and agent_product_bundles
         await queryInterface.createTable("agent_product_bundles_products", {
             agent_product_id: {

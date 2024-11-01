@@ -4,16 +4,33 @@ import { YpSubscriptionUser } from './subscriptionUser.js';
 import { YpAgentProduct } from './agentProduct.js';
 import { YpSubscriptionPlan } from './subscriptionPlan.js';
 import { YpAgentProductRun } from './agentProductRun.js';
+import { YpDiscount } from './discount.js';
 export class YpSubscription extends Model {
 }
 YpSubscription.init({
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull: false },
     user_id: { type: DataTypes.INTEGER, allowNull: false },
-    domain_id: { type: DataTypes.INTEGER, allowNull: false },
-    agent_product_id: { type: DataTypes.INTEGER, allowNull: false },
+    domain_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "domains",
+            key: "id",
+        },
+        onDelete: "CASCADE",
+    },
+    agent_product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "agent_products",
+            key: "id",
+        },
+        onDelete: "CASCADE",
+    },
     configuration: { type: DataTypes.JSONB, allowNull: true },
-    plan_id: { type: DataTypes.INTEGER, allowNull: false },
+    subscription_plan_id: { type: DataTypes.INTEGER, allowNull: false },
     start_date: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     end_date: { type: DataTypes.DATE, allowNull: true },
     next_billing_date: { type: DataTypes.DATE, allowNull: false },
@@ -34,7 +51,7 @@ YpSubscription.init({
         { fields: ['uuid'], unique: true },
         { fields: ['user_id'] },
         { fields: ['agent_product_id'] },
-        { fields: ['plan_id'] },
+        { fields: ['subscription_plan_id'] },
     ],
     timestamps: true,
     underscored: true,
@@ -45,8 +62,17 @@ YpSubscription.belongsTo(YpAgentProduct, {
     foreignKey: 'agent_product_id',
     as: 'AgentProduct',
 });
-YpSubscription.belongsTo(YpSubscriptionPlan, { foreignKey: 'plan_id', as: 'Plan' });
+YpSubscription.belongsTo(YpSubscriptionPlan, {
+    foreignKey: 'subscription_plan_id',
+    as: 'Plan',
+});
 YpSubscription.hasMany(YpAgentProductRun, {
     foreignKey: 'subscription_id',
     as: 'Runs',
+});
+YpSubscription.belongsToMany(YpDiscount, {
+    through: 'subscription_discounts',
+    foreignKey: 'subscription_id',
+    otherKey: 'discount_id',
+    as: 'Discounts',
 });

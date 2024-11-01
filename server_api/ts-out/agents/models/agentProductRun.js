@@ -7,7 +7,7 @@ YpAgentProductRun.init({
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull: false },
     subscription_id: { type: DataTypes.INTEGER, allowNull: false },
-    workflow: { type: DataTypes.JSONB, allowNull: true },
+    workflow: { type: DataTypes.JSONB, allowNull: false },
     start_time: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     end_time: { type: DataTypes.DATE, allowNull: true },
     duration: { type: DataTypes.INTEGER, allowNull: true },

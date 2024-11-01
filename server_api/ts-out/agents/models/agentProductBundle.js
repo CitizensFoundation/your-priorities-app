@@ -26,7 +26,7 @@ YpAgentProductBundle.init({
         allowNull: true,
     },
     configuration: {
-        type: DataTypes.JSON,
+        type: DataTypes.JSONB,
         allowNull: true,
     },
     created_at: {

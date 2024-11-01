@@ -16,9 +16,9 @@ YpSubscriptionPlan.init({
         },
         onDelete: 'CASCADE',
     },
-    name: { type: DataTypes.STRING(100), allowNull: false },
+    name: { type: DataTypes.STRING(256), allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: true },
-    configuration: { type: DataTypes.JSON, allowNull: false },
+    configuration: { type: DataTypes.JSONB, allowNull: false },
     created_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
 }, {
@@ -27,13 +27,15 @@ YpSubscriptionPlan.init({
     indexes: [
         { fields: ['uuid'], unique: true },
         { fields: ['name'] },
-        { fields: ['type'] },
     ],
     timestamps: true,
     underscored: true,
 });
 // Associations
-YpSubscriptionPlan.hasMany(YpSubscription, { foreignKey: 'plan_id', as: 'Subscriptions' });
+YpSubscriptionPlan.hasMany(YpSubscription, {
+    foreignKey: 'subscription_plan_id',
+    as: 'Subscriptions',
+});
 YpSubscriptionPlan.hasMany(YpAgentProductBoosterPurchase, {
     foreignKey: 'subscription_plan_id',
     as: 'BoosterPurchases',

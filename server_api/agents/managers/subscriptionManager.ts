@@ -372,7 +372,7 @@ export class SubscriptionManager {
         const subscription = await YpSubscription.create({
           user_id: userId,
           agent_product_id: agentProductIds[i],
-          plan_id: planIds[i],
+          subscription_plan_id: planIds[i],
           start_date: new Date(),
           next_billing_date: nextBillingDate,
           status: "active",
@@ -548,7 +548,7 @@ export class SubscriptionManager {
   private async incrementRunsUsed(subscription: YpSubscription): Promise<void> {
     // Increment runs used in the subscription
     // Also check if runs limit is reached
-    const plan = await YpSubscriptionPlan.findByPk(subscription.plan_id);
+    const plan = await YpSubscriptionPlan.findByPk(subscription.subscription_plan_id);
     if (!plan) {
       throw new Error("Subscription plan not found");
     }
@@ -566,7 +566,7 @@ export class SubscriptionManager {
   }
 
   private async checkRunsLimit(subscription: YpSubscription): Promise<void> {
-    const plan = await YpSubscriptionPlan.findByPk(subscription.plan_id);
+    const plan = await YpSubscriptionPlan.findByPk(subscription.subscription_plan_id);
     if (!plan) {
       throw new Error("Subscription plan not found");
     }

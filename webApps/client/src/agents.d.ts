@@ -34,6 +34,7 @@ interface YpAgentProductBoosterPurchaseAttributes
   extends YpBaseModelAttributes {
   user_id: number;
   subscription_plan_id: number;
+  agent_product_id: number;
   runs_purchased: number;
   amount: number;
   currency: string;
@@ -117,7 +118,7 @@ interface YpAgentProductRunOutputData {
 
 // YpAgentProductRunAttributes Interface
 interface YpAgentProductRunAttributes extends YpBaseModelAttributes {
-  agent_product_id: number;
+  subscription_id: number;
   start_time: Date;
   end_time?: Date;
   duration?: number; // Duration in seconds

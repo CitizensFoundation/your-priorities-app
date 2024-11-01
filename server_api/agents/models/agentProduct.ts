@@ -1,4 +1,3 @@
-
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 import { YpSubscriptionUser } from './subscriptionUser.js';
@@ -58,7 +57,7 @@ YpAgentProduct.init(
     },
     group_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     domain_id: {
       type: DataTypes.INTEGER,
@@ -66,8 +65,7 @@ YpAgentProduct.init(
     },
     configuration: {
       type: DataTypes.JSONB,
-      allowNull: true,
-      defaultValue: {},
+      allowNull: false
     },
     status: {
       type: DataTypes.JSONB,
@@ -124,7 +122,9 @@ YpAgentProduct.hasMany(YpAgentProductRun, {
   as: 'Runs',
 });
 
-YpAgentProduct.hasMany(YpAgentProductBundle, {
+YpAgentProduct.belongsToMany(YpAgentProductBundle, {
+  through: 'agent_product_bundles_products',
   foreignKey: 'agent_product_id',
-  as: 'AgentBundles',
+  otherKey: 'agent_product_bundle_id',
+  as: 'AgentBundles'
 });
