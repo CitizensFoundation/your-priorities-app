@@ -266,6 +266,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         this.infoMessage = this.defaultInfoMessage;
         break;
       case 'message':
+      case 'html':
         if (this.lastChatUiElement) {
           this.lastChatUiElement.spinnerActive = false;
         }

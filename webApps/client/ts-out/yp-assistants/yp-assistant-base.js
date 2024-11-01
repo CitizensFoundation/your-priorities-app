@@ -96,7 +96,7 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
                   class="chatElement ${chatElement.sender}-chat-element"
                   .detectedLanguage="${this.language}"
                   .message="${chatElement.message}"
-                  .componentToRender="${chatElement.html}"
+                  .htmlToRender="${chatElement.html}"
                   @scroll-down-enabled="${() => (this.userScrolled = false)}"
                   .type="${chatElement.type}"
                   .sender="${chatElement.sender}"

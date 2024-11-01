@@ -1,10 +1,11 @@
 import { nothing } from "lit";
 import { YpAiChatbotItemBase } from '../yp-llms/yp-chatbot-item-base.js';
+import "./yp-agent-chip.js";
 export declare class YpAssistantItemBase extends YpAiChatbotItemBase {
     isVoiceMode: boolean;
     isListening: boolean;
     isSpeaking: boolean;
-    componentToRender?: string;
+    htmlToRender?: string;
     firstUpdated(changedProps: Map<string, any>): void;
     updated(changedProps: Map<string, any>): void;
     static get styles(): (any[] | import("lit").CSSResult)[];

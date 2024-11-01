@@ -14,6 +14,30 @@ import { NotificationAgentQueueManager } from "../managers/notificationAgentQueu
 import { LexRuntime } from "aws-sdk";
 import { DEBUG } from "bunyan";
 
+
+interface MyAgentSubscriptionStatus {
+  availableAgents: Array<{
+    id: number;
+    name: string;
+    description: string;
+    imageUrl: string;
+    isRunning: boolean;
+  }>;
+  runningAgents: Array<{
+    runId: number;
+    agentId: number;
+    agentName: string;
+    startTime: Date;
+    status: string;
+    workflow: any;
+    subscriptionId: number;
+  }>;
+  systemStatus: {
+    healthy: boolean;
+    lastUpdated: Date;
+  };
+}
+
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private currentAgentId?: number;
   private currentAgent?: PsAgent;
@@ -67,11 +91,11 @@ Available commands:
 Current system status and available agents are provided via functions.
 ${this.renderCommon()}
 ${this.renderAllAgentsStatus()}`,
-        description: "List, browse and select available agents",
+        description: "List, browse and select agents",
         functions: [
           {
-            name: "get_agents_status",
-            description: "Get status of, list, all available and running agents",
+            name: "list_my_agent_subscriptions",
+            description: "List all agent subscriptions for the current user",
             parameters: {
               type: "object",
               properties: {
@@ -87,15 +111,23 @@ ${this.renderAllAgentsStatus()}`,
               },
             },
             handler: async (params): Promise<ToolExecutionResult<any>> => {
-              console.log(`handler: get_agents_status: ${JSON.stringify(params, null, 2)}`);
+              console.log(`handler: list_my_agent_subscriptions: ${JSON.stringify(params, null, 2)}`);
               try {
-                const status = await this.loadAgentStatus();
+                const status = await this.loadMyAgentSubscriptions() as MyAgentSubscriptionStatus;
                 if (DEBUG ) {
-                  console.log(`get_agents_status: ${JSON.stringify(status, null, 2)}`);
+                  console.log(`list_my_agent_subscriptions: ${JSON.stringify(status, null, 2)}`);
                 }
-                const html = `<yp-agents-status
-                  .status="${JSON.stringify(status, null, 2)}"
-                ></yp-agents-status>`;
+
+                let agentChips = ``;
+                for (const agent of status.availableAgents) {
+                  agentChips += `<yp-agent-chip
+                    agentId="${agent.id}"
+                    agentName="${agent.name}"
+                    agentDescription="${agent.description}"
+                    agentImageUrl="${agent.imageUrl}"
+                  ></yp-agent-chip>`;
+                }
+                const html = `<div class="agent-chips">${agentChips}</div>`;
                 return {
                   success: true,
                   data: status,
@@ -513,7 +545,8 @@ ${this.renderCurrentWorkflowStatus()}`,
     ];
   }
 
-  private async loadAgentStatus(): Promise<any> {
+
+  private async loadMyAgentSubscriptions(): Promise<MyAgentSubscriptionStatus> {
     try {
       // Get available agent products from user's subscriptions for their domain
       const availableAgents = await YpSubscription.findAll({
@@ -522,6 +555,10 @@ ${this.renderCurrentWorkflowStatus()}`,
           status: "active", // Only get active subscriptions
         },
         include: [
+          {
+            model: YpSubscriptionPlan,
+            as: "Plan",
+          },
           {
             model: YpAgentProduct,
             as: "AgentProduct",
@@ -574,20 +611,13 @@ ${this.renderCurrentWorkflowStatus()}`,
           id: subscription.AgentProduct.id,
           name: subscription.AgentProduct.name,
           description: subscription.AgentProduct.description,
-          configuration: subscription.AgentProduct.configuration,
-          plan: subscription.Plan,
-          subscriptionId: subscription.id,
-          bundles: subscription.AgentProduct.AgentBundles?.map((bundle) => ({
-            id: bundle.id,
-            name: bundle.name,
-            description: bundle.description,
-          })),
+          imageUrl: subscription.Plan.configuration.imageUrl,
+          isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id === subscription.AgentProduct.id),
         })),
         runningAgents: runningAgents.map((run) => ({
           runId: run.id,
           agentId: run.Subscription?.AgentProduct?.id,
           agentName: run.Subscription?.AgentProduct?.name,
-          plan: run.Subscription?.Plan,
           startTime: run.start_time,
           status: run.status,
           workflow: run.workflow,
@@ -614,7 +644,7 @@ ${this.renderCurrentWorkflowStatus()}`,
 
   private async validateAndSelectAgent(agentId: number): Promise<any> {
     // Implement agent validation logic
-    const status = await this.loadAgentStatus();
+    const status = await this.loadMyAgentSubscriptions();
     const agent = status.availableAgents.find((a: any) => a.id === agentId);
     if (!agent) {
       throw new Error("Agent not found or not available");
@@ -625,7 +655,7 @@ ${this.renderCurrentWorkflowStatus()}`,
   private async stopAgent(agentId: number, reason?: string): Promise<any> {
     // Implement agent stop logic
     // This should communicate with your backend API
-    const status = await this.loadAgentStatus();
+    const status = await this.loadMyAgentSubscriptions();
     const runningAgent = status.runningAgents.find(
       (a: any) => a.agentId === agentId
     );
@@ -648,7 +678,7 @@ ${this.renderCurrentWorkflowStatus()}`,
   private async getRequiredQuestions(
     agentProductId: number
   ): Promise<YpStructuredQuestionData[]> {
-    const status = await this.loadAgentStatus();
+    const status = await this.loadMyAgentSubscriptions();
     const agent = status.availableAgents.find((a: any) => a.id === agentProductId);
 
     if (!agent || !agent.configuration) {

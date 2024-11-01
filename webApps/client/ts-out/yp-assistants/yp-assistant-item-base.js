@@ -9,6 +9,7 @@ import { property, customElement } from "lit/decorators.js";
 import { YpAiChatbotItemBase } from '../yp-llms/yp-chatbot-item-base.js';
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import "./yp-agent-chip.js";
 let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase {
     constructor() {
         super(...arguments);
@@ -97,9 +98,9 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
             handleJsonBlocks: true,
             targetElement: this,
         })}
-              ${this.componentToRender ? html `
+              ${this.htmlToRender ? html `
               <div class="component-container">
-                ${unsafeHTML(this.componentToRender)}
+                ${unsafeHTML(this.htmlToRender)}
               </div>
             ` : nothing}
             </div>
@@ -120,9 +121,9 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
             ${this.message}
           </div>
           ${this.renderVoiceStatus()}
-              ${this.componentToRender ? html `
+              ${this.htmlToRender ? html `
                 <div class="component-container">
-                  ${unsafeHTML(this.componentToRender)}
+                  ${unsafeHTML(this.htmlToRender)}
                 </div>
               ` : nothing}
         </div>
@@ -141,7 +142,7 @@ __decorate([
 ], YpAssistantItemBase.prototype, "isSpeaking", void 0);
 __decorate([
     property({ type: String })
-], YpAssistantItemBase.prototype, "componentToRender", void 0);
+], YpAssistantItemBase.prototype, "htmlToRender", void 0);
 YpAssistantItemBase = __decorate([
     customElement("yp-assistant-item-base")
 ], YpAssistantItemBase);

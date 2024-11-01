@@ -4,6 +4,8 @@ import { YpAiChatbotItemBase } from '../yp-llms/yp-chatbot-item-base.js';
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
+import "./yp-agent-chip.js";
+
 @customElement("yp-assistant-item-base")
 export class YpAssistantItemBase extends YpAiChatbotItemBase {
   @property({ type: Boolean })
@@ -16,7 +18,7 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
   override isSpeaking = false;
 
   @property({ type: String })
-  componentToRender?: string;
+  htmlToRender?: string;
 
   override firstUpdated(changedProps: Map<string, any>) {
     super.firstUpdated(changedProps);
@@ -103,9 +105,9 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
                 handleJsonBlocks: true,
                 targetElement: this,
               })}
-              ${this.componentToRender ? html`
+              ${this.htmlToRender ? html`
               <div class="component-container">
-                ${unsafeHTML(this.componentToRender)}
+                ${unsafeHTML(this.htmlToRender)}
               </div>
             ` : nothing}
             </div>
@@ -128,9 +130,9 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
             ${this.message}
           </div>
           ${this.renderVoiceStatus()}
-              ${this.componentToRender ? html`
+              ${this.htmlToRender ? html`
                 <div class="component-container">
-                  ${unsafeHTML(this.componentToRender)}
+                  ${unsafeHTML(this.htmlToRender)}
                 </div>
               ` : nothing}
         </div>

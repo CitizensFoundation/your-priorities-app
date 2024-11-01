@@ -6,6 +6,7 @@ interface YpAssistantMessage {
     | "moderation_error"
     | "start"
     | "component"
+    | "html"
     | "message"
     | "end"
     | "stream"
