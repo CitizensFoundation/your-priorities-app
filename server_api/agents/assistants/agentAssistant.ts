@@ -96,21 +96,22 @@ ${this.renderAllAgentsStatus()}`,
         functions: [
           {
             name: "list_my_agent_subscriptions",
-            description: "List all agent subscriptions for the current user",
+            description: "List all agent subscriptions for the current user, after completing the function say something like here you go or something similar",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
                 includeDetails: { type: "boolean" },
               },
             },
-            resultSchema: {
+            /*resultSchema: {
               type: "object",
               properties: {
                 availableAgents: { type: "array", items: { type: "object" } },
                 runningAgents: { type: "array", items: { type: "object" } },
                 systemStatus: { type: "object" },
               },
-            },
+            },*/
             handler: async (params): Promise<ToolExecutionResult<any>> => {
               console.log(`handler: list_my_agent_subscriptions: ${JSON.stringify(params, null, 2)}`);
               try {
@@ -151,6 +152,7 @@ ${this.renderAllAgentsStatus()}`,
           {
             name: "select_agent",
             description: "Select an agent to work with",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
@@ -215,6 +217,7 @@ ${this.renderCurrentAgent()}`,
           {
             name: "show_question_form",
             description: "Display form for required questions",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
@@ -276,6 +279,7 @@ ${this.renderCurrentWorkflowStatus()}`,
           {
             name: "run_agent_next_workflow_step",
             description: "Run the next step in the selected agent's workflow",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
@@ -310,6 +314,7 @@ ${this.renderCurrentWorkflowStatus()}`,
           {
             name: "show_engagement_group",
             description: "Show group for human engagement",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
@@ -347,20 +352,21 @@ ${this.renderCurrentWorkflowStatus()}`,
           {
             name: "stop_agent",
             description: "Stop the currently running agent",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
                 reason: { type: "string" },
               },
             },
-            resultSchema: {
+            /*resultSchema: {
               type: "object",
               properties: {
                 agentId: { type: "number" },
                 stopTime: { type: "string" },
                 finalStatus: { type: "string" },
               },
-            },
+            },*/
             handler: async (params): Promise<ToolExecutionResult> => {
               console.log(`handler: stop_agent: ${JSON.stringify(params, null, 2)}`);
               try {
@@ -397,6 +403,7 @@ ${this.renderCurrentWorkflowStatus()}`,
           {
             name: "show_workflow",
             description: "Display the current workflow status and steps",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
@@ -404,7 +411,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                 showDetails: { type: "boolean" },
               },
             },
-            resultSchema: {
+            /*resultSchema: {
               type: "object",
               properties: {
                 workflow: {
@@ -430,7 +437,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                 },
                 visualizationHtml: { type: "string" },
               },
-            },
+            },*/
             handler: async (params): Promise<ToolExecutionResult> => {
               console.log(`handler: show_workflow: ${JSON.stringify(params, null, 2)}`);
               try {
@@ -477,6 +484,7 @@ ${this.renderCurrentWorkflowStatus()}`,
             name: "get_workflow_step_details",
             description:
               "Get detailed information about a specific workflow step",
+            type: "function",
             parameters: {
               type: "object",
               properties: {
@@ -485,7 +493,7 @@ ${this.renderCurrentWorkflowStatus()}`,
               },
               required: ["stepId"],
             },
-            resultSchema: {
+            /*resultSchema: {
               type: "object",
               properties: {
                 step: {
@@ -505,7 +513,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                   },
                 },
               },
-            },
+            },*/
             handler: async (params): Promise<ToolExecutionResult> => {
               console.log(`handler: get_workflow_step_details: ${JSON.stringify(params, null, 2)}`);
               try {

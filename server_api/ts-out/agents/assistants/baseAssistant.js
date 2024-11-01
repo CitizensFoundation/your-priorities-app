@@ -178,6 +178,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     registerCoreFunctions() {
         const switchModeFunction = {
             name: "switch_mode",
+            type: "function",
             description: "Switch to a different conversation mode. Never switch to and from the same mode.",
             parameters: {
                 type: "object",
@@ -190,15 +191,15 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 },
                 required: ["mode"],
             },
-            resultSchema: {
-                type: "object",
-                properties: {
-                    previousMode: { type: "string" },
-                    newMode: { type: "string" },
-                    timestamp: { type: "string" },
-                    transitionReason: { type: "string" },
-                },
-            },
+            /*resultSchema: {
+              type: "object",
+              properties: {
+                previousMode: { type: "string" },
+                newMode: { type: "string" },
+                timestamp: { type: "string" },
+                transitionReason: { type: "string" },
+              },
+            },*/
             handler: async (params) => {
                 try {
                     const previousMode = this.memory.currentMode;

@@ -28,6 +28,7 @@ export interface ToolExecutionResult<T = unknown> {
 export interface ChatbotFunction {
   name: string;
   description: string;
+  type?: string;
   parameters: FunctionDefinition["parameters"];
   handler: (params: any) => Promise<ToolExecutionResult>;
   resultSchema?: FunctionDefinition["parameters"]; // Schema for the result data
@@ -300,6 +301,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   registerCoreFunctions(): void {
     const switchModeFunction: ChatbotFunction = {
       name: "switch_mode",
+      type: "function",
       description: "Switch to a different conversation mode. Never switch to and from the same mode.",
       parameters: {
         type: "object",
@@ -313,7 +315,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         required: ["mode"],
       },
 
-      resultSchema: {
+      /*resultSchema: {
         type: "object",
         properties: {
           previousMode: { type: "string" },
@@ -321,7 +323,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           timestamp: { type: "string" },
           transitionReason: { type: "string" },
         },
-      },
+      },*/
       handler: async (params): Promise<ToolExecutionResult> => {
         try {
           const previousMode = this.memory.currentMode;
@@ -359,7 +361,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Get current mode's functions
    */
-  protected getCurrentModeFunctions(): ChatbotFunction[] {
+  getCurrentModeFunctions(): ChatbotFunction[] {
     const currentMode = this.modes.get(this.memory.currentMode!);
     if (!currentMode) return [];
 
@@ -373,7 +375,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Get current mode's system prompt
    */
-  protected getCurrentSystemPrompt(): string {
+  getCurrentSystemPrompt(): string {
     const currentMode = this.modes.get(this.memory.currentMode!);
     if (!currentMode) return "You are a helpful assistant.";
 

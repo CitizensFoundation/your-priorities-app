@@ -1,8 +1,9 @@
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
-import { ChatbotFunction } from "./baseAssistant.js";
+import { ChatbotFunction, YpBaseAssistant } from "./baseAssistant.js";
 import WebSocket from "ws";
 
 interface VoiceMessage {
+  delta: any;
   type: string;
   content?: string;
   audio?: string; // base64 encoded audio
@@ -41,13 +42,17 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected readonly VAD_TIMEOUT = 1000; // 1 second of silence for VAD
   protected vadTimeout?: NodeJS.Timeout;
 
+  protected parentAssistant?: YpBaseAssistant;
+
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
     memoryId: string | undefined = undefined,
-    voiceEnabled: boolean = false
+    voiceEnabled: boolean = false,
+    parentAssistant?: YpBaseAssistant
   ) {
     super(wsClientId, wsClients, memoryId);
+    this.parentAssistant = parentAssistant;
     this.voiceEnabled = voiceEnabled;
     this.voiceState = {
       speaking: false,
@@ -58,7 +63,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     // Default voice configuration
     this.voiceConfig = {
       model: "gpt-4o-realtime-preview-2024-10-01",
-      voice: "alloy",
+      voice: "ballad",
       modalities: ["text", "audio"]
     };
   }
@@ -113,7 +118,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       try {
         const event = JSON.parse(data.toString());
 
-        console.log("voiceMessage: ", JSON.stringify(event, null, 2));
+        console.log("voiceMessage: ", event.type);
 
         switch (event.type) {
           case "session.created":
@@ -134,11 +139,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             await this.handleVoiceResponseStatus(event);
             break;
 
-          case "speech.started":
+          case "input_audio_buffer.speech_started":
             this.handleSpeechStarted();
             break;
 
-          case "speech.stopped":
+          case "input_audio_buffer.speech_stopped":
             await this.handleSpeechStopped();
             break;
 
@@ -154,8 +159,17 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             await this.handleAudioBufferCommitted(event);
             break;
 
+          case "response.audio.delta":
+            await this.handleAudioDelta(event);
+            break;
+
+          case "response.function_call_arguments.done":
+            await this.proxyToClient(event);
+            break;
+
           default:
             console.log("Unhandled voice event type:", event.type);
+            console.log(JSON.stringify(event, null, 2));
             break;
         }
       } catch (error) {
@@ -164,9 +178,22 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     });
   }
 
+  async proxyToClient(event: any): Promise<void> {
+    console.log("proxyToClient: ", event.type);
+    console.log(JSON.stringify(event, null, 2));
+
+    const proxyMessage = {
+      sender: "bot",
+      type: event.type,
+      data: event
+    };
+
+    this.wsClientSocket.send(JSON.stringify(proxyMessage));
+  }
+
   // Handle incoming audio from client
   async handleIncomingAudio(audioData: Uint8Array): Promise<void> {
-    console.log(`handleIncomingAudio: ${audioData.length} ${this.voiceEnabled} ${this.voiceConnection?.ws}`);
+    //console.log(`handleIncomingAudio: ${audioData.length} ${this.voiceEnabled} ${this.voiceConnection?.ws}`);
     if (!this.voiceConnection?.ws || !this.voiceEnabled) return;
 
     this.audioBuffer.push(audioData);
@@ -238,6 +265,18 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     this.wsClientSocket.send(JSON.stringify(audioMessage));
   }
 
+  async handleAudioDelta(event: VoiceMessage): Promise<void> {
+    if (!event.delta) return;
+
+    const audioMessage = {
+      sender: "bot",
+      type: "audio",
+      audio: event.delta // base64 encoded audio
+    };
+
+    this.wsClientSocket.send(JSON.stringify(audioMessage));
+  }
+
   // Handle text output from server
   private async handleTextOutput(event: VoiceMessage): Promise<void> {
     if (!event.content) return;
@@ -272,35 +311,43 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected async initializeVoiceSession(): Promise<void> {
     if (!this.voiceConnection?.ws) return;
 
-    // First create the response with initial configuration
-    const createResponse = {
-      type: "response.create",
-      response: {
-        modalities: this.voiceConfig.modalities,
-        instructions: this.renderSystemPrompt()
-      }
-    };
-    this.voiceConnection.ws.send(JSON.stringify(createResponse));
+
 
     // Then update the session with full configuration
     const sessionConfig = {
       type: "session.update",
       session: {
         ...this.voiceConfig,
-        instructions: this.renderSystemPrompt(),
+        instructions: this.parentAssistant?.getCurrentSystemPrompt(),
         //@ts-ignore
-        tools: this.getCurrentModeFunctions ? this.getCurrentModeFunctions() : undefined,
+        tools: this.parentAssistant?.getCurrentModeFunctions(),
+        tool_choice: "auto",
+        temperature: 0.72,
         input_audio_transcription: {
-          enabled: true,
           model: "whisper-1"
         },
         turn_detection: {
-          mode: "server_vad"  // Use server-side Voice Activity Detection
+          type: "server_vad",
+          threshold: 0.5,
+          prefix_padding_ms: 300,
+          silence_duration_ms: 500
         }
       }
-    };
+    }
+
+    console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
 
     this.voiceConnection.ws.send(JSON.stringify(sessionConfig));
+
+    /*const createResponse = {
+      type: "response.create",
+      response: {
+        modalities: this.voiceConfig.modalities,
+        instructions: this.parentAssistant?.getCurrentSystemPrompt()
+      }
+    };
+    this.voiceConnection.ws.send(JSON.stringify(createResponse));
+    */
   }
 
   // Override the base conversation method to handle both text and voice

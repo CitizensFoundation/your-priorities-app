@@ -123,8 +123,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     `;
   }
 
-
-
   toggleRecording() {
     if (this.isRecording) {
       this.stopRecording();
@@ -219,13 +217,17 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
         break;
 
-      case 'speech.started':
+      case 'listening_start':
         if (this.lastChatUiElement) {
           this.lastChatUiElement.isSpeaking = true;
         }
+        await this.wavStreamPlayer?.interrupt();
+        this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
+
+        await this.wavStreamPlayer?.connect();
         break;
 
-      case 'speech.stopped':
+      case 'listening_stop':
         if (this.lastChatUiElement) {
           this.lastChatUiElement.isSpeaking = false;
         }
