@@ -5,6 +5,12 @@ import { YpBaseAssistant } from "./baseAssistant.js";
 import { ChatbotMode } from "./baseAssistant.js";
 import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
+import { YpAgentProductRun } from "agents/models/agentProductRun.js";
+import { YpAgentProduct } from "agents/models/agentProduct.js";
+import { YpAgentProductBundle } from "agents/models/agentProductBundle.js";
+import { YpSubscription } from "agents/models/subscription.js";
+import { YpSubscriptionPlan } from "agents/models/subscriptionPlan.js";
+import { NotificationAgentQueueManager } from "agents/managers/notificationAgentQueueManager.js";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private currentAgentId?: number;
@@ -216,8 +222,8 @@ ${this.renderCurrentWorkflowStatus()}`,
         description: "Manage agent operations",
         functions: [
           {
-            name: "start_agent",
-            description: "Start the selected agent",
+            name: "run_agent_next_workflow_step",
+            description: "Run the next step in the selected agent's workflow",
             parameters: {
               type: "object",
               properties: {
@@ -230,7 +236,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                   throw new Error("No agent selected");
                 }
 
-                const result = await this.startAgent(
+                const result = await this.runAgentNextWorkflowStep(
                   this.currentAgentId,
                   params.configuration
                 );
@@ -485,18 +491,95 @@ ${this.renderCurrentWorkflowStatus()}`,
   }
 
   private async loadAgentStatus(): Promise<any> {
-    // Implement Redis loading logic
-    const status = await this.redis.get("agent_status");
-    return status
-      ? JSON.parse(status)
-      : {
-          availableAgents: [],
-          runningAgents: [],
-          systemStatus: {
-            healthy: true,
-            lastUpdated: new Date(),
-          },
-        };
+    try {
+      // Get available agent products from user's subscriptions for their domain
+      const availableAgents = await YpSubscription.findAll({
+        where: {
+          //domain_id: this.domainId, //TODO: get working
+          status: "active", // Only get active subscriptions
+        },
+        include: [
+          {
+          model: YpAgentProduct,
+          as: "AgentProduct",
+          attributes: {
+              exclude: ["created_at", "updated_at"],
+            },
+            include: [
+              {
+                model: YpAgentProductBundle,
+            as: "Bundles",
+            required: false,
+            attributes: {
+              exclude: ["created_at", "updated_at"]
+            }
+          }]
+        }]
+      });
+
+      // Get currently running agents for the domain
+      const runningAgents = await YpAgentProductRun.findAll({
+        where: {
+          //domain_id: this.domainId, //TODO: get working
+          status: "running",
+        },
+        include: [{
+          model: YpSubscription,
+          as: "Subscription",
+          //where: {
+          //  domain_id: this.domainId
+          //},
+          include: [{
+            model: YpAgentProduct,
+            as: "AgentProduct"
+          }, {
+            model: YpSubscriptionPlan,
+            as: "Plan"
+          }]
+        }]
+      });
+
+      return {
+        availableAgents: availableAgents.map((subscription) => ({
+          id: subscription.AgentProduct.id,
+          name: subscription.AgentProduct.name,
+          description: subscription.AgentProduct.description,
+          configuration: subscription.AgentProduct.configuration,
+          plan: subscription.Plan,
+          subscriptionId: subscription.id,
+          bundles: subscription.AgentProduct.AgentBundles?.map((bundle) => ({
+            id: bundle.id,
+            name: bundle.name,
+            description: bundle.description,
+          })),
+        })),
+        runningAgents: runningAgents.map((run) => ({
+          runId: run.id,
+          agentId: run.Subscription?.AgentProduct?.id,
+          agentName: run.Subscription?.AgentProduct?.name,
+          plan: run.Subscription?.Plan,
+          startTime: run.start_time,
+          status: run.status,
+          workflow: run.workflow,
+          subscriptionId: run.subscription_id
+        })),
+        systemStatus: {
+          healthy: true,
+          lastUpdated: new Date()
+        }
+      };
+    } catch (error) {
+      console.error("Error loading agent status:", error);
+      return {
+        availableAgents: [],
+        runningAgents: [],
+        systemStatus: {
+          healthy: false,
+          lastUpdated: new Date(),
+          error: error instanceof Error ? error.message : "Unknown error"
+        }
+      };
+    }
   }
 
   private async validateAndSelectAgent(
@@ -543,10 +626,57 @@ ${this.renderCurrentWorkflowStatus()}`,
     return questions ? JSON.parse(questions) : [];
   }
 
-  private async startAgent(agentId: number, configuration: any): Promise<any> {
-    // Implement agent start logic
-    // You'll need to implement this based on your backend API
-    return { status: "started", agentId };
+  async runAgentNextWorkflowStep(agentId: number, agentProductRunId: number): Promise<any> {
+    try {
+      // Get the agent product run to access the workflow
+      const agentProductRun = await YpAgentProductRun.findByPk(agentProductRunId);
+      if (!agentProductRun || !agentProductRun.workflow) {
+        throw new Error("Agent product run or workflow not found");
+      }
+
+
+      // Check if there's a next step
+      const nextStep = agentProductRun.workflow.steps[agentProductRun.workflow.currentStepIndex + 1];
+      if (!nextStep) {
+        // This was the last step, mark the run as completed
+        agentProductRun.status = "completed";
+        agentProductRun.end_time = new Date();
+        agentProductRun.duration = Math.floor(
+          (agentProductRun.end_time.getTime() - agentProductRun.start_time.getTime()) / 1000
+        );
+        await agentProductRun.save();
+        return { status: "completed", message: "Workflow completed" };
+      }
+
+      // Start the next agent in the workflow
+      const agentQueueManager = new NotificationAgentQueueManager(this.wsClients);
+      let success = false;
+      if (nextStep.agentId && this.wsClientId) {
+        success = await agentQueueManager.startAgentProcessingWithWsClient(
+          nextStep.agentId,
+        agentProductRunId,
+          this.wsClientId
+        );
+      }
+
+      if (!success) {
+        return {
+          status: "failed",
+          message: "Failed to start next workflow step"
+        };
+      } else {
+        return {
+          status: "started",
+          agentId: nextStep.agentId,
+          message: "Next workflow step started"
+        };
+      }
+
+
+    } catch (error: any) {
+      console.error("Error running next workflow step:", error);
+      throw new Error(`Failed to run next workflow step: ${error.message}`);
+    }
   }
 
   private async handleQuestionsSubmitted(event: {

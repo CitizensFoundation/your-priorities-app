@@ -6,6 +6,7 @@ import { YpAgentProductBoosterPurchase } from './agentProductBoosterPurchase.js'
 import { YpSubscription } from './subscription.js';
 import { YpAgentProductRun } from './agentProductRun.js';
 import { YpSubscriptionPlan } from "./subscriptionPlan.js";
+import { YpAgentProductBundle } from "./agentProductBundle.js";
 export class YpAgentProduct extends Model {
 }
 YpAgentProduct.init({
@@ -18,6 +19,14 @@ YpAgentProduct.init({
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
     },
     user_id: {
         type: DataTypes.INTEGER,
@@ -81,4 +90,8 @@ YpAgentProduct.hasMany(YpSubscriptionPlan, {
 YpAgentProduct.hasMany(YpAgentProductRun, {
     foreignKey: 'agent_product_id',
     as: 'Runs',
+});
+YpAgentProduct.hasMany(YpAgentProductBundle, {
+    foreignKey: 'agent_product_id',
+    as: 'AgentBundles',
 });

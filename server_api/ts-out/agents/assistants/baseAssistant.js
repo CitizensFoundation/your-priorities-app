@@ -18,6 +18,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.redis = redis;
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
+        this.wsClients = wsClients;
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });

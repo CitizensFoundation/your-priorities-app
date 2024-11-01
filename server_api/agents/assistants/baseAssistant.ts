@@ -84,6 +84,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
 export abstract class YpBaseAssistant extends YpBaseChatBot {
   wsClientId: string;
   wsClientSocket: WebSocket;
+  wsClients: Map<string, WebSocket>;
   openaiClient: OpenAI;
   memory!: YpBaseAssistantMemoryData;
   protected modes: Map<string, ChatbotMode> = new Map();
@@ -104,6 +105,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.redis = redis;
     this.wsClientId = wsClientId;
     this.wsClientSocket = wsClients.get(this.wsClientId)!;
+    this.wsClients = wsClients;
     this.openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
