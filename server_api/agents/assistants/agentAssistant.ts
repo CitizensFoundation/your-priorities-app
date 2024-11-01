@@ -11,6 +11,7 @@ import { YpAgentProductBundle } from "agents/models/agentProductBundle.js";
 import { YpSubscription } from "agents/models/subscription.js";
 import { YpSubscriptionPlan } from "agents/models/subscriptionPlan.js";
 import { NotificationAgentQueueManager } from "agents/managers/notificationAgentQueueManager.js";
+import { LexRuntime } from "aws-sdk";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private currentAgentId?: number;
@@ -107,18 +108,18 @@ ${this.renderAllAgentsStatus()}`,
             parameters: {
               type: "object",
               properties: {
-                agentId: { type: "number" },
+                agentProductId: { type: "number" },
               },
-              required: ["agentId"],
+              required: ["agentProductId"],
             },
             handler: async (params): Promise<ToolExecutionResult> => {
               try {
-                const agent = await this.validateAndSelectAgent(params.agentId);
+                const agent = await this.validateAndSelectAgent(params.agentProductId);
                 const requiredQuestions = await this.getRequiredQuestions(
-                  params.agentId
+                  params.agentProductId
                 );
 
-                this.currentAgentId = params.agentId;
+                this.currentAgentId = params.agentProductId;
 
                 // If we have unanswered required questions, switch to configuration mode
                 if (requiredQuestions && requiredQuestions.length > 0) {
@@ -155,6 +156,7 @@ ${this.renderAllAgentsStatus()}`,
         ],
         allowedTransitions: ["agent_configuration", "agent_operations"],
       },
+
       {
         name: "agent_configuration",
         systemPrompt: `Help the user configure the selected agent by collecting required information.
@@ -180,10 +182,11 @@ ${this.renderCurrentAgent()}`,
                 );
 
                 // Create HTML element for questions
-                const formHtml = `<yp-structured-questions
-                  .questions="${JSON.stringify(questions)}"
-                  @questions-submitted="${this.handleQuestionsSubmitted}"
-                ></yp-structured-questions>`;
+                let formHtml = questions.map(question => `
+                  <yp-structured-question
+                    .question="${JSON.stringify(question)}"
+                  ></yp-structured-question>
+                `).join('\n');
 
                 return {
                   success: true,
@@ -500,21 +503,23 @@ ${this.renderCurrentWorkflowStatus()}`,
         },
         include: [
           {
-          model: YpAgentProduct,
-          as: "AgentProduct",
-          attributes: {
+            model: YpAgentProduct,
+            as: "AgentProduct",
+            attributes: {
               exclude: ["created_at", "updated_at"],
             },
             include: [
               {
                 model: YpAgentProductBundle,
-            as: "Bundles",
-            required: false,
-            attributes: {
-              exclude: ["created_at", "updated_at"]
-            }
-          }]
-        }]
+                as: "Bundles",
+                required: false,
+                attributes: {
+                  exclude: ["created_at", "updated_at"],
+                },
+              },
+            ],
+          },
+        ],
       });
 
       // Get currently running agents for the domain
@@ -523,20 +528,25 @@ ${this.renderCurrentWorkflowStatus()}`,
           //domain_id: this.domainId, //TODO: get working
           status: "running",
         },
-        include: [{
-          model: YpSubscription,
-          as: "Subscription",
-          //where: {
-          //  domain_id: this.domainId
-          //},
-          include: [{
-            model: YpAgentProduct,
-            as: "AgentProduct"
-          }, {
-            model: YpSubscriptionPlan,
-            as: "Plan"
-          }]
-        }]
+        include: [
+          {
+            model: YpSubscription,
+            as: "Subscription",
+            //where: {
+            //  domain_id: this.domainId
+            //},
+            include: [
+              {
+                model: YpAgentProduct,
+                as: "AgentProduct",
+              },
+              {
+                model: YpSubscriptionPlan,
+                as: "Plan",
+              },
+            ],
+          },
+        ],
       });
 
       return {
@@ -561,12 +571,12 @@ ${this.renderCurrentWorkflowStatus()}`,
           startTime: run.start_time,
           status: run.status,
           workflow: run.workflow,
-          subscriptionId: run.subscription_id
+          subscriptionId: run.subscription_id,
         })),
         systemStatus: {
           healthy: true,
-          lastUpdated: new Date()
-        }
+          lastUpdated: new Date(),
+        },
       };
     } catch (error) {
       console.error("Error loading agent status:", error);
@@ -576,15 +586,13 @@ ${this.renderCurrentWorkflowStatus()}`,
         systemStatus: {
           healthy: false,
           lastUpdated: new Date(),
-          error: error instanceof Error ? error.message : "Unknown error"
-        }
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
       };
     }
   }
 
-  private async validateAndSelectAgent(
-    agentId: number
-  ): Promise<any> {
+  private async validateAndSelectAgent(agentId: number): Promise<any> {
     // Implement agent validation logic
     const status = await this.loadAgentStatus();
     const agent = status.availableAgents.find((a: any) => a.id === agentId);
@@ -618,43 +626,59 @@ ${this.renderCurrentWorkflowStatus()}`,
   }
 
   private async getRequiredQuestions(
-    agentId: number
+    agentProductId: number
   ): Promise<YpStructuredQuestionData[]> {
-    // Implement required questions loading logic
-    const key = `agent:${agentId}:required_questions`;
-    const questions = await this.redis.get(key);
-    return questions ? JSON.parse(questions) : [];
+    const status = await this.loadAgentStatus();
+    const agent = status.availableAgents.find((a: any) => a.id === agentProductId);
+
+    if (!agent || !agent.configuration) {
+      return [];
+    }
+
+    const config = agent.configuration as YpAgentProductConfiguration;
+    return config.requiredStructuredQuestions || [];
   }
 
-  async runAgentNextWorkflowStep(agentId: number, agentProductRunId: number): Promise<any> {
+  async runAgentNextWorkflowStep(
+    agentId: number,
+    agentProductRunId: number
+  ): Promise<any> {
     try {
       // Get the agent product run to access the workflow
-      const agentProductRun = await YpAgentProductRun.findByPk(agentProductRunId);
+      const agentProductRun = await YpAgentProductRun.findByPk(
+        agentProductRunId
+      );
       if (!agentProductRun || !agentProductRun.workflow) {
         throw new Error("Agent product run or workflow not found");
       }
 
-
       // Check if there's a next step
-      const nextStep = agentProductRun.workflow.steps[agentProductRun.workflow.currentStepIndex + 1];
+      const nextStep =
+        agentProductRun.workflow.steps[
+          agentProductRun.workflow.currentStepIndex + 1
+        ];
       if (!nextStep) {
         // This was the last step, mark the run as completed
         agentProductRun.status = "completed";
         agentProductRun.end_time = new Date();
         agentProductRun.duration = Math.floor(
-          (agentProductRun.end_time.getTime() - agentProductRun.start_time.getTime()) / 1000
+          (agentProductRun.end_time.getTime() -
+            agentProductRun.start_time.getTime()) /
+            1000
         );
         await agentProductRun.save();
         return { status: "completed", message: "Workflow completed" };
       }
 
       // Start the next agent in the workflow
-      const agentQueueManager = new NotificationAgentQueueManager(this.wsClients);
+      const agentQueueManager = new NotificationAgentQueueManager(
+        this.wsClients
+      );
       let success = false;
       if (nextStep.agentId && this.wsClientId) {
         success = await agentQueueManager.startAgentProcessingWithWsClient(
           nextStep.agentId,
-        agentProductRunId,
+          agentProductRunId,
           this.wsClientId
         );
       }
@@ -662,17 +686,15 @@ ${this.renderCurrentWorkflowStatus()}`,
       if (!success) {
         return {
           status: "failed",
-          message: "Failed to start next workflow step"
+          message: "Failed to start next workflow step",
         };
       } else {
         return {
           status: "started",
           agentId: nextStep.agentId,
-          message: "Next workflow step started"
+          message: "Next workflow step started",
         };
       }
-
-
     } catch (error: any) {
       console.error("Error running next workflow step:", error);
       throw new Error(`Failed to run next workflow step: ${error.message}`);

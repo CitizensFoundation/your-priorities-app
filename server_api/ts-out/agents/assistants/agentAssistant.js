@@ -80,15 +80,15 @@ ${this.renderAllAgentsStatus()}`,
                         parameters: {
                             type: "object",
                             properties: {
-                                agentId: { type: "number" },
+                                agentProductId: { type: "number" },
                             },
-                            required: ["agentId"],
+                            required: ["agentProductId"],
                         },
                         handler: async (params) => {
                             try {
-                                const agent = await this.validateAndSelectAgent(params.agentId);
-                                const requiredQuestions = await this.getRequiredQuestions(params.agentId);
-                                this.currentAgentId = params.agentId;
+                                const agent = await this.validateAndSelectAgent(params.agentProductId);
+                                const requiredQuestions = await this.getRequiredQuestions(params.agentProductId);
+                                this.currentAgentId = params.agentProductId;
                                 // If we have unanswered required questions, switch to configuration mode
                                 if (requiredQuestions && requiredQuestions.length > 0) {
                                     await this.handleModeSwitch("agent_configuration", "Required questions need to be answered");
@@ -139,10 +139,11 @@ ${this.renderCurrentAgent()}`,
                             try {
                                 const questions = await this.getRequiredQuestions(params.agentId);
                                 // Create HTML element for questions
-                                const formHtml = `<yp-structured-questions
-                  .questions="${JSON.stringify(questions)}"
-                  @questions-submitted="${this.handleQuestionsSubmitted}"
-                ></yp-structured-questions>`;
+                                let formHtml = questions.map(question => `
+                  <yp-structured-question
+                    .question="${JSON.stringify(question)}"
+                  ></yp-structured-question>
+                `).join('\n');
                                 return {
                                     success: true,
                                     data: {
@@ -446,12 +447,12 @@ ${this.renderCurrentWorkflowStatus()}`,
                                 as: "Bundles",
                                 required: false,
                                 attributes: {
-                                    exclude: ["created_at", "updated_at"]
-                                }
-                            }
-                        ]
-                    }
-                ]
+                                    exclude: ["created_at", "updated_at"],
+                                },
+                            },
+                        ],
+                    },
+                ],
             });
             // Get currently running agents for the domain
             const runningAgents = await YpAgentProductRun.findAll({
@@ -459,20 +460,25 @@ ${this.renderCurrentWorkflowStatus()}`,
                     //domain_id: this.domainId, //TODO: get working
                     status: "running",
                 },
-                include: [{
+                include: [
+                    {
                         model: YpSubscription,
                         as: "Subscription",
                         //where: {
                         //  domain_id: this.domainId
                         //},
-                        include: [{
+                        include: [
+                            {
                                 model: YpAgentProduct,
-                                as: "AgentProduct"
-                            }, {
+                                as: "AgentProduct",
+                            },
+                            {
                                 model: YpSubscriptionPlan,
-                                as: "Plan"
-                            }]
-                    }]
+                                as: "Plan",
+                            },
+                        ],
+                    },
+                ],
             });
             return {
                 availableAgents: availableAgents.map((subscription) => ({
@@ -496,12 +502,12 @@ ${this.renderCurrentWorkflowStatus()}`,
                     startTime: run.start_time,
                     status: run.status,
                     workflow: run.workflow,
-                    subscriptionId: run.subscription_id
+                    subscriptionId: run.subscription_id,
                 })),
                 systemStatus: {
                     healthy: true,
-                    lastUpdated: new Date()
-                }
+                    lastUpdated: new Date(),
+                },
             };
         }
         catch (error) {
@@ -512,8 +518,8 @@ ${this.renderCurrentWorkflowStatus()}`,
                 systemStatus: {
                     healthy: false,
                     lastUpdated: new Date(),
-                    error: error instanceof Error ? error.message : "Unknown error"
-                }
+                    error: error instanceof Error ? error.message : "Unknown error",
+                },
             };
         }
     }
@@ -542,11 +548,14 @@ ${this.renderCurrentWorkflowStatus()}`,
         await this.redis.set("agent_status", JSON.stringify(status));
         return stopResult;
     }
-    async getRequiredQuestions(agentId) {
-        // Implement required questions loading logic
-        const key = `agent:${agentId}:required_questions`;
-        const questions = await this.redis.get(key);
-        return questions ? JSON.parse(questions) : [];
+    async getRequiredQuestions(agentProductId) {
+        const status = await this.loadAgentStatus();
+        const agent = status.availableAgents.find((a) => a.id === agentProductId);
+        if (!agent || !agent.configuration) {
+            return [];
+        }
+        const config = agent.configuration;
+        return config.requiredStructuredQuestions || [];
     }
     async runAgentNextWorkflowStep(agentId, agentProductRunId) {
         try {
@@ -561,7 +570,9 @@ ${this.renderCurrentWorkflowStatus()}`,
                 // This was the last step, mark the run as completed
                 agentProductRun.status = "completed";
                 agentProductRun.end_time = new Date();
-                agentProductRun.duration = Math.floor((agentProductRun.end_time.getTime() - agentProductRun.start_time.getTime()) / 1000);
+                agentProductRun.duration = Math.floor((agentProductRun.end_time.getTime() -
+                    agentProductRun.start_time.getTime()) /
+                    1000);
                 await agentProductRun.save();
                 return { status: "completed", message: "Workflow completed" };
             }
@@ -574,14 +585,14 @@ ${this.renderCurrentWorkflowStatus()}`,
             if (!success) {
                 return {
                     status: "failed",
-                    message: "Failed to start next workflow step"
+                    message: "Failed to start next workflow step",
                 };
             }
             else {
                 return {
                     status: "started",
                     agentId: nextStep.agentId,
-                    message: "Next workflow step started"
+                    message: "Next workflow step started",
                 };
             }
         }
