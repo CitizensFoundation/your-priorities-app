@@ -34,4 +34,5 @@ interface PsSimpleChatLog {
   base64Audio?: string;
   sender: string;
   message: string;
+  hiddenContextMessage?: boolean;
 }

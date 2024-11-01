@@ -7,6 +7,7 @@ let tlsConfig = {
 if (!process.env.REDIS_URL || process.env.REDIS_URL.indexOf("localhost") > -1) {
     tlsConfig = undefined;
 }
+const DEBUG = true;
 //@ts-ignore
 const redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
     process.env.REDIS_URL ||
@@ -152,12 +153,16 @@ export class YpBaseChatBot {
             redisKey: this.redisKey,
         };
     }
-    sendToClient(sender, message, type = "stream") {
+    sendToClient(sender, message, type = "stream", hiddenContextMessage = false) {
         try {
+            if (DEBUG) {
+                console.log(`sendToClient: ${JSON.stringify({ sender, type, message, hiddenContextMessage }, null, 2)}`);
+            }
             this.wsClientSocket.send(JSON.stringify({
                 sender,
                 type: type,
                 message,
+                hiddenContextMessage,
             }));
             this.lastSentToUserAt = new Date();
         }

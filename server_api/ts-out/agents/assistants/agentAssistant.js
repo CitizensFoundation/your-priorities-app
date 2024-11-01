@@ -23,7 +23,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         return `<currentAgent>${JSON.stringify(this.currentAgent, null, 2)}</currentAgent>`;
     }
     renderCommon() {
-        return `<currentMode>${this.memory.currentMode}</currentMode>`;
+        return `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>`;
     }
     defineAvailableModes() {
         return [
@@ -42,7 +42,7 @@ ${this.renderAllAgentsStatus()}`,
                 functions: [
                     {
                         name: "get_agents_status",
-                        description: "Get status of all available and running agents",
+                        description: "Get status of, list, all available and running agents",
                         parameters: {
                             type: "object",
                             properties: {
@@ -64,9 +64,13 @@ ${this.renderAllAgentsStatus()}`,
                                 if (DEBUG) {
                                     console.log(`get_agents_status: ${JSON.stringify(status, null, 2)}`);
                                 }
+                                const html = `<yp-agents-status
+                  .status="${JSON.stringify(status, null, 2)}"
+                ></yp-agents-status>`;
                                 return {
                                     success: true,
                                     data: status,
+                                    html,
                                     metadata: {
                                         timestamp: new Date().toISOString(),
                                     },

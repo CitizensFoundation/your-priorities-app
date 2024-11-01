@@ -56,7 +56,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
             }
         });
     }
-    async handleToolCalls(toolCalls) {
+    async handleToolCallsOther(toolCalls) {
         console.log(JSON.stringify(toolCalls, null, 2));
         for (const [id, toolCall] of toolCalls.entries()) {
             try {

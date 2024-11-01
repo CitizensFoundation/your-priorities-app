@@ -17,6 +17,7 @@ const DEBUG = true;
 export interface ToolExecutionResult<T = unknown> {
   success: boolean;
   data?: T;
+  html?: string;
   error?: string;
   metadata?: Record<string, unknown>;
 }
@@ -143,7 +144,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     toolCalls: Map<string, ToolCall>
   ): Promise<void> {
     if (DEBUG) {
-      console.log(`handleToolCalls: ${JSON.stringify(toolCalls, null, 2)}`);
+      console.log(`====================================> handleToolCalls: ${JSON.stringify(Array.from(toolCalls.values()), null, 2)}`);
     }
     const toolResponses: ToolResponseMessage[] = [];
 
@@ -163,6 +164,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         // Execute the function and get result
         const result = await func.handler(parsedArgs);
+        if (DEBUG) {
+          console.log(`----------------------------------> Tool execution result:`, JSON.stringify(result, null, 2));
+        }
 
         // Store the result in memory for context
         if (result.success && result.data) {
@@ -175,6 +179,24 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           result
         );
         toolResponses.push(responseMessage);
+
+        // Generate a user-friendly message based on the tool result
+        const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
+        if (result.data) {
+          this.sendToClient("bot", resultMessage, "stream", true);
+          this.memory.chatLog!.push({
+            sender: "bot",
+            hiddenContextMessage: true,
+            message: resultMessage,
+          });
+          await this.saveMemoryIfNeeded();
+        } else {
+          console.error(`No data returned from tool execution: ${toolCall.name}`);
+        }
+
+        if (result.html) {
+          this.sendToClient("bot", result.html, "html", true);
+        }
 
         // If error, throw it after recording the result
         if (!result.success) {
@@ -266,7 +288,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   registerCoreFunctions(): void {
     const switchModeFunction: ChatbotFunction = {
       name: "switch_mode",
-      description: "Switch to a different conversation mode",
+      description: "Switch to a different conversation mode. Never switch to and from the same mode.",
       parameters: {
         type: "object",
         properties: {

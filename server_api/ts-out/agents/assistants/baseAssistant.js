@@ -45,7 +45,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
      */
     async handleToolCalls(toolCalls) {
         if (DEBUG) {
-            console.log(`handleToolCalls: ${JSON.stringify(toolCalls, null, 2)}`);
+            console.log(`====================================> handleToolCalls: ${JSON.stringify(Array.from(toolCalls.values()), null, 2)}`);
         }
         const toolResponses = [];
         for (const toolCall of toolCalls.values()) {
@@ -63,6 +63,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 }
                 // Execute the function and get result
                 const result = await func.handler(parsedArgs);
+                if (DEBUG) {
+                    console.log(`----------------------------------> Tool execution result:`, JSON.stringify(result, null, 2));
+                }
                 // Store the result in memory for context
                 if (result.success && result.data) {
                     await this.setModeData(`${toolCall.name}_result`, result.data);
@@ -70,6 +73,23 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 // Convert result to message
                 const responseMessage = this.convertToolResultToMessage(toolCall, result);
                 toolResponses.push(responseMessage);
+                // Generate a user-friendly message based on the tool result
+                const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
+                if (result.data) {
+                    this.sendToClient("bot", resultMessage, "stream", true);
+                    this.memory.chatLog.push({
+                        sender: "bot",
+                        hiddenContextMessage: true,
+                        message: resultMessage,
+                    });
+                    await this.saveMemoryIfNeeded();
+                }
+                else {
+                    console.error(`No data returned from tool execution: ${toolCall.name}`);
+                }
+                if (result.html) {
+                    this.sendToClient("bot", result.html, "html", true);
+                }
                 // If error, throw it after recording the result
                 if (!result.success) {
                     throw new Error(result.error || "Unknown error in tool execution");
@@ -146,7 +166,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     registerCoreFunctions() {
         const switchModeFunction = {
             name: "switch_mode",
-            description: "Switch to a different conversation mode",
+            description: "Switch to a different conversation mode. Never switch to and from the same mode.",
             parameters: {
                 type: "object",
                 properties: {
