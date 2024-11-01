@@ -425,7 +425,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Set mode data with type safety
    */
-  protected async setModeData<T>(type: string, data: T): Promise<void> {
+  async setModeData<T>(type: string, data: T): Promise<void> {
     this.memory.modeData = {
       type,
       data,

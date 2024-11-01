@@ -164,7 +164,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             break;
 
           case "response.function_call_arguments.done":
-            await this.proxyToClient(event);
+            await this.callFunctionHandler(event);
             break;
 
           default:
@@ -176,6 +176,44 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         console.error("Error handling voice message:", error);
       }
     });
+  }
+
+  async callFunctionHandler(event: any): Promise<void> {
+    const tools = this.parentAssistant?.getCurrentModeFunctions();
+    if (!tools) return;
+
+    const tool = tools.find((t) => t.name === event.name);
+    if (!tool) {
+      console.log("Tool not found: ", event.name);
+      return;
+    }
+
+    console.log("Calling tool handler: ", event.name);
+
+    const result =await tool.handler(event.arguments);
+
+    // Store the result in memory for context
+    if (result.success && result.data) {
+      await this.parentAssistant?.setModeData(`${event.name}_result`, result.data);
+    }
+
+    // Generate a user-friendly message based on the tool result
+    const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
+    if (result.data) {
+      this.sendToClient("bot", resultMessage, "hiddenContextMessage", true);
+      /*this.memory.chatLog!.push({
+        sender: "bot",
+        hiddenContextMessage: true,
+        message: resultMessage,
+      });
+      await this.saveMemoryIfNeeded();*/
+    } else {
+      console.error(`No data returned from tool execution: ${event.name}`);
+    }
+
+    if (result.html) {
+      this.sendToClient("bot", result.html, "html", true);
+    }
   }
 
   async proxyToClient(event: any): Promise<void> {
