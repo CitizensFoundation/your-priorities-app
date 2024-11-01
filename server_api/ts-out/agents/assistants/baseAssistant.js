@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
+const DEBUG = true;
 /**
  * Common modes that implementations might use
  */
@@ -29,6 +30,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Convert tool result to message format
      */
     convertToolResultToMessage(toolCall, result) {
+        if (DEBUG) {
+            console.log(`convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`);
+        }
         return {
             role: "tool",
             content: JSON.stringify(result.data),
@@ -40,6 +44,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Handle executing tool calls with results
      */
     async handleToolCalls(toolCalls) {
+        if (DEBUG) {
+            console.log(`handleToolCalls: ${JSON.stringify(toolCalls, null, 2)}`);
+        }
         const toolResponses = [];
         for (const toolCall of toolCalls.values()) {
             try {
@@ -82,6 +89,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Handle tool responses by creating a new completion
      */
     async handleToolResponses(toolResponses) {
+        if (DEBUG) {
+            console.log(`handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`);
+        }
         // Get existing chat messages
         const messages = [
             {
@@ -309,6 +319,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Handle mode switching
      */
     async handleModeSwitch(newMode, reason) {
+        if (DEBUG) {
+            console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
+        }
         const oldMode = this.memory.currentMode;
         if (!this.modes.has(newMode)) {
             throw new Error(`Invalid mode: ${newMode}`);
@@ -348,7 +361,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
                         console.error("Unexpected response format:", JSON.stringify(part));
                         continue;
                     }
+                    if (DEBUG) {
+                        console.log(`streamWebSocketResponses: ${JSON.stringify(part, null, 2)}`);
+                    }
                     const delta = part.choices[0].delta;
+                    if (DEBUG) {
+                        console.log(`streamWebSocketResponses: ${JSON.stringify(delta, null, 2)}`);
+                    }
                     if ("tool_calls" in delta && delta.tool_calls) {
                         for (const toolCall of delta.tool_calls) {
                             if (toolCall.id) {

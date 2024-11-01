@@ -51,13 +51,20 @@ YpSubscriptionPlan.init(
   }
 );
 
+// Add the associate method
+(YpSubscriptionPlan as any).associate = (models: any) => {
+  YpSubscriptionPlan.hasMany(models.YpSubscription, {
+    foreignKey: 'subscription_plan_id',
+    as: 'Subscriptions',
+  });
 
-// Associations
-YpSubscriptionPlan.hasMany(YpSubscription, {
-  foreignKey: 'subscription_plan_id',
-  as: 'Subscriptions',
-});
-YpSubscriptionPlan.hasMany(YpAgentProductBoosterPurchase, {
-  foreignKey: 'subscription_plan_id',
-  as: 'BoosterPurchases',
-});
+  YpSubscriptionPlan.hasMany(models.YpAgentProductBoosterPurchase, {
+    foreignKey: 'subscription_plan_id',
+    as: 'BoosterPurchases',
+  });
+
+  YpSubscriptionPlan.belongsTo(models.YpAgentProduct, {
+    foreignKey: 'agent_product_id',
+    as: 'AgentProduct',
+  });
+};

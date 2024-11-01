@@ -20,6 +20,7 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
         this.audioQueue = [];
         this.isPlayingAudio = false;
         this.currentAudioSource = null;
+        this.onlyUseTextField = true;
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
         this.initializeAudioContext();
         this.setupVoiceCapabilities();
@@ -337,6 +338,9 @@ __decorate([
 __decorate([
     state()
 ], YpAssistantBase.prototype, "currentAudioSource", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAssistantBase.prototype, "onlyUseTextField", void 0);
 __decorate([
     query('#voiceButton')
 ], YpAssistantBase.prototype, "voiceButton", void 0);

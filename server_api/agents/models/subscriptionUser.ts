@@ -26,9 +26,19 @@ YpSubscriptionUser.init(
 );
 
 // Associations
-YpSubscriptionUser.hasMany(YpAgentProduct, { foreignKey: 'user_id', as: 'AgentProducts' });
-YpSubscriptionUser.hasMany(YpAgentProductBoosterPurchase, {
-  foreignKey: 'user_id',
-  as: 'AgentProductBoosterPurchases',
-});
-YpSubscriptionUser.hasMany(YpSubscription, { foreignKey: 'user_id', as: 'Subscriptions' });
+(YpSubscriptionUser as any).associate = (models: any) => {
+  YpSubscriptionUser.hasMany(models.YpAgentProduct, {
+    foreignKey: 'user_id',
+    as: 'AgentProducts'
+  });
+
+  YpSubscriptionUser.hasMany(models.YpAgentProductBoosterPurchase, {
+    foreignKey: 'user_id',
+    as: 'AgentProductBoosterPurchases',
+  });
+
+  YpSubscriptionUser.hasMany(models.YpSubscription, {
+    foreignKey: 'user_id',
+    as: 'Subscriptions'
+  });
+};

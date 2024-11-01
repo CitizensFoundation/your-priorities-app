@@ -70,16 +70,26 @@ YpAgentProductBoosterPurchase.init(
 );
 
 // Associations
-YpAgentProductBoosterPurchase.belongsTo(YpSubscriptionUser, { foreignKey: 'user_id', as: 'User' });
-YpAgentProductBoosterPurchase.belongsTo(YpAgentProduct, {
-  foreignKey: 'agent_product_id',
-  as: 'AgentProduct',
-});
-YpAgentProductBoosterPurchase.belongsTo(YpSubscriptionPlan, {
-  foreignKey: 'subscription_plan_id',
-  as: 'SubscriptionPlan',
-});
-YpAgentProductBoosterPurchase.belongsTo(YpDiscount, {
-  foreignKey: 'discount_id',
-  as: 'Discount',
-});
+(YpAgentProductBoosterPurchase as any).associate = (models: any) => {
+  console.log('YpAgentProductBoosterPurchase.associate');
+
+  YpAgentProductBoosterPurchase.belongsTo(models.YpSubscriptionUser, {
+    foreignKey: 'user_id',
+    as: 'User'
+  });
+
+  YpAgentProductBoosterPurchase.belongsTo(models.YpAgentProduct, {
+    foreignKey: 'agent_product_id',
+    as: 'AgentProduct',
+  });
+
+  YpAgentProductBoosterPurchase.belongsTo(models.YpSubscriptionPlan, {
+    foreignKey: 'subscription_plan_id',
+    as: 'SubscriptionPlan',
+  });
+
+  YpAgentProductBoosterPurchase.belongsTo(models.YpDiscount, {
+    foreignKey: 'discount_id',
+    as: 'Discount',
+  });
+};

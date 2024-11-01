@@ -550,6 +550,8 @@ auth.entity("domain", function (req, done) {
         match = req.originalUrl.match(/images\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
+    if (!match)
+        match = req.originalUrl.match(/assistants\/(\w+)/);
     if (!match) {
         done(new Error("Expected url like /domains/:domainId"));
     }

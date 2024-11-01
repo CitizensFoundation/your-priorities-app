@@ -60,7 +60,10 @@ YpAgentProductRun.init(
 );
 
 // Associations
-YpAgentProductRun.belongsTo(YpSubscription, {
-  foreignKey: 'subscription_id',
-  as: 'Subscription',
-});
+(YpAgentProductRun as any).associate = (models: any) => {
+  // Define associations
+  YpAgentProductRun.belongsTo(models.YpSubscription, {
+    foreignKey: 'subscription_id',
+    as: 'Subscription',
+  });
+};

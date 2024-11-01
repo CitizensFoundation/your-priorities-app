@@ -30,6 +30,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @state()
   private currentAudioSource: AudioBufferSourceNode | null = null;
 
+  @property({ type: Boolean })
+  override onlyUseTextField = true;
 
   @query('#voiceButton')
   voiceButton!: HTMLElement;

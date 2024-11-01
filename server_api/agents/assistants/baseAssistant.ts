@@ -11,6 +11,9 @@ import {
 import { FunctionDefinition } from "openai/resources/shared.mjs";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 
+
+const DEBUG = true;
+
 export interface ToolExecutionResult<T = unknown> {
   success: boolean;
   data?: T;
@@ -121,6 +124,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     toolCall: ToolCall,
     result: ToolExecutionResult
   ): ToolResponseMessage {
+    if (DEBUG) {
+      console.log(`convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`);
+    }
     return {
       role: "tool",
       content: JSON.stringify(result.data),
@@ -136,6 +142,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   async handleToolCalls(
     toolCalls: Map<string, ToolCall>
   ): Promise<void> {
+    if (DEBUG) {
+      console.log(`handleToolCalls: ${JSON.stringify(toolCalls, null, 2)}`);
+    }
     const toolResponses: ToolResponseMessage[] = [];
 
     for (const toolCall of toolCalls.values()) {
@@ -189,6 +198,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   async handleToolResponses(
     toolResponses: ToolResponseMessage[]
   ): Promise<void> {
+    if (DEBUG) {
+      console.log(`handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`);
+    }
     // Get existing chat messages
     const messages: ChatCompletionMessageParam[] = [
       {
@@ -454,6 +466,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     newMode: string,
     reason?: string
   ): Promise<void> {
+    if (DEBUG) {
+      console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
+    }
     const oldMode = this.memory.currentMode;
 
     if (!this.modes.has(newMode)) {
@@ -508,7 +523,15 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             continue;
           }
 
+          if (DEBUG) {
+            console.log(`streamWebSocketResponses: ${JSON.stringify(part, null, 2)}`);
+          }
+
           const delta = part.choices[0].delta;
+
+          if (DEBUG) {
+            console.log(`streamWebSocketResponses: ${JSON.stringify(delta, null, 2)}`);
+          }
 
           if ("tool_calls" in delta && delta.tool_calls) {
             for (const toolCall of delta.tool_calls) {

@@ -81,7 +81,8 @@ ${this.renderAllAgentsStatus()}`,
                 systemStatus: { type: "object" },
               },
             },
-            handler: async (): Promise<ToolExecutionResult<any>> => {
+            handler: async (params): Promise<ToolExecutionResult<any>> => {
+              console.log(`handler: get_agent_status: ${JSON.stringify(params, null, 2)}`);
               try {
                 const status = await this.loadAgentStatus();
                 return {
@@ -113,6 +114,7 @@ ${this.renderAllAgentsStatus()}`,
               required: ["agentProductId"],
             },
             handler: async (params): Promise<ToolExecutionResult> => {
+              console.log(`handler: select_agent: ${JSON.stringify(params, null, 2)}`);
               try {
                 const agent = await this.validateAndSelectAgent(params.agentProductId);
                 const requiredQuestions = await this.getRequiredQuestions(
@@ -176,6 +178,7 @@ ${this.renderCurrentAgent()}`,
               required: ["agentId"],
             },
             handler: async (params): Promise<ToolExecutionResult> => {
+              console.log(`handler: show_question_form: ${JSON.stringify(params, null, 2)}`);
               try {
                 const questions = await this.getRequiredQuestions(
                   params.agentId
@@ -269,6 +272,7 @@ ${this.renderCurrentWorkflowStatus()}`,
               required: ["groupId"],
             },
             handler: async (params): Promise<ToolExecutionResult> => {
+              console.log(`handler: show_engagement_group: ${JSON.stringify(params, null, 2)}`);
               try {
                 // Create HTML element for group
                 const html = `<yp-group
@@ -312,6 +316,7 @@ ${this.renderCurrentWorkflowStatus()}`,
               },
             },
             handler: async (params): Promise<ToolExecutionResult> => {
+              console.log(`handler: stop_agent: ${JSON.stringify(params, null, 2)}`);
               try {
                 if (!this.currentAgentId) {
                   throw new Error("No agent selected");
@@ -381,6 +386,7 @@ ${this.renderCurrentWorkflowStatus()}`,
               },
             },
             handler: async (params): Promise<ToolExecutionResult> => {
+              console.log(`handler: show_workflow: ${JSON.stringify(params, null, 2)}`);
               try {
                 if (!this.currentAgentId) {
                   throw new Error("No agent selected");
@@ -455,6 +461,7 @@ ${this.renderCurrentWorkflowStatus()}`,
               },
             },
             handler: async (params): Promise<ToolExecutionResult> => {
+              console.log(`handler: get_workflow_step_details: ${JSON.stringify(params, null, 2)}`);
               try {
                 if (!this.currentAgentId) {
                   throw new Error("No agent selected");

@@ -82,6 +82,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
   }
 
   async handleToolCalls(toolCalls: Map<string, ToolCall>): Promise<void> {
+    console.log(JSON.stringify(toolCalls, null, 2));
     for (const [id, toolCall] of toolCalls.entries()) {
       try {
         const func = this.availableFunctions.get(toolCall.name);

@@ -84,23 +84,32 @@ YpSubscription.init(
 );
 
 // Associations
-YpSubscription.belongsTo(YpSubscriptionUser, { foreignKey: 'user_id', as: 'User' });
-YpSubscription.belongsTo(YpAgentProduct, {
-  foreignKey: 'agent_product_id',
-  as: 'AgentProduct',
-});
-YpSubscription.belongsTo(YpSubscriptionPlan, {
-  foreignKey: 'subscription_plan_id',
-  as: 'Plan',
-});
-YpSubscription.hasMany(YpAgentProductRun, {
-  foreignKey: 'subscription_id',
-  as: 'Runs',
-});
+(YpSubscription as any).associate = (models: any) => {
+  // Define associations
+  YpSubscription.belongsTo(models.YpSubscriptionUser, {
+    foreignKey: 'user_id',
+    as: 'User'
+  });
 
-YpSubscription.belongsToMany(YpDiscount, {
-  through: 'subscription_discounts',
-  foreignKey: 'subscription_id',
-  otherKey: 'discount_id',
-  as: 'Discounts',
-});
+  YpSubscription.belongsTo(models.YpAgentProduct, {
+    foreignKey: 'agent_product_id',
+    as: 'AgentProduct',
+  });
+
+  YpSubscription.belongsTo(models.YpSubscriptionPlan, {
+    foreignKey: 'subscription_plan_id',
+    as: 'Plan',
+  });
+
+  YpSubscription.hasMany(models.YpAgentProductRun, {
+    foreignKey: 'subscription_id',
+    as: 'Runs',
+  });
+
+  YpSubscription.belongsToMany(models.YpDiscount, {
+    through: 'subscription_discounts',
+    foreignKey: 'subscription_id',
+    otherKey: 'discount_id',
+    as: 'Discounts',
+  });
+};

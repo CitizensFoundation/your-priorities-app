@@ -1,9 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
-import { YpSubscriptionUser } from './subscriptionUser.js';
-import { YpAgentProduct } from './agentProduct.js';
-import { YpSubscriptionPlan } from './subscriptionPlan.js';
-import { YpDiscount } from './discount.js';
 export class YpAgentProductBoosterPurchase extends Model {
 }
 YpAgentProductBoosterPurchase.init({
@@ -41,16 +37,22 @@ YpAgentProductBoosterPurchase.init({
     underscored: true,
 });
 // Associations
-YpAgentProductBoosterPurchase.belongsTo(YpSubscriptionUser, { foreignKey: 'user_id', as: 'User' });
-YpAgentProductBoosterPurchase.belongsTo(YpAgentProduct, {
-    foreignKey: 'agent_product_id',
-    as: 'AgentProduct',
-});
-YpAgentProductBoosterPurchase.belongsTo(YpSubscriptionPlan, {
-    foreignKey: 'subscription_plan_id',
-    as: 'SubscriptionPlan',
-});
-YpAgentProductBoosterPurchase.belongsTo(YpDiscount, {
-    foreignKey: 'discount_id',
-    as: 'Discount',
-});
+YpAgentProductBoosterPurchase.associate = (models) => {
+    console.log('YpAgentProductBoosterPurchase.associate');
+    YpAgentProductBoosterPurchase.belongsTo(models.YpSubscriptionUser, {
+        foreignKey: 'user_id',
+        as: 'User'
+    });
+    YpAgentProductBoosterPurchase.belongsTo(models.YpAgentProduct, {
+        foreignKey: 'agent_product_id',
+        as: 'AgentProduct',
+    });
+    YpAgentProductBoosterPurchase.belongsTo(models.YpSubscriptionPlan, {
+        foreignKey: 'subscription_plan_id',
+        as: 'SubscriptionPlan',
+    });
+    YpAgentProductBoosterPurchase.belongsTo(models.YpDiscount, {
+        foreignKey: 'discount_id',
+        as: 'Discount',
+    });
+};

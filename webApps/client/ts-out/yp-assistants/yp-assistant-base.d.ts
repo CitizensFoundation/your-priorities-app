@@ -9,6 +9,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private audioQueue;
     private isPlayingAudio;
     private currentAudioSource;
+    onlyUseTextField: boolean;
     voiceButton: HTMLElement;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
     constructor();

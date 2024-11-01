@@ -1,7 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
-import { YpSubscription } from './subscription.js';
-import { YpAgentProductBoosterPurchase } from './agentProductBoosterPurchase.js';
 export class YpSubscriptionPlan extends Model {
 }
 YpSubscriptionPlan.init({
@@ -31,12 +29,18 @@ YpSubscriptionPlan.init({
     timestamps: true,
     underscored: true,
 });
-// Associations
-YpSubscriptionPlan.hasMany(YpSubscription, {
-    foreignKey: 'subscription_plan_id',
-    as: 'Subscriptions',
-});
-YpSubscriptionPlan.hasMany(YpAgentProductBoosterPurchase, {
-    foreignKey: 'subscription_plan_id',
-    as: 'BoosterPurchases',
-});
+// Add the associate method
+YpSubscriptionPlan.associate = (models) => {
+    YpSubscriptionPlan.hasMany(models.YpSubscription, {
+        foreignKey: 'subscription_plan_id',
+        as: 'Subscriptions',
+    });
+    YpSubscriptionPlan.hasMany(models.YpAgentProductBoosterPurchase, {
+        foreignKey: 'subscription_plan_id',
+        as: 'BoosterPurchases',
+    });
+    YpSubscriptionPlan.belongsTo(models.YpAgentProduct, {
+        foreignKey: 'agent_product_id',
+        as: 'AgentProduct',
+    });
+};

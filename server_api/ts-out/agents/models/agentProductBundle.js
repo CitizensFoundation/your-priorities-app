@@ -49,16 +49,20 @@ YpAgentProductBundle.init({
     ],
     underscored: true,
 });
-// Define the many-to-many associations between YpAgentProduct and YpAgentProductBundle
-YpAgentProduct.belongsToMany(YpAgentProductBundle, {
-    through: 'agent_product_bundles_products',
-    as: 'Bundles',
-    foreignKey: 'agent_product_id',
-    otherKey: 'agent_product_bundle_id',
-});
-YpAgentProductBundle.belongsToMany(YpAgentProduct, {
-    through: 'agent_product_bundles_products',
-    as: 'AgentProducts',
-    foreignKey: 'agent_product_bundle_id',
-    otherKey: 'agent_product_id',
-});
+// Add the associate static method
+YpAgentProductBundle.associate = (models) => {
+    YpAgentProductBundle.belongsToMany(models.YpAgentProduct, {
+        through: 'agent_product_bundles_products',
+        as: 'AgentProducts',
+        foreignKey: 'agent_product_bundle_id',
+        otherKey: 'agent_product_id',
+    });
+};
+YpAgentProduct.associate = (models) => {
+    YpAgentProduct.belongsToMany(models.YpAgentProductBundle, {
+        through: 'agent_product_bundles_products',
+        as: 'Bundles',
+        foreignKey: 'agent_product_id',
+        otherKey: 'agent_product_bundle_id',
+    });
+};

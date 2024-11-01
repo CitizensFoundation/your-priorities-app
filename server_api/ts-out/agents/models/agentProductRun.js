@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
-import { YpSubscription } from './subscription.js';
 export class YpAgentProductRun extends Model {
 }
 YpAgentProductRun.init({
@@ -35,7 +34,10 @@ YpAgentProductRun.init({
     underscored: true,
 });
 // Associations
-YpAgentProductRun.belongsTo(YpSubscription, {
-    foreignKey: 'subscription_id',
-    as: 'Subscription',
-});
+YpAgentProductRun.associate = (models) => {
+    // Define associations
+    YpAgentProductRun.belongsTo(models.YpSubscription, {
+        foreignKey: 'subscription_id',
+        as: 'Subscription',
+    });
+};
