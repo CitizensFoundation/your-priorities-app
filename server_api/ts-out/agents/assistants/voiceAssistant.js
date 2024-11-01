@@ -120,11 +120,12 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             console.log("Tool not found: ", event.name);
             return;
         }
-        console.log("Calling tool handler: ", event.name);
+        const toolName = tool.name;
+        console.log("Calling tool handler: ", toolName);
         const result = await tool.handler(event.arguments);
         // Store the result in memory for context
         if (result.success && result.data) {
-            await this.parentAssistant?.setModeData(`${event.name}_result`, result.data);
+            await this.parentAssistant?.setModeData(`${toolName}_result`, result.data);
         }
         // Generate a user-friendly message based on the tool result
         const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
@@ -143,6 +144,15 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (result.html) {
             this.sendToClient("bot", result.html, "html", true);
         }
+        const responseEvent = {
+            type: "conversation.item.create",
+            item: {
+                type: "function_call_output",
+                call_id: event.call_id,
+                output: JSON.stringify(result.data, null, 2)
+            }
+        };
+        this.voiceConnection?.ws.send(JSON.stringify(responseEvent));
     }
     async proxyToClient(event) {
         console.log("proxyToClient: ", event.type);
