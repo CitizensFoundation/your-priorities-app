@@ -506,77 +506,164 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   }
 
   /**
-   * Handle streaming responses and function calls
+   * Handle streaming responses and function calls with comprehensive debugging
    */
   async streamWebSocketResponses(
     stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {
     return new Promise<void>(async (resolve, reject) => {
+      if (DEBUG) console.log("Starting streamWebSocketResponses");
       this.sendToClient("bot", "", "start");
+
       try {
         let botMessage = "";
         const toolCalls = new Map<string, ToolCall>();
+        const toolCallArguments = new Map<string, string>();
+        let currentToolCallId: string | null = null;
 
         for await (const part of stream) {
+          if (DEBUG) {
+            console.log("Received stream part:", JSON.stringify(part, null, 2));
+          }
+
           if (!part.choices?.[0]?.delta) {
-            console.error("Unexpected response format:", JSON.stringify(part));
+            if (DEBUG) console.log("Skipping invalid stream part - no choices or delta");
             continue;
           }
 
-          if (DEBUG) {
-            console.log(`streamWebSocketResponses: ${JSON.stringify(part, null, 2)}`);
-          }
-
           const delta = part.choices[0].delta;
-
           if (DEBUG) {
-            console.log(`streamWebSocketResponses: ${JSON.stringify(delta, null, 2)}`);
+            console.log("Processing delta:", JSON.stringify(delta, null, 2));
           }
 
           if ("tool_calls" in delta && delta.tool_calls) {
+            if (DEBUG) console.log("Processing tool calls in delta");
+
             for (const toolCall of delta.tool_calls) {
+              // If we have a new tool call ID, update the current ID
               if (toolCall.id) {
+                if (DEBUG) console.log(`Setting current tool call ID to: ${toolCall.id}`);
+                currentToolCallId = toolCall.id;
+              }
+
+              // Always use the currentToolCallId for processing
+              if (currentToolCallId) {
                 const now = Date.now();
-                if (!toolCalls.has(toolCall.id)) {
-                  toolCalls.set(toolCall.id, {
-                    id: toolCall.id,
+
+                if (DEBUG) {
+                  console.log(`Processing tool call ${currentToolCallId}:`, {
+                    name: toolCall.function?.name,
+                    newArguments: toolCall.function?.arguments,
+                    exists: toolCalls.has(currentToolCallId)
+                  });
+                }
+
+                // Initialize tool call if it's new
+                if (!toolCalls.has(currentToolCallId)) {
+                  if (DEBUG) console.log(`Initializing new tool call ${currentToolCallId}`);
+
+                  toolCalls.set(currentToolCallId, {
+                    id: currentToolCallId,
                     name: toolCall.function?.name ?? "",
-                    arguments: toolCall.function?.arguments ?? "",
+                    arguments: "",
                     startTime: now,
                   });
-                } else {
-                  const existingCall = toolCalls.get(toolCall.id)!;
-
-                  // Check for timeout
-                  if (now - existingCall.startTime! > this.toolCallTimeout) {
-                    throw new Error(
-                      `Tool call timeout for ${existingCall.name}`
-                    );
-                  }
-
-                  if (toolCall.function?.name) {
-                    existingCall.name =
-                      existingCall.name + toolCall.function.name;
-                  }
-                  if (toolCall.function?.arguments) {
-                    existingCall.arguments =
-                      existingCall.arguments + toolCall.function.arguments;
-                  }
+                  toolCallArguments.set(currentToolCallId, "");
                 }
+
+                const existingCall = toolCalls.get(currentToolCallId)!;
+
+                // Check timeout
+                if (now - existingCall.startTime! > this.toolCallTimeout) {
+                  if (DEBUG) console.log(`Tool call timeout for ${existingCall.name}`);
+                  throw new Error(`Tool call timeout for ${existingCall.name}`);
+                }
+
+                // Update name if provided
+                if (toolCall.function?.name) {
+                  if (DEBUG) console.log(`Updating tool call name to ${toolCall.function.name}`);
+                  existingCall.name = toolCall.function.name;
+                }
+
+                // Concatenate arguments if provided
+                if (toolCall.function?.arguments) {
+                  const currentArgs = toolCallArguments.get(currentToolCallId) || "";
+                  const newArgs = currentArgs + toolCall.function.arguments;
+                  if (DEBUG) {
+                    console.log(`Updating arguments for ${currentToolCallId}:`, {
+                      previous: currentArgs,
+                      new: toolCall.function.arguments,
+                      combined: newArgs
+                    });
+                  }
+                  toolCallArguments.set(currentToolCallId, newArgs);
+                  existingCall.arguments = newArgs;
+                }
+
+                toolCalls.set(currentToolCallId, existingCall);
+
+                if (DEBUG) {
+                  console.log(`Current state of tool call ${currentToolCallId}:`, {
+                    name: existingCall.name,
+                    arguments: existingCall.arguments
+                  });
+                }
+              } else {
+                if (DEBUG) console.log("No current tool call ID available");
               }
             }
           } else if ("content" in delta && delta.content) {
-            const content = delta.content ?? "";
+            if (DEBUG) console.log("Processing content:", delta.content);
+            const content = delta.content;
             this.sendToClient("bot", content);
             botMessage += content;
           }
 
           const finishReason = part.choices[0].finish_reason;
+          if (DEBUG) {
+            console.log("Finish reason:", finishReason);
+            if (finishReason === "tool_calls") {
+              console.log("Final state of all tool calls:",
+                Object.fromEntries(toolCalls.entries())
+              );
+            }
+          }
+
           if (finishReason === "tool_calls") {
+            // Reset current tool call ID
+            currentToolCallId = null;
+
+            // Validate all accumulated arguments are valid JSON before proceeding
+            for (const [id, call] of toolCalls) {
+              try {
+                if (DEBUG) {
+                  console.log(`Validating JSON for tool call ${id}:`, call.arguments);
+                }
+                // Handle empty arguments case
+                if (!call.arguments.trim()) {
+                  call.arguments = "{}";  // Set default empty object
+                }
+                JSON.parse(call.arguments); // Validate JSON
+              } catch (e) {
+                if (DEBUG) {
+                  console.error(`JSON validation failed for ${id}:`, e);
+                  console.log("Invalid arguments:", call.arguments);
+                }
+                throw new Error(
+                  `Invalid JSON in function arguments for ${call.name}: ${call.arguments}`
+                );
+              }
+            }
+
+            if (DEBUG) console.log("Executing tool calls");
             await this.handleToolCalls(toolCalls);
+
+            if (DEBUG) console.log("Clearing tool calls and arguments");
             toolCalls.clear();
+            toolCallArguments.clear();
           } else if (finishReason === "stop") {
             if (botMessage) {
+              if (DEBUG) console.log("Saving bot message to chat log");
               this.memory.chatLog!.push({
                 sender: "bot",
                 message: botMessage,
@@ -590,6 +677,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         // Attempt to switch to error recovery mode
         try {
+          if (DEBUG) console.log("Attempting to switch to error recovery mode");
           await this.handleModeSwitch(
             CommonModes.ErrorRecovery,
             error instanceof Error ? error.message : "Unknown error"
@@ -605,6 +693,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         );
         reject(error);
       } finally {
+        if (DEBUG) console.log("Finalizing stream response");
         this.sendToClient("bot", "", "end");
         resolve();
       }
