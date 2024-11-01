@@ -39,7 +39,7 @@ interface ToolResponseMessage {
   name: string;
 }
 
-interface ToolCall {
+export interface ToolCall {
   id: string;
   name: string;
   arguments: string;
@@ -128,6 +128,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       name: toolCall.name,
     };
   }
+
 
   /**
    * Handle executing tool calls with results

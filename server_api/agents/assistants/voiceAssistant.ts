@@ -34,7 +34,7 @@ interface RealtimeVoiceConnection {
 // Extend the base class with voice capabilities
 export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected voiceEnabled: boolean = false;
-  protected voiceConnection?: RealtimeVoiceConnection;
+  voiceConnection?: RealtimeVoiceConnection;
   protected voiceConfig: VoiceConnectionConfig;
   protected voiceState: VoiceState;
   protected audioBuffer: Uint8Array[] = [];
