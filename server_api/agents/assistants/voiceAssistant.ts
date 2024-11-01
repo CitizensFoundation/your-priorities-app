@@ -66,6 +66,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected async initializeVoiceConnection(): Promise<void> {
     if (!this.voiceEnabled) return;
 
+    console.log("initializeVoiceConnection");
+
     const url = "wss://api.openai.com/v1/realtime";
     const wsConfig = {
       headers: {
@@ -110,6 +112,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     ws.on("message", async (data) => {
       try {
         const event = JSON.parse(data.toString());
+
+        console.log("voiceMessage: ", JSON.stringify(event, null, 2));
 
         switch (event.type) {
           case "session.created":
@@ -162,6 +166,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   // Handle incoming audio from client
   async handleIncomingAudio(audioData: Uint8Array): Promise<void> {
+    console.log(`handleIncomingAudio: ${audioData.length} ${this.voiceEnabled} ${this.voiceConnection?.ws}`);
     if (!this.voiceConnection?.ws || !this.voiceEnabled) return;
 
     this.audioBuffer.push(audioData);
@@ -182,6 +187,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       type: "input_audio_buffer.append",
       audio: Buffer.from(audioData).toString('base64')
     };
+
+    console.log("Sending audio message to server:");
 
     this.voiceConnection.ws.send(JSON.stringify(audioMessage));
   }
@@ -379,12 +386,12 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   // Helper method to switch between voice and text modes
   async setVoiceMode(enabled: boolean): Promise<void> {
-    if (this.voiceEnabled === enabled) return;
-
     this.voiceEnabled = enabled;
     if (enabled) {
+      console.log("setVoiceMode: initializing voice connection");
       await this.initializeVoiceConnection();
     } else {
+      console.log("setVoiceMode: closing voice connection");
       // Clean up voice connection if it exists
       if (this.voiceConnection?.ws) {
         this.voiceConnection.ws.close();

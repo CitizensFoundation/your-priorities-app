@@ -26,4 +26,16 @@ export class YpAssistantServerApi extends YpServerApi {
       false
     );
   }
+
+  public startVoiceSession(
+    domainId: number,
+    wsClientId: string,
+    chatLog: PsSimpleChatLog[]
+  ): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${domainId}/voice`,
+      { method: "POST", body: JSON.stringify({ wsClientId, chatLog }) },
+      false
+    );
+  }
 }

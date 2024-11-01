@@ -35,6 +35,7 @@ interface MyAgentSubscriptionStatus {
   systemStatus: {
     healthy: boolean;
     lastUpdated: Date;
+    error?: string;
   };
 }
 
@@ -606,18 +607,19 @@ ${this.renderCurrentWorkflowStatus()}`,
         ],
       });
 
+
       return {
         availableAgents: availableAgents.map((subscription) => ({
           id: subscription.AgentProduct.id,
           name: subscription.AgentProduct.name,
           description: subscription.AgentProduct.description,
-          imageUrl: subscription.Plan.configuration.imageUrl,
+          imageUrl: subscription.Plan.configuration.imageUrl || "",
           isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id === subscription.AgentProduct.id),
         })),
         runningAgents: runningAgents.map((run) => ({
           runId: run.id,
-          agentId: run.Subscription?.AgentProduct?.id,
-          agentName: run.Subscription?.AgentProduct?.name,
+          agentId: run.Subscription?.AgentProduct?.id || 0,
+          agentName: run.Subscription?.AgentProduct?.name || "",
           startTime: run.start_time,
           status: run.status,
           workflow: run.workflow,
@@ -678,7 +680,7 @@ ${this.renderCurrentWorkflowStatus()}`,
   private async getRequiredQuestions(
     agentProductId: number
   ): Promise<YpStructuredQuestionData[]> {
-    const status = await this.loadMyAgentSubscriptions();
+    /*const status = await this.loadMyAgentSubscriptions();
     const agent = status.availableAgents.find((a: any) => a.id === agentProductId);
 
     if (!agent || !agent.configuration) {
@@ -686,7 +688,8 @@ ${this.renderCurrentWorkflowStatus()}`,
     }
 
     const config = agent.configuration as YpAgentProductConfiguration;
-    return config.requiredStructuredQuestions || [];
+    return config.requiredStructuredQuestions || [];*/
+    return [];
   }
 
   async runAgentNextWorkflowStep(

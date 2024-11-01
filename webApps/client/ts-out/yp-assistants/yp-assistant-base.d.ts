@@ -22,10 +22,15 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     toggleRecording(): void;
     startRecording(): Promise<void>;
     stopRecording(): void;
-    handleVoiceInput(base64Audio: string): Promise<void>;
+    static floatTo16BitPCM(float32Array: Float32Array): ArrayBuffer;
+    static arrayBufferToBase64(arrayBuffer: ArrayBuffer | Iterable<number>): string;
+    handleVoiceInput(data: {
+        mono: ArrayBuffer;
+        raw: ArrayBuffer;
+    }): Promise<void>;
     onMessage(event: MessageEvent): Promise<void>;
     base64ToArrayBuffer(base64: string): ArrayBuffer;
-    toggleVoiceMode(): void;
+    toggleVoiceMode(): Promise<void>;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderChatInput(): import("lit-html").TemplateResult<1>;
 }

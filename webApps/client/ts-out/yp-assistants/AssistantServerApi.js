@@ -14,5 +14,8 @@ export class YpAssistantServerApi extends YpServerApi {
             }),
         }, false);
     }
+    startVoiceSession(domainId, wsClientId, chatLog) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/voice`, { method: "POST", body: JSON.stringify({ wsClientId, chatLog }) }, false);
+    }
 }
 //# sourceMappingURL=AssistantServerApi.js.map

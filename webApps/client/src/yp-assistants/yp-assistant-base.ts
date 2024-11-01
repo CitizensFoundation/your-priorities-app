@@ -5,6 +5,7 @@ import "./yp-assistant-item-base.js";
 import { literal } from "lit/static-html.js";
 import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
 import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
+import { YpAssistantServerApi } from "./AssistantServerApi.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -125,7 +126,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
 
   toggleRecording() {
-    debugger;
     if (this.isRecording) {
       this.stopRecording();
     } else {
@@ -134,18 +134,18 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async startRecording() {
+    const serverApi = new YpAssistantServerApi();
+    await serverApi.startVoiceSession(1790, this.wsClientId, this.chatLog);
     this.mediaRecorder = new WavRecorder({ sampleRate: 24000 }) as WavRecorder;
     this.isRecording = true;
 
     await this.mediaRecorder.begin();
 
-    await this.mediaRecorder.record((data: any) => this.handleVoiceInput(data.mono));
+    await this.mediaRecorder.record((data: any) => this.handleVoiceInput(data));
 
     this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
 
     await this.wavStreamPlayer?.connect();
-
-    debugger;
   }
 
   stopRecording() {
@@ -157,11 +157,39 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.isRecording = false;
   }
 
-  async handleVoiceInput(base64Audio: string) {
+  static floatTo16BitPCM(float32Array: Float32Array) {
+    const buffer = new ArrayBuffer(float32Array.length * 2);
+    const view = new DataView(buffer);
+    let offset = 0;
+    for (let i = 0; i < float32Array.length; i++, offset += 2) {
+      let s = Math.max(-1, Math.min(1, float32Array[i]));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    }
+    return buffer;
+  }
+
+  static arrayBufferToBase64(arrayBuffer: ArrayBuffer | Iterable<number>) {
+    if (arrayBuffer instanceof Float32Array) {
+      arrayBuffer = this.floatTo16BitPCM(arrayBuffer);
+    } else if (arrayBuffer instanceof Int16Array) {
+      arrayBuffer = arrayBuffer.buffer;
+    }
+    let binary = '';
+    let bytes = new Uint8Array(arrayBuffer as any);
+    const chunkSize = 0x8000; // 32KB chunk size
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      let chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, chunk as any);
+    }
+    return btoa(binary);
+  }
+
+  async handleVoiceInput(data: { mono: ArrayBuffer, raw: ArrayBuffer }) {
+    // Convert ArrayBuffer to base64 using browser APIs
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({
         type: 'voice_input',
-        audio: base64Audio,
+        audio: YpAssistantBase.arrayBufferToBase64(data.mono),
         clientId: this.wsClientId
       }));
     }
@@ -226,8 +254,14 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return bytes.buffer;
   }
 
-  toggleVoiceMode() {
+  async toggleVoiceMode() {
     this.voiceEnabled = !this.voiceEnabled;
+
+    if (!this.voiceEnabled && this.isRecording) {
+      this.stopRecording();
+    } else if (this.voiceEnabled && !this.isRecording) {
+      await this.startRecording();
+    }
 
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({
@@ -235,12 +269,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         enabled: this.voiceEnabled,
         clientId: this.wsClientId
       }));
-    }
-
-    if (!this.voiceEnabled && this.isRecording) {
-      this.stopRecording();
-    } else if (this.voiceEnabled && !this.isRecording) {
-      this.startRecording();
     }
 
     // Initialize or resume AudioContext when enabling voice mode

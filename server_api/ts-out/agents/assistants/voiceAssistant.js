@@ -23,6 +23,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeVoiceConnection() {
         if (!this.voiceEnabled)
             return;
+        console.log("initializeVoiceConnection");
         const url = "wss://api.openai.com/v1/realtime";
         const wsConfig = {
             headers: {
@@ -61,6 +62,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         ws.on("message", async (data) => {
             try {
                 const event = JSON.parse(data.toString());
+                console.log("voiceMessage: ", JSON.stringify(event, null, 2));
                 switch (event.type) {
                     case "session.created":
                         await this.handleVoiceSessionCreated(event);
@@ -103,6 +105,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     // Handle incoming audio from client
     async handleIncomingAudio(audioData) {
+        console.log(`handleIncomingAudio: ${audioData.length} ${this.voiceEnabled} ${this.voiceConnection?.ws}`);
         if (!this.voiceConnection?.ws || !this.voiceEnabled)
             return;
         this.audioBuffer.push(audioData);
@@ -120,6 +123,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             type: "input_audio_buffer.append",
             audio: Buffer.from(audioData).toString('base64')
         };
+        console.log("Sending audio message to server:");
         this.voiceConnection.ws.send(JSON.stringify(audioMessage));
     }
     // Handle Voice Activity Detection silence
@@ -291,13 +295,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     // Helper method to switch between voice and text modes
     async setVoiceMode(enabled) {
-        if (this.voiceEnabled === enabled)
-            return;
         this.voiceEnabled = enabled;
         if (enabled) {
+            console.log("setVoiceMode: initializing voice connection");
             await this.initializeVoiceConnection();
         }
         else {
+            console.log("setVoiceMode: closing voice connection");
             // Clean up voice connection if it exists
             if (this.voiceConnection?.ws) {
                 this.voiceConnection.ws.close();

@@ -9,14 +9,19 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
         const ws = wsClients.get(wsClientId);
         if (ws) {
             ws.on('message', async (data) => {
+                console.log("Received message");
                 try {
                     const message = JSON.parse(data.toString());
+                    console.log("Message type: ", message.type);
                     switch (message.type) {
                         case 'voice_mode':
+                            console.log("voice_mode: ", message.enabled);
                             await this.setVoiceMode(message.enabled);
                             break;
                         case 'voice_input':
+                            console.log("voice_input: ");
                             if (this.voiceEnabled && message.audio) {
+                                console.log("voice_input: Calling voiceBot.handleIncomingAudio");
                                 await this.voiceBot.handleIncomingAudio(Buffer.from(message.audio, 'base64'));
                             }
                             break;
@@ -26,6 +31,9 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
                     console.error('Error processing message:', error);
                 }
             });
+        }
+        else {
+            console.error("No WebSocket found for client: ", wsClientId);
         }
     }
     setupVoiceEventForwarder() {
@@ -83,6 +91,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
     }
     async conversation(chatLog) {
         if (this.voiceEnabled) {
+            console.log("voiceEnabled: Updating voice config");
             await this.voiceBot.updateVoiceConfig({
                 instructions: this.getCurrentSystemPrompt(),
                 tools: this.getCurrentModeFunctions(),

@@ -515,13 +515,13 @@ ${this.renderCurrentWorkflowStatus()}`,
                     id: subscription.AgentProduct.id,
                     name: subscription.AgentProduct.name,
                     description: subscription.AgentProduct.description,
-                    imageUrl: subscription.Plan.configuration.imageUrl,
+                    imageUrl: subscription.Plan.configuration.imageUrl || "",
                     isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id === subscription.AgentProduct.id),
                 })),
                 runningAgents: runningAgents.map((run) => ({
                     runId: run.id,
-                    agentId: run.Subscription?.AgentProduct?.id,
-                    agentName: run.Subscription?.AgentProduct?.name,
+                    agentId: run.Subscription?.AgentProduct?.id || 0,
+                    agentName: run.Subscription?.AgentProduct?.name || "",
                     startTime: run.start_time,
                     status: run.status,
                     workflow: run.workflow,
@@ -572,13 +572,16 @@ ${this.renderCurrentWorkflowStatus()}`,
         return stopResult;
     }
     async getRequiredQuestions(agentProductId) {
-        const status = await this.loadMyAgentSubscriptions();
-        const agent = status.availableAgents.find((a) => a.id === agentProductId);
+        /*const status = await this.loadMyAgentSubscriptions();
+        const agent = status.availableAgents.find((a: any) => a.id === agentProductId);
+    
         if (!agent || !agent.configuration) {
-            return [];
+          return [];
         }
-        const config = agent.configuration;
-        return config.requiredStructuredQuestions || [];
+    
+        const config = agent.configuration as YpAgentProductConfiguration;
+        return config.requiredStructuredQuestions || [];*/
+        return [];
     }
     async runAgentNextWorkflowStep(agentId, agentProductRunId) {
         try {

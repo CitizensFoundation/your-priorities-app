@@ -47,6 +47,22 @@ export class AssistantController {
     }
     initializeRoutes() {
         this.router.put("/:domainId/chat", auth.can("view domain"), this.sendChatMessage.bind(this));
+        this.router.post("/:domainId/voice", auth.can("view domain"), this.startVoiceSession.bind(this));
+    }
+    async startVoiceSession(req, res) {
+        try {
+            const { wsClientId, chatLog } = req.body;
+            console.log(`Starting chat session for client: ${wsClientId}`);
+            new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true);
+            res.status(200).json({
+                message: "Voice session initialized",
+                wsClientId
+            });
+        }
+        catch (error) {
+            console.error("Error starting chat session:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
     }
     async sendChatMessage(req, res) {
         try {

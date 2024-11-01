@@ -4,6 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var YpAssistantBase_1;
 import { css, html, nothing } from "lit";
 import { property, customElement, state, query } from "lit/decorators.js";
 import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
@@ -11,7 +12,8 @@ import "./yp-assistant-item-base.js";
 import { literal } from "lit/static-html.js";
 import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
 import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
-let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
+import { YpAssistantServerApi } from "./AssistantServerApi.js";
+let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbotBase {
     constructor() {
         super();
         this.voiceEnabled = false;
@@ -93,7 +95,6 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
     `;
     }
     toggleRecording() {
-        debugger;
         if (this.isRecording) {
             this.stopRecording();
         }
@@ -102,13 +103,14 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
         }
     }
     async startRecording() {
+        const serverApi = new YpAssistantServerApi();
+        await serverApi.startVoiceSession(1790, this.wsClientId, this.chatLog);
         this.mediaRecorder = new WavRecorder({ sampleRate: 24000 });
         this.isRecording = true;
         await this.mediaRecorder.begin();
-        await this.mediaRecorder.record((data) => this.handleVoiceInput(data.mono));
+        await this.mediaRecorder.record((data) => this.handleVoiceInput(data));
         this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
         await this.wavStreamPlayer?.connect();
-        debugger;
     }
     stopRecording() {
         this.mediaRecorder?.end();
@@ -117,11 +119,38 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
         this.wavStreamPlayer = null;
         this.isRecording = false;
     }
-    async handleVoiceInput(base64Audio) {
+    static floatTo16BitPCM(float32Array) {
+        const buffer = new ArrayBuffer(float32Array.length * 2);
+        const view = new DataView(buffer);
+        let offset = 0;
+        for (let i = 0; i < float32Array.length; i++, offset += 2) {
+            let s = Math.max(-1, Math.min(1, float32Array[i]));
+            view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+        }
+        return buffer;
+    }
+    static arrayBufferToBase64(arrayBuffer) {
+        if (arrayBuffer instanceof Float32Array) {
+            arrayBuffer = this.floatTo16BitPCM(arrayBuffer);
+        }
+        else if (arrayBuffer instanceof Int16Array) {
+            arrayBuffer = arrayBuffer.buffer;
+        }
+        let binary = '';
+        let bytes = new Uint8Array(arrayBuffer);
+        const chunkSize = 0x8000; // 32KB chunk size
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            let chunk = bytes.subarray(i, i + chunkSize);
+            binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+    }
+    async handleVoiceInput(data) {
+        // Convert ArrayBuffer to base64 using browser APIs
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify({
                 type: 'voice_input',
-                audio: base64Audio,
+                audio: YpAssistantBase_1.arrayBufferToBase64(data.mono),
                 clientId: this.wsClientId
             }));
         }
@@ -174,20 +203,20 @@ let YpAssistantBase = class YpAssistantBase extends YpChatbotBase {
         }
         return bytes.buffer;
     }
-    toggleVoiceMode() {
+    async toggleVoiceMode() {
         this.voiceEnabled = !this.voiceEnabled;
+        if (!this.voiceEnabled && this.isRecording) {
+            this.stopRecording();
+        }
+        else if (this.voiceEnabled && !this.isRecording) {
+            await this.startRecording();
+        }
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify({
                 type: 'voice_mode',
                 enabled: this.voiceEnabled,
                 clientId: this.wsClientId
             }));
-        }
-        if (!this.voiceEnabled && this.isRecording) {
-            this.stopRecording();
-        }
-        else if (this.voiceEnabled && !this.isRecording) {
-            this.startRecording();
         }
         // Initialize or resume AudioContext when enabling voice mode
         if (this.voiceEnabled && this.audioContext?.state === 'suspended') {
@@ -282,7 +311,7 @@ __decorate([
 __decorate([
     query('#voiceButton')
 ], YpAssistantBase.prototype, "voiceButton", void 0);
-YpAssistantBase = __decorate([
+YpAssistantBase = YpAssistantBase_1 = __decorate([
     customElement("yp-assistant-base")
 ], YpAssistantBase);
 export { YpAssistantBase };
