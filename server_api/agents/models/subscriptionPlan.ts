@@ -10,14 +10,7 @@ export class YpSubscriptionPlan extends Model {
   declare agent_product_id: number; // Add this line
   declare name: string;
   declare description?: string;
-  declare amount: number;
-  declare currency: string;
-  declare billing_cycle: 'monthly' | 'yearly' | 'weekly';
-  declare type: 'free' | 'paid';
-  declare max_runs_per_cycle: number;
-  declare booster_runs: number;
-  declare booster_price: number;
-  declare booster_currency: string;
+  declare configuration: YpSubscriptionPlanConfiguration;
   declare created_at: Date;
   declare updated_at: Date;
 
@@ -42,14 +35,7 @@ YpSubscriptionPlan.init(
     },
     name: { type: DataTypes.STRING(100), allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: true },
-    type: { type: DataTypes.ENUM('free', 'paid'), allowNull: false, defaultValue: 'free' },
-    amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    currency: { type: DataTypes.STRING(10), allowNull: false, defaultValue: 'USD' },
-    billing_cycle: { type: DataTypes.ENUM('monthly', 'yearly', 'weekly'), allowNull: false },
-    max_runs_per_cycle: { type: DataTypes.INTEGER, allowNull: false },
-    booster_runs: { type: DataTypes.INTEGER, allowNull: false },
-    booster_price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    booster_currency: { type: DataTypes.STRING(10), allowNull: false, defaultValue: 'USD' },
+    configuration: { type: DataTypes.JSON, allowNull: false },
     created_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
   },

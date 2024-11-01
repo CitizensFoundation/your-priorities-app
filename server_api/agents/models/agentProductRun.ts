@@ -1,11 +1,12 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 import { YpAgentProduct } from './agentProduct.js';
+import { YpSubscription } from './subscription.js';
 
 export class YpAgentProductRun extends Model {
   declare id: number;
   declare uuid: string;
-  declare agent_product_id: number;
+  declare subscription_id: number;
   declare start_time: Date;
   declare end_time?: Date;
   declare duration?: number;
@@ -15,18 +16,20 @@ export class YpAgentProductRun extends Model {
   declare error_message?: string;
   declare run_type?: string;
   declare metadata?: any;
+  declare workflow: YpWorkflowConfiguration;
   declare created_at: Date;
   declare updated_at: Date;
 
   // Associations
-  declare AgentProduct?: YpAgentProduct;
+  declare Subscription?: YpSubscription;
 }
 
 YpAgentProductRun.init(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull: false },
-    agent_product_id: { type: DataTypes.INTEGER, allowNull: false },
+    subscription_id: { type: DataTypes.INTEGER, allowNull: false },
+    workflow: { type: DataTypes.JSONB, allowNull: true },
     start_time: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     end_time: { type: DataTypes.DATE, allowNull: true },
     duration: { type: DataTypes.INTEGER, allowNull: true },
@@ -48,7 +51,7 @@ YpAgentProductRun.init(
     tableName: 'agent_product_runs',
     indexes: [
       { fields: ['uuid'], unique: true },
-      { fields: ['agent_product_id'] },
+      { fields: ['subscription_id'] },
       { fields: ['status'] },
     ],
     timestamps: true,
@@ -57,7 +60,7 @@ YpAgentProductRun.init(
 );
 
 // Associations
-YpAgentProductRun.belongsTo(YpAgentProduct, {
-  foreignKey: 'agent_product_id',
-  as: 'AgentProduct',
+YpAgentProductRun.belongsTo(YpSubscription, {
+  foreignKey: 'subscription_id',
+  as: 'Subscription',
 });

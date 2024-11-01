@@ -6,8 +6,6 @@ import { YpSubscription } from './subscription.js';
 
 export class YpSubscriptionUser extends Model {
   declare id: number;
-  declare uuid: string;
-  // Other fields...
 
   // Associations
   declare AgentProducts?: YpAgentProduct[];

@@ -1125,6 +1125,20 @@ var updateGroupConfigParameters = function (req, group) {
     "configuration.forceShowDebateCountOnPost",
     truthValueFromBody(req.body.forceShowDebateCountOnPost)
   );
+
+  if (
+    req.body.forAgentId &&
+    req.body.forAgentId != "" &&
+    req.body.inputOutput &&
+    req.body.inputOutput != ""
+  ) {
+    group.set("configuration.agents", {
+      inputConnectorForAgentId:
+        req.body.inputOutput == "input" ? req.body.forAgentId : undefined,
+      outputConnectorForAgentId:
+        req.body.inputOutput == "output" ? req.body.forAgentId : undefined,
+    });
+  }
 };
 
 const getGroupFolder = function (req, done) {
@@ -2838,19 +2852,21 @@ router.get(
 
 //TODO: Refactor this as not to repeate it in controlelrs
 const addAgentFabricUserToSessionIfNeeded = async (req) => {
-  let userId = (req.user && req.user.id) ? req.user.id : null;
+  let userId = req.user && req.user.id ? req.user.id : null;
   if (
     !userId &&
     req.query.agentFabricUserId &&
     process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
     req.headers["x-api-key"] === process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY
   ) {
-    log.info(`Creating group with temp agents fabric group api key ${req.query.agentFabricUserId}`);
+    log.info(
+      `Creating group with temp agents fabric group api key ${req.query.agentFabricUserId}`
+    );
     userId = req.query.agentFabricUserId;
     try {
       const loadedUser = await models.User.findByPk(userId);
       req.user = loadedUser;
-    } catch(error) {
+    } catch (error) {
       log.error(`Could not find user with id ${userId}`, {
         context: "create",
         userId: userId,
@@ -2861,18 +2877,24 @@ const addAgentFabricUserToSessionIfNeeded = async (req) => {
   } else {
     log.info("Creating group with user id: " + userId);
   }
-}
+};
 
-const copyThemeAndLogoFromAgentFabricGroup = async (newGroup, agentFabricGroup) => {
+const copyThemeAndLogoFromAgentFabricGroup = async (
+  newGroup,
+  agentFabricGroup
+) => {
   if (agentFabricGroup.configuration && agentFabricGroup.configuration.theme) {
     newGroup.configuration.theme = { ...agentFabricGroup.configuration.theme };
     await newGroup.save();
   }
 
-  if (agentFabricGroup.GroupLogoImages && agentFabricGroup.GroupLogoImages.length > 0) {
-    log.info("Copying logo images from agent fabric group")
+  if (
+    agentFabricGroup.GroupLogoImages &&
+    agentFabricGroup.GroupLogoImages.length > 0
+  ) {
+    log.info("Copying logo images from agent fabric group");
     for (const logoImage of agentFabricGroup.GroupLogoImages) {
-      log.info(`Copying logo image ${logoImage.id} from agent fabric group`)
+      log.info(`Copying logo image ${logoImage.id} from agent fabric group`);
       await newGroup.addGroupLogoImage(logoImage);
     }
   }
@@ -2884,7 +2906,7 @@ const createGroup = async (req, res) => {
   if (!req.user) {
     try {
       await addAgentFabricUserToSessionIfNeeded(req);
-    } catch(error) {
+    } catch (error) {
       log.error("Could not add agent fabric user to session", {
         context: "create",
         userId: req.user.id,
@@ -2893,7 +2915,6 @@ const createGroup = async (req, res) => {
       res.sendStatus(500);
       return;
     }
-
   }
 
   var group = models.Group.build({
@@ -2937,16 +2958,21 @@ const createGroup = async (req, res) => {
 
       if (req.query.agentFabricGroupId) {
         try {
-          const agentFabricGroup = await models.Group.findByPk(req.query.agentFabricGroupId, {
-            include: [{
-              model: models.Image,
-              as: 'GroupLogoImages'
-            }]
-          });
+          const agentFabricGroup = await models.Group.findByPk(
+            req.query.agentFabricGroupId,
+            {
+              include: [
+                {
+                  model: models.Image,
+                  as: "GroupLogoImages",
+                },
+              ],
+            }
+          );
           if (agentFabricGroup) {
             await copyThemeAndLogoFromAgentFabricGroup(group, agentFabricGroup);
           }
-        } catch(error) {
+        } catch (error) {
           log.error("Error copying theme and logo from agent fabric group", {
             context: "create",
             newGroupId: group.id,
@@ -3126,7 +3152,13 @@ router.put("/:id", auth.can("edit group"), function (req, res) {
                           context: "create",
                           userId: req.user.id,
                         });
-                        sendGroupOrError(res, group, "setupImages", req.user, error);
+                        sendGroupOrError(
+                          res,
+                          group,
+                          "setupImages",
+                          req.user,
+                          error
+                        );
                       })
                       .catch((error) => {
                         sendGroupOrError(
@@ -3144,7 +3176,7 @@ router.put("/:id", auth.can("edit group"), function (req, res) {
                         });
                       });
                   }
-                )
+                );
               } else {
                 sendGroupOrError(res, group, "setupImages", req.user, error);
               }

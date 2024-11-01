@@ -1,5 +1,5 @@
-import { YpBaseAssistant } from "./baseAssistant.js";
-export class YpAgentAssistant extends YpBaseAssistant {
+import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
+export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     constructor() {
         super(...arguments);
         this.availableAgents = [];

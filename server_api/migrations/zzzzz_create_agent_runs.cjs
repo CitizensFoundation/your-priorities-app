@@ -69,9 +69,9 @@ module.exports = {
       },
       group_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: "groups", // Assuming 'groups' table exists
+          model: "groups",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -136,11 +136,6 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
       },
-      type: {
-        type: Sequelize.STRING(25),
-        allowNull: false,
-        defaultValue: "free",
-      },
       agent_product_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -158,35 +153,9 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      amount: {
-        type: Sequelize.DECIMAL(10, 2),
+      configuration: {
+        type: Sequelize.JSONB,
         allowNull: false,
-      },
-      currency: {
-        type: Sequelize.STRING(10),
-        allowNull: false,
-        defaultValue: "USD",
-      },
-      billing_cycle: {
-        type: Sequelize.ENUM("monthly", "yearly", "weekly"),
-        allowNull: false,
-      },
-      max_runs_per_cycle: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      booster_runs: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      booster_price: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      booster_currency: {
-        type: Sequelize.STRING(10),
-        allowNull: false,
-        defaultValue: "USD",
       },
       created_at: {
         type: Sequelize.DATE,
@@ -207,7 +176,6 @@ module.exports = {
 
     await queryInterface.addIndex("subscription_plans", ["name"]);
 
-    await queryInterface.addIndex("subscription_plans", ["type"]);
 
     // Create the 'subscriptions' table
     await queryInterface.createTable("subscriptions", {
@@ -225,7 +193,16 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "users", // Assuming 'users' table exists
+          model: "users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      domain_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "domains",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -238,6 +215,10 @@ module.exports = {
           key: "id",
         },
         onDelete: "CASCADE",
+      },
+      configuration: {
+        type: Sequelize.JSONB,
+        allowNull: true,
       },
       plan_id: {
         type: Sequelize.INTEGER,

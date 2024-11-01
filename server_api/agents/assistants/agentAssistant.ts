@@ -3,8 +3,9 @@ import { ToolExecutionResult } from "./baseAssistant.js";
 
 import { YpBaseAssistant } from "./baseAssistant.js";
 import { ChatbotMode } from "./baseAssistant.js";
+import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
 
-export class YpAgentAssistant extends YpBaseAssistant {
+export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private currentAgentId?: number;
   private currentAgent?: YpAgentAssistantRunningAgent;
   private currentWorkflow?: YpWorkflowConfiguration;
@@ -24,7 +25,7 @@ export class YpAgentAssistant extends YpBaseAssistant {
     return `<currentAgent>${JSON.stringify(this.currentAgent, null, 2)}</currentAgent>`;
   }
 
-  protected defineAvailableModes(): ChatbotMode[] {
+  defineAvailableModes(): ChatbotMode[] {
     return [
       {
         name: "agent_selection",

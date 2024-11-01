@@ -14,7 +14,7 @@ export class YpAgentProduct extends Model {
   declare user_id: number;
   declare group_id: number;
   declare domain_id: number;
-  declare configuration?: YpAgentProductConfiguration;
+  declare configuration: YpAgentProductConfiguration;
   declare status?: YpAgentProductStatus;
   declare created_at: Date;
   declare updated_at: Date;

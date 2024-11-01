@@ -222,7 +222,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Abstract method that subclasses must implement to define their modes
    */
-  protected abstract defineAvailableModes(): ChatbotMode[];
+  abstract defineAvailableModes(): ChatbotMode[];
 
   /**
    * Initialize modes from subclass definitions

@@ -1,10 +1,10 @@
 "use strict";
-var models = require('../models/index.cjs');
-var async = require('async');
-const { cloneTranslationForGroup } = require("../active-citizen/utils/translation_cloning.cjs");
-const { cloneTranslationForCommunity } = require("../active-citizen/utils/translation_cloning.cjs");
-const { cloneTranslationForPoint } = require("../active-citizen/utils/translation_cloning.cjs");
-const { cloneTranslationForPost } = require("../active-citizen/utils/translation_cloning.cjs");
+var models = require("../models/index.cjs");
+var async = require("async");
+const { cloneTranslationForGroup, } = require("../active-citizen/utils/translation_cloning.cjs");
+const { cloneTranslationForCommunity, } = require("../active-citizen/utils/translation_cloning.cjs");
+const { cloneTranslationForPoint, } = require("../active-citizen/utils/translation_cloning.cjs");
+const { cloneTranslationForPost, } = require("../active-citizen/utils/translation_cloning.cjs");
 const { recountCommunity } = require("./recount_utils.cjs");
 const clonePagesForCollection = (model, modelRelField, inCollection, outCollection, done) => {
     const oldToNewHash = {};
@@ -13,30 +13,37 @@ const clonePagesForCollection = (model, modelRelField, inCollection, outCollecti
             {
                 model: model,
                 where: {
-                    id: inCollection.id
-                }
-            }
-        ]
-    }).then(pages => {
+                    id: inCollection.id,
+                },
+            },
+        ],
+    })
+        .then((pages) => {
         async.forEach(pages, (oldPage, forEachCallback) => {
             const pageJson = JSON.parse(JSON.stringify(oldPage.toJSON()));
-            delete pageJson['id'];
+            delete pageJson["id"];
             pageJson[modelRelField] = outCollection.id;
             const newPage = models.Page.build(pageJson);
-            newPage.save().then(() => {
+            newPage
+                .save()
+                .then(() => {
                 oldToNewHash[oldPage.id] = newPage.id;
                 forEachCallback();
-            }).catch(error => {
+            })
+                .catch((error) => {
                 forEachCallback(error);
             });
-        }, error => {
+        }, (error) => {
             if (inCollection.configuration &&
                 inCollection.configuration.welcomePageId &&
                 inCollection.configuration.welcomePageId !== "") {
-                outCollection.set('configuration.welcomePageId', oldToNewHash[parseInt(inCollection.configuration.welcomePageId)]);
-                outCollection.save().then(() => {
+                outCollection.set("configuration.welcomePageId", oldToNewHash[parseInt(inCollection.configuration.welcomePageId)]);
+                outCollection
+                    .save()
+                    .then(() => {
                     done();
-                }).catch(error => {
+                })
+                    .catch((error) => {
                     done(error);
                 });
             }
@@ -44,7 +51,8 @@ const clonePagesForCollection = (model, modelRelField, inCollection, outCollecti
                 done(error);
             }
         });
-    }).catch(error => {
+    })
+        .catch((error) => {
         done(error);
     });
 };
@@ -64,7 +72,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
         function (callback) {
             models.Group.findOne({
                 where: {
-                    id: toGroupId
+                    id: toGroupId,
                 },
                 include: [
                     {
@@ -73,52 +81,54 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                         include: [
                             {
                                 model: models.Domain,
-                                required: true
-                            }
-                        ]
-                    }
-                ]
-            }).then(function (groupIn) {
+                                required: true,
+                            },
+                        ],
+                    },
+                ],
+            })
+                .then(function (groupIn) {
                 toGroup = groupIn;
                 toCommunityId = toGroup.Community.id;
                 toDomainId = toGroup.Community.Domain.id;
                 toDomain = toGroup.Community.Domain;
                 callback();
-            }).catch(function (error) {
+            })
+                .catch(function (error) {
                 callback(error);
             });
         },
         function (callback) {
             models.Post.findOne({
                 where: {
-                    id: fromPostId
+                    id: fromPostId,
                 },
                 include: [
                     {
                         model: models.Image,
-                        as: 'PostHeaderImages',
-                        attributes: ['id'],
-                        required: false
+                        as: "PostHeaderImages",
+                        attributes: ["id"],
+                        required: false,
                     },
                     {
                         model: models.Video,
                         as: "PostVideos",
-                        attributes: ['id'],
-                        required: false
+                        attributes: ["id"],
+                        required: false,
                     },
                     {
                         model: models.Audio,
                         as: "PostAudios",
-                        attributes: ['id'],
-                        required: false
+                        attributes: ["id"],
+                        required: false,
                     },
                     {
                         model: models.Image,
-                        as: 'PostUserImages',
-                        attributes: ['id'],
-                        required: false
-                    }
-                ]
+                        as: "PostUserImages",
+                        attributes: ["id"],
+                        required: false,
+                    },
+                ],
             }).then(function (postIn) {
                 oldPost = postIn;
                 if (!postIn) {
@@ -127,23 +137,25 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                 }
                 else {
                     var postJson = JSON.parse(JSON.stringify(postIn.toJSON()));
-                    delete postJson['id'];
+                    delete postJson["id"];
                     newPost = models.Post.build(postJson);
-                    newPost.set('group_id', toGroup.id);
+                    newPost.set("group_id", toGroup.id);
                     if (options && !options.copyPoints) {
-                        newPost.set('counter_points', 0);
+                        newPost.set("counter_points", 0);
                     }
                     if (options && options.toCategoryId) {
-                        newPost.set('category_id', options.toCategoryId);
+                        newPost.set("category_id", options.toCategoryId);
                     }
                     if (options && options.skipUsers) {
-                        newPost.set('counter_users', 0);
+                        newPost.set("counter_users", 0);
                     }
                     if (options && options.resetEndorsementCounters) {
-                        newPost.set('counter_endorsements_up', 0);
-                        newPost.set('counter_endorsements_down', 0);
+                        newPost.set("counter_endorsements_up", 0);
+                        newPost.set("counter_endorsements_down", 0);
                     }
-                    newPost.save().then(function () {
+                    newPost
+                        .save()
+                        .then(function () {
                         async.series([
                             (postSeriesCallback) => {
                                 cloneTranslationForPost(oldPost, newPost, postSeriesCallback);
@@ -151,12 +163,12 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                             (postSeriesCallback) => {
                                 if (options && options.createCopyActivities) {
                                     models.AcActivity.createActivity({
-                                        type: 'activity.post.copied',
+                                        type: "activity.post.copied",
                                         userId: newPost.user_id,
                                         domainId: toDomain.id,
                                         groupId: newPost.group_id,
                                         postId: newPost.id,
-                                        access: models.AcActivity.ACCESS_PRIVATE
+                                        access: models.AcActivity.ACCESS_PRIVATE,
                                     }, function (error) {
                                         postSeriesCallback(error);
                                     });
@@ -168,9 +180,12 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                             (postSeriesCallback) => {
                                 if (oldPost.PostVideos && oldPost.PostVideos.length > 0) {
                                     async.eachSeries(oldPost.PostVideos, function (media, mediaCallback) {
-                                        newPost.addPostVideo(media).then(function () {
+                                        newPost
+                                            .addPostVideo(media)
+                                            .then(function () {
                                             mediaCallback();
-                                        }).catch((error) => {
+                                        })
+                                            .catch((error) => {
                                             mediaCallback(error);
                                         });
                                     }, function (error) {
@@ -184,9 +199,12 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                             (postSeriesCallback) => {
                                 if (oldPost.PostAudios && oldPost.PostAudios.length > 0) {
                                     async.eachSeries(oldPost.PostAudios, function (media, mediaCallback) {
-                                        newPost.addPostAudio(media).then(function () {
+                                        newPost
+                                            .addPostAudio(media)
+                                            .then(function () {
                                             mediaCallback();
-                                        }).catch((error) => {
+                                        })
+                                            .catch((error) => {
                                             mediaCallback(error);
                                         });
                                     }, function (error) {
@@ -201,24 +219,28 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 if (!options.skipEndorsementQualitiesAndRatings) {
                                     models.Endorsement.findAll({
                                         where: {
-                                            post_id: oldPost.id
-                                        }
+                                            post_id: oldPost.id,
+                                        },
                                     }).then(function (endorsements) {
                                         async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
                                             var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
                                             delete endorsementJson.id;
                                             var endorsementModel = models.Endorsement.build(endorsementJson);
-                                            endorsementModel.set('post_id', newPost.id);
-                                            endorsementModel.set('PostId', newPost.id);
-                                            endorsementModel.save().then(function () {
+                                            endorsementModel.set("post_id", newPost.id);
+                                            endorsementModel.set("PostId", newPost.id);
+                                            endorsementModel
+                                                .save()
+                                                .then(function () {
                                                 if (options && options.createCopyActivities) {
                                                     models.AcActivity.createActivity({
-                                                        type: endorsementModel.value > 0 ? 'activity.post.endorsement.copied' : 'activity.post.opposition.copied',
+                                                        type: endorsementModel.value > 0
+                                                            ? "activity.post.endorsement.copied"
+                                                            : "activity.post.opposition.copied",
                                                         userId: endorsementModel.user_id,
                                                         domainId: toDomain.id,
                                                         groupId: newPost.group_id,
                                                         postId: newPost.id,
-                                                        access: models.AcActivity.ACCESS_PRIVATE
+                                                        access: models.AcActivity.ACCESS_PRIVATE,
                                                     }, function (error) {
                                                         endorsementCallback(error);
                                                     });
@@ -226,7 +248,8 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                                 else {
                                                     endorsementCallback();
                                                 }
-                                            }).catch((error) => {
+                                            })
+                                                .catch((error) => {
                                                 endorsementCallback(error);
                                             });
                                         }, function (error) {
@@ -242,24 +265,26 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 if (!options.skipEndorsementQualitiesAndRatings) {
                                     models.Rating.findAll({
                                         where: {
-                                            post_id: oldPost.id
-                                        }
+                                            post_id: oldPost.id,
+                                        },
                                     }).then(function (ratings) {
                                         async.eachSeries(ratings, function (rating, ratingCallback) {
                                             var ratingJson = JSON.parse(JSON.stringify(rating.toJSON()));
                                             delete rating.id;
                                             var ratingModel = models.Endorsement.build(ratingJson);
-                                            ratingModel.set('post_id', newPost.id);
-                                            ratingModel.set('PostId', newPost.id);
-                                            ratingModel.save().then(function () {
+                                            ratingModel.set("post_id", newPost.id);
+                                            ratingModel.set("PostId", newPost.id);
+                                            ratingModel
+                                                .save()
+                                                .then(function () {
                                                 if (options && options.createCopyActivities) {
                                                     models.AcActivity.createActivity({
-                                                        type: 'activity.post.rating.copied',
+                                                        type: "activity.post.rating.copied",
                                                         userId: ratingModel.user_id,
                                                         domainId: toDomain.id,
                                                         groupId: newPost.group_id,
                                                         postId: newPost.id,
-                                                        access: models.AcActivity.ACCESS_PRIVATE
+                                                        access: models.AcActivity.ACCESS_PRIVATE,
                                                     }, function (error) {
                                                         ratingCallback(error);
                                                     });
@@ -267,7 +292,8 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                                 else {
                                                     ratingCallback();
                                                 }
-                                            }).catch((error) => {
+                                            })
+                                                .catch((error) => {
                                                 ratingCallback(error);
                                             });
                                         }, function (error) {
@@ -282,18 +308,21 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                             function (postSeriesCallback) {
                                 models.PostRevision.findAll({
                                     where: {
-                                        post_id: oldPost.id
-                                    }
+                                        post_id: oldPost.id,
+                                    },
                                 }).then(function (postRevisions) {
                                     async.eachSeries(postRevisions, function (postRevision, postRevisionCallback) {
                                         var postRevisionJson = JSON.parse(JSON.stringify(postRevision.toJSON()));
                                         delete postRevisionJson.id;
                                         var newPostRevision = models.PostRevision.build(postRevisionJson);
-                                        newPostRevision.set('post_id', newPost.id);
-                                        newPostRevision.set('PostId', newPost.id);
-                                        newPostRevision.save().then(function () {
+                                        newPostRevision.set("post_id", newPost.id);
+                                        newPostRevision.set("PostId", newPost.id);
+                                        newPostRevision
+                                            .save()
+                                            .then(function () {
                                             postRevisionCallback();
-                                        }).catch((error) => {
+                                        })
+                                            .catch((error) => {
                                             postRevisionCallback(error);
                                         });
                                     }, function (error) {
@@ -302,11 +331,15 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 });
                             },
                             function (postSeriesCallback) {
-                                if (oldPost.PostUserImages && oldPost.PostUserImages.length > 0) {
+                                if (oldPost.PostUserImages &&
+                                    oldPost.PostUserImages.length > 0) {
                                     async.eachSeries(oldPost.PostUserImages, function (userImage, userImageCallback) {
-                                        newPost.addPostUserImage(userImage).then(function () {
+                                        newPost
+                                            .addPostUserImage(userImage)
+                                            .then(function () {
                                             userImageCallback();
-                                        }).catch((error) => {
+                                        })
+                                            .catch((error) => {
                                             userImageCallback(error);
                                         });
                                     }, function (error) {
@@ -318,11 +351,15 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 }
                             },
                             function (postSeriesCallback) {
-                                if (oldPost.PostHeaderImages && oldPost.PostHeaderImages.length > 0) {
+                                if (oldPost.PostHeaderImages &&
+                                    oldPost.PostHeaderImages.length > 0) {
                                     async.eachSeries(oldPost.PostHeaderImages, function (userImage, imageCallback) {
-                                        newPost.addPostHeaderImage(userImage).then(function () {
+                                        newPost
+                                            .addPostHeaderImage(userImage)
+                                            .then(function () {
                                             imageCallback();
-                                        }).catch((error) => {
+                                        })
+                                            .catch((error) => {
                                             imageCallback(error);
                                         });
                                     }, function (error) {
@@ -332,12 +369,13 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 else {
                                     postSeriesCallback();
                                 }
-                            }
+                            },
                         ], function (error) {
                             console.log("Have copied post to group id");
                             callback(error);
                         });
-                    }).catch((error) => {
+                    })
+                        .catch((error) => {
                         callback(error);
                     });
                 }
@@ -347,33 +385,33 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             if (options && options.copyPoints) {
                 models.Point.findAll({
                     where: {
-                        post_id: fromPostId
+                        post_id: fromPostId,
                     },
                     include: [
                         {
                             model: models.Video,
                             as: "PointVideos",
-                            attributes: ['id'],
-                            required: false
+                            attributes: ["id"],
+                            required: false,
                         },
                         {
                             model: models.Audio,
                             as: "PointAudios",
-                            attributes: ['id'],
-                            required: false
-                        }
-                    ]
+                            attributes: ["id"],
+                            required: false,
+                        },
+                    ],
                 }).then(function (pointsIn) {
                     async.eachSeries(pointsIn, function (point, innerSeriesCallback) {
                         var pointJson = JSON.parse(JSON.stringify(point.toJSON()));
                         var currentOldPoint = point;
-                        delete pointJson['id'];
+                        delete pointJson["id"];
                         var newPoint = models.Point.build(pointJson);
-                        newPoint.set('group_id', toGroup.id);
-                        newPoint.set('community_id', toCommunityId);
-                        newPoint.set('domain_id', toDomainId);
-                        newPoint.set('post_id', newPost.id);
-                        newPoint.set('PostId', newPost.id);
+                        newPoint.set("group_id", toGroup.id);
+                        newPoint.set("community_id", toCommunityId);
+                        newPoint.set("domain_id", toDomainId);
+                        newPoint.set("post_id", newPost.id);
+                        newPoint.set("PostId", newPost.id);
                         newPoint.save().then(function () {
                             async.series([
                                 (pointSeriesCallback) => {
@@ -383,13 +421,13 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 (pointSeriesCallback) => {
                                     if (options && options.createCopyActivities) {
                                         models.AcActivity.createActivity({
-                                            type: 'activity.point.copied',
+                                            type: "activity.point.copied",
                                             userId: newPost.user_id,
                                             domainId: toDomain.id,
                                             groupId: newPost.group_id,
                                             postId: newPost.id,
                                             pointId: newPoint.id,
-                                            access: models.AcActivity.ACCESS_PRIVATE
+                                            access: models.AcActivity.ACCESS_PRIVATE,
                                         }, function (error) {
                                             pointSeriesCallback(error);
                                         });
@@ -402,24 +440,29 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                     if (!options.skipEndorsementQualitiesAndRatings) {
                                         models.PointQuality.findAll({
                                             where: {
-                                                point_id: currentOldPoint.id
-                                            }
+                                                point_id: currentOldPoint.id,
+                                            },
                                         }).then(function (pointQualities) {
                                             async.eachSeries(pointQualities, function (pointQuality, pointQualityCallback) {
                                                 var pointQualityJson = JSON.parse(JSON.stringify(pointQuality.toJSON()));
                                                 delete pointQualityJson.id;
                                                 var newPointQuality = models.PointQuality.build(pointQualityJson);
-                                                newPointQuality.set('point_id', newPoint.id);
-                                                newPointQuality.save().then(function () {
-                                                    if (options && options.createCopyActivities) {
+                                                newPointQuality.set("point_id", newPoint.id);
+                                                newPointQuality
+                                                    .save()
+                                                    .then(function () {
+                                                    if (options &&
+                                                        options.createCopyActivities) {
                                                         models.AcActivity.createActivity({
-                                                            type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' : 'activity.point.unhelpful.copied',
+                                                            type: newPointQuality.value > 0
+                                                                ? "activity.point.helpful.copied"
+                                                                : "activity.point.unhelpful.copied",
                                                             userId: newPointQuality.user_id,
                                                             domainId: toDomain.id,
                                                             groupId: newPost.group_id,
                                                             postId: newPost.id,
                                                             pointId: newPoint.id,
-                                                            access: models.AcActivity.ACCESS_PRIVATE
+                                                            access: models.AcActivity.ACCESS_PRIVATE,
                                                         }, function (error) {
                                                             pointQualityCallback(error);
                                                         });
@@ -427,7 +470,8 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                                     else {
                                                         pointQualityCallback();
                                                     }
-                                                }).catch((error) => {
+                                                })
+                                                    .catch((error) => {
                                                     pointQualityCallback(error);
                                                 });
                                             }, function (error) {
@@ -442,17 +486,20 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 function (pointSeriesCallback) {
                                     models.PointRevision.findAll({
                                         where: {
-                                            point_id: currentOldPoint.id
-                                        }
+                                            point_id: currentOldPoint.id,
+                                        },
                                     }).then(function (pointRevisions) {
                                         async.eachSeries(pointRevisions, function (pointRevision, pointRevisionCallback) {
                                             var pointRevisionJson = JSON.parse(JSON.stringify(pointRevision.toJSON()));
                                             delete pointRevisionJson.id;
                                             var newPointRevision = models.PointRevision.build(pointRevisionJson);
-                                            newPointRevision.set('point_id', newPoint.id);
-                                            newPointRevision.save().then(function () {
+                                            newPointRevision.set("point_id", newPoint.id);
+                                            newPointRevision
+                                                .save()
+                                                .then(function () {
                                                 pointRevisionCallback();
-                                            }).catch((error) => {
+                                            })
+                                                .catch((error) => {
                                                 pointRevisionCallback(error);
                                             });
                                         }, function (error) {
@@ -465,22 +512,26 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                         models.AcActivity.findAll({
                                             where: {
                                                 point_id: currentOldPoint.id,
-                                                post_id: { $not: null }
-                                            }
+                                                post_id: { $not: null },
+                                            },
                                         }).then(function (activities) {
                                             async.eachSeries(activities, function (activity, activitesSeriesCallback) {
                                                 skipPointActivitiesIdsForPostCopy.push(activity.id);
                                                 var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
                                                 delete activityJson.id;
                                                 var newActivity = models.AcActivity.build(activityJson);
-                                                newActivity.set('group_id', toGroup.id);
-                                                newActivity.set('community_id', toCommunityId);
-                                                newActivity.set('domain_id', toDomainId);
-                                                newActivity.set('point_id', newPoint.id);
-                                                newActivity.save().then(function (results) {
-                                                    console.log("Have changed group and all activity: " + newActivity.id);
+                                                newActivity.set("group_id", toGroup.id);
+                                                newActivity.set("community_id", toCommunityId);
+                                                newActivity.set("domain_id", toDomainId);
+                                                newActivity.set("point_id", newPoint.id);
+                                                newActivity
+                                                    .save()
+                                                    .then(function (results) {
+                                                    console.log("Have changed group and all activity: " +
+                                                        newActivity.id);
                                                     activitesSeriesCallback();
-                                                }).catch((error) => {
+                                                })
+                                                    .catch((error) => {
                                                     activitesSeriesCallback(error);
                                                 });
                                             }, function (error) {
@@ -491,7 +542,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                     else {
                                         pointSeriesCallback();
                                     }
-                                }
+                                },
                             ], function (error) {
                                 innerSeriesCallback(error);
                             });
@@ -511,35 +562,40 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                 models.AcActivity.findAll({
                     where: {
                         post_id: oldPost.id,
-                        point_id: { $is: null }
-                    }
-                }).then(function (activities) {
+                        point_id: { $is: null },
+                    },
+                })
+                    .then(function (activities) {
                     async.eachSeries(activities, function (activity, innerSeriesCallback) {
                         var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
                         delete activityJson.id;
                         var newActivity = models.AcActivity.build(activityJson);
-                        newActivity.set('group_id', toGroup.id);
-                        newActivity.set('community_id', toCommunityId);
-                        newActivity.set('domain_id', toDomainId);
-                        newActivity.set('post_id', newPost.id);
-                        newActivity.set('PostId', newPost.id);
-                        newActivity.save().then(function (results) {
+                        newActivity.set("group_id", toGroup.id);
+                        newActivity.set("community_id", toCommunityId);
+                        newActivity.set("domain_id", toDomainId);
+                        newActivity.set("post_id", newPost.id);
+                        newActivity.set("PostId", newPost.id);
+                        newActivity
+                            .save()
+                            .then(function (results) {
                             console.log("Have changed group and all activity: " + newActivity.id);
                             innerSeriesCallback();
-                        }).catch((error) => {
+                        })
+                            .catch((error) => {
                             innerSeriesCallback(error);
                         });
                     }, function (error) {
                         callback(error);
                     });
-                }).catch((error) => {
+                })
+                    .catch((error) => {
                     callback(error);
                 });
             }
             else {
                 callback();
             }
-        }
+        },
     ], function (error) {
         console.log("Done copying post id " + fromPostId);
         if (error)
@@ -558,13 +614,13 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                 where: {
                     id: toCommunityIn.id,
                 },
-                attributes: ['id'],
+                attributes: ["id"],
                 include: [
                     {
                         model: models.Domain,
-                        attributes: ['id', 'theme_id', 'name']
-                    }
-                ]
+                        attributes: ["id", "theme_id", "name"],
+                    },
+                ],
             }).then((communityIn) => {
                 toCommunity = communityIn;
                 toDomain = communityIn.Domain.id;
@@ -576,13 +632,20 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
             var groupIncludes = [
                 {
                     model: models.Community,
-                    attributes: ['id', 'theme_id', 'name', 'access', 'google_analytics_code', 'configuration'],
+                    attributes: [
+                        "id",
+                        "theme_id",
+                        "name",
+                        "access",
+                        "google_analytics_code",
+                        "configuration",
+                    ],
                     include: [
                         {
                             model: models.Domain,
-                            attributes: ['id', 'theme_id', 'name']
-                        }
-                    ]
+                            attributes: ["id", "theme_id", "name"],
+                        },
+                    ],
                 },
                 {
                     model: models.Category,
@@ -591,66 +654,67 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                         {
                             model: models.Image,
                             required: false,
-                            as: 'CategoryIconImages',
-                            attributes: ['id'],
-                        }
-                    ]
+                            as: "CategoryIconImages",
+                            attributes: ["id"],
+                        },
+                    ],
                 },
                 {
                     model: models.User,
-                    attributes: ['id'],
-                    as: 'GroupAdmins',
-                    required: false
+                    attributes: ["id"],
+                    as: "GroupAdmins",
+                    required: false,
                 },
                 {
                     model: models.Image,
-                    as: 'GroupLogoImages',
+                    as: "GroupLogoImages",
                     attributes: models.Image.defaultAttributesPublic,
-                    required: false
+                    required: false,
                 },
                 {
                     model: models.Video,
-                    as: 'GroupLogoVideos',
-                    attributes: ['id', 'formats', 'viewable', 'public_meta'],
-                    required: false
+                    as: "GroupLogoVideos",
+                    attributes: ["id", "formats", "viewable", "public_meta"],
+                    required: false,
                 },
                 {
                     model: models.Image,
-                    as: 'GroupHeaderImages',
+                    as: "GroupHeaderImages",
                     attributes: models.Image.defaultAttributesPublic,
-                    required: false
-                }
+                    required: false,
+                },
             ];
             if (!options.skipUsers) {
                 groupIncludes.push({
                     model: models.User,
-                    attributes: ['id'],
-                    as: 'GroupUsers',
-                    required: false
+                    attributes: ["id"],
+                    as: "GroupUsers",
+                    required: false,
                 });
             }
             models.Group.findOne({
                 where: {
-                    id: fromGroupId
+                    id: fromGroupId,
                 },
-                include: groupIncludes
-            }).then(function (groupIn) {
+                include: groupIncludes,
+            })
+                .then(function (groupIn) {
                 oldGroup = groupIn;
                 var groupJson = JSON.parse(JSON.stringify(oldGroup.toJSON()));
-                delete groupJson['id'];
+                delete groupJson["id"];
                 newGroup = models.Group.build(groupJson);
-                newGroup.set('community_id', toCommunity.id);
+                newGroup.set("community_id", toCommunity.id);
                 if (options.setInGroupFolderId) {
-                    newGroup.set('in_group_folder_id', options.setInGroupFolderId);
+                    newGroup.set("in_group_folder_id", options.setInGroupFolderId);
                 }
                 if (options.skipUsers) {
-                    newGroup.set('counter_users', 0);
+                    newGroup.set("counter_users", 0);
                 }
                 if (!options.copyPoints) {
-                    newGroup.set('counter_points', 0);
+                    newGroup.set("counter_points", 0);
                 }
                 if (!options.copyPosts) {
-                    newGroup.set('counter_posts', 0);
+                    newGroup.set("counter_posts", 0);
                 }
                 newGroup.save().then(function () {
                     async.series([
@@ -664,16 +728,21 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             if (oldGroup.is_group_folder) {
                                 models.Group.findAll({
                                     where: {
-                                        in_group_folder_id: oldGroup.id
+                                        in_group_folder_id: oldGroup.id,
                                     },
-                                    attributes: ['id', 'in_group_folder_id']
-                                }).then(groupsInFolder => {
+                                    attributes: ["id", "in_group_folder_id"],
+                                })
+                                    .then((groupsInFolder) => {
                                     async.eachSeries(groupsInFolder, function (groupInFolder, groupInFolderCallback) {
-                                        copyGroup(groupInFolder.id, toCommunity, toDomainId, { ...JSON.parse(JSON.stringify(options)), setInGroupFolderId: newGroup.id }, groupInFolderCallback);
-                                    }, error => {
+                                        copyGroup(groupInFolder.id, toCommunity, toDomainId, {
+                                            ...JSON.parse(JSON.stringify(options)),
+                                            setInGroupFolderId: newGroup.id,
+                                        }, groupInFolderCallback);
+                                    }, (error) => {
                                         groupSeriesCallback(error);
                                     });
-                                }).catch(error => {
+                                })
+                                    .catch((error) => {
                                     groupSeriesCallback(error);
                                 });
                             }
@@ -682,13 +751,15 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             }
                         },
                         (groupSeriesCallback) => {
-                            if (options.deepCopyLinks && oldGroup.configuration && oldGroup.configuration.actAsLinkToCommunityId) {
+                            if (options.deepCopyLinks &&
+                                oldGroup.configuration &&
+                                oldGroup.configuration.actAsLinkToCommunityId) {
                                 copyCommunity(oldGroup.configuration.actAsLinkToCommunityId, toDomainId, options, { id: toCommunityIn.id, name: toCommunityIn.name }, (error, newCommunity) => {
                                     if (error) {
                                         groupSeriesCallback(error);
                                     }
                                     else {
-                                        newGroup.set('configuration.actAsLinkToCommunityId', newCommunity.id);
+                                        newGroup.set("configuration.actAsLinkToCommunityId", newCommunity.id);
                                         newGroup.save().then(function () {
                                             groupSeriesCallback();
                                         });
@@ -700,11 +771,15 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             }
                         },
                         (groupSeriesCallback) => {
-                            if (oldGroup.GroupLogoImages && oldGroup.GroupLogoImages.length > 0) {
+                            if (oldGroup.GroupLogoImages &&
+                                oldGroup.GroupLogoImages.length > 0) {
                                 async.eachSeries(oldGroup.GroupLogoImages, function (image, mediaCallback) {
-                                    newGroup.addGroupLogoImage(image).then(function () {
+                                    newGroup
+                                        .addGroupLogoImage(image)
+                                        .then(function () {
                                         mediaCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         mediaCallback(error);
                                     });
                                 }, function (error) {
@@ -716,11 +791,15 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             }
                         },
                         (groupSeriesCallback) => {
-                            if (oldGroup.GroupHeaderImages && oldGroup.GroupHeaderImages.length > 0) {
+                            if (oldGroup.GroupHeaderImages &&
+                                oldGroup.GroupHeaderImages.length > 0) {
                                 async.eachSeries(oldGroup.GroupHeaderImages, function (image, mediaCallback) {
-                                    newGroup.addGroupHeaderImage(image).then(function () {
+                                    newGroup
+                                        .addGroupHeaderImage(image)
+                                        .then(function () {
                                         mediaCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         mediaCallback(error);
                                     });
                                 }, function (error) {
@@ -732,11 +811,15 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             }
                         },
                         (groupSeriesCallback) => {
-                            if (oldGroup.GroupLogoVideos && oldGroup.GroupLogoVideos.length > 0) {
+                            if (oldGroup.GroupLogoVideos &&
+                                oldGroup.GroupLogoVideos.length > 0) {
                                 async.eachSeries(oldGroup.GroupLogoVideos, function (image, mediaCallback) {
-                                    newGroup.addGroupLogoVideo(image).then(function () {
+                                    newGroup
+                                        .addGroupLogoVideo(image)
+                                        .then(function () {
                                         mediaCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         mediaCallback(error);
                                     });
                                 }, function (error) {
@@ -748,11 +831,15 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             }
                         },
                         (groupSeriesCallback) => {
-                            if (oldGroup.GroupAdmins && oldGroup.GroupAdmins.length > 0) {
+                            if (oldGroup.GroupAdmins &&
+                                oldGroup.GroupAdmins.length > 0) {
                                 async.eachSeries(oldGroup.GroupAdmins, function (admin, adminCallback) {
-                                    newGroup.addGroupAdmin(admin).then(function () {
+                                    newGroup
+                                        .addGroupAdmin(admin)
+                                        .then(function () {
                                         adminCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         adminCallback(error);
                                     });
                                 }, function (error) {
@@ -766,9 +853,12 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                         (groupSeriesCallback) => {
                             if (oldGroup.GroupUsers && oldGroup.GroupUsers.length > 0) {
                                 async.eachSeries(oldGroup.GroupUsers, function (user, userCallback) {
-                                    newGroup.addGroupUser(user).then(function () {
+                                    newGroup
+                                        .addGroupUser(user)
+                                        .then(function () {
                                         userCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         userCallback(error);
                                     });
                                 }, function (error) {
@@ -785,13 +875,19 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                                     const newCategoryJson = JSON.parse(JSON.stringify(category.toJSON()));
                                     delete newCategoryJson.id;
                                     const newCategoryModel = models.Category.build(newCategoryJson);
-                                    newCategoryModel.set('group_id', newGroup.id);
-                                    newCategoryModel.save().then(() => {
-                                        if (category.CategoryIconImages && category.CategoryIconImages.length > 0) {
+                                    newCategoryModel.set("group_id", newGroup.id);
+                                    newCategoryModel
+                                        .save()
+                                        .then(() => {
+                                        if (category.CategoryIconImages &&
+                                            category.CategoryIconImages.length > 0) {
                                             async.eachSeries(category.CategoryIconImages, (image, categoryImageCallBack) => {
-                                                newCategoryModel.addCategoryIconImage(image).then(() => {
+                                                newCategoryModel
+                                                    .addCategoryIconImage(image)
+                                                    .then(() => {
                                                     categoryImageCallBack();
-                                                }).catch((error) => {
+                                                })
+                                                    .catch((error) => {
                                                     categoryImageCallBack(error);
                                                 });
                                             }, (error) => {
@@ -801,7 +897,8 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                                         else {
                                             categoryCallback();
                                         }
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         categoryCallback(error);
                                     });
                                 }, (error) => {
@@ -816,16 +913,18 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             if (options && options.copyPosts === true) {
                                 models.Post.findAll({
                                     where: {
-                                        group_id: oldGroup.id
+                                        group_id: oldGroup.id,
                                     },
-                                    attributes: ['id']
-                                }).then((posts) => {
+                                    attributes: ["id"],
+                                })
+                                    .then((posts) => {
                                     async.eachSeries(posts, function (post, postCallback) {
                                         copyPost(post.id, newGroup.id, options, postCallback);
                                     }, function (error) {
                                         groupSeriesCallback(error);
                                     });
-                                }).catch((error) => {
+                                })
+                                    .catch((error) => {
                                     groupSeriesCallback(error);
                                 });
                             }
@@ -837,30 +936,33 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             if (options.recountGroupPosts) {
                                 models.Post.count({
                                     where: {
-                                        group_id: newGroup.id
-                                    }
-                                }).then(count => {
-                                    newGroup.set('counter_posts', count);
+                                        group_id: newGroup.id,
+                                    },
+                                })
+                                    .then((count) => {
+                                    newGroup.set("counter_posts", count);
                                     newGroup.save().then(function () {
                                         groupSeriesCallback();
                                     });
-                                }).catch(error => {
+                                })
+                                    .catch((error) => {
                                     groupSeriesCallback(error);
                                 });
                             }
                             else {
                                 groupSeriesCallback();
                             }
-                        }
+                        },
                     ], function (error) {
                         console.log("Have copied post to group id");
                         callback(error);
                     });
                 });
-            }).catch(function (error) {
+            })
+                .catch(function (error) {
                 callback(error);
             });
-        }
+        },
     ], function (error) {
         console.log("Done copying group");
         if (error)
@@ -872,17 +974,20 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
     let toDomain;
     let newCommunity = null;
     let oldCommunity;
+    const groupMapping = new Map();
     async.series([
         (callback) => {
             models.Domain.findOne({
                 where: {
                     id: toDomainId,
                 },
-                attributes: ['id']
-            }).then((domainIn) => {
+                attributes: ["id"],
+            })
+                .then((domainIn) => {
                 toDomain = domainIn;
                 callback();
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 callback(error);
             });
         },
@@ -890,61 +995,62 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
             var communityIncludes = [
                 {
                     model: models.Domain,
-                    attributes: ['id', 'theme_id', 'name']
+                    attributes: ["id", "theme_id", "name"],
                 },
                 {
                     model: models.User,
-                    attributes: ['id'],
-                    as: 'CommunityAdmins',
-                    required: false
+                    attributes: ["id"],
+                    as: "CommunityAdmins",
+                    required: false,
                 },
                 {
                     model: models.Image,
-                    as: 'CommunityLogoImages',
+                    as: "CommunityLogoImages",
                     attributes: models.Image.defaultAttributesPublic,
-                    required: false
+                    required: false,
                 },
                 {
                     model: models.Video,
-                    as: 'CommunityLogoVideos',
-                    attributes: ['id', 'formats', 'viewable', 'public_meta'],
-                    required: false
+                    as: "CommunityLogoVideos",
+                    attributes: ["id", "formats", "viewable", "public_meta"],
+                    required: false,
                 },
                 {
                     model: models.Image,
-                    as: 'CommunityHeaderImages',
+                    as: "CommunityHeaderImages",
                     attributes: models.Image.defaultAttributesPublic,
-                    required: false
-                }
+                    required: false,
+                },
             ];
             if (!options.skipUsers) {
                 communityIncludes.push({
                     model: models.User,
-                    attributes: ['id'],
-                    as: 'CommunityUsers',
-                    required: false
+                    attributes: ["id"],
+                    as: "CommunityUsers",
+                    required: false,
                 });
             }
             models.Community.findOne({
                 where: {
-                    id: fromCommunityId
+                    id: fromCommunityId,
                 },
-                include: communityIncludes
-            }).then(function (communityIn) {
+                include: communityIncludes,
+            })
+                .then(function (communityIn) {
                 oldCommunity = communityIn;
                 var communityJson = JSON.parse(JSON.stringify(oldCommunity.toJSON()));
-                delete communityJson['id'];
+                delete communityJson["id"];
                 newCommunity = models.Community.build(communityJson);
-                newCommunity.set('domain_id', toDomain.id);
+                newCommunity.set("domain_id", toDomain.id);
                 if (options.skipUsers) {
-                    newCommunity.set('counter_users', 0);
+                    newCommunity.set("counter_users", 0);
                 }
                 if (linkFromOptions) {
-                    newCommunity.set('configuration.customBackURL', `/community/${linkFromOptions.id}`);
-                    newCommunity.set('configuration.customBackName', linkFromOptions.name);
+                    newCommunity.set("configuration.customBackURL", `/community/${linkFromOptions.id}`);
+                    newCommunity.set("configuration.customBackName", linkFromOptions.name);
                 }
                 if (newCommunity.hostname) {
-                    newCommunity.set('hostname', newCommunity.hostname + "-copy");
+                    newCommunity.set("hostname", newCommunity.hostname + "-copy");
                 }
                 newCommunity.save().then(function () {
                     async.series([
@@ -955,11 +1061,15 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             cloneTranslationForCommunity(oldCommunity, newCommunity, communitySeriesCallback);
                         },
                         (communitySeriesCallback) => {
-                            if (oldCommunity.CommunityLogoImages && oldCommunity.CommunityLogoImages.length > 0) {
+                            if (oldCommunity.CommunityLogoImages &&
+                                oldCommunity.CommunityLogoImages.length > 0) {
                                 async.eachSeries(oldCommunity.CommunityLogoImages, function (image, mediaCallback) {
-                                    newCommunity.addCommunityLogoImage(image).then(function () {
+                                    newCommunity
+                                        .addCommunityLogoImage(image)
+                                        .then(function () {
                                         mediaCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         mediaCallback(error);
                                     });
                                 }, function (error) {
@@ -971,11 +1081,15 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             }
                         },
                         (communitySeriesCallback) => {
-                            if (oldCommunity.CommunityHeaderImages && oldCommunity.CommunityHeaderImages.length > 0) {
+                            if (oldCommunity.CommunityHeaderImages &&
+                                oldCommunity.CommunityHeaderImages.length > 0) {
                                 async.eachSeries(oldCommunity.CommunityHeaderImages, function (image, mediaCallback) {
-                                    newCommunity.addCommunityHeaderImage(image).then(function () {
+                                    newCommunity
+                                        .addCommunityHeaderImage(image)
+                                        .then(function () {
                                         mediaCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         mediaCallback(error);
                                     });
                                 }, function (error) {
@@ -987,11 +1101,15 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             }
                         },
                         (communitySeriesCallback) => {
-                            if (oldCommunity.CommunityLogoVideos && oldCommunity.CommunityLogoVideos.length > 0) {
+                            if (oldCommunity.CommunityLogoVideos &&
+                                oldCommunity.CommunityLogoVideos.length > 0) {
                                 async.eachSeries(oldCommunity.CommunityLogoVideos, function (image, mediaCallback) {
-                                    newCommunity.addCommunityLogoVideo(image).then(function () {
+                                    newCommunity
+                                        .addCommunityLogoVideo(image)
+                                        .then(function () {
                                         mediaCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         mediaCallback(error);
                                     });
                                 }, function (error) {
@@ -1003,11 +1121,15 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             }
                         },
                         (communitySeriesCallback) => {
-                            if (oldCommunity.CommunityAdmins && oldCommunity.CommunityAdmins.length > 0) {
+                            if (oldCommunity.CommunityAdmins &&
+                                oldCommunity.CommunityAdmins.length > 0) {
                                 async.eachSeries(oldCommunity.CommunityAdmins, function (admin, adminCallback) {
-                                    newCommunity.addCommunityAdmin(admin).then(function () {
+                                    newCommunity
+                                        .addCommunityAdmin(admin)
+                                        .then(function () {
                                         adminCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         adminCallback(error);
                                     });
                                 }, function (error) {
@@ -1019,11 +1141,15 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             }
                         },
                         (communitySeriesCallback) => {
-                            if (oldCommunity.CommunityUsers && oldCommunity.CommunityUsers.length > 0) {
+                            if (oldCommunity.CommunityUsers &&
+                                oldCommunity.CommunityUsers.length > 0) {
                                 async.eachSeries(oldCommunity.CommunityUsers, function (user, userCallback) {
-                                    newCommunity.addCommunityUser(user).then(function () {
+                                    newCommunity
+                                        .addCommunityUser(user)
+                                        .then(function () {
                                         userCallback();
-                                    }).catch((error) => {
+                                    })
+                                        .catch((error) => {
                                         userCallback(error);
                                     });
                                 }, function (error) {
@@ -1035,44 +1161,54 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             }
                         },
                         (communitySeriesCallback) => {
-                            if (options && (options.copyGroups === true || options.copyOneGroupId)) {
+                            if (options &&
+                                (options.copyGroups === true || options.copyOneGroupId)) {
                                 let whereOptions = {
                                     community_id: oldCommunity.id,
                                     in_group_folder_id: {
-                                        $eq: null
-                                    }
+                                        $eq: null,
+                                    },
                                 };
                                 if (options.copyOneGroupId) {
-                                    whereOptions = { ...whereOptions,
+                                    whereOptions = {
+                                        ...whereOptions,
                                         id: options.copyOneGroupId,
                                     };
                                 }
                                 models.Group.findAll({
                                     where: whereOptions,
-                                    attributes: ['id']
-                                }).then((groups) => {
+                                    attributes: ["id"],
+                                })
+                                    .then((groups) => {
                                     async.eachSeries(groups, function (group, groupCallback) {
-                                        copyGroup(group.id, newCommunity, toDomainId, options, groupCallback);
+                                        copyGroup(group.id, newCommunity, toDomainId, options, (error, newGroup) => {
+                                            if (!error && newGroup) {
+                                                groupMapping.set(group.id, newGroup.id);
+                                            }
+                                            groupCallback(error);
+                                        });
                                     }, function (error) {
                                         communitySeriesCallback(error);
                                     });
-                                }).catch((error) => {
+                                })
+                                    .catch((error) => {
                                     communitySeriesCallback(error);
                                 });
                             }
                             else {
                                 communitySeriesCallback();
                             }
-                        }
+                        },
                     ], function (error) {
                         console.log("Have copied community");
                         callback(error);
                     });
                 });
-            }).catch(function (error) {
+            })
+                .catch(function (error) {
                 callback(error);
             });
-        }
+        },
     ], function (error) {
         console.log("Done copying community");
         if (error) {
@@ -1082,17 +1218,23 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
         else {
             models.Group.count({
                 where: {
-                    community_id: newCommunity.id
-                }
-            }).then(count => {
-                newCommunity.update({
-                    counter_groups: count
-                }).then(() => {
+                    community_id: newCommunity.id,
+                },
+            })
+                .then((count) => {
+                newCommunity
+                    .update({
+                    counter_groups: count,
+                })
+                    .then(() => {
+                    newCommunity.groupMapping = groupMapping;
                     done(error, typeof newCommunity != "undefined" ? newCommunity : null);
-                }).catch(error => {
+                })
+                    .catch((error) => {
                     done(error);
                 });
-            }).catch(error => {
+            })
+                .catch((error) => {
                 done(error);
             });
         }
@@ -1102,7 +1244,7 @@ const copyCommunityWithEverything = (communityId, toDomainId, options, done) => 
     copyCommunity(communityId, toDomainId, {
         copyGroups: true,
         copyPosts: true,
-        copyPoints: true
+        copyPoints: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
             console.log(newCommunity.id);
@@ -1126,7 +1268,7 @@ const deepCopyCommunityOnlyStructureWithAdminsAndPosts = (communityId, toDomainI
         skipUsers: true,
         skipEndorsementQualitiesAndRatings: true,
         resetEndorsementCounters: true,
-        skipActivities: true
+        skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
             console.log(newCommunity.id);
@@ -1148,7 +1290,7 @@ const copyCommunityNoUsersNoEndorsementsNoPoints = (communityId, toDomainId, don
         skipUsers: true,
         skipEndorsementQualitiesAndRatings: true,
         resetEndorsementCounters: true,
-        skipActivities: true
+        skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
             console.log(newCommunity.id);
@@ -1177,7 +1319,7 @@ const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
         skipUsers: true,
         skipEndorsementQualitiesAndRatings: true,
         resetEndorsementCounters: true,
-        skipActivities: true
+        skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
             console.log(newCommunity.id);
@@ -1199,7 +1341,7 @@ const copyCommunityNoUsersNoEndorsementsOneGroup = (communityId, groupId, toDoma
         skipUsers: true,
         skipEndorsementQualitiesAndRatings: true,
         resetEndorsementCounters: true,
-        skipActivities: true
+        skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
             console.log(newCommunity.id);
@@ -1222,7 +1364,7 @@ const copyCommunityOnlyGroups = (communityId, toDomainId, done) => {
         recountGroupPosts: true,
         skipEndorsementQualitiesAndRatings: true,
         resetEndorsementCounters: true,
-        skipActivities: true
+        skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
             console.log(newCommunity.id);
@@ -1247,5 +1389,5 @@ module.exports = {
     copyCommunity,
     copyCommunityOnlyGroups,
     copyGroup,
-    copyPost
+    copyPost,
 };

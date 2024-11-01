@@ -333,7 +333,9 @@ interface YpGroupPrivateAccessConfiguration {
 }
 
 interface YpPsAgentConfiguration {
-  topLevelAgentId: number;
+  topLevelAgentId?: number;
+  inputConnectorForAgentId?: number;
+  outputConnectorForAgentId?: number;
 }
 
 interface YpSimpleGroupMediaData {

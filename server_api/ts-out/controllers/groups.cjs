@@ -618,6 +618,15 @@ var updateGroupConfigParameters = function (req, group) {
         : null);
     group.set("configuration.exportSubCodesForRadiosAndCheckboxes", truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
     group.set("configuration.forceShowDebateCountOnPost", truthValueFromBody(req.body.forceShowDebateCountOnPost));
+    if (req.body.forAgentId &&
+        req.body.forAgentId != "" &&
+        req.body.inputOutput &&
+        req.body.inputOutput != "") {
+        group.set("configuration.agents", {
+            inputConnectorForAgentId: req.body.inputOutput == "input" ? req.body.forAgentId : undefined,
+            outputConnectorForAgentId: req.body.inputOutput == "output" ? req.body.forAgentId : undefined,
+        });
+    }
 };
 const getGroupFolder = function (req, done) {
     var groupFolder;
@@ -2026,7 +2035,7 @@ router.get("/:groupId/default_post_image/:imageId", auth.can("view group"), func
 });
 //TODO: Refactor this as not to repeate it in controlelrs
 const addAgentFabricUserToSessionIfNeeded = async (req) => {
-    let userId = (req.user && req.user.id) ? req.user.id : null;
+    let userId = req.user && req.user.id ? req.user.id : null;
     if (!userId &&
         req.query.agentFabricUserId &&
         process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
@@ -2055,7 +2064,8 @@ const copyThemeAndLogoFromAgentFabricGroup = async (newGroup, agentFabricGroup) 
         newGroup.configuration.theme = { ...agentFabricGroup.configuration.theme };
         await newGroup.save();
     }
-    if (agentFabricGroup.GroupLogoImages && agentFabricGroup.GroupLogoImages.length > 0) {
+    if (agentFabricGroup.GroupLogoImages &&
+        agentFabricGroup.GroupLogoImages.length > 0) {
         log.info("Copying logo images from agent fabric group");
         for (const logoImage of agentFabricGroup.GroupLogoImages) {
             log.info(`Copying logo image ${logoImage.id} from agent fabric group`);
@@ -2110,10 +2120,12 @@ const createGroup = async (req, res) => {
         if (req.query.agentFabricGroupId) {
             try {
                 const agentFabricGroup = await models.Group.findByPk(req.query.agentFabricGroupId, {
-                    include: [{
+                    include: [
+                        {
                             model: models.Image,
-                            as: 'GroupLogoImages'
-                        }]
+                            as: "GroupLogoImages",
+                        },
+                    ],
                 });
                 if (agentFabricGroup) {
                     await copyThemeAndLogoFromAgentFabricGroup(group, agentFabricGroup);

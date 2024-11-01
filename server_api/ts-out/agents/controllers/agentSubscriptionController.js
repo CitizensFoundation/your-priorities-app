@@ -20,9 +20,32 @@ export class AgentSubscriptionController {
             }
         };
         this.createSubscriptions = async (req, res) => {
-            res.status(400).json({
-                error: 'This endpoint is deprecated. Please use /create-payment-intent instead'
-            });
+            try {
+                const { planIds, isFreeTrialRequest } = req.body;
+                const userId = req.user.id;
+                // If not a free trial request, redirect to payment intent endpoint
+                if (!isFreeTrialRequest) {
+                    return res.status(400).json({
+                        error: 'For paid subscriptions, please use /stripe-create-payment-intent instead'
+                    });
+                }
+                // Handle free trial subscription
+                if (!planIds) {
+                    return res.status(400).json({
+                        error: 'agentProductIds and planIds are required'
+                    });
+                }
+                const result = await this.subscriptionManager.createSubscriptions(userId, planIds, null // No payment method needed for free trials
+                );
+                res.status(201).json({
+                    subscriptionId: result.subscriptionId,
+                    message: 'Free trial subscription created successfully'
+                });
+            }
+            catch (error) {
+                console.error('Error creating free trial subscription:', error);
+                res.status(500).json({ error: error.message });
+            }
         };
         this.startAgentRun = async (req, res) => {
             try {
@@ -102,13 +125,13 @@ export class AgentSubscriptionController {
         this.createPaymentIntent = async (req, res) => {
             try {
                 const userId = req.user.id;
-                const { agentProductIds, planIds, paymentMethodId } = req.body;
-                if (!agentProductIds || !planIds || !paymentMethodId) {
+                const { planIds, paymentMethodId } = req.body;
+                if (!planIds || !paymentMethodId) {
                     return res.status(400).json({
-                        error: 'agentProductIds, planIds, and paymentMethodId are required'
+                        error: 'planIds, and paymentMethodId are required'
                     });
                 }
-                const result = await this.subscriptionManager.createSubscriptions(userId, agentProductIds, planIds, paymentMethodId);
+                const result = await this.subscriptionManager.createSubscriptions(userId, planIds, paymentMethodId);
                 res.status(200).json({
                     clientSecret: result.clientSecret,
                     subscriptionId: result.subscriptionId

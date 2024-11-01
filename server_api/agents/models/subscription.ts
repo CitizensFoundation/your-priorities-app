@@ -3,11 +3,13 @@ import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 import { YpSubscriptionUser } from './subscriptionUser.js';
 import { YpAgentProduct } from './agentProduct.js';
 import { YpSubscriptionPlan } from './subscriptionPlan.js';
+import { YpAgentProductRun } from './agentProductRun.js';
 
 export class YpSubscription extends Model {
   declare id: number;
   declare uuid: string;
   declare user_id: number;
+  declare domain_id: number;
   declare agent_product_id: number;
   declare plan_id: number;
   declare start_date: Date;
@@ -16,14 +18,15 @@ export class YpSubscription extends Model {
   declare status: 'active' | 'paused' | 'cancelled' | 'expired';
   declare payment_method?: string;
   declare transaction_id?: string;
+  declare configuration?: YpSubscriptionConfiguration;
   declare metadata?: any;
   declare created_at: Date;
   declare updated_at: Date;
 
   // Associations
-  declare User?: YpSubscriptionUser;
-  declare AgentProduct?: YpAgentProduct;
-  declare Plan?: YpSubscriptionPlan;
+  declare User: YpSubscriptionUser;
+  declare AgentProduct: YpAgentProduct;
+  declare Plan: YpSubscriptionPlan;
 }
 
 YpSubscription.init(
@@ -31,7 +34,9 @@ YpSubscription.init(
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull: false },
     user_id: { type: DataTypes.INTEGER, allowNull: false },
+    domain_id: { type: DataTypes.INTEGER, allowNull: false },
     agent_product_id: { type: DataTypes.INTEGER, allowNull: false },
+    configuration: { type: DataTypes.JSONB, allowNull: true },
     plan_id: { type: DataTypes.INTEGER, allowNull: false },
     start_date: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     end_date: { type: DataTypes.DATE, allowNull: true },
@@ -68,3 +73,7 @@ YpSubscription.belongsTo(YpAgentProduct, {
   as: 'AgentProduct',
 });
 YpSubscription.belongsTo(YpSubscriptionPlan, { foreignKey: 'plan_id', as: 'Plan' });
+YpSubscription.hasMany(YpAgentProductRun, {
+  foreignKey: 'subscription_id',
+  as: 'Runs',
+});

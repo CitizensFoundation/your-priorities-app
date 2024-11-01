@@ -11,13 +11,16 @@ interface YpAgentProductAttributes extends YpBaseModelAttributes {
   domain_id: number;
   name: string;
   description?: string;
-  configuration?: YpAgentProductConfiguration;
+  configuration: YpAgentProductConfiguration;
   status?: YpAgentProductStatus;
   Bundles?: YpAgentProductBundleAttributes[];
 }
 
 interface YpAgentProductConfiguration {
-  workflow?: YpWorkflowConfiguration;
+  workflow: YpWorkflowConfiguration;
+  templateWorkflowCommunityId: number;
+  structuredAnswersOverride: YpStructuredAnswer[];
+  requiredStructuredQuestions: YpStructuredQuestionData[];
   settings?: Record<string, any>;
   integrations?: Record<string, any>;
 }
@@ -42,17 +45,26 @@ interface YpAgentProductBoosterPurchaseAttributes
   discount_id?: number;
 }
 
+type YpSubscriptionPlanType = "free" | "paid" | "coming_soon";
+type YpSubscriptionBillingCycle = "monthly" | "yearly" | "weekly";
+
+interface YpSubscriptionBoosterConfiguration {
+  name: string;
+  description: string;
+  runs_available: number;
+  price: number;
+  currency: string;
+  structuredAnswersOverride: YpStructuredAnswer[];
+}
+
 interface YpSubscriptionPlanConfiguration {
   amount: number;
   currency: string;
-  billing_cycle: "monthly" | "yearly" | "weekly";
-  type: "free" | "paid" | "coming_soon";
+  billing_cycle: YpSubscriptionBillingCycle;
+  type: YpSubscriptionPlanType;
   max_runs_per_cycle: number;
-  booster_runs_available: number;
-  booster_price: number;
-  booster_currency: string;
-  structuredAnswersOverride: YpStructuredAnswer[];
-  requiredStructuredQuestions: YpStructuredQuestionData[];
+  boosters: YpSubscriptionBoosterConfiguration[];
+  imageUrl?: string;
 }
 
 // YpSubscriptionPlanAttributes Interface
@@ -63,9 +75,12 @@ interface YpSubscriptionPlanAttributes extends YpBaseModelAttributes {
   configuration: YpSubscriptionPlanConfiguration;
 }
 
+interface YpSubscriptionConfiguration {}
+
 // YpSubscriptionAttributes Interface
 interface YpSubscriptionAttributes extends YpBaseModelAttributes {
   user_id: number;
+  domain_id: number;
   agent_product_id: number;
   subscription_plan_id: number;
   start_date: Date;
@@ -107,6 +122,7 @@ interface YpAgentProductRunAttributes extends YpBaseModelAttributes {
   end_time?: Date;
   duration?: number; // Duration in seconds
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
+  workflow?: YpWorkflowConfiguration;
   input_data?: YpAgentProductRunInputData;
   output_data?: YpAgentProductRunOutputData;
   error_message?: string;
@@ -141,25 +157,21 @@ interface YpBaseChatBotMemoryData extends PsAgentBaseMemoryData {
 interface YpWorkflowStep {
   id: number;
   name: string;
-  groupId?: number;
   description: string;
   agentClassUuid: string;
-  type: "agentOps" | "engagmentFromOutputConnector";
-  engagementGroupId?: number;
-  order?: number;
+  agentId?: number;
+  groupId?: number;
+  type:
+    | "agentOps"
+    | "engagmentFromOutputConnector"
+    | "engagmentFromInputConnector";
   configuration?: Record<string, any>;
-  dependencies?: string[];
+  dependencies?: number[];
   timeout?: number;
-  retryConfig?: {
-    maxAttempts: number;
-    backoffMultiplier: number;
-  };
 }
 
 interface YpWorkflowConfiguration {
   steps: YpWorkflowStep[];
-  parallel?: boolean;
-  maxConcurrent?: number;
   timeoutTotal?: number;
 }
 
@@ -169,7 +181,7 @@ interface YpAgentAssistantAgent {
   name: string;
   description: string;
   imageUrl: string;
-  capabilities?: string[];    // List of capabilities this agent has
+  capabilities?: string[]; // List of capabilities this agent has
   requiredPermissions?: string[];
   version?: string;
 }

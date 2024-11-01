@@ -31,6 +31,7 @@ interface PsAiChatWsMessage {
 }
 
 interface PsSimpleChatLog {
+  base64Audio?: string;
   sender: string;
   message: string;
 }
