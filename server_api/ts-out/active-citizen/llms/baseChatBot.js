@@ -7,7 +7,7 @@ let tlsConfig = {
 if (!process.env.REDIS_URL || process.env.REDIS_URL.indexOf("localhost") > -1) {
     tlsConfig = undefined;
 }
-const DEBUG = true;
+const DEBUG = false;
 //@ts-ignore
 const redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
     process.env.REDIS_URL ||

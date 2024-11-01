@@ -230,6 +230,18 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         content: this.getCurrentSystemPrompt(),
       },
       ...this.convertToOpenAIMessages(this.memory.chatLog || []),
+      {
+        role: "assistant",
+        content: null,
+        tool_calls: Array.from(toolResponses.values()).map(response => ({
+          id: response.tool_call_id,
+          type: "function",
+          function: {
+            name: response.name,
+            arguments: "{}" // The actual arguments don't matter here
+          }
+        }))
+      },
       ...toolResponses,
     ];
 
