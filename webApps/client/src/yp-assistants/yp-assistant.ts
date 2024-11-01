@@ -5,7 +5,7 @@ import { YpAssistantServerApi } from "./AssistantServerApi.js";
 
 @customElement("yp-assistant")
 export class YpAssistant extends YpAssistantBase {
-  groupId!: number;
+  domainId!: number;
 
   serverApi!: YpAssistantServerApi;
   override setupServerApi(): void {
@@ -34,7 +34,7 @@ export class YpAssistant extends YpAssistantBase {
     this.addThinkingChatBotMessage();
 
     await this.serverApi.sendChatMessage(
-      this.groupId,
+      this.domainId,
       this.wsClientId,
       this.simplifiedChatLog,
       YpLanguages.getEnglishName(this.language)

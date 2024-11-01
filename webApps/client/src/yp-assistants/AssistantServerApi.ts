@@ -8,13 +8,13 @@ export class YpAssistantServerApi extends YpServerApi {
   }
 
   public sendChatMessage(
-    groupId: number,
+    domainId: number,
     wsClientId: string,
     chatLog: PsSimpleChatLog[],
     languageName: string
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/chat`,
+      this.baseUrlPath + `/${domainId}/chat`,
       {
         method: "PUT",
         body: JSON.stringify({

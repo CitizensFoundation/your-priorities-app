@@ -29,7 +29,7 @@ let YpAssistant = class YpAssistant extends YpAssistantBase {
             message: message,
         });
         this.addThinkingChatBotMessage();
-        await this.serverApi.sendChatMessage(this.groupId, this.wsClientId, this.simplifiedChatLog, YpLanguages.getEnglishName(this.language));
+        await this.serverApi.sendChatMessage(this.domainId, this.wsClientId, this.simplifiedChatLog, YpLanguages.getEnglishName(this.language));
     }
 };
 YpAssistant = __decorate([

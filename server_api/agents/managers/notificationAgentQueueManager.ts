@@ -4,7 +4,7 @@ import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueMana
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
 import WebSocket from "ws";
-import { YpAgentProductRun } from "agents/models/agentProductRun.js";
+import { YpAgentProductRun } from "../models/agentProductRun.js";
 
 export class NotificationAgentQueueManager extends AgentQueueManager {
   redisClient!: Redis;

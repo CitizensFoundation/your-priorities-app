@@ -1,4 +1,3 @@
-import { YpBaseChatBot } from "active-citizen/llms/baseChatBot.js";
 import { OpenAI } from "openai";
 import { Stream } from "openai/streaming.js";
 import WebSocket from "ws";
@@ -10,6 +9,7 @@ import {
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
 import { FunctionDefinition } from "openai/resources/shared.mjs";
+import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 
 export interface ToolExecutionResult<T = unknown> {
   success: boolean;

@@ -1,4 +1,4 @@
-import { YpBaseChatBot } from "active-citizen/llms/baseChatBot.js";
+import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import WebSocket from "ws";
 // Extend the base class with voice capabilities
 export class YpBaseChatBotWithVoice extends YpBaseChatBot {

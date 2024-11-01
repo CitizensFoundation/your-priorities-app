@@ -210,7 +210,8 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         .chat-window {
           display: flex;
           flex-direction: column;
-          height: 75vh;
+          height: 100%;
+          min-height: 45vh;
           width: 100%;
           max-width: 1200px;
           margin: 0 auto;

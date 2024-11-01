@@ -517,6 +517,10 @@ export class YourPrioritiesApi {
       policySynthAgentsController.router
     );
 
+    const { AssistantController } = await import("./agents/controllers/assistantController.js");
+    const assistantController = new AssistantController(this.wsClients);
+    this.app.use(assistantController.path, assistantController.router);
+
     // Setup those here so they wont override the ES controllers
     this.setupErrorHandler();
   }

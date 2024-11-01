@@ -1,8 +1,7 @@
 import express from "express";
 import WebSocket from "ws";
 import auth from "../../authorization.cjs";
-import { YpBaseAssistantWithVoice } from "agents/assistants/baseAssistantWithVoice.js";
-import { YpAgentAssistant } from "agents/assistants/agentAssistant.js";
+import { YpAgentAssistant } from "../assistants/agentAssistant.js";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -17,7 +16,7 @@ interface YpRequest extends express.Request {
 }
 
 export class AssistantController {
-  public path = "/api/assistant";
+  public path = "/api/assistants";
   public router = express.Router();
   public wsClients: Map<string, WebSocket>;
 
@@ -27,9 +26,9 @@ export class AssistantController {
   }
 
   public initializeRoutes() {
-    this.router.post(
-      "/:groupId/chat",
-    //  auth.can("view group"),
+    this.router.put(
+      "/:id/chat",
+      auth.can("view domain"),
       this.startChatSession
     );
   }

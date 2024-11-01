@@ -2,7 +2,7 @@ import { Queue, QueueEvents } from "bullmq";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
-import { YpAgentProductRun } from "agents/models/agentProductRun.js";
+import { YpAgentProductRun } from "../models/agentProductRun.js";
 export class NotificationAgentQueueManager extends AgentQueueManager {
     constructor(wsClients) {
         super();

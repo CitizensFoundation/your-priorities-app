@@ -1,5 +1,5 @@
-import { YpBaseChatBot } from "active-citizen/llms/baseChatBot.js";
 import { OpenAI } from "openai";
+import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 /**
  * Common modes that implementations might use
  */

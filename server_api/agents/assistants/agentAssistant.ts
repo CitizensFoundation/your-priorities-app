@@ -5,12 +5,12 @@ import { YpBaseAssistant } from "./baseAssistant.js";
 import { ChatbotMode } from "./baseAssistant.js";
 import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
-import { YpAgentProductRun } from "agents/models/agentProductRun.js";
-import { YpAgentProduct } from "agents/models/agentProduct.js";
-import { YpAgentProductBundle } from "agents/models/agentProductBundle.js";
-import { YpSubscription } from "agents/models/subscription.js";
-import { YpSubscriptionPlan } from "agents/models/subscriptionPlan.js";
-import { NotificationAgentQueueManager } from "agents/managers/notificationAgentQueueManager.js";
+import { YpAgentProductRun } from "../models/agentProductRun.js";
+import { YpAgentProduct } from "../models/agentProduct.js";
+import { YpAgentProductBundle } from "../models/agentProductBundle.js";
+import { YpSubscription } from "../models/subscription.js";
+import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
+import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { LexRuntime } from "aws-sdk";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {

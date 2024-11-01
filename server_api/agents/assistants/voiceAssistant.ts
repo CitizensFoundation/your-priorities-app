@@ -1,4 +1,4 @@
-import { YpBaseChatBot } from "active-citizen/llms/baseChatBot.js";
+import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { ChatbotFunction } from "./baseAssistant.js";
 import WebSocket from "ws";
 

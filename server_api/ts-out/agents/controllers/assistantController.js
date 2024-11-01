@@ -1,16 +1,15 @@
 import express from "express";
-import { YpAgentAssistant } from "agents/assistants/agentAssistant.js";
+import auth from "../../authorization.cjs";
+import { YpAgentAssistant } from "../assistants/agentAssistant.js";
 export class AssistantController {
     constructor(wsClients) {
-        this.path = "/api/assistant";
+        this.path = "/api/assistants";
         this.router = express.Router();
         this.wsClients = wsClients;
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.post("/:groupId/chat", 
-        //  auth.can("view group"),
-        this.startChatSession);
+        this.router.put("/:id/chat", auth.can("view domain"), this.startChatSession);
     }
     async startChatSession(req, res) {
         try {
