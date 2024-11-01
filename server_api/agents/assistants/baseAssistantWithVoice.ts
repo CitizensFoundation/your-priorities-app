@@ -81,45 +81,6 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     });
   }
 
-  async handleToolCallsOther(toolCalls: Map<string, ToolCall>): Promise<void> {
-    console.log(JSON.stringify(toolCalls, null, 2));
-    for (const [id, toolCall] of toolCalls.entries()) {
-      try {
-        const func = this.availableFunctions.get(toolCall.name);
-        if (!func) {
-          throw new Error(`Unknown function: ${toolCall.name}`);
-        }
-
-        let parsedArgs;
-        try {
-          parsedArgs = JSON.parse(toolCall.arguments);
-        } catch (error) {
-          throw new Error(`Invalid function arguments: ${toolCall.arguments}`);
-        }
-
-        const result = await func.handler(parsedArgs) as VoiceToolResult;
-
-        if (result.success && result.data) {
-          // Send results to client if there's HTML content
-          if (result.data.html) {
-            this.wsClientSocket.send(JSON.stringify({
-              type: 'bot',
-              message: result.data.message || '',
-              html: result.data.html
-            }));
-          }
-        }
-
-        if (!result.success) {
-          throw new Error(result.error || "Unknown error in tool execution");
-        }
-      } catch (error) {
-        console.error(`Error executing tool ${toolCall.name}:`, error);
-        throw error;
-      }
-    }
-  }
-
   async setVoiceMode(enabled: boolean): Promise<void> {
     this.voiceEnabled = enabled;
     await this.voiceBot.setVoiceMode(enabled);

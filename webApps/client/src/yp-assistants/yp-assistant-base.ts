@@ -3,6 +3,8 @@ import { property, customElement, state, query } from "lit/decorators.js";
 import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 import { literal } from "lit/static-html.js";
+import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
+import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -10,7 +12,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   voiceEnabled = false;
 
   @state()
-  private mediaRecorder: MediaRecorder | null = null;
+  private mediaRecorder: WavRecorder | null = null;
+
+  @state()
+  private wavStreamPlayer: WavStreamPlayer | null = null;
 
   @state()
   private isRecording = false;
@@ -74,29 +79,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async setupVoiceCapabilities() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/wav'
-      });
 
-      this.mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          this.audioChunks.push(event.data);
-        }
-      };
-
-      this.mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-        const base64Audio = await this.blobToBase64(audioBlob);
-        this.handleVoiceInput(base64Audio);
-        this.audioChunks = [];
-      };
-
-    } catch (error) {
-      console.error('Error setting up voice capabilities:', error);
-      this.voiceEnabled = false;
-    }
   }
 
   override render() {
@@ -139,63 +122,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     `;
   }
 
-  async blobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          const base64 = reader.result.split(',')[1];
-          resolve(base64);
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
 
-  async appendAudioChunk(chunk: ArrayBuffer) {
-    this.audioQueue.push(chunk);
-    if (!this.isPlayingAudio) {
-      await this.playNextAudioChunk();
-    }
-  }
-
-  private async playNextAudioChunk() {
-    if (!this.audioContext || this.audioQueue.length === 0) {
-      this.isPlayingAudio = false;
-      return;
-    }
-
-    this.isPlayingAudio = true;
-    const chunk = this.audioQueue.shift();
-
-    try {
-      const audioBuffer = await this.audioContext.decodeAudioData(chunk!);
-      this.currentAudioSource = this.audioContext.createBufferSource();
-      this.currentAudioSource.buffer = audioBuffer;
-      this.currentAudioSource.connect(this.audioContext.destination);
-
-      this.currentAudioSource.onended = () => {
-        this.currentAudioSource = null;
-        if (this.audioQueue.length > 0) {
-          this.playNextAudioChunk();
-        } else {
-          this.isPlayingAudio = false;
-          this.fire('audio-complete');
-        }
-      };
-
-      this.currentAudioSource.start();
-    } catch (error) {
-      console.error('Error playing audio chunk:', error);
-      this.isPlayingAudio = false;
-      this.currentAudioSource = null;
-    }
-  }
 
   toggleRecording() {
-    if (!this.mediaRecorder) return;
-
+    debugger;
     if (this.isRecording) {
       this.stopRecording();
     } else {
@@ -203,23 +133,27 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
   }
 
-  startRecording() {
-    if (!this.mediaRecorder || this.isRecording) return;
-
-    this.mediaRecorder.start(100); // Collect chunks every 100ms
+  async startRecording() {
+    this.mediaRecorder = new WavRecorder({ sampleRate: 24000 }) as WavRecorder;
     this.isRecording = true;
 
-    this.addChatBotElement({
-      sender: "you",
-      type: "start",
-      message: this.t("Recording..."),
-    });
+    await this.mediaRecorder.begin();
+
+    await this.mediaRecorder.record((data: any) => this.handleVoiceInput(data.mono));
+
+    this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
+
+    await this.wavStreamPlayer?.connect();
+
+    debugger;
   }
 
   stopRecording() {
-    if (!this.mediaRecorder || !this.isRecording) return;
+    this.mediaRecorder?.end();
+    this.mediaRecorder = null;
 
-    this.mediaRecorder.stop();
+    this.wavStreamPlayer?.interrupt();
+    this.wavStreamPlayer = null;
     this.isRecording = false;
   }
 
@@ -253,7 +187,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       case 'audio':
         if (data.audio) {
           const audioData = this.base64ToArrayBuffer(data.audio);
-          await this.appendAudioChunk(audioData);
+          this.wavStreamPlayer?.add16BitPCM(audioData);
         }
         break;
 
@@ -305,6 +239,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
     if (!this.voiceEnabled && this.isRecording) {
       this.stopRecording();
+    } else if (this.voiceEnabled && !this.isRecording) {
+      this.startRecording();
     }
 
     // Initialize or resume AudioContext when enabling voice mode

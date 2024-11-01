@@ -3,6 +3,7 @@ import "./yp-assistant-item-base.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
     private mediaRecorder;
+    private wavStreamPlayer;
     private isRecording;
     private audioChunks;
     private audioContext;
@@ -18,11 +19,8 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private cleanupAudio;
     setupVoiceCapabilities(): Promise<void>;
     render(): import("lit-html").TemplateResult<1>;
-    blobToBase64(blob: Blob): Promise<string>;
-    appendAudioChunk(chunk: ArrayBuffer): Promise<void>;
-    private playNextAudioChunk;
     toggleRecording(): void;
-    startRecording(): void;
+    startRecording(): Promise<void>;
     stopRecording(): void;
     handleVoiceInput(base64Audio: string): Promise<void>;
     onMessage(event: MessageEvent): Promise<void>;
