@@ -75,7 +75,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
+        mimeType: 'audio/wav'
       });
 
       this.mediaRecorder.ondataavailable = (event) => {
@@ -85,7 +85,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       };
 
       this.mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm;codecs=opus' });
+        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
         const base64Audio = await this.blobToBase64(audioBlob);
         this.handleVoiceInput(base64Audio);
         this.audioChunks = [];

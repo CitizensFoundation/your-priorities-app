@@ -211,6 +211,13 @@ export class YpDomain extends YpCollection {
       : nothing;
   }
 
+  override renderAssistantTab() {
+    return html`<md-secondary-tab
+      ?has-static-theme="${this.hasStaticTheme}"
+      >${this.t("assistant")}<md-icon slot="icon">smart_toy</md-icon></md-secondary-tab
+    >`;
+  }
+
   renderDomainLogin() {
     return html`
       <div class="layout vertical center-center">

@@ -1,0 +1,1 @@
+{"version":3,"file":"AssistantServerApi.d.ts","sourceRoot":"","sources":["../../src/yp-assistants/AssistantServerApi.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,WAAW,EAAE,MAAM,0BAA0B,CAAC;AAEvD,qBAAa,oBAAqB,SAAQ,WAAW;gBACvC,OAAO,GAAE,MAA0B;IAKxC,eAAe,CACpB,OAAO,EAAE,MAAM,EACf,UAAU,EAAE,MAAM,EAClB,OAAO,EAAE,eAAe,EAAE,EAC1B,YAAY,EAAE,MAAM,GACnB,OAAO,CAAC,IAAI,CAAC;CAcjB"}

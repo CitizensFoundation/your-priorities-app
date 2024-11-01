@@ -7,6 +7,7 @@ import "./yp-collection-header.js";
 import "./yp-collection-items-list.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-post-map.js";
+import "../yp-assistants/yp-assistant.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export declare const CollectionTabTypes: Record<string, number>;
 export declare abstract class YpCollection extends YpBaseElementWithLogin {
@@ -52,6 +53,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     createNewCollection(): void;
     static get styles(): any[];
     renderHeader(): TemplateResult<1> | typeof nothing;
+    renderAssistantTab(): TemplateResult<1>;
     renderNewsAndMapTabs(): TemplateResult<1>;
     renderTabs(): TemplateResult<1> | typeof nothing;
     renderCurrentTabPage(): TemplateResult | undefined;

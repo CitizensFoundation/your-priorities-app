@@ -15,12 +15,14 @@ import "./yp-collection-items-list.js";
 import { YpServerApi } from "../common/YpServerApi.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-post-map.js";
+import "../yp-assistants/yp-assistant.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export const CollectionTabTypes = {
-    Collection: 0,
-    Newsfeed: 1,
-    Map: 2,
+    Assistant: 0,
+    Collection: 1,
+    Newsfeed: 2,
+    Map: 3,
 };
 export class YpCollection extends YpBaseElementWithLogin {
     constructor(collectionType, collectionItemType, collectionCreateFabIcon, collectionCreateFabLabel) {
@@ -176,6 +178,9 @@ export class YpCollection extends YpBaseElementWithLogin {
                 break;
             case "map":
                 tabNumber = CollectionTabTypes.Map;
+                break;
+            case "assistant":
+                tabNumber = CollectionTabTypes.Assistant;
                 break;
             default:
                 tabNumber = CollectionTabTypes.Collection;
@@ -397,6 +402,12 @@ export class YpCollection extends YpBaseElementWithLogin {
         `
             : nothing;
     }
+    renderAssistantTab() {
+        return html `<md-secondary-tab hidden
+      ?has-static-theme="${this.hasStaticTheme}"
+      >${this.t("assistant")}<md-icon slot="icon">assistant</md-icon></md-secondary-tab
+    >`;
+    }
     renderNewsAndMapTabs() {
         return html `
       <md-secondary-tab
@@ -424,6 +435,7 @@ export class YpCollection extends YpBaseElementWithLogin {
             @change="${this._selectTab}"
             .activeTabIndex="${this.selectedTab}"
           >
+            ${this.renderAssistantTab()}
             <md-secondary-tab
               ?has-static-theme="${this.hasStaticTheme}"
               ?hidden="${this.hideCollection}"
@@ -470,6 +482,12 @@ export class YpCollection extends YpBaseElementWithLogin {
           .collectionType="${this.collectionType}"
           .collectionId="${this.collectionId}"
         ></yp-post-map>`;
+                break;
+            case CollectionTabTypes.Assistant:
+                page = html `<yp-assistant
+          id="assistant"
+          .domainId="${this.collectionId}"
+        ></yp-assistant>`;
                 break;
         }
         return page;
