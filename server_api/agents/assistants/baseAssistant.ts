@@ -655,6 +655,24 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     );
   }
 
+  async addUserMessage(message: string): Promise<void> {
+    this.memory.chatLog!.push({
+      sender: "user",
+      message,
+      type: "message",
+    });
+    await this.saveMemory();
+  }
+
+  async addAssistantMessage(message: string): Promise<void> {
+    this.memory.chatLog!.push({
+      sender: "assistant",
+      message,
+      type: "message",
+    });
+    await this.saveMemory();
+  }
+
   /**
    * Handle streaming responses and function calls with comprehensive debugging
    */

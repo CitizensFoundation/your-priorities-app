@@ -105,6 +105,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                     case "input_audio_buffer.speech_stopped":
                         await this.handleSpeechStopped();
                         break;
+                    case "conversation.item.input_audio_transcription.completed":
+                        await this.handleAudioTranscriptDone(event);
+                        break;
                     case "text":
                         await this.handleTextOutput(event);
                         break;
@@ -113,6 +116,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                         break;
                     case "response.audio.delta":
                         await this.handleAudioDelta(event);
+                        break;
+                    case "response.output_item.done":
+                        await this.handleResponseDone(event);
                         break;
                     case "response.function_call_arguments.done":
                         await this.callFunctionHandler(event);
@@ -127,6 +133,21 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 console.error("Error handling voice message:", error);
             }
         });
+    }
+    async handleResponseDone(event) {
+        if (event.item?.content && event.item.content.length > 0) {
+            this.sendToClient("assistant", event.item.content[0].transcript, "message");
+            this.parentAssistant?.addAssistantMessage(event.item.content[0].transcript);
+        }
+        else {
+            console.error("------------------------------------> No text in response.done event ", JSON.stringify(event, null, 2));
+        }
+    }
+    async handleAudioTranscriptDone(event) {
+        if (event.transcript) {
+            this.sendToClient("user", event.transcript, "message");
+            this.parentAssistant?.addUserMessage(event.transcript);
+        }
     }
     async callFunctionHandler(event) {
         const tools = this.parentAssistant?.getCurrentModeFunctions();
@@ -155,6 +176,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                     response: {
                         modalities: this.voiceConfig.modalities,
                         instructions: "Inform the user about the mode change",
+                        tools: this.parentAssistant?.getCurrentModeFunctions(),
                     },
                 };
                 this.voiceConnection?.ws.send(JSON.stringify(createResponse));

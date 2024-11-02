@@ -175,6 +175,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             await this.handleSpeechStopped();
             break;
 
+          case "conversation.item.input_audio_transcription.completed":
+            await this.handleAudioTranscriptDone(event);
+            break;
+
           case "text":
             await this.handleTextOutput(event);
             break;
@@ -185,6 +189,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
           case "response.audio.delta":
             await this.handleAudioDelta(event);
+            break;
+
+          case "response.output_item.done":
+            await this.handleResponseDone(event);
             break;
 
           case "response.function_call_arguments.done":
@@ -200,6 +208,29 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         console.error("Error handling voice message:", error);
       }
     });
+  }
+
+  async handleResponseDone(event: any): Promise<void> {
+    if (event.item?.content && event.item.content.length > 0) {
+      this.sendToClient(
+        "assistant",
+        event.item.content[0].transcript,
+        "message"
+      );
+      this.parentAssistant?.addAssistantMessage(event.item.content[0].transcript);
+    } else {
+      console.error(
+        "------------------------------------> No text in response.done event ",
+        JSON.stringify(event, null, 2)
+      );
+    }
+  }
+
+  async handleAudioTranscriptDone(event: any): Promise<void> {
+    if (event.transcript) {
+      this.sendToClient("user", event.transcript, "message");
+      this.parentAssistant?.addUserMessage(event.transcript);
+    }
   }
 
   async callFunctionHandler(event: any): Promise<void> {
@@ -247,6 +278,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
           response: {
             modalities: this.voiceConfig.modalities,
             instructions: "Inform the user about the mode change",
+            tools: this.parentAssistant?.getCurrentModeFunctions(),
           },
         };
         this.voiceConnection?.ws.send(JSON.stringify(createResponse));
