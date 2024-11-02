@@ -59,6 +59,26 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             throw error;
         }
     }
+    destroyVoiceConnection() {
+        if (this.vadTimeout) {
+            clearTimeout(this.vadTimeout);
+            this.vadTimeout = undefined;
+        }
+        // Reset voice state
+        this.voiceState = {
+            speaking: false,
+            listening: false,
+            processingAudio: false
+        };
+        // Clear audio buffer
+        this.audioBuffer = [];
+        // Close WebSocket connection
+        if (this.voiceConnection?.ws) {
+            this.voiceConnection.ws.close();
+            this.voiceConnection.connected = false;
+            this.voiceConnection = undefined;
+        }
+    }
     setupVoiceMessageHandlers(ws) {
         ws.on("message", async (data) => {
             try {
@@ -368,22 +388,6 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }
         // Otherwise, use the original implementation
         return super.streamWebSocketResponses(stream);
-    }
-    // Helper method to switch between voice and text modes
-    async setVoiceMode(enabled) {
-        this.voiceEnabled = enabled;
-        if (enabled) {
-            console.log("setVoiceMode: initializing voice connection");
-            await this.initializeVoiceConnection();
-        }
-        else {
-            console.log("setVoiceMode: closing voice connection");
-            // Clean up voice connection if it exists
-            if (this.voiceConnection?.ws) {
-                this.voiceConnection.ws.close();
-                this.voiceConnection = undefined;
-            }
-        }
     }
     // Method to update voice configuration
     async updateVoiceConfig(config) {
