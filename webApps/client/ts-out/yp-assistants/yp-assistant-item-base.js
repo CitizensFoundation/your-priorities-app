@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
-import { YpAiChatbotItemBase } from '../yp-llms/yp-chatbot-item-base.js';
+import { YpAiChatbotItemBase } from '../yp-chatbots/yp-chatbot-item-base.js';
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import "./yp-agent-chip.js";

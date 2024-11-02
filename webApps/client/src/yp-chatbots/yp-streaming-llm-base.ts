@@ -256,12 +256,12 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   get simplifiedChatLog() {
+    debugger;
     let chatLog = this.chatLog.filter(
       (chatMessage) =>
         chatMessage.type != "thinking" &&
         chatMessage.type != "noStreaming" &&
-        chatMessage.sender != "system" &&
-        chatMessage.message
+        chatMessage.sender != "system"
     );
     return chatLog.map((chatMessage) => {
       return {

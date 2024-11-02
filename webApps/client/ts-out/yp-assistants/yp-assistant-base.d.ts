@@ -1,5 +1,5 @@
 import { nothing, PropertyValueMap } from "lit";
-import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
+import { YpChatbotBase } from "../yp-chatbots/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;

@@ -1,5 +1,5 @@
 import { nothing } from "lit";
-import { YpAiChatbotItemBase } from '../yp-llms/yp-chatbot-item-base.js';
+import { YpAiChatbotItemBase } from '../yp-chatbots/yp-chatbot-item-base.js';
 import "./yp-agent-chip.js";
 import "./yp-agent-chip-for-purchase.js";
 export declare class YpAssistantItemBase extends YpAiChatbotItemBase {

@@ -13,7 +13,7 @@ import "@material/web/button/text-button.js";
 import "@material/web/progress/circular-progress.js";
 import "@material/web/textfield/filled-text-field.js";
 import { SharedStyles } from "./SharedStyles.js";
-import { YpChatbotBase } from "../../yp-llms/yp-chatbot-base.js";
+import { YpChatbotBase } from "../../yp-chatbots/yp-chatbot-base.js";
 import { AoiServerApi } from "./AoiServerApi.js";
 import { YpLanguages } from "../../common/languages/ypLanguages.js";
 let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {

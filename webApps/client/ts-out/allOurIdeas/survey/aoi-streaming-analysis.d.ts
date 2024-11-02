@@ -5,7 +5,7 @@ import "@material/web/button/text-button.js";
 import "@material/web/progress/circular-progress.js";
 import "@material/web/textfield/filled-text-field.js";
 import { AoiServerApi } from "./AoiServerApi.js";
-import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
+import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 export declare class AoiStreamingAnalysis extends YpStreamingLlmBase {
     earl: AoiEarlData;
     groupId: number;

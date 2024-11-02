@@ -5,7 +5,7 @@ import "@material/web/button/outlined-button.js";
 import "@material/web/button/text-button.js";
 import "@material/web/progress/circular-progress.js";
 import "@material/web/textfield/filled-text-field.js";
-import { YpChatbotBase } from "../../yp-llms/yp-chatbot-base.js";
+import { YpChatbotBase } from "../../yp-chatbots/yp-chatbot-base.js";
 import { AoiServerApi } from "./AoiServerApi.js";
 export declare class AoiLlmExplainDialog extends YpChatbotBase {
     earl: AoiEarlData;
