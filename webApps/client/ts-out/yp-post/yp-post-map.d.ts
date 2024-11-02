@@ -13,7 +13,7 @@ export declare class YpPostMap extends YpBaseElement {
     skipFitToMarkersNext: boolean;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderInfoCard(post: YpPostData): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderInfoCard(post: YpPostData): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     resetMapHeight(): void;
     connectedCallback(): void;

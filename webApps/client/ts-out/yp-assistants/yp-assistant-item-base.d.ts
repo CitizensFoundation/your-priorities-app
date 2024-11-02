@@ -9,7 +9,7 @@ export declare class YpAssistantItemBase extends YpAiChatbotItemBase {
     firstUpdated(changedProps: Map<string, any>): void;
     updated(changedProps: Map<string, any>): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
-    renderVoiceStatus(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderVoiceStatus(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderChatGPT(): import("lit-html").TemplateResult<1>;
     renderUser(): import("lit-html").TemplateResult<1>;
 }

@@ -1,3 +1,4 @@
+import { nothing, PropertyValueMap } from "lit";
 import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
@@ -9,15 +10,26 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private audioContext;
     private audioQueue;
     private isPlayingAudio;
+    userIsSpeaking: boolean;
+    aiIsSpeaking: boolean;
     private currentAudioSource;
     onlyUseTextField: boolean;
     voiceButton: HTMLElement;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
+    private waveformCanvas;
+    private canvasCtx;
+    private renderLoopActive;
     constructor();
     private initializeAudioContext;
+    firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
+    private setupCanvasRendering;
+    private renderLoop;
+    private stopCanvasRendering;
     disconnectedCallback(): void;
     private cleanupAudio;
     setupVoiceCapabilities(): Promise<void>;
+    get talkingHeadImage(): "https://assets.evoly.ai/direct/listeningHead.png" | "https://assets.evoly.ai/direct/talkingHead.png" | "https://assets.evoly.ai/direct/idleHead.png";
+    renderVoiceTalkingHead(): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
     startRecording(): Promise<void>;

@@ -1,4 +1,4 @@
-import { css, html, nothing } from "lit";
+import { css, html, nothing, PropertyValueMap } from "lit";
 import { property, customElement, state, query } from "lit/decorators.js";
 import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
@@ -6,6 +6,7 @@ import { literal } from "lit/static-html.js";
 import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
 import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
+import { WavRenderer } from "./wave-renderer.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -34,15 +35,27 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   private isPlayingAudio = false;
 
   @state()
+  userIsSpeaking = false;
+
+  @state()
+  aiIsSpeaking = false;
+
+  @state()
   private currentAudioSource: AudioBufferSourceNode | null = null;
 
   @property({ type: Boolean })
   override onlyUseTextField = true;
 
-  @query('#voiceButton')
+  @query("#voiceButton")
   voiceButton!: HTMLElement;
 
   override chatbotItemComponentName = literal`yp-assistant-item-base`;
+
+  @query("#waveformCanvas")
+  private waveformCanvas!: HTMLCanvasElement;
+
+  private canvasCtx: CanvasRenderingContext2D | null = null;
+  private renderLoopActive = false;
 
   constructor() {
     super();
@@ -53,9 +66,81 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   private initializeAudioContext() {
     this.audioContext = new AudioContext();
   }
+  override firstUpdated(
+    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ) {
+    if (changedProperties) {
+      super.firstUpdated(changedProperties);
+    }
+  }
+
+  private setupCanvasRendering() {
+    if (this.renderLoopActive) return;
+
+    this.renderLoopActive = true;
+    this.renderLoop();
+  }
+
+  private renderLoop = () => {
+    if (!this.renderLoopActive) return;
+
+    if (this.waveformCanvas) {
+      // Set up canvas if needed
+      if (!this.waveformCanvas.width || !this.waveformCanvas.height) {
+        this.waveformCanvas.width = this.waveformCanvas.offsetWidth;
+        this.waveformCanvas.height = this.waveformCanvas.offsetHeight;
+      }
+      this.canvasCtx = this.canvasCtx || this.waveformCanvas.getContext("2d");
+
+      if (this.canvasCtx) {
+        this.canvasCtx.clearRect(
+          0,
+          0,
+          this.waveformCanvas.width,
+          this.waveformCanvas.height
+        );
+
+        // Get frequencies based on who is speaking
+        let frequencies = new Float32Array([0]);
+        let color = "#ffdc2f"; // default color
+
+        try {
+          if (this.userIsSpeaking) {
+            frequencies =
+              this.mediaRecorder?.getFrequencies("voice")?.values!;
+            color = "#ffdc2f"; // blue for user
+          } else if (this.aiIsSpeaking) {
+            frequencies =
+              this.mediaRecorder?.getFrequencies("voice")?.values!;
+            color = "#1e90ff"; // green for AI
+          }
+
+          WavRenderer.drawBars(
+            this.waveformCanvas,
+            this.canvasCtx,
+            frequencies,
+            color,
+            10,
+            0,
+            8
+          );
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    requestAnimationFrame(this.renderLoop);
+  };
+
+  private stopCanvasRendering() {
+    this.renderLoopActive = false;
+  }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.stopCanvasRendering();
+
     this.stopRecording();
     this.cleanupAudio();
   }
@@ -79,8 +164,32 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.isPlayingAudio = false;
   }
 
-  async setupVoiceCapabilities() {
+  async setupVoiceCapabilities() {}
 
+  get talkingHeadImage() {
+    if (this.userIsSpeaking) {
+      return "https://assets.evoly.ai/direct/listeningHead.png";
+    } else if (this.aiIsSpeaking) {
+      return "https://assets.evoly.ai/direct/talkingHead.png";
+    }
+    return "https://assets.evoly.ai/direct/idleHead.png";
+  }
+
+  renderVoiceTalkingHead() {
+    if (!this.voiceEnabled) {
+      return nothing;
+    }
+    return html`
+      <div class="voice-header">
+        <div class="voice-title">Voice Assistant</div>
+        <img
+          class="talking-head-image"
+          src="${this.talkingHeadImage}"
+          alt="Voice Assistant"
+        />
+        <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+      </div>
+    `;
   }
 
   override render() {
@@ -96,18 +205,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             sender="bot"
           ></yp-assistant-item-base>
           ${this.chatLog
-            .filter(chatElement => !chatElement.hidden && chatElement.type !== 'hiddenContextMessage')
+            .filter(
+              (chatElement) =>
+                !chatElement.hidden &&
+                chatElement.type !== "hiddenContextMessage"
+            )
             .map(
-              chatElement => html`
+              (chatElement) => html`
                 <yp-assistant-item-base
-                  ?thinking="${chatElement.type === 'thinking' ||
-                  chatElement.type === 'noStreaming'}"
+                  ?thinking="${chatElement.type === "thinking" ||
+                  chatElement.type === "noStreaming"}"
                   @followup-question="${this.followUpQuestion}"
                   .clusterId="${this.clusterId}"
                   class="chatElement ${chatElement.sender}-chat-element"
                   .detectedLanguage="${this.language}"
                   .message="${chatElement.message}"
-
                   .htmlToRender="${chatElement.html}"
                   @scroll-down-enabled="${() => (this.userScrolled = false)}"
                   .type="${chatElement.type}"
@@ -117,7 +229,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             )}
         </div>
         <div class="layout horizontal center-center chat-input">
-          ${this.renderChatInput()}
+          ${this.renderVoiceTalkingHead()}${this.renderChatInput()}
         </div>
       </div>
     `;
@@ -172,7 +284,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     } else if (arrayBuffer instanceof Int16Array) {
       arrayBuffer = arrayBuffer.buffer;
     }
-    let binary = '';
+    let binary = "";
     let bytes = new Uint8Array(arrayBuffer as any);
     const chunkSize = 0x8000; // 32KB chunk size
     for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -182,14 +294,16 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return btoa(binary);
   }
 
-  async handleVoiceInput(data: { mono: ArrayBuffer, raw: ArrayBuffer }) {
+  async handleVoiceInput(data: { mono: ArrayBuffer; raw: ArrayBuffer }) {
     // Convert ArrayBuffer to base64 using browser APIs
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({
-        type: 'voice_input',
-        audio: YpAssistantBase.arrayBufferToBase64(data.mono),
-        clientId: this.wsClientId
-      }));
+      this.ws.send(
+        JSON.stringify({
+          type: "voice_input",
+          audio: YpAssistantBase.arrayBufferToBase64(data.mono),
+          clientId: this.wsClientId,
+        })
+      );
     }
   }
 
@@ -197,43 +311,52 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     const data = JSON.parse(event.data);
 
     // Handle messages with HTML content
-    if (data.type === 'bot' && data.html) {
-
+    if (data.type === "bot" && data.html) {
       // Add message to chat log with reference to component
       this.addChatBotElement({
         sender: "bot",
         type: "component",
         message: data.message || "",
-        html: data.html
+        html: data.html,
       });
       return;
     }
 
     switch (data.type) {
-      case 'audio':
+      case "audio":
         if (data.audio) {
           const audioData = this.base64ToArrayBuffer(data.audio);
           this.wavStreamPlayer?.add16BitPCM(audioData);
         }
         break;
 
-      case 'listening_start':
+      case "listening_start":
         if (this.lastChatUiElement) {
           this.lastChatUiElement.isSpeaking = true;
         }
+        this.userIsSpeaking = true;
         await this.wavStreamPlayer?.interrupt();
         this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
 
         await this.wavStreamPlayer?.connect();
         break;
 
-      case 'listening_stop':
+      case "listening_stop":
         if (this.lastChatUiElement) {
           this.lastChatUiElement.isSpeaking = false;
         }
+        this.userIsSpeaking = false;
         break;
 
-      case 'speech.transcription':
+      case "ai_speaking_start":
+        this.aiIsSpeaking = true;
+        break;
+
+      case "ai_speaking_stop":
+        this.aiIsSpeaking = false;
+        break;
+
+      case "speech.transcription":
         if (data.text && this.lastChatUiElement) {
           this.lastChatUiElement.message = data.text;
         }
@@ -266,16 +389,24 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
 
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({
-        type: 'voice_mode',
-        enabled: this.voiceEnabled,
-        clientId: this.wsClientId
-      }));
+      this.ws.send(
+        JSON.stringify({
+          type: "voice_mode",
+          enabled: this.voiceEnabled,
+          clientId: this.wsClientId,
+        })
+      );
     }
 
     // Initialize or resume AudioContext when enabling voice mode
-    if (this.voiceEnabled && this.audioContext?.state === 'suspended') {
+    if (this.voiceEnabled && this.audioContext?.state === "suspended") {
       this.audioContext.resume();
+    }
+
+    if (this.voiceEnabled) {
+      this.setupCanvasRendering();
+    } else {
+      this.stopCanvasRendering();
     }
   }
 
@@ -283,6 +414,26 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return [
       super.styles,
       css`
+        .voice-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          position: relative;
+        }
+
+        .talking-head-image {
+          width: 128px;
+          height: 128px;
+        }
+
+        .waveform-canvas {
+          width: 100%;
+          height: 60px;
+          margin-top: 8px;
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 8px;
+        }
+
         .voice-controls {
           display: flex;
           align-items: center;
@@ -301,33 +452,44 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
 
         @keyframes pulse {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.1); opacity: 0.8; }
-          100% { transform: scale(1); opacity: 1; }
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
-      `
+      `,
     ];
   }
 
   override renderChatInput() {
     return html`
       <div class="voice-controls">
-        ${this.voiceEnabled ? html`
-          <md-icon-button
-            id="voiceButton"
-            class="voice-button"
-            ?recording="${this.isRecording}"
-            @click="${this.toggleRecording}"
-          >
-            <md-icon>${this.isRecording ? 'stop' : 'mic'}</md-icon>
-          </md-icon-button>
-        ` : nothing}
+        ${this.voiceEnabled
+          ? html`
+              <md-icon-button
+                id="voiceButton"
+                class="voice-button"
+                ?recording="${this.isRecording}"
+                @click="${this.toggleRecording}"
+              >
+                <md-icon>${this.isRecording ? "stop" : "mic"}</md-icon>
+              </md-icon-button>
+            `
+          : nothing}
 
         <md-icon-button
           class="voice-mode-toggle"
           @click="${this.toggleVoiceMode}"
         >
-          <md-icon>${this.voiceEnabled ? 'keyboard' : 'mic_none'}</md-icon>
+          <md-icon>${this.voiceEnabled ? "keyboard" : "mic_none"}</md-icon>
         </md-icon-button>
 
         ${super.renderChatInput()}
