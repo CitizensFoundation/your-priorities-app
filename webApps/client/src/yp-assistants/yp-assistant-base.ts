@@ -32,7 +32,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   override onlyUseTextField = true;
 
   @state()
-  currentMode: string | undefined = undefined;
+  currentMode = "";
 
   @query("#voiceButton")
   voiceButton!: HTMLElement;
@@ -206,7 +206,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   async startRecording() {
     const serverApi = new YpAssistantServerApi();
-    await serverApi.startVoiceSession(1790, this.wsClientId, this.chatLog);
+    await serverApi.startVoiceSession(1790, this.wsClientId, this.currentMode);
     this.mediaRecorder = new WavRecorder({ sampleRate: 24000 }) as WavRecorder;
     this.isRecording = true;
 

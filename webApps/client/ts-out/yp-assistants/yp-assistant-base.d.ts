@@ -9,7 +9,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     userIsSpeaking: boolean;
     aiIsSpeaking: boolean;
     onlyUseTextField: boolean;
-    currentMode: string | undefined;
+    currentMode: string;
     voiceButton: HTMLElement;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
     private waveformCanvas;

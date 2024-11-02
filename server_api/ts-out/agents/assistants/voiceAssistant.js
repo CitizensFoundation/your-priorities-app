@@ -2,7 +2,7 @@ import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import WebSocket from "ws";
 // Extend the base class with voice capabilities
 export class YpBaseChatBotWithVoice extends YpBaseChatBot {
-    constructor(wsClientId, wsClients, memoryId = undefined, voiceEnabled = false, parentAssistant) {
+    constructor(wsClientId, wsClients, memoryId, voiceEnabled = false, parentAssistant) {
         super(wsClientId, wsClients, memoryId);
         this.voiceEnabled = false;
         this.audioBuffer = [];
@@ -284,6 +284,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeVoiceSession() {
         if (!this.voiceConnection?.ws)
             return;
+        console.log("======================> initializeVoiceSession current mode", this.memory?.currentMode);
+        console.log("======================> initializeVoiceSession system prompt", this.parentAssistant?.getCurrentSystemPrompt());
+        console.log("======================> initializeVoiceSession functions", this.parentAssistant?.getCurrentModeFunctions());
+        console.log("======================> initializeVoiceSession chat log", JSON.stringify(this.memory?.chatLog, null, 2));
         // Then update the session with full configuration
         const sessionConfig = {
             type: "session.update",

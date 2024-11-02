@@ -1,7 +1,22 @@
 import { YpServerApi } from "../common/YpServerApi.js";
-export declare class YpAssistantServerApi extends YpServerApi {
-    constructor(urlPath?: string);
-    sendChatMessage(domainId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string, currentMode?: string | undefined): Promise<void>;
-    startVoiceSession(domainId: number, wsClientId: string, chatLog: PsSimpleChatLog[]): Promise<void>;
+interface SavedChat {
+    serverMemoryId: string;
+    questionSnippet: string;
 }
+export declare class YpAssistantServerApi extends YpServerApi {
+    private readonly localStorageChatsKey;
+    constructor(urlPath?: string);
+    sendChatMessage(domainId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string, currentMode?: string | undefined, serverMemoryId?: string): Promise<{
+        serverMemoryId: string;
+    }>;
+    getChatLogFromServer(serverMemoryId: string): Promise<{
+        chatLog: PsSimpleChatLog[];
+        totalCosts?: number;
+    }>;
+    startVoiceSession(domainId: number, wsClientId: string, currentMode: string, serverMemoryId?: string): Promise<void>;
+    private saveChatToLocalStorage;
+    loadChatsFromLocalStorage(): SavedChat[];
+    clearServerMemory(serverMemoryId: string): Promise<void>;
+}
+export {};
 //# sourceMappingURL=AssistantServerApi.d.ts.map

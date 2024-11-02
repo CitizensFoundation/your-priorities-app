@@ -1,8 +1,8 @@
 import { YpBaseAssistant } from "./baseAssistant.js";
 import { YpBaseChatBotWithVoice } from "./voiceAssistant.js";
 export class YpBaseAssistantWithVoice extends YpBaseAssistant {
-    constructor(wsClientId, wsClients, redis, voiceEnabled = false, currentMode = undefined) {
-        super(wsClientId, wsClients, redis);
+    constructor(wsClientId, wsClients, redis, voiceEnabled, currentMode, memoryId) {
+        super(wsClientId, wsClients, redis, memoryId);
         if (currentMode) {
             console.log(`Setting currentMode to ${currentMode} it was ${this.memory.currentMode}`);
             this.memory.currentMode = currentMode;
@@ -16,7 +16,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
         }
     }
     async createVoiceBot() {
-        this.voiceBot = new YpBaseChatBotWithVoice(this.wsClientId, this.wsClients, undefined, true, this);
+        this.voiceBot = new YpBaseChatBotWithVoice(this.wsClientId, this.wsClients, this.memoryId, true, this);
         await this.voiceBot.initializeVoiceConnection();
         this.setupVoiceEventForwarder();
         await this.voiceBot.updateVoiceConfig({

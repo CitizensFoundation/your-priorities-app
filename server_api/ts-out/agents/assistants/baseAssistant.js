@@ -9,8 +9,8 @@ export var CommonModes;
     CommonModes["ErrorRecovery"] = "error_recovery";
 })(CommonModes || (CommonModes = {}));
 export class YpBaseAssistant extends YpBaseChatBot {
-    constructor(wsClientId, wsClients, redis) {
-        super(wsClientId, wsClients);
+    constructor(wsClientId, wsClients, redis, memoryId) {
+        super(wsClientId, wsClients, memoryId);
         this.modes = new Map();
         this.availableFunctions = new Map();
         this.toolCallTimeout = 30000; // 30 seconds
@@ -329,6 +329,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     parameters: f.parameters,
                 },
             }));
+            console.log("======================> conversation currentMode", this.memory?.currentMode);
+            console.log("======================> conversation", JSON.stringify(messages, null, 2));
+            console.log("======================> conversation", JSON.stringify(tools, null, 2));
             const stream = await this.openaiClient.chat.completions.create({
                 model: this.modelName,
                 messages,

@@ -24,7 +24,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.userIsSpeaking = false;
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
-        this.currentMode = undefined;
+        this.currentMode = "";
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
         this.canvasCtx = null;
         this.renderLoopActive = false;
@@ -155,7 +155,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     async startRecording() {
         const serverApi = new YpAssistantServerApi();
-        await serverApi.startVoiceSession(1790, this.wsClientId, this.chatLog);
+        await serverApi.startVoiceSession(1790, this.wsClientId, this.currentMode);
         this.mediaRecorder = new WavRecorder({ sampleRate: 24000 });
         this.isRecording = true;
         await this.mediaRecorder.begin();

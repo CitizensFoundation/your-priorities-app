@@ -176,6 +176,25 @@ interface YpBaseChatBotMemoryData extends PsAgentBaseMemoryData {
   chatLog?: PsSimpleChatLog[];
 }
 
+
+interface AssistantModeData<T = unknown> {
+  type: string;
+  data: T;
+  timestamp: number;
+  metadata?: Record<string, unknown>;
+}
+
+interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
+  redisKey: string;
+  currentMode?: string;
+  modeData?: AssistantModeData;
+  modeHistory?: Array<{
+    mode: string;
+    timestamp: number;
+    reason?: string;
+  }>;
+}
+
 interface YpWorkflowStep {
   id: number;
   name: string;

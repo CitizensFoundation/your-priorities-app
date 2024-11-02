@@ -20,10 +20,12 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
-    voiceEnabled: boolean = false,
-    currentMode: string | undefined = undefined
+    voiceEnabled: boolean,
+    currentMode: string,
+    memoryId: string | undefined
   ) {
-    super(wsClientId, wsClients, redis);
+    super(wsClientId, wsClients, redis, memoryId);
+
     if (currentMode) {
       console.log(
         `Setting currentMode to ${currentMode} it was ${this.memory.currentMode}`
@@ -46,7 +48,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     this.voiceBot = new YpBaseChatBotWithVoice(
       this.wsClientId,
       this.wsClients,
-      undefined,
+      this.memoryId,
       true,
       this
     );

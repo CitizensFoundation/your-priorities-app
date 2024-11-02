@@ -51,13 +51,6 @@ export interface ToolCall {
   startTime?: number; // For timeout tracking
 }
 
-export interface AssistantModeData<T = unknown> {
-  type: string;
-  data: T;
-  timestamp: number;
-  metadata?: Record<string, unknown>;
-}
-
 /**
  * Common modes that implementations might use
  */
@@ -73,17 +66,6 @@ export interface ChatbotMode {
   routingRules?: string[];
   allowedTransitions?: string[]; // Allowed next modes
   cleanup?: () => Promise<void>; // Cleanup function
-}
-
-interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
-  redisKey: string;
-  currentMode?: string;
-  modeData?: AssistantModeData;
-  modeHistory?: Array<{
-    mode: string;
-    timestamp: number;
-    reason?: string;
-  }>;
 }
 
 export abstract class YpBaseAssistant extends YpBaseChatBot {
@@ -104,9 +86,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
-    redis: ioredis.Redis
+    redis: ioredis.Redis,
+    memoryId: string | undefined
   ) {
-    super(wsClientId, wsClients);
+    super(wsClientId, wsClients, memoryId);
     this.redis = redis;
     this.wsClientId = wsClientId;
     this.wsClientSocket = wsClients.get(this.wsClientId)!;
@@ -471,6 +454,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           },
         })
       );
+
+      console.log("======================> conversation currentMode", this.memory?.currentMode);
+      console.log("======================> conversation", JSON.stringify(messages, null, 2));
+      console.log("======================> conversation", JSON.stringify(tools, null, 2));
 
       const stream = await this.openaiClient.chat.completions.create({
         model: this.modelName,

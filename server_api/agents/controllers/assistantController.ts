@@ -81,10 +81,10 @@ export class AssistantController {
 
   private async startVoiceSession(req: YpRequest, res: express.Response) {
     try {
-      const { wsClientId, chatLog } = req.body;
+      const { wsClientId, currentMode } = req.body;
       console.log(`Starting chat session for client: ${wsClientId}`);
 
-      new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true);
+      new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, currentMode);
 
       res.status(200).json({
         message: "Voice session initialized",

@@ -42,12 +42,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected readonly VAD_TIMEOUT = 1000; // 1 second of silence for VAD
   protected vadTimeout?: NodeJS.Timeout;
 
+  memory!: YpBaseAssistantMemoryData;
+
   protected parentAssistant?: YpBaseAssistant;
 
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
-    memoryId: string | undefined = undefined,
+    memoryId: string,
     voiceEnabled: boolean = false,
     parentAssistant?: YpBaseAssistant
   ) {
@@ -386,7 +388,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected async initializeVoiceSession(): Promise<void> {
     if (!this.voiceConnection?.ws) return;
 
+    console.log("======================> initializeVoiceSession current mode", this.memory?.currentMode);
 
+    console.log("======================> initializeVoiceSession system prompt", this.parentAssistant?.getCurrentSystemPrompt());
+    console.log("======================> initializeVoiceSession functions", this.parentAssistant?.getCurrentModeFunctions());
+    console.log("======================> initializeVoiceSession chat log", JSON.stringify(this.memory?.chatLog, null, 2));
 
     // Then update the session with full configuration
     const sessionConfig = {
