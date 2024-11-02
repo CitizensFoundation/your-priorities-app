@@ -25,6 +25,9 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     renderCommon() {
         return `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>`;
     }
+    getCleanedParams(params) {
+        return typeof params === "string" ? JSON.parse(params) : params;
+    }
     defineAvailableModes() {
         return [
             {
@@ -59,9 +62,10 @@ ${this.renderAllAgentsStatus()}`,
                           },
                         },*/
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             console.log(`handler: list_my_agent_subscriptions: ${JSON.stringify(params, null, 2)}`);
                             try {
-                                const status = await this.loadMyAgentSubscriptions();
+                                const status = (await this.loadMyAgentSubscriptions());
                                 if (DEBUG) {
                                     console.log(`list_my_agent_subscriptions: ${JSON.stringify(status, null, 2)}`);
                                 }
@@ -113,9 +117,10 @@ ${this.renderAllAgentsStatus()}`,
                           },
                         },*/
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             console.log(`handler: list_all_agents_available_for_purchase: ${JSON.stringify(params, null, 2)}`);
                             try {
-                                const status = await this.loadAllAgentPlans();
+                                const status = (await this.loadAllAgentPlans());
                                 if (DEBUG) {
                                     console.log(`list_all_agents_available_for_purchase: ${JSON.stringify(status, null, 2)}`);
                                 }
@@ -165,7 +170,7 @@ ${this.renderAllAgentsStatus()}`,
                         handler: async (params) => {
                             console.log(`handler: select_agent: ${JSON.stringify(params, null, 2)}`);
                             try {
-                                let cleanedParams = typeof params === 'string' ? JSON.parse(params) : params;
+                                let cleanedParams = typeof params === "string" ? JSON.parse(params) : params;
                                 const agent = await this.validateAndSelectAgent(cleanedParams.agentProductId);
                                 const requiredQuestions = await this.getRequiredQuestions(cleanedParams.agentProductId);
                                 this.currentAgentId = cleanedParams.agentProductId;
@@ -221,26 +226,27 @@ ${this.renderCurrentAgent()}`,
                         parameters: {
                             type: "object",
                             properties: {
-                                agentId: { type: "number" },
+                                agentProductId: { type: "number" },
                             },
-                            required: ["agentId"],
+                            required: ["agentProductId"],
                         },
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             console.log(`handler: show_question_form: ${JSON.stringify(params, null, 2)}`);
                             try {
-                                const questions = await this.getRequiredQuestions(params.agentId);
+                                const questions = await this.getRequiredQuestions(params.agentProductId);
                                 // Create HTML element for questions
-                                let html = questions.map(question => `
+                                let html = questions
+                                    .map((question) => `
                   <yp-structured-question
                     .question="${JSON.stringify(question)}"
                   ></yp-structured-question>
-                `).join('\n');
+                `)
+                                    .join("\n");
                                 return {
                                     success: true,
-                                    data: {
-                                        questions,
-                                        html,
-                                    },
+                                    data: questions,
+                                    html,
                                 };
                             }
                             catch (error) {
@@ -283,6 +289,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                             },
                         },
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             try {
                                 if (!this.currentAgentId) {
                                     throw new Error("No agent selected");
@@ -315,18 +322,19 @@ ${this.renderCurrentWorkflowStatus()}`,
                             required: ["groupId"],
                         },
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             console.log(`handler: show_engagement_group: ${JSON.stringify(params, null, 2)}`);
                             try {
                                 // Create HTML element for group
-                                const html = `<yp-group
+                                const html = `<div class="group-container"><yp-group
                   .groupId="${params.groupId}"
                   .configuration="${JSON.stringify(params.configuration)}"
-                ></yp-group>`;
+                ></yp-group></div>`;
                                 return {
                                     success: true,
+                                    html,
                                     data: {
                                         groupId: params.groupId,
-                                        html,
                                     },
                                 };
                             }
@@ -359,6 +367,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                           },
                         },*/
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             console.log(`handler: stop_agent: ${JSON.stringify(params, null, 2)}`);
                             try {
                                 if (!this.currentAgentId) {
@@ -388,15 +397,15 @@ ${this.renderCurrentWorkflowStatus()}`,
                         },
                     },
                     {
-                        name: "show_workflow",
-                        description: "Display the current workflow status and steps",
+                        name: "show_workflow_for_selected_agent",
+                        description: "Display the workflow for the selected agent",
                         type: "function",
                         parameters: {
                             type: "object",
                             properties: {
-                                includeHistory: { type: "boolean" },
-                                showDetails: { type: "boolean" },
+                                agentProductId: { type: "number" },
                             },
+                            required: ["agentProductId"],
                         },
                         /*resultSchema: {
                           type: "object",
@@ -426,24 +435,21 @@ ${this.renderCurrentWorkflowStatus()}`,
                           },
                         },*/
                         handler: async (params) => {
+                            params = this.getCleanedParams(params);
                             console.log(`handler: show_workflow: ${JSON.stringify(params, null, 2)}`);
                             try {
                                 if (!this.currentAgentId) {
                                     throw new Error("No agent selected");
                                 }
-                                const workflow = await this.getWorkflowStatus(this.currentAgentId);
+                                const workflow = await this.getWorkflowStatus(params.agentProductId);
                                 // Create visualization HTML
-                                const html = `
-                  <yp-group
-                    .groupId="${workflow.steps[params.currentStepId].groupId}"
-                  ></yp-group>
-                `;
+                                const html = `<div class="group-container"><yp-group
+                    collectionId="31042"
+                  ></yp-group></div>`;
                                 return {
                                     success: true,
-                                    data: {
-                                        workflow,
-                                        html,
-                                    },
+                                    html,
+                                    data: {},
                                     metadata: {
                                         lastUpdated: new Date().toISOString(),
                                         includesHistory: params.includeHistory,
@@ -452,6 +458,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                                 };
                             }
                             catch (error) {
+                                console.error(`Failed to show workflow: ${error} ${error instanceof Error ? error.message : ""}`);
                                 return {
                                     success: false,
                                     error: error instanceof Error
@@ -562,7 +569,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                     imageUrl: plan.configuration?.imageUrl || "",
                     price: plan.configuration?.amount || 0,
                     currency: plan.configuration?.currency || "USD",
-                    maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0
+                    maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0,
                 })),
                 systemStatus: {
                     healthy: true,
@@ -646,7 +653,8 @@ ${this.renderCurrentWorkflowStatus()}`,
                     name: subscription.AgentProduct.name,
                     description: subscription.AgentProduct.description,
                     imageUrl: subscription.Plan.configuration.imageUrl || "",
-                    isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id === subscription.AgentProduct.id),
+                    isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id ===
+                        subscription.AgentProduct.id),
                 })),
                 runningAgents: runningAgents.map((run) => ({
                     runId: run.id,
