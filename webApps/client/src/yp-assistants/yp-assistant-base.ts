@@ -204,7 +204,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             .filter(
               (chatElement) =>
                 !chatElement.hidden &&
-                chatElement.type !== "hiddenContextMessage"
+                chatElement.type !== "hiddenContextMessage" &&
+                (chatElement.message || chatElement.html)
             )
             .map(
               (chatElement) => html`

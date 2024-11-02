@@ -427,7 +427,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
             return;
         }
         if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
-            throw new Error(`Invalid mode transition from ${oldMode} to ${newMode}`);
+            console.warn(`Invalid mode transition from ${oldMode} to ${newMode}`);
         }
         // Perform cleanup of old mode
         if (oldMode) {
@@ -450,7 +450,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
             mode: this.memory.currentMode,
         }));
         await this.saveMemory();
-        this.sendToClient("assistant", `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`);
+        this.sendToClient("assistant", `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`, undefined, true);
     }
     /**
      * Handle streaming responses and function calls with comprehensive debugging

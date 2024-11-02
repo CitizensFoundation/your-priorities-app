@@ -147,7 +147,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           ></yp-assistant-item-base>
           ${this.chatLog
             .filter((chatElement) => !chatElement.hidden &&
-            chatElement.type !== "hiddenContextMessage")
+            chatElement.type !== "hiddenContextMessage" &&
+            (chatElement.message || chatElement.html))
             .map((chatElement) => html `
                 <yp-assistant-item-base
                   ?thinking="${chatElement.type === "thinking" ||

@@ -611,7 +611,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       return;
     }
     if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
-      throw new Error(`Invalid mode transition from ${oldMode} to ${newMode}`);
+      console.warn(`Invalid mode transition from ${oldMode} to ${newMode}`);
     }
 
     // Perform cleanup of old mode
@@ -644,7 +644,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.sendToClient(
       "assistant",
-      `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`
+      `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`,
+      undefined,
+      true
     );
   }
 
