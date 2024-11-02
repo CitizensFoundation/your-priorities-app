@@ -16,7 +16,7 @@ export declare class YpPostListItem extends YpBaseElement {
     get structuredAnswerTruncateLength(): number;
     renderDescription(): import("lit-html").TemplateResult<1>;
     renderTags(): import("lit-html").TemplateResult<1>;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderShare(): import("lit-html").TemplateResult<1>;
     renderDebate(): import("lit-html").TemplateResult<1>;
     renderActions(): import("lit-html").TemplateResult<1>;

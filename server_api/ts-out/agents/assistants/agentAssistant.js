@@ -165,9 +165,10 @@ ${this.renderAllAgentsStatus()}`,
                         handler: async (params) => {
                             console.log(`handler: select_agent: ${JSON.stringify(params, null, 2)}`);
                             try {
-                                const agent = await this.validateAndSelectAgent(params.agentProductId);
-                                const requiredQuestions = await this.getRequiredQuestions(params.agentProductId);
-                                this.currentAgentId = params.agentProductId;
+                                let cleanedParams = typeof params === 'string' ? JSON.parse(params) : params;
+                                const agent = await this.validateAndSelectAgent(cleanedParams.agentProductId);
+                                const requiredQuestions = await this.getRequiredQuestions(cleanedParams.agentProductId);
+                                this.currentAgentId = cleanedParams.agentProductId;
                                 // If we have unanswered required questions, switch to configuration mode
                                 if (requiredQuestions && requiredQuestions.length > 0) {
                                     await this.handleModeSwitch("agent_configuration", "Required questions need to be answered");
@@ -175,8 +176,16 @@ ${this.renderAllAgentsStatus()}`,
                                 else {
                                     await this.handleModeSwitch("agent_operations", "Agent ready for operations");
                                 }
+                                const html = `<div class="agent-chips"><yp-agent-chip
+                    isSelected="true"
+                    agentId="${agent.id}"
+                    agentName="${agent.name}"
+                    agentDescription="${agent.description}"
+                    agentImageUrl="${agent.imageUrl}"
+                  ></yp-agent-chip></div>`;
                                 return {
                                     success: true,
+                                    html,
                                     data: {
                                         agent,
                                         hasRequiredQuestions: requiredQuestions && requiredQuestions.length > 0,
@@ -184,6 +193,7 @@ ${this.renderAllAgentsStatus()}`,
                                 };
                             }
                             catch (error) {
+                                console.error(`Failed to select agent: ${error} ${error instanceof Error ? error.message : ""}`);
                                 return {
                                     success: false,
                                     error: error instanceof Error

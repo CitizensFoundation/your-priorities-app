@@ -40,6 +40,8 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
         .agent-chip {
           transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
           cursor: pointer;
+          margin-top: 16px;
+          margin-bottom: 16px;
         }
 
         .agent-chip:hover {

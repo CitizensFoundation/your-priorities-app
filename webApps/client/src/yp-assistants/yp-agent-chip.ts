@@ -18,6 +18,9 @@ export class YpAgentChip extends YpBaseElement {
   @property({ type: String })
   agentImageUrl!: string;
 
+  @property({ type: String })
+  isSelected: string | undefined;
+
   static override get styles() {
     return [
       super.styles,
@@ -32,9 +35,13 @@ export class YpAgentChip extends YpBaseElement {
           display: flex;
           align-items: center;
           padding: 16px;
-          background-color: var(--surface-container-low);
+          background-color: var(--md-sys-color-surface-container-low);
           border-radius: 8px;
           gap: 16px;
+        }
+
+        .agent-chip[isSelected] {
+          background-color: var(--md-sys-color-surface-variant);
         }
 
         img {
@@ -71,12 +78,12 @@ export class YpAgentChip extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="agent-chip">
+      <div class="agent-chip" ?isSelected="${this.isSelected}">
         <img src="${this.agentImageUrl}" alt="${this.agentName}" />
         <div class="content">
           <div class="layout horizontal">
             <div class="layout vertical">
-              <div class="agent-name">${this.agentName}</div>
+              <div class="agent-name">${this.agentName} ${this.isSelected ? " (selected)" : ""}</div>
               <div class="agent-description">${this.agentDescription}</div>
             </div>
             <md-filled-icon-button><md-icon>play_arrow</md-icon></md-filled-icon-button>

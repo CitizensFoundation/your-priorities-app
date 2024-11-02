@@ -23,9 +23,13 @@ let YpAgentChip = class YpAgentChip extends YpBaseElement {
           display: flex;
           align-items: center;
           padding: 16px;
-          background-color: var(--surface-container-low);
+          background-color: var(--md-sys-color-surface-container-low);
           border-radius: 8px;
           gap: 16px;
+        }
+
+        .agent-chip[isSelected] {
+          background-color: var(--md-sys-color-surface-variant);
         }
 
         img {
@@ -61,12 +65,12 @@ let YpAgentChip = class YpAgentChip extends YpBaseElement {
     }
     render() {
         return html `
-      <div class="agent-chip">
+      <div class="agent-chip" ?isSelected="${this.isSelected}">
         <img src="${this.agentImageUrl}" alt="${this.agentName}" />
         <div class="content">
           <div class="layout horizontal">
             <div class="layout vertical">
-              <div class="agent-name">${this.agentName}</div>
+              <div class="agent-name">${this.agentName} ${this.isSelected ? " (selected)" : ""}</div>
               <div class="agent-description">${this.agentDescription}</div>
             </div>
             <md-filled-icon-button><md-icon>play_arrow</md-icon></md-filled-icon-button>
@@ -88,6 +92,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentChip.prototype, "agentImageUrl", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentChip.prototype, "isSelected", void 0);
 YpAgentChip = __decorate([
     customElement("yp-agent-chip")
 ], YpAgentChip);

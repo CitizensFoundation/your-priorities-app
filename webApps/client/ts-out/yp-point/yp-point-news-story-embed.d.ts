@@ -4,6 +4,6 @@ import '../common/yp-image.js';
 export declare class YpPointNewsStoryEmbed extends YpBaseElement {
     embedData: YpEmbedData;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=yp-point-news-story-embed.d.ts.map

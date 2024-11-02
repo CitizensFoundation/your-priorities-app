@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
-const DEBUG = true;
+const DEBUG = false;
 /**
  * Common modes that implementations might use
  */
@@ -358,6 +358,10 @@ export class YpBaseAssistant extends YpBaseChatBot {
         const oldMode = this.memory.currentMode;
         if (!this.modes.has(newMode)) {
             throw new Error(`Invalid mode: ${newMode}`);
+        }
+        if (oldMode === newMode) {
+            console.error(`Trying to switch to the same mode: ${oldMode} to ${newMode}`);
+            return;
         }
         if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
             throw new Error(`Invalid mode transition from ${oldMode} to ${newMode}`);

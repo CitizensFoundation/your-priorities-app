@@ -12,7 +12,7 @@ import { FunctionDefinition } from "openai/resources/shared.mjs";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 
 
-const DEBUG = true;
+const DEBUG = false;
 
 export interface ToolExecutionResult<T = unknown> {
   success: boolean;
@@ -511,6 +511,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       throw new Error(`Invalid mode: ${newMode}`);
     }
 
+    if (oldMode === newMode) {
+      console.error(`Trying to switch to the same mode: ${oldMode} to ${newMode}`);
+      return;
+    }
     if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
       throw new Error(`Invalid mode transition from ${oldMode} to ${newMode}`);
     }

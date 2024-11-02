@@ -5,6 +5,7 @@ export declare class YpAgentChip extends YpBaseElement {
     agentName: string;
     agentDescription: string;
     agentImageUrl: string;
+    isSelected: string | undefined;
     static get styles(): any[];
     render(): import("lit-html").TemplateResult<1>;
 }

@@ -192,7 +192,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     console.log("Calling tool handler: ", toolName);
 
-    const result =await tool.handler(event.arguments);
+    const result = await tool.handler(event.arguments);
 
     // Store the result in memory for context
     if (result.success && result.data) {
