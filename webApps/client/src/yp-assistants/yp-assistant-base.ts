@@ -31,6 +31,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: Boolean })
   override onlyUseTextField = true;
 
+  @state()
+  currentMode: string | undefined = undefined;
+
   @query("#voiceButton")
   voiceButton!: HTMLElement;
 
@@ -281,6 +284,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
 
     switch (data.type) {
+      case "current_mode":
+        this.currentMode = data.mode;
+        break;
       case "audio":
         if (data.audio) {
           const audioData = this.base64ToArrayBuffer(data.audio);

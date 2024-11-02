@@ -24,6 +24,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.userIsSpeaking = false;
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
+        this.currentMode = undefined;
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
         this.canvasCtx = null;
         this.renderLoopActive = false;
@@ -219,6 +220,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             return;
         }
         switch (data.type) {
+            case "current_mode":
+                this.currentMode = data.mode;
+                break;
             case "audio":
                 if (data.audio) {
                     const audioData = this.base64ToArrayBuffer(data.audio);
@@ -400,6 +404,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAssistantBase.prototype, "onlyUseTextField", void 0);
+__decorate([
+    state()
+], YpAssistantBase.prototype, "currentMode", void 0);
 __decorate([
     query("#voiceButton")
 ], YpAssistantBase.prototype, "voiceButton", void 0);

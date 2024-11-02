@@ -66,9 +66,9 @@ export class AssistantController {
     }
     async sendChatMessage(req, res) {
         try {
-            const { wsClientId, chatLog } = req.body;
-            console.log(`Starting chat session for client: ${wsClientId}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient);
+            const { wsClientId, chatLog, currentMode } = req.body;
+            console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode);
             assistant.conversation(chatLog);
             res.status(200).json({
                 message: "Chat session initialized",

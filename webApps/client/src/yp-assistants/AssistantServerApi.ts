@@ -11,7 +11,8 @@ export class YpAssistantServerApi extends YpServerApi {
     domainId: number,
     wsClientId: string,
     chatLog: PsSimpleChatLog[],
-    languageName: string
+    languageName: string,
+    currentMode: string | undefined = undefined
   ): Promise<void> {
     return this.fetchWrapper(
       this.baseUrlPath + `/${domainId}/chat`,
@@ -21,6 +22,7 @@ export class YpAssistantServerApi extends YpServerApi {
           wsClientId,
           chatLog,
           languageName,
+          currentMode
         }),
       },
       false

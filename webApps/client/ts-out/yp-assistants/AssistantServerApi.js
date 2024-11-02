@@ -4,13 +4,14 @@ export class YpAssistantServerApi extends YpServerApi {
         super();
         this.baseUrlPath = urlPath;
     }
-    sendChatMessage(domainId, wsClientId, chatLog, languageName) {
+    sendChatMessage(domainId, wsClientId, chatLog, languageName, currentMode = undefined) {
         return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chat`, {
             method: "PUT",
             body: JSON.stringify({
                 wsClientId,
                 chatLog,
                 languageName,
+                currentMode
             }),
         }, false);
     }

@@ -9,6 +9,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     userIsSpeaking: boolean;
     aiIsSpeaking: boolean;
     onlyUseTextField: boolean;
+    currentMode: string | undefined;
     voiceButton: HTMLElement;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
     private waveformCanvas;
@@ -23,7 +24,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     disconnectedCallback(): void;
     setupVoiceCapabilities(): Promise<void>;
     get talkingHeadImage(): "https://assets.evoly.ai/direct/talkingHead.png" | "https://assets.evoly.ai/direct/listeningHead.png" | "https://assets.evoly.ai/direct/idleHead.png";
-    renderVoiceTalkingHead(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderVoiceTalkingHead(): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
     startRecording(): Promise<void>;

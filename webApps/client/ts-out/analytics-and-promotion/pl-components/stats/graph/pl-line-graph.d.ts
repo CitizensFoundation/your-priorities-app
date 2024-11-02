@@ -30,9 +30,9 @@ export declare class PlausibleLineGraph extends PlausibleBaseElementWithState {
     onClick(e: CustomEvent): void;
     pollExportReady(): void;
     downloadSpinner(): void;
-    downloadLink(): import("lit-html").TemplateResult<1> | typeof nothing;
-    samplingNotice(): import("lit-html").TemplateResult<1> | typeof nothing;
-    importedNotice(): import("lit-html").TemplateResult<1> | typeof nothing;
+    downloadLink(): typeof nothing | import("lit-html").TemplateResult<1>;
+    samplingNotice(): typeof nothing | import("lit-html").TemplateResult<1>;
+    importedNotice(): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=pl-line-graph.d.ts.map

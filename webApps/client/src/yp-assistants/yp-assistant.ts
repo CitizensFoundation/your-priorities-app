@@ -37,7 +37,8 @@ export class YpAssistant extends YpAssistantBase {
       this.domainId,
       this.wsClientId,
       this.simplifiedChatLog,
-      YpLanguages.getEnglishName(this.language)
+      YpLanguages.getEnglishName(this.language),
+      this.currentMode
     );
   }
 }

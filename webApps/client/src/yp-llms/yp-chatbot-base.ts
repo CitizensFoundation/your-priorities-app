@@ -260,7 +260,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         );
         break;
       case 'end':
-        this.lastChatUiElement.stopJsonLoading();
+        this.lastChatUiElement?.stopJsonLoading();
         this.sendButton!.disabled = false;
         this.sendButton!.innerHTML = this.t('Send');
         this.infoMessage = this.defaultInfoMessage;

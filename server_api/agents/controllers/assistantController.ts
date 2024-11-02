@@ -98,10 +98,10 @@ export class AssistantController {
 
   private async sendChatMessage(req: YpRequest, res: express.Response) {
     try {
-      const { wsClientId, chatLog } = req.body;
-      console.log(`Starting chat session for client: ${wsClientId}`);
+      const { wsClientId, chatLog, currentMode } = req.body;
+      console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
 
-      const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient);
+      const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode);
 
       assistant.conversation(chatLog);
 

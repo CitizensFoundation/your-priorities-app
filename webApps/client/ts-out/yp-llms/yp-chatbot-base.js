@@ -167,7 +167,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
                 this.addToChatLogWithMessage(wsMessage, wsMessage.message, false, this.t('Send'));
                 break;
             case 'end':
-                this.lastChatUiElement.stopJsonLoading();
+                this.lastChatUiElement?.stopJsonLoading();
                 this.sendButton.disabled = false;
                 this.sendButton.innerHTML = this.t('Send');
                 this.infoMessage = this.defaultInfoMessage;

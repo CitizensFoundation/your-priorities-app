@@ -13,16 +13,29 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         this.runningAgents = [];
     }
     renderAllAgentsStatus() {
+        if (this.availableAgents?.length === 0 && this.runningAgents?.length === 0) {
+            return "";
+        }
         return `<availableAgents>${JSON.stringify(this.availableAgents, null, 2)}</availableAgents>
     <runningAgents>${JSON.stringify(this.runningAgents, null, 2)}</runningAgents>  `;
     }
     renderCurrentWorkflowStatus() {
+        if (!this.currentWorkflow) {
+            return "";
+        }
         return `<currentWorkflow>${JSON.stringify(this.currentWorkflow, null, 2)}</currentWorkflow>`;
     }
     renderCurrentAgent() {
+        if (!this.currentAgent) {
+            return "";
+        }
         return `<currentAgent>${JSON.stringify(this.currentAgent, null, 2)}</currentAgent>`;
     }
     renderCommon() {
+        if (!this.memory.currentMode) {
+            return "";
+        }
+        console.log(`renderCommon: currentConversationMode ${this.memory.currentMode}`);
         return `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>`;
     }
     getCleanedParams(params) {
@@ -34,10 +47,9 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
                 name: "agent_selection",
                 systemPrompt: `You are an AI agent assistant. Help users select and manage their AI agents.
 Available commands:
-- List available agents
-- Check running agents
-- Select an agent to work with
-- Get agent status
+- List available agents you are subscribed to
+- List available agents available for purchase
+- Select an agent you are subscribed to to work with
 Current system status and available agents are provided via functions.
 ${this.renderCommon()}
 ${this.renderAllAgentsStatus()}`,
@@ -45,7 +57,7 @@ ${this.renderAllAgentsStatus()}`,
                 functions: [
                     {
                         name: "list_my_agent_subscriptions",
-                        description: "List all agent subscriptions for the current user, after completing the function say something like here you go or something similar",
+                        description: "List all agent subscriptions for the current user.",
                         type: "function",
                         parameters: {
                             type: "object",

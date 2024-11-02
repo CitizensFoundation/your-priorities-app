@@ -292,6 +292,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     // Set initial mode if none exists
     if (!this.memory.currentMode && modes.length > 0) {
       this.memory.currentMode = modes[0].name;
+      /*this.wsClientSocket.send(JSON.stringify({
+        type: "current_mode",
+        mode: this.memory.currentMode
+      }));*/
     }
   }
 
@@ -536,6 +540,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.memory.currentMode = newMode;
     this.memory.modeData = undefined; // Clear mode data
+
+    this.wsClientSocket.send(JSON.stringify({
+      type: "current_mode",
+      mode: this.memory.currentMode
+    }));
 
     await this.saveMemory();
 
