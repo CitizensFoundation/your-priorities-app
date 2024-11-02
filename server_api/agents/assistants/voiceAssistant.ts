@@ -217,7 +217,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         event.item.content[0].transcript,
         "message"
       );
-      this.parentAssistant?.addAssistantMessage(event.item.content[0].transcript);
+      this.parentAssistant?.addAssistantMessage(
+        event.item.content[0].transcript
+      );
     } else {
       console.error(
         "------------------------------------> No text in response.done event ",
@@ -446,12 +448,37 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       JSON.stringify(this.memory?.chatLog, null, 2)
     );
 
+    let chatHistory;
+
+    if (this.memory && this.memory.chatLog && this.memory.chatLog.length > 0) {
+      chatHistory = JSON.stringify(
+        this.memory.chatLog
+          .filter((message) => message.message != "")
+          .slice(-10)
+          .map((message) => ({
+            role: message.sender,
+            content: message.message,
+          }))
+      );
+    }
+
+    let instructions = `${this.parentAssistant?.getCurrentSystemPrompt()}`;
+
+    if (chatHistory) {
+      instructions += `\n\n<PreviousMaxTenMessageFromYourTextChatWithTheUserEarlier>\n${chatHistory}\n</PreviousMaxTenMessageFromYourTextChatWithTheUserEarlier>`;
+    }
+
+    console.log(
+      "======================> initializeVoiceSession final instructions",
+      instructions
+    );
+
     // Then update the session with full configuration
     const sessionConfig = {
       type: "session.update",
       session: {
         ...this.voiceConfig,
-        instructions: this.parentAssistant?.getCurrentSystemPrompt(),
+        instructions: instructions,
         //@ts-ignore
         tools: this.parentAssistant?.getCurrentModeFunctions(),
         tool_choice: "auto",
