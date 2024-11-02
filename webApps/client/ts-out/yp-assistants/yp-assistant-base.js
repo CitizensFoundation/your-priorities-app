@@ -21,13 +21,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.mediaRecorder = null;
         this.wavStreamPlayer = null;
         this.isRecording = false;
-        this.audioChunks = [];
-        this.audioContext = null;
-        this.audioQueue = [];
-        this.isPlayingAudio = false;
         this.userIsSpeaking = false;
         this.aiIsSpeaking = false;
-        this.currentAudioSource = null;
         this.onlyUseTextField = true;
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
         this.canvasCtx = null;
@@ -49,13 +44,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     let color = "#ffdc2f"; // default color
                     try {
                         if (this.userIsSpeaking) {
-                            frequencies =
-                                this.mediaRecorder?.getFrequencies("voice")?.values;
+                            frequencies = this.mediaRecorder?.getFrequencies("voice")?.values;
                             color = "#ffdc2f"; // blue for user
                         }
                         else if (this.aiIsSpeaking) {
-                            frequencies =
-                                this.mediaRecorder?.getFrequencies("voice")?.values;
+                            frequencies = this.mediaRecorder?.getFrequencies("voice")?.values;
                             color = "#1e90ff"; // green for AI
                         }
                         WavRenderer.drawBars(this.waveformCanvas, this.canvasCtx, frequencies, color, 10, 0, 8);
@@ -67,11 +60,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             }
             requestAnimationFrame(this.renderLoop);
         };
-        this.initializeAudioContext();
         this.setupVoiceCapabilities();
-    }
-    initializeAudioContext() {
-        this.audioContext = new AudioContext();
     }
     firstUpdated(changedProperties) {
         if (changedProperties) {
@@ -91,34 +80,17 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         super.disconnectedCallback();
         this.stopCanvasRendering();
         this.stopRecording();
-        this.cleanupAudio();
-    }
-    cleanupAudio() {
-        if (this.currentAudioSource) {
-            try {
-                this.currentAudioSource.stop();
-            }
-            catch (e) {
-                // Ignore if already stopped
-            }
-            this.currentAudioSource = null;
-        }
-        if (this.audioContext) {
-            this.audioContext.close();
-            this.audioContext = null;
-        }
-        this.audioQueue = [];
-        this.isPlayingAudio = false;
     }
     async setupVoiceCapabilities() { }
     get talkingHeadImage() {
-        if (this.userIsSpeaking) {
-            return "https://assets.evoly.ai/direct/listeningHead.png";
-        }
-        else if (this.aiIsSpeaking) {
+        if (this.aiIsSpeaking) {
             return "https://assets.evoly.ai/direct/talkingHead.png";
         }
-        return "https://assets.evoly.ai/direct/idleHead.png";
+        else if (this.userIsSpeaking) {
+            return "https://assets.evoly.ai/direct/listeningHead.png";
+        }
+        else
+            return "https://assets.evoly.ai/direct/idleHead.png";
     }
     renderVoiceTalkingHead() {
         if (!this.voiceEnabled) {
@@ -126,7 +98,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
         return html `
       <div class="voice-header">
-        <div class="voice-title">Voice Assistant</div>
         <img
           class="talking-head-image"
           src="${this.talkingHeadImage}"
@@ -252,6 +223,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 if (data.audio) {
                     const audioData = this.base64ToArrayBuffer(data.audio);
                     this.wavStreamPlayer?.add16BitPCM(audioData);
+                    this.aiIsSpeaking = true;
+                    clearTimeout(this.aiSpeakingTimeout);
+                    this.aiSpeakingTimeout = setTimeout(() => {
+                        this.aiIsSpeaking = false;
+                    }, 2500);
                 }
                 break;
             case "listening_start":
@@ -328,6 +304,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           flex-direction: column;
           align-items: center;
           position: relative;
+          margin-top: -134px;
+          margin-left: -16px;
         }
 
         .talking-head-image {
@@ -419,25 +397,10 @@ __decorate([
 ], YpAssistantBase.prototype, "isRecording", void 0);
 __decorate([
     state()
-], YpAssistantBase.prototype, "audioChunks", void 0);
-__decorate([
-    state()
-], YpAssistantBase.prototype, "audioContext", void 0);
-__decorate([
-    state()
-], YpAssistantBase.prototype, "audioQueue", void 0);
-__decorate([
-    state()
-], YpAssistantBase.prototype, "isPlayingAudio", void 0);
-__decorate([
-    state()
 ], YpAssistantBase.prototype, "userIsSpeaking", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "aiIsSpeaking", void 0);
-__decorate([
-    state()
-], YpAssistantBase.prototype, "currentAudioSource", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpAssistantBase.prototype, "onlyUseTextField", void 0);

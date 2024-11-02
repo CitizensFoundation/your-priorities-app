@@ -23,25 +23,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   private isRecording = false;
 
   @state()
-  private audioChunks: Blob[] = [];
-
-  @state()
-  private audioContext: AudioContext | null = null;
-
-  @state()
-  private audioQueue: ArrayBuffer[] = [];
-
-  @state()
-  private isPlayingAudio = false;
-
-  @state()
   userIsSpeaking = false;
 
   @state()
   aiIsSpeaking = false;
-
-  @state()
-  private currentAudioSource: AudioBufferSourceNode | null = null;
 
   @property({ type: Boolean })
   override onlyUseTextField = true;
@@ -56,16 +41,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   private canvasCtx: CanvasRenderingContext2D | null = null;
   private renderLoopActive = false;
+  aiSpeakingTimeout: NodeJS.Timeout;
 
   constructor() {
     super();
-    this.initializeAudioContext();
     this.setupVoiceCapabilities();
   }
 
-  private initializeAudioContext() {
-    this.audioContext = new AudioContext();
-  }
   override firstUpdated(
     changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
@@ -106,12 +88,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
         try {
           if (this.userIsSpeaking) {
-            frequencies =
-              this.mediaRecorder?.getFrequencies("voice")?.values!;
+            frequencies = this.mediaRecorder?.getFrequencies("voice")?.values!;
             color = "#ffdc2f"; // blue for user
           } else if (this.aiIsSpeaking) {
-            frequencies =
-              this.mediaRecorder?.getFrequencies("voice")?.values!;
+            frequencies = this.mediaRecorder?.getFrequencies("voice")?.values!;
             color = "#1e90ff"; // green for AI
           }
 
@@ -142,37 +122,16 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.stopCanvasRendering();
 
     this.stopRecording();
-    this.cleanupAudio();
-  }
-
-  private cleanupAudio() {
-    if (this.currentAudioSource) {
-      try {
-        this.currentAudioSource.stop();
-      } catch (e) {
-        // Ignore if already stopped
-      }
-      this.currentAudioSource = null;
-    }
-
-    if (this.audioContext) {
-      this.audioContext.close();
-      this.audioContext = null;
-    }
-
-    this.audioQueue = [];
-    this.isPlayingAudio = false;
   }
 
   async setupVoiceCapabilities() {}
 
   get talkingHeadImage() {
-    if (this.userIsSpeaking) {
-      return "https://assets.evoly.ai/direct/listeningHead.png";
-    } else if (this.aiIsSpeaking) {
+    if (this.aiIsSpeaking) {
       return "https://assets.evoly.ai/direct/talkingHead.png";
-    }
-    return "https://assets.evoly.ai/direct/idleHead.png";
+    } else if (this.userIsSpeaking) {
+      return "https://assets.evoly.ai/direct/listeningHead.png";
+    } else return "https://assets.evoly.ai/direct/idleHead.png";
   }
 
   renderVoiceTalkingHead() {
@@ -181,7 +140,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
     return html`
       <div class="voice-header">
-        <div class="voice-title">Voice Assistant</div>
         <img
           class="talking-head-image"
           src="${this.talkingHeadImage}"
@@ -327,6 +285,14 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         if (data.audio) {
           const audioData = this.base64ToArrayBuffer(data.audio);
           this.wavStreamPlayer?.add16BitPCM(audioData);
+
+          this.aiIsSpeaking = true;
+
+          clearTimeout(this.aiSpeakingTimeout);
+
+          this.aiSpeakingTimeout = setTimeout(() => {
+            this.aiIsSpeaking = false;
+          }, 2500);
         }
         break;
 
@@ -419,6 +385,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           flex-direction: column;
           align-items: center;
           position: relative;
+          margin-top: -134px;
+          margin-left: -16px;
         }
 
         .talking-head-image {
