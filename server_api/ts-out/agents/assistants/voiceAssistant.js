@@ -12,13 +12,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         this.voiceState = {
             speaking: false,
             listening: false,
-            processingAudio: false
+            processingAudio: false,
         };
         // Default voice configuration
         this.voiceConfig = {
             model: "gpt-4o-realtime-preview-2024-10-01",
             voice: "verse",
-            modalities: ["text", "audio"]
+            modalities: ["text", "audio"],
         };
     }
     async initializeVoiceConnection() {
@@ -28,9 +28,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const url = "wss://api.openai.com/v1/realtime";
         const wsConfig = {
             headers: {
-                "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-                "OpenAI-Beta": "realtime=v1"
-            }
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                "OpenAI-Beta": "realtime=v1",
+            },
         };
         try {
             const ws = new WebSocket(`${url}?model=${this.voiceConfig.model}`, wsConfig);
@@ -40,7 +40,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                     ws,
                     connected: true,
                     model: this.voiceConfig.model,
-                    voice: this.voiceConfig.voice
+                    voice: this.voiceConfig.voice,
                 };
                 this.initializeVoiceSession();
             });
@@ -68,7 +68,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         this.voiceState = {
             speaking: false,
             listening: false,
-            processingAudio: false
+            processingAudio: false,
         };
         // Clear audio buffer
         this.audioBuffer = [];
@@ -149,6 +149,16 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
         if (result.data) {
             this.sendToClient("assistant", resultMessage, "hiddenContextMessage", true);
+            if (toolName === "switch_mode") {
+                const createResponse = {
+                    type: "response.create",
+                    response: {
+                        modalities: this.voiceConfig.modalities,
+                        instructions: "Inform the user about the mode change",
+                    },
+                };
+                this.voiceConnection?.ws.send(JSON.stringify(createResponse));
+            }
             /*this.memory.chatLog!.push({
               sender: "assistant",
               hiddenContextMessage: true,
@@ -167,8 +177,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             item: {
                 type: "function_call_output",
                 call_id: event.call_id,
-                output: JSON.stringify(result.data, null, 2)
-            }
+                output: JSON.stringify(result.data, null, 2),
+            },
         };
         this.voiceConnection?.ws.send(JSON.stringify(responseEvent));
     }
@@ -178,7 +188,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const proxyMessage = {
             sender: "assistant",
             type: event.type,
-            data: event
+            data: event,
         };
         this.wsClientSocket.send(JSON.stringify(proxyMessage));
     }
@@ -200,7 +210,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         // Send audio to server
         const audioMessage = {
             type: "input_audio_buffer.append",
-            audio: Buffer.from(audioData).toString('base64')
+            audio: Buffer.from(audioData).toString("base64"),
         };
         console.log("Sending audio message to server:");
         this.voiceConnection.ws.send(JSON.stringify(audioMessage));
@@ -211,7 +221,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             return;
         // Commit the audio buffer
         const commitMessage = {
-            type: "input_audio_buffer.commit"
+            type: "input_audio_buffer.commit",
         };
         this.voiceConnection.ws.send(JSON.stringify(commitMessage));
         this.audioBuffer = []; // Clear the buffer
@@ -237,7 +247,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const audioMessage = {
             sender: "assistant",
             type: "audio",
-            base64Audio: event.delta // base64 encoded audio
+            base64Audio: event.delta, // base64 encoded audio
         };
         this.wsClientSocket.send(JSON.stringify(audioMessage));
     }
@@ -248,7 +258,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         // Add to chat log
         this.memory.chatLog.push({
             sender: "assistant",
-            message: event.content
+            message: event.content,
         });
         // Send to client
         this.sendToClient("assistant", event.content);
@@ -261,8 +271,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             const responseEvent = {
                 type: "response.create",
                 response: {
-                    modalities: this.voiceConfig.modalities
-                }
+                    modalities: this.voiceConfig.modalities,
+                },
             };
             this.voiceConnection?.ws.send(JSON.stringify(responseEvent));
         }
@@ -285,27 +295,26 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 tool_choice: "auto",
                 temperature: 0.72,
                 input_audio_transcription: {
-                    model: "whisper-1"
+                    model: "whisper-1",
                 },
                 turn_detection: {
                     type: "server_vad",
                     threshold: 0.5,
                     prefix_padding_ms: 300,
-                    silence_duration_ms: 500
-                }
-            }
+                    silence_duration_ms: 500,
+                },
+            },
         };
         console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
         this.voiceConnection.ws.send(JSON.stringify(sessionConfig));
-        /*const createResponse = {
-          type: "response.create",
-          response: {
-            modalities: this.voiceConfig.modalities,
-            instructions: this.parentAssistant?.getCurrentSystemPrompt()
-          }
+        const createResponse = {
+            type: "response.create",
+            response: {
+                modalities: this.voiceConfig.modalities,
+                instructions: "Say hi to the user",
+            },
         };
         this.voiceConnection.ws.send(JSON.stringify(createResponse));
-        */
     }
     // Handle voice-specific events
     async handleVoiceSessionCreated(event) {
@@ -339,7 +348,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async updateVoiceConfig(config) {
         this.voiceConfig = {
             ...this.voiceConfig,
-            ...config
+            ...config,
         };
         if (this.voiceEnabled && this.voiceConnection?.connected) {
             await this.initializeVoiceSession();
