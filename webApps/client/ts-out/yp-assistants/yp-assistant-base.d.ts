@@ -3,12 +3,14 @@ import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
+    domainId: number;
     private mediaRecorder;
     private wavStreamPlayer;
     private isRecording;
     userIsSpeaking: boolean;
     aiIsSpeaking: boolean;
     onlyUseTextField: boolean;
+    chatLogFromServer: YpAssistantMessage[] | undefined;
     currentMode: string;
     voiceButton: HTMLElement;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
@@ -18,6 +20,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     aiSpeakingTimeout: NodeJS.Timeout | undefined;
     constructor();
     firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
+    getChatLogFromServer(): Promise<void>;
     private setupCanvasRendering;
     private renderLoop;
     private stopCanvasRendering;

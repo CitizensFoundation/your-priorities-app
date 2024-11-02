@@ -74,6 +74,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   wsClients: Map<string, WebSocket>;
   openaiClient: OpenAI;
   memory!: YpBaseAssistantMemoryData;
+
+  currentMode!: string;
+
+  domainId: number;
+
   protected modes: Map<string, ChatbotMode> = new Map();
   protected availableFunctions: Map<string, ChatbotFunction> = new Map();
   protected toolCallTimeout = 30000; // 30 seconds
@@ -87,9 +92,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
+    domainId: number,
     memoryId: string | undefined
   ) {
     super(wsClientId, wsClients, memoryId);
+    this.domainId = domainId;
     this.redis = redis;
     this.wsClientId = wsClientId;
     this.wsClientSocket = wsClients.get(this.wsClientId)!;
@@ -97,9 +104,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
-
-    this.initializeModes();
-    this.registerCoreFunctions();
   }
 
   /**
@@ -120,6 +124,15 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     };
   }
 
+  getEmptyMemory() {
+    return {
+      redisKey: this.redisKey,
+      chatLog: [],
+      currentMode: undefined,
+      modeHistory: [],
+      modeData: undefined
+    } as YpBaseAssistantMemoryData;
+  }
 
   /**
    * Handle executing tool calls with results
@@ -257,10 +270,50 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    */
   abstract defineAvailableModes(): ChatbotMode[];
 
+  async setupMemory(memoryId: string | undefined = undefined) {
+    // DO nothing override call from constructor
+  }
+
+  async setupMemoryAsync(memoryId: string | undefined = undefined) {
+    this.memoryId = memoryId;
+    if (!this.memory) {
+      console.log("setupMemoryAsync: loading memory");
+      this.memory = await this.loadMemory() as YpBaseAssistantMemoryData;
+    } else {
+      console.log("setupMemoryAsync: creating new memory");
+      //this.memoryId = uuidv4();
+      this.memory = this.getEmptyMemory();
+      if (this.wsClientSocket) {
+        this.sendMemoryId();
+      } else {
+        console.error("No wsClientSocket found");
+      }
+    }
+
+    await this.saveMemory();
+  }
+
+  setCurrentMode() {
+    if (this.currentMode) {
+      console.log(
+        `Setting currentMode to ${this.currentMode} it was ${this.memory.currentMode}`
+      );
+      this.memory.currentMode = this.currentMode;
+    } else {
+      console.log(
+        `No currentMode provided, keeping ${this.memory.currentMode}`
+      );
+    }
+  }
+
   /**
    * Initialize modes from subclass definitions
    */
-  initializeModes(): void {
+  async initializeModes(): Promise<void> {
+    await this.setupMemoryAsync();
+
+    this.setCurrentMode();
+
     const modes = this.defineAvailableModes();
 
     for (const mode of modes) {
@@ -432,6 +485,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    * Main conversation handler with updated function handling
    */
   async conversation(chatLog: PsSimpleChatLog[]) {
+    await this.initializeModes();
+    this.registerCoreFunctions();
+
     await this.setChatLog(chatLog);
 
     const messages: ChatCompletionMessageParam[] = [

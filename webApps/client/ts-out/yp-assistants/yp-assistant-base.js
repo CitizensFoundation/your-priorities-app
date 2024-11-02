@@ -68,6 +68,27 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             super.firstUpdated(changedProperties);
         }
     }
+    async getChatLogFromServer() {
+        if (this.chatLog.length === 0) {
+            try {
+                const serverApi = new YpAssistantServerApi();
+                const { chatLog } = await serverApi.getChatLogFromServer(this.domainId, this.serverMemoryId);
+                if (chatLog) {
+                    this.chatLogFromServer = chatLog.map((chatLogItem) => ({
+                        ...chatLogItem,
+                        date: new Date(chatLogItem.date),
+                        sender: ['assistant', 'bot'].includes(chatLogItem.sender)
+                            ? 'bot'
+                            : 'you',
+                    }));
+                    this.requestUpdate();
+                }
+            }
+            catch (error) {
+                console.error('Error getting chat log from server:', error);
+            }
+        }
+    }
     setupCanvasRendering() {
         if (this.renderLoopActive)
             return;
@@ -387,6 +408,9 @@ __decorate([
     property({ type: Boolean })
 ], YpAssistantBase.prototype, "voiceEnabled", void 0);
 __decorate([
+    property({ type: Number })
+], YpAssistantBase.prototype, "domainId", void 0);
+__decorate([
     state()
 ], YpAssistantBase.prototype, "mediaRecorder", void 0);
 __decorate([
@@ -404,6 +428,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAssistantBase.prototype, "onlyUseTextField", void 0);
+__decorate([
+    property({ type: Array })
+], YpAssistantBase.prototype, "chatLogFromServer", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "currentMode", void 0);

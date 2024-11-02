@@ -13,6 +13,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: Boolean })
   voiceEnabled = false;
 
+  @property({ type: Number })
+  domainId!: number;
+
   @state()
   private mediaRecorder: WavRecorder | null = null;
 
@@ -30,6 +33,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   @property({ type: Boolean })
   override onlyUseTextField = true;
+
+  @property({ type: Array })
+  chatLogFromServer: YpAssistantMessage[] | undefined;
 
   @state()
   currentMode = "";
@@ -56,6 +62,31 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   ) {
     if (changedProperties) {
       super.firstUpdated(changedProperties);
+    }
+  }
+
+  async getChatLogFromServer() {
+    if (this.chatLog.length === 0) {
+      try {
+        const serverApi = new YpAssistantServerApi();
+        const { chatLog } = await serverApi.getChatLogFromServer(
+          this.domainId,
+          this.serverMemoryId
+        );
+
+        if (chatLog) {
+          this.chatLogFromServer = chatLog.map((chatLogItem: any) => ({
+            ...chatLogItem,
+            date: new Date(chatLogItem.date),
+            sender: ['assistant', 'bot'].includes(chatLogItem.sender)
+              ? 'bot'
+              : 'you',
+          }));
+          this.requestUpdate();
+        }
+      } catch (error) {
+        console.error('Error getting chat log from server:', error);
+      }
     }
   }
 

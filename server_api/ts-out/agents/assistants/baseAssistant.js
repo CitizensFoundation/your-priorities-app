@@ -9,13 +9,14 @@ export var CommonModes;
     CommonModes["ErrorRecovery"] = "error_recovery";
 })(CommonModes || (CommonModes = {}));
 export class YpBaseAssistant extends YpBaseChatBot {
-    constructor(wsClientId, wsClients, redis, memoryId) {
+    constructor(wsClientId, wsClients, redis, domainId, memoryId) {
         super(wsClientId, wsClients, memoryId);
         this.modes = new Map();
         this.availableFunctions = new Map();
         this.toolCallTimeout = 30000; // 30 seconds
         this.maxModeTransitions = 10; // Prevent infinite mode transitions
         this.modelName = "gpt-4o";
+        this.domainId = domainId;
         this.redis = redis;
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
@@ -23,8 +24,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-        this.initializeModes();
-        this.registerCoreFunctions();
     }
     /**
      * Convert tool result to message format
@@ -38,6 +37,15 @@ export class YpBaseAssistant extends YpBaseChatBot {
             content: JSON.stringify(result.data),
             tool_call_id: toolCall.id,
             name: toolCall.name,
+        };
+    }
+    getEmptyMemory() {
+        return {
+            redisKey: this.redisKey,
+            chatLog: [],
+            currentMode: undefined,
+            modeHistory: [],
+            modeData: undefined
         };
     }
     /**
@@ -155,10 +163,43 @@ export class YpBaseAssistant extends YpBaseChatBot {
             throw error;
         }
     }
+    async setupMemory(memoryId = undefined) {
+        // DO nothing override call from constructor
+    }
+    async setupMemoryAsync(memoryId = undefined) {
+        this.memoryId = memoryId;
+        if (!this.memory) {
+            console.log("setupMemoryAsync: loading memory");
+            this.memory = await this.loadMemory();
+        }
+        else {
+            console.log("setupMemoryAsync: creating new memory");
+            //this.memoryId = uuidv4();
+            this.memory = this.getEmptyMemory();
+            if (this.wsClientSocket) {
+                this.sendMemoryId();
+            }
+            else {
+                console.error("No wsClientSocket found");
+            }
+        }
+        await this.saveMemory();
+    }
+    setCurrentMode() {
+        if (this.currentMode) {
+            console.log(`Setting currentMode to ${this.currentMode} it was ${this.memory.currentMode}`);
+            this.memory.currentMode = this.currentMode;
+        }
+        else {
+            console.log(`No currentMode provided, keeping ${this.memory.currentMode}`);
+        }
+    }
     /**
      * Initialize modes from subclass definitions
      */
-    initializeModes() {
+    async initializeModes() {
+        await this.setupMemoryAsync();
+        this.setCurrentMode();
         const modes = this.defineAvailableModes();
         for (const mode of modes) {
             this.modes.set(mode.name, mode);
@@ -311,6 +352,8 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Main conversation handler with updated function handling
      */
     async conversation(chatLog) {
+        await this.initializeModes();
+        this.registerCoreFunctions();
         await this.setChatLog(chatLog);
         const messages = [
             {

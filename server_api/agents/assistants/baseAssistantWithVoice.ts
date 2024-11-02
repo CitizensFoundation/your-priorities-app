@@ -22,22 +22,18 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     redis: ioredis.Redis,
     voiceEnabled: boolean,
     currentMode: string,
+    domainId: number,
     memoryId: string | undefined
   ) {
-    super(wsClientId, wsClients, redis, memoryId);
-
-    if (currentMode) {
-      console.log(
-        `Setting currentMode to ${currentMode} it was ${this.memory.currentMode}`
-      );
-      this.memory.currentMode = currentMode;
-    } else {
-      console.log(
-        `No currentMode provided, keeping ${this.memory.currentMode}`
-      );
-    }
+    super(wsClientId, wsClients, redis, domainId, memoryId);
+    this.currentMode = currentMode;
 
     this.voiceEnabled = voiceEnabled;
+  }
+
+  async initialize() {
+    await this.initializeModes();
+    this.registerCoreFunctions();
 
     if (this.voiceEnabled) {
       this.createVoiceBot();

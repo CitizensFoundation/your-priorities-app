@@ -5,9 +5,8 @@ import { YpAssistantServerApi } from "./AssistantServerApi.js";
 
 @customElement("yp-assistant")
 export class YpAssistant extends YpAssistantBase {
-  domainId!: number;
-
   serverApi!: YpAssistantServerApi;
+
   override setupServerApi(): void {
     this.serverApi = new YpAssistantServerApi();
   }

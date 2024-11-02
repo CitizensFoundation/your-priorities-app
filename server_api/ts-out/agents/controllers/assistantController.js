@@ -41,6 +41,33 @@ export class AssistantController {
                 process.exit(1);
             }
         };
+        this.getChatLog = async (req, res) => {
+            const memoryId = `${req.params.domainId}-${req.user.id}`;
+            console.log(`Getting chat log for memoryId: ${memoryId}`);
+            let chatLog;
+            try {
+                if (memoryId) {
+                    const memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId);
+                    if (memory) {
+                        console.log(`memory loaded: ${JSON.stringify(memory, null, 2)}`);
+                        chatLog = memory.chatLog;
+                    }
+                    else {
+                        console.log(`memory not found for id ${memoryId}`);
+                    }
+                }
+            }
+            catch (error) {
+                console.log(error);
+                res.sendStatus(500);
+            }
+            if (chatLog) {
+                res.send({ chatLog });
+            }
+            else {
+                res.sendStatus(404);
+            }
+        };
         this.wsClients = wsClients;
         this.initializeRoutes();
         this.initializeModels();
@@ -48,12 +75,16 @@ export class AssistantController {
     initializeRoutes() {
         this.router.put("/:domainId/chat", auth.can("view domain"), this.sendChatMessage.bind(this));
         this.router.post("/:domainId/voice", auth.can("view domain"), this.startVoiceSession.bind(this));
+        this.router.get("/:domainId/chatlog", auth.can("view domain"), this.getChatLog.bind(this));
     }
     async startVoiceSession(req, res) {
         try {
             const { wsClientId, currentMode } = req.body;
+            const domainId = parseInt(req.params.domainId);
+            const memoryId = `${domainId}-${req.user.id}`;
             console.log(`Starting chat session for client: ${wsClientId}`);
-            new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, currentMode);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, currentMode, domainId, memoryId);
+            await assistant.initialize();
             res.status(200).json({
                 message: "Voice session initialized",
                 wsClientId
@@ -67,8 +98,10 @@ export class AssistantController {
     async sendChatMessage(req, res) {
         try {
             const { wsClientId, chatLog, currentMode } = req.body;
+            const domainId = parseInt(req.params.domainId);
+            const memoryId = `${domainId}-${req.user.id}`;
             console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode, domainId, memoryId);
             assistant.conversation(chatLog);
             res.status(200).json({
                 message: "Chat session initialized",

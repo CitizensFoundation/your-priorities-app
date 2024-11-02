@@ -49,7 +49,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
-    memoryId: string,
+    memoryId?: string,
     voiceEnabled: boolean = false,
     parentAssistant?: YpBaseAssistant
   ) {
@@ -429,17 +429,6 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     };
     this.voiceConnection.ws.send(JSON.stringify(createResponse));
     */
-  }
-
-  // Override the base conversation method to handle both text and voice
-  async conversation(chatLog: PsSimpleChatLog[]) {
-    await this.setChatLog(chatLog);
-
-    if (this.voiceEnabled && this.voiceConnection?.connected) {
-      return this.handleVoiceConversation(chatLog);
-    } else {
-      return super.conversation(chatLog);
-    }
   }
 
   protected async handleVoiceConversation(chatLog: PsSimpleChatLog[]): Promise<void> {

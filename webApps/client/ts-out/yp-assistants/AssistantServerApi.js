@@ -21,8 +21,8 @@ export class YpAssistantServerApi extends YpServerApi {
         }
         return response;
     }
-    async getChatLogFromServer(serverMemoryId) {
-        return this.fetchWrapper(this.baseUrlPath + `/memory/${serverMemoryId}`, {
+    async getChatLogFromServer(domainId, serverMemoryId = "123") {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chatlog`, {
             method: "GET",
         }, true);
     }

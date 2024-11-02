@@ -71,8 +71,8 @@ export class YpBaseChatBot {
         this.setupMemory(memoryId);
     }
     async setupMemory(memoryId = undefined) {
-        if (memoryId) {
-            this.memoryId = memoryId;
+        this.memoryId = memoryId;
+        if (!this.memory) {
             this.memory = await this.loadMemory();
         }
         else {

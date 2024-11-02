@@ -44,12 +44,11 @@ export class YpAssistantServerApi extends YpServerApi {
     return response;
   }
 
-  public async getChatLogFromServer(serverMemoryId: string): Promise<{
+  public async getChatLogFromServer(domainId: number, serverMemoryId = "123"): Promise<{
     chatLog: PsSimpleChatLog[];
-    totalCosts?: number;
   }> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/memory/${serverMemoryId}`,
+      this.baseUrlPath + `/${domainId}/chatlog`,
       {
         method: "GET",
       },

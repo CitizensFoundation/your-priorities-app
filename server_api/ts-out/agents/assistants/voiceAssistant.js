@@ -321,16 +321,6 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         this.voiceConnection.ws.send(JSON.stringify(createResponse));
         */
     }
-    // Override the base conversation method to handle both text and voice
-    async conversation(chatLog) {
-        await this.setChatLog(chatLog);
-        if (this.voiceEnabled && this.voiceConnection?.connected) {
-            return this.handleVoiceConversation(chatLog);
-        }
-        else {
-            return super.conversation(chatLog);
-        }
-    }
     async handleVoiceConversation(chatLog) {
         if (!this.voiceConnection?.ws)
             return;
