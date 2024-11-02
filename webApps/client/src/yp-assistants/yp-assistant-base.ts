@@ -1,6 +1,6 @@
 import { css, html, nothing, PropertyValueMap } from "lit";
 import { property, customElement, state, query } from "lit/decorators.js";
-import { YpChatbotBase } from "../yp-llms/yp-chatbot-base.js";
+import { YpChatbotBase } from "../yp-chatbots/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 import { literal } from "lit/static-html.js";
 import { WavRecorder } from "../tools/wavTools/wav_recorder.js";

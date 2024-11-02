@@ -1,5 +1,5 @@
 import { nothing } from "lit";
-import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
+import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 import { AoiAdminServerApi } from "./AoiAdminServerApi.js";
 import "@material/web/list/list.js";

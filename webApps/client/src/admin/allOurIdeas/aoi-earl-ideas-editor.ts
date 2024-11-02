@@ -1,6 +1,6 @@
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
+import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 import { AoiAdminServerApi } from "./AoiAdminServerApi.js";
 

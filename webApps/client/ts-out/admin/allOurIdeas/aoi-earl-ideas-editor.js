@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
+import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 import { AoiAdminServerApi } from "./AoiAdminServerApi.js";
 import "@material/web/list/list.js";
 import "@material/web/list/list-item.js";
