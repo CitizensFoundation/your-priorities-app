@@ -44,15 +44,25 @@ export class YpAssistantServerApi extends YpServerApi {
     return response;
   }
 
-  public async getChatLogFromServer(domainId: number, serverMemoryId = "123"): Promise<{
+  public async getMemoryFromServer(domainId: number): Promise<{
     chatLog: PsSimpleChatLog[];
   }> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/chatlog`,
+      this.baseUrlPath + `/${domainId}/memory`,
       {
         method: "GET",
       },
       true
+    );
+  }
+
+  public clearChatLogFromServer(domainId: number): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${domainId}/chatlog`,
+      {
+        method: "DELETE",
+      },
+      false
     );
   }
 

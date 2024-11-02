@@ -9,7 +9,7 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 export declare class YpAiChatbotItemBase extends YpBaseElement {
     message: string;
     updateMessage: string | undefined;
-    sender: "you" | "bot";
+    sender: YpSenderType;
     detectedLanguage: string;
     clusterId: number;
     type: "start" | "error" | "moderation_error" | "info" | "message" | "thinking" | "noStreaming" | undefined;

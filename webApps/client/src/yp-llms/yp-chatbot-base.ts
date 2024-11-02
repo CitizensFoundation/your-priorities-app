@@ -185,7 +185,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
 
         if (startOptions.noStreaming) {
           this.addChatBotElement({
-            sender: 'bot',
+            sender: 'assistant',
             type: 'noStreaming',
             message: startOptions.name,
           });

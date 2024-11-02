@@ -7,6 +7,7 @@ import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
 import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import { WavRenderer } from "./wave-renderer.js";
+import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -57,6 +58,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.setupVoiceCapabilities();
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.getMemoryFromServer();
+  }
+
   override firstUpdated(
     changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ) {
@@ -65,23 +71,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
   }
 
-  async getChatLogFromServer() {
-    if (this.chatLog.length === 0) {
+  async getMemoryFromServer() {
+    if (!this.chatLog ||this.chatLog.length === 0) {
       try {
         const serverApi = new YpAssistantServerApi();
-        const { chatLog } = await serverApi.getChatLogFromServer(
-          this.domainId,
-          this.serverMemoryId
-        );
+        const { chatLog, modeData, currentMode } = await serverApi.getMemoryFromServer(this.domainId) as YpBaseAssistantMemoryData;
 
-        if (chatLog) {
+        this.currentMode = currentMode;
+
+        if (chatLog && chatLog.length > 0) {
           this.chatLogFromServer = chatLog.map((chatLogItem: any) => ({
             ...chatLogItem,
             date: new Date(chatLogItem.date),
-            sender: ['assistant', 'bot'].includes(chatLogItem.sender)
-              ? 'bot'
-              : 'you',
+            sender: chatLogItem.sender as YpSenderType,
           }));
+          this.chatLog = this.chatLogFromServer;
           this.requestUpdate();
         }
       } catch (error) {
@@ -300,14 +304,14 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   override async onMessage(event: MessageEvent) {
-    const data = JSON.parse(event.data);
+    const data = JSON.parse(event.data) as YpAssistantMessage;
 
     // Handle messages with HTML content
-    if (data.type === "bot" && data.html) {
+    if (data.sender === "assistant" && data.html) {
       // Add message to chat log with reference to component
       this.addChatBotElement({
-        sender: "bot",
-        type: "component",
+        sender: "assistant",
+        type: "html",
         message: data.message || "",
         html: data.html,
       });
@@ -316,11 +320,15 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
     switch (data.type) {
       case "current_mode":
-        this.currentMode = data.mode;
+        if (data.mode) {
+          this.currentMode = data.mode;
+        } else {
+          console.error("No mode received in current_mode message");
+        }
         break;
       case "audio":
-        if (data.audio) {
-          const audioData = this.base64ToArrayBuffer(data.audio);
+        if (data.base64Audio) {
+          const audioData = this.base64ToArrayBuffer(data.base64Audio);
           this.wavStreamPlayer?.add16BitPCM(audioData);
 
           this.aiIsSpeaking = true;
@@ -357,12 +365,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
       case "ai_speaking_stop":
         this.aiIsSpeaking = false;
-        break;
-
-      case "speech.transcription":
-        if (data.text && this.lastChatUiElement) {
-          this.lastChatUiElement.message = data.text;
-        }
         break;
 
       default:
@@ -406,6 +408,25 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     } else {
       this.stopCanvasRendering();
     }
+  }
+
+  async reallyClearHistory() {
+    const serverApi = new YpAssistantServerApi();
+    await serverApi.clearChatLogFromServer(this.domainId);
+    this.chatLog = [];
+    this.requestUpdate();
+  }
+
+  async clearHistory() {
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmClearHistory"),
+          this.reallyClearHistory.bind(this)
+        );
+      }
+    );
   }
 
   static override get styles() {
@@ -493,6 +514,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         </md-icon-button>
 
         ${super.renderChatInput()}
+        <md-icon-button
+          class="voice-mode-toggle"
+          @click="${this.clearHistory}"
+        >
+          <md-icon>delete_history</md-icon>
+        </md-icon-button>
       </div>
     `;
   }

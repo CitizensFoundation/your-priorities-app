@@ -11,8 +11,7 @@ import {
 import { FunctionDefinition } from "openai/resources/shared.mjs";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 
-
-const DEBUG = false;
+const DEBUG = true;
 
 export interface ToolExecutionResult<T = unknown> {
   success: boolean;
@@ -59,12 +58,12 @@ export enum CommonModes {
 }
 
 export interface ChatbotMode {
-  name: string;
+  name: YpAssistantMode;
   systemPrompt: string;
   functions: ChatbotFunction[];
   description: string;
   routingRules?: string[];
-  allowedTransitions?: string[]; // Allowed next modes
+  allowedTransitions?: YpAssistantMode[]; // Allowed next modes
   cleanup?: () => Promise<void>; // Cleanup function
 }
 
@@ -75,11 +74,13 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   openaiClient: OpenAI;
   memory!: YpBaseAssistantMemoryData;
 
-  currentMode!: string;
+  persistMemory = true;
+
+  currentMode: YpAssistantMode;
 
   domainId: number;
 
-  protected modes: Map<string, ChatbotMode> = new Map();
+  protected modes: Map<YpAssistantMode, ChatbotMode> = new Map();
   protected availableFunctions: Map<string, ChatbotFunction> = new Map();
   protected toolCallTimeout = 30000; // 30 seconds
   protected maxModeTransitions = 10; // Prevent infinite mode transitions
@@ -93,10 +94,15 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
     domainId: number,
-    memoryId: string | undefined
+    memoryId: string,
+    currentMode: YpAssistantMode
   ) {
     super(wsClientId, wsClients, memoryId);
     this.domainId = domainId;
+    this.currentMode = currentMode;
+    if (!domainId) {
+      throw new Error("Domain ID is required");
+    }
     this.redis = redis;
     this.wsClientId = wsClientId;
     this.wsClientSocket = wsClients.get(this.wsClientId)!;
@@ -114,7 +120,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     result: ToolExecutionResult
   ): ToolResponseMessage {
     if (DEBUG) {
-      console.log(`convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`);
+      console.log(
+        `convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`
+      );
     }
     return {
       role: "tool",
@@ -128,20 +136,24 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     return {
       redisKey: this.redisKey,
       chatLog: [],
-      currentMode: undefined,
+      currentMode: "agent_selection",
       modeHistory: [],
-      modeData: undefined
+      modeData: undefined,
     } as YpBaseAssistantMemoryData;
   }
 
   /**
    * Handle executing tool calls with results
    */
-  async handleToolCalls(
-    toolCalls: Map<string, ToolCall>
-  ): Promise<void> {
+  async handleToolCalls(toolCalls: Map<string, ToolCall>): Promise<void> {
     if (DEBUG) {
-      console.log(`====================================> handleToolCalls: ${JSON.stringify(Array.from(toolCalls.values()), null, 2)}`);
+      console.log(
+        `====================================> handleToolCalls: ${JSON.stringify(
+          Array.from(toolCalls.values()),
+          null,
+          2
+        )}`
+      );
     }
     const toolResponses: ToolResponseMessage[] = [];
 
@@ -162,7 +174,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         // Execute the function and get result
         const result = await func.handler(parsedArgs);
         if (DEBUG) {
-          console.log(`----------------------------------> Tool execution result:`, JSON.stringify(result, null, 2));
+          console.log(
+            `----------------------------------> Tool execution result:`,
+            JSON.stringify(result, null, 2)
+          );
         }
 
         // Store the result in memory for context
@@ -178,21 +193,33 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         toolResponses.push(responseMessage);
 
         // Generate a user-friendly message based on the tool result
-        const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
+        const resultMessage = `<contextFromRetrievedData>${JSON.stringify(
+          result.data,
+          null,
+          2
+        )}</contextFromRetrievedData>`;
         if (result.data) {
-          this.sendToClient("bot", resultMessage, "hiddenContextMessage", true);
+          this.sendToClient(
+            "assistant",
+            resultMessage,
+            "hiddenContextMessage",
+            true
+          );
           this.memory.chatLog!.push({
-            sender: "bot",
+            sender: "system",
             hiddenContextMessage: true,
             message: resultMessage,
-          });
+            type: "hiddenContextMessage",
+          } as PsSimpleChatLog);
           await this.saveMemoryIfNeeded();
         } else {
-          console.error(`No data returned from tool execution: ${toolCall.name}`);
+          console.error(
+            `No data returned from tool execution: ${toolCall.name}`
+          );
         }
 
         if (result.html) {
-          this.sendToClient("bot", result.html, "html", true);
+          this.sendToClient("assistant", result.html, "html", true);
         }
 
         // If error, throw it after recording the result
@@ -218,7 +245,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     toolResponses: ToolResponseMessage[]
   ): Promise<void> {
     if (DEBUG) {
-      console.log(`handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`);
+      console.log(
+        `handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`
+      );
     }
     // Get existing chat messages
     const messages: ChatCompletionMessageParam[] = [
@@ -230,14 +259,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       {
         role: "assistant",
         content: null,
-        tool_calls: Array.from(toolResponses.values()).map(response => ({
+        tool_calls: Array.from(toolResponses.values()).map((response) => ({
           id: response.tool_call_id,
           type: "function",
           function: {
             name: response.name,
-            arguments: "{}" // The actual arguments don't matter here
-          }
-        }))
+            arguments: "{}", // The actual arguments don't matter here
+          },
+        })),
       },
       ...toolResponses,
     ];
@@ -274,11 +303,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     // DO nothing override call from constructor
   }
 
-  async setupMemoryAsync(memoryId: string | undefined = undefined) {
-    this.memoryId = memoryId;
+  async setupMemoryAsync() {
     if (!this.memory) {
       console.log("setupMemoryAsync: loading memory");
-      this.memory = await this.loadMemory() as YpBaseAssistantMemoryData;
+      this.memory = (await this.loadMemory()) as YpBaseAssistantMemoryData;
     } else {
       console.log("setupMemoryAsync: creating new memory");
       //this.memoryId = uuidv4();
@@ -293,6 +321,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     await this.saveMemory();
   }
 
+  getCleanedParams(params: any) {
+    return typeof params === "string" ? JSON.parse(params) : params;
+  }
+
   setCurrentMode() {
     if (this.currentMode) {
       console.log(
@@ -304,6 +336,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         `No currentMode provided, keeping ${this.memory.currentMode}`
       );
     }
+
+    this.saveMemory();
   }
 
   /**
@@ -328,10 +362,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     // Set initial mode if none exists
     if (!this.memory.currentMode && modes.length > 0) {
       this.memory.currentMode = modes[0].name;
-      /*this.wsClientSocket.send(JSON.stringify({
-        type: "current_mode",
-        mode: this.memory.currentMode
-      }));*/
     }
   }
 
@@ -339,20 +369,23 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    * Register core functions available in all modes
    */
   registerCoreFunctions(): void {
+    const allModesText = JSON.stringify(Array.from(this.modes.keys()), null, 2);
+    console.log(`registerCoreFunctions all modes: ${allModesText}`);
     const switchModeFunction: ChatbotFunction = {
       name: "switch_mode",
       type: "function",
-      description: "Switch to a different conversation mode. Never switch to and from the same mode.",
+      description:
+        `Switch to a different conversation mode. Never switch to and from the same mode. Here are all the available modes: ${allModesText}`,
       parameters: {
         type: "object",
         properties: {
-          mode: {
+          newMode: {
             type: "string",
             enum: Array.from(this.modes.keys()),
           },
           reason: { type: "string" },
         },
-        required: ["mode"],
+        required: ["newMode"],
       },
 
       /*resultSchema: {
@@ -366,14 +399,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       },*/
       handler: async (params): Promise<ToolExecutionResult> => {
         try {
+          params = this.getCleanedParams(params);
           const previousMode = this.memory.currentMode;
-          await this.handleModeSwitch(params.mode, params.reason);
+          console.log(`Switching from ${previousMode} to ${params.newMode} ${JSON.stringify(this.memory, null, 2)}`);
+          await this.handleModeSwitch(params.newMode, params.reason);
 
           return {
             success: true,
             data: {
               previousMode,
-              newMode: params.mode,
+              newMode: params.newMode,
               timestamp: new Date().toISOString(),
               transitionReason: params.reason || "No reason provided",
             },
@@ -382,6 +417,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             },
           };
         } catch (error) {
+          console.error("Error switching mode:", error);
           return {
             success: false,
             error:
@@ -425,7 +461,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Validate mode transition
    */
-  protected validateModeTransition(fromMode: string, toMode: string): boolean {
+  protected validateModeTransition(fromMode: YpAssistantMode, toMode: YpAssistantMode): boolean {
     const currentMode = this.modes.get(fromMode);
     if (!currentMode) return false;
 
@@ -449,7 +485,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Clean up mode-specific resources
    */
-  protected async cleanupMode(mode: string): Promise<void> {
+  protected async cleanupMode(mode: YpAssistantMode): Promise<void> {
     const modeConfig = this.modes.get(mode);
     if (modeConfig?.cleanup) {
       await modeConfig.cleanup();
@@ -490,6 +526,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     await this.setChatLog(chatLog);
 
+    await this.saveMemory();
+
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
@@ -511,9 +549,18 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         })
       );
 
-      console.log("======================> conversation currentMode", this.memory?.currentMode);
-      console.log("======================> conversation", JSON.stringify(messages, null, 2));
-      console.log("======================> conversation", JSON.stringify(tools, null, 2));
+      console.log(
+        "======================> conversation currentMode",
+        this.memory?.currentMode
+      );
+      console.log(
+        "======================> conversation",
+        JSON.stringify(messages, null, 2)
+      );
+      console.log(
+        "======================> conversation",
+        JSON.stringify(tools, null, 2)
+      );
 
       const stream = await this.openaiClient.chat.completions.create({
         model: this.modelName,
@@ -526,7 +573,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       await this.streamWebSocketResponses(stream);
     } catch (error) {
       console.error("Error in conversation:", error);
-      this.sendToClient("bot", "Error processing request", "error");
+      this.sendToClient("assistant", "Error processing request", "error");
     }
   }
 
@@ -536,19 +583,18 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   protected convertToOpenAIMessages(
     chatLog: PsSimpleChatLog[]
   ): ChatCompletionMessageParam[] {
-    return chatLog.map((message) => ({
-      role: message.sender === "bot" ? "assistant" : "user",
-      content: message.message,
-    })) as ChatCompletionMessageParam[];
+    return chatLog
+      .filter((message) => message.sender !== "system")
+      .map((message) => ({
+        role: message.sender,
+        content: message.message,
+      })) as ChatCompletionMessageParam[];
   }
 
   /**
    * Handle mode switching
    */
-  async handleModeSwitch(
-    newMode: string,
-    reason?: string
-  ): Promise<void> {
+  async handleModeSwitch(newMode: YpAssistantMode, reason?: string): Promise<void> {
     if (DEBUG) {
       console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
     }
@@ -559,7 +605,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     }
 
     if (oldMode === newMode) {
-      console.error(`Trying to switch to the same mode: ${oldMode} to ${newMode}`);
+      console.error(
+        `Trying to switch to the same mode: ${oldMode} to ${newMode}`
+      );
       return;
     }
     if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
@@ -584,15 +632,18 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.memory.currentMode = newMode;
     this.memory.modeData = undefined; // Clear mode data
 
-    this.wsClientSocket.send(JSON.stringify({
-      type: "current_mode",
-      mode: this.memory.currentMode
-    }));
+    this.wsClientSocket.send(
+      JSON.stringify({
+        sender: "system",
+        type: "current_mode",
+        mode: this.memory.currentMode,
+      } as YpAssistantMessage)
+    );
 
     await this.saveMemory();
 
     this.sendToClient(
-      "bot",
+      "assistant",
       `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`
     );
   }
@@ -605,7 +656,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   ) {
     return new Promise<void>(async (resolve, reject) => {
       if (DEBUG) console.log("Starting streamWebSocketResponses");
-      this.sendToClient("bot", "", "start");
+      this.sendToClient("assistant", "", "start");
 
       try {
         let botMessage = "";
@@ -619,7 +670,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           }
 
           if (!part.choices?.[0]?.delta) {
-            if (DEBUG) console.log("Skipping invalid stream part - no choices or delta");
+            if (DEBUG)
+              console.log("Skipping invalid stream part - no choices or delta");
             continue;
           }
 
@@ -634,7 +686,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             for (const toolCall of delta.tool_calls) {
               // If we have a new tool call ID, update the current ID
               if (toolCall.id) {
-                if (DEBUG) console.log(`Setting current tool call ID to: ${toolCall.id}`);
+                if (DEBUG)
+                  console.log(
+                    `Setting current tool call ID to: ${toolCall.id}`
+                  );
                 currentToolCallId = toolCall.id;
               }
 
@@ -646,13 +701,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
                   console.log(`Processing tool call ${currentToolCallId}:`, {
                     name: toolCall.function?.name,
                     newArguments: toolCall.function?.arguments,
-                    exists: toolCalls.has(currentToolCallId)
+                    exists: toolCalls.has(currentToolCallId),
                   });
                 }
 
                 // Initialize tool call if it's new
                 if (!toolCalls.has(currentToolCallId)) {
-                  if (DEBUG) console.log(`Initializing new tool call ${currentToolCallId}`);
+                  if (DEBUG)
+                    console.log(
+                      `Initializing new tool call ${currentToolCallId}`
+                    );
 
                   toolCalls.set(currentToolCallId, {
                     id: currentToolCallId,
@@ -667,26 +725,34 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
                 // Check timeout
                 if (now - existingCall.startTime! > this.toolCallTimeout) {
-                  if (DEBUG) console.log(`Tool call timeout for ${existingCall.name}`);
+                  if (DEBUG)
+                    console.log(`Tool call timeout for ${existingCall.name}`);
                   throw new Error(`Tool call timeout for ${existingCall.name}`);
                 }
 
                 // Update name if provided
                 if (toolCall.function?.name) {
-                  if (DEBUG) console.log(`Updating tool call name to ${toolCall.function.name}`);
+                  if (DEBUG)
+                    console.log(
+                      `Updating tool call name to ${toolCall.function.name}`
+                    );
                   existingCall.name = toolCall.function.name;
                 }
 
                 // Concatenate arguments if provided
                 if (toolCall.function?.arguments) {
-                  const currentArgs = toolCallArguments.get(currentToolCallId) || "";
+                  const currentArgs =
+                    toolCallArguments.get(currentToolCallId) || "";
                   const newArgs = currentArgs + toolCall.function.arguments;
                   if (DEBUG) {
-                    console.log(`Updating arguments for ${currentToolCallId}:`, {
-                      previous: currentArgs,
-                      new: toolCall.function.arguments,
-                      combined: newArgs
-                    });
+                    console.log(
+                      `Updating arguments for ${currentToolCallId}:`,
+                      {
+                        previous: currentArgs,
+                        new: toolCall.function.arguments,
+                        combined: newArgs,
+                      }
+                    );
                   }
                   toolCallArguments.set(currentToolCallId, newArgs);
                   existingCall.arguments = newArgs;
@@ -695,10 +761,13 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
                 toolCalls.set(currentToolCallId, existingCall);
 
                 if (DEBUG) {
-                  console.log(`Current state of tool call ${currentToolCallId}:`, {
-                    name: existingCall.name,
-                    arguments: existingCall.arguments
-                  });
+                  console.log(
+                    `Current state of tool call ${currentToolCallId}:`,
+                    {
+                      name: existingCall.name,
+                      arguments: existingCall.arguments,
+                    }
+                  );
                 }
               } else {
                 if (DEBUG) console.log("No current tool call ID available");
@@ -707,7 +776,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           } else if ("content" in delta && delta.content) {
             if (DEBUG) console.log("Processing content:", delta.content);
             const content = delta.content;
-            this.sendToClient("bot", content);
+            this.sendToClient("assistant", content);
             botMessage += content;
           }
 
@@ -715,7 +784,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           if (DEBUG) {
             console.log("Finish reason:", finishReason);
             if (finishReason === "tool_calls") {
-              console.log("Final state of all tool calls:",
+              console.log(
+                "Final state of all tool calls:",
                 Object.fromEntries(toolCalls.entries())
               );
             }
@@ -729,11 +799,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             for (const [id, call] of toolCalls) {
               try {
                 if (DEBUG) {
-                  console.log(`Validating JSON for tool call ${id}:`, call.arguments);
+                  console.log(
+                    `Validating JSON for tool call ${id}:`,
+                    call.arguments
+                  );
                 }
                 // Handle empty arguments case
                 if (!call.arguments.trim()) {
-                  call.arguments = "{}";  // Set default empty object
+                  call.arguments = "{}"; // Set default empty object
                 }
                 JSON.parse(call.arguments); // Validate JSON
               } catch (e) {
@@ -757,8 +830,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             if (botMessage) {
               if (DEBUG) console.log("Saving bot message to chat log");
               this.memory.chatLog!.push({
-                sender: "bot",
+                sender: "assistant",
                 message: botMessage,
+                type: "message",
               });
               await this.saveMemoryIfNeeded();
             }
@@ -779,14 +853,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         }
 
         this.sendToClient(
-          "bot",
+          "assistant",
           "There has been an error, please retry",
           "error"
         );
         reject(error);
       } finally {
         if (DEBUG) console.log("Finalizing stream response");
-        this.sendToClient("bot", "", "end");
+        this.sendToClient("assistant", "", "end");
         resolve();
       }
     });

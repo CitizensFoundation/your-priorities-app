@@ -21,12 +21,15 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
     voiceEnabled: boolean,
-    currentMode: string,
+    currentMode: YpAssistantMode,
     domainId: number,
-    memoryId: string | undefined
+    memoryId: string
   ) {
-    super(wsClientId, wsClients, redis, domainId, memoryId);
-    this.currentMode = currentMode;
+    super(wsClientId, wsClients, redis, domainId, memoryId, currentMode);
+
+    if (!domainId) {
+      throw new Error("Domain ID is required");
+    }
 
     this.voiceEnabled = voiceEnabled;
   }
@@ -139,7 +142,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     );
   }
 
-  async handleModeSwitch(newMode: string, reason?: string): Promise<void> {
+  async handleModeSwitch(newMode: YpAssistantMode, reason?: string): Promise<void> {
     await super.handleModeSwitch(newMode, reason);
 
     if (this.voiceEnabled) {

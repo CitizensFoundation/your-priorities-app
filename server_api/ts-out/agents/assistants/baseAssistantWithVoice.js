@@ -2,8 +2,10 @@ import { YpBaseAssistant } from "./baseAssistant.js";
 import { YpBaseChatBotWithVoice } from "./voiceAssistant.js";
 export class YpBaseAssistantWithVoice extends YpBaseAssistant {
     constructor(wsClientId, wsClients, redis, voiceEnabled, currentMode, domainId, memoryId) {
-        super(wsClientId, wsClients, redis, domainId, memoryId);
-        this.currentMode = currentMode;
+        super(wsClientId, wsClients, redis, domainId, memoryId, currentMode);
+        if (!domainId) {
+            throw new Error("Domain ID is required");
+        }
         this.voiceEnabled = voiceEnabled;
     }
     async initialize() {

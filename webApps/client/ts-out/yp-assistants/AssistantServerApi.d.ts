@@ -9,9 +9,10 @@ export declare class YpAssistantServerApi extends YpServerApi {
     sendChatMessage(domainId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string, currentMode?: string | undefined, serverMemoryId?: string): Promise<{
         serverMemoryId: string;
     }>;
-    getChatLogFromServer(domainId: number, serverMemoryId?: string): Promise<{
+    getMemoryFromServer(domainId: number): Promise<{
         chatLog: PsSimpleChatLog[];
     }>;
+    clearChatLogFromServer(domainId: number): Promise<void>;
     startVoiceSession(domainId: number, wsClientId: string, currentMode: string, serverMemoryId?: string): Promise<void>;
     private saveChatToLocalStorage;
     loadChatsFromLocalStorage(): SavedChat[];

@@ -24,7 +24,7 @@ let YpAssistant = class YpAssistant extends YpAssistantBase {
             this.chatInputField.blur();
         });
         this.addChatBotElement({
-            sender: "you",
+            sender: "user",
             type: "start",
             message: message,
         });

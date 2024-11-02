@@ -388,16 +388,16 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
         return `${this.t("thinking")}...`;
     }
     renderMessage() {
-        if (this.sender === "you") {
+        if (this.sender === "user") {
             return this.renderUser();
         }
-        else if (this.sender === "bot" && this.type === "thinking") {
+        else if (this.sender === "assistant" && this.type === "thinking") {
             return this.renderThinking();
         }
-        else if (this.sender === "bot" && this.type === "noStreaming") {
+        else if (this.sender === "assistant" && this.type === "noStreaming") {
             return this.renderNoStreaming();
         }
-        else if (this.sender === "bot") {
+        else if (this.sender === "assistant") {
             return this.renderChatGPT();
         }
     }

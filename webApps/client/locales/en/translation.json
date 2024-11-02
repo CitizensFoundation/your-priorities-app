@@ -1,4 +1,5 @@
 {
+  "confirmClearHistory": "Are you sure you want to clear the chat history?",
   "assistant": "Assistant",
   "endorsementThumbsWithColor": "Thumbs with color",
   "onlyAllowCreateUserOnInvite": "Only allow create user on invite",

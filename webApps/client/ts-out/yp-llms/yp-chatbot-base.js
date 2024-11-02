@@ -102,7 +102,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
                 }, 50);
                 if (startOptions.noStreaming) {
                     this.addChatBotElement({
-                        sender: 'bot',
+                        sender: 'assistant',
                         type: 'noStreaming',
                         message: startOptions.name,
                     });

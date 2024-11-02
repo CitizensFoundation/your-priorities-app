@@ -24,7 +24,7 @@ export class YpAiChatbotItemBase extends YpBaseElement {
   updateMessage: string | undefined;
 
   @property({ type: String })
-  sender!: "you" | "bot";
+  sender!: YpSenderType;
 
   @property({ type: String })
   detectedLanguage!: string;
@@ -459,13 +459,13 @@ export class YpAiChatbotItemBase extends YpBaseElement {
   }
 
   renderMessage() {
-    if (this.sender === "you") {
+    if (this.sender === "user") {
       return this.renderUser();
-    } else if (this.sender === "bot" && this.type === "thinking") {
+    } else if (this.sender === "assistant" && this.type === "thinking") {
       return this.renderThinking();
-    } else if (this.sender === "bot" && this.type === "noStreaming") {
+    } else if (this.sender === "assistant" && this.type === "noStreaming") {
       return this.renderNoStreaming();
-    } else if (this.sender === "bot") {
+    } else if (this.sender === "assistant") {
       return this.renderChatGPT();
     }
   }

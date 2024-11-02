@@ -38,9 +38,6 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         console.log(`renderCommon: currentConversationMode ${this.memory.currentMode}`);
         return `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>`;
     }
-    getCleanedParams(params) {
-        return typeof params === "string" ? JSON.parse(params) : params;
-    }
     defineAvailableModes() {
         return [
             {
@@ -450,7 +447,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                             params = this.getCleanedParams(params);
                             console.log(`handler: show_workflow: ${JSON.stringify(params, null, 2)}`);
                             try {
-                                if (!this.currentAgentId) {
+                                if (!params.agentProductId) {
                                     throw new Error("No agent selected");
                                 }
                                 const workflow = await this.getWorkflowStatus(params.agentProductId);
@@ -461,7 +458,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                                 return {
                                     success: true,
                                     html,
-                                    data: {},
+                                    data: { workFlowFound: true, workFlowDisplayed: true },
                                     metadata: {
                                         lastUpdated: new Date().toISOString(),
                                         includesHistory: params.includeHistory,

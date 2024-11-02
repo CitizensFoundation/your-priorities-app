@@ -19,8 +19,9 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private renderLoopActive;
     aiSpeakingTimeout: NodeJS.Timeout | undefined;
     constructor();
+    connectedCallback(): void;
     firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
-    getChatLogFromServer(): Promise<void>;
+    getMemoryFromServer(): Promise<void>;
     private setupCanvasRendering;
     private renderLoop;
     private stopCanvasRendering;
@@ -41,6 +42,8 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     onMessage(event: MessageEvent): Promise<void>;
     base64ToArrayBuffer(base64: string): ArrayBuffer;
     toggleVoiceMode(): Promise<void>;
+    reallyClearHistory(): Promise<void>;
+    clearHistory(): Promise<void>;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderChatInput(): import("lit-html").TemplateResult<1>;
 }

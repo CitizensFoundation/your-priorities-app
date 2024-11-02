@@ -21,10 +21,15 @@ export class YpAssistantServerApi extends YpServerApi {
         }
         return response;
     }
-    async getChatLogFromServer(domainId, serverMemoryId = "123") {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chatlog`, {
+    async getMemoryFromServer(domainId) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/memory`, {
             method: "GET",
         }, true);
+    }
+    clearChatLogFromServer(domainId) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chatlog`, {
+            method: "DELETE",
+        }, false);
     }
     startVoiceSession(domainId, wsClientId, currentMode, serverMemoryId) {
         return this.fetchWrapper(this.baseUrlPath + `/${domainId}/voice`, {

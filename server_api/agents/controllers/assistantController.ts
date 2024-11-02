@@ -79,36 +79,73 @@ export class AssistantController {
     );
 
     this.router.get(
+      "/:domainId/memory",
+      auth.can("view domain"),
+      this.getMemory.bind(this)
+    );
+
+    this.router.delete(
       "/:domainId/chatlog",
       auth.can("view domain"),
-      this.getChatLog.bind(this)
+      this.clearChatLog.bind(this)
     );
   }
 
-  private getChatLog = async (req: YpRequest, res: express.Response) => {
+  private clearChatLog = async (req: YpRequest, res: express.Response) => {
     const memoryId = `${req.params.domainId}-${req.user.id}`;
-    console.log(`Getting chat log for memoryId: ${memoryId}`);
+    console.log(`Clearing chat log for memoryId: ${memoryId}`);
 
-    let chatLog: PsSimpleChatLog[] | undefined;
+    try {
+      const redisKey = YpAgentAssistant.getRedisKey(memoryId);
+      const memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId) as YpBaseAssistantMemoryData;
+
+      if (memory) {
+        memory.chatLog = [];
+        await req.redisClient.set(redisKey, JSON.stringify(memory));
+        res.sendStatus(200);
+      } else {
+        console.warn(`No memory found to clear for id ${memoryId}`);
+        res.sendStatus(200);
+      }
+    } catch (error) {
+      console.error("Error clearing chat log:", error);
+      res.sendStatus(500);
+    }
+  }
+
+  private getMemory = async (req: YpRequest, res: express.Response) => {
+    const memoryId = `${req.params.domainId}-${req.user.id}`;
+    console.log(`Getting memory for memoryId: ${memoryId}`);
+
+    let memory: YpBaseAssistantMemoryData | undefined;
 
     try {
       if (memoryId) {
-        const memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId) as YpBaseAssistantMemoryData;
-        if (memory) {
-          console.log(`memory loaded: ${JSON.stringify(memory, null, 2)}`)
-          chatLog = memory.chatLog;
-        } else {
+        memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId) as YpBaseAssistantMemoryData;
+        if (!memory) {
           console.log(`memory not found for id ${memoryId}`)
+          memory = {
+            redisKey: YpAgentAssistant.getRedisKey(memoryId),
+            chatLog: [],
+            currentMode: "agent_selection",
+            modeHistory: [],
+            modeData: undefined
+          } as YpBaseAssistantMemoryData;
+
+          await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
         }
       }
     } catch (error) {
       console.log(error);
       res.sendStatus(500);
+      return;
     }
-    if (chatLog) {
-      res.send({ chatLog });
+
+    if (memory) {
+      res.send(memory);
     } else {
-      res.sendStatus(404);
+      console.error(`No memory found for memoryId: ${memoryId}`);
+      res.send({});
     }
   };
 

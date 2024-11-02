@@ -1,4 +1,4 @@
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { YpAssistantBase } from "./yp-assistant-base.js";
 import { YpLanguages } from "../common/languages/ypLanguages.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
@@ -25,7 +25,7 @@ export class YpAssistant extends YpAssistantBase {
     });
 
     this.addChatBotElement({
-      sender: "you",
+      sender: "user",
       type: "start",
       message: message,
     });

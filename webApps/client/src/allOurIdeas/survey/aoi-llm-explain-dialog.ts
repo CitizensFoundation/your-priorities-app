@@ -84,7 +84,7 @@ ${this.rightAnswerText}
 `;
 
     this.addChatBotElement({
-      sender: "you",
+      sender: "user",
       type: "start",
       message: firstMessage,
     });
@@ -116,7 +116,7 @@ ${this.rightAnswerText}
     });
 
     this.addChatBotElement({
-      sender: "you",
+      sender: "user",
       type: "start",
       message: message,
     });

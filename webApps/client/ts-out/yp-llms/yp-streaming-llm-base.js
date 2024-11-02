@@ -140,10 +140,10 @@ export class YpStreamingLlmBase extends YpBaseElement {
     async onMessage(event) {
         const data = JSON.parse(event.data);
         switch (data.sender) {
-            case "bot":
+            case "assistant":
                 this.addChatBotElement(data);
                 break;
-            case "you":
+            case "user":
                 this.addChatUserElement(data);
                 break;
         }
@@ -176,14 +176,14 @@ export class YpStreamingLlmBase extends YpBaseElement {
     }
     addUserChatBotMessage(userMessage) {
         this.addChatBotElement({
-            sender: "you",
+            sender: "user",
             type: "start",
             message: userMessage,
         });
     }
     addThinkingChatBotMessage() {
         this.addChatBotElement({
-            sender: "bot",
+            sender: "assistant",
             type: "thinking",
             message: "",
         });
@@ -194,10 +194,11 @@ export class YpStreamingLlmBase extends YpBaseElement {
     get simplifiedChatLog() {
         let chatLog = this.chatLog.filter((chatMessage) => chatMessage.type != "thinking" &&
             chatMessage.type != "noStreaming" &&
+            chatMessage.sender != "system" &&
             chatMessage.message);
         return chatLog.map((chatMessage) => {
             return {
-                sender: chatMessage.sender == "bot" ? "assistant" : "user",
+                ...chatMessage,
                 message: chatMessage.rawMessage
                     ? chatMessage.rawMessage
                     : chatMessage.message,

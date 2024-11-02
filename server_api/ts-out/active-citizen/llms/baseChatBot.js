@@ -36,6 +36,9 @@ export class YpBaseChatBot {
             }
         });
     }
+    static getRedisKey(memoryId) {
+        return `${YpBaseChatBot.redisMemoryKeyPrefix}-${memoryId}`;
+    }
     loadMemory() {
         return new Promise(async (resolve, reject) => {
             try {
@@ -54,12 +57,11 @@ export class YpBaseChatBot {
             }
         });
     }
-    constructor(wsClientId, wsClients, memoryId = undefined) {
+    constructor(wsClientId, wsClients, memoryId) {
         this.temperature = 0.7;
         this.maxTokens = 16000;
         this.llmModel = "gpt-4o";
         this.persistMemory = false;
-        this.memoryId = undefined;
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
         this.openaiClient = new OpenAI({
@@ -68,10 +70,10 @@ export class YpBaseChatBot {
         if (!this.wsClientSocket) {
             console.error(`WS Client ${this.wsClientId} not found in streamWebSocketResponses`);
         }
+        this.memoryId = memoryId;
         this.setupMemory(memoryId);
     }
     async setupMemory(memoryId = undefined) {
-        this.memoryId = memoryId;
         if (!this.memory) {
             this.memory = await this.loadMemory();
         }
@@ -91,7 +93,7 @@ export class YpBaseChatBot {
     }
     sendMemoryId() {
         const botMessage = {
-            sender: "bot",
+            sender: "assistant",
             type: "memoryIdCreated",
             data: this.memoryId,
         };
@@ -116,7 +118,7 @@ export class YpBaseChatBot {
     }
     sendAgentStart(name, hasNoStreaming = true) {
         const botMessage = {
-            sender: "bot",
+            sender: "assistant",
             type: "agentStart",
             data: {
                 name: name,
@@ -127,7 +129,7 @@ export class YpBaseChatBot {
     }
     sendAgentCompleted(name, lastAgent = false, error = undefined) {
         const botMessage = {
-            sender: "bot",
+            sender: "assistant",
             type: "agentCompleted",
             data: {
                 name: name,
@@ -142,7 +144,7 @@ export class YpBaseChatBot {
     }
     sendAgentUpdate(message) {
         const botMessage = {
-            sender: "bot",
+            sender: "assistant",
             type: "agentUpdated",
             message: message,
         };
@@ -161,7 +163,8 @@ export class YpBaseChatBot {
             this.wsClientSocket.send(JSON.stringify({
                 sender,
                 type: type,
-                message,
+                message: type === "html" ? undefined : message,
+                html: type === "html" ? message : undefined,
                 hiddenContextMessage,
             }));
             this.lastSentToUserAt = new Date();
@@ -170,20 +173,19 @@ export class YpBaseChatBot {
             console.error("Can't send message to client", error);
         }
     }
-    async streamWebSocketResponses(
-    //@ts-ignore
-    stream) {
+    async streamWebSocketResponses(stream) {
         return new Promise(async (resolve, reject) => {
-            this.sendToClient("bot", "", "start");
+            this.sendToClient("assistant", "", "start");
             try {
                 let botMessage = "";
                 for await (const part of stream) {
-                    this.sendToClient("bot", part.choices[0].delta.content);
+                    this.sendToClient("assistant", part.choices[0].delta.content);
                     botMessage += part.choices[0].delta.content;
                     if (part.choices[0].finish_reason == "stop") {
                         this.memory.chatLog.push({
-                            sender: "bot",
+                            sender: "assistant",
                             message: botMessage,
+                            type: "message",
                         });
                         await this.saveMemoryIfNeeded();
                     }
@@ -191,11 +193,11 @@ export class YpBaseChatBot {
             }
             catch (error) {
                 console.error(error);
-                this.sendToClient("bot", "There has been an error, please retry", "error");
+                this.sendToClient("assistant", "There has been an error, please retry", "error");
                 reject();
             }
             finally {
-                this.sendToClient("bot", "", "end");
+                this.sendToClient("assistant", "", "end");
             }
             resolve();
         });
@@ -231,6 +233,5 @@ export class YpBaseChatBot {
         });
         this.streamWebSocketResponses(stream);
     }
-    ;
 }
-YpBaseChatBot.redisMemoryKeyPrefix = "yp-chatbot-memory";
+YpBaseChatBot.redisMemoryKeyPrefix = "yp-chatbot-memory-v4";

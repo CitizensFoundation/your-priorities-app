@@ -49,7 +49,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
-    memoryId?: string,
+    memoryId: string,
     voiceEnabled: boolean = false,
     parentAssistant?: YpBaseAssistant
   ) {
@@ -173,10 +173,6 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             await this.handleSpeechStopped();
             break;
 
-          case "audio":
-            await this.handleAudioOutput(event);
-            break;
-
           case "text":
             await this.handleTextOutput(event);
             break;
@@ -208,6 +204,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     const tools = this.parentAssistant?.getCurrentModeFunctions();
     if (!tools) return;
 
+    console.log("callFunctionHandler event: ", JSON.stringify(event, null, 2));
+
     const tool = tools.find((t) => t.name === event.name);
     if (!tool) {
       console.log("Tool not found: ", event.name);
@@ -228,9 +226,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     // Generate a user-friendly message based on the tool result
     const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
     if (result.data) {
-      this.sendToClient("bot", resultMessage, "hiddenContextMessage", true);
+      this.sendToClient("assistant", resultMessage, "hiddenContextMessage", true);
       /*this.memory.chatLog!.push({
-        sender: "bot",
+        sender: "assistant",
         hiddenContextMessage: true,
         message: resultMessage,
       });
@@ -240,7 +238,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
 
     if (result.html) {
-      this.sendToClient("bot", result.html, "html", true);
+      this.sendToClient("assistant", result.html, "html", true);
     }
 
     const responseEvent = {
@@ -260,7 +258,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     console.log(JSON.stringify(event, null, 2));
 
     const proxyMessage = {
-      sender: "bot",
+      sender: "assistant",
       type: event.type,
       data: event
     };
@@ -314,13 +312,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   // Handle speech started event
   private handleSpeechStarted(): void {
     this.voiceState.listening = true;
-    this.sendToClient("bot", "", "listening_start");
+    this.sendToClient("assistant", "", "listening_start");
   }
 
   // Handle speech stopped event
   private async handleSpeechStopped(): Promise<void> {
     this.voiceState.listening = false;
-    this.sendToClient("bot", "", "listening_stop");
+    this.sendToClient("assistant", "", "listening_stop");
 
     // If we're not already processing, commit the buffer
     if (!this.voiceState.processingAudio) {
@@ -328,28 +326,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
   }
 
-  // Handle audio output from server
-  private async handleAudioOutput(event: VoiceMessage): Promise<void> {
-    if (!event.audio) return;
-
-    // Forward audio to client
-    const audioMessage = {
-      sender: "bot",
-      type: "audio",
-      audio: event.audio // base64 encoded audio
-    };
-
-    this.wsClientSocket.send(JSON.stringify(audioMessage));
-  }
-
   async handleAudioDelta(event: VoiceMessage): Promise<void> {
     if (!event.delta) return;
 
     const audioMessage = {
-      sender: "bot",
+      sender: "assistant",
       type: "audio",
-      audio: event.delta // base64 encoded audio
-    };
+      base64Audio: event.delta // base64 encoded audio
+    } as YpAssistantMessage;
 
     this.wsClientSocket.send(JSON.stringify(audioMessage));
   }
@@ -360,12 +344,12 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     // Add to chat log
     this.memory.chatLog!.push({
-      sender: "bot",
+      sender: "assistant",
       message: event.content
     } as PsSimpleChatLog);
 
     // Send to client
-    this.sendToClient("bot", event.content);
+    this.sendToClient("assistant", event.content);
   }
 
   // Handle audio buffer committed event
@@ -431,44 +415,6 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     */
   }
 
-  protected async handleVoiceConversation(chatLog: PsSimpleChatLog[]): Promise<void> {
-    if (!this.voiceConnection?.ws) return;
-
-    // Check if the last message contains audio or text
-    const lastMessage = chatLog[chatLog.length - 1];
-
-    if (lastMessage.base64Audio) {
-      // Handle audio input
-      await this.handleIncomingAudio(Buffer.from(lastMessage.base64Audio, 'base64'));
-    } else {
-      // Handle text input by creating a conversation item
-      const conversationEvent = {
-        type: "conversation.item.create",
-        item: {
-          type: "message",
-          role: lastMessage.sender === "bot" ? "assistant" : "user",
-          content: [{
-            type: "input_text",
-            text: lastMessage.message
-          }]
-        }
-      };
-
-      // Send the message
-      this.voiceConnection.ws.send(JSON.stringify(conversationEvent));
-
-      // Request response immediately for text input
-      const responseEvent = {
-        type: "response.create",
-        response: {
-          modalities: this.voiceConfig.modalities
-        }
-      };
-
-      this.voiceConnection.ws.send(JSON.stringify(responseEvent));
-    }
-  }
-
   // Handle voice-specific events
   protected async handleVoiceSessionCreated(event: any): Promise<void> {
     console.log("Voice session created:", event.session.id);
@@ -477,16 +423,16 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   protected async handleVoiceSessionError(event: any): Promise<void> {
     console.error("Voice session error:", event.error);
-    this.sendToClient("bot", "Voice processing error occurred", "error");
+    this.sendToClient("system", "Voice processing error occurred", "error");
   }
 
   protected async handleVoiceResponseStatus(event: any): Promise<void> {
     switch (event.type) {
       case "response.generating.started":
-        this.sendToClient("bot", "", "start");
+        this.sendToClient("assistant", "", "start");
         break;
       case "response.generating.completed":
-        this.sendToClient("bot", "", "end");
+        this.sendToClient("assistant", "", "end");
         break;
     }
   }
