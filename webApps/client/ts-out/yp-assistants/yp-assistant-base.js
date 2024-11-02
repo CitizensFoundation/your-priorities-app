@@ -284,10 +284,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 clientId: this.wsClientId,
             }));
         }
-        // Initialize or resume AudioContext when enabling voice mode
-        if (this.voiceEnabled && this.audioContext?.state === "suspended") {
-            this.audioContext.resume();
-        }
         if (this.voiceEnabled) {
             this.setupCanvasRendering();
         }

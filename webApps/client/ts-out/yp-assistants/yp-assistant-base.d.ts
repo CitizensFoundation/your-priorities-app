@@ -14,7 +14,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private waveformCanvas;
     private canvasCtx;
     private renderLoopActive;
-    aiSpeakingTimeout: NodeJS.Timeout;
+    aiSpeakingTimeout: NodeJS.Timeout | undefined;
     constructor();
     firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     private setupCanvasRendering;

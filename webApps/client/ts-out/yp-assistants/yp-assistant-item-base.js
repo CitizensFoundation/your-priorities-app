@@ -10,6 +10,7 @@ import { YpAiChatbotItemBase } from '../yp-llms/yp-chatbot-item-base.js';
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import "./yp-agent-chip.js";
+import "./yp-agent-chip-for-purchase.js";
 let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase {
     constructor() {
         super(...arguments);

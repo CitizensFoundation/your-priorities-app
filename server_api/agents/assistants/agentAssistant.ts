@@ -39,6 +39,23 @@ interface MyAgentSubscriptionStatus {
   };
 }
 
+interface MyAgentPlanStatus {
+  availablePlans: Array<{
+    id: number;
+    name: string;
+    description: string;
+    imageUrl: string;
+    price: number;
+    currency: string;
+    maxRunsPerCycle: number;
+  }>;
+  systemStatus: {
+    healthy: boolean;
+    lastUpdated: Date;
+    error?: string;
+  };
+}
+
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private currentAgentId?: number;
   private currentAgent?: PsAgent;
@@ -128,6 +145,64 @@ ${this.renderAllAgentsStatus()}`,
                     agentDescription="${agent.description}"
                     agentImageUrl="${agent.imageUrl}"
                   ></yp-agent-chip>`;
+                }
+                const html = `<div class="agent-chips">${agentChips}</div>`;
+                return {
+                  success: true,
+                  data: status,
+                  html,
+                  metadata: {
+                    timestamp: new Date().toISOString(),
+                  },
+                };
+              } catch (error) {
+                return {
+                  success: false,
+                  error:
+                    error instanceof Error
+                      ? error.message
+                      : "Failed to load agent status",
+                };
+              }
+            },
+          },
+          {
+            name: "list_all_agents_available_for_purchase",
+            description: "List all agent subscriptions available for purchase",
+            type: "function",
+            parameters: {
+              type: "object",
+              properties: {
+                includeDetails: { type: "boolean" },
+              },
+            },
+            /*resultSchema: {
+              type: "object",
+              properties: {
+                availableAgents: { type: "array", items: { type: "object" } },
+                runningAgents: { type: "array", items: { type: "object" } },
+                systemStatus: { type: "object" },
+              },
+            },*/
+            handler: async (params): Promise<ToolExecutionResult<any>> => {
+              console.log(`handler: list_all_agents_available_for_purchase: ${JSON.stringify(params, null, 2)}`);
+              try {
+                  const status = await this.loadAllAgentPlans() as MyAgentPlanStatus;
+                if (DEBUG ) {
+                  console.log(`list_all_agents_available_for_purchase: ${JSON.stringify(status, null, 2)}`);
+                }
+
+                let agentChips = ``;
+                for (const agent of status.availablePlans) {
+                  agentChips += `<yp-agent-chip-for-purchase
+                    agentId="${agent.id}"
+                    agentName="${agent.name}"
+                    agentDescription="${agent.description}"
+                    agentImageUrl="${agent.imageUrl}"
+                    price="${agent.price}"
+                    currency="${agent.currency}"
+                    maxRunsPerCycle="${agent.maxRunsPerCycle}"
+                  ></yp-agent-chip-for-purchase>`;
                 }
                 const html = `<div class="agent-chips">${agentChips}</div>`;
                 return {
@@ -554,6 +629,61 @@ ${this.renderCurrentWorkflowStatus()}`,
     ];
   }
 
+  async loadAllAgentPlans(): Promise<MyAgentPlanStatus> {
+    try {
+      // Get all available subscription plans with their associated agent products
+      const availablePlans = await YpSubscriptionPlan.findAll({
+        where: {
+        //  status: 'active', // Only get active plans
+        },
+        include: [
+          {
+            model: YpAgentProduct,
+            as: "AgentProduct",
+            attributes: {
+              exclude: ["created_at", "updated_at"],
+            },
+            include: [
+              {
+                model: YpAgentProductBundle,
+                as: "Bundles",
+                required: false,
+                attributes: {
+                  exclude: ["created_at", "updated_at"],
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      return {
+        availablePlans: availablePlans.map((plan) => ({
+          id: plan.AgentProduct?.id || 0,
+          name: plan.AgentProduct?.name || plan.name,
+          description: plan.AgentProduct?.description || "No description available",
+          imageUrl: plan.configuration?.imageUrl || "",
+          price: plan.configuration?.amount || 0,
+          currency: plan.configuration?.currency || "USD",
+          maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0
+        })),
+        systemStatus: {
+          healthy: true,
+          lastUpdated: new Date(),
+        },
+      };
+    } catch (error) {
+      console.error("Error loading available subscription plans:", error);
+      return {
+        availablePlans: [],
+        systemStatus: {
+          healthy: false,
+          lastUpdated: new Date(),
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      };
+    }
+  }
 
   private async loadMyAgentSubscriptions(): Promise<MyAgentSubscriptionStatus> {
     try {

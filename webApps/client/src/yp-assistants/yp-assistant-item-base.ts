@@ -5,6 +5,7 @@ import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import "./yp-agent-chip.js";
+import "./yp-agent-chip-for-purchase.js";
 
 @customElement("yp-assistant-item-base")
 export class YpAssistantItemBase extends YpAiChatbotItemBase {

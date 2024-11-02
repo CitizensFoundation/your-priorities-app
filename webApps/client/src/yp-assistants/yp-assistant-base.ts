@@ -41,7 +41,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   private canvasCtx: CanvasRenderingContext2D | null = null;
   private renderLoopActive = false;
-  aiSpeakingTimeout: NodeJS.Timeout;
+  aiSpeakingTimeout: NodeJS.Timeout | undefined;
 
   constructor() {
     super();
@@ -362,11 +362,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           clientId: this.wsClientId,
         })
       );
-    }
-
-    // Initialize or resume AudioContext when enabling voice mode
-    if (this.voiceEnabled && this.audioContext?.state === "suspended") {
-      this.audioContext.resume();
     }
 
     if (this.voiceEnabled) {
