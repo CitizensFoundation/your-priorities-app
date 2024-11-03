@@ -10,26 +10,28 @@ import { YpSubscription } from '../../models/subscription.js';
 import { NotificationAgentQueueManager } from '../../managers/notificationAgentQueueManager.js';
 import { YpAgentAssistant } from '../agentAssistant.js';
 
+interface MyAgent {
+  agentProductId: number;
+  subscriptionId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  isRunning: boolean;
+}
+
+interface MyAgentRun {
+  runId: number;
+  agentProductId: number;
+  agentRunId: number;
+  status: string;
+  agentName: string;
+  workflow: any;
+  subscriptionId: number;
+}
 
 interface MyAgentSubscriptionStatus {
-  availableAgents: Array<{
-    agentProductId: number;
-    subscriptionId: number;
-    name: string;
-    description: string;
-    imageUrl: string;
-    isRunning: boolean;
-  }>;
-  runningAgents: Array<{
-    runId: number;
-    agentProductId: number;
-    agentRunId: number;
-    agentName: string;
-    startTime: Date;
-    status: string;
-    workflow: any;
-    subscriptionId: number;
-  }>;
+  availableAgents: Array<MyAgent>;
+  runningAgents: Array<MyAgentRun>;
   systemStatus: {
     healthy: boolean;
     lastUpdated: Date;
@@ -37,9 +39,8 @@ interface MyAgentSubscriptionStatus {
   };
 }
 
-interface MyAgentPlanStatus {
-  availablePlans: Array<{
-    agentProductId: number;
+interface MyAgentPlan {
+  agentProductId: number;
     subscriptionPlanId: number;
     name: string;
     description: string;
@@ -47,7 +48,10 @@ interface MyAgentPlanStatus {
     price: number;
     currency: string;
     maxRunsPerCycle: number;
-  }>;
+}
+
+interface MyAgentPlanStatus {
+  availablePlans: Array<MyAgentPlan>;
   systemStatus: {
     healthy: boolean;
     lastUpdated: Date;
@@ -316,7 +320,7 @@ export class BaseAssistantMode {
     }
   }
 
-  protected async validateAndSelectAgent(agentId: number): Promise<any> {
+  protected async validateAndSelectAgent(agentId: number): Promise<MyAgent> {
     // Implement agent validation logic
     const status = await this.loadMyAgentSubscriptions();
     const agent = status.availableAgents.find((a) => a.agentProductId === agentId);

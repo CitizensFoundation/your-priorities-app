@@ -21,7 +21,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         ];
     }
     triggerResponseIfNeeded(message) {
-        if (this.voiceBot) {
+        if (this.voiceBot && this.voiceEnabled) {
             this.voiceBot.triggerResponseIfNeeded(message);
         }
     }

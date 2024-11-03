@@ -16,6 +16,7 @@ interface SubscribeResult {
   success: boolean;
   error?: string;
   subscriptionId?: number;
+  subscriptionPlanId?: number;
 }
 
 export class AgentSelectionMode extends BaseAssistantMode {
@@ -77,7 +78,16 @@ ${this.renderAllAgentsStatus()}`,
                   agentImageUrl="${agent.imageUrl}"
                 ></yp-agent-chip>`;
               }
-              const html = `<div class="agent-chips">${agentChips}</div>`;
+              let html;
+
+              if (status.availableAgents.length > 0) {
+                html = `<div class="agent-chips">${agentChips}</div>`;
+              } else {
+                this.assistant.triggerResponseIfNeeded(
+                  "The user is not subscribed to any agents, offer to show available agents for purchase"
+                );
+              }
+
               return {
                 success: true,
                 data: status,
@@ -169,56 +179,87 @@ ${this.renderAllAgentsStatus()}`,
           },
         },
         {
-          name: 'unsubscribe_from_one_of_my_subscribed_agents',
-          description: 'Unsubscribe from an existing agent subscription',
-          type: 'function',
+          name: "unsubscribe_from_one_of_my_subscribed_agents",
+          description: "Unsubscribe from an existing agent subscription",
+          type: "function",
           parameters: {
-            type: 'object',
+            type: "object",
             properties: {
-              agentProductId: { type: 'number' },
-              subscriptionId: { type: 'number' },
-              useHasVerballyConfirmedUnsubscribeWithTheAgentName: { type: 'boolean' }
+              agentProductId: { type: "number" },
+              subscriptionId: { type: "number" },
+              useHasVerballyConfirmedUnsubscribeWithTheAgentName: {
+                type: "boolean",
+              },
             },
-            required: ['agentProductId', 'subscriptionId', 'useHasVerballyConfirmedUnsubscribeWithTheAgentName']
+            required: [
+              "agentProductId",
+              "subscriptionId",
+              "useHasVerballyConfirmedUnsubscribeWithTheAgentName",
+            ],
           },
           handler: async (params): Promise<ToolExecutionResult> => {
             console.log(
-              `handler: unsubscribe_from_one_of_my_subscribed_agents: ${JSON.stringify(params, null, 2)}`
+              `handler: unsubscribe_from_one_of_my_subscribed_agents: ${JSON.stringify(
+                params,
+                null,
+                2
+              )}`
             );
             try {
               let cleanedParams =
-                typeof params === 'string' ? JSON.parse(params) : params;
+                typeof params === "string" ? JSON.parse(params) : params;
 
-              if (!cleanedParams.useHasVerballyConfirmedUnsubscribeWithTheAgentName) {
+              if (
+                !cleanedParams.useHasVerballyConfirmedUnsubscribeWithTheAgentName
+              ) {
                 return {
                   success: false,
-                  error: 'User must verbally confirm unsubscription with the agent name before proceeding',
+                  error:
+                    "User must verbally confirm unsubscription with the agent name before proceeding",
                 };
               }
 
-              const result = await this.unsubscribeFromAgentPlan(cleanedParams.subscriptionId);
+              const agent = await this.validateAndSelectAgent(
+                cleanedParams.agentProductId
+              );
+
+              const result = await this.unsubscribeFromAgentPlan(
+                cleanedParams.subscriptionId
+              );
 
               if (!result.success) {
                 return {
                   success: false,
-                  error: result.error
+                  error: result.error,
                 };
               }
 
-              this.assistant.triggerResponseIfNeeded("Successfully unsubscribed from agent subscription");
+              const html = `<div class="agent-chips"><yp-agent-chip
+                isSubscribed
+                agentProductId="${agent.agentProductId}"
+                subscriptionId="${cleanedParams.subscriptionId}"
+                agentName="${agent.name}"
+                agentDescription="${agent.description}"
+                agentImageUrl="${agent.imageUrl}"
+            ></yp-agent-chip></div>`;
+
+              this.assistant.triggerResponseIfNeeded(
+                "Successfully unsubscribed from agent subscription"
+              );
 
               return {
                 success: true,
+                html,
                 data: {
-                  message: 'Successfully unsubscribed from agent subscription',
-                  subscriptionId: result.subscriptionId
-                }
+                  message: "Successfully unsubscribed from agent subscription",
+                  subscriptionId: result.subscriptionId,
+                },
               };
             } catch (error) {
               const errorMessage =
                 error instanceof Error
                   ? error.message
-                  : 'Failed to unsubscribe from agent';
+                  : "Failed to unsubscribe from agent";
               console.error(
                 `Failed to unsubscribe from agent: ${errorMessage}`
               );
@@ -230,32 +271,47 @@ ${this.renderAllAgentsStatus()}`,
           },
         },
         {
-          name: 'subscribe_to_one_of_the_available_agent_plans',
-          description: 'Subscribe to a new agent subscription plan. User must confirm subscription with the agent name before proceeding.',
-          type: 'function',
+          name: "subscribe_to_one_of_the_available_agent_plans",
+          description:
+            "Subscribe to a new agent subscription plan. User must confirm subscription with the agent name before proceeding.",
+          type: "function",
           parameters: {
-            type: 'object',
+            type: "object",
             properties: {
-              agentProductId: { type: 'number' },
-              subscriptionPlanId: { type: 'number' },
-              useHasVerballyConfirmedSubscribeWithTheAgentName: { type: 'boolean' }
+              agentProductId: { type: "number" },
+              subscriptionPlanId: { type: "number" },
+              useHasVerballyConfirmedSubscribeWithTheAgentName: {
+                type: "boolean",
+              },
             },
-            required: ['agentProductId', 'subscriptionPlanId', 'useHasVerballyConfirmedSubscribeWithTheAgentName']
+            required: [
+              "agentProductId",
+              "subscriptionPlanId",
+              "useHasVerballyConfirmedSubscribeWithTheAgentName",
+            ],
           },
           handler: async (params): Promise<ToolExecutionResult> => {
             console.log(
-              `handler: subscribe_to_one_of_the_available_agent_plans: ${JSON.stringify(params, null, 2)}`
+              `handler: subscribe_to_one_of_the_available_agent_plans: ${JSON.stringify(
+                params,
+                null,
+                2
+              )}`
             );
             try {
               let cleanedParams =
-                typeof params === 'string' ? JSON.parse(params) : params;
+                typeof params === "string" ? JSON.parse(params) : params;
 
-              if (!cleanedParams.useHasVerballyConfirmedSubscribeWithTheAgentName) {
+              if (
+                !cleanedParams.useHasVerballyConfirmedSubscribeWithTheAgentName
+              ) {
                 return {
                   success: false,
-                  error: 'User must confirm subscription with the agent name before proceeding',
+                  error:
+                    "User must confirm subscription with the agent name before proceeding",
                 };
               }
+
 
               const result = await this.subscribeToAgentPlan(
                 cleanedParams.agentProductId,
@@ -265,27 +321,48 @@ ${this.renderAllAgentsStatus()}`,
               if (!result.success) {
                 return {
                   success: false,
-                  error: result.error
+                  error: result.error,
                 };
               }
 
-              this.assistant.triggerResponseIfNeeded("Successfully subscribed to agent plan");
+              const agentPlans = await this.loadAllAgentPlans();
+
+              const agent = agentPlans.availablePlans.find(
+                (a) => a.subscriptionPlanId === result.subscriptionPlanId
+              );
+
+              let html;
+              if (agent) {
+                html = `<div class="agent-chips"><yp-agent-chip-for-purchase
+                  agentProductId="${agent.agentProductId}"
+                  subscriptionPlanId="${agent.subscriptionPlanId}"
+                  agentName="${agent.name}"
+                  agentDescription="${agent.description}"
+                  agentImageUrl="${agent.imageUrl}"
+                  price="${agent.price}"
+                  currency="${agent.currency}"
+                  maxRunsPerCycle="${agent.maxRunsPerCycle}"
+                ></yp-agent-chip-for-purchase>`;
+              }
+
+              this.assistant.triggerResponseIfNeeded(
+                "Successfully subscribed to agent plan"
+              );
 
               return {
                 success: true,
+                html,
                 data: {
-                  message: 'Successfully subscribed to agent plan',
-                  subscriptionId: result.subscriptionId
-                }
+                  message: "Successfully subscribed to agent plan",
+                  subscriptionId: result.subscriptionId,
+                },
               };
             } catch (error) {
               const errorMessage =
                 error instanceof Error
                   ? error.message
-                  : 'Failed to subscribe to agent';
-              console.error(
-                `Failed to subscribe to agent: ${errorMessage}`
-              );
+                  : "Failed to subscribe to agent";
+              console.error(`Failed to subscribe to agent: ${errorMessage}`);
               return {
                 success: false,
                 error: errorMessage,
@@ -306,7 +383,11 @@ ${this.renderAllAgentsStatus()}`,
           },
           handler: async (params): Promise<ToolExecutionResult> => {
             console.log(
-              `handler: select_one_of_my_subscribed_agents: ${JSON.stringify(params, null, 2)}`
+              `handler: select_one_of_my_subscribed_agents: ${JSON.stringify(
+                params,
+                null,
+                2
+              )}`
             );
             try {
               let cleanedParams =
@@ -336,8 +417,9 @@ ${this.renderAllAgentsStatus()}`,
               }
 
               const html = `<div class="agent-chips"><yp-agent-chip
-                  isSelected="true"
-                  agentId="${agent.id}"
+                  isSelected
+                  agentProductId="${agent.agentProductId}"
+                  subscriptionId="${agent.subscriptionId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
                   agentImageUrl="${agent.imageUrl}"
@@ -373,56 +455,65 @@ ${this.renderAllAgentsStatus()}`,
     };
   }
 
-
-  private async unsubscribeFromAgentPlan(subscriptionId: number): Promise<UnsubscribeResult> {
+  private async unsubscribeFromAgentPlan(
+    subscriptionId: number
+  ): Promise<UnsubscribeResult> {
     try {
       const subscription = await YpSubscription.findOne({
         where: {
           id: subscriptionId,
           domain_id: this.assistant.domainId,
-          status: 'active'
-        }
+          status: "active",
+        },
       });
 
       if (!subscription) {
         return {
           success: false,
-          error: 'Subscription not found or already inactive'
+          error: "Subscription not found or already inactive",
         };
       }
 
-      subscription.status = 'cancelled';
+      subscription.status = "cancelled";
       subscription.configuration = {
         cancelledAt: new Date(),
-        cancelledByUserId: this.assistant.userId
+        cancelledByUserId: this.assistant.userId,
       };
       subscription.end_date = new Date();
-      subscription.changed('configuration', true);
+      subscription.changed("configuration", true);
 
       await subscription.save();
 
       return {
         success: true,
-        subscriptionId: subscription.id
+        subscriptionId: subscription.id,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to unsubscribe from agent plan';
-      console.error(`Database error in unsubscribeFromAgentPlan: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to unsubscribe from agent plan";
+      console.error(
+        `Database error in unsubscribeFromAgentPlan: ${errorMessage}`
+      );
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
 
-  private async subscribeToAgentPlan(agentProductId: number, subscriptionPlanId: number): Promise<SubscribeResult> {
+  private async subscribeToAgentPlan(
+    agentProductId: number,
+    subscriptionPlanId: number
+  ): Promise<SubscribeResult> {
     try {
       const plan = await YpSubscriptionPlan.findByPk(subscriptionPlanId);
 
       if (!plan) {
         return {
           success: false,
-          error: 'Subscription plan not found'
+          error: "Subscription plan not found",
         };
       }
 
@@ -432,21 +523,25 @@ ${this.renderAllAgentsStatus()}`,
         user_id: this.assistant.userId,
         domain_id: this.assistant.domainId,
         next_billing_date: new Date(),
-        status: 'active',
+        status: "active",
         start_date: new Date(),
-        configuration: plan.configuration
+        configuration: plan.configuration,
       });
 
       return {
         success: true,
-        subscriptionId: subscription.id
+        subscriptionId: subscription.id,
+        subscriptionPlanId: subscriptionPlanId,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to subscribe to agent plan';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to subscribe to agent plan";
       console.error(`Database error in subscribeToAgentPlan: ${errorMessage}`);
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
