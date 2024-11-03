@@ -147,7 +147,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   handleScroll() {
-    debugger;
     if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
       console.error(`handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`);
       return;

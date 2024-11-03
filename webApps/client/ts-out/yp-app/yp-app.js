@@ -183,7 +183,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.addGlobalListener("yp-refresh-community", this._refreshCommunity.bind(this));
         this.addGlobalListener("yp-refresh-group", this._refreshGroup.bind(this));
         this.addListener("yp-close-right-drawer", this._closeUserDrawer, this);
-        this.addGlobalListener("yp-close-all-drawers", this._closeNavDrawer);
+        this.addGlobalListener("yp-close-all-drawers", this._closeNavDrawer.bind(this));
         this.addListener("yp-set-number-of-un-viewed-notifications", this._setNumberOfUnViewedNotifications, this);
         this.addListener("yp-redirect-to", this._redirectTo, this);
         this.addListener("yp-set-home-link", this._setHomeLink, this);
@@ -209,7 +209,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.removeGlobalListener("yp-language-loaded", this._languageLoaded.bind(this));
         this.removeListener("yp-add-back-community-override", this._addBackCommunityOverride, this);
         this.removeListener("yp-reset-keep-open-for-page", this._resetKeepOpenForPage, this);
-        this.removeGlobalListener("yp-close-all-drawers", this._closeNavDrawer);
+        this.removeGlobalListener("yp-close-all-drawers", this._closeNavDrawer.bind(this));
         this.removeListener("yp-open-login", this._login, this);
         this.removeListener("yp-open-page", this._openPageFromEvent, this);
         this.removeGlobalListener("yp-open-toast", this._openToast.bind(this));
