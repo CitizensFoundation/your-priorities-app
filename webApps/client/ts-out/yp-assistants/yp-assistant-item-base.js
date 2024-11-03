@@ -52,7 +52,6 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
         .component-container {
           margin-top: 16px;
           padding: 8px;
-          background: var(--md-sys-color-surface-variant);
           border-radius: 8px;
         }
 
