@@ -387,6 +387,12 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           --md-fab-container-shadow-color: transparent;
         }
 
+        md-fab:not([has-static-theme]) {
+          --md-sys-color-primary-container: var(--md-sys-color-primary);
+          --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
+        }
+
+
         md-linear-progress {
           --md-sys-color-primary: var(--md-sys-color-on-surface-variant);
         }
@@ -400,10 +406,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           margin-left: 64px;
         }
 
-        md-fab:not([has-static-theme]) {
-          --md-sys-color-primary-container: var(--md-sys-color-primary);
-          --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
-        }
 
         md-tabs {
           border-bottom-color: transparent;

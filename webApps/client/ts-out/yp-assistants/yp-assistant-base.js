@@ -168,7 +168,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         >
           ${this.renderChatInput()}
           <div
-            style="position: absolute; right:96px;bottom:104px;z-index: 100;"
+            style="position: absolute; right:88px;bottom:116px;z-index: 100;"
           >
             ${this.renderVoiceTalkingHead()}
           </div>
@@ -355,6 +355,24 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
+      .voiceClose {
+          margin-left: 20px;
+          margin-right: 6px;
+        }
+
+        md-fab {
+          --md-fab-container-shape: 4px;
+          --md-fab-label-text-size: 15px !important;
+          --md-fab-label-text-weight: 500 !important;
+          --md-fab-container-elevation: 0;
+          --md-fab-container-shadow-color: transparent;
+        }
+
+        md-fab:not([has-static-theme]) {
+          --md-sys-color-primary-container: var(--md-sys-color-primary);
+          --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
+        }
+
         .currentMode {
           font-size: 17px;
           font-weight: 700;
@@ -450,22 +468,24 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             `
             : nothing}
         ${!this.voiceEnabled
-            ? html ` <md-filled-tonal-button
+            ? html `<md-fab
+              ?has-static-theme="${this.hasStaticTheme}"
+              lowered
+              size="large"
+              ?extended="${this.wide}"
               class="voice-mode-toggle"
+              variant="primary"
               @click="${this.toggleVoiceMode}"
               .label="${!this.voiceEnabled
                 ? this.t("voiceAssistant")
                 : this.t("closeAssistant")}"
             >
-              ${!this.voiceEnabled
-                ? this.t("voiceAssistant")
-                : this.t("closeAssistant")}
               <md-icon slot="icon"
                 >${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon
-              >
-            </md-filled-tonal-button>`
+              ></md-fab
+            > `
             : html ` <md-text-button
-              class="voice-mode-toggle"
+              class="voice-mode-toggle voiceClose"
               @click="${this.toggleVoiceMode}"
               .label="${!this.voiceEnabled
                 ? this.t("voiceAssistant")
