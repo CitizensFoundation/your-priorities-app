@@ -25,6 +25,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
         this.currentMode = "";
+        this.isExpanded = false;
         this.textInputLabel = "Ask me anything with text or...";
         this.defaultInfoMessage = "I'm your friendly chat assistant";
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
@@ -134,11 +135,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     render() {
         return html `
-      <div class="chat-window" id="chat-window">
+      <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="chat-messages" id="chat-messages">
           <yp-assistant-item-base
             ?hidden="${!this.defaultInfoMessage}"
-            class="chatElement bot-chat-element"
+            class="chatElement assistant-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"
@@ -322,6 +323,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     async toggleVoiceMode() {
         this.voiceEnabled = !this.voiceEnabled;
+        this.isExpanded = this.voiceEnabled;
+        this.fireGlobal("yp-hide-collection-header-status", this.isExpanded);
         if (!this.voiceEnabled && this.isRecording) {
             this.stopRecording();
         }
@@ -457,8 +460,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           max-width: 1200px;
           margin: 0 auto;
           border-radius: 10px;
-          overflow: hidden;
         }
+
+        .chat-window[expanded] {
+          height: calc(100vh - 149px);
+        }
+
         .chat-messages {
           display: flex;
           flex-direction: column;
@@ -474,7 +481,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           margin-right: 32px;
         }
 
-        .bot-chat-element {
+        .assistant-chat-element {
           align-self: flex-start;
           justify-content: flex-start;
           width: 100%;
@@ -585,6 +592,9 @@ __decorate([
 __decorate([
     state()
 ], YpAssistantBase.prototype, "currentMode", void 0);
+__decorate([
+    state()
+], YpAssistantBase.prototype, "isExpanded", void 0);
 __decorate([
     query("#voiceButton")
 ], YpAssistantBase.prototype, "voiceButton", void 0);

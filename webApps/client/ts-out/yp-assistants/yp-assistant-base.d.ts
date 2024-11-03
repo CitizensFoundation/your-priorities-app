@@ -12,6 +12,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     onlyUseTextField: boolean;
     chatLogFromServer: YpAssistantMessage[] | undefined;
     currentMode: string;
+    isExpanded: boolean;
     voiceButton: HTMLElement;
     textInputLabel: string;
     defaultInfoMessage: string | undefined;

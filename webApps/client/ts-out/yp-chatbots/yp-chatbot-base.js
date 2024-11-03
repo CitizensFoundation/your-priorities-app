@@ -237,7 +237,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
           margin-right: 32px;
         }
 
-        .bot-chat-element {
+        .assistant-chat-element {
           align-self: flex-start;
           justify-content: flex-start;
           width: 100%;
@@ -444,7 +444,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         <div class="chat-messages" id="chat-messages">
           <yp-chatbot-item-base
             ?hidden="${!this.defaultInfoMessage}"
-            class="chatElement bot-chat-element"
+            class="chatElement assistant-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"

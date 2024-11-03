@@ -41,6 +41,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @state()
   currentMode = "";
 
+  @state()
+  isExpanded = false;
+
   @query("#voiceButton")
   voiceButton!: HTMLElement;
 
@@ -197,11 +200,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   override render() {
     return html`
-      <div class="chat-window" id="chat-window">
+      <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="chat-messages" id="chat-messages">
           <yp-assistant-item-base
             ?hidden="${!this.defaultInfoMessage}"
-            class="chatElement bot-chat-element"
+            class="chatElement assistant-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"
@@ -420,6 +423,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   async toggleVoiceMode() {
     this.voiceEnabled = !this.voiceEnabled;
+    this.isExpanded = this.voiceEnabled;
+
+    this.fireGlobal("yp-hide-collection-header-status", this.isExpanded);
 
     if (!this.voiceEnabled && this.isRecording) {
       this.stopRecording();
@@ -567,8 +573,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           max-width: 1200px;
           margin: 0 auto;
           border-radius: 10px;
-          overflow: hidden;
         }
+
+        .chat-window[expanded] {
+          height: calc(100vh - 149px);
+        }
+
         .chat-messages {
           display: flex;
           flex-direction: column;
@@ -584,7 +594,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           margin-right: 32px;
         }
 
-        .bot-chat-element {
+        .assistant-chat-element {
           align-self: flex-start;
           justify-content: flex-start;
           width: 100%;

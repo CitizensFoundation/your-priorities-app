@@ -34,6 +34,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         this.locationHidden = false;
         this.hideCollection = false;
         this.useEvenOddItemLayout = false;
+        this.collectionHeaderHidden = false;
         this.collectionType = collectionType;
         this.collectionItemType = collectionItemType;
         this.collectionCreateFabIcon = collectionCreateFabIcon;
@@ -67,6 +68,10 @@ export class YpCollection extends YpBaseElementWithLogin {
                 this.getCollection();
             }
         }
+        this.addGlobalListener("yp-hide-collection-header-status", this.hideCollectionHeader.bind(this));
+    }
+    hideCollectionHeader(event) {
+        this.collectionHeaderHidden = event.detail;
     }
     async themeApplied() {
         this.requestUpdate();
@@ -74,6 +79,7 @@ export class YpCollection extends YpBaseElementWithLogin {
     disconnectedCallback() {
         super.disconnectedCallback();
         this.removeGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
+        this.removeGlobalListener("yp-hide-collection-header-status", this.hideCollectionHeader.bind(this));
     }
     refresh() {
         console.info("REFRESH");
@@ -503,7 +509,7 @@ export class YpCollection extends YpBaseElementWithLogin {
             return html `
         <div class="layout vertical center-center">
           <div class="layout vertical topContainer">
-            ${this.renderHeader()}
+            <div ?hidden="${this.collectionHeaderHidden}">${this.renderHeader()}</div>
             <div class="layout horizontal mainContent wrap">
               ${this.renderTabs()}
               <div class="flex"></div>
@@ -589,4 +595,7 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpCollection.prototype, "useEvenOddItemLayout", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpCollection.prototype, "collectionHeaderHidden", void 0);
 //# sourceMappingURL=yp-collection.js.map

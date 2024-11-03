@@ -26,6 +26,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     createFabLabel: string | undefined;
     headerImageUrl: string | undefined;
     useEvenOddItemLayout: boolean;
+    collectionHeaderHidden: boolean;
     collectionType: string;
     collectionItemType: string | null;
     collectionCreateFabIcon: string;
@@ -35,6 +36,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     abstract scrollToCollectionItemSubClass(): void;
     setupTheme(): void;
     connectedCallback(): void;
+    hideCollectionHeader(event: CustomEvent): void;
     themeApplied(): Promise<void>;
     disconnectedCallback(): void;
     refresh(): void;

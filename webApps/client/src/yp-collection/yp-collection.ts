@@ -78,6 +78,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   @property({ type: Boolean })
   useEvenOddItemLayout = false;
 
+  @property({ type: Boolean })
+  collectionHeaderHidden = false;
+
   collectionType: string;
   collectionItemType: string | null;
   collectionCreateFabIcon: string;
@@ -132,6 +135,12 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         this.getCollection();
       }
     }
+
+    this.addGlobalListener("yp-hide-collection-header-status", this.hideCollectionHeader.bind(this));
+  }
+
+  hideCollectionHeader(event: CustomEvent) {
+    this.collectionHeaderHidden = event.detail;
   }
 
   async themeApplied() {
@@ -141,6 +150,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
+    this.removeGlobalListener("yp-hide-collection-header-status", this.hideCollectionHeader.bind(this));
   }
 
   refresh(): void {
@@ -623,7 +633,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       return html`
         <div class="layout vertical center-center">
           <div class="layout vertical topContainer">
-            ${this.renderHeader()}
+            <div ?hidden="${this.collectionHeaderHidden}">${this.renderHeader()}</div>
             <div class="layout horizontal mainContent wrap">
               ${this.renderTabs()}
               <div class="flex"></div>
