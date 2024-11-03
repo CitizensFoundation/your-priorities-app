@@ -388,6 +388,7 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
         return `${this.t("thinking")}...`;
     }
     renderMessage() {
+        debugger;
         if (this.sender === "user") {
             return this.renderUser();
         }
@@ -402,7 +403,7 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
         }
     }
     render() {
-        return html ` ${this.renderMessage()} `;
+        return html `${this.renderMessage()} `;
     }
 };
 __decorate([

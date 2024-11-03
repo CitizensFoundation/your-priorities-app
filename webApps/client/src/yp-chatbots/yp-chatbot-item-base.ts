@@ -459,6 +459,7 @@ export class YpAiChatbotItemBase extends YpBaseElement {
   }
 
   renderMessage() {
+    debugger;
     if (this.sender === "user") {
       return this.renderUser();
     } else if (this.sender === "assistant" && this.type === "thinking") {
@@ -471,6 +472,6 @@ export class YpAiChatbotItemBase extends YpBaseElement {
   }
 
   override render() {
-    return html` ${this.renderMessage()} `;
+    return html`${this.renderMessage()} `;
   }
 }

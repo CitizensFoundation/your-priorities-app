@@ -44,6 +44,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @query("#voiceButton")
   voiceButton!: HTMLElement;
 
+  @property({ type: String })
+  override textInputLabel = "Ask me anything with text or...";
+
+  @property({ type: String })
+  override defaultInfoMessage: string | undefined =
+    "I'm your friendly chat assistant";
+
   override chatbotItemComponentName = literal`yp-assistant-item-base`;
 
   @query("#waveformCanvas")
@@ -198,7 +205,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"
-            sender="bot"
+            sender="assistant"
           ></yp-assistant-item-base>
           ${this.chatLog
             .filter(
@@ -231,13 +238,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         >
           ${this.renderChatInput()}
           <div
-            style="position: absolute; right:88px;bottom:116px;z-index: 100;"
+            style="position: absolute; right:92px;bottom:116px;z-index: 100;"
           >
             ${this.renderVoiceTalkingHead()}
           </div>
           <div
             class="currentMode"
-            style="position: absolute;left:82px;bottom:90px;z-index: 100;"
+            style="position: absolute;left:84px;bottom:96px;z-index: 100;"
           >
             ${this.t(this.currentMode)}
           </div>
@@ -256,7 +263,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   async startRecording() {
     const serverApi = new YpAssistantServerApi();
-    await serverApi.startVoiceSession(1790, this.wsClientId, this.currentMode);
+    await serverApi.startVoiceSession(
+      this.domainId,
+      this.wsClientId,
+      this.currentMode
+    );
     this.mediaRecorder = new WavRecorder({ sampleRate: 24000 }) as WavRecorder;
     this.isRecording = true;
 
@@ -456,7 +467,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return [
       super.styles,
       css`
-      .voiceClose {
+        .voiceClose {
           margin-left: 20px;
           margin-right: 6px;
         }
@@ -493,7 +504,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
         .voice-header[voice-not-enabled] {
           filter: grayscale(100%);
-          opacity: 0.75;
         }
 
         .talking-head-image {

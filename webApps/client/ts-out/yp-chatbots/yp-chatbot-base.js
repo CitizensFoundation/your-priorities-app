@@ -448,7 +448,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"
-            sender="bot"
+            sender="assistant"
           ></yp-chatbot-item-base>
           ${this.chatLog
             .filter(chatElement => !chatElement.hidden)

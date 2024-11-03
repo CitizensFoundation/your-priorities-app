@@ -5,7 +5,7 @@ const { DataTypes } = require("sequelize");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     // Agent Classes Users/Admins
-   /*await queryInterface.createTable("AgentClassUsers", {
+   await queryInterface.createTable("AgentClassUsers", {
       agent_class_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -104,7 +104,6 @@ module.exports = {
     await queryInterface.addIndex("AgentConnectorClassAdmins", [
       "agent_connector_class_id",
     ]);
-      await queryInterface.addIndex("AgentConnectorClassAdmins", ["user_id"]);
-    */
+    await queryInterface.addIndex("AgentConnectorClassAdmins", ["user_id"]);
   },
 };

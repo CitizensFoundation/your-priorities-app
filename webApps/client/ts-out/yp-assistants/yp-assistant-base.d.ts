@@ -13,6 +13,8 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     chatLogFromServer: YpAssistantMessage[] | undefined;
     currentMode: string;
     voiceButton: HTMLElement;
+    textInputLabel: string;
+    defaultInfoMessage: string | undefined;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
     private waveformCanvas;
     private canvasCtx;

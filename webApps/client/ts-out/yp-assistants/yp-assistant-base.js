@@ -25,6 +25,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
         this.currentMode = "";
+        this.textInputLabel = "Ask me anything with text or...";
+        this.defaultInfoMessage = "I'm your friendly chat assistant";
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
         this.canvasCtx = null;
         this.renderLoopActive = false;
@@ -140,7 +142,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"
-            sender="bot"
+            sender="assistant"
           ></yp-assistant-item-base>
           ${this.chatLog
             .filter((chatElement) => !chatElement.hidden &&
@@ -168,13 +170,13 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         >
           ${this.renderChatInput()}
           <div
-            style="position: absolute; right:88px;bottom:116px;z-index: 100;"
+            style="position: absolute; right:92px;bottom:116px;z-index: 100;"
           >
             ${this.renderVoiceTalkingHead()}
           </div>
           <div
             class="currentMode"
-            style="position: absolute;left:82px;bottom:90px;z-index: 100;"
+            style="position: absolute;left:84px;bottom:96px;z-index: 100;"
           >
             ${this.t(this.currentMode)}
           </div>
@@ -192,7 +194,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     async startRecording() {
         const serverApi = new YpAssistantServerApi();
-        await serverApi.startVoiceSession(1790, this.wsClientId, this.currentMode);
+        await serverApi.startVoiceSession(this.domainId, this.wsClientId, this.currentMode);
         this.mediaRecorder = new WavRecorder({ sampleRate: 24000 });
         this.isRecording = true;
         await this.mediaRecorder.begin();
@@ -355,7 +357,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
-      .voiceClose {
+        .voiceClose {
           margin-left: 20px;
           margin-right: 6px;
         }
@@ -392,7 +394,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
 
         .voice-header[voice-not-enabled] {
           filter: grayscale(100%);
-          opacity: 0.75;
         }
 
         .talking-head-image {
@@ -535,6 +536,12 @@ __decorate([
 __decorate([
     query("#voiceButton")
 ], YpAssistantBase.prototype, "voiceButton", void 0);
+__decorate([
+    property({ type: String })
+], YpAssistantBase.prototype, "textInputLabel", void 0);
+__decorate([
+    property({ type: String })
+], YpAssistantBase.prototype, "defaultInfoMessage", void 0);
 __decorate([
     query("#waveformCanvas")
 ], YpAssistantBase.prototype, "waveformCanvas", void 0);
