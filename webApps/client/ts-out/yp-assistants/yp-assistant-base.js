@@ -463,7 +463,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
 
         .chat-window[expanded] {
-          height: calc(100vh - 149px);
+          height: calc(100vh - 148px);
         }
 
         .chat-messages {
