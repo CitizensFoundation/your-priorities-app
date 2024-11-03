@@ -44,7 +44,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         }, 420);
         setTimeout(() => {
             this.chatMessagesElement.addEventListener('scroll', this.handleScroll.bind(this));
-        }, 2500);
+        }, 500);
     }
     updated(changedProperties) {
         super.updated(changedProperties);

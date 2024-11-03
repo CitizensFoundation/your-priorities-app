@@ -271,6 +271,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     }, 2500);
                 }
                 break;
+            case "current_mode":
+                if (data.mode) {
+                    this.currentMode = data.mode;
+                }
+                else {
+                    console.error("No mode received in current_mode message");
+                }
+                break;
             case "listening_start":
                 if (this.lastChatUiElement) {
                     this.lastChatUiElement.isSpeaking = true;

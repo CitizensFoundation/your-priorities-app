@@ -336,7 +336,7 @@ ${this.renderAllAgentsStatus()}`,
                 html = `<div class="agent-chips"><yp-agent-chip-for-purchase
                   isSubscribed="${true}"
                   agentProductId="${agent.agentProductId}"
-                  subscriptionPlanId="${agent.subscriptionPlanId}"
+                  subscriptionPlanId="${result.subscriptionPlanId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
                   agentImageUrl="${agent.imageUrl}"
