@@ -282,9 +282,11 @@ ${this.renderAllAgentsStatus()}`,
               try {
                 let cleanedParams =
                   typeof params === "string" ? JSON.parse(params) : params;
-                const agent = await this.validateAndSelectAgent(
+
+                  const agent = await this.validateAndSelectAgent(
                   cleanedParams.agentProductId
                 );
+
                 const requiredQuestions = await this.getRequiredQuestions(
                   cleanedParams.agentProductId
                 );
@@ -327,12 +329,14 @@ ${this.renderAllAgentsStatus()}`,
                     error instanceof Error ? error.message : ""
                   }`
                 );
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to select agent";
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to select agent",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -886,7 +890,13 @@ ${this.renderCurrentWorkflowStatus()}`,
     const status = await this.loadMyAgentSubscriptions();
     const agent = status.availableAgents.find((a: any) => a.id === agentId);
     if (!agent) {
-      throw new Error("Agent not found or not available");
+      throw new Error(
+        `The users agent with agentProductId ${agentId} not found or not available in ${JSON.stringify(
+          status.availableAgents,
+          null,
+          2
+        )}`
+      );
     }
     return agent;
   }

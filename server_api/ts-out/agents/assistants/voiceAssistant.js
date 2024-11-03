@@ -309,7 +309,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeVoiceSession() {
         if (!this.voiceConnection?.ws)
             return;
-        console.log("======================> initializeVoiceSession current mode", this.memory?.currentMode);
+        console.log("======================> initializeVoiceSession current mode", this.parentAssistant?.memory.currentMode);
         console.log("======================> initializeVoiceSession system prompt", this.parentAssistant?.getCurrentSystemPrompt());
         console.log("======================> initializeVoiceSession functions", this.parentAssistant?.getCurrentModeFunctions());
         console.log("======================> initializeVoiceSession chat log", JSON.stringify(this.memory?.chatLog, null, 2));

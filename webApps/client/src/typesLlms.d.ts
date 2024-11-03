@@ -12,6 +12,7 @@ type YpAssistantMessageType =
   | "noStreaming"
   | "error"
   | "info"
+  | "modeChange"
   | "agentStart"
   | "agentCompleted"
   | "agentUpdated"

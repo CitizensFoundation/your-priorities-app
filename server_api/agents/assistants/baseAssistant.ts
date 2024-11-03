@@ -648,9 +648,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     await this.saveMemory();
 
     this.sendToClient(
-      "assistant",
-      `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`,
-      undefined,
+      "system",
+      newMode,
+      "modeChange",
       true
     );
   }

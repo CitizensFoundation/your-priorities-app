@@ -208,11 +208,13 @@ ${this.renderAllAgentsStatus()}`,
                             }
                             catch (error) {
                                 console.error(`Failed to select agent: ${error} ${error instanceof Error ? error.message : ""}`);
+                                const errorMessage = error instanceof Error
+                                    ? error.message
+                                    : "Failed to select agent";
                                 return {
                                     success: false,
-                                    error: error instanceof Error
-                                        ? error.message
-                                        : "Failed to select agent",
+                                    data: errorMessage,
+                                    error: errorMessage,
                                 };
                             }
                         },
@@ -698,7 +700,7 @@ ${this.renderCurrentWorkflowStatus()}`,
         const status = await this.loadMyAgentSubscriptions();
         const agent = status.availableAgents.find((a) => a.id === agentId);
         if (!agent) {
-            throw new Error("Agent not found or not available");
+            throw new Error(`The users agent with agentProductId ${agentId} not found or not available in ${JSON.stringify(status.availableAgents, null, 2)}`);
         }
         return agent;
     }

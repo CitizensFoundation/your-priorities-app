@@ -439,7 +439,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     console.log(
       "======================> initializeVoiceSession current mode",
-      this.memory?.currentMode
+      this.parentAssistant?.memory.currentMode
     );
 
     console.log(

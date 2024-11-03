@@ -189,6 +189,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   override render() {
+    debugger;
     return html`
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
@@ -205,7 +206,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
               (chatElement) =>
                 !chatElement.hidden &&
                 chatElement.type !== "hiddenContextMessage" &&
-                (chatElement.message || chatElement.html)
+                (chatElement.message!="" || chatElement.html!="")
             )
             .map(
               (chatElement) => html`

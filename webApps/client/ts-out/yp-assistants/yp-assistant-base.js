@@ -134,6 +134,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     `;
     }
     render() {
+        debugger;
         return html `
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
@@ -148,7 +149,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           ${this.chatLog
             .filter((chatElement) => !chatElement.hidden &&
             chatElement.type !== "hiddenContextMessage" &&
-            (chatElement.message || chatElement.html))
+            (chatElement.message != "" || chatElement.html != ""))
             .map((chatElement) => html `
                 <yp-assistant-item-base
                   ?thinking="${chatElement.type === "thinking" ||

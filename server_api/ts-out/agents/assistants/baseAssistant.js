@@ -453,7 +453,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
             mode: this.memory.currentMode,
         }));
         await this.saveMemory();
-        this.sendToClient("assistant", `Switching from ${oldMode} to ${newMode}${reason ? ": " + reason : ""}`, undefined, true);
+        this.sendToClient("system", newMode, "modeChange", true);
     }
     async addUserMessage(message) {
         this.memory.chatLog.push({
