@@ -1,10 +1,10 @@
 // baseAssistantMode.ts
-import { YpSubscriptionPlan } from '../../models/subscriptionPlan.js';
-import { YpAgentProductRun } from '../../models/agentProductRun.js';
-import { YpAgentProduct } from '../../models/agentProduct.js';
-import { YpAgentProductBundle } from '../../models/agentProductBundle.js';
-import { YpSubscription } from '../../models/subscription.js';
-import { NotificationAgentQueueManager } from '../../managers/notificationAgentQueueManager.js';
+import { YpSubscriptionPlan } from "../../models/subscriptionPlan.js";
+import { YpAgentProductRun } from "../../models/agentProductRun.js";
+import { YpAgentProduct } from "../../models/agentProduct.js";
+import { YpAgentProductBundle } from "../../models/agentProductBundle.js";
+import { YpSubscription } from "../../models/subscription.js";
+import { NotificationAgentQueueManager } from "../../managers/notificationAgentQueueManager.js";
 export class BaseAssistantMode {
     constructor(assistant) {
         this.assistant = assistant;
@@ -46,33 +46,40 @@ export class BaseAssistantMode {
         this.assistant.runningAgents = value;
     }
     renderAllAgentsStatus() {
-        if (this.availableAgents?.length === 0 && this.runningAgents?.length === 0) {
-            return '';
+        if (this.availableAgents?.length === 0 &&
+            this.runningAgents?.length === 0) {
+            return "";
         }
         return `<availableAgents>${JSON.stringify(this.availableAgents, null, 2)}</availableAgents>
 <runningAgents>${JSON.stringify(this.runningAgents, null, 2)}</runningAgents>`;
     }
     renderCurrentWorkflowStatus() {
         if (!this.currentWorkflow) {
-            return '';
+            return "";
         }
         return `<currentWorkflow>${JSON.stringify(this.currentWorkflow, null, 2)}</currentWorkflow>`;
     }
     renderCurrentAgent() {
         if (!this.currentAgent) {
-            return '';
+            return "";
         }
         return `<currentAgent>${JSON.stringify(this.currentAgent, null, 2)}</currentAgent>`;
     }
     renderCommon() {
         if (!this.memory.currentMode) {
-            return '';
+            return "";
         }
         console.log(`renderCommon: currentConversationMode ${this.memory.currentMode}`);
         return `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>`;
     }
     async loadAllAgentPlans() {
         try {
+            const firstBundle = await YpAgentProductBundle.findOne({
+                where: {
+                //TODO: get working
+                //domain_id: this.domainId,
+                },
+            });
             // Get all available subscription plans with their associated agent products
             const availablePlans = await YpSubscriptionPlan.findAll({
                 where: {
@@ -81,34 +88,43 @@ export class BaseAssistantMode {
                 include: [
                     {
                         model: YpAgentProduct,
-                        as: 'AgentProduct',
+                        as: "AgentProduct",
                         attributes: {
-                            exclude: ['created_at', 'updated_at'],
+                            exclude: ["created_at", "updated_at"],
                         },
                         include: [
                             {
                                 model: YpAgentProductBundle,
-                                as: 'Bundles',
+                                as: "AgentBundles",
                                 required: false,
                                 attributes: {
-                                    exclude: ['created_at', 'updated_at'],
+                                    exclude: ["created_at", "updated_at"],
                                 },
                             },
                         ],
                     },
                 ],
             });
+            console.log(`-----------XXXXXXXXXXXXXXXx----------_> ${JSON.stringify(availablePlans, null, 2)}`);
             return {
                 availablePlans: availablePlans.map((plan) => ({
                     agentProductId: plan.AgentProduct?.id || 0,
                     subscriptionPlanId: plan.id,
                     name: plan.AgentProduct?.name || plan.name,
-                    description: plan.AgentProduct?.description || 'No description available',
-                    imageUrl: plan.configuration?.imageUrl || '',
+                    description: plan.AgentProduct?.description || "No description available",
+                    imageUrl: plan.configuration?.imageUrl || "",
                     price: plan.configuration?.amount || 0,
-                    currency: plan.configuration?.currency || 'USD',
+                    currency: plan.configuration?.currency || "USD",
                     maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0,
                 })),
+                availableBundle: firstBundle
+                    ? {
+                        agentBundleId: firstBundle.id,
+                        name: firstBundle.name,
+                        description: firstBundle.description || "",
+                        imageUrl: firstBundle.configuration?.imageUrl || "",
+                    }
+                    : "No bundle available",
                 systemStatus: {
                     healthy: true,
                     lastUpdated: new Date(),
@@ -116,13 +132,14 @@ export class BaseAssistantMode {
             };
         }
         catch (error) {
-            console.error('Error loading available subscription plans:', error);
+            console.error("Error loading available subscription plans:", error);
             return {
                 availablePlans: [],
+                availableBundle: "No bundle available",
                 systemStatus: {
                     healthy: false,
                     lastUpdated: new Date(),
-                    error: error instanceof Error ? error.message : 'Unknown error',
+                    error: error instanceof Error ? error.message : "Unknown error",
                 },
             };
         }
@@ -133,26 +150,26 @@ export class BaseAssistantMode {
             const availableAgents = await YpSubscription.findAll({
                 where: {
                     //domain_id: this.domainId, //TODO: get working
-                    status: 'active', // Only get active subscriptions
+                    status: "active", // Only get active subscriptions
                 },
                 include: [
                     {
                         model: YpSubscriptionPlan,
-                        as: 'Plan',
+                        as: "Plan",
                     },
                     {
                         model: YpAgentProduct,
-                        as: 'AgentProduct',
+                        as: "AgentProduct",
                         attributes: {
-                            exclude: ['created_at', 'updated_at'],
+                            exclude: ["created_at", "updated_at"],
                         },
                         include: [
                             {
                                 model: YpAgentProductBundle,
-                                as: 'Bundles',
+                                as: "AgentBundles",
                                 required: false,
                                 attributes: {
-                                    exclude: ['created_at', 'updated_at'],
+                                    exclude: ["created_at", "updated_at"],
                                 },
                             },
                         ],
@@ -163,23 +180,23 @@ export class BaseAssistantMode {
             const runningAgents = await YpAgentProductRun.findAll({
                 where: {
                     //domain_id: this.domainId, //TODO: get working
-                    status: 'running',
+                    status: "running",
                 },
                 include: [
                     {
                         model: YpSubscription,
-                        as: 'Subscription',
+                        as: "Subscription",
                         //where: {
                         //  domain_id: this.domainId
                         //},
                         include: [
                             {
                                 model: YpAgentProduct,
-                                as: 'AgentProduct',
+                                as: "AgentProduct",
                             },
                             {
                                 model: YpSubscriptionPlan,
-                                as: 'Plan',
+                                as: "Plan",
                             },
                         ],
                     },
@@ -191,7 +208,7 @@ export class BaseAssistantMode {
                     subscriptionId: subscription.id,
                     name: subscription.AgentProduct.name,
                     description: subscription.AgentProduct.description,
-                    imageUrl: subscription.Plan.configuration.imageUrl || '',
+                    imageUrl: subscription.Plan.configuration.imageUrl || "",
                     isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id ===
                         subscription.AgentProduct.id),
                 })),
@@ -199,7 +216,7 @@ export class BaseAssistantMode {
                     runId: run.id,
                     agentProductId: run.Subscription?.AgentProduct?.id || 0,
                     agentRunId: run.id,
-                    agentName: run.Subscription?.AgentProduct?.name || '',
+                    agentName: run.Subscription?.AgentProduct?.name || "",
                     startTime: run.start_time,
                     status: run.status,
                     workflow: run.workflow,
@@ -212,14 +229,14 @@ export class BaseAssistantMode {
             };
         }
         catch (error) {
-            console.error('Error loading agent status:', error);
+            console.error("Error loading agent status:", error);
             return {
                 availableAgents: [],
                 runningAgents: [],
                 systemStatus: {
                     healthy: false,
                     lastUpdated: new Date(),
-                    error: error instanceof Error ? error.message : 'Unknown error',
+                    error: error instanceof Error ? error.message : "Unknown error",
                 },
             };
         }
@@ -239,14 +256,14 @@ export class BaseAssistantMode {
         const status = await this.loadMyAgentSubscriptions();
         const runningAgent = status.runningAgents.find((a) => a.agentId === agentId);
         if (!runningAgent) {
-            throw new Error('Agent is not running');
+            throw new Error("Agent is not running");
         }
         // Call your backend API to stop the agent
         // This is a placeholder - implement actual API call
-        const stopResult = { status: 'stopped', timestamp: new Date() };
+        const stopResult = { status: "stopped", timestamp: new Date() };
         // Update Redis status
-        runningAgent.status = 'cancelled';
-        await this.redis.set('agent_status', JSON.stringify(status));
+        runningAgent.status = "cancelled";
+        await this.redis.set("agent_status", JSON.stringify(status));
         return stopResult;
     }
     async getRequiredQuestions(agentProductId) {
@@ -258,19 +275,19 @@ export class BaseAssistantMode {
             // Get the agent product run to access the workflow
             const agentProductRun = await YpAgentProductRun.findByPk(agentProductRunId);
             if (!agentProductRun || !agentProductRun.workflow) {
-                throw new Error('Agent product run or workflow not found');
+                throw new Error("Agent product run or workflow not found");
             }
             // Check if there's a next step
             const nextStep = agentProductRun.workflow.steps[agentProductRun.workflow.currentStepIndex + 1];
             if (!nextStep) {
                 // This was the last step, mark the run as completed
-                agentProductRun.status = 'completed';
+                agentProductRun.status = "completed";
                 agentProductRun.end_time = new Date();
                 agentProductRun.duration = Math.floor((agentProductRun.end_time.getTime() -
                     agentProductRun.start_time.getTime()) /
                     1000);
                 await agentProductRun.save();
-                return { status: 'completed', message: 'Workflow completed' };
+                return { status: "completed", message: "Workflow completed" };
             }
             // Start the next agent in the workflow
             const agentQueueManager = new NotificationAgentQueueManager(this.assistant.wsClients);
@@ -280,20 +297,20 @@ export class BaseAssistantMode {
             }
             if (!success) {
                 return {
-                    status: 'failed',
-                    message: 'Failed to start next workflow step',
+                    status: "failed",
+                    message: "Failed to start next workflow step",
                 };
             }
             else {
                 return {
-                    status: 'started',
+                    status: "started",
                     agentId: nextStep.agentId,
-                    message: 'Next workflow step started',
+                    message: "Next workflow step started",
                 };
             }
         }
         catch (error) {
-            console.error('Error running next workflow step:', error);
+            console.error("Error running next workflow step:", error);
             throw new Error(`Failed to run next workflow step: ${error.message}`);
         }
     }
@@ -301,7 +318,7 @@ export class BaseAssistantMode {
         const answers = event.detail;
         if (this.currentAgentId) {
             await this.redis.set(`agent:${this.currentAgentId}:answers`, JSON.stringify(answers));
-            await this.assistant.handleModeSwitch('agent_operations', 'Configuration completed');
+            await this.assistant.handleModeSwitch("agent_operations", "Configuration completed");
         }
     }
     async getWorkflowStatus(agentId) {
@@ -312,9 +329,7 @@ export class BaseAssistantMode {
             this.redis.get(configKey),
             this.redis.get(statusKey),
         ]);
-        const config = configStr
-            ? JSON.parse(configStr)
-            : { steps: [] };
+        const config = configStr ? JSON.parse(configStr) : { steps: [] };
         const status = statusStr
             ? JSON.parse(statusStr)
             : {
@@ -325,10 +340,10 @@ export class BaseAssistantMode {
         const enhancedSteps = config.steps.map((step) => ({
             ...step,
             status: step.id === status.currentStepId
-                ? 'active'
+                ? "active"
                 : step.id < status.currentStepId
-                    ? 'completed'
-                    : 'pending',
+                    ? "completed"
+                    : "pending",
             completed: step.id < status.currentStepId,
             currentStep: step.id === status.currentStepId,
         }));
@@ -344,7 +359,7 @@ export class BaseAssistantMode {
         const detailsStr = await this.redis.get(key);
         const details = detailsStr ? JSON.parse(detailsStr) : null;
         if (!details) {
-            throw new Error('Step details not found');
+            throw new Error("Step details not found");
         }
         if (includeArtifacts) {
             const artifactsKey = `agent:${agentId}:step:${stepId}:artifacts`;

@@ -93,7 +93,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
 
   private setupVoiceEventForwarder() {
     // Forward all voice bot events to client
-    this.voiceBot?.wsClientSocket.on("message", (data: Buffer) => {
+    this.voiceBot?.wsClientSocket?.on("message", (data: Buffer) => {
       try {
         const event = JSON.parse(data.toString());
 

@@ -4,7 +4,7 @@ import { ChatbotMode, ToolExecutionResult } from "../baseAssistant.js";
 import { YpSubscriptionPlan } from "../../models/subscriptionPlan.js";
 import { YpSubscription } from "../../models/subscription.js";
 
-const DEBUG = false;
+const DEBUG = true;
 
 interface UnsubscribeResult {
   success: boolean;

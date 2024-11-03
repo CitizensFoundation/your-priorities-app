@@ -1,14 +1,14 @@
 // baseAssistantMode.ts
 
-import { PsAgent } from '@policysynth/agents/dbModels/agent.js';
-import { YpBaseAssistantWithVoice } from '../baseAssistantWithVoice.js';
-import { YpSubscriptionPlan } from '../../models/subscriptionPlan.js';
-import { YpAgentProductRun } from '../../models/agentProductRun.js';
-import { YpAgentProduct } from '../../models/agentProduct.js';
-import { YpAgentProductBundle } from '../../models/agentProductBundle.js';
-import { YpSubscription } from '../../models/subscription.js';
-import { NotificationAgentQueueManager } from '../../managers/notificationAgentQueueManager.js';
-import { YpAgentAssistant } from '../agentAssistant.js';
+import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
+import { YpBaseAssistantWithVoice } from "../baseAssistantWithVoice.js";
+import { YpSubscriptionPlan } from "../../models/subscriptionPlan.js";
+import { YpAgentProductRun } from "../../models/agentProductRun.js";
+import { YpAgentProduct } from "../../models/agentProduct.js";
+import { YpAgentProductBundle } from "../../models/agentProductBundle.js";
+import { YpSubscription } from "../../models/subscription.js";
+import { NotificationAgentQueueManager } from "../../managers/notificationAgentQueueManager.js";
+import { YpAgentAssistant } from "../agentAssistant.js";
 
 interface MyAgent {
   agentProductId: number;
@@ -39,19 +39,27 @@ interface MyAgentSubscriptionStatus {
   };
 }
 
+interface MyAgentBundle {
+  agentBundleId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+}
+
 interface MyAgentPlan {
   agentProductId: number;
-    subscriptionPlanId: number;
-    name: string;
-    description: string;
-    imageUrl: string;
-    price: number;
-    currency: string;
-    maxRunsPerCycle: number;
+  subscriptionPlanId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  price: number;
+  currency: string;
+  maxRunsPerCycle: number;
 }
 
 interface MyAgentPlanStatus {
   availablePlans: Array<MyAgentPlan>;
+  availableBundle: MyAgentBundle | string;
   systemStatus: {
     healthy: boolean;
     lastUpdated: Date;
@@ -115,24 +123,23 @@ export class BaseAssistantMode {
   }
 
   protected renderAllAgentsStatus() {
-    if (this.availableAgents?.length === 0 && this.runningAgents?.length === 0) {
-      return '';
+    if (
+      this.availableAgents?.length === 0 &&
+      this.runningAgents?.length === 0
+    ) {
+      return "";
     }
     return `<availableAgents>${JSON.stringify(
       this.availableAgents,
       null,
       2
     )}</availableAgents>
-<runningAgents>${JSON.stringify(
-      this.runningAgents,
-      null,
-      2
-    )}</runningAgents>`;
+<runningAgents>${JSON.stringify(this.runningAgents, null, 2)}</runningAgents>`;
   }
 
   protected renderCurrentWorkflowStatus() {
     if (!this.currentWorkflow) {
-      return '';
+      return "";
     }
     return `<currentWorkflow>${JSON.stringify(
       this.currentWorkflow,
@@ -143,7 +150,7 @@ export class BaseAssistantMode {
 
   protected renderCurrentAgent() {
     if (!this.currentAgent) {
-      return '';
+      return "";
     }
     return `<currentAgent>${JSON.stringify(
       this.currentAgent,
@@ -154,14 +161,22 @@ export class BaseAssistantMode {
 
   protected renderCommon() {
     if (!this.memory.currentMode) {
-      return '';
+      return "";
     }
-    console.log(`renderCommon: currentConversationMode ${this.memory.currentMode}`);
+    console.log(
+      `renderCommon: currentConversationMode ${this.memory.currentMode}`
+    );
     return `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>`;
   }
 
   protected async loadAllAgentPlans(): Promise<MyAgentPlanStatus> {
     try {
+      const firstBundle = await YpAgentProductBundle.findOne({
+        where: {
+          //TODO: get working
+          //domain_id: this.domainId,
+        },
+      });
       // Get all available subscription plans with their associated agent products
       const availablePlans = await YpSubscriptionPlan.findAll({
         where: {
@@ -170,17 +185,17 @@ export class BaseAssistantMode {
         include: [
           {
             model: YpAgentProduct,
-            as: 'AgentProduct',
+            as: "AgentProduct",
             attributes: {
-              exclude: ['created_at', 'updated_at'],
+              exclude: ["created_at", "updated_at"],
             },
             include: [
               {
                 model: YpAgentProductBundle,
-                as: 'Bundles',
+                as: "AgentBundles",
                 required: false,
                 attributes: {
-                  exclude: ['created_at', 'updated_at'],
+                  exclude: ["created_at", "updated_at"],
                 },
               },
             ],
@@ -188,31 +203,45 @@ export class BaseAssistantMode {
         ],
       });
 
+      console.log(
+        `-----------XXXXXXXXXXXXXXXx----------_> ${JSON.stringify(availablePlans, null, 2)}`
+      );
+
       return {
         availablePlans: availablePlans.map((plan) => ({
           agentProductId: plan.AgentProduct?.id || 0,
           subscriptionPlanId: plan.id,
           name: plan.AgentProduct?.name || plan.name,
           description:
-            plan.AgentProduct?.description || 'No description available',
-          imageUrl: plan.configuration?.imageUrl || '',
+            plan.AgentProduct?.description || "No description available",
+          imageUrl: plan.configuration?.imageUrl || "",
           price: plan.configuration?.amount || 0,
-          currency: plan.configuration?.currency || 'USD',
+          currency: plan.configuration?.currency || "USD",
           maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0,
         })),
+        availableBundle:
+          firstBundle
+            ? {
+                agentBundleId: firstBundle.id,
+                name: firstBundle.name,
+                description: firstBundle.description || "",
+                imageUrl: firstBundle.configuration?.imageUrl || "",
+              }
+                  : "No bundle available",
         systemStatus: {
           healthy: true,
           lastUpdated: new Date(),
         },
       };
     } catch (error) {
-      console.error('Error loading available subscription plans:', error);
+      console.error("Error loading available subscription plans:", error);
       return {
         availablePlans: [],
+        availableBundle: "No bundle available",
         systemStatus: {
           healthy: false,
           lastUpdated: new Date(),
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       };
     }
@@ -221,29 +250,31 @@ export class BaseAssistantMode {
   protected async loadMyAgentSubscriptions(): Promise<MyAgentSubscriptionStatus> {
     try {
       // Get available agent products from user's subscriptions for their domain
+
+
       const availableAgents = await YpSubscription.findAll({
         where: {
           //domain_id: this.domainId, //TODO: get working
-          status: 'active', // Only get active subscriptions
+          status: "active", // Only get active subscriptions
         },
         include: [
           {
             model: YpSubscriptionPlan,
-            as: 'Plan',
+            as: "Plan",
           },
           {
             model: YpAgentProduct,
-            as: 'AgentProduct',
+            as: "AgentProduct",
             attributes: {
-              exclude: ['created_at', 'updated_at'],
+              exclude: ["created_at", "updated_at"],
             },
             include: [
               {
                 model: YpAgentProductBundle,
-                as: 'Bundles',
+                as: "AgentBundles",
                 required: false,
                 attributes: {
-                  exclude: ['created_at', 'updated_at'],
+                  exclude: ["created_at", "updated_at"],
                 },
               },
             ],
@@ -255,23 +286,23 @@ export class BaseAssistantMode {
       const runningAgents = await YpAgentProductRun.findAll({
         where: {
           //domain_id: this.domainId, //TODO: get working
-          status: 'running',
+          status: "running",
         },
         include: [
           {
             model: YpSubscription,
-            as: 'Subscription',
+            as: "Subscription",
             //where: {
             //  domain_id: this.domainId
             //},
             include: [
               {
                 model: YpAgentProduct,
-                as: 'AgentProduct',
+                as: "AgentProduct",
               },
               {
                 model: YpSubscriptionPlan,
-                as: 'Plan',
+                as: "Plan",
               },
             ],
           },
@@ -284,7 +315,7 @@ export class BaseAssistantMode {
           subscriptionId: subscription.id,
           name: subscription.AgentProduct.name,
           description: subscription.AgentProduct.description,
-          imageUrl: subscription.Plan.configuration.imageUrl || '',
+          imageUrl: subscription.Plan.configuration.imageUrl || "",
           isRunning: runningAgents.some(
             (run) =>
               run.Subscription?.AgentProduct?.id ===
@@ -295,7 +326,7 @@ export class BaseAssistantMode {
           runId: run.id,
           agentProductId: run.Subscription?.AgentProduct?.id || 0,
           agentRunId: run.id,
-          agentName: run.Subscription?.AgentProduct?.name || '',
+          agentName: run.Subscription?.AgentProduct?.name || "",
           startTime: run.start_time,
           status: run.status,
           workflow: run.workflow,
@@ -307,14 +338,14 @@ export class BaseAssistantMode {
         },
       };
     } catch (error) {
-      console.error('Error loading agent status:', error);
+      console.error("Error loading agent status:", error);
       return {
         availableAgents: [],
         runningAgents: [],
         systemStatus: {
           healthy: false,
           lastUpdated: new Date(),
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       };
     }
@@ -323,7 +354,9 @@ export class BaseAssistantMode {
   protected async validateAndSelectAgent(agentId: number): Promise<MyAgent> {
     // Implement agent validation logic
     const status = await this.loadMyAgentSubscriptions();
-    const agent = status.availableAgents.find((a) => a.agentProductId === agentId);
+    const agent = status.availableAgents.find(
+      (a) => a.agentProductId === agentId
+    );
     if (!agent) {
       throw new Error(
         `The user's agent with agentProductId ${agentId} not found or not available in ${JSON.stringify(
@@ -345,23 +378,21 @@ export class BaseAssistantMode {
     );
 
     if (!runningAgent) {
-      throw new Error('Agent is not running');
+      throw new Error("Agent is not running");
     }
 
     // Call your backend API to stop the agent
     // This is a placeholder - implement actual API call
-    const stopResult = { status: 'stopped', timestamp: new Date() };
+    const stopResult = { status: "stopped", timestamp: new Date() };
 
     // Update Redis status
-    runningAgent.status = 'cancelled';
-    await this.redis.set('agent_status', JSON.stringify(status));
+    runningAgent.status = "cancelled";
+    await this.redis.set("agent_status", JSON.stringify(status));
 
     return stopResult;
   }
 
-  protected async getRequiredQuestions(
-    agentProductId: number
-  ): Promise<any[]> {
+  protected async getRequiredQuestions(agentProductId: number): Promise<any[]> {
     // Implement logic to get required questions
     return [];
   }
@@ -376,7 +407,7 @@ export class BaseAssistantMode {
         agentProductRunId
       );
       if (!agentProductRun || !agentProductRun.workflow) {
-        throw new Error('Agent product run or workflow not found');
+        throw new Error("Agent product run or workflow not found");
       }
 
       // Check if there's a next step
@@ -386,7 +417,7 @@ export class BaseAssistantMode {
         ];
       if (!nextStep) {
         // This was the last step, mark the run as completed
-        agentProductRun.status = 'completed';
+        agentProductRun.status = "completed";
         agentProductRun.end_time = new Date();
         agentProductRun.duration = Math.floor(
           (agentProductRun.end_time.getTime() -
@@ -394,7 +425,7 @@ export class BaseAssistantMode {
             1000
         );
         await agentProductRun.save();
-        return { status: 'completed', message: 'Workflow completed' };
+        return { status: "completed", message: "Workflow completed" };
       }
 
       // Start the next agent in the workflow
@@ -412,23 +443,25 @@ export class BaseAssistantMode {
 
       if (!success) {
         return {
-          status: 'failed',
-          message: 'Failed to start next workflow step',
+          status: "failed",
+          message: "Failed to start next workflow step",
         };
       } else {
         return {
-          status: 'started',
+          status: "started",
           agentId: nextStep.agentId,
-          message: 'Next workflow step started',
+          message: "Next workflow step started",
         };
       }
     } catch (error: any) {
-      console.error('Error running next workflow step:', error);
+      console.error("Error running next workflow step:", error);
       throw new Error(`Failed to run next workflow step: ${error.message}`);
     }
   }
 
-  protected async handleQuestionsSubmitted(event: { detail: any }): Promise<void> {
+  protected async handleQuestionsSubmitted(event: {
+    detail: any;
+  }): Promise<void> {
     const answers = event.detail;
     if (this.currentAgentId) {
       await this.redis.set(
@@ -436,8 +469,8 @@ export class BaseAssistantMode {
         JSON.stringify(answers)
       );
       await this.assistant.handleModeSwitch(
-        'agent_operations',
-        'Configuration completed'
+        "agent_operations",
+        "Configuration completed"
       );
     }
   }
@@ -452,9 +485,7 @@ export class BaseAssistantMode {
       this.redis.get(statusKey),
     ]);
 
-    const config: any = configStr
-      ? JSON.parse(configStr)
-      : { steps: [] };
+    const config: any = configStr ? JSON.parse(configStr) : { steps: [] };
     const status = statusStr
       ? JSON.parse(statusStr)
       : {
@@ -467,10 +498,10 @@ export class BaseAssistantMode {
       ...step,
       status:
         step.id === status.currentStepId
-          ? 'active'
+          ? "active"
           : step.id < status.currentStepId
-          ? 'completed'
-          : 'pending',
+          ? "completed"
+          : "pending",
       completed: step.id < status.currentStepId,
       currentStep: step.id === status.currentStepId,
     }));
@@ -493,7 +524,7 @@ export class BaseAssistantMode {
     const details = detailsStr ? JSON.parse(detailsStr) : null;
 
     if (!details) {
-      throw new Error('Step details not found');
+      throw new Error("Step details not found");
     }
 
     if (includeArtifacts) {

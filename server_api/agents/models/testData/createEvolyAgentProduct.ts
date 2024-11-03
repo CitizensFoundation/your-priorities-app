@@ -31,8 +31,10 @@ async function createAgentProductsAndPlans() {
     const agentBundle = {
       id: 1,
       name: "Evoly Amplifier Agent Bundle",
-      description: `Bundle for the Evoly Amplifier Agent. Evoly Cloud is a platform to revolutionize business outcomes in every department of your company.
-      Evoly integrates AI agents with people, workflows, and data and enables multi-agent workflows. With Evoly Cloud, your staff and AI agents collaborate seamlessly to achieve optimal efficiency and innovative results.
+      description: `The Amplifier Agent Bundle includes: Competition Agent, Lead Generation Agent, Production Innovation Agent, Marketing Ops Agent and Funding Agent.
+      Evoly Cloud is a platform to revolutionize business outcomes in every department of your company.
+      Evoly integrates AI agents with people, workflows, and data and enables multi-agent workflows.
+      With Evoly Cloud, your staff and AI agents collaborate seamlessly to achieve optimal efficiency and innovative results.
       Evoly Cloud offers ready-to-use AI agents as well as empowering your business to create custom-made AI agents.`,
       configuration: {
         imageUrl: "https://assets.evoly.ai/dl/7a651ab3d224f105ab5c543b89634b90--retina-1.png",
@@ -84,7 +86,7 @@ async function createAgentProductsAndPlans() {
         description: "Analyzes competitor strategies and market positions.",
         configuration: {
           workflow: competitionAgentWorkflow,
-          templateWorkflowCommunityId: 33810,
+          templateWorkflowCommunityId: 11,
         } as YpAgentProductConfiguration,
         status: {
           currentStatus: "active",
@@ -172,10 +174,10 @@ async function createAgentProductsAndPlans() {
       {
         name: "Competition Agent",
         description: "Analyzes competitor strategies and market positions.",
-        groupId: 33811,
+        groupId: 11,
         configuration: {
           workflow: competitionAgentWorkflow,
-          templateWorkflowCommunityId: 33810,
+          templateWorkflowCommunityId: 11,
         } as YpAgentProductConfiguration,
         status: {
           currentStatus: "active",
@@ -243,7 +245,10 @@ async function createAgentProductsAndPlans() {
         name: "Lead Generation Agent",
         description: "Generates leads and potential client contacts.",
         groupId: 2,
-        configuration: {},
+        configuration: {
+          workflow: {},
+          templateWorkflowCommunityId: 12,
+        } as YpAgentProductConfiguration,
         status: {},
         subscriptionPlan: {
           name: "Lead Generation Agent Plan",
@@ -265,7 +270,10 @@ async function createAgentProductsAndPlans() {
         name: "Production Innovation Agent",
         description: "Produces innovative ideas for production processes.",
         groupId: 33812,
-        configuration: {},
+        configuration: {
+          workflow: {},
+          templateWorkflowCommunityId: 13,
+        } as YpAgentProductConfiguration,
         status: {},
         subscriptionPlan: {
           name: "Production Innovation Agent Plan",
@@ -287,7 +295,10 @@ async function createAgentProductsAndPlans() {
         name: "Marketing Ops Agent",
         description: "Optimizes marketing operations and campaign strategies.",
         groupId: 33813,
-        configuration: {},
+        configuration: {
+          workflow: {},
+          templateWorkflowCommunityId: 14,
+        } as YpAgentProductConfiguration,
         status: {},
         subscriptionPlan: {
           name: "Marketing Ops Agent Plan",
@@ -310,7 +321,10 @@ async function createAgentProductsAndPlans() {
         description:
           "Identifies and analyzes funding opportunities and investment strategies.",
         groupId: 33814,
-        configuration: {},
+        configuration: {
+          workflow: {},
+          templateWorkflowCommunityId: 15,
+        } as YpAgentProductConfiguration,
         status: {},
         subscriptionPlan: {
           name: "Funding Agent Plan",

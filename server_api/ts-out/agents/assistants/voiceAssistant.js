@@ -127,7 +127,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                         break;
                     default:
                         console.log("Unhandled voice event type:", event.type);
-                        console.log(JSON.stringify(event, null, 2));
+                        //console.log(JSON.stringify(event, null, 2));
                         break;
                 }
             }
@@ -144,7 +144,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.parentAssistant?.addAssistantMessage(event.item.content[0].transcript);
         }
         else {
-            console.error("------------------------------------> No text in response.done event ", JSON.stringify(event, null, 2));
+            console.error("No text in response.done event");
         }
     }
     async handleAudioTranscriptDone(event) {
@@ -159,7 +159,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const tools = this.parentAssistant?.getCurrentModeFunctions();
         if (!tools)
             return;
-        console.log("callFunctionHandler event: ", JSON.stringify(event, null, 2));
+        //console.log("callFunctionHandler event: ", JSON.stringify(event, null, 2));
         const tool = tools.find((t) => t.name === event.name);
         if (!tool) {
             console.log("Tool not found: ", event.name);

@@ -42,7 +42,7 @@ export class SubscriptionManager {
             include: [
               {
                 model: YpAgentProductBundle,
-                as: "Bundles",
+                as: "AgentBundles",
                 attributes: {
                   exclude: ["created_at", "updated_at"],
                 },

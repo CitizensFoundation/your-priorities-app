@@ -74,6 +74,10 @@ YpAgentProduct.associate = (models) => {
         foreignKey: 'group_id',
         as: 'Group'
     });
+    YpAgentProduct.hasOne(models.YpAgentProductBundle, {
+        foreignKey: 'agent_bundle_id',
+        as: 'AgentBundle'
+    });
     YpAgentProduct.hasMany(models.YpAgentProductBoosterPurchase, {
         foreignKey: 'agent_product_id',
         as: 'BoosterPurchases',

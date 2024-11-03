@@ -29,6 +29,7 @@ export class YpAgentProduct extends Model {
   declare SubscriptionPlans?: YpSubscriptionPlan[];
   declare Runs?: YpAgentProductRun[];
   declare AgentBundles?: YpAgentProductBundle[];
+  declare AgentBundle?: YpAgentProductBundle;
 }
 
 YpAgentProduct.init(
@@ -108,6 +109,11 @@ YpAgentProduct.init(
   YpAgentProduct.belongsTo(models.Group, {
     foreignKey: 'group_id',
     as: 'Group'
+  });
+
+  YpAgentProduct.hasOne(models.YpAgentProductBundle, {
+    foreignKey: 'agent_bundle_id',
+    as: 'AgentBundle'
   });
 
   YpAgentProduct.hasMany(models.YpAgentProductBoosterPurchase, {

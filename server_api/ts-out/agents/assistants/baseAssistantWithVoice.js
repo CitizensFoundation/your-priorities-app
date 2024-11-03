@@ -55,7 +55,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
     }
     setupVoiceEventForwarder() {
         // Forward all voice bot events to client
-        this.voiceBot?.wsClientSocket.on("message", (data) => {
+        this.voiceBot?.wsClientSocket?.on("message", (data) => {
             try {
                 const event = JSON.parse(data.toString());
                 // Forward all voice-related events to client

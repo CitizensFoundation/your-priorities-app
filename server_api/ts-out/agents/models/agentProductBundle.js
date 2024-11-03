@@ -61,7 +61,7 @@ YpAgentProductBundle.associate = (models) => {
 YpAgentProduct.associate = (models) => {
     YpAgentProduct.belongsToMany(models.YpAgentProductBundle, {
         through: 'agent_product_bundles_products',
-        as: 'Bundles',
+        as: 'AgentBundles',
         foreignKey: 'agent_product_id',
         otherKey: 'agent_product_bundle_id',
     });
