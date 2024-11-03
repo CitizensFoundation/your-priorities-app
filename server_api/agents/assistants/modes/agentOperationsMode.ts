@@ -1,5 +1,3 @@
-// agentOperationsMode.ts
-
 import { BaseAssistantMode } from './baseAssistantMode.js';
 import { ToolExecutionResult } from '../baseAssistant.js';
 import { ChatbotMode } from '../baseAssistant.js';
@@ -34,8 +32,9 @@ ${this.renderCurrentWorkflowStatus()}`,
           parameters: {
             type: 'object',
             properties: {
-              configuration: { type: 'object' },
+              agentProductId: { type: 'number' },
             },
+            required: ['agentProductId'],
           },
           handler: async (params): Promise<ToolExecutionResult> => {
             params = this.assistant.getCleanedParams(params);

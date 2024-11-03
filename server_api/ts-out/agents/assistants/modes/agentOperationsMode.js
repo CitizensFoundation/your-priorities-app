@@ -1,4 +1,3 @@
-// agentOperationsMode.ts
 import { BaseAssistantMode } from './baseAssistantMode.js';
 export class AgentOperationsMode extends BaseAssistantMode {
     constructor(assistant) {
@@ -28,8 +27,9 @@ ${this.renderCurrentWorkflowStatus()}`,
                     parameters: {
                         type: 'object',
                         properties: {
-                            configuration: { type: 'object' },
+                            agentProductId: { type: 'number' },
                         },
+                        required: ['agentProductId'],
                     },
                     handler: async (params) => {
                         params = this.assistant.getCleanedParams(params);

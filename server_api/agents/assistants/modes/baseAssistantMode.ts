@@ -10,9 +10,11 @@ import { YpSubscription } from '../../models/subscription.js';
 import { NotificationAgentQueueManager } from '../../managers/notificationAgentQueueManager.js';
 import { YpAgentAssistant } from '../agentAssistant.js';
 
+
 interface MyAgentSubscriptionStatus {
   availableAgents: Array<{
-    id: number;
+    agentProductId: number;
+    subscriptionId: number;
     name: string;
     description: string;
     imageUrl: string;
@@ -20,7 +22,8 @@ interface MyAgentSubscriptionStatus {
   }>;
   runningAgents: Array<{
     runId: number;
-    agentId: number;
+    agentProductId: number;
+    agentRunId: number;
     agentName: string;
     startTime: Date;
     status: string;
@@ -36,7 +39,8 @@ interface MyAgentSubscriptionStatus {
 
 interface MyAgentPlanStatus {
   availablePlans: Array<{
-    id: number;
+    agentProductId: number;
+    subscriptionPlanId: number;
     name: string;
     description: string;
     imageUrl: string;
@@ -182,7 +186,8 @@ export class BaseAssistantMode {
 
       return {
         availablePlans: availablePlans.map((plan) => ({
-          id: plan.AgentProduct?.id || 0,
+          agentProductId: plan.AgentProduct?.id || 0,
+          subscriptionPlanId: plan.id,
           name: plan.AgentProduct?.name || plan.name,
           description:
             plan.AgentProduct?.description || 'No description available',
@@ -271,7 +276,8 @@ export class BaseAssistantMode {
 
       return {
         availableAgents: availableAgents.map((subscription) => ({
-          id: subscription.AgentProduct.id,
+          agentProductId: subscription.AgentProduct.id,
+          subscriptionId: subscription.id,
           name: subscription.AgentProduct.name,
           description: subscription.AgentProduct.description,
           imageUrl: subscription.Plan.configuration.imageUrl || '',
@@ -283,7 +289,8 @@ export class BaseAssistantMode {
         })),
         runningAgents: runningAgents.map((run) => ({
           runId: run.id,
-          agentId: run.Subscription?.AgentProduct?.id || 0,
+          agentProductId: run.Subscription?.AgentProduct?.id || 0,
+          agentRunId: run.id,
           agentName: run.Subscription?.AgentProduct?.name || '',
           startTime: run.start_time,
           status: run.status,
@@ -312,7 +319,7 @@ export class BaseAssistantMode {
   protected async validateAndSelectAgent(agentId: number): Promise<any> {
     // Implement agent validation logic
     const status = await this.loadMyAgentSubscriptions();
-    const agent = status.availableAgents.find((a: any) => a.id === agentId);
+    const agent = status.availableAgents.find((a) => a.agentProductId === agentId);
     if (!agent) {
       throw new Error(
         `The user's agent with agentProductId ${agentId} not found or not available in ${JSON.stringify(

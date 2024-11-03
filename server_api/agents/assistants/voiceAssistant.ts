@@ -361,7 +361,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       audio: Buffer.from(audioData).toString("base64"),
     };
 
-    console.log("Sending audio message to server:");
+    //console.log("Sending audio message to server:");
 
     this.voiceConnection.ws.send(JSON.stringify(audioMessage));
   }

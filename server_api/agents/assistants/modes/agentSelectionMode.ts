@@ -1,5 +1,3 @@
-// agentSelectionMode.ts
-
 import { BaseAssistantMode } from './baseAssistantMode.js';
 import { YpAgentAssistant } from '../agentAssistant.js';
 import { ChatbotMode, ToolExecutionResult } from '../baseAssistant.js';
@@ -59,7 +57,8 @@ ${this.renderAllAgentsStatus()}`,
               let agentChips = '';
               for (const agent of status.availableAgents) {
                 agentChips += `<yp-agent-chip
-                  agentId="${agent.id}"
+                  agentProductId="${agent.agentProductId}"
+                  subscriptionId="${agent.subscriptionId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
                   agentImageUrl="${agent.imageUrl}"
@@ -126,7 +125,8 @@ ${this.renderAllAgentsStatus()}`,
               let agentChips = '';
               for (const agent of status.availablePlans) {
                 agentChips += `<yp-agent-chip-for-purchase
-                  agentId="${agent.id}"
+                  agentProductId="${agent.agentProductId}"
+                  subscriptionPlanId="${agent.subscriptionPlanId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
                   agentImageUrl="${agent.imageUrl}"
