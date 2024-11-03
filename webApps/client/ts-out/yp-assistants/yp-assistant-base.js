@@ -162,12 +162,20 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ></yp-assistant-item-base>
               `)}
         </div>
-        <div class="layout horizontal center-center chat-input" style="position: relative;">
+        <div
+          class="layout horizontal center-center chat-input"
+          style="position: relative;"
+        >
           ${this.renderChatInput()}
-          <div style="position: absolute; right:96px;bottom:104px;z-index: 100;">
+          <div
+            style="position: absolute; right:96px;bottom:104px;z-index: 100;"
+          >
             ${this.renderVoiceTalkingHead()}
           </div>
-          <div class="currentMode" style="position: absolute;left:82px;bottom:90px;z-index: 100;">
+          <div
+            class="currentMode"
+            style="position: absolute;left:82px;bottom:90px;z-index: 100;"
+          >
             ${this.t(this.currentMode)}
           </div>
         </div>
@@ -347,7 +355,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
-
         .currentMode {
           font-size: 17px;
           font-weight: 700;
@@ -389,6 +396,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           gap: 8px;
         }
 
+        md-filled-tonal-button {
+          border-radius: 4px;
+        }
+
         .voice-button {
           --md-icon-button-icon-size: 24px;
           margin-right: 24px;
@@ -427,7 +438,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         ${super.renderChatInput()}
         ${this.voiceEnabled
             ? html `
-              <md-icon-button hidden
+              <md-icon-button
+                hidden
                 id="voiceButton"
                 class="voice-button"
                 ?recording="${this.isRecording}"
@@ -437,15 +449,35 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
               </md-icon-button>
             `
             : nothing}
-
-        <md-fab
-          class="voice-mode-toggle"
-          @click="${this.toggleVoiceMode}"
-          .label="${!this.voiceEnabled ? this.t('voiceAssistant') : this.t('closeAssistant')}"
-        >
-          ${!this.voiceEnabled ? this.t('voiceAssistant') : this.t('closeAssistant')}
-          <md-icon slot="icon">${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon>
-        </md-fab>
+        ${!this.voiceEnabled
+            ? html ` <md-filled-tonal-button
+              class="voice-mode-toggle"
+              @click="${this.toggleVoiceMode}"
+              .label="${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}"
+            >
+              ${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}
+              <md-icon slot="icon"
+                >${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon
+              >
+            </md-filled-tonal-button>`
+            : html ` <md-text-button
+              class="voice-mode-toggle"
+              @click="${this.toggleVoiceMode}"
+              .label="${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}"
+            >
+              ${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}
+              <md-icon slot="icon"
+                >${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon
+              >
+            </md-text-button>`}
       </div>
     `;
     }
