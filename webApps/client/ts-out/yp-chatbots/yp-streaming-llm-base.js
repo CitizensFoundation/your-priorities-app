@@ -104,6 +104,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
     }
     handleScroll() {
         if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
+            console.error(`handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`);
             return;
         }
         const currentScrollTop = this.$$(this.scrollElementSelector).scrollTop;

@@ -134,7 +134,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     `;
     }
     render() {
-        debugger;
         return html `
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
@@ -166,8 +165,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ></yp-assistant-item-base>
               `)}
         </div>
-        <div class="layout horizontal center-center chat-input">
-          ${this.renderChatInput()}${this.renderVoiceTalkingHead()}
+        <div class="layout horizontal center-center chat-input" style="position: relative;">
+          ${this.renderChatInput()}
+          <div style="position: absolute; right:82px;bottom:104px;">
+            ${this.renderVoiceTalkingHead()}
+          </div>
+          <div class="currentMode" style="position: absolute; right:auto;left:auto;bottom:82px;">
+            ${this.t(this.currentMode)}
+          </div>
         </div>
       </div>
     `;
@@ -337,6 +342,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
+
+        .currentMode {
+          font-size: 17px;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          margin-bottom: 16px;
+          font-family: var(--md-ref-typeface-brand);
+        }
+
         .voice-header {
           display: flex;
           flex-direction: column;

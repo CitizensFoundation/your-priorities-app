@@ -1,4 +1,13 @@
 {
+  "agent_selection": "Agent Selection",
+  "agent_operation": "Agent Operation",
+  "current_mode": "Current Mode",
+  "agent_subscription_sales": "Agent Subscription Sales",
+  "user_login": "User Login",
+  "user_payment": "User Payment",
+  "agent_configuration": "Agent Configuration",
+  "agent_operations": "Agent Operations",
+  "error_recovery": "Error Recovery",
   "confirmClearHistory": "Are you sure you want to clear the chat history?",
   "assistant": "Assistant",
   "endorsementThumbsWithColor": "Thumbs with color",

@@ -102,7 +102,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         'scroll',
         this.handleScroll.bind(this)
       );
-    }, 500);
+    }, 2500);
   }
 
   override updated(
