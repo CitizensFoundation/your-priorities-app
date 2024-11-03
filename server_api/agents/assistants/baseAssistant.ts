@@ -673,6 +673,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     await this.saveMemory();
   }
 
+  async addAssistantHtmlMessage(html: string): Promise<void> {
+    this.memory.chatLog!.push({
+      sender: "assistant",
+      html,
+      message: "",
+      type: "html",
+    });
+    await this.saveMemory();
+  }
+
   /**
    * Handle streaming responses and function calls with comprehensive debugging
    */

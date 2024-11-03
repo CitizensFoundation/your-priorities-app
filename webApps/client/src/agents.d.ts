@@ -184,7 +184,10 @@ interface AssistantModeData<T = unknown> {
 }
 
 type YpAssistantMode =
+  | "agent_subscription_sales"
   | "agent_selection"
+  | "user_login"
+  | "user_payment"
   | "agent_configuration"
   | "agent_operations"
   | "error_recovery";

@@ -7,6 +7,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         this.voiceEnabled = false;
         this.audioBuffer = [];
         this.VAD_TIMEOUT = 1000; // 1 second of silence for VAD
+        this.sendTranscriptsToClient = false;
+        this.lastNumberOfChatHistoryForInstructions = 15;
         this.parentAssistant = parentAssistant;
         this.voiceEnabled = voiceEnabled;
         this.voiceState = {
@@ -136,7 +138,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     async handleResponseDone(event) {
         if (event.item?.content && event.item.content.length > 0) {
-            this.sendToClient("assistant", event.item.content[0].transcript, "message");
+            if (this.sendTranscriptsToClient) {
+                this.sendToClient("assistant", event.item.content[0].transcript, "message");
+            }
             this.parentAssistant?.addAssistantMessage(event.item.content[0].transcript);
         }
         else {
@@ -145,7 +149,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     async handleAudioTranscriptDone(event) {
         if (event.transcript) {
-            this.sendToClient("user", event.transcript, "message");
+            if (this.sendTranscriptsToClient) {
+                this.sendToClient("user", event.transcript, "message");
+            }
             this.parentAssistant?.addUserMessage(event.transcript);
         }
     }
@@ -193,6 +199,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }
         if (result.html) {
             this.sendToClient("assistant", result.html, "html", true);
+            this.parentAssistant?.addAssistantHtmlMessage(result.html);
         }
         const responseEvent = {
             type: "conversation.item.create",
@@ -310,7 +317,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (this.memory && this.memory.chatLog && this.memory.chatLog.length > 0) {
             chatHistory = JSON.stringify(this.memory.chatLog
                 .filter((message) => message.message != "")
-                .slice(-10)
+                .slice(-this.lastNumberOfChatHistoryForInstructions)
                 .map((message) => ({
                 role: message.sender,
                 content: message.message,

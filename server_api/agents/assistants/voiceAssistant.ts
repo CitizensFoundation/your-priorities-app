@@ -42,9 +42,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   protected readonly VAD_TIMEOUT = 1000; // 1 second of silence for VAD
   protected vadTimeout?: NodeJS.Timeout;
 
-  memory!: YpBaseAssistantMemoryData;
-
   protected parentAssistant?: YpBaseAssistant;
+
+  sendTranscriptsToClient = false;
+
+  lastNumberOfChatHistoryForInstructions = 15;
 
   constructor(
     wsClientId: string,
@@ -212,11 +214,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   async handleResponseDone(event: any): Promise<void> {
     if (event.item?.content && event.item.content.length > 0) {
-      this.sendToClient(
-        "assistant",
-        event.item.content[0].transcript,
-        "message"
-      );
+      if (this.sendTranscriptsToClient) {
+        this.sendToClient(
+          "assistant",
+          event.item.content[0].transcript,
+          "message"
+        );
+      }
       this.parentAssistant?.addAssistantMessage(
         event.item.content[0].transcript
       );
@@ -230,7 +234,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   async handleAudioTranscriptDone(event: any): Promise<void> {
     if (event.transcript) {
-      this.sendToClient("user", event.transcript, "message");
+      if (this.sendTranscriptsToClient) {
+        this.sendToClient("user", event.transcript, "message");
+      }
       this.parentAssistant?.addUserMessage(event.transcript);
     }
   }
@@ -297,7 +303,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     if (result.html) {
       this.sendToClient("assistant", result.html, "html", true);
-    }
+      this.parentAssistant?.addAssistantHtmlMessage(result.html);
+   }
 
     const responseEvent = {
       type: "conversation.item.create",
@@ -454,7 +461,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       chatHistory = JSON.stringify(
         this.memory.chatLog
           .filter((message) => message.message != "")
-          .slice(-10)
+          .slice(-this.lastNumberOfChatHistoryForInstructions)
           .map((message) => ({
             role: message.sender,
             content: message.message,
