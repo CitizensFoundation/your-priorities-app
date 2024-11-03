@@ -199,8 +199,9 @@ ${this.renderCurrentWorkflowStatus()}`,
 
               // Create visualization HTML
               const html = `<div class="group-container"><yp-group
-                      collectionId="31042"
-                    ></yp-group></div>`;
+                  minimizeWorkflow="${true}"
+                  collectionId="43"
+                ></yp-group></div>`;
 
               return {
                 success: true,

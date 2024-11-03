@@ -56,6 +56,9 @@ export class YpGroup extends YpCollection {
   @property({ type: Boolean })
   disableNewPosts = false;
 
+  @property({ type: Boolean })
+  minimizeWorkflow = false;
+
   @property({ type: Number })
   selectedGroupTab = GroupTabTypes.Open;
 
@@ -1077,6 +1080,7 @@ export class YpGroup extends YpCollection {
   renderAgentsOps() {
     return html`<ps-operations-manager
       class="agentManager"
+      .minimizeWorkflow="${this.minimizeWorkflow}"
       .groupId="${this.collection!.id}"
       .group="${this.collection as YpGroupData}"
     ></ps-operations-manager>`;

@@ -13,6 +13,7 @@ export declare class YpGroup extends YpCollection {
     searchingFor: string | undefined;
     hasNonOpenPosts: boolean;
     disableNewPosts: boolean;
+    minimizeWorkflow: boolean;
     selectedGroupTab: number;
     configCheckTimer: ReturnType<typeof setTimeout> | undefined;
     newGroupRefresh: boolean;

@@ -31,6 +31,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         super();
         this.currentAgentId = 1;
         this.isFetchingAgent = false;
+        this.minimizeWorkflow = false;
         this.activeTabIndex = 0;
         this.showEditNodeDialog = false;
         this.showAddAgentDialog = false;
@@ -361,7 +362,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <div class="layout vertical">
+        <div class="layout vertical" ?hidden="${this.minimizeWorkflow}">
           <div class="layout horizontal self-start tabsContainer">
             ${this.renderHeader()}
 
@@ -409,6 +410,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         ${this.activeTabIndex === 0
                 ? html `
               <ps-operations-view
+                .minimizeWorkflow="${this.minimizeWorkflow}"
                 .currentAgent="${this.currentAgent}"
                 .groupId="${this.groupId}"
                 .group="${this.group}"
@@ -419,7 +421,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
                 ? html ` <!-- Render Audit Log tab content here --> `
                 : ""}
         ${this.activeTabIndex === 1 ? this.renderDetailedCostsTab() : ""}
-        ${this.renderThemeToggle()}
+        ${this.minimizeWorkflow ? "" : this.renderThemeToggle()}
       `;
         }
     }
@@ -734,6 +736,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], PsOperationsManager.prototype, "isFetchingAgent", void 0);
+__decorate([
+    property({ type: Boolean })
+], PsOperationsManager.prototype, "minimizeWorkflow", void 0);
 __decorate([
     property({ type: Object })
 ], PsOperationsManager.prototype, "nodeToEditInfo", void 0);

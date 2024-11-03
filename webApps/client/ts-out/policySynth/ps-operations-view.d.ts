@@ -11,6 +11,7 @@ import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js
 export declare class PsOperationsView extends PsBaseWithRunningAgentObserver {
     currentAgent: PsAgentAttributes;
     groupId: number;
+    minimizeWorkflow: boolean;
     group: YpGroupData;
     connectorRegistry: {
         [key: number]: PsAgentConnectorAttributes;

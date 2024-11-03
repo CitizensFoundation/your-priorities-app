@@ -44,6 +44,9 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
   @property({ type: Boolean })
   isFetchingAgent = false;
 
+  @property({ type: Boolean })
+  minimizeWorkflow = false;
+
   @property({ type: Object })
   nodeToEditInfo: PsAgentAttributes | PsAgentConnectorAttributes | undefined;
 
@@ -524,7 +527,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <div class="layout vertical">
+        <div class="layout vertical" ?hidden="${this.minimizeWorkflow}">
           <div class="layout horizontal self-start tabsContainer">
             ${this.renderHeader()}
 
@@ -572,6 +575,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
         ${this.activeTabIndex === 0
           ? html`
               <ps-operations-view
+                .minimizeWorkflow="${this.minimizeWorkflow}"
                 .currentAgent="${this.currentAgent}"
                 .groupId="${this.groupId}"
                 .group="${this.group}"
@@ -582,7 +586,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           ? html` <!-- Render Audit Log tab content here --> `
           : ""}
         ${this.activeTabIndex === 1 ? this.renderDetailedCostsTab() : ""}
-        ${this.renderThemeToggle()}
+        ${this.minimizeWorkflow ? "" : this.renderThemeToggle()}
       `;
     }
   }

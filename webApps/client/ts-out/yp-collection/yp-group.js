@@ -32,6 +32,7 @@ let YpGroup = class YpGroup extends YpCollection {
         super("group", "post", "lightbulb_outline", "post.create");
         this.hasNonOpenPosts = false;
         this.disableNewPosts = false;
+        this.minimizeWorkflow = false;
         this.selectedGroupTab = GroupTabTypes.Open;
         this.newGroupRefresh = false;
         this.isImportingCode = false;
@@ -853,6 +854,7 @@ let YpGroup = class YpGroup extends YpCollection {
     renderAgentsOps() {
         return html `<ps-operations-manager
       class="agentManager"
+      .minimizeWorkflow="${this.minimizeWorkflow}"
       .groupId="${this.collection.id}"
       .group="${this.collection}"
     ></ps-operations-manager>`;
@@ -957,6 +959,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpGroup.prototype, "disableNewPosts", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpGroup.prototype, "minimizeWorkflow", void 0);
 __decorate([
     property({ type: Number })
 ], YpGroup.prototype, "selectedGroupTab", void 0);

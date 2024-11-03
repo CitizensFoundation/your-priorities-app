@@ -27,6 +27,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
   @property({ type: Number })
   groupId!: number;
 
+  @property({ type: Boolean })
+  minimizeWorkflow = false;
+
   @property({ type: Object })
   group!: YpGroupData;
 
@@ -517,7 +520,11 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
       const isInputConnector = sourceAgent.InputConnectors?.some(
         (input) => input.id === connector.id
       );
-      const link = this.createLink(sourceElement, targetElement, isInputConnector!);
+      const link = this.createLink(
+        sourceElement,
+        targetElement,
+        isInputConnector!
+      );
       link?.addTo(this.graph);
     } else {
       console.warn("Source or target element not found");
@@ -619,7 +626,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     return [
       super.styles,
       css`
-       md-fab {
+        md-fab {
           --md-fab-container-shape: 4px;
           --md-fab-label-text-size: 16px !important;
           --md-fab-label-text-weight: 600 !important;
@@ -637,7 +644,6 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           margin-top: 10px;
           margin-right: 16px;
         }
-
 
         md-fab:not([has-static-theme]) {
           --md-sys-color-primary-container: var(--md-sys-color-primary);
@@ -735,6 +741,12 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           /* styles for the JointJS canvas */
         }
 
+        .jointJSCanvas[minimize-workflow] {
+          height: 100% !important;
+          width: 920px !important;
+          height: 500px !important;
+        }
+
         .controlPanel {
           display: flex;
           flex-direction: row;
@@ -753,7 +765,6 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           background: transparent;
           color: var(--md-sys-color-on-surface-variant);
         }
-
 
         md-filled-tonal-icon-button {
           margin-left: 8px;
@@ -843,10 +854,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     window.psAppGlobals.setCurrentRunningAgentId(this.currentAgent.id);
   }
 
-
   override render() {
     return html`
-      <div class="controlPanel">
+      <div class="controlPanel" ?hidden="${this.minimizeWorkflow}">
         <div class="navControls">
           <md-icon-button @click="${this.zoomIn}" class="firstButton"
             ><md-icon>zoom_in</md-icon></md-icon-button
@@ -864,20 +874,20 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
 
         <div class="flex"></div>
 
-
-        <div class="masterPlayConfigButtons">
+        <div class="masterPlayConfigButtons" ?hidden="${this.minimizeWorkflow}">
           ${this.currentRunningAgentId
             ? html`<md-filled-icon-button
                 class="mainAgentStopButton"
                 @click="${this.stop}"
                 ><md-icon>stop</md-icon></md-filled-icon-button
               >`
-            : html`<md-outlined-icon-button hidden
+            : html`<md-outlined-icon-button
+                hidden
                 class="mainAgentPlayButton"
                 @click="${this.start}"
                 ><md-icon>play_arrow</md-icon></md-outlined-icon-button
               >`}
-              <md-fab
+          <md-fab
             ?has-static-theme="${this.hasStaticTheme}"
             lowered
             size="large"
@@ -888,10 +898,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           >
             <md-icon hidden slot="icon">addExistingConnector</md-icon></md-fab
           >
-
         </div>
 
-        <div hidden>
+        <div hidden ?hidden="${this.minimizeWorkflow}">
           <md-icon-button @click="${() => this.pan("left")}"
             ><md-icon>arrow_back</md-icon></md-icon-button
           >
@@ -909,7 +918,11 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           >
         </div>
       </div>
-      <div class="jointJSCanvas" id="paper-container"></div>
+      <div
+        class="jointJSCanvas"
+        id="paper-container"
+        ?minimize-workflow="${this.minimizeWorkflow}"
+      ></div>
     `;
   }
 }

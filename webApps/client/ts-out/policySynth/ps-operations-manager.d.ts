@@ -20,6 +20,7 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     totalCosts: number | undefined;
     currentAgent: PsAgentAttributes | undefined;
     isFetchingAgent: boolean;
+    minimizeWorkflow: boolean;
     nodeToEditInfo: PsAgentAttributes | PsAgentConnectorAttributes | undefined;
     activeTabIndex: number;
     showEditNodeDialog: boolean;
