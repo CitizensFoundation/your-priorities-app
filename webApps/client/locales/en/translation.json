@@ -1,4 +1,6 @@
 {
+  "closeAssistant": "Close Assistant",
+  "voiceAssistant": "Voice Assistant",
   "agent_selection": "Agent Selection",
   "agent_operation": "Agent Operation",
   "current_mode": "Current Mode",

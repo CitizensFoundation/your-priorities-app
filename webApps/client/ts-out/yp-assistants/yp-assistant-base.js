@@ -167,10 +167,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         </div>
         <div class="layout horizontal center-center chat-input" style="position: relative;">
           ${this.renderChatInput()}
-          <div style="position: absolute; right:82px;bottom:104px;">
+          <div style="position: absolute; right:96px;bottom:144px;z-index: 100;">
             ${this.renderVoiceTalkingHead()}
           </div>
-          <div class="currentMode" style="position: absolute; right:auto;left:auto;bottom:82px;">
+          <div class="currentMode" style="position: absolute;right:82px;bottom:90px;z-index: 100;">
             ${this.t(this.currentMode)}
           </div>
         </div>
@@ -436,12 +436,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             `
             : nothing}
 
-        <md-icon-button
+        <md-fab
           class="voice-mode-toggle"
           @click="${this.toggleVoiceMode}"
+          .label="${!this.voiceEnabled ? this.t('voiceAssistant') : this.t('closeAssistant')}"
         >
-          <md-icon>${this.voiceEnabled ? "keyboard" : "mic_none"}</md-icon>
-        </md-icon-button>
+          ${!this.voiceEnabled ? this.t('voiceAssistant') : this.t('closeAssistant')}
+          <md-icon slot="icon">${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon>
+        </md-fab>
       </div>
     `;
     }
