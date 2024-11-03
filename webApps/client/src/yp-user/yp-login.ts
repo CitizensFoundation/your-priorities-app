@@ -199,10 +199,11 @@ export class YpLogin extends YpBaseElement {
         }
 
         .loginButton[has-static-theme] {
-          --md-filled-button-container-color: var(--md-sys-color-primary-container);
+          --md-filled-button-container-color: var(
+            --md-sys-color-primary-container
+          );
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
         }
-
 
         .closeLoginDialog {
           margin-bottom: 6px;
@@ -713,17 +714,14 @@ export class YpLogin extends YpBaseElement {
 
   renderLoginButton() {
     return html`<md-filled-button
-        autofocus
-        ?has-static-theme="${this.hasStaticTheme}"
-        raised
-        ?fullWithLoginButton="${this.fullWithLoginButton}"
-        class="loginButton"
-        @click="${() => this._validateAndSend(false)}"
-        ><span class="capitalize"
-          >${this.submitText}</span
-        ></md-filled-button
-      >
-  `;
+      autofocus
+      ?has-static-theme="${this.hasStaticTheme}"
+      raised
+      ?fullWithLoginButton="${this.fullWithLoginButton}"
+      class="loginButton"
+      @click="${() => this._validateAndSend(false)}"
+      ><span class="capitalize">${this.submitText}</span></md-filled-button
+    > `;
   }
 
   renderLoginInput() {
@@ -801,7 +799,8 @@ export class YpLogin extends YpBaseElement {
   }
 
   renderLanguage() {
-    return html`<yp-language-selector autoTranslateOptionDisabled
+    return html`<yp-language-selector
+      autoTranslateOptionDisabled
       class="languageSelector"
     ></yp-language-selector>`;
   }
@@ -1601,6 +1600,13 @@ export class YpLogin extends YpBaseElement {
     } else {
       this.createEnabled = true;
     }
+
+    if (
+      window.appGlobals.originalQueryParameters &&
+      window.appGlobals.originalQueryParameters.allowCreateForTestSystem72
+    ) {
+      this.createEnabled = true;
+    }
   }
 
   setup(onLoginFunction: Function, domain: YpDomainData) {
@@ -1668,8 +1674,6 @@ export class YpLogin extends YpBaseElement {
       console.error("No user in registerUser");
     }
   }
-
-
 
   async _loginUser() {
     const user = (await window.serverApi.loginUser(

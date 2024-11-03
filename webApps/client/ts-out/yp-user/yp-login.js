@@ -119,10 +119,11 @@ let YpLogin = class YpLogin extends YpBaseElement {
         }
 
         .loginButton[has-static-theme] {
-          --md-filled-button-container-color: var(--md-sys-color-primary-container);
+          --md-filled-button-container-color: var(
+            --md-sys-color-primary-container
+          );
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
         }
-
 
         .closeLoginDialog {
           margin-bottom: 6px;
@@ -630,17 +631,14 @@ let YpLogin = class YpLogin extends YpBaseElement {
     }
     renderLoginButton() {
         return html `<md-filled-button
-        autofocus
-        ?has-static-theme="${this.hasStaticTheme}"
-        raised
-        ?fullWithLoginButton="${this.fullWithLoginButton}"
-        class="loginButton"
-        @click="${() => this._validateAndSend(false)}"
-        ><span class="capitalize"
-          >${this.submitText}</span
-        ></md-filled-button
-      >
-  `;
+      autofocus
+      ?has-static-theme="${this.hasStaticTheme}"
+      raised
+      ?fullWithLoginButton="${this.fullWithLoginButton}"
+      class="loginButton"
+      @click="${() => this._validateAndSend(false)}"
+      ><span class="capitalize">${this.submitText}</span></md-filled-button
+    > `;
     }
     renderLoginInput() {
         return html `<md-outlined-text-field
@@ -711,7 +709,8 @@ let YpLogin = class YpLogin extends YpBaseElement {
         }
     }
     renderLanguage() {
-        return html `<yp-language-selector autoTranslateOptionDisabled
+        return html `<yp-language-selector
+      autoTranslateOptionDisabled
       class="languageSelector"
     ></yp-language-selector>`;
     }
@@ -1385,6 +1384,10 @@ let YpLogin = class YpLogin extends YpBaseElement {
             this.createEnabled = false;
         }
         else {
+            this.createEnabled = true;
+        }
+        if (window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters.allowCreateForTestSystem72) {
             this.createEnabled = true;
         }
     }
