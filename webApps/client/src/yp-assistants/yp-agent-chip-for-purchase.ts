@@ -13,6 +13,9 @@ export class YpAgentChipForPurchase extends YpAgentChip {
   @property({ type: Number })
   maxRunsPerCycle!: number;
 
+  @property({ type: String })
+  isSubscribed!: string | undefined;
+
   static override get styles() {
     return [
       super.styles,
@@ -53,8 +56,16 @@ export class YpAgentChipForPurchase extends YpAgentChip {
           transform: translateY(-2px);
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        .agent-name[isSubscribed] {
+          color: var(--yp-sys-color-up);
+        }
       `,
     ];
+  }
+
+  getSubscribedStatus() {
+    return this.isSubscribed ? " (subscribed)" : "";
   }
 
   override render() {
@@ -62,7 +73,7 @@ export class YpAgentChipForPurchase extends YpAgentChip {
       <div class="agent-chip">
         <img src="${this.agentImageUrl}" alt="${this.agentName}" />
         <div class="content">
-          <div class="agent-name">${this.agentName}</div>
+          <div class="agent-name" ?isSubscribed="${this.isSubscribed}">${this.agentName} ${this.getSubscribedStatus()}</div>
           <div class="agent-description">${this.agentDescription}</div>
           <div class="purchase-info">
             <div class="${this.currency=="USD" ? "price" : "price-other-currency"}">${this.currency=="USD" ? "$" : this.currency+" "}${this.price}</div>

@@ -48,15 +48,22 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
           transform: translateY(-2px);
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        .agent-name[isSubscribed] {
+          color: var(--yp-sys-color-up);
+        }
       `,
         ];
+    }
+    getSubscribedStatus() {
+        return this.isSubscribed ? " (subscribed)" : "";
     }
     render() {
         return html `
       <div class="agent-chip">
         <img src="${this.agentImageUrl}" alt="${this.agentName}" />
         <div class="content">
-          <div class="agent-name">${this.agentName}</div>
+          <div class="agent-name" ?isSubscribed="${this.isSubscribed}">${this.agentName} ${this.getSubscribedStatus()}</div>
           <div class="agent-description">${this.agentDescription}</div>
           <div class="purchase-info">
             <div class="${this.currency == "USD" ? "price" : "price-other-currency"}">${this.currency == "USD" ? "$" : this.currency + " "}${this.price}</div>
@@ -81,6 +88,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpAgentChipForPurchase.prototype, "maxRunsPerCycle", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentChipForPurchase.prototype, "isSubscribed", void 0);
 YpAgentChipForPurchase = __decorate([
     customElement("yp-agent-chip-for-purchase")
 ], YpAgentChipForPurchase);

@@ -168,7 +168,7 @@ ${this.renderAllAgentsStatus()}`,
                                 };
                             }
                             const html = `<div class="agent-chips"><yp-agent-chip
-                isSubscribed
+                isUnsubscribed="${true}"
                 agentProductId="${agent.agentProductId}"
                 subscriptionId="${cleanedParams.subscriptionId}"
                 agentName="${agent.name}"
@@ -238,6 +238,7 @@ ${this.renderAllAgentsStatus()}`,
                             let html;
                             if (agent) {
                                 html = `<div class="agent-chips"><yp-agent-chip-for-purchase
+                  isSubscribed="${true}"
                   agentProductId="${agent.agentProductId}"
                   subscriptionPlanId="${agent.subscriptionPlanId}"
                   agentName="${agent.name}"
@@ -246,7 +247,7 @@ ${this.renderAllAgentsStatus()}`,
                   price="${agent.price}"
                   currency="${agent.currency}"
                   maxRunsPerCycle="${agent.maxRunsPerCycle}"
-                ></yp-agent-chip-for-purchase>`;
+                ></yp-agent-chip-for-purchase></div>`;
                             }
                             this.assistant.triggerResponseIfNeeded("Successfully subscribed to agent plan");
                             return {

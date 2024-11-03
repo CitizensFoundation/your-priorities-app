@@ -21,7 +21,7 @@ export declare class YpPostCard extends YpBaseElement {
     static get styles(): any[];
     renderDescription(): import("lit-html").TemplateResult<1>;
     renderTags(): import("lit-html").TemplateResult<1>;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _sharedContent(event: CustomEvent): void;
     get _fullPostUrl(): string;
     get structuredAnswersFormatted(): string;

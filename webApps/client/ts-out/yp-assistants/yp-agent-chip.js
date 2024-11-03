@@ -50,6 +50,10 @@ let YpAgentChip = class YpAgentChip extends YpBaseElement {
           margin-bottom: 4px;
         }
 
+        .agent-name[isUnsubscribed] {
+          color: var(--yp-sys-color-down);
+        }
+
         .agent-description {
           color: var(--secondary-text-color);
           font-size: 0.9em;
@@ -63,14 +67,17 @@ let YpAgentChip = class YpAgentChip extends YpBaseElement {
       `,
         ];
     }
+    getStatus() {
+        return this.isUnsubscribed ? "unsubscribed" : this.isSelected ? "selected" : "";
+    }
     render() {
         return html `
-      <div class="agent-chip" ?isSelected="${this.isSelected}">
+      <div class="agent-chip" ?isSelected="${this.isSelected}" ?isUnsubscribed="${this.isUnsubscribed}">
         <img src="${this.agentImageUrl}" alt="${this.agentName}" />
         <div class="content">
           <div class="layout horizontal">
             <div class="layout vertical">
-              <div class="agent-name">${this.agentName} ${this.isSelected ? " (selected)" : ""}</div>
+              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">${this.agentName} ${this.getStatus()}</div>
               <div class="agent-description">${this.agentDescription}</div>
             </div>
             <md-filled-icon-button><md-icon>play_arrow</md-icon></md-filled-icon-button>
@@ -95,6 +102,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentChip.prototype, "isSelected", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentChip.prototype, "isUnsubscribed", void 0);
 YpAgentChip = __decorate([
     customElement("yp-agent-chip")
 ], YpAgentChip);

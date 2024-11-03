@@ -47,7 +47,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 this.initializeVoiceSession();
             });
             ws.on("close", () => {
-                console.log("Voice connection closed");
+                console.log("Voice connection to OpenAI closed");
                 this.voiceConnection = undefined;
             });
             ws.on("error", (error) => {

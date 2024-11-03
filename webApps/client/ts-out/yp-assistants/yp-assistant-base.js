@@ -76,7 +76,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         if (!this.chatLog || this.chatLog.length === 0) {
             try {
                 const serverApi = new YpAssistantServerApi();
-                const { chatLog, modeData, currentMode } = await serverApi.getMemoryFromServer(this.domainId);
+                const { chatLog, modeData, currentMode } = (await serverApi.getMemoryFromServer(this.domainId));
                 this.currentMode = currentMode;
                 if (chatLog && chatLog.length > 0) {
                     this.chatLogFromServer = chatLog.map((chatLogItem) => ({
@@ -89,7 +89,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 }
             }
             catch (error) {
-                console.error('Error getting chat log from server:', error);
+                console.error("Error getting chat log from server:", error);
             }
         }
     }
@@ -167,7 +167,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
               `)}
         </div>
         <div class="layout horizontal center-center chat-input">
-          ${this.renderVoiceTalkingHead()}${this.renderChatInput()}
+          ${this.renderChatInput()}${this.renderVoiceTalkingHead()}
         </div>
       </div>
     `;
@@ -343,7 +343,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           align-items: center;
           position: relative;
           margin-top: -134px;
-          margin-left: -16px;
+          margin-right: -16px;
         }
 
         .talking-head-image {
@@ -367,13 +367,13 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
 
         .voice-button {
           --md-icon-button-icon-size: 24px;
-          margin-right: 8px;
+          margin-right: 24px;
         }
 
         .voice-button[recording] {
           --md-icon-button-container-color: var(--md-sys-color-error);
           --md-icon-button-icon-color: var(--md-sys-color-on-error);
-          animation: pulse 2s infinite;
+          /* animation: pulse 2s infinite; */
         }
 
         @keyframes pulse {
@@ -396,9 +396,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     renderChatInput() {
         return html `
       <div class="voice-controls">
+        <md-icon-button class="voice-mode-toggle" @click="${this.clearHistory}">
+          <md-icon>delete_history</md-icon>
+        </md-icon-button>
+
+        ${super.renderChatInput()}
         ${this.voiceEnabled
             ? html `
-              <md-icon-button
+              <md-icon-button hidden
                 id="voiceButton"
                 class="voice-button"
                 ?recording="${this.isRecording}"
@@ -414,14 +419,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           @click="${this.toggleVoiceMode}"
         >
           <md-icon>${this.voiceEnabled ? "keyboard" : "mic_none"}</md-icon>
-        </md-icon-button>
-
-        ${super.renderChatInput()}
-        <md-icon-button
-          class="voice-mode-toggle"
-          @click="${this.clearHistory}"
-        >
-          <md-icon>delete_history</md-icon>
         </md-icon-button>
       </div>
     `;

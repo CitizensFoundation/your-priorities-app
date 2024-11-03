@@ -72,10 +72,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async getMemoryFromServer() {
-    if (!this.chatLog ||this.chatLog.length === 0) {
+    if (!this.chatLog || this.chatLog.length === 0) {
       try {
         const serverApi = new YpAssistantServerApi();
-        const { chatLog, modeData, currentMode } = await serverApi.getMemoryFromServer(this.domainId) as YpBaseAssistantMemoryData;
+        const { chatLog, modeData, currentMode } =
+          (await serverApi.getMemoryFromServer(
+            this.domainId
+          )) as YpBaseAssistantMemoryData;
 
         this.currentMode = currentMode;
 
@@ -89,7 +92,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           this.requestUpdate();
         }
       } catch (error) {
-        console.error('Error getting chat log from server:', error);
+        console.error("Error getting chat log from server:", error);
       }
     }
   }
@@ -206,7 +209,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
               (chatElement) =>
                 !chatElement.hidden &&
                 chatElement.type !== "hiddenContextMessage" &&
-                (chatElement.message!="" || chatElement.html!="")
+                (chatElement.message != "" || chatElement.html != "")
             )
             .map(
               (chatElement) => html`
@@ -227,7 +230,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             )}
         </div>
         <div class="layout horizontal center-center chat-input">
-          ${this.renderVoiceTalkingHead()}${this.renderChatInput()}
+          ${this.renderChatInput()}${this.renderVoiceTalkingHead()}
         </div>
       </div>
     `;
@@ -441,7 +444,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           align-items: center;
           position: relative;
           margin-top: -134px;
-          margin-left: -16px;
+          margin-right: -16px;
         }
 
         .talking-head-image {
@@ -465,13 +468,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
         .voice-button {
           --md-icon-button-icon-size: 24px;
-          margin-right: 8px;
+          margin-right: 24px;
         }
 
         .voice-button[recording] {
           --md-icon-button-container-color: var(--md-sys-color-error);
           --md-icon-button-icon-color: var(--md-sys-color-on-error);
-          animation: pulse 2s infinite;
+          /* animation: pulse 2s infinite; */
         }
 
         @keyframes pulse {
@@ -495,9 +498,14 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   override renderChatInput() {
     return html`
       <div class="voice-controls">
+        <md-icon-button class="voice-mode-toggle" @click="${this.clearHistory}">
+          <md-icon>delete_history</md-icon>
+        </md-icon-button>
+
+        ${super.renderChatInput()}
         ${this.voiceEnabled
           ? html`
-              <md-icon-button
+              <md-icon-button hidden
                 id="voiceButton"
                 class="voice-button"
                 ?recording="${this.isRecording}"
@@ -513,14 +521,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           @click="${this.toggleVoiceMode}"
         >
           <md-icon>${this.voiceEnabled ? "keyboard" : "mic_none"}</md-icon>
-        </md-icon-button>
-
-        ${super.renderChatInput()}
-        <md-icon-button
-          class="voice-mode-toggle"
-          @click="${this.clearHistory}"
-        >
-          <md-icon>delete_history</md-icon>
         </md-icon-button>
       </div>
     `;
