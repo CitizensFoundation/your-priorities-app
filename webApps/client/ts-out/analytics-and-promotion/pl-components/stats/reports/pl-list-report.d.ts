@@ -20,13 +20,13 @@ export declare class PlausableListReport extends PlausibleBaseElementWithState {
     loading: boolean;
     connectedCallback(): void;
     static get styles(): import("lit").CSSResult[];
-    getExternalLink(item: PlausibleListItemData): typeof nothing | import("lit-html").TemplateResult<1>;
+    getExternalLink(item: PlausibleListItemData): import("lit-html").TemplateResult<1> | typeof nothing;
     protected firstUpdated(_changedProperties: Map<string | number | symbol, unknown>): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     fetchData(): void;
     get label(): string;
     renderListItem(listItem: PlausibleListItemData): import("lit-html").TemplateResult<1>;
-    renderList(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderList(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=pl-list-report.d.ts.map

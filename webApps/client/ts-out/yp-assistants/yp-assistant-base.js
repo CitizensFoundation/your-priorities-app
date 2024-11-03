@@ -119,11 +119,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             return "https://assets.evoly.ai/direct/idleHead.png";
     }
     renderVoiceTalkingHead() {
-        if (!this.voiceEnabled) {
-            return nothing;
-        }
         return html `
-      <div class="voice-header">
+      <div class="voice-header" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
           src="${this.talkingHeadImage}"
@@ -167,10 +164,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         </div>
         <div class="layout horizontal center-center chat-input" style="position: relative;">
           ${this.renderChatInput()}
-          <div style="position: absolute; right:96px;bottom:144px;z-index: 100;">
+          <div style="position: absolute; right:96px;bottom:104px;z-index: 100;">
             ${this.renderVoiceTalkingHead()}
           </div>
-          <div class="currentMode" style="position: absolute;right:82px;bottom:90px;z-index: 100;">
+          <div class="currentMode" style="position: absolute;left:82px;bottom:90px;z-index: 100;">
             ${this.t(this.currentMode)}
           </div>
         </div>
@@ -366,6 +363,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           position: relative;
           margin-top: -134px;
           margin-right: -16px;
+        }
+
+        .voice-header[voice-not-enabled] {
+          filter: grayscale(100%);
+          opacity: 0.75;
         }
 
         .talking-head-image {
