@@ -19,8 +19,8 @@ async function createAgentProductsAndPlans() {
     transaction = await sequelize.transaction();
 
     // Define the user and domain (assuming they exist or create them)
-    const userId = 850;
-    const organizationId = 1790;
+    const userId = 1;
+    const organizationId = 1;
 
     // Check if user exists
     const user = await YpSubscriptionUser.findByPk(userId, { transaction });
@@ -30,8 +30,10 @@ async function createAgentProductsAndPlans() {
 
     const agentBundle = {
       id: 1,
-      name: "Amplifier Agent Bundle",
-      description: "Bundle for the Amplifier Agent.",
+      name: "Evoly Amplifier Agent Bundle",
+      description: `Bundle for the Evoly Amplifier Agent. Evoly Cloud is a platform to revolutionize business outcomes in every department of your company.
+      Evoly integrates AI agents with people, workflows, and data and enables multi-agent workflows. With Evoly Cloud, your staff and AI agents collaborate seamlessly to achieve optimal efficiency and innovative results.
+      Evoly Cloud offers ready-to-use AI agents as well as empowering your business to create custom-made AI agents.`,
       configuration: {
         imageUrl: "https://assets.evoly.ai/dl/7a651ab3d224f105ab5c543b89634b90--retina-1.png",
       },
