@@ -201,6 +201,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.sendToClient("assistant", result.html, "html", true);
             this.parentAssistant?.addAssistantHtmlMessage(result.html);
         }
+        if (!result.success) {
+            console.error(`Tool execution failed: ${event.name} ${result.error}`);
+        }
         const responseEvent = {
             type: "conversation.item.create",
             item: {

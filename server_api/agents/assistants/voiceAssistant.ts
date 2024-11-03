@@ -306,6 +306,12 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       this.parentAssistant?.addAssistantHtmlMessage(result.html);
    }
 
+    if (!result.success) {
+      console.error(
+        `Tool execution failed: ${event.name} ${result.error}`
+      );
+    }
+
     const responseEvent = {
       type: "conversation.item.create",
       item: {

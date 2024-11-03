@@ -181,12 +181,17 @@ ${this.renderAllAgentsStatus()}`,
                   },
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to load agent status";
+                console.error(
+                  `Failed to load agent status: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to load agent status",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -254,12 +259,17 @@ ${this.renderAllAgentsStatus()}`,
                   },
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to load agent status";
+                console.error(
+                  `Failed to load agent status: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to load agent status",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -324,15 +334,13 @@ ${this.renderAllAgentsStatus()}`,
                   },
                 };
               } catch (error) {
-                console.error(
-                  `Failed to select agent: ${error} ${
-                    error instanceof Error ? error.message : ""
-                  }`
-                );
                 const errorMessage =
                  error instanceof Error
                       ? error.message
                       : "Failed to select agent";
+                console.error(
+                  `Failed to select agent: ${errorMessage}`
+                );
                 return {
                   success: false,
                   data: errorMessage,
@@ -396,12 +404,17 @@ ${this.renderCurrentAgent()}`,
                   html,
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to show questions";
+                console.error(
+                    `Failed to show questions: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to show questions",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -452,12 +465,17 @@ ${this.renderCurrentWorkflowStatus()}`,
                   data: result,
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to start agent";
+                console.error(
+                  `Failed to start agent: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to start agent",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -498,12 +516,17 @@ ${this.renderCurrentWorkflowStatus()}`,
                   },
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to show group";
+                console.error(
+                  `Failed to show group: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to show group",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -553,12 +576,17 @@ ${this.renderCurrentWorkflowStatus()}`,
                   },
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to stop agent";
+                console.error(
+                  `Failed to stop agent: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to stop agent",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -632,17 +660,17 @@ ${this.renderCurrentWorkflowStatus()}`,
                   },
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to show workflow";
                 console.error(
-                  `Failed to show workflow: ${error} ${
-                    error instanceof Error ? error.message : ""
-                  }`
+                  `Failed to show workflow: ${errorMessage}`
                 );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to show workflow",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },
@@ -712,12 +740,17 @@ ${this.renderCurrentWorkflowStatus()}`,
                   },
                 };
               } catch (error) {
+                const errorMessage =
+                 error instanceof Error
+                      ? error.message
+                      : "Failed to get step details";
+                console.error(
+                  `Failed to get step details: ${errorMessage}`
+                );
                 return {
                   success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to get step details",
+                  data: errorMessage,
+                  error: errorMessage,
                 };
               }
             },

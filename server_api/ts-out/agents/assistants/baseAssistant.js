@@ -107,11 +107,12 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 }
                 // If error, throw it after recording the result
                 if (!result.success) {
-                    throw new Error(result.error || "Unknown error in tool execution");
+                    console.error(`Unknown error in tool execution: ${result.error}`);
                 }
             }
             catch (error) {
-                console.error(`Error executing tool ${toolCall.name}:`, error);
+                const errorMessage = error instanceof Error ? error.message : "Unknown error";
+                console.error(`Error executing tool ${toolCall.name}: ${errorMessage}`);
                 throw error;
             }
         }

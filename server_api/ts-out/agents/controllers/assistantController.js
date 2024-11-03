@@ -41,6 +41,7 @@ export class AssistantController {
                 process.exit(1);
             }
         };
+        this.defaultStartAgentMode = "agent_selection";
         this.clearChatLog = async (req, res) => {
             const memoryId = `${req.params.domainId}-${req.user.id}`;
             console.log(`Clearing chat log for memoryId: ${memoryId}`);
@@ -49,6 +50,7 @@ export class AssistantController {
                 const memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId);
                 if (memory) {
                     memory.chatLog = [];
+                    memory.currentMode = this.defaultStartAgentMode;
                     await req.redisClient.set(redisKey, JSON.stringify(memory));
                     res.sendStatus(200);
                 }
@@ -74,7 +76,7 @@ export class AssistantController {
                         memory = {
                             redisKey: YpAgentAssistant.getRedisKey(memoryId),
                             chatLog: [],
-                            currentMode: "agent_selection",
+                            currentMode: this.defaultStartAgentMode,
                             modeHistory: [],
                             modeData: undefined
                         };
