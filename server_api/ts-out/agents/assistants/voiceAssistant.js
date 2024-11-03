@@ -172,9 +172,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (result.success && result.data) {
             await this.parentAssistant?.setModeData(`${toolName}_result`, result.data);
         }
+        let resultData = result.data || result.error;
         // Generate a user-friendly message based on the tool result
-        const resultMessage = `<contextFromRetrievedData>${JSON.stringify(result.data, null, 2)}</contextFromRetrievedData>`;
-        if (result.data) {
+        const resultMessage = `<contextFromRetrievedData>${JSON.stringify(resultData, null, 2)}</contextFromRetrievedData>`;
+        if (resultData) {
             this.sendToClient("assistant", resultMessage, "hiddenContextMessage", true);
             if (toolName === "switch_mode") {
                 const createResponse = {
@@ -209,10 +210,21 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             item: {
                 type: "function_call_output",
                 call_id: event.call_id,
-                output: JSON.stringify(result.data, null, 2),
+                output: JSON.stringify(resultData, null, 2),
             },
         };
         this.voiceConnection?.ws.send(JSON.stringify(responseEvent));
+        if (result.error) {
+            const createResponse = {
+                type: "response.create",
+                response: {
+                    modalities: this.voiceConfig.modalities,
+                    instructions: "Inform the user about the tool execution error",
+                    tools: this.parentAssistant?.getCurrentModeFunctions(),
+                },
+            };
+            this.voiceConnection?.ws.send(JSON.stringify(createResponse));
+        }
     }
     async proxyToClient(event) {
         console.log("proxyToClient: ", event.type);
@@ -354,14 +366,17 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         };
         console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
         this.voiceConnection.ws.send(JSON.stringify(sessionConfig));
+        this.triggerResponseIfNeeded("Say hi to the user");
+    }
+    triggerResponseIfNeeded(message) {
         const createResponse = {
             type: "response.create",
             response: {
                 modalities: this.voiceConfig.modalities,
-                instructions: "Say hi to the user",
+                instructions: message,
             },
         };
-        this.voiceConnection.ws.send(JSON.stringify(createResponse));
+        this.voiceConnection?.ws.send(JSON.stringify(createResponse));
     }
     // Handle voice-specific events
     async handleVoiceSessionCreated(event) {

@@ -16,6 +16,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   public availableAgents: PsAgent[] = [];
   public runningAgents: PsAgent[] = [];
 
+  public userId: number;
   private agentSelectionMode: AgentSelectionMode;
   private agentConfigurationMode: AgentConfigurationMode;
   private agentOperationsMode: AgentOperationsMode;
@@ -27,7 +28,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     voiceEnabled: boolean,
     currentMode: YpAssistantMode,
     domainId: number,
-    memoryId: string
+    memoryId: string,
+    userId: number
   ) {
     super(
       wsClientId,
@@ -36,8 +38,9 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
       voiceEnabled,
       currentMode,
       domainId,
-      memoryId
+      memoryId,
     );
+    this.userId = userId;
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.agentConfigurationMode = new AgentConfigurationMode(this);
     this.agentOperationsMode = new AgentOperationsMode(this);
@@ -49,6 +52,12 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
       this.agentConfigurationMode.getMode(),
       this.agentOperationsMode.getMode(),
     ];
+  }
+
+  triggerResponseIfNeeded(message: string): void {
+    if (this.voiceBot) {
+      this.voiceBot.triggerResponseIfNeeded(message);
+    }
   }
 
   // Other methods as needed

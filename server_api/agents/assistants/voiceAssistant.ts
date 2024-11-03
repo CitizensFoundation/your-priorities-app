@@ -1,3 +1,4 @@
+import { response } from "express";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { ChatbotFunction, YpBaseAssistant } from "./baseAssistant.js";
 import WebSocket from "ws";
@@ -267,13 +268,15 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       );
     }
 
+    let resultData = result.data || result.error;
+
     // Generate a user-friendly message based on the tool result
     const resultMessage = `<contextFromRetrievedData>${JSON.stringify(
-      result.data,
+      resultData,
       null,
       2
     )}</contextFromRetrievedData>`;
-    if (result.data) {
+    if (resultData) {
       this.sendToClient(
         "assistant",
         resultMessage,
@@ -317,11 +320,23 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       item: {
         type: "function_call_output",
         call_id: event.call_id,
-        output: JSON.stringify(result.data, null, 2),
+        output: JSON.stringify(resultData, null, 2),
       },
     };
 
     this.voiceConnection?.ws.send(JSON.stringify(responseEvent));
+
+    if (result.error) {
+      const createResponse = {
+        type: "response.create",
+        response: {
+          modalities: this.voiceConfig.modalities,
+          instructions: "Inform the user about the tool execution error",
+          tools: this.parentAssistant?.getCurrentModeFunctions(),
+        },
+      };
+      this.voiceConnection?.ws.send(JSON.stringify(createResponse));
+    }
   }
 
   async proxyToClient(event: any): Promise<void> {
@@ -515,14 +530,18 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     this.voiceConnection.ws.send(JSON.stringify(sessionConfig));
 
+    this.triggerResponseIfNeeded("Say hi to the user");
+  }
+
+  triggerResponseIfNeeded(message: string): void {
     const createResponse = {
       type: "response.create",
       response: {
         modalities: this.voiceConfig.modalities,
-        instructions: "Say hi to the user",
+        instructions: message,
       },
     };
-    this.voiceConnection.ws.send(JSON.stringify(createResponse));
+    this.voiceConnection?.ws.send(JSON.stringify(createResponse));
   }
 
   // Handle voice-specific events

@@ -120,6 +120,9 @@ export class YpCollection extends YpBaseElementWithLogin {
             this.collection = undefined;
             this.collection = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
             this.refresh();
+            if (this.collectionType == "domain") {
+                this.selectedTab = CollectionTabTypes.Assistant;
+            }
         }
         else {
             console.error("No collection id for getCollection");

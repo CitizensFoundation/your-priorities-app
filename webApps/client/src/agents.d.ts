@@ -89,7 +89,10 @@ interface YpSubscriptionPlanAttributes extends YpBaseModelAttributes {
   BoosterPurchases?: YpAgentProductBoosterPurchaseAttributes[];
 }
 
-interface YpSubscriptionConfiguration {}
+interface YpSubscriptionConfiguration {
+  cancelledAt?: Date;
+  cancelledByUserId?: number;
+}
 
 // YpSubscriptionAttributes Interface
 interface YpSubscriptionAttributes extends YpBaseModelAttributes {
@@ -104,6 +107,7 @@ interface YpSubscriptionAttributes extends YpBaseModelAttributes {
   payment_method?: string;
   transaction_id?: string;
   metadata?: Record<string, any>;
+  configuration?: YpSubscriptionConfiguration;
   User?: YpUserData;
   AgentProduct?: YpAgentProductAttributes;
   Plan?: YpSubscriptionPlanAttributes;

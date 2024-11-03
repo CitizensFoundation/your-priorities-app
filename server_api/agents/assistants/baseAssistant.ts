@@ -192,13 +192,15 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         );
         toolResponses.push(responseMessage);
 
+        let resultData = result.data || result.error;
+
         // Generate a user-friendly message based on the tool result
         const resultMessage = `<contextFromRetrievedData>${JSON.stringify(
-          result.data,
+          resultData,
           null,
           2
         )}</contextFromRetrievedData>`;
-        if (result.data) {
+        if (resultData) {
           this.sendToClient(
             "assistant",
             resultMessage,

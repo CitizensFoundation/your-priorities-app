@@ -113,7 +113,7 @@ export class AssistantController {
             const domainId = parseInt(req.params.domainId);
             const memoryId = `${domainId}-${req.user.id}`;
             console.log(`Starting chat session for client: ${wsClientId}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, currentMode, domainId, memoryId);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, currentMode, domainId, memoryId, req.user.id);
             await assistant.initialize();
             res.status(200).json({
                 message: "Voice session initialized",
@@ -131,7 +131,7 @@ export class AssistantController {
             const domainId = parseInt(req.params.domainId);
             const memoryId = `${domainId}-${req.user.id}`;
             console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode, domainId, memoryId);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode, domainId, memoryId, req.user.id);
             assistant.conversation(chatLog);
             res.status(200).json({
                 message: "Chat session initialized",

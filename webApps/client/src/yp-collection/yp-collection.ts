@@ -196,6 +196,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         this.collectionId
       )) as YpCollectionData | undefined;
       this.refresh();
+      if (this.collectionType == "domain") {
+        this.selectedTab = CollectionTabTypes.Assistant;
+      }
     } else {
       console.error("No collection id for getCollection");
     }
