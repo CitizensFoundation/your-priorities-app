@@ -49,11 +49,18 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     try {
                         if (this.userIsSpeaking) {
                             frequencies = this.mediaRecorder?.getFrequencies("voice")?.values;
-                            color = "#ffdc2f"; // blue for user
+                            // GO throught the frequencies and lower them all by 30%
+                            for (let i = 0; i < frequencies.length; i++) {
+                                frequencies[i] = frequencies[i] * 0.15;
+                            }
+                            color = "#ffdc2f";
                         }
                         else if (this.aiIsSpeaking) {
                             frequencies = this.mediaRecorder?.getFrequencies("voice")?.values;
-                            color = "#1e90ff"; // green for AI
+                            color = "#1e90ff";
+                            for (let i = 0; i < frequencies.length; i++) {
+                                frequencies[i] = frequencies[i] * 0.75;
+                            }
                         }
                         WavRenderer.drawBars(this.waveformCanvas, this.canvasCtx, frequencies, color, 10, 0, 8);
                     }
