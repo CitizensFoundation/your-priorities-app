@@ -3,6 +3,7 @@ import { YpBaseAssistantWithVoice } from './baseAssistantWithVoice.js';
 import { AgentSelectionMode } from './modes/agentSelectionMode.js';
 import { AgentConfigurationMode } from './modes/agentConfigurationMode.js';
 import { AgentOperationsMode } from './modes/agentOperationsMode.js';
+import { DirectConversationMode } from './modes/directConversationMode.js';
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     constructor(wsClientId, wsClients, redis, voiceEnabled, currentMode, domainId, memoryId, userId) {
         super(wsClientId, wsClients, redis, voiceEnabled, currentMode, domainId, memoryId);
@@ -12,17 +13,19 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         this.agentSelectionMode = new AgentSelectionMode(this);
         this.agentConfigurationMode = new AgentConfigurationMode(this);
         this.agentOperationsMode = new AgentOperationsMode(this);
+        this.directConversationMode = new DirectConversationMode(this);
     }
     defineAvailableModes() {
         return [
             this.agentSelectionMode.getMode(),
             this.agentConfigurationMode.getMode(),
             this.agentOperationsMode.getMode(),
+            this.directConversationMode.getMode(),
         ];
     }
     triggerResponseIfNeeded(message) {
         if (this.voiceBot && this.voiceEnabled) {
-            this.voiceBot.triggerResponseIfNeeded(message);
+            this.voiceBot.triggerResponse(message);
         }
     }
 }

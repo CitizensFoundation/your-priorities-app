@@ -318,7 +318,7 @@ export class BaseAssistantMode {
         const answers = event.detail;
         if (this.currentAgentId) {
             await this.redis.set(`agent:${this.currentAgentId}:answers`, JSON.stringify(answers));
-            await this.assistant.handleModeSwitch("agent_operations", "Configuration completed");
+            await this.assistant.handleModeSwitch("agent_operations", "Configuration completed", {});
         }
     }
     async getWorkflowStatus(agentId) {

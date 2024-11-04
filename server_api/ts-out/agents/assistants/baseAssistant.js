@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
+import { YpAgentProduct } from "../models/agentProduct.js";
 const DEBUG = true;
 /**
  * Common modes that implementations might use
@@ -49,7 +50,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         return {
             redisKey: this.redisKey,
             chatLog: [],
-            currentMode: "agent_selection",
+            currentMode: "agent_subscription_and_selection",
             modeHistory: [],
             modeData: undefined,
         };
@@ -229,7 +230,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Register core functions available in all modes
      */
     registerCoreFunctions() {
-        const allModesText = JSON.stringify(Array.from(this.modes.keys()), null, 2);
+        const allModesText = Array.from(this.modes.entries())
+            .map(([key, mode]) => `${key}: ${mode.description}`)
+            .join('\n');
         console.log(`registerCoreFunctions all modes: ${allModesText}`);
         const switchModeFunction = {
             name: "switch_mode",
@@ -260,11 +263,12 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     params = this.getCleanedParams(params);
                     const previousMode = this.memory.currentMode;
                     console.log(`Switching from ${previousMode} to ${params.newMode} ${JSON.stringify(this.memory, null, 2)}`);
-                    await this.handleModeSwitch(params.newMode, params.reason);
+                    await this.handleModeSwitch(params.newMode, params.reason, params);
                     return {
                         success: true,
                         data: {
                             previousMode,
+                            oldMode: previousMode,
                             newMode: params.newMode,
                             timestamp: new Date().toISOString(),
                             transitionReason: params.reason || "No reason provided",
@@ -312,6 +316,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
             return this.defaultSystemPrompt;
         }
         return `${this.defaultSystemPrompt}\n\n${currentMode.systemPrompt}`;
+    }
+    sendAvatarUrlChange(url) {
+        this.wsClientSocket.send(JSON.stringify({
+            sender: "system",
+            type: "avatar_url_change",
+            url,
+        }));
     }
     /**
      * Validate mode transition
@@ -405,6 +416,16 @@ export class YpBaseAssistant extends YpBaseChatBot {
             this.sendToClient("assistant", "Error processing request", "error");
         }
     }
+    async getAgentProduct(agentProductId) {
+        try {
+            const agentProduct = await YpAgentProduct.findByPk(agentProductId);
+            return agentProduct;
+        }
+        catch (error) {
+            console.error(`Error getting agent product for ${agentProductId}: ${error}`);
+            return null;
+        }
+    }
     /**
      * Convert chat log to OpenAI message format
      */
@@ -419,7 +440,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     /**
      * Handle mode switching
      */
-    async handleModeSwitch(newMode, reason) {
+    async handleModeSwitch(newMode, reason, params) {
         if (DEBUG) {
             console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
         }
@@ -449,6 +470,28 @@ export class YpBaseAssistant extends YpBaseChatBot {
         });
         this.memory.currentMode = newMode;
         this.memory.modeData = undefined; // Clear mode data
+        if (params?.agentProductId) {
+            try {
+                const agentProduct = await this.getAgentProduct(params.agentProductId);
+                if (agentProduct) {
+                    this.memory.currentAgentProductId = agentProduct.id;
+                    this.memory.currentAgentProductConfiguration = agentProduct.configuration;
+                    await this.saveMemory();
+                }
+                else {
+                    console.error(`Agent product not found for ${params.agentProductId}`);
+                }
+            }
+            catch (error) {
+                console.error(`Error getting agent product for ${params.agentProductId}: ${error}`);
+            }
+        }
+        else {
+            //TODO: This is a temporary fix to avoid keeping the agent product id and configuration in memory as we don't have agentProductId in the new modes
+            //this.memory.currentAgentProductId = undefined;
+            //this.memory.currentAgentProductConfiguration = undefined;
+            await this.saveMemory();
+        }
         this.wsClientSocket.send(JSON.stringify({
             sender: "system",
             type: "current_mode",
@@ -646,7 +689,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 try {
                     if (DEBUG)
                         console.log("Attempting to switch to error recovery mode");
-                    await this.handleModeSwitch(CommonModes.ErrorRecovery, error instanceof Error ? error.message : "Unknown error");
+                    await this.handleModeSwitch(CommonModes.ErrorRecovery, error instanceof Error ? error.message : "Unknown error", {});
                 }
                 catch (e) {
                     console.error("Failed to switch to error recovery mode:", e);

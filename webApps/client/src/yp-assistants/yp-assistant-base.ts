@@ -17,6 +17,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: Number })
   domainId!: number;
 
+  @property({ type: String })
+  temporaryAvatarUrl: string | undefined;
+
   @state()
   private mediaRecorder: WavRecorder | null = null;
 
@@ -197,7 +200,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       <div class="voice-header" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
-          src="${this.talkingHeadImage}"
+          src="${this.temporaryAvatarUrl || this.talkingHeadImage}"
           alt="Voice Assistant"
         />
         <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
@@ -384,6 +387,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           console.error("No mode received in current_mode message");
         }
         break;
+      case "avatar_url_change":
+        if (data.url==null) {
+          this.temporaryAvatarUrl = undefined;
+        } else {
+          this.temporaryAvatarUrl = data.url;
+        }
+        break;
 
       case "listening_start":
         if (this.lastChatUiElement) {
@@ -522,6 +532,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         .talking-head-image {
           width: 128px;
           height: 128px;
+          object-fit: cover;
         }
 
         .waveform-canvas {

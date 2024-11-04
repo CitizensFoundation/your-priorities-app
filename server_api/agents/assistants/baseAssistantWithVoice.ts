@@ -51,7 +51,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
       true,
       this
     );
-    await this.voiceBot.initializeVoiceConnection();
+    await this.voiceBot.initializeMainAssistantVoiceConnection();
     this.setupVoiceEventForwarder();
 
     await this.voiceBot.updateVoiceConfig({
@@ -87,7 +87,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
   }
 
   destroyVoiceBot() {
-    this.voiceBot?.destroyVoiceConnection();
+    this.voiceBot?.destroyAssistantVoiceConnection();
     this.voiceBot = undefined;
   }
 
@@ -142,15 +142,27 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     );
   }
 
-  async handleModeSwitch(newMode: YpAssistantMode, reason?: string): Promise<void> {
-    await super.handleModeSwitch(newMode, reason);
+  async handleModeSwitch(
+    newMode: YpAssistantMode,
+    reason: string,
+    params: any
+  ): Promise<void> {
+    await super.handleModeSwitch(newMode, reason, params);
 
     if (this.voiceEnabled) {
+
       await this.voiceBot?.updateVoiceConfig({
         instructions: this.getCurrentSystemPrompt(),
         tools: this.getCurrentModeFunctions(),
-        modalities: ["text", "audio"],
+        modalities: ["text", "audio"]
       });
+
+      if (newMode === "agent_direct_conversation") {
+        this.voiceBot?.initializeDirectAgentVoiceConnection();
+      } else {
+        this.voiceBot?.destroyDirectAgentVoiceConnection();
+        this.voiceBot?.initializeVoiceSession();
+      }
     }
   }
 

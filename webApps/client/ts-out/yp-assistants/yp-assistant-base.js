@@ -133,7 +133,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       <div class="voice-header" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
-          src="${this.talkingHeadImage}"
+          src="${this.temporaryAvatarUrl || this.talkingHeadImage}"
           alt="Voice Assistant"
         />
         <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
@@ -294,6 +294,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     console.error("No mode received in current_mode message");
                 }
                 break;
+            case "avatar_url_change":
+                if (data.url == null) {
+                    this.temporaryAvatarUrl = undefined;
+                }
+                else {
+                    this.temporaryAvatarUrl = data.url;
+                }
+                break;
             case "listening_start":
                 if (this.lastChatUiElement) {
                     this.lastChatUiElement.isSpeaking = true;
@@ -409,6 +417,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         .talking-head-image {
           width: 128px;
           height: 128px;
+          object-fit: cover;
         }
 
         .waveform-canvas {
@@ -575,6 +584,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpAssistantBase.prototype, "domainId", void 0);
+__decorate([
+    property({ type: String })
+], YpAssistantBase.prototype, "temporaryAvatarUrl", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "mediaRecorder", void 0);

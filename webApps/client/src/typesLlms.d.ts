@@ -25,6 +25,7 @@ type YpAssistantMessageType =
   | "current_mode"
   | "listening_start"
   | "listening_stop"
+  | "avatar_url_change"
   | "input_audio_buffer.append"
   | "input_audio_buffer.commit"
   | "ai_speaking_start"
@@ -42,6 +43,7 @@ interface YpAssistantMessage {
   refinedCausesSuggestions?: string[];
   base64Audio?: string;
   hidden?: boolean;
+  url?: string;
 }
 
 type YpSenderType = "assistant" | "user" | "system";

@@ -29,6 +29,11 @@ interface YpAgentProductConfiguration {
   requiredStructuredQuestions: YpStructuredQuestionData[];
   settings?: Record<string, any>;
   integrations?: Record<string, any>;
+  avatar?: {
+    systemPrompt: string;
+    imageUrl: string;
+    voiceName?: string;
+  };
 }
 
 interface YpAgentProductStatus {
@@ -189,16 +194,19 @@ interface AssistantModeData<T = unknown> {
 
 type YpAssistantMode =
   | "agent_subscription_sales"
-  | "agent_selection"
+  | "agent_subscription_and_selection"
   | "user_login"
   | "user_payment"
   | "agent_configuration"
   | "agent_operations"
+  | "agent_direct_conversation"
   | "error_recovery";
 
 interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   redisKey: string;
   currentMode: YpAssistantMode;
+  currentAgentProductId?: number;
+  currentAgentProductConfiguration?: YpAgentProductConfiguration;
   modeData?: AssistantModeData;
   modeHistory?: Array<{
     mode: string;

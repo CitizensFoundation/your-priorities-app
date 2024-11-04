@@ -41,7 +41,7 @@ export class AssistantController {
                 process.exit(1);
             }
         };
-        this.defaultStartAgentMode = "agent_selection";
+        this.defaultStartAgentMode = "agent_subscription_and_selection";
         this.clearChatLog = async (req, res) => {
             const memoryId = `${req.params.domainId}-${req.user.id}`;
             console.log(`Clearing chat log for memoryId: ${memoryId}`);
@@ -51,6 +51,8 @@ export class AssistantController {
                 if (memory) {
                     memory.chatLog = [];
                     memory.currentMode = this.defaultStartAgentMode;
+                    memory.currentAgentProductConfiguration = undefined;
+                    memory.currentAgentProductId = undefined;
                     await req.redisClient.set(redisKey, JSON.stringify(memory));
                     res.sendStatus(200);
                 }

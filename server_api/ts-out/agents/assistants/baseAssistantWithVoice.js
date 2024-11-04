@@ -17,7 +17,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
     }
     async createVoiceBot() {
         this.voiceBot = new YpBaseChatBotWithVoice(this.wsClientId, this.wsClients, this.memoryId, true, this);
-        await this.voiceBot.initializeVoiceConnection();
+        await this.voiceBot.initializeMainAssistantVoiceConnection();
         this.setupVoiceEventForwarder();
         await this.voiceBot.updateVoiceConfig({
             instructions: this.getCurrentSystemPrompt(),
@@ -50,7 +50,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
         }
     }
     destroyVoiceBot() {
-        this.voiceBot?.destroyVoiceConnection();
+        this.voiceBot?.destroyAssistantVoiceConnection();
         this.voiceBot = undefined;
     }
     setupVoiceEventForwarder() {
@@ -91,14 +91,21 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
             enabled: this.voiceEnabled,
         }));
     }
-    async handleModeSwitch(newMode, reason) {
-        await super.handleModeSwitch(newMode, reason);
+    async handleModeSwitch(newMode, reason, params) {
+        await super.handleModeSwitch(newMode, reason, params);
         if (this.voiceEnabled) {
             await this.voiceBot?.updateVoiceConfig({
                 instructions: this.getCurrentSystemPrompt(),
                 tools: this.getCurrentModeFunctions(),
-                modalities: ["text", "audio"],
+                modalities: ["text", "audio"]
             });
+            if (newMode === "agent_direct_conversation") {
+                this.voiceBot?.initializeDirectAgentVoiceConnection();
+            }
+            else {
+                this.voiceBot?.destroyDirectAgentVoiceConnection();
+                this.voiceBot?.initializeVoiceSession();
+            }
         }
     }
     async conversation(chatLog) {

@@ -8,6 +8,7 @@ import { ChatbotMode } from './baseAssistant.js';
 import { PsAgent } from '@policysynth/agents/dbModels/agent.js';
 import WebSocket from 'ws';
 import ioredis from "ioredis";
+import { DirectConversationMode } from './modes/directConversationMode.js';
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   public currentAgentId?: number;
@@ -20,6 +21,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   private agentSelectionMode: AgentSelectionMode;
   private agentConfigurationMode: AgentConfigurationMode;
   private agentOperationsMode: AgentOperationsMode;
+  private directConversationMode: DirectConversationMode;
 
   constructor(
     wsClientId: string,
@@ -44,6 +46,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.agentConfigurationMode = new AgentConfigurationMode(this);
     this.agentOperationsMode = new AgentOperationsMode(this);
+    this.directConversationMode = new DirectConversationMode(this);
   }
 
   defineAvailableModes(): ChatbotMode[] {
@@ -51,12 +54,13 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
       this.agentSelectionMode.getMode(),
       this.agentConfigurationMode.getMode(),
       this.agentOperationsMode.getMode(),
+      this.directConversationMode.getMode(),
     ];
   }
 
   triggerResponseIfNeeded(message: string): void {
     if (this.voiceBot && this.voiceEnabled) {
-      this.voiceBot.triggerResponseIfNeeded(message);
+      this.voiceBot.triggerResponse(message);
     }
   }
 

@@ -11,6 +11,7 @@ export class AgentOperationsMode extends BaseAssistantMode {
   public getMode(): ChatbotMode {
     return {
       name: 'agent_operations',
+      description: 'Manage the selected agentProduct operations',
       systemPrompt: `Help the user manage the selected agent's operations.
 Available commands:
 - Start/stop agent
@@ -23,7 +24,7 @@ ${this.renderCommon()}
 ${this.renderAllAgentsStatus()}
 ${this.renderCurrentAgent()}
 ${this.renderCurrentWorkflowStatus()}`,
-      description: 'Manage agent operations',
+
       functions: [
         {
           name: 'run_agent_next_workflow_step',
@@ -288,7 +289,7 @@ ${this.renderCurrentWorkflowStatus()}`,
           },
         },
       ],
-      allowedTransitions: ['agent_selection'],
+      allowedTransitions: ['agent_subscription_and_selection','agent_direct_conversation'],
     };
   }
 }

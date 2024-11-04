@@ -470,7 +470,8 @@ export class BaseAssistantMode {
       );
       await this.assistant.handleModeSwitch(
         "agent_operations",
-        "Configuration completed"
+        "Configuration completed",
+        {}
       );
     }
   }

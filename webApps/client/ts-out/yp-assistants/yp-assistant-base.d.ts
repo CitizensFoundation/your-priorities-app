@@ -4,6 +4,7 @@ import "./yp-assistant-item-base.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
     domainId: number;
+    temporaryAvatarUrl: string | undefined;
     private mediaRecorder;
     private wavStreamPlayer;
     private isRecording;

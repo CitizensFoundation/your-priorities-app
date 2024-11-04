@@ -26,7 +26,8 @@ export class AgentSelectionMode extends BaseAssistantMode {
 
   public getMode(): ChatbotMode {
     return {
-      name: "agent_selection",
+      name: "agent_subscription_and_selection",
+      description: "List, purchase and select agentProducts you are subscribed to or available for purchase.",
       systemPrompt: `You are an AI agent assistant. Help users select and manage their AI agents.
 Available commands:
 - List available agents you are subscribed to
@@ -35,7 +36,6 @@ Available commands:
 Current system status and available agents are provided via functions.
 ${this.renderCommon()}
 ${this.renderAllAgentsStatus()}`,
-      description: "List, browse and select agents",
       functions: [
         {
           name: "list_my_agent_subscriptions",
@@ -408,12 +408,14 @@ ${this.renderAllAgentsStatus()}`,
               if (requiredQuestions && requiredQuestions.length > 0) {
                 await this.assistant.handleModeSwitch(
                   "agent_configuration",
-                  "Required questions need to be answered"
+                  "Required questions need to be answered",
+                  cleanedParams
                 );
               } else {
                 await this.assistant.handleModeSwitch(
                   "agent_operations",
-                  "Agent ready for operations"
+                  "Agent ready for operations",
+                  cleanedParams
                 );
               }
 

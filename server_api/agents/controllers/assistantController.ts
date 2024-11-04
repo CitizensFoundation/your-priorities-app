@@ -91,7 +91,7 @@ export class AssistantController {
     );
   }
 
-  private defaultStartAgentMode = "agent_selection" as YpAssistantMode;
+  private defaultStartAgentMode = "agent_subscription_and_selection" as YpAssistantMode;
 
   private clearChatLog = async (req: YpRequest, res: express.Response) => {
     const memoryId = `${req.params.domainId}-${req.user.id}`;
@@ -104,6 +104,8 @@ export class AssistantController {
       if (memory) {
         memory.chatLog = [];
         memory.currentMode = this.defaultStartAgentMode;
+        memory.currentAgentProductConfiguration = undefined;
+        memory.currentAgentProductId = undefined;
         await req.redisClient.set(redisKey, JSON.stringify(memory));
         res.sendStatus(200);
       } else {
