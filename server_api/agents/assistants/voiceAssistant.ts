@@ -53,6 +53,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   lastNumberOfChatHistoryForInstructions = 15;
 
+  exitMessageFromDirectAgentConversation: string | undefined;
+
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
@@ -129,6 +131,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     await this.sendCancelResponse();
 
+    if (this.parentAssistant?.memory.currentAgentProductConfiguration) {
+      this.exitMessageFromDirectAgentConversation =
+        `You are now back to the main assistant role after the use has concluded the conversation with ${this.parentAssistant.memory.currentAgentProductName}. Now help the user with tasks.`;
+    }
+
     this.sendToClient("assistant", "", "clear_audio_buffer");
 
     if (this.directAgentVoiceConnection) {
@@ -186,8 +193,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       this.directAgentVoiceConnection.connected = false;
       this.directAgentVoiceConnection = undefined;
       this.parentAssistant?.memory.chatLog!.push({
-        sender: "assistant",
-        message: "The direct conversation with the agent has ended and the assistant is back to the main assistant",
+        sender: "user",
+        message:
+          "Thank you for the information, I would not like to speak to the main assistant about selecting agents or managing subscriptions",
       } as PsSimpleChatLog);
       await this.saveMemory();
     }
@@ -214,14 +222,19 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
   }
 
-  protected setupVoiceMessageHandlers(ws: WebSocket, disableWhenAgentIsSpeaking: boolean): void {
+  protected setupVoiceMessageHandlers(
+    ws: WebSocket,
+    disableWhenAgentIsSpeaking: boolean
+  ): void {
     ws.on("message", async (data) => {
-
       try {
         const event = JSON.parse(data.toString());
 
         if (disableWhenAgentIsSpeaking && this.directAgentVoiceConnection) {
-          console.log("Voice message received but agent is speaking, ignoring", event.type);
+          console.log(
+            "Voice message received but agent is speaking, ignoring",
+            event.type
+          );
           return;
         }
 
@@ -255,7 +268,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             break;
 
           case "response.cancelled":
-            console.log("-------------------MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMZZZZZZZZZZZZZZ>>>>>>>>>>>>>>>>>>> response.cancelled");
+            console.log(
+              "-------------------MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMZZZZZZZZZZZZZZ>>>>>>>>>>>>>>>>>>> response.cancelled"
+            );
             this.isWaitingOnCancelResponseCompleted = false;
             break;
 
@@ -388,12 +403,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     if (result.html) {
       this.sendToClient("assistant", result.html, "html", true);
       this.parentAssistant?.addAssistantHtmlMessage(result.html);
-   }
+    }
 
     if (!result.success) {
-      console.error(
-        `Tool execution failed: ${event.name} ${result.error}`
-      );
+      console.error(`Tool execution failed: ${event.name} ${result.error}`);
     }
 
     const responseEvent = {
@@ -466,7 +479,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   // Handle Voice Activity Detection silence
   private async handleVADSilence(): Promise<void> {
-    if (!this.assistantVoiceConnection?.ws || !this.voiceState.listening) return;
+    if (!this.assistantVoiceConnection?.ws || !this.voiceState.listening)
+      return;
 
     // Commit the audio buffer
     const commitMessage = {
@@ -522,7 +536,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   }
 
   sendToVoiceConnection(message: any): void {
-    if (this.directAgentVoiceConnection && this.directAgentVoiceConnection.connected) {
+    if (
+      this.directAgentVoiceConnection &&
+      this.directAgentVoiceConnection.connected
+    ) {
       this.directAgentVoiceConnection.ws.send(JSON.stringify(message));
     } else {
       this.assistantVoiceConnection?.ws.send(JSON.stringify(message));
@@ -538,7 +555,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     this.isWaitingOnCancelResponseCompleted = true;
 
     await Promise.race([
-      new Promise(resolve => {
+      new Promise((resolve) => {
         const checkFlag = () => {
           if (!this.isWaitingOnCancelResponseCompleted) {
             console.log("Cancel response completed from event");
@@ -549,7 +566,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         };
         checkFlag();
       }),
-      new Promise(resolve => setTimeout(resolve, 75))
+      new Promise((resolve) => setTimeout(resolve, 75)),
     ]);
 
     console.log("Cancel response completed from timeout");
@@ -567,7 +584,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     await this.waitForCancelResponseCompleted();
   }
 
-   async initializeVoiceSession(customResponseMessage?: string): Promise<void> {
+  async initializeVoiceSession(customResponseMessage?: string): Promise<void> {
     if (!this.assistantVoiceConnection?.ws) return;
 
     console.log(
@@ -584,10 +601,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       this.parentAssistant?.getCurrentModeFunctions()
     );
 
-
     let chatHistory;
 
-    if (this.parentAssistant?.memory && this.parentAssistant?.memory.chatLog && this.parentAssistant?.memory.chatLog.length > 0) {
+    if (
+      this.parentAssistant?.memory &&
+      this.parentAssistant?.memory.chatLog &&
+      this.parentAssistant?.memory.chatLog.length > 0
+    ) {
       chatHistory = JSON.stringify(
         this.parentAssistant?.memory.chatLog
           .filter((message) => message.message != "")
@@ -603,21 +623,30 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< initializeVoiceSession current mode", JSON.stringify(this.parentAssistant?.memory, null, 2));
 
+    let voiceName = this.voiceConfig.voice;
+
     if (
-      this.parentAssistant?.memory.currentMode === "agent_direct_conversation" &&
-      this.parentAssistant?.memory.currentAgentProductConfiguration?.avatar?.voiceName
+      this.parentAssistant?.memory.currentMode ===
+        "agent_direct_conversation" &&
+      this.parentAssistant?.memory.currentAgentProductConfiguration?.avatar
+        ?.voiceName
     ) {
-      this.voiceConfig.voice = this.parentAssistant?.memory.currentAgentProductConfiguration.avatar.voiceName;
-      instructions = this.parentAssistant?.memory.currentAgentProductConfiguration.avatar.systemPrompt;
-      this.parentAssistant?.sendAvatarUrlChange(this.parentAssistant?.memory.currentAgentProductConfiguration.avatar.imageUrl);
+      voiceName =
+        this.parentAssistant?.memory.currentAgentProductConfiguration.avatar.voiceName;
+      instructions =
+        this.parentAssistant?.memory.currentAgentProductConfiguration.avatar
+          .systemPrompt;
+      this.parentAssistant?.sendAvatarUrlChange(
+        this.parentAssistant?.memory.currentAgentProductConfiguration.avatar
+          .imageUrl
+      );
     } else {
       this.parentAssistant?.sendAvatarUrlChange(null);
     }
 
     if (chatHistory) {
-      instructions += `\n\n<ChatHistory>\n${chatHistory}\n</ChatHistory>`;
+      instructions += `\n\n<ImportantPreviousChatHistory>\n${chatHistory}\n</ImportantPreviousChatHistory>`;
     }
-
 
     console.log(
       "======================> initializeVoiceSession final instructions",
@@ -630,6 +659,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       event_id: `initializeVoiceSession_${this.getRandomStringAscii(10)}`,
       session: {
         ...this.voiceConfig,
+        voice: voiceName,
         instructions: instructions,
         //@ts-ignore
         tools: this.parentAssistant?.getCurrentModeFunctions(),
@@ -655,7 +685,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     this.sendToVoiceConnection(sessionConfig);
 
     setTimeout(() => {
-      if (!customResponseMessage  ) {
+      if (this.exitMessageFromDirectAgentConversation && !this.directAgentVoiceConnection) {
+        setTimeout(() => {
+          if (this.exitMessageFromDirectAgentConversation) {
+            this.triggerResponse(this.exitMessageFromDirectAgentConversation, false);
+            this.exitMessageFromDirectAgentConversation = undefined;
+          }
+        }, 250);
+      } else if (!customResponseMessage) {
         this.triggerResponse("Say hi to the user", false);
       } else {
         this.triggerResponse(customResponseMessage, false);
@@ -664,7 +701,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   }
 
   getRandomStringAscii(length: number = 10): string {
-    return Array.from({ length }, () => Math.floor(Math.random() * 128)).map(n => String.fromCharCode(n)).join('');
+    return Array.from({ length }, () => Math.floor(Math.random() * 128))
+      .map((n) => String.fromCharCode(n))
+      .join("");
   }
 
   async triggerResponse(message: string, cancelResponse = true): Promise<void> {

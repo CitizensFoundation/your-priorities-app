@@ -207,6 +207,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   currentMode: YpAssistantMode;
   currentAgentProductId?: number;
   currentAgentProductConfiguration?: YpAgentProductConfiguration;
+  currentAgentProductName?: string;
   modeData?: AssistantModeData;
   modeHistory?: Array<{
     mode: string;

@@ -389,10 +389,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             type: "string",
             enum: Array.from(this.modes.keys()),
           },
-          reason: { type: "string" },
-          oldMode: { type: "string", enum: Array.from(this.modes.keys()) },
+          reason: { type: "string" }
         },
-        required: ["newMode", "oldMode"],
+        required: ["newMode"],
       },
 
       /*resultSchema: {
@@ -686,6 +685,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         const agentProduct = await this.getAgentProduct(params.agentProductId);
         if (agentProduct) {
           this.memory.currentAgentProductId = agentProduct.id;
+          this.memory.currentAgentProductName = agentProduct.name;
           this.memory.currentAgentProductConfiguration =
             agentProduct.configuration;
           await this.saveMemory();
