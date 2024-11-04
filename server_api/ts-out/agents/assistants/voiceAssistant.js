@@ -67,7 +67,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         await this.sendCancelResponse();
         if (this.parentAssistant?.memory.currentAgentProductConfiguration) {
             this.exitMessageFromDirectAgentConversation =
-                `You are now back to the main assistant role after the use has concluded the conversation with ${this.parentAssistant.memory.currentAgentProductName}. Now help the user with tasks.`;
+                `Welcome the user back from their conversation with the ${this.parentAssistant.memory.currentAgentProductName}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
         }
         this.sendToClient("assistant", "", "clear_audio_buffer");
         if (this.directAgentVoiceConnection) {
@@ -486,9 +486,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         this.sendToVoiceConnection(sessionConfig);
         setTimeout(() => {
             if (this.exitMessageFromDirectAgentConversation && !this.directAgentVoiceConnection) {
+                this.sendCancelResponse();
                 setTimeout(() => {
                     if (this.exitMessageFromDirectAgentConversation) {
-                        this.triggerResponse(this.exitMessageFromDirectAgentConversation, false);
+                        this.triggerResponse(this.exitMessageFromDirectAgentConversation, true);
                         this.exitMessageFromDirectAgentConversation = undefined;
                     }
                 }, 250);
