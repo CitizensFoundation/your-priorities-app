@@ -237,7 +237,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
         const switchModeFunction = {
             name: "switch_mode",
             type: "function",
-            description: `Switch to a different conversation mode. Never switch to and from the same mode. Here are all the available modes: ${allModesText}`,
+            description: `Switch to a different conversation mode. Never switch to and from the same mode. If there is a relevant
+       agentProductId in the context or chat history, use it if you are switching to a direct conversation mode with an agent.
+       Here are all the available modes: ${allModesText}`,
             parameters: {
                 type: "object",
                 properties: {
@@ -245,6 +247,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                         type: "string",
                         enum: Array.from(this.modes.keys()),
                     },
+                    agentProductId: { type: "number" },
                     reason: { type: "string" }
                 },
                 required: ["newMode"],

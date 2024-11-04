@@ -8,7 +8,7 @@ export class AgentConfigurationMode extends BaseAssistantMode {
         return {
             name: 'agent_configuration',
             description: 'Configure the selected agentProduct the users owns by collecting required information.',
-            systemPrompt: `Help the user configure the selected agent by collecting required information.
+            systemPrompt: `You are the Agent Configuration Assistant. Help the user configure the selected agent by collecting required information.
 Review the required questions and guide the user through answering them.
 ${this.renderCommon()}
 ${this.renderCurrentAgent()}`,

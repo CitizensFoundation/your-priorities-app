@@ -9,13 +9,15 @@ export class AgentSelectionMode extends BaseAssistantMode {
     getMode() {
         return {
             name: "agent_subscription_and_selection",
-            description: "List, purchase and select agentProducts you are subscribed to or available for purchase.",
+            description: "List, purchase and select agentProducts the user is subscribed to or agents available for purchase.",
             systemPrompt: `You are an AI agent assistant. Help users select and manage their AI agents.
 Available commands:
-- List available agents you are subscribed to
+- List available agents the user is subscribed to
 - List available agents available for purchase
-- Select an agent you are subscribed to to work with
-Current system status and available agents are provided via functions.
+- Select an agent the user is subscribed to to work with
+- Subscribe to an agent available for purchase
+- Unsubscribe from an agent the user is subscribed to
+- Open a direct conversation with any agent subscribed or available for purchase.
 ${this.renderCommon()}
 ${this.renderAllAgentsStatus()}
 
