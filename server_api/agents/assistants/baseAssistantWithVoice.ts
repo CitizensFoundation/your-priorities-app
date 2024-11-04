@@ -157,10 +157,12 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
         modalities: ["text", "audio"]
       });
 
+      console.log("handleModeSwitch", newMode, params);
+
       if (newMode === "agent_direct_conversation") {
         this.voiceBot?.initializeDirectAgentVoiceConnection();
       } else {
-        this.voiceBot?.destroyDirectAgentVoiceConnection();
+        await this.voiceBot?.destroyDirectAgentVoiceConnection();
         this.voiceBot?.initializeVoiceSession();
       }
     }

@@ -35,7 +35,9 @@ Available commands:
 - Select an agent you are subscribed to to work with
 Current system status and available agents are provided via functions.
 ${this.renderCommon()}
-${this.renderAllAgentsStatus()}`,
+${this.renderAllAgentsStatus()}
+
+In this mode we focus on the agent selection and subscription management.`,
       functions: [
         {
           name: "list_my_agent_subscriptions",

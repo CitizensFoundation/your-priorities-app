@@ -43,6 +43,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
         mono: ArrayBuffer;
         raw: ArrayBuffer;
     }): Promise<void>;
+    resetWaveformPlayer(): Promise<void>;
     onMessage(event: MessageEvent): Promise<void>;
     base64ToArrayBuffer(base64: string): ArrayBuffer;
     toggleVoiceMode(): Promise<void>;

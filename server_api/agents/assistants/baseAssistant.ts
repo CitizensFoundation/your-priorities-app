@@ -376,7 +376,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   registerCoreFunctions(): void {
     const allModesText = Array.from(this.modes.entries())
       .map(([key, mode]) => `${key}: ${mode.description}`)
-      .join('\n');
+      .join("\n");
     console.log(`registerCoreFunctions all modes: ${allModesText}`);
     const switchModeFunction: ChatbotFunction = {
       name: "switch_mode",
@@ -390,8 +390,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             enum: Array.from(this.modes.keys()),
           },
           reason: { type: "string" },
+          oldMode: { type: "string", enum: Array.from(this.modes.keys()) },
         },
-        required: ["newMode"],
+        required: ["newMode", "oldMode"],
       },
 
       /*resultSchema: {
@@ -685,13 +686,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         const agentProduct = await this.getAgentProduct(params.agentProductId);
         if (agentProduct) {
           this.memory.currentAgentProductId = agentProduct.id;
-          this.memory.currentAgentProductConfiguration = agentProduct.configuration;
+          this.memory.currentAgentProductConfiguration =
+            agentProduct.configuration;
           await this.saveMemory();
         } else {
           console.error(`Agent product not found for ${params.agentProductId}`);
         }
       } catch (error) {
-        console.error(`Error getting agent product for ${params.agentProductId}: ${error}`);
+        console.error(
+          `Error getting agent product for ${params.agentProductId}: ${error}`
+        );
       }
     } else {
       //TODO: This is a temporary fix to avoid keeping the agent product id and configuration in memory as we don't have agentProductId in the new modes

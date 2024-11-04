@@ -54,7 +54,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 console.error("Voice connection error:", error);
                 this.assistantVoiceConnection = undefined;
             });
-            this.setupVoiceMessageHandlers(ws);
+            this.setupVoiceMessageHandlers(ws, true);
         }
         catch (error) {
             console.error("Failed to initialize voice connection:", error);
@@ -64,6 +64,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeDirectAgentVoiceConnection() {
         if (!this.voiceEnabled)
             return;
+        await this.sendCancelResponse();
+        this.sendToClient("assistant", "", "clear_audio_buffer");
         if (this.directAgentVoiceConnection) {
             console.log("Direct agent voice connection already initialized, closing");
             this.destroyDirectAgentVoiceConnection();
@@ -96,18 +98,23 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 console.error("Agent voice connection error:", error);
                 this.directAgentVoiceConnection = undefined;
             });
-            this.setupVoiceMessageHandlers(ws);
+            this.setupVoiceMessageHandlers(ws, false);
         }
         catch (error) {
             console.error("Failed to initialize voice connection:", error);
             throw error;
         }
     }
-    destroyDirectAgentVoiceConnection() {
+    async destroyDirectAgentVoiceConnection() {
         if (this.directAgentVoiceConnection) {
             this.directAgentVoiceConnection.ws.close();
             this.directAgentVoiceConnection.connected = false;
             this.directAgentVoiceConnection = undefined;
+            this.parentAssistant?.memory.chatLog.push({
+                sender: "assistant",
+                message: "The direct conversation with the agent has ended and the assistant is back to the main assistant",
+            });
+            await this.saveMemory();
         }
     }
     destroyAssistantVoiceConnection() {
@@ -128,10 +135,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.assistantVoiceConnection = undefined;
         }
     }
-    setupVoiceMessageHandlers(ws) {
+    setupVoiceMessageHandlers(ws, disableWhenAgentIsSpeaking) {
         ws.on("message", async (data) => {
             try {
                 const event = JSON.parse(data.toString());
+                if (disableWhenAgentIsSpeaking && this.directAgentVoiceConnection) {
+                    console.log("Voice message received but agent is speaking, ignoring", event.type);
+                    return;
+                }
                 console.log("voiceMessage: ", event.type);
                 switch (event.type) {
                     case "session.created":
@@ -242,7 +253,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 };
                 this.assistantVoiceConnection?.ws.send(JSON.stringify(createResponse));
             }
-            /*this.memory.chatLog!.push({
+            /*this.parentAssistant?.memory.chatLog!.push({
               sender: "assistant",
               hiddenContextMessage: true,
               message: resultMessage,
@@ -356,7 +367,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (!event.content)
             return;
         // Add to chat log
-        this.memory.chatLog.push({
+        this.parentAssistant?.memory.chatLog.push({
             sender: "assistant",
             message: event.content,
         });
@@ -403,16 +414,15 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         console.log("Have sent cancel response");
         await this.waitForCancelResponseCompleted();
     }
-    async initializeVoiceSession() {
+    async initializeVoiceSession(customResponseMessage) {
         if (!this.assistantVoiceConnection?.ws)
             return;
         console.log("======================> initializeVoiceSession current mode", this.parentAssistant?.memory.currentMode);
         console.log("======================> initializeVoiceSession system prompt", this.parentAssistant?.getCurrentSystemPrompt());
         console.log("======================> initializeVoiceSession functions", this.parentAssistant?.getCurrentModeFunctions());
-        console.log("======================> initializeVoiceSession chat log", JSON.stringify(this.memory?.chatLog, null, 2));
         let chatHistory;
-        if (this.memory && this.memory.chatLog && this.memory.chatLog.length > 0) {
-            chatHistory = JSON.stringify(this.memory.chatLog
+        if (this.parentAssistant?.memory && this.parentAssistant?.memory.chatLog && this.parentAssistant?.memory.chatLog.length > 0) {
+            chatHistory = JSON.stringify(this.parentAssistant?.memory.chatLog
                 .filter((message) => message.message != "")
                 .slice(-this.lastNumberOfChatHistoryForInstructions)
                 .map((message) => ({
@@ -432,7 +442,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.parentAssistant?.sendAvatarUrlChange(null);
         }
         if (chatHistory) {
-            instructions += `\n\n<PreviousMaxTenMessageFromYourTextChatWithTheUserEarlier>\n${chatHistory}\n</PreviousMaxTenMessageFromYourTextChatWithTheUserEarlier>`;
+            instructions += `\n\n<ChatHistory>\n${chatHistory}\n</ChatHistory>`;
         }
         console.log("======================> initializeVoiceSession final instructions", instructions);
         // Then update the session with full configuration
@@ -460,8 +470,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
         this.sendToVoiceConnection(sessionConfig);
         setTimeout(() => {
-            this.triggerResponse("Say hi to the user", false);
-        }, 300);
+            if (!customResponseMessage) {
+                this.triggerResponse("Say hi to the user", false);
+            }
+            else {
+                this.triggerResponse(customResponseMessage, false);
+            }
+        }, 20);
     }
     getRandomStringAscii(length = 10) {
         return Array.from({ length }, () => Math.floor(Math.random() * 128)).map(n => String.fromCharCode(n)).join('');

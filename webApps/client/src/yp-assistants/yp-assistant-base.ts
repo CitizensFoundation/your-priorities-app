@@ -342,6 +342,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
   }
 
+  async resetWaveformPlayer() {
+    await this.wavStreamPlayer?.interrupt();
+    this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
+
+    await this.wavStreamPlayer?.connect();
+  }
+
   override async onMessage(event: MessageEvent) {
     const data = JSON.parse(event.data) as YpAssistantMessage;
 
@@ -395,15 +402,15 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
         break;
 
+      case "clear_audio_buffer":
+        await this.resetWaveformPlayer();
+        break;
       case "listening_start":
         if (this.lastChatUiElement) {
           this.lastChatUiElement.isSpeaking = true;
         }
         this.userIsSpeaking = true;
-        await this.wavStreamPlayer?.interrupt();
-        this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
-
-        await this.wavStreamPlayer?.connect();
+        await this.resetWaveformPlayer();
         break;
 
       case "listening_stop":

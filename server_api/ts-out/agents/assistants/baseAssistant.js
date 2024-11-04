@@ -232,7 +232,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     registerCoreFunctions() {
         const allModesText = Array.from(this.modes.entries())
             .map(([key, mode]) => `${key}: ${mode.description}`)
-            .join('\n');
+            .join("\n");
         console.log(`registerCoreFunctions all modes: ${allModesText}`);
         const switchModeFunction = {
             name: "switch_mode",
@@ -246,8 +246,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
                         enum: Array.from(this.modes.keys()),
                     },
                     reason: { type: "string" },
+                    oldMode: { type: "string", enum: Array.from(this.modes.keys()) },
                 },
-                required: ["newMode"],
+                required: ["newMode", "oldMode"],
             },
             /*resultSchema: {
               type: "object",
@@ -475,7 +476,8 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 const agentProduct = await this.getAgentProduct(params.agentProductId);
                 if (agentProduct) {
                     this.memory.currentAgentProductId = agentProduct.id;
-                    this.memory.currentAgentProductConfiguration = agentProduct.configuration;
+                    this.memory.currentAgentProductConfiguration =
+                        agentProduct.configuration;
                     await this.saveMemory();
                 }
                 else {

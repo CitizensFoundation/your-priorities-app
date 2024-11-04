@@ -253,6 +253,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             }));
         }
     }
+    async resetWaveformPlayer() {
+        await this.wavStreamPlayer?.interrupt();
+        this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
+        await this.wavStreamPlayer?.connect();
+    }
     async onMessage(event) {
         const data = JSON.parse(event.data);
         // Handle messages with HTML content
@@ -302,14 +307,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     this.temporaryAvatarUrl = data.url;
                 }
                 break;
+            case "clear_audio_buffer":
+                await this.resetWaveformPlayer();
+                break;
             case "listening_start":
                 if (this.lastChatUiElement) {
                     this.lastChatUiElement.isSpeaking = true;
                 }
                 this.userIsSpeaking = true;
-                await this.wavStreamPlayer?.interrupt();
-                this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
-                await this.wavStreamPlayer?.connect();
+                await this.resetWaveformPlayer();
                 break;
             case "listening_stop":
                 if (this.lastChatUiElement) {

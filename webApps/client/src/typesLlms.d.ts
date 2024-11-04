@@ -4,6 +4,7 @@ type YpAssistantMessageType =
   | "start"
   | "component"
   | "html"
+  | "clear_audio_buffer"
   | "audio"
   | "message"
   | "hiddenContextMessage"
