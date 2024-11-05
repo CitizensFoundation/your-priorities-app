@@ -29,7 +29,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
       name: "agent_subscription_and_selection",
       description: "List, purchase and select agentProducts the user is subscribed to or agents available for purchase.",
       systemPrompt: `You are an AI agent assistant. Help users select and manage their AI agents.
-Available commands:
+Available tools:
 - List available agents the user is subscribed to
 - List available agents available for purchase
 - Select an agent the user is subscribed to to work with

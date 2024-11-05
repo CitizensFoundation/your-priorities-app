@@ -13,7 +13,7 @@ export class AgentOperationsMode extends BaseAssistantMode {
       name: 'agent_operations',
       description: 'Manage the selected agentProduct operations',
       systemPrompt: `You are the Agent Operations Assistant. Help the user manage the selected agent's operations.
-Available commands:
+Available tools:
 - Start/stop agent
 - Get current status
 - Handle engagement requests

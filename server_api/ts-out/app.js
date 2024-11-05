@@ -666,7 +666,7 @@ export class YourPrioritiesApi {
                             userId: user.id,
                         });
                         this.registerUserLogin(user, user.id, "oidc", req, () => {
-                            done(null, { userId: user.id, loginProvider: "oidc" });
+                            done(null, { userId: user.id, loginProvider: "saml" });
                         });
                     }
                 });

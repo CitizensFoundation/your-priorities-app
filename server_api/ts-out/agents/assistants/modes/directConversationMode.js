@@ -25,7 +25,7 @@ export class DirectConversationMode extends BaseAssistantMode {
                             this.assistant.sendAvatarUrlChange(null);
                             return {
                                 success: true,
-                                data: { message: "Exited conversation with agent" },
+                                data: { message: "The user has been returned to the main assistant and exited the direct conversation with the agent" },
                             };
                         }
                         catch (error) {

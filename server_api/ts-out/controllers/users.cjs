@@ -299,7 +299,7 @@ router.post('/register_anonymously', async function (req, res) {
             });
         });
         //TODO: Without this hack the user session is recreated each time due to some new Redis timing issue
-        await new Promise(resolve => setTimeout(resolve, 70));
+        await new Promise(resolve => setTimeout(resolve, 100));
         log.info("Successfully logged in anonymous user", {
             sessionID: req.sessionID,
             user: toJson(user)
@@ -2213,7 +2213,8 @@ router.get('/auth/oidc/callback', function (req, res) {
         }
     });
 });
-router.get('/auth/audkenni/callback', function (req, res) {
+router.get('/auth/audkenni/callback', async function (req, res) {
+    await new Promise(resolve => setTimeout(resolve, 100));
     req.sso.authenticate('oidc-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
         if (error) {
             log.error("Error from Audkenni login", { err: error });
