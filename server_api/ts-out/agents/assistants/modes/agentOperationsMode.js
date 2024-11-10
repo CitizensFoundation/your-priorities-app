@@ -187,50 +187,7 @@ ${this.renderCurrentWorkflowStatus()}`,
                             };
                         }
                     },
-                },
-                {
-                    name: 'get_workflow_step_details',
-                    description: 'Get detailed information about a specific workflow step',
-                    type: 'function',
-                    parameters: {
-                        type: 'object',
-                        properties: {
-                            stepId: { type: 'number' },
-                            includeArtifacts: { type: 'boolean' },
-                        },
-                        required: ['stepId'],
-                    },
-                    handler: async (params) => {
-                        console.log(`handler: get_workflow_step_details: ${JSON.stringify(params, null, 2)}`);
-                        try {
-                            if (!this.currentAgentId) {
-                                throw new Error('No agent selected');
-                            }
-                            const stepDetails = await this.getWorkflowStepDetails(this.currentAgentId, params.stepId, params.includeArtifacts);
-                            return {
-                                success: true,
-                                data: {
-                                    step: stepDetails,
-                                },
-                                metadata: {
-                                    requestedAt: new Date().toISOString(),
-                                    includesArtifacts: params.includeArtifacts,
-                                },
-                            };
-                        }
-                        catch (error) {
-                            const errorMessage = error instanceof Error
-                                ? error.message
-                                : 'Failed to get step details';
-                            console.error(`Failed to get step details: ${errorMessage}`);
-                            return {
-                                success: false,
-                                data: errorMessage,
-                                error: errorMessage,
-                            };
-                        }
-                    },
-                },
+                }
             ],
             allowedTransitions: ['agent_subscription_and_selection', 'agent_direct_conversation'],
         };

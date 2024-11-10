@@ -100,7 +100,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
                 modalities: ["text", "audio"]
             });
             console.log("handleModeSwitch", newMode, params);
-            if (newMode === "agent_direct_conversation") {
+            if (newMode === "agent_direct_connection_mode") {
                 this.voiceBot?.initializeDirectAgentVoiceConnection();
             }
             else {

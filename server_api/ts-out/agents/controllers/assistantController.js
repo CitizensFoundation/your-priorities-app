@@ -49,10 +49,15 @@ export class AssistantController {
                 const redisKey = YpAgentAssistant.getRedisKey(memoryId);
                 const memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId);
                 if (memory) {
+                    if (!memory.allChatLogs) {
+                        memory.allChatLogs = [];
+                    }
+                    if (memory.chatLog) {
+                        memory.allChatLogs = [...memory.allChatLogs, ...memory.chatLog];
+                    }
                     memory.chatLog = [];
                     memory.currentMode = this.defaultStartAgentMode;
-                    memory.currentAgentProductConfiguration = undefined;
-                    memory.currentAgentProductId = undefined;
+                    memory.currentAgentStatus = undefined;
                     await req.redisClient.set(redisKey, JSON.stringify(memory));
                     res.sendStatus(200);
                 }

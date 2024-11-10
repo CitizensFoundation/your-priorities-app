@@ -3,6 +3,7 @@ type YpAssistantMessageType =
   | "moderation_error"
   | "start"
   | "component"
+  | "memory-changed"
   | "html"
   | "clear_audio_buffer"
   | "audio"

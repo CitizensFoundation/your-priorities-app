@@ -9,6 +9,29 @@ export class AgentSubscriptionController {
     constructor(wsClients) {
         this.path = "/api/subscriptions";
         this.router = express.Router();
+        this.updateAgentConfiguration = async (req, res) => {
+            try {
+                const subscriptionId = parseInt(req.params.subscriptionId);
+                const requiredQuestionsAnswered = req.body.requiredQuestionsAnswered;
+                if (!requiredQuestionsAnswered) {
+                    return res.status(400).json({ error: "requiredQuestionsAnswered is required" });
+                }
+                const subscription = await YpSubscription.findOne({
+                    where: { id: subscriptionId, user_id: req.user.id }
+                });
+                if (!subscription) {
+                    return res.status(404).json({ error: "Subscription not found" });
+                }
+                subscription.configuration.requiredQuestionsAnswered = JSON.parse(requiredQuestionsAnswered);
+                subscription.changed('configuration', true);
+                await subscription.save();
+                res.status(200);
+            }
+            catch (error) {
+                console.error("Error updating agent configuration:", error);
+                res.status(500).json({ error: error.message });
+            }
+        };
         this.getPlans = async (req, res) => {
             try {
                 const plans = await this.subscriptionManager.getPlans();
@@ -184,6 +207,7 @@ export class AgentSubscriptionController {
         this.router.get("/", auth.can("view subscriptions"), this.getSubscriptions);
         this.router.delete("/:subscriptionId", this.cancelSubscription);
         this.router.put("/:subscriptionId", this.updateSubscription);
+        this.router.put("/:subscriptionId/update-agent-configuration", this.updateAgentConfiguration);
         // Add new payment-related routes
         this.router.post("/stripe-create-payment-intent", this.createPaymentIntent);
         this.router.post("/stripe-webhook", express.raw({ type: "application/json" }), this.handleWebhook);
@@ -191,6 +215,7 @@ export class AgentSubscriptionController {
     initializeRoutesSecure() {
         this.router.get("/plans", auth.can("view subscriptions"), this.getPlans);
         this.router.post("/", auth.can("create subscriptions"), this.createSubscriptions);
+        this.router.put("/:subscriptionId/update-agent-configuration", auth.can("edit subscriptions"), this.updateAgentConfiguration);
         this.router.post("/:subscriptionId/start", auth.can("edit subscriptions"), this.startAgentRun);
         this.router.post("/:subscriptionId/stop", auth.can("edit subscriptions"), this.stopAgentRun);
         // Additional routes

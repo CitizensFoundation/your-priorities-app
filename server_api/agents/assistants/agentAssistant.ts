@@ -1,26 +1,18 @@
 // YpAgentAssistant.ts
 
-import { YpBaseAssistantWithVoice } from './baseAssistantWithVoice.js';
-import { AgentSelectionMode } from './modes/agentSelectionMode.js';
-import { AgentConfigurationMode } from './modes/agentConfigurationMode.js';
-import { AgentOperationsMode } from './modes/agentOperationsMode.js';
-import { ChatbotMode } from './baseAssistant.js';
-import { PsAgent } from '@policysynth/agents/dbModels/agent.js';
-import WebSocket from 'ws';
+import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
+import { AgentSelectionMode } from "./modes/agentSelectionMode.js";
+import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
+import WebSocket from "ws";
 import ioredis from "ioredis";
-import { DirectConversationMode } from './modes/directConversationMode.js';
+import { DirectConversationMode } from "./modes/agentDirectConnection.js";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
-  public currentAgentId?: number;
-  public currentAgent?: PsAgent;
-  public currentWorkflow?: any;
   public availableAgents: PsAgent[] = [];
   public runningAgents: PsAgent[] = [];
 
   public userId: number;
   private agentSelectionMode: AgentSelectionMode;
-  private agentConfigurationMode: AgentConfigurationMode;
-  private agentOperationsMode: AgentOperationsMode;
   private directConversationMode: DirectConversationMode;
 
   constructor(
@@ -40,22 +32,89 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
       voiceEnabled,
       currentMode,
       domainId,
-      memoryId,
+      memoryId
     );
     this.userId = userId;
     this.agentSelectionMode = new AgentSelectionMode(this);
-    this.agentConfigurationMode = new AgentConfigurationMode(this);
-    this.agentOperationsMode = new AgentOperationsMode(this);
     this.directConversationMode = new DirectConversationMode(this);
+    this.on("memory-changed", this.handleMemoryChanged);
   }
 
-  defineAvailableModes(): ChatbotMode[] {
+  defineAvailableModes(): AssistantChatbotMode[] {
     return [
       this.agentSelectionMode.getMode(),
-      this.agentConfigurationMode.getMode(),
-      this.agentOperationsMode.getMode(),
       this.directConversationMode.getMode(),
     ];
+  }
+
+  get simplifiedMemory(): Partial<YpBaseAssistantMemoryData> {
+    return {
+      currentMode: this.memory.currentMode,
+      currentUser: this.memory.currentUser,
+      currentAgentStatus: this.memory.currentAgentStatus,
+    } as Partial<YpBaseAssistantMemoryData>;
+  }
+
+  handleMemoryChanged(memory: YpBaseAssistantMemoryData) {
+    console.log(`memory changed: ${JSON.stringify(memory, null, 2)}`);
+    this.sendToClient(
+      "system",
+      JSON.stringify(this.simplifiedMemory),
+      "memory-changed"
+    );
+  }
+
+  get isLoggedIn(): boolean {
+    return this.memory.currentUser !== undefined;
+  }
+
+  get currentAgent(): YpAgentProductAttributes | undefined {
+    return this.memory.currentAgentStatus?.agentProduct;
+  }
+
+  get isSubscribedToCurrentAgent(): boolean {
+    return this.memory.currentAgentStatus?.subscription !== undefined;
+  }
+
+  get hasConfiguredCurrentAgent(): boolean {
+    return this.memory.currentAgentStatus?.configurationState === "configured";
+  }
+
+  get isCurrentAgentRunning(): boolean {
+    return (
+      this.memory.currentAgentStatus?.agentRun?.status === "running"
+    );
+  }
+
+  get haveShownConfigurationWidget(): boolean {
+    return this.memory.haveShownConfigurationWidget ?? false;
+  }
+
+  get haveShownLoginWidget(): boolean {
+    return this.memory.haveShownLoginWidget ?? false;
+  }
+
+  get currentAgentWorkflow(): YpWorkflowConfiguration | undefined {
+    return this.memory.currentAgentStatus?.agentRun?.workflow;
+  }
+
+  get currentAgentWorkflowCurrentStep(): YpWorkflowStep | undefined {
+    return this.memory.currentAgentStatus?.agentRun?.workflow?.steps[
+      this.memory.currentAgentStatus?.agentRun?.workflow?.currentStepIndex ?? 0
+    ];
+  }
+
+  get isCurrentAgentWaitingOnUserInput(): boolean {
+    const currentStep = this.currentAgentWorkflowCurrentStep;
+
+    if (!currentStep) {
+      return false;
+    }
+
+    return (
+      currentStep.type === "engagmentFromInputConnector" ||
+      currentStep.type === "engagmentFromOutputConnector"
+    );
   }
 
   triggerResponseIfNeeded(message: string): void {
@@ -64,5 +123,4 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     }
   }
 
-  // Other methods as needed
 }

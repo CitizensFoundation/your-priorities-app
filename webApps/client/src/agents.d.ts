@@ -97,6 +97,7 @@ interface YpSubscriptionPlanAttributes extends YpBaseModelAttributes {
 interface YpSubscriptionConfiguration {
   cancelledAt?: Date;
   cancelledByUserId?: number;
+  requiredQuestionsAnswered?: YpStructuredQuestionData[];
 }
 
 // YpSubscriptionAttributes Interface
@@ -193,24 +194,45 @@ interface AssistantModeData<T = unknown> {
 }
 
 type YpAssistantMode =
-  | "agent_subscription_and_selection"
-  | "user_login"
-  | "user_payment"
-  | "user_create_organization"
-  | "agent_configuration"
-  | "agent_operations"
-  | "agent_direct_conversation"
-  | "error_recovery";
+  | "agent_selection_mode"
+  | "agent_direct_connection_mode"
+  | "error_recovery_mode";
+
+type YpAssistantLoginState =
+  | "logged_out"
+  | "logging_in_no_organization"
+  | "logged_in";
+
+type YpAssistantAgentSubscriptionState = "subscribed" | "unsubscribed";
+
+type YpAssistantAgentConfigurationState = "configured" | "not_configured";
+
+type YpAssistantAgentWorkflowRunningStatus =
+  | "running"
+  | "waiting_on_user"
+  | "not_running";
 
 interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   redisKey: string;
   currentMode: YpAssistantMode;
-  currentAgentProductId?: number;
-  currentAgentProductConfiguration?: YpAgentProductConfiguration;
-  currentAgentProductName?: string;
+  currentUser?: YpUserData;
+  haveShownLoginWidget?: boolean;
+  haveShownConfigurationWidget?: boolean;
+  currentAgentStatus?: {
+    agentProduct: YpAgentProductAttributes;
+    agentRun?: YpAgentProductRunAttributes;
+    subscription: YpSubscriptionAttributes | null;
+    subscriptionState: YpAssistantAgentSubscriptionState;
+    configurationState: YpAssistantAgentConfigurationState;
+  };
+
+  allChatLogs?: PsSimpleChatLog[];
+
+  loginState?: YpAssistantLoginState;
+
   modeData?: AssistantModeData;
   modeHistory?: Array<{
-    mode: string;
+    mode: YpAssistantMode;
     timestamp: number;
     reason?: string;
   }>;
@@ -236,4 +258,74 @@ interface YpWorkflowConfiguration {
   steps: YpWorkflowStep[];
   currentStepIndex: number;
   timeoutTotal?: number;
+}
+
+///
+
+interface YpAgentUnsubscribeProperties {
+  agentProductId: {
+    type: "number";
+  };
+  subscriptionId: {
+    type: "number";
+  };
+  useHasVerballyConfirmedUnsubscribeWithTheAgentName: {
+    type: "boolean";
+  };
+}
+
+interface YpAgentUnsubscribeParams {
+  agentProductId: number;
+  subscriptionId: number;
+  useHasVerballyConfirmedUnsubscribeWithTheAgentName: boolean;
+}
+
+//
+
+interface YpAgentSubscribeParams {
+  agentProductId: number;
+  subscriptionPlanId: number;
+  useHasVerballyConfirmedSubscribeWithTheAgentName: boolean;
+}
+
+interface YpAgentSubscribeProperties {
+  agentProductId: {
+    type: "number";
+  };
+  subscriptionPlanId: {
+    type: "number";
+  };
+  useHasVerballyConfirmedSubscribeWithTheAgentName: {
+    type: "boolean";
+  };
+}
+
+//
+
+interface YpAgentSelectProperties {
+  agentProductId: {
+    type: "number";
+  };
+}
+
+interface YpAgentSelectParams {
+  agentProductId: number;
+}
+
+//
+
+interface YpAgentEmptyProperties {}
+
+//
+
+
+interface YpAssistantLogoutProperties {
+  confirmLogout: {
+    type: "boolean";
+  };
+}
+
+
+interface YpAssistantLogoutParams {
+  confirmLogout: boolean;
 }

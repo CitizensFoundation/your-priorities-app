@@ -47,6 +47,11 @@ export class AgentSubscriptionController {
       this.updateSubscription
     );
 
+    this.router.put(
+      "/:subscriptionId/update-agent-configuration",
+      this.updateAgentConfiguration
+    );
+
     // Add new payment-related routes
     this.router.post(
       "/stripe-create-payment-intent",
@@ -66,6 +71,13 @@ export class AgentSubscriptionController {
       auth.can("create subscriptions"),
       this.createSubscriptions
     );
+
+    this.router.put(
+      "/:subscriptionId/update-agent-configuration",
+      auth.can("edit subscriptions"),
+      this.updateAgentConfiguration
+    );
+
     this.router.post(
       "/:subscriptionId/start",
       auth.can("edit subscriptions"),
@@ -102,6 +114,36 @@ export class AgentSubscriptionController {
       express.raw({ type: "application/json" }),
       this.handleWebhook
     );
+  }
+
+  updateAgentConfiguration = async (req: YpRequest, res: express.Response) => {
+    try {
+      const subscriptionId = parseInt(req.params.subscriptionId);
+      const requiredQuestionsAnswered = req.body.requiredQuestionsAnswered;
+
+      if (!requiredQuestionsAnswered) {
+        return res.status(400).json({ error: "requiredQuestionsAnswered is required" });
+      }
+
+      const subscription = await YpSubscription.findOne({
+        where: { id: subscriptionId, user_id: req.user.id }
+      });
+
+      if (!subscription) {
+        return res.status(404).json({ error: "Subscription not found" });
+      }
+
+      subscription.configuration!.requiredQuestionsAnswered = JSON.parse(requiredQuestionsAnswered);
+
+      subscription.changed('configuration', true);
+
+      await subscription.save();
+
+      res.status(200);
+    } catch (error: any) {
+      console.error("Error updating agent configuration:", error);
+      res.status(500).json({ error: error.message });
+    }
   }
 
   getPlans = async (req: YpRequest, res: express.Response) => {

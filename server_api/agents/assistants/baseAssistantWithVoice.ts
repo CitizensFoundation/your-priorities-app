@@ -2,7 +2,6 @@ import { WebSocket } from "ws";
 import { YpBaseAssistant } from "./baseAssistant.js";
 import { YpBaseChatBotWithVoice } from "./voiceAssistant.js";
 import ioredis from "ioredis";
-import { ToolCall, ToolExecutionResult } from "./baseAssistant.js";
 
 interface VoiceToolResult extends ToolExecutionResult {
   data?: {
@@ -159,7 +158,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
 
       console.log("handleModeSwitch", newMode, params);
 
-      if (newMode === "agent_direct_conversation") {
+      if (newMode === "agent_direct_connection_mode") {
         this.voiceBot?.initializeDirectAgentVoiceConnection();
       } else {
         await this.voiceBot?.destroyDirectAgentVoiceConnection();
