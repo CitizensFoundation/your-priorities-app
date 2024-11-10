@@ -40,7 +40,7 @@ Available tools:
         }
         else {
             tools.push(this.loginTools.showLogin);
-            if (!this.assistant.haveShownLoginWidget) {
+            if (this.assistant.haveShownLoginWidget) {
                 tools.push(this.loginTools.clickGoogleLoginButton);
             }
         }
@@ -49,6 +49,7 @@ Available tools:
     getMode() {
         const systemPrompt = this.getCurrentModeSystemPrompt();
         const tools = this.getCurrentModeTools();
+        console.log("222222------------------->", tools);
         return {
             name: "agent_selection_mode",
             description: "List available agents the user is subscribed to or available for purchase then connect the user to the agent selected by the user",

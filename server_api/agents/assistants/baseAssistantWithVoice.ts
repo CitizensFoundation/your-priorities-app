@@ -34,8 +34,8 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
   }
 
   async initialize() {
-    await this.initializeModes();
     this.registerCoreFunctions();
+    await this.initializeModes();
 
     if (this.voiceEnabled) {
       this.createVoiceBot();

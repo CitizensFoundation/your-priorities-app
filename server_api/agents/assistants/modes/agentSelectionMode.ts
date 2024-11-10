@@ -5,6 +5,7 @@ import { YpSubscription } from "../../models/subscription.js";
 import { SubscriptionTools } from "./tools/subscriptionTools.js";
 import { NavigationTools } from "./tools/navigationTools.js";
 import { LoginAssistantTools } from "./tools/loginTools.js";
+import { AgentTools } from "./tools/agentTools.js";
 
 export class AgentSelectionMode extends BaseAssistantMode {
   constructor(assistant: YpAgentAssistant) {
@@ -49,7 +50,7 @@ Available tools:
       tools.push(this.subscriptionTools.listMyAgentSubscriptions);
     } else {
       tools.push(this.loginTools.showLogin);
-      if (!this.assistant.haveShownLoginWidget) {
+      if (this.assistant.haveShownLoginWidget) {
         tools.push(this.loginTools.clickGoogleLoginButton);
       }
     }
@@ -60,6 +61,8 @@ Available tools:
   public getMode(): AssistantChatbotMode {
     const systemPrompt = this.getCurrentModeSystemPrompt();
     const tools = this.getCurrentModeTools();
+
+    console.log("222222------------------->", tools)
 
     return {
       name: "agent_selection_mode",

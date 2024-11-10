@@ -308,6 +308,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Get current mode's functions
      */
     getCurrentModeFunctions() {
+        this.registerCoreFunctions();
         this.initializeModes();
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode)
@@ -322,6 +323,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Get current mode's system prompt
      */
     getCurrentSystemPrompt() {
+        this.registerCoreFunctions();
         this.initializeModes(); //TODO: Look into not calling this twice in those getters
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode) {
