@@ -61,8 +61,8 @@ export class LoginAssistantTools extends BaseAssistantTools {
         params = this.assistant.getCleanedParams(params);
         console.log(`handler: clickMainLoginButton: ${JSON.stringify(params, null, 2)}`);
         const clientEvent = {
-            name: "click_main_login_button",
-            details: {},
+            name: "ui_click",
+            details: "login-button-main",
         };
         return {
             success: true,
@@ -89,8 +89,8 @@ export class LoginAssistantTools extends BaseAssistantTools {
         params = this.assistant.getCleanedParams(params);
         console.log(`handler: clickGoogleLoginButton: ${JSON.stringify(params, null, 2)}`);
         const clientEvent = {
-            name: "click_google_login_button",
-            details: {},
+            name: "ui_click",
+            details: "login-button-google",
         };
         return {
             success: true,
@@ -122,8 +122,10 @@ export class LoginAssistantTools extends BaseAssistantTools {
         params = this.assistant.getCleanedParams(params);
         console.log(`handler: logout: ${JSON.stringify(params, null, 2)}`);
         const clientEvent = {
-            name: "logout",
-            details: { confirmLogout: params.confirmLogout },
+            name: "ui_click",
+            details: {
+                element: "logout",
+            },
         };
         try {
             if (!params.confirmLogout) {
@@ -134,7 +136,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
             }
             return {
                 success: true,
-                data: { message: "Logged out successfully" },
+                data: { message: "UI Event for logout sent successfully" },
                 clientEvents: [clientEvent],
                 metadata: {
                     timestamp: new Date().toISOString(),

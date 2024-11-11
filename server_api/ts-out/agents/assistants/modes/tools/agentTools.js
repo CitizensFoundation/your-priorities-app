@@ -175,8 +175,8 @@ export class AgentTools extends BaseAssistantTools {
     async submitConfigurationHandler(params) {
         try {
             const clientEvent = {
-                name: "submit-agent-configuration",
-                details: {},
+                name: "ui_click",
+                details: "submit-agent-configuration",
             };
             return {
                 success: true,

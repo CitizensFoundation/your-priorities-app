@@ -206,10 +206,10 @@ export class AgentTools extends BaseAssistantTools {
   ): Promise<ToolExecutionResult> {
     try {
 
-      const clientEvent = {
-        name: "submit-agent-configuration",
-        details: {},
-      } as ToolClientEvent;
+      const clientEvent: ToolClientEventUiClick = {
+        name: "ui_click",
+        details: "submit-agent-configuration",
+      }
 
       return {
         success: true,

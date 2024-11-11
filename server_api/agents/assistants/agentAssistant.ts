@@ -11,7 +11,6 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   public availableAgents: PsAgent[] = [];
   public runningAgents: PsAgent[] = [];
 
-  public userId: number;
   private agentSelectionMode: AgentSelectionMode;
   private directConversationMode: DirectConversationMode;
 
@@ -20,21 +19,17 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
     voiceEnabled: boolean,
-    currentMode: YpAssistantMode,
     domainId: number,
-    memoryId: string,
-    userId: number
+    memoryId: string
   ) {
     super(
       wsClientId,
       wsClients,
       redis,
       voiceEnabled,
-      currentMode,
       domainId,
       memoryId
     );
-    this.userId = userId;
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.directConversationMode = new DirectConversationMode(this);
     this.on("memory-changed", this.handleMemoryChanged.bind(this));

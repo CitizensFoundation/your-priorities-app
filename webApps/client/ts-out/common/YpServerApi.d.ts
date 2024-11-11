@@ -11,6 +11,7 @@ export declare class YpServerApi extends YpServerApiBase {
     getRecommendationsForGroup(groupId: number): Promise<any>;
     hasVideoUploadSupport(): Promise<any>;
     hasAudioUploadSupport(): Promise<any>;
+    updateAssistantMemoryUserLoginStatus(domainId: number): Promise<any>;
     sendVideoView(body: Record<string, unknown>): Promise<any>;
     sendAudioView(body: Record<string, unknown>): Promise<any>;
     createActivityFromApp(body: Record<string, unknown>): Promise<any>;

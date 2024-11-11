@@ -36,6 +36,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.dialogMode = false;
         this.forceSecureSamlLogin = false;
         this.directSamlIntegration = false;
+        this.assistantMode = false;
         this.hasAnonymousLogin = false;
         this.disableFacebookLoginForGroup = false;
         this.hasOneTimeLoginWithName = false;
@@ -710,13 +711,15 @@ let YpLogin = class YpLogin extends YpBaseElement {
     }
     renderLanguage() {
         return html `<yp-language-selector
+      ?hidden="${this.assistantMode}"
       autoTranslateOptionDisabled
       class="languageSelector"
     ></yp-language-selector>`;
     }
     renderLoginSurface() {
         return html `${!this.dialogMode ? this.renderDomainImage() : nothing}
-      <div class="welcome">${this.t("welcome")}</div>
+      <div class="welcome" ?hidden="${this.assistantMode}">${this.t("welcome")}</div>
+      <div class="welcome" ?hidden="${!this.assistantMode}">${this.t("loginHere")}</div>
       ${this.renderCustomUserRegistrationText()} ${this.renderSamlInfo()}
       ${this.renderAdditionalMethods()}
 
@@ -1364,6 +1367,9 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.addListener("yp-network-error", this._networkError.bind(this));
         this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
         this.addGlobalListener("yp-language-loaded", this._setTexts.bind(this));
+        this.addGlobalListener("assistant-requested-login-main-button-click", () => this._validateAndSend(false));
+        this.addGlobalListener("assistant-requested-logout-main-button-click", () => this.logout());
+        this.addGlobalListener("assistant-requested-login-google-button-click", () => this._validateAndSend(false));
         this._setTexts();
         this.setupCreateOptions();
     }
@@ -1373,6 +1379,12 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.removeListener("yp-network-error", this._networkError.bind(this));
         this.removeGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
         this.removeGlobalListener("yp-language-loaded", this._setTexts.bind(this));
+        this.removeGlobalListener("assistant-requested-login-main-button-click", () => this._validateAndSend(false));
+        this.removeGlobalListener("assistant-requested-logout-main-button-click", () => this.logout());
+        this.removeGlobalListener("assistant-requested-login-google-button-click", () => this._validateAndSend(false));
+    }
+    logout() {
+        window.appUser.logout();
     }
     setupCreateOptions() {
         if (window.appUser.loginForAcceptInviteParams) {
@@ -1640,6 +1652,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "directSamlIntegration", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpLogin.prototype, "assistantMode", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "hasAnonymousLogin", void 0);

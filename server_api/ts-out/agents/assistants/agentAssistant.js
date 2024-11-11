@@ -3,11 +3,10 @@ import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
 import { AgentSelectionMode } from "./modes/agentSelectionMode.js";
 import { DirectConversationMode } from "./modes/agentDirectConnection.js";
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
-    constructor(wsClientId, wsClients, redis, voiceEnabled, currentMode, domainId, memoryId, userId) {
-        super(wsClientId, wsClients, redis, voiceEnabled, currentMode, domainId, memoryId);
+    constructor(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId) {
+        super(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId);
         this.availableAgents = [];
         this.runningAgents = [];
-        this.userId = userId;
         this.agentSelectionMode = new AgentSelectionMode(this);
         this.directConversationMode = new DirectConversationMode(this);
         this.on("memory-changed", this.handleMemoryChanged.bind(this));

@@ -70,8 +70,13 @@ interface AssistantAgentPlanStatus {
 }
 
 interface ToolClientEvent {
-  name: string;
+  name: YpAssistantMessageType;
   details: any;
+}
+
+interface ToolClientEventUiClick {
+  name: "ui_click";
+  details: YpAssistantUiClickTypes;
 }
 
 interface ToolExecutionResult<T = unknown> {

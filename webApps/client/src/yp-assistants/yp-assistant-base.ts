@@ -8,6 +8,7 @@ import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import { WavRenderer } from "./wave-renderer.js";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
+import { YpServerApi } from "../common/YpServerApi.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -66,6 +67,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   private renderLoopActive = false;
   aiSpeakingTimeout: NodeJS.Timeout | undefined;
 
+  serverApi!: YpServerApi;
+
   constructor() {
     super();
     this.setupVoiceCapabilities();
@@ -74,6 +77,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   override connectedCallback() {
     super.connectedCallback();
     this.getMemoryFromServer();
+    this.addGlobalListener("yp-logged-in", this.userLoggedIn);
+  }
+
+  async setupServerApi() {
+    this.serverApi = new YpServerApi();
+  }
+
+  async userLoggedIn() {
+    await this.serverApi.updateAssistantMemoryUserLoginStatus(this.domainId);
+    const clientSystemMessage: YpAssistantMessage = {
+      type: "client_system_message",
+      sender: "user",
+      message: "user_logged_in",
+    };
+    this.ws.send(JSON.stringify(clientSystemMessage));
   }
 
   override firstUpdated(
@@ -183,6 +201,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.stopCanvasRendering();
 
     this.stopRecording();
+    this.removeGlobalListener("yp-logged-in", this.userLoggedIn);
+
   }
 
   async setupVoiceCapabilities() {}
@@ -365,6 +385,18 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
 
     switch (data.type) {
+      case "ui_click":
+        const type = data.data as YpAssistantUiClickTypes;
+        if (type === "login-button-main") {
+          this.fireGlobal("assistant-requested-login-main-button-click");
+        } else if (type === "login-button-google") {
+          this.fireGlobal("assistant-requested-login-google-button-click");
+        } else if (type === "logout") {
+          this.fireGlobal("assistant-requested-logout-button-click");
+        } else {
+          console.error("No mode received in current_mode message");
+        }
+        break;
       case "current_mode":
         if (data.mode) {
           this.currentMode = data.mode;

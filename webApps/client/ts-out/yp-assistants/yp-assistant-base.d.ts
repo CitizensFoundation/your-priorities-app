@@ -1,6 +1,7 @@
 import { PropertyValueMap } from "lit";
 import { YpChatbotBase } from "../yp-chatbots/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
+import { YpServerApi } from "../common/YpServerApi.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
     domainId: number;
@@ -22,8 +23,11 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private canvasCtx;
     private renderLoopActive;
     aiSpeakingTimeout: NodeJS.Timeout | undefined;
+    serverApi: YpServerApi;
     constructor();
     connectedCallback(): void;
+    setupServerApi(): Promise<void>;
+    userLoggedIn(): Promise<void>;
     firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     getMemoryFromServer(): Promise<void>;
     private setupCanvasRendering;

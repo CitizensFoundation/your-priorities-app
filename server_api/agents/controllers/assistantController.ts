@@ -89,8 +89,36 @@ export class AssistantController {
       auth.can("view domain"),
       this.clearChatLog.bind(this)
     );
+
+    this.router.put(
+      "/:domainId/updateAssistantMemoryLoginStatus",
+      this.updateAssistantMemoryLoginStatus.bind(this)
+    );
   }
 
+  private updateAssistantMemoryLoginStatus = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
+    if (req.user && req.params.domainId) {
+      const memoryId = `${req.params.domainId}-${req.user.id}`;
+      const redisKey = YpAgentAssistant.getRedisKey(memoryId);
+      const memory = (await YpAgentAssistant.loadMemoryFromRedis(
+        memoryId
+      )) as YpBaseAssistantMemoryData;
+      if (memory) {
+        memory.currentUser = req.user;
+        await req.redisClient.set(redisKey, JSON.stringify(memory));
+      } else {
+        console.error(
+          `No memory found to update login status for id ${memoryId}`
+        );
+      }
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    }
+  };
 
   private defaultStartAgentMode: YpAssistantMode = "agent_selection_mode";
 
@@ -100,7 +128,9 @@ export class AssistantController {
 
     try {
       const redisKey = YpAgentAssistant.getRedisKey(memoryId);
-      const memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId) as YpBaseAssistantMemoryData;
+      const memory = (await YpAgentAssistant.loadMemoryFromRedis(
+        memoryId
+      )) as YpBaseAssistantMemoryData;
 
       if (memory) {
         if (!memory.allChatLogs) {
@@ -122,7 +152,7 @@ export class AssistantController {
       console.error("Error clearing chat log:", error);
       res.sendStatus(500);
     }
-  }
+  };
 
   private getMemory = async (req: YpRequest, res: express.Response) => {
     const memoryId = `${req.params.domainId}-${req.user.id}`;
@@ -132,15 +162,17 @@ export class AssistantController {
 
     try {
       if (memoryId) {
-        memory = await YpAgentAssistant.loadMemoryFromRedis(memoryId) as YpBaseAssistantMemoryData;
+        memory = (await YpAgentAssistant.loadMemoryFromRedis(
+          memoryId
+        )) as YpBaseAssistantMemoryData;
         if (!memory) {
-          console.log(`memory not found for id ${memoryId}`)
+          console.log(`memory not found for id ${memoryId}`);
           memory = {
             redisKey: YpAgentAssistant.getRedisKey(memoryId),
             chatLog: [],
             currentMode: this.defaultStartAgentMode,
             modeHistory: [],
-            modeData: undefined
+            modeData: undefined,
           } as YpBaseAssistantMemoryData;
 
           await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
@@ -167,13 +199,20 @@ export class AssistantController {
       const memoryId = `${domainId}-${req.user.id}`;
       console.log(`Starting chat session for client: ${wsClientId}`);
 
-      const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, currentMode, domainId, memoryId, req.user.id);
+      const assistant = new YpAgentAssistant(
+        wsClientId,
+        this.wsClients,
+        req.redisClient,
+        true,
+        domainId,
+        memoryId
+      );
 
       await assistant.initialize();
 
       res.status(200).json({
         message: "Voice session initialized",
-        wsClientId
+        wsClientId,
       });
     } catch (error) {
       console.error("Error starting chat session:", error);
@@ -186,15 +225,24 @@ export class AssistantController {
       const { wsClientId, chatLog, currentMode } = req.body;
       const domainId = parseInt(req.params.domainId);
       const memoryId = `${domainId}-${req.user.id}`;
-      console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
+      console.log(
+        `Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`
+      );
 
-      const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, currentMode, domainId, memoryId, req.user.id);
+      const assistant = new YpAgentAssistant(
+        wsClientId,
+        this.wsClients,
+        req.redisClient,
+        false,
+        domainId,
+        memoryId,
+      );
 
       assistant.conversation(chatLog);
 
       res.status(200).json({
         message: "Chat session initialized",
-        wsClientId
+        wsClientId,
       });
     } catch (error) {
       console.error("Error starting chat session:", error);

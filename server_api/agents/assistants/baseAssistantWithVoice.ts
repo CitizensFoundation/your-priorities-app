@@ -20,11 +20,10 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
     voiceEnabled: boolean,
-    currentMode: YpAssistantMode,
     domainId: number,
-    memoryId: string
+    memoryId: string,
   ) {
-    super(wsClientId, wsClients, redis, domainId, memoryId, currentMode);
+    super(wsClientId, wsClients, redis, domainId, memoryId);
 
     if (!domainId) {
       throw new Error("Domain ID is required");

@@ -10,7 +10,7 @@ export var CommonModes;
     CommonModes["ErrorRecovery"] = "error_recovery";
 })(CommonModes || (CommonModes = {}));
 export class YpBaseAssistant extends YpBaseChatBot {
-    constructor(wsClientId, wsClients, redis, domainId, memoryId, currentMode) {
+    constructor(wsClientId, wsClients, redis, domainId, memoryId) {
         super(wsClientId, wsClients, memoryId);
         this.persistMemory = true;
         this.DEBUG = true;
@@ -32,6 +32,15 @@ export class YpBaseAssistant extends YpBaseChatBot {
             apiKey: process.env.OPENAI_API_KEY,
         });
         this.eventEmitter = new EventEmitter();
+        this.wsClientSocket.on("client_system_message", this.processClientSystemMessage.bind(this));
+        this.on("update-ai-model-session", this.initializeModes.bind(this));
+    }
+    processClientSystemMessage(clientEvent) {
+        console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
+        if (clientEvent.message === "user_logged_in") {
+            console.log(`user_logged_in: `);
+            this.emit("update-ai-model-session", "User is logged and lets move to the next step");
+        }
     }
     emit(event, ...args) {
         return this.eventEmitter.emit(event, ...args);
@@ -114,6 +123,11 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 }
                 if (result.html) {
                     this.sendToClient("assistant", result.html, "html", true);
+                }
+                if (result.clientEvents) {
+                    for (const clientEvent of result.clientEvents) {
+                        this.sendToClient("assistant", clientEvent.details, clientEvent.name);
+                    }
                 }
                 // If error, throw it after recording the result
                 if (!result.success) {
@@ -199,8 +213,8 @@ export class YpBaseAssistant extends YpBaseChatBot {
             else {
                 console.error("No wsClientSocket found");
             }
+            await this.saveMemory();
         }
-        await this.saveMemory();
     }
     getCleanedParams(params) {
         return typeof params === "string" ? JSON.parse(params) : params;
@@ -258,7 +272,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                         enum: Array.from(this.modes.keys()),
                     },
                     agentProductId: { type: "number" },
-                    reason: { type: "string" }
+                    reason: { type: "string" },
                 },
                 required: ["newMode"],
             },
@@ -397,10 +411,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
         await this.setChatLog(chatLog);
         await this.saveMemory();
         let systemPrompt = this.getCurrentSystemPrompt();
-        if (this.memory.currentMode ===
-            "agent_direct_connection_mode" &&
-            this.memory.currentAgentStatus?.agentProduct
-                .configuration.avatar?.systemPrompt) {
+        if (this.memory.currentMode === "agent_direct_connection_mode" &&
+            this.memory.currentAgentStatus?.agentProduct.configuration.avatar
+                ?.systemPrompt) {
             systemPrompt = `${this.memory.currentAgentStatus.agentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
         }
         const messages = [

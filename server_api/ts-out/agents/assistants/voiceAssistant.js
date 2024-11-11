@@ -22,6 +22,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             voice: "verse",
             modalities: ["text", "audio"],
         };
+        this.parentAssistant.on("update-ai-model-session", this.updateAiModelSession.bind(this));
+    }
+    updateAiModelSession(message) {
+        console.log(`updateAiModelSession: ${message}`);
+        this.initializeVoiceSession(message);
     }
     async initializeMainAssistantVoiceConnection() {
         if (!this.voiceEnabled)
@@ -65,7 +70,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (!this.voiceEnabled)
             return;
         await this.sendCancelResponse();
-        if (this.parentAssistant?.memory.currentAgentStatus?.agentProduct.name) {
+        if (this.parentAssistant.memory.currentAgentStatus?.agentProduct.name) {
             this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${this.parentAssistant.memory.currentAgentStatus.agentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
         }
         this.sendToClient("assistant", "", "clear_audio_buffer");
@@ -113,7 +118,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.directAgentVoiceConnection.ws.close();
             this.directAgentVoiceConnection.connected = false;
             this.directAgentVoiceConnection = undefined;
-            this.parentAssistant?.memory.chatLog.push({
+            this.parentAssistant.memory.chatLog.push({
                 sender: "user",
                 message: "Thank you for the information, I would not like to speak to the main assistant about selecting agents or managing subscriptions",
             });
@@ -208,7 +213,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             if (this.sendTranscriptsToClient) {
                 this.sendToClient("assistant", event.item.content[0].transcript, "message");
             }
-            this.parentAssistant?.addAssistantMessage(event.item.content[0].transcript);
+            this.parentAssistant.addAssistantMessage(event.item.content[0].transcript);
         }
         else {
             console.error("No text in response.done event");
@@ -219,11 +224,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             if (this.sendTranscriptsToClient) {
                 this.sendToClient("user", event.transcript, "message");
             }
-            this.parentAssistant?.addUserMessage(event.transcript);
+            this.parentAssistant.addUserMessage(event.transcript);
         }
     }
     async callFunctionHandler(event) {
-        const tools = this.parentAssistant?.getCurrentModeFunctions();
+        const tools = this.parentAssistant.getCurrentModeFunctions();
         if (!tools)
             return;
         //console.log("callFunctionHandler event: ", JSON.stringify(event, null, 2));
@@ -237,7 +242,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const result = await tool.handler(event.arguments);
         // Store the result in memory for context
         if (result.success && result.data) {
-            await this.parentAssistant?.setModeData(`${toolName}_result`, result.data);
+            await this.parentAssistant.setModeData(`${toolName}_result`, result.data);
         }
         let resultData = result.data || result.error;
         // Generate a user-friendly message based on the tool result
@@ -251,12 +256,12 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                     response: {
                         modalities: this.voiceConfig.modalities,
                         instructions: "Inform the user about the mode change",
-                        tools: this.parentAssistant?.getCurrentModeFunctions(),
+                        tools: this.parentAssistant.getCurrentModeFunctions(),
                     },
                 };
                 this.assistantVoiceConnection?.ws.send(JSON.stringify(createResponse));
             }
-            /*this.parentAssistant?.memory.chatLog!.push({
+            /*this.parentAssistant.memory.chatLog!.push({
               sender: "assistant",
               hiddenContextMessage: true,
               message: resultMessage,
@@ -268,7 +273,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }
         if (result.html) {
             this.sendToClient("assistant", result.html, "html", true);
-            this.parentAssistant?.addAssistantHtmlMessage(result.html);
+            this.parentAssistant.addAssistantHtmlMessage(result.html);
         }
         if (!result.success) {
             console.error(`Tool execution failed: ${event.name} ${result.error}`);
@@ -290,7 +295,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 response: {
                     modalities: this.voiceConfig.modalities,
                     instructions: "Inform the user about the tool execution error",
-                    tools: this.parentAssistant?.getCurrentModeFunctions(),
+                    tools: this.parentAssistant.getCurrentModeFunctions(),
                 },
             };
             this.sendToVoiceConnection(createResponse);
@@ -370,7 +375,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (!event.content)
             return;
         // Add to chat log
-        this.parentAssistant?.memory.chatLog.push({
+        this.parentAssistant.memory.chatLog.push({
             sender: "assistant",
             message: event.content,
         });
@@ -421,14 +426,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeVoiceSession(customResponseMessage) {
         if (!this.assistantVoiceConnection?.ws)
             return;
-        console.log("======================> initializeVoiceSession current mode", this.parentAssistant?.memory.currentMode);
-        console.log("======================> initializeVoiceSession system prompt", this.parentAssistant?.getCurrentSystemPrompt());
-        console.log("======================> initializeVoiceSession functions", this.parentAssistant?.getCurrentModeFunctions());
+        console.log("======================> initializeVoiceSession current mode", this.parentAssistant.memory.currentMode);
+        console.log("======================> initializeVoiceSession system prompt", this.parentAssistant.getCurrentSystemPrompt());
+        console.log("======================> initializeVoiceSession functions", this.parentAssistant.getCurrentModeFunctions());
         let chatHistory;
-        if (this.parentAssistant?.memory &&
-            this.parentAssistant?.memory.chatLog &&
-            this.parentAssistant?.memory.chatLog.length > 0) {
-            chatHistory = JSON.stringify(this.parentAssistant?.memory.chatLog
+        if (this.parentAssistant.memory &&
+            this.parentAssistant.memory.chatLog &&
+            this.parentAssistant.memory.chatLog.length > 0) {
+            chatHistory = JSON.stringify(this.parentAssistant.memory.chatLog
                 .filter((message) => message.message != "")
                 .slice(-this.lastNumberOfChatHistoryForInstructions)
                 .map((message) => ({
@@ -436,22 +441,22 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 content: message.message,
             })));
         }
-        let instructions = this.parentAssistant?.getCurrentSystemPrompt() || "";
-        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< initializeVoiceSession current mode", JSON.stringify(this.parentAssistant?.memory, null, 2));
+        let instructions = this.parentAssistant.getCurrentSystemPrompt() || "";
+        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< initializeVoiceSession current mode", JSON.stringify(this.parentAssistant.memory, null, 2));
         let voiceName = this.voiceConfig.voice;
-        if (this.parentAssistant?.memory.currentMode ===
+        if (this.parentAssistant.memory.currentMode ===
             "agent_direct_connection_mode" &&
-            this.parentAssistant?.memory.currentAgentStatus?.agentProduct
+            this.parentAssistant.memory.currentAgentStatus?.agentProduct
                 .configuration.avatar?.voiceName) {
             voiceName =
-                this.parentAssistant?.memory.currentAgentStatus?.agentProduct
+                this.parentAssistant.memory.currentAgentStatus?.agentProduct
                     .configuration.avatar.voiceName;
-            instructions = `${this.parentAssistant?.memory.currentAgentStatus?.agentProduct.configuration.avatar.systemPrompt}\n${instructions}`;
-            this.parentAssistant?.sendAvatarUrlChange(this.parentAssistant?.memory.currentAgentStatus?.agentProduct
+            instructions = `${this.parentAssistant.memory.currentAgentStatus?.agentProduct.configuration.avatar.systemPrompt}\n${instructions}`;
+            this.parentAssistant.sendAvatarUrlChange(this.parentAssistant.memory.currentAgentStatus?.agentProduct
                 .configuration.avatar.imageUrl);
         }
         else {
-            this.parentAssistant?.sendAvatarUrlChange(null);
+            this.parentAssistant.sendAvatarUrlChange(null);
         }
         if (chatHistory) {
             instructions += `\n\n<ImportantPreviousChatHistory>\n${chatHistory}\n</ImportantPreviousChatHistory>`;
@@ -466,7 +471,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 voice: voiceName,
                 instructions: instructions,
                 //@ts-ignore
-                tools: this.parentAssistant?.getCurrentModeFunctions(),
+                tools: this.parentAssistant.getCurrentModeFunctions(),
                 tool_choice: "auto",
                 temperature: 0.72,
                 input_audio_transcription: {

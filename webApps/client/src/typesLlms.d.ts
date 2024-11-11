@@ -2,6 +2,8 @@ type YpAssistantMessageType =
   | "hello_message"
   | "moderation_error"
   | "start"
+  | "ui_click"
+  | "client_system_message"
   | "component"
   | "memory-changed"
   | "html"
@@ -34,6 +36,9 @@ type YpAssistantMessageType =
   | "ai_speaking_stop"
   | "stream_followup";
 
+type YpAssistantUiClickTypes = "login-button-main" | "logout" | "login-button-google" | "submit-agent-configuration";
+type YpAssistantClientSystemMessageType = "user_logged_in";
+
 interface YpAssistantMessage {
   sender: YpSenderType;
   type: YpAssistantMessageType;
@@ -46,6 +51,10 @@ interface YpAssistantMessage {
   base64Audio?: string;
   hidden?: boolean;
   url?: string;
+}
+
+interface YpAssistantClientSystemMessage extends YpAssistantMessage {
+  message: YpAssistantClientSystemMessageType;
 }
 
 type YpSenderType = "assistant" | "user" | "system";

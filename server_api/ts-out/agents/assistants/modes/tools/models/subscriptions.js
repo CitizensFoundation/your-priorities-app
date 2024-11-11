@@ -203,10 +203,11 @@ export class SubscriptionModels {
                     error: "Subscription not found or already inactive",
                 };
             }
+            const userId = this.assistant.memory.currentUser?.id;
             subscription.status = "cancelled";
             subscription.configuration = {
                 cancelledAt: new Date(),
-                cancelledByUserId: this.assistant.userId,
+                cancelledByUserId: userId,
             };
             subscription.end_date = new Date();
             subscription.changed("configuration", true);
@@ -236,10 +237,11 @@ export class SubscriptionModels {
                     error: "Subscription plan not found",
                 };
             }
+            const userId = this.assistant.memory.currentUser?.id;
             const subscription = await YpSubscription.create({
                 subscription_plan_id: subscriptionPlanId,
                 agent_product_id: agentProductId,
-                user_id: this.assistant.userId,
+                user_id: userId,
                 domain_id: this.assistant.domainId,
                 next_billing_date: new Date(),
                 status: "active",

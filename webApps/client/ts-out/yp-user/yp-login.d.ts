@@ -32,6 +32,7 @@ export declare class YpLogin extends YpBaseElement {
     target: any | undefined;
     forceSecureSamlLogin: boolean;
     directSamlIntegration: boolean;
+    assistantMode: boolean;
     hasAnonymousLogin: boolean;
     disableFacebookLoginForGroup: boolean;
     credentials: Record<string, unknown> | undefined;
@@ -102,6 +103,7 @@ export declare class YpLogin extends YpBaseElement {
     _forgotPassword(): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    logout(): void;
     setupCreateOptions(): void;
     setup(onLoginFunction: Function, domain: YpDomainData): void;
     _setTexts(): void;
