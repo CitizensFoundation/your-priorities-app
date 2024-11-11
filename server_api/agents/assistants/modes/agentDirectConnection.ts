@@ -19,41 +19,7 @@ export class DirectConversationMode extends BaseAssistantMode {
   agentTools = new AgentTools(this.assistant);
 
   protected getCurrentModeSystemPrompt(): string {
-    let systemPrompt = `Available tools:
-- Switch back to the main assistant to work with other agents
-`;
-
-    if (this.assistant.isLoggedIn) {
-      systemPrompt += `- Log out the current user and switch to the main assistant
-  `;
-    } else {
-      systemPrompt += "- Show login widget to the user if wants to subscribe to an agent, start an agent workflow or any other action that requires the user to be logged in.";
-      if (this.assistant.haveShownLoginWidget) {
-        systemPrompt += "- Click the Google login button";
-        systemPrompt += "- Click the main login button";
-      }
-    }
-
-    if (this.assistant.isSubscribedToCurrentAgent) {
-      if (this.assistant.hasConfiguredCurrentAgent) {
-        systemPrompt += `- Show agent workflow widget`;
-        if (this.assistant.isCurrentAgentRunning) {
-          systemPrompt += `- Stop the current agent workflow`;
-        } else {
-          systemPrompt += `- Start an agent workflow with the current agent`;
-        }
-        if (this.assistant.isCurrentAgentWaitingOnUserInput) {
-          systemPrompt += `- Show current agent input widget`;
-        }
-      } else {
-        systemPrompt += `- Show configuration widget for the current agent before the user can start an agent workflow`;
-        if (this.assistant.haveShownConfigurationWidget) {
-          systemPrompt += `- Submit the configuration`;
-        }
-      }
-    } else {
-      systemPrompt += `- Subscribe to the current agent before the user can start an agent workflow`;
-    }
+    let systemPrompt = ``; // Is filled in dynamically
 
     systemPrompt += this.renderCommon();
 

@@ -101,9 +101,9 @@ export class AssistantController {
     res: express.Response
   ) => {
     if (req.user && req.params.domainId) {
-      const memoryId = `${req.params.domainId}-${req.user.id}`;
-      const redisKey = YpAgentAssistant.getRedisKey(memoryId);
-      const memory = (await YpAgentAssistant.loadMemoryFromRedis(
+      let memoryId = this.getMemoryUserId(req);
+      let redisKey = YpAgentAssistant.getRedisKey(memoryId);
+      let memory = (await YpAgentAssistant.loadMemoryFromRedis(
         memoryId
       )) as YpBaseAssistantMemoryData;
       if (memory) {
@@ -122,11 +122,20 @@ export class AssistantController {
 
   private defaultStartAgentMode: YpAssistantMode = "agent_selection_mode";
 
+  private getMemoryUserId = (req: YpRequest) => {
+    const userIdentifier = req.body.clientMemoryUuid || req.query.clientMemoryUuid;
+    if (!userIdentifier) {
+      throw new Error("No user identifier found");
+    }
+    return `${req.params.domainId}-${userIdentifier}`;
+  }
+
   private clearChatLog = async (req: YpRequest, res: express.Response) => {
-    const memoryId = `${req.params.domainId}-${req.user.id}`;
-    console.log(`Clearing chat log for memoryId: ${memoryId}`);
+
 
     try {
+      const memoryId = this.getMemoryUserId(req);
+      console.log(`Clearing chat log for memoryId: ${memoryId}`);
       const redisKey = YpAgentAssistant.getRedisKey(memoryId);
       const memory = (await YpAgentAssistant.loadMemoryFromRedis(
         memoryId
@@ -155,12 +164,13 @@ export class AssistantController {
   };
 
   private getMemory = async (req: YpRequest, res: express.Response) => {
-    const memoryId = `${req.params.domainId}-${req.user.id}`;
-    console.log(`Getting memory for memoryId: ${memoryId}`);
 
     let memory: YpBaseAssistantMemoryData | undefined;
+    let memoryId: string | undefined;
 
     try {
+      memoryId = this.getMemoryUserId(req);
+      console.log(`Getting memory for memoryId: ${memoryId}`);
       if (memoryId) {
         memory = (await YpAgentAssistant.loadMemoryFromRedis(
           memoryId
@@ -195,8 +205,7 @@ export class AssistantController {
   private async startVoiceSession(req: YpRequest, res: express.Response) {
     try {
       const { wsClientId, currentMode } = req.body;
-      const domainId = parseInt(req.params.domainId);
-      const memoryId = `${domainId}-${req.user.id}`;
+      const memoryId = this.getMemoryUserId(req);
       console.log(`Starting chat session for client: ${wsClientId}`);
 
       const assistant = new YpAgentAssistant(
@@ -204,7 +213,7 @@ export class AssistantController {
         this.wsClients,
         req.redisClient,
         true,
-        domainId,
+        parseInt(req.params.domainId),
         memoryId
       );
 
@@ -223,8 +232,7 @@ export class AssistantController {
   private async sendChatMessage(req: YpRequest, res: express.Response) {
     try {
       const { wsClientId, chatLog, currentMode } = req.body;
-      const domainId = parseInt(req.params.domainId);
-      const memoryId = `${domainId}-${req.user.id}`;
+      const memoryId = this.getMemoryUserId(req);
       console.log(
         `Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`
       );
@@ -234,7 +242,7 @@ export class AssistantController {
         this.wsClients,
         req.redisClient,
         false,
-        domainId,
+        parseInt(req.params.domainId),
         memoryId,
       );
 

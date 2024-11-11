@@ -5,11 +5,6 @@ import { YpAssistantServerApi } from "./AssistantServerApi.js";
 
 @customElement("yp-assistant")
 export class YpAssistant extends YpAssistantBase {
-  serverApi!: YpAssistantServerApi;
-
-  override setupServerApi(): void {
-    this.serverApi = new YpAssistantServerApi();
-  }
 
   override async sendChatMessage() {
     const message = this.chatInputField!.value;

@@ -1,9 +1,10 @@
 import { YpServerApi } from "../common/YpServerApi.js";
 export class YpAssistantServerApi extends YpServerApi {
-    constructor(urlPath = "/api/assistants") {
+    constructor(clientMemoryUuid, urlPath = "/api/assistants") {
         super();
         this.localStorageChatsKey = "yp-assistant-chats-v1";
         this.baseUrlPath = urlPath;
+        this.clientMemoryUuid = clientMemoryUuid;
     }
     async sendChatMessage(domainId, wsClientId, chatLog, languageName, currentMode = undefined, serverMemoryId) {
         const response = await this.fetchWrapper(this.baseUrlPath + `/${domainId}/chat`, {
@@ -14,6 +15,7 @@ export class YpAssistantServerApi extends YpServerApi {
                 languageName,
                 currentMode,
                 serverMemoryId,
+                clientMemoryUuid: this.clientMemoryUuid,
             }),
         }, true);
         if (response.serverMemoryId) {
@@ -21,13 +23,16 @@ export class YpAssistantServerApi extends YpServerApi {
         }
         return response;
     }
+    updateAssistantMemoryUserLoginStatus(domainId) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`, { method: 'PUT', body: JSON.stringify({ domainId, clientMemoryUuid: this.clientMemoryUuid }) });
+    }
     async getMemoryFromServer(domainId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/memory`, {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/memory?clientMemoryUuid=${this.clientMemoryUuid}`, {
             method: "GET",
         }, true);
     }
     clearChatLogFromServer(domainId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chatlog`, {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chatlog?clientMemoryUuid=${this.clientMemoryUuid}`, {
             method: "DELETE",
         }, false);
     }
@@ -37,7 +42,8 @@ export class YpAssistantServerApi extends YpServerApi {
             body: JSON.stringify({
                 wsClientId,
                 currentMode,
-                serverMemoryId
+                serverMemoryId,
+                clientMemoryUuid: this.clientMemoryUuid,
             })
         }, false);
     }
@@ -76,7 +82,7 @@ export class YpAssistantServerApi extends YpServerApi {
         }
     }
     clearServerMemory(serverMemoryId) {
-        return this.fetchWrapper(this.baseUrlPath + `/memory/${serverMemoryId}`, {
+        return this.fetchWrapper(this.baseUrlPath + `/memory/${serverMemoryId}?clientMemoryUuid=${this.clientMemoryUuid}`, {
             method: "DELETE",
         }, false);
     }

@@ -8,10 +8,11 @@ interface SavedChat {
 
 export class YpAssistantServerApi extends YpServerApi {
   private readonly localStorageChatsKey = "yp-assistant-chats-v1";
-
-  constructor(urlPath: string = "/api/assistants") {
+  clientMemoryUuid: string;
+  constructor(clientMemoryUuid: string, urlPath: string = "/api/assistants") {
     super();
     this.baseUrlPath = urlPath;
+    this.clientMemoryUuid = clientMemoryUuid;
   }
 
   public async sendChatMessage(
@@ -32,6 +33,7 @@ export class YpAssistantServerApi extends YpServerApi {
           languageName,
           currentMode,
           serverMemoryId,
+          clientMemoryUuid: this.clientMemoryUuid,
         }),
       },
       true
@@ -44,11 +46,20 @@ export class YpAssistantServerApi extends YpServerApi {
     return response;
   }
 
+
+  public updateAssistantMemoryUserLoginStatus(domainId: number  ) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`,
+      { method: 'PUT', body: JSON.stringify({ domainId, clientMemoryUuid: this.clientMemoryUuid }) }
+    );
+  }
+
+
   public async getMemoryFromServer(domainId: number): Promise<{
     chatLog: PsSimpleChatLog[];
   }> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/memory`,
+      this.baseUrlPath + `/${domainId}/memory?clientMemoryUuid=${this.clientMemoryUuid}`,
       {
         method: "GET",
       },
@@ -58,7 +69,7 @@ export class YpAssistantServerApi extends YpServerApi {
 
   public clearChatLogFromServer(domainId: number): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/chatlog`,
+      this.baseUrlPath + `/${domainId}/chatlog?clientMemoryUuid=${this.clientMemoryUuid}`,
       {
         method: "DELETE",
       },
@@ -79,7 +90,8 @@ export class YpAssistantServerApi extends YpServerApi {
         body: JSON.stringify({
           wsClientId,
           currentMode,
-          serverMemoryId
+          serverMemoryId,
+          clientMemoryUuid: this.clientMemoryUuid,
         })
       },
       false
@@ -126,7 +138,7 @@ export class YpAssistantServerApi extends YpServerApi {
 
   public clearServerMemory(serverMemoryId: string): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/memory/${serverMemoryId}`,
+      this.baseUrlPath + `/memory/${serverMemoryId}?clientMemoryUuid=${this.clientMemoryUuid}`,
       {
         method: "DELETE",
       },

@@ -5,10 +5,12 @@ interface SavedChat {
 }
 export declare class YpAssistantServerApi extends YpServerApi {
     private readonly localStorageChatsKey;
-    constructor(urlPath?: string);
+    clientMemoryUuid: string;
+    constructor(clientMemoryUuid: string, urlPath?: string);
     sendChatMessage(domainId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string, currentMode?: string | undefined, serverMemoryId?: string): Promise<{
         serverMemoryId: string;
     }>;
+    updateAssistantMemoryUserLoginStatus(domainId: number): Promise<any>;
     getMemoryFromServer(domainId: number): Promise<{
         chatLog: PsSimpleChatLog[];
     }>;

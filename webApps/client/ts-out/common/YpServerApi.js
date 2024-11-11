@@ -42,9 +42,6 @@ export class YpServerApi extends YpServerApiBase {
     hasAudioUploadSupport() {
         return this.fetchWrapper(this.baseUrlPath + '/audios/hasAudioUploadSupport');
     }
-    updateAssistantMemoryUserLoginStatus(domainId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`, { method: 'PUT', body: JSON.stringify({ domainId }) });
-    }
     sendVideoView(body) {
         return this.fetchWrapper(this.baseUrlPath + '/videos/videoView', {
             method: 'PUT',

@@ -48,7 +48,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     get clickMainLoginButton() {
         return {
             name: "click_main_login_button",
-            description: "Click the main login button",
+            description: "Send an event to click the main login button to the web app",
             type: "function",
             parameters: {
                 type: "object",
@@ -76,7 +76,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     get clickGoogleLoginButton() {
         return {
             name: "click_google_login_button",
-            description: "Click the Google login button",
+            description: "Submit an event to click the Google login button to the web app",
             type: "function",
             parameters: {
                 type: "object",

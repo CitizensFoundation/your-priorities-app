@@ -77,13 +77,6 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public updateAssistantMemoryUserLoginStatus(domainId: number  ) {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`,
-      { method: 'PUT', body: JSON.stringify({ domainId }) }
-    );
-  }
-
   public sendVideoView(body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + '/videos/videoView',

@@ -125,6 +125,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     this.sendToClient("assistant", result.html, "html", true);
                 }
                 if (result.clientEvents) {
+                    console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
                     for (const clientEvent of result.clientEvents) {
                         this.sendToClient("assistant", clientEvent.details, clientEvent.name);
                     }

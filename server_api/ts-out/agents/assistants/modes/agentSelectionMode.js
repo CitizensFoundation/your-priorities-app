@@ -10,22 +10,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
         this.loginTools = new LoginAssistantTools(this.assistant);
     }
     getCurrentModeSystemPrompt() {
-        let systemPrompt = `You are a general AI agent assistant. Help users select and manage AI agents.
-Available tools:
-- Switch to a direct conversation mode with an agent
-- List available agents available for purchase
-    `;
-        if (this.assistant.isLoggedIn) {
-            systemPrompt += `- Log out the current user
-- List available agents the user is subscribed to
-      `;
-        }
-        else {
-            systemPrompt += "- Show login widget to the user if the user wants to display all their subscribed agents. You do not need to log in to connect to an agent.";
-            if (this.assistant.haveShownLoginWidget) {
-                systemPrompt += "- Click the Google login button";
-            }
-        }
+        let systemPrompt = `You are the main AI agent assistant. Help users select AI agents to subscribe to or connect to. Use your tools when needed.`;
         systemPrompt += this.renderCommon();
         return systemPrompt;
     }

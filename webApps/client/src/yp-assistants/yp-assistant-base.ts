@@ -67,21 +67,32 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   private renderLoopActive = false;
   aiSpeakingTimeout: NodeJS.Timeout | undefined;
 
-  serverApi!: YpServerApi;
+  serverApi!: YpAssistantServerApi;
+
+  clientMemoryUuid: string;
 
   constructor() {
     super();
     this.setupVoiceCapabilities();
+    const storageKey = `yp-assistant-${this.domainId}-client-uuid`;
+    const savedUuid = localStorage.getItem(storageKey);
+    if (savedUuid) {
+      this.clientMemoryUuid = savedUuid;
+    } else {
+      this.clientMemoryUuid = crypto.randomUUID();
+      localStorage.setItem(storageKey, this.clientMemoryUuid);
+    }
+    this.setupServerApi();
+  }
+
+  override async setupServerApi(): Promise<void> {
+    this.serverApi = new YpAssistantServerApi(this.clientMemoryUuid);
   }
 
   override connectedCallback() {
     super.connectedCallback();
     this.getMemoryFromServer();
     this.addGlobalListener("yp-logged-in", this.userLoggedIn);
-  }
-
-  async setupServerApi() {
-    this.serverApi = new YpServerApi();
   }
 
   async userLoggedIn() {
@@ -105,9 +116,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   async getMemoryFromServer() {
     if (!this.chatLog || this.chatLog.length === 0) {
       try {
-        const serverApi = new YpAssistantServerApi();
         const { chatLog, modeData, currentMode } =
-          (await serverApi.getMemoryFromServer(
+          (await this.serverApi.getMemoryFromServer(
             this.domainId
           )) as YpBaseAssistantMemoryData;
 
@@ -295,8 +305,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async startRecording() {
-    const serverApi = new YpAssistantServerApi();
-    await serverApi.startVoiceSession(
+    await this.serverApi.startVoiceSession(
       this.domainId,
       this.wsClientId,
       this.currentMode
@@ -507,8 +516,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async reallyClearHistory() {
-    const serverApi = new YpAssistantServerApi();
-    await serverApi.clearChatLogFromServer(this.domainId);
+    await this.serverApi.clearChatLogFromServer(this.domainId);
     this.chatLog = [];
     this.requestUpdate();
   }

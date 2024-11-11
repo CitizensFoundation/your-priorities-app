@@ -14,7 +14,6 @@ import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
 import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import { WavRenderer } from "./wave-renderer.js";
-import { YpServerApi } from "../common/YpServerApi.js";
 let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbotBase {
     constructor() {
         super();
@@ -73,14 +72,24 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             requestAnimationFrame(this.renderLoop);
         };
         this.setupVoiceCapabilities();
+        const storageKey = `yp-assistant-${this.domainId}-client-uuid`;
+        const savedUuid = localStorage.getItem(storageKey);
+        if (savedUuid) {
+            this.clientMemoryUuid = savedUuid;
+        }
+        else {
+            this.clientMemoryUuid = crypto.randomUUID();
+            localStorage.setItem(storageKey, this.clientMemoryUuid);
+        }
+        this.setupServerApi();
+    }
+    async setupServerApi() {
+        this.serverApi = new YpAssistantServerApi(this.clientMemoryUuid);
     }
     connectedCallback() {
         super.connectedCallback();
         this.getMemoryFromServer();
         this.addGlobalListener("yp-logged-in", this.userLoggedIn);
-    }
-    async setupServerApi() {
-        this.serverApi = new YpServerApi();
     }
     async userLoggedIn() {
         await this.serverApi.updateAssistantMemoryUserLoginStatus(this.domainId);
@@ -99,8 +108,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     async getMemoryFromServer() {
         if (!this.chatLog || this.chatLog.length === 0) {
             try {
-                const serverApi = new YpAssistantServerApi();
-                const { chatLog, modeData, currentMode } = (await serverApi.getMemoryFromServer(this.domainId));
+                const { chatLog, modeData, currentMode } = (await this.serverApi.getMemoryFromServer(this.domainId));
                 this.currentMode = currentMode;
                 if (chatLog && chatLog.length > 0) {
                     this.chatLogFromServer = chatLog.map((chatLogItem) => ({
@@ -216,8 +224,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
     }
     async startRecording() {
-        const serverApi = new YpAssistantServerApi();
-        await serverApi.startVoiceSession(this.domainId, this.wsClientId, this.currentMode);
+        await this.serverApi.startVoiceSession(this.domainId, this.wsClientId, this.currentMode);
         this.mediaRecorder = new WavRecorder({ sampleRate: 24000 });
         this.isRecording = true;
         await this.mediaRecorder.begin();
@@ -397,8 +404,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
     }
     async reallyClearHistory() {
-        const serverApi = new YpAssistantServerApi();
-        await serverApi.clearChatLogFromServer(this.domainId);
+        await this.serverApi.clearChatLogFromServer(this.domainId);
         this.chatLog = [];
         this.requestUpdate();
     }

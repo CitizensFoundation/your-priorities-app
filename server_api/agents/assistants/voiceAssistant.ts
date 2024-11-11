@@ -343,6 +343,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
   }
 
+  //TODO: Don't have this duplicated in the voice assistant and main assistant
   async callFunctionHandler(event: any): Promise<void> {
     const tools = this.parentAssistant.getCurrentModeFunctions();
     if (!tools) return;
@@ -409,6 +410,18 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     if (result.html) {
       this.sendToClient("assistant", result.html, "html", true);
       this.parentAssistant.addAssistantHtmlMessage(result.html);
+    }
+
+    if (result.clientEvents) {
+      console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
+
+      for (const clientEvent of result.clientEvents) {
+        this.sendToClient(
+          "assistant",
+          clientEvent.details,
+          clientEvent.name as YpAssistantMessageType
+        );
+      }
     }
 
     if (!result.success) {

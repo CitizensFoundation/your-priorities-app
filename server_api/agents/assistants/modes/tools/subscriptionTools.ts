@@ -283,7 +283,7 @@ export class SubscriptionTools extends BaseAssistantTools {
   get unsubscribeFromCurrentAgentSubscription() {
     return {
       name: "unsubscribe_from_current_agent_subscription",
-      description: "Unsubscribe from an existing agent subscription",
+      description: "Unsubscribe from an existing agent subscription the user is subscribed to. User must verbally confirm unsubscription with the agent name before proceeding.",
       type: "function",
       parameters: {
         type: "object",

@@ -43,9 +43,9 @@ export class AssistantController {
         };
         this.updateAssistantMemoryLoginStatus = async (req, res) => {
             if (req.user && req.params.domainId) {
-                const memoryId = `${req.params.domainId}-${req.user.id}`;
-                const redisKey = YpAgentAssistant.getRedisKey(memoryId);
-                const memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
+                let memoryId = this.getMemoryUserId(req);
+                let redisKey = YpAgentAssistant.getRedisKey(memoryId);
+                let memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
                 if (memory) {
                     memory.currentUser = req.user;
                     await req.redisClient.set(redisKey, JSON.stringify(memory));
@@ -60,10 +60,17 @@ export class AssistantController {
             }
         };
         this.defaultStartAgentMode = "agent_selection_mode";
+        this.getMemoryUserId = (req) => {
+            const userIdentifier = req.body.clientMemoryUuid || req.query.clientMemoryUuid;
+            if (!userIdentifier) {
+                throw new Error("No user identifier found");
+            }
+            return `${req.params.domainId}-${userIdentifier}`;
+        };
         this.clearChatLog = async (req, res) => {
-            const memoryId = `${req.params.domainId}-${req.user.id}`;
-            console.log(`Clearing chat log for memoryId: ${memoryId}`);
             try {
+                const memoryId = this.getMemoryUserId(req);
+                console.log(`Clearing chat log for memoryId: ${memoryId}`);
                 const redisKey = YpAgentAssistant.getRedisKey(memoryId);
                 const memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
                 if (memory) {
@@ -90,10 +97,11 @@ export class AssistantController {
             }
         };
         this.getMemory = async (req, res) => {
-            const memoryId = `${req.params.domainId}-${req.user.id}`;
-            console.log(`Getting memory for memoryId: ${memoryId}`);
             let memory;
+            let memoryId;
             try {
+                memoryId = this.getMemoryUserId(req);
+                console.log(`Getting memory for memoryId: ${memoryId}`);
                 if (memoryId) {
                     memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
                     if (!memory) {
@@ -136,10 +144,9 @@ export class AssistantController {
     async startVoiceSession(req, res) {
         try {
             const { wsClientId, currentMode } = req.body;
-            const domainId = parseInt(req.params.domainId);
-            const memoryId = `${domainId}-${req.user.id}`;
+            const memoryId = this.getMemoryUserId(req);
             console.log(`Starting chat session for client: ${wsClientId}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, domainId, memoryId);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, parseInt(req.params.domainId), memoryId);
             await assistant.initialize();
             res.status(200).json({
                 message: "Voice session initialized",
@@ -154,10 +161,9 @@ export class AssistantController {
     async sendChatMessage(req, res) {
         try {
             const { wsClientId, chatLog, currentMode } = req.body;
-            const domainId = parseInt(req.params.domainId);
-            const memoryId = `${domainId}-${req.user.id}`;
+            const memoryId = this.getMemoryUserId(req);
             console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, domainId, memoryId);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, parseInt(req.params.domainId), memoryId);
             assistant.conversation(chatLog);
             res.status(200).json({
                 message: "Chat session initialized",

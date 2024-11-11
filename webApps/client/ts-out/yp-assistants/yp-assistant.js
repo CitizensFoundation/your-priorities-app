@@ -7,11 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { customElement } from "lit/decorators.js";
 import { YpAssistantBase } from "./yp-assistant-base.js";
 import { YpLanguages } from "../common/languages/ypLanguages.js";
-import { YpAssistantServerApi } from "./AssistantServerApi.js";
 let YpAssistant = class YpAssistant extends YpAssistantBase {
-    setupServerApi() {
-        this.serverApi = new YpAssistantServerApi();
-    }
     async sendChatMessage() {
         const message = this.chatInputField.value;
         if (message.length === 0)
