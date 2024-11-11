@@ -19,7 +19,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
   protected getCurrentModeSystemPrompt(): string {
     let systemPrompt = `You are a general AI agent assistant. Help users select and manage AI agents.
 Available tools:
-- Connect directly to an agent to work with
+- Switch to a direct conversation mode with an agent
 - List available agents available for purchase
     `;
 
@@ -28,7 +28,7 @@ Available tools:
 - List available agents the user is subscribed to
       `;
     } else {
-      systemPrompt += "- Show login widget to the user";
+      systemPrompt += "- Show login widget to the user if the user wants to display all their subscribed agents. You do not need to log in to connect to an agent.";
       if (this.assistant.haveShownLoginWidget) {
         systemPrompt += "- Click the Google login button";
       }
@@ -41,15 +41,15 @@ Available tools:
 
   protected getCurrentModeTools(): AssistantChatbotTool[] {
     const tools: AssistantChatbotTool[] = [
-      this.navigationTools.connectDirectlyToAgent,
       this.subscriptionTools.listAllAgentsAvailableForSubscription,
+      this.navigationTools.connectDirectlyToAgent,
     ];
 
     if (this.assistant.isLoggedIn) {
       tools.push(this.loginTools.logout);
       tools.push(this.subscriptionTools.listMyAgentSubscriptions);
     } else {
-      tools.push(this.loginTools.showLogin);
+      tools.push(this.loginTools.showLogin("Show login widget to the user if the user wants to display all their subscribed agents. You do not need to log in to connect to an agent."));
       if (this.assistant.haveShownLoginWidget) {
         tools.push(this.loginTools.clickGoogleLoginButton);
       }
@@ -61,8 +61,6 @@ Available tools:
   public getMode(): AssistantChatbotMode {
     const systemPrompt = this.getCurrentModeSystemPrompt();
     const tools = this.getCurrentModeTools();
-
-    console.log("222222------------------->", tools)
 
     return {
       name: "agent_selection_mode",

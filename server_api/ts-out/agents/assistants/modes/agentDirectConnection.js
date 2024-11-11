@@ -14,15 +14,17 @@ export class DirectConversationMode extends BaseAssistantMode {
     }
     getCurrentModeSystemPrompt() {
         let systemPrompt = `Available tools:
+- Switch back to the main assistant to work with other agents
 `;
         if (this.assistant.isLoggedIn) {
             systemPrompt += `- Log out the current user and switch to the main assistant
   `;
         }
         else {
-            systemPrompt += "- Show login widget to the user before taking any other action like subscribing or starting an agent workflow";
+            systemPrompt += "- Show login widget to the user if wants to subscribe to an agent, start an agent workflow or any other action that requires the user to be logged in.";
             if (this.assistant.haveShownLoginWidget) {
                 systemPrompt += "- Click the Google login button";
+                systemPrompt += "- Click the main login button";
             }
         }
         if (this.assistant.isSubscribedToCurrentAgent) {
@@ -57,9 +59,10 @@ export class DirectConversationMode extends BaseAssistantMode {
             tools.push(this.loginTools.logout);
         }
         else {
-            tools.push(this.loginTools.showLogin);
-            if (!this.assistant.haveShownLoginWidget) {
+            tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow"));
+            if (this.assistant.haveShownLoginWidget) {
                 tools.push(this.loginTools.clickGoogleLoginButton);
+                tools.push(this.loginTools.clickMainLoginButton);
             }
         }
         if (this.assistant.isSubscribedToCurrentAgent) {

@@ -41,48 +41,58 @@ async function createAgentProductsAndPlans() {
       },
     } as YpAgentProductBundleAttributes;
 
-    const competitionAgentWorkflow = {
-      currentStepIndex: 1,
+    const competitionAgentWorkflow: YpWorkflowConfiguration = {
+      currentStepIndex: 0,
       steps: [
         {
-          name: "Competition Analysis Wide Search",
+          name: "Competitor Analysis Wide Search",
+          shortName: "Wide Search",
           description:
             "Wide search for competitor strategies and market positions.",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "agentOps",
+          shortDescription: "Wide search for competitor strategies and market positions.",
         },
         {
-          name: "Competition Analysis Human Prioritization",
+          name: "Competitor Analysis Human Prioritization",
+          shortName: "Human Prioritization",
           description: "Human prioritization of the wide search results.",
+          shortDescription: "Human prioritization of the wide search results.",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "engagmentFromOutputConnector",
         },
         {
-          name: "Competition Analysis Detailed Search",
+          name: "Competitor Analysis Detailed Search",
+          shortName: "Detailed Search",
           description:
             "Detailed search for competitor strategies and market positions.",
+          shortDescription: "Detailed search for competitor strategies and market positions.",
           agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
           type: "agentOps",
         },
         {
-          name: "Competition Analysis Detailed Search Human Prioritization",
+          name: "Competitor Analysis Detailed Search Human Prioritization",
+          shortName: "Detailed Search Human Prioritization",
           description: "Human prioritization of the detailed search results.",
           agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
           type: "engagmentFromOutputConnector",
+          shortDescription: "Human prioritization of the detailed search results.",
         },
         {
-          name: "State of the Market Report",
+          name: "Competitors Report",
+          shortName: "Competitors Report",
           description:
-            "Report on the state of the market based on the competition analysis.",
+            "Report on the state of the market based on the competitors analysis.",
+          shortDescription: "Report on the state of the market based on the competitors analysis.",
           agentClassUuid: "1cf3af64-a5f6-a7c1-91c1-51fb13c72f1a",
           type: "agentOps",
         },
       ],
-    } as YpWorkflowConfiguration;
+    };
 
     const agentProductsData = [
       {
-        name: "Competition Agent Free Trial",
+        name: "Competitor Agent Free Trial",
         description: "Analyzes competitor strategies and market positions.",
         configuration: {
           workflow: competitionAgentWorkflow,
@@ -92,8 +102,8 @@ async function createAgentProductsAndPlans() {
           currentStatus: "active",
         },
         subscriptionPlan: {
-          name: "Competition Agent Free Trial",
-          description: "Free trial for the Competition Agent.",
+          name: "Competitor Agent Free Trial",
+          description: "Free trial for the Competitor Agent.",
           agent_product_id: 1,
           configuration: {
             type: "free" as YpSubscriptionPlanType,
@@ -104,7 +114,7 @@ async function createAgentProductsAndPlans() {
             boosters: [
               {
                 name: "Regular Booster",
-                description: "Regular booster for the Competition Agent.",
+                description: "Regular booster for the Competitor Agent.",
                 runs_available: 30,
                 price: 90.0,
                 currency: "USD",
@@ -112,7 +122,7 @@ async function createAgentProductsAndPlans() {
               },
               {
                 name: "Mega Booster",
-                description: "Mega booster for the Competition Agent.",
+                description: "Mega booster for the Competitor Agent.",
                 runs_available: 10,
                 price: 250.0,
                 currency: "USD",
@@ -129,7 +139,7 @@ async function createAgentProductsAndPlans() {
               },
               {
                 name: "Ultra Booster",
-                description: "Ultra booster for the Competition Agent.",
+                description: "Ultra booster for the Competitor Agent.",
                 runs_available: 1,
                 price: 520.0,
                 currency: "USD",
@@ -172,7 +182,7 @@ async function createAgentProductsAndPlans() {
         } as YpSubscriptionPlanAttributes,
       },
       {
-        name: "Competition Agent",
+        name: "Competitor Agent",
         description: "Analyzes competitor strategies and market positions.",
         groupId: 11,
         configuration: {
@@ -183,8 +193,8 @@ async function createAgentProductsAndPlans() {
           currentStatus: "active",
         },
         subscriptionPlan: {
-          name: "Competition Agent Plan",
-          description: "Competition Agent Plan",
+          name: "Competitor Agent Plan",
+          description: "Competitor Agent Plan",
           configuration: {
             type: "paid" as YpSubscriptionPlanType,
             amount: 150.0,
@@ -194,7 +204,7 @@ async function createAgentProductsAndPlans() {
             boosters: [
               {
                 name: "Regular Booster",
-                description: "Regular booster for the Competition Agent.",
+                description: "Regular booster for the Competitor Agent.",
                 runs_available: 30,
                 price: 90.0,
                 currency: "USD",
@@ -202,7 +212,7 @@ async function createAgentProductsAndPlans() {
               },
               {
                 name: "Mega Booster",
-                description: "Mega booster for the Competition Agent.",
+                description: "Mega booster for the Competitor Agent.",
                 runs_available: 10,
                 price: 250.0,
                 currency: "USD",
@@ -219,7 +229,7 @@ async function createAgentProductsAndPlans() {
               },
               {
                 name: "Ultra Booster",
-                description: "Ultra booster for the Competition Agent.",
+                description: "Ultra booster for the Competitor Agent.",
                 runs_available: 1,
                 price: 520.0,
                 currency: "USD",

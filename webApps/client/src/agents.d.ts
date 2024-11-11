@@ -239,9 +239,10 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
 }
 
 interface YpWorkflowStep {
-  id: number;
   name: string;
+  shortName: string;
   description: string;
+  shortDescription: string;
   agentClassUuid: string;
   agentId?: number;
   groupId?: number;

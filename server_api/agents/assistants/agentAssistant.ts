@@ -37,7 +37,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     this.userId = userId;
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.directConversationMode = new DirectConversationMode(this);
-    this.on("memory-changed", this.handleMemoryChanged);
+    this.on("memory-changed", this.handleMemoryChanged.bind(this));
   }
 
   defineAvailableModes(): AssistantChatbotMode[] {
@@ -51,6 +51,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     return {
       currentMode: this.memory.currentMode,
       currentUser: this.memory.currentUser,
+      haveShownConfigurationWidget: this.memory.haveShownConfigurationWidget,
+      haveShownLoginWidget: this.memory.haveShownLoginWidget,
       currentAgentStatus: this.memory.currentAgentStatus,
     } as Partial<YpBaseAssistantMemoryData>;
   }

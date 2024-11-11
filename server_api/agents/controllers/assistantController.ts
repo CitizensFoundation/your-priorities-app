@@ -92,7 +92,7 @@ export class AssistantController {
   }
 
 
-  private defaultStartAgentMode = "agent_subscription_and_selection" as YpAssistantMode;
+  private defaultStartAgentMode: YpAssistantMode = "agent_selection_mode";
 
   private clearChatLog = async (req: YpRequest, res: express.Response) => {
     const memoryId = `${req.params.domainId}-${req.user.id}`;

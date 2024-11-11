@@ -41,7 +41,7 @@ export class AssistantController {
                 process.exit(1);
             }
         };
-        this.defaultStartAgentMode = "agent_subscription_and_selection";
+        this.defaultStartAgentMode = "agent_selection_mode";
         this.clearChatLog = async (req, res) => {
             const memoryId = `${req.params.domainId}-${req.user.id}`;
             console.log(`Clearing chat log for memoryId: ${memoryId}`);

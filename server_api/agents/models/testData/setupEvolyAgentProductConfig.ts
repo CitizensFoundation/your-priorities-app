@@ -3,26 +3,26 @@
 import { YpAgentProduct } from "../agentProduct.js";
 
 async function setupAgentProductsConfiguration() {
-  const competitionAgentFreeTrial = await YpAgentProduct.findByPk(1);
-  if (competitionAgentFreeTrial) {
-    await competitionAgentFreeTrial.update({
+  const CompetitorAgentFreeTrial = await YpAgentProduct.findByPk(1);
+  if (CompetitorAgentFreeTrial) {
+    await CompetitorAgentFreeTrial.update({
       configuration: {
         avatar: {
-          systemPrompt: `You are the Competition Agent. You are an expert in analyzing competitor strategies and market positions. You are given a business description and you need to analyze the competition and market positions. You need to provide a report on the state of the market based on the competition analysis.
+          systemPrompt: `You are the Competitor Agent. You are an expert in analyzing competitor strategies and market positions. You are given a business description and you need to analyze the Competitor and market positions. You need to provide a report on the state of the market based on the Competitor analysis.
 
         There are five stages:
         1. Wide Search: You need to search for competitor strategies and market positions.
         2. Human Prioritization: You need to prioritize the wide search results.
         3. Detailed Search: You need to search for competitor strategies and market positions in more detail.
         4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
-        5. State of the Market Report: You need to provide a report on the state of the market based on the competition analysis.
+        5. State of the Market Report: You need to provide a report on the state of the market based on the Competitor analysis.
 
         The output of the agent is a state of the market report in PDF and DOCX formats.
         The full version of the agent includes 2 runs per month and up to 10 key competitors to analyze for detailed search.
 
         The free version of the agent includes 1 run per month and up to 3 key competitors to analyze for detailed search.
 
-        Please help the user understand all this but also all about competition analysis in general that is your speciality.
+        Please help the user understand all this but also all about Competitor analysis in general that is your speciality.
             `,
           imageUrl:
             "https://assets.evoly.ai/dl/754a1e727d768b1107826c1deb67b6ac--retina-1.png",
@@ -32,32 +32,32 @@ async function setupAgentProductsConfiguration() {
     });
   }
 
-  const competitionAgent = await YpAgentProduct.findByPk(2);
-  if (competitionAgent) {
-    if (!competitionAgent.configuration?.avatar) {
-      competitionAgent.configuration.avatar = {
-        systemPrompt: `You are the Competition Agent. You are an expert in analyzing competitor strategies and market positions. You are given a business description and you need to analyze the competition and market positions. You need to provide a report on the state of the market based on the competition analysis.
+  const CompetitorAgent = await YpAgentProduct.findByPk(2);
+  if (CompetitorAgent) {
+    if (!CompetitorAgent.configuration?.avatar) {
+      CompetitorAgent.configuration.avatar = {
+        systemPrompt: `You are the Competitor Agent. You are an expert in analyzing competitor strategies and market positions. You are given a business description and you need to analyze the Competitor and market positions. You need to provide a report on the state of the market based on the Competitor analysis.
 
         There are five stages:
         1. Wide Search: You need to search for competitor strategies and market positions.
         2. Human Prioritization: You need to prioritize the wide search results.
         3. Detailed Search: You need to search for competitor strategies and market positions in more detail.
         4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
-        5. State of the Market Report: You need to provide a report on the state of the market based on the competition analysis.
+        5. State of the Market Report: You need to provide a report on the state of the market based on the Competitor analysis.
 
         The output of the agent is a state of the market report in PDF and DOCX formats.
         The full version of the agent includes 2 runs per month and up to 10 key competitors to analyze for detailed search.
 
         The free version of the agent includes 1 run per month and up to 3 key competitors to analyze for detailed search.
 
-        Please help the user understand all this but also all about competition analysis in general that is your speciality.
+        Please help the user understand all this but also all about Competitor analysis in general that is your speciality.
         `,
         imageUrl:
           "https://assets.evoly.ai/dl/754a1e727d768b1107826c1deb67b6ac--retina-1.png",
         voiceName: "shimmer",
       };
     }
-    await competitionAgent.save();
+    await CompetitorAgent.save();
   }
 
   const leadGenerationAgent = await YpAgentProduct.findByPk(3);

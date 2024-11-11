@@ -189,7 +189,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
             console.log("setupMemoryAsync: loading memory");
             this.memory = (await this.loadMemory());
         }
-        else {
+        if (!this.memory) {
             console.log("setupMemoryAsync: creating new memory");
             //this.memoryId = uuidv4();
             this.memory = this.getEmptyMemory();
@@ -229,6 +229,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 this.availableTools.set(func.name, func);
             }
         }
+        this.registerCoreFunctions();
         // Set initial mode if none exists
         if (!this.memory.currentMode && modes.length > 0) {
             this.memory.currentMode = modes[0].name;
@@ -238,6 +239,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Register core functions available in all modes
      */
     registerCoreFunctions() {
+        return;
         const allModesText = Array.from(this.modes.entries())
             .map(([key, mode]) => `${key}: ${mode.description}`)
             .join("\n");
@@ -308,7 +310,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Get current mode's functions
      */
     getCurrentModeFunctions() {
-        this.registerCoreFunctions();
         this.initializeModes();
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode)
@@ -316,14 +317,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
         // Combine mode-specific functions with core functions
         return [
             ...currentMode.tools,
-            this.availableTools.get("switch_mode"),
+            //    this.availableTools.get("switch_mode")!,
         ];
     }
     /**
      * Get current mode's system prompt
      */
     getCurrentSystemPrompt() {
-        this.registerCoreFunctions();
         this.initializeModes(); //TODO: Look into not calling this twice in those getters
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode) {
@@ -394,7 +394,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
      */
     async conversation(chatLog) {
         await this.initializeModes();
-        this.registerCoreFunctions();
         await this.setChatLog(chatLog);
         await this.saveMemory();
         let systemPrompt = this.getCurrentSystemPrompt();

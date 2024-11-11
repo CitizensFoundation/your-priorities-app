@@ -4,10 +4,10 @@ export class LoginAssistantTools extends BaseAssistantTools {
     constructor(assistant) {
         super(assistant);
     }
-    get showLogin() {
+    showLogin(description) {
         return {
             name: "show_login_widget",
-            description: "Show login widget to the user",
+            description,
             type: "function",
             parameters: {
                 type: "object",
@@ -44,6 +44,34 @@ export class LoginAssistantTools extends BaseAssistantTools {
                 error: errorMessage,
             };
         }
+    }
+    get clickMainLoginButton() {
+        return {
+            name: "click_main_login_button",
+            description: "Click the main login button",
+            type: "function",
+            parameters: {
+                type: "object",
+                properties: {},
+            },
+            handler: this.clickMainLoginButtonHandler.bind(this),
+        };
+    }
+    async clickMainLoginButtonHandler(params) {
+        params = this.assistant.getCleanedParams(params);
+        console.log(`handler: clickMainLoginButton: ${JSON.stringify(params, null, 2)}`);
+        const clientEvent = {
+            name: "click_main_login_button",
+            details: {},
+        };
+        return {
+            success: true,
+            data: { message: "Main login button clicked successfully" },
+            clientEvents: [clientEvent],
+            metadata: {
+                timestamp: new Date().toISOString(),
+            },
+        };
     }
     get clickGoogleLoginButton() {
         return {

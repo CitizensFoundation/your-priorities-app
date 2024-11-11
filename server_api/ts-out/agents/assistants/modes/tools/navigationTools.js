@@ -18,7 +18,7 @@ export class NavigationTools extends BaseAssistantTools {
     get connectDirectlyToAgent() {
         return {
             name: "connect_directly_to_one_of_the_agents",
-            description: "Select an agent to work with, either one the user is subscribed to or one available for purchase to the user",
+            description: "Select an agent to work with, either one the user is subscribed to or one available for purchase to the user. The user does not need to be logged in to use this tool.",
             type: "function",
             parameters: {
                 type: "object",
@@ -37,6 +37,7 @@ export class NavigationTools extends BaseAssistantTools {
         console.log(`handler: connect_to_one_of_the_agents: ${JSON.stringify(params, null, 2)}`);
         try {
             const { agent, subscription } = await this.subscriptionModels.loadAgentProductAndSubscription(params.agentProductId);
+            console.log(`Loading: ${agent.name} ${subscription?.id}`);
             this.updateCurrentAgentProduct(agent, subscription, { sendEvent: false });
             await this.assistant.handleModeSwitch("agent_direct_connection_mode", `Directly connected to agent: ${agent.name}`, params);
             const html = `<div class="agent-chips"><yp-agent-chip
