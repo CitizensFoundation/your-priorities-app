@@ -24,7 +24,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
             tools.push(this.subscriptionTools.listMyAgentSubscriptions);
         }
         else {
-            tools.push(this.loginTools.showLogin("Show login widget to the user if the user wants to display all their subscribed agents. You do not need to log in to connect to an agent."));
+            tools.push(this.loginTools.showLogin("Show login widget to the user only if they ask to be logged in or if they ask specfically to list all of their subscribed agents. You do not need to log in to connect to an agent."));
             if (this.assistant.haveShownLoginWidget) {
                 tools.push(this.loginTools.clickGoogleLoginButton);
             }

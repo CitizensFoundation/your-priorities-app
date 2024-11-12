@@ -150,6 +150,8 @@ export class AssistantController {
         }
         memory.chatLog = [];
         memory.currentMode = this.defaultStartAgentMode;
+        memory.haveShownConfigurationWidget = false;
+        memory.haveShownLoginWidget = false;
         memory.currentAgentStatus = undefined;
         if (!req.user) {
           memory.currentUser = undefined;

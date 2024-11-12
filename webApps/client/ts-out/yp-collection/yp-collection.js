@@ -55,15 +55,18 @@ export class YpCollection extends YpBaseElementWithLogin {
         super.connectedCallback();
         if (this.collection) {
             this.refresh();
-            if (this.collectionType == "domain" && window.appGlobals.domainNeedsRefresh) {
+            if (this.collectionType == "domain" &&
+                window.appGlobals.domainNeedsRefresh) {
                 window.appGlobals.domainNeedsRefresh = false;
                 this.getCollection();
             }
-            else if (this.collectionType == "community" && window.appGlobals.communityNeedsRefresh) {
+            else if (this.collectionType == "community" &&
+                window.appGlobals.communityNeedsRefresh) {
                 window.appGlobals.communityNeedsRefresh = false;
                 this.getCollection();
             }
-            else if (this.collectionType == "group" && window.appGlobals.groupNeedsRefresh) {
+            else if (this.collectionType == "group" &&
+                window.appGlobals.groupNeedsRefresh) {
                 window.appGlobals.groupNeedsRefresh = false;
                 this.getCollection();
             }
@@ -123,7 +126,10 @@ export class YpCollection extends YpBaseElementWithLogin {
                 //this.setupTheme();
             }
             this.collectionItems = undefined;
-            this.collection = undefined;
+            //TODO: Look into this if its ok
+            if (this.collectionType != "domain") {
+                this.collection = undefined;
+            }
             this.collection = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
             this.refresh();
             if (this.collectionType == "domain") {
@@ -286,7 +292,6 @@ export class YpCollection extends YpBaseElementWithLogin {
           --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
         }
 
-
         md-linear-progress {
           --md-sys-color-primary: var(--md-sys-color-on-surface-variant);
         }
@@ -299,7 +304,6 @@ export class YpCollection extends YpBaseElementWithLogin {
           width: 225px;
           margin-left: 64px;
         }
-
 
         md-tabs {
           border-bottom-color: transparent;
@@ -414,9 +418,12 @@ export class YpCollection extends YpBaseElementWithLogin {
             : nothing;
     }
     renderAssistantTab() {
-        return html `<md-secondary-tab hidden
+        return html `<md-secondary-tab
+      hidden
       ?has-static-theme="${this.hasStaticTheme}"
-      >${this.t("assistant")}<md-icon slot="icon">assistant</md-icon></md-secondary-tab
+      >${this.t("assistant")}<md-icon slot="icon"
+        >assistant</md-icon
+      ></md-secondary-tab
     >`;
     }
     renderNewsAndMapTabs() {
@@ -509,7 +516,9 @@ export class YpCollection extends YpBaseElementWithLogin {
             return html `
         <div class="layout vertical center-center">
           <div class="layout vertical topContainer">
-            <div ?hidden="${this.collectionHeaderHidden}">${this.renderHeader()}</div>
+            <div ?hidden="${this.collectionHeaderHidden}">
+              ${this.renderHeader()}
+            </div>
             <div class="layout horizontal mainContent wrap">
               ${this.renderTabs()}
               <div class="flex"></div>

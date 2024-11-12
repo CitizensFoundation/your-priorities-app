@@ -129,6 +129,7 @@ export class YpLogin extends YpBaseElement {
     debugger;
     if (this.reloadPageOnDialogClose) {
       setTimeout(() => {
+        debugger;
         window.location.reload();
       }, 350);
     }

@@ -49,7 +49,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
     domainId: number,
-    memoryId: string,
+    memoryId: string
   ) {
     super(wsClientId, wsClients, memoryId);
     this.domainId = domainId;
@@ -71,16 +71,26 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       this.processClientSystemMessage.bind(this)
     );
 
-    this.on("update-ai-model-session", this.initializeModes.bind(this));
+    this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
+  }
+
+  updateAiModelSession(message: string) {
+    console.log(`updateAiModelSession: ${message}`);
+    this.initializeModes();
   }
 
   processClientSystemMessage(clientEvent: YpAssistantClientSystemMessage) {
-    console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
+    console.log(
+      `processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`
+    );
 
     if (clientEvent.message === "user_logged_in") {
-      console.log(`user_logged_in: `);
+      console.log(`user_logged_in emitting`);
 
-      this.emit("update-ai-model-session", "User is logged and lets move to the next step");
+      this.emit(
+        "update-ai-model-session",
+        "User is logged and lets move to the next step"
+      );
     }
   }
 
@@ -206,7 +216,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         }
 
         if (result.clientEvents) {
-          console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
+          console.log(
+            `clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`
+          );
 
           for (const clientEvent of result.clientEvents) {
             this.sendToClient(
@@ -452,7 +464,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.initializeModes();
 
     const currentMode = this.modes.get(this.memory.currentMode!);
-    if (!currentMode) return [];
+    if (!currentMode) {
+      console.error(`No current mode found: ${this.memory.currentMode}`);
+      return [];
+    }
 
     // Combine mode-specific functions with core functions
     return [
@@ -656,9 +671,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     reason: string,
     params: any
   ): Promise<void> {
-    if (this.DEBUG) {
-      console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
-    }
+    console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
     const oldMode = this.memory.currentMode;
 
     if (!this.modes.has(newMode)) {

@@ -124,19 +124,31 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     if (this.collection) {
       this.refresh();
 
-      if (this.collectionType == "domain" && window.appGlobals.domainNeedsRefresh) {
+      if (
+        this.collectionType == "domain" &&
+        window.appGlobals.domainNeedsRefresh
+      ) {
         window.appGlobals.domainNeedsRefresh = false;
         this.getCollection();
-      } else if (this.collectionType == "community" && window.appGlobals.communityNeedsRefresh) {
+      } else if (
+        this.collectionType == "community" &&
+        window.appGlobals.communityNeedsRefresh
+      ) {
         window.appGlobals.communityNeedsRefresh = false;
         this.getCollection();
-      } else if (this.collectionType == "group" && window.appGlobals.groupNeedsRefresh) {
+      } else if (
+        this.collectionType == "group" &&
+        window.appGlobals.groupNeedsRefresh
+      ) {
         window.appGlobals.groupNeedsRefresh = false;
         this.getCollection();
       }
     }
 
-    this.addGlobalListener("yp-hide-collection-header-status", this.hideCollectionHeader.bind(this));
+    this.addGlobalListener(
+      "yp-hide-collection-header-status",
+      this.hideCollectionHeader.bind(this)
+    );
   }
 
   hideCollectionHeader(event: CustomEvent) {
@@ -150,7 +162,10 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
-    this.removeGlobalListener("yp-hide-collection-header-status", this.hideCollectionHeader.bind(this));
+    this.removeGlobalListener(
+      "yp-hide-collection-header-status",
+      this.hideCollectionHeader.bind(this)
+    );
   }
 
   refresh(): void {
@@ -200,7 +215,10 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         //this.setupTheme();
       }
       this.collectionItems = undefined;
-      this.collection = undefined;
+      //TODO: Look into this if its ok
+      if (this.collectionType != "domain") {
+        this.collection = undefined;
+      }
       this.collection = (await window.serverApi.getCollection(
         this.collectionType,
         this.collectionId
@@ -402,7 +420,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
         }
 
-
         md-linear-progress {
           --md-sys-color-primary: var(--md-sys-color-on-surface-variant);
         }
@@ -415,7 +432,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           width: 225px;
           margin-left: 64px;
         }
-
 
         md-tabs {
           border-bottom-color: transparent;
@@ -532,9 +548,12 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   }
 
   renderAssistantTab() {
-    return html`<md-secondary-tab hidden
+    return html`<md-secondary-tab
+      hidden
       ?has-static-theme="${this.hasStaticTheme}"
-      >${this.t("assistant")}<md-icon slot="icon">assistant</md-icon></md-secondary-tab
+      >${this.t("assistant")}<md-icon slot="icon"
+        >assistant</md-icon
+      ></md-secondary-tab
     >`;
   }
 
@@ -633,7 +652,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       return html`
         <div class="layout vertical center-center">
           <div class="layout vertical topContainer">
-            <div ?hidden="${this.collectionHeaderHidden}">${this.renderHeader()}</div>
+            <div ?hidden="${this.collectionHeaderHidden}">
+              ${this.renderHeader()}
+            </div>
             <div class="layout horizontal mainContent wrap">
               ${this.renderTabs()}
               <div class="flex"></div>

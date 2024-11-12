@@ -33,12 +33,16 @@ export class YpBaseAssistant extends YpBaseChatBot {
         });
         this.eventEmitter = new EventEmitter();
         this.wsClientSocket.on("client_system_message", this.processClientSystemMessage.bind(this));
-        this.on("update-ai-model-session", this.initializeModes.bind(this));
+        this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
+    }
+    updateAiModelSession(message) {
+        console.log(`updateAiModelSession: ${message}`);
+        this.initializeModes();
     }
     processClientSystemMessage(clientEvent) {
         console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
         if (clientEvent.message === "user_logged_in") {
-            console.log(`user_logged_in: `);
+            console.log(`user_logged_in emitting`);
             this.emit("update-ai-model-session", "User is logged and lets move to the next step");
         }
     }
@@ -327,8 +331,10 @@ export class YpBaseAssistant extends YpBaseChatBot {
     getCurrentModeFunctions() {
         this.initializeModes();
         const currentMode = this.modes.get(this.memory.currentMode);
-        if (!currentMode)
+        if (!currentMode) {
+            console.error(`No current mode found: ${this.memory.currentMode}`);
             return [];
+        }
         // Combine mode-specific functions with core functions
         return [
             ...currentMode.tools,
@@ -476,9 +482,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Handle mode switching
      */
     async handleModeSwitch(newMode, reason, params) {
-        if (this.DEBUG) {
-            console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
-        }
+        console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
         const oldMode = this.memory.currentMode;
         if (!this.modes.has(newMode)) {
             throw new Error(`Invalid mode: ${newMode}`);

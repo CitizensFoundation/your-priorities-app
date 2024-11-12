@@ -207,6 +207,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   override disconnectedCallback() {
+    debugger;
     super.disconnectedCallback();
     this.stopCanvasRendering();
 
