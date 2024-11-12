@@ -209,6 +209,7 @@ export class YpAppUser extends YpCodeBase {
             //this.fireGlobal("yp-open-toast", { text: this.toastLoginTextCombined });
         }
         this._checkLoginForParameters();
+        debugger;
         // Redirect to another local service after login, for example the analytics app
         setTimeout(() => {
             if (window.appGlobals.originalQueryParameters &&

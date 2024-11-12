@@ -1,6 +1,6 @@
 import { html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { YpBaseElement } from "../common/yp-base-element.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
 
 import "@material/web/radio/radio.js";
 import "@material/web/checkbox/checkbox.js";

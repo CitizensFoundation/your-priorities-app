@@ -30,11 +30,11 @@ export class LoginAssistantTools extends BaseAssistantTools {
     try {
       await this.updateHaveShownLoginWidget();
 
-      const html = `<yp-login
+      const html = `<yp-login-widget
             id="userLogin"
             class="loginSurface"
             fullWithLoginButton
-          ></yp-login>`;
+          ></yp-login-widget>`;
 
       return {
         success: true,

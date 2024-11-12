@@ -92,7 +92,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   override connectedCallback() {
     super.connectedCallback();
     this.getMemoryFromServer();
-    this.addGlobalListener("yp-logged-in", this.userLoggedIn);
+    this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
   }
 
   async userLoggedIn() {
@@ -211,7 +211,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.stopCanvasRendering();
 
     this.stopRecording();
-    this.removeGlobalListener("yp-logged-in", this.userLoggedIn);
+    this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
 
   }
 
@@ -395,7 +395,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
     switch (data.type) {
       case "ui_click":
-        const type = data.data as YpAssistantUiClickTypes;
+        const type = data.message as YpAssistantUiClickTypes;
         if (type === "login-button-main") {
           this.fireGlobal("assistant-requested-login-main-button-click");
         } else if (type === "login-button-google") {

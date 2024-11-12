@@ -89,7 +89,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     connectedCallback() {
         super.connectedCallback();
         this.getMemoryFromServer();
-        this.addGlobalListener("yp-logged-in", this.userLoggedIn);
+        this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
     }
     async userLoggedIn() {
         await this.serverApi.updateAssistantMemoryUserLoginStatus(this.domainId);
@@ -138,7 +138,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         super.disconnectedCallback();
         this.stopCanvasRendering();
         this.stopRecording();
-        this.removeGlobalListener("yp-logged-in", this.userLoggedIn);
+        this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
     }
     async setupVoiceCapabilities() { }
     get talkingHeadImage() {
@@ -295,7 +295,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
         switch (data.type) {
             case "ui_click":
-                const type = data.data;
+                const type = data.message;
                 if (type === "login-button-main") {
                     this.fireGlobal("assistant-requested-login-main-button-click");
                 }

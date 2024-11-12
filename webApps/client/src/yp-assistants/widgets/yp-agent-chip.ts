@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators.js";
-import { YpBaseElement } from "../common/yp-base-element.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
 import { css, html } from "lit";
 
 import '@material/web/iconbutton/filled-icon-button.js';

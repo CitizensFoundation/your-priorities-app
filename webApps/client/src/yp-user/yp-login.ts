@@ -126,6 +126,7 @@ export class YpLogin extends YpBaseElement {
   reloadPageOnDialogClose = true;
 
   _logingDialogClose() {
+    debugger;
     if (this.reloadPageOnDialogClose) {
       setTimeout(() => {
         window.location.reload();
@@ -788,6 +789,7 @@ export class YpLogin extends YpBaseElement {
   renderDomainImage() {
     if (window.appGlobals.domain) {
       return html`<yp-image
+        ?hidden="${this.assistantMode}"
         class="domainImage"
         .alt="${window.appGlobals.domain?.name}"
         sizing="cover"
@@ -1747,6 +1749,7 @@ export class YpLogin extends YpBaseElement {
   }
 
   _loginAfterSavePassword(user: YpUserData) {
+    debugger;
     if (this.redirectToURL) YpNavHelpers.redirectTo(this.redirectToURL);
     if (this.onLoginFunction) {
       this.onLoginFunction(user);

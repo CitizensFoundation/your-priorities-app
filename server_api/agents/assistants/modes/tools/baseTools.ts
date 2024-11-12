@@ -36,6 +36,8 @@ export class BaseAssistantTools {
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
+    //TODO: Do we need this?
+    //this.assistant.emit("update-ai-model-session", "Updated agent product");
   }
 
   async updateAgentProductRun(
@@ -53,6 +55,8 @@ export class BaseAssistantTools {
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
+
+    this.assistant.emit("update-ai-model-session", "Updated agent product run");
   }
 
   async updateShownConfigurationWidget(
@@ -65,6 +69,8 @@ export class BaseAssistantTools {
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
+
+    this.assistant.emit("update-ai-model-session", "Shown configuration widget");
   }
 
   async updateHaveShownLoginWidget(
@@ -77,6 +83,8 @@ export class BaseAssistantTools {
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
+
+    this.assistant.emit("update-ai-model-session", "Shown login widget");
   }
 
   async clearCurrentAgentProduct(
@@ -89,5 +97,7 @@ export class BaseAssistantTools {
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
+
+    this.assistant.emit("update-ai-model-session", "Cleared current agent product");
   }
 }

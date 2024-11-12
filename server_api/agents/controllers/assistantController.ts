@@ -151,6 +151,9 @@ export class AssistantController {
         memory.chatLog = [];
         memory.currentMode = this.defaultStartAgentMode;
         memory.currentAgentStatus = undefined;
+        if (!req.user) {
+          memory.currentUser = undefined;
+        }
         await req.redisClient.set(redisKey, JSON.stringify(memory));
         res.sendStatus(200);
       } else {

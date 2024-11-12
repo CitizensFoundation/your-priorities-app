@@ -22,11 +22,11 @@ export class LoginAssistantTools extends BaseAssistantTools {
         console.log(`handler: showLogin: ${JSON.stringify(params, null, 2)}`);
         try {
             await this.updateHaveShownLoginWidget();
-            const html = `<yp-login
+            const html = `<yp-login-widget
             id="userLogin"
             class="loginSurface"
             fullWithLoginButton
-          ></yp-login>`;
+          ></yp-login-widget>`;
             return {
                 success: true,
                 html,

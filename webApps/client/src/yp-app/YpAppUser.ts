@@ -331,6 +331,8 @@ export class YpAppUser extends YpCodeBase {
     }
     this._checkLoginForParameters();
 
+    debugger;
+
     // Redirect to another local service after login, for example the analytics app
     setTimeout(() => {
       if (

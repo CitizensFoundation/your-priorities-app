@@ -4,8 +4,9 @@ import { YpAiChatbotItemBase } from '../yp-chatbots/yp-chatbot-item-base.js';
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import "./yp-agent-chip.js";
-import "./yp-agent-chip-for-purchase.js";
+import "./widgets/yp-agent-chip.js";
+import "./widgets/yp-agent-chip-for-purchase.js";
+import "./widgets/yp-login-widget.js";
 
 @customElement("yp-assistant-item-base")
 export class YpAssistantItemBase extends YpAiChatbotItemBase {
