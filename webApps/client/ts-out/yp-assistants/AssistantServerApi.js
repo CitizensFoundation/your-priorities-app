@@ -24,15 +24,23 @@ export class YpAssistantServerApi extends YpServerApi {
         return response;
     }
     updateAssistantMemoryUserLoginStatus(domainId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`, { method: 'PUT', body: JSON.stringify({ domainId, clientMemoryUuid: this.clientMemoryUuid }) });
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`, {
+            method: "PUT",
+            body: JSON.stringify({
+                domainId,
+                clientMemoryUuid: this.clientMemoryUuid,
+            }),
+        });
     }
     async getMemoryFromServer(domainId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/memory?clientMemoryUuid=${this.clientMemoryUuid}`, {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId}/memory?clientMemoryUuid=${this.clientMemoryUuid}`, {
             method: "GET",
         }, true);
     }
     clearChatLogFromServer(domainId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/chatlog?clientMemoryUuid=${this.clientMemoryUuid}`, {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId}/chatlog?clientMemoryUuid=${this.clientMemoryUuid}`, {
             method: "DELETE",
         }, false);
     }
@@ -44,7 +52,7 @@ export class YpAssistantServerApi extends YpServerApi {
                 currentMode,
                 serverMemoryId,
                 clientMemoryUuid: this.clientMemoryUuid,
-            })
+            }),
         }, false);
     }
     saveChatToLocalStorage(serverMemoryId, chatLog) {
@@ -57,7 +65,7 @@ export class YpAssistantServerApi extends YpServerApi {
                     questionSnippet,
                 };
                 // Check if chat already exists
-                const existingChatIndex = savedChats.findIndex(chat => chat.serverMemoryId === serverMemoryId);
+                const existingChatIndex = savedChats.findIndex((chat) => chat.serverMemoryId === serverMemoryId);
                 if (existingChatIndex >= 0) {
                     savedChats[existingChatIndex] = newChat;
                 }
@@ -68,7 +76,7 @@ export class YpAssistantServerApi extends YpServerApi {
             }
         }
         catch (error) {
-            console.error('Error saving chat to local storage:', error);
+            console.error("Error saving chat to local storage:", error);
         }
     }
     loadChatsFromLocalStorage() {
@@ -77,14 +85,25 @@ export class YpAssistantServerApi extends YpServerApi {
             return storedChats ? JSON.parse(storedChats) : [];
         }
         catch (error) {
-            console.error('Error loading chats from local storage:', error);
+            console.error("Error loading chats from local storage:", error);
             return [];
         }
     }
     clearServerMemory(serverMemoryId) {
-        return this.fetchWrapper(this.baseUrlPath + `/memory/${serverMemoryId}?clientMemoryUuid=${this.clientMemoryUuid}`, {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/memory/${serverMemoryId}?clientMemoryUuid=${this.clientMemoryUuid}`, {
             method: "DELETE",
         }, false);
+    }
+    submitAgentConfiguration(domainId, agentProductId, subscriptionId, requiredQuestionsAnswers) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/submitAgentConfiguration`, {
+            method: "PUT",
+            body: JSON.stringify({
+                agentProductId,
+                subscriptionId,
+                requiredQuestionsAnswers,
+            }),
+        });
     }
 }
 //# sourceMappingURL=AssistantServerApi.js.map

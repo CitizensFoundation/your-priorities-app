@@ -29,6 +29,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     constructor();
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
+    agentConfigurationSubmitted(): Promise<void>;
     userLoggedIn(): Promise<void>;
     firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     getMemoryFromServer(): Promise<void>;

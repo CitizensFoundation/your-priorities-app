@@ -12,6 +12,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import "./widgets/yp-agent-chip.js";
 import "./widgets/yp-agent-chip-for-purchase.js";
 import "./widgets/yp-login-widget.js";
+import "./widgets/yp-agent-configuration-widget.js";
 let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase {
     constructor() {
         super(...arguments);

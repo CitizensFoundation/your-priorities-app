@@ -30,6 +30,7 @@ export declare class YpAppGlobals extends YpCodeBase {
     goalTriggerEvents: Array<string>;
     haveLoadedLanguages: boolean;
     hasTranscriptSupport: boolean;
+    currentClientMemoryUuid: string | undefined;
     hasVideoUpload: boolean;
     hasAudioUpload: boolean;
     myDomains: Array<YpShortDomainList> | undefined;

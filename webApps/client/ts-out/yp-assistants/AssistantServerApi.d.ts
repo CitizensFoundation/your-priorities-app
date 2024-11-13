@@ -19,6 +19,7 @@ export declare class YpAssistantServerApi extends YpServerApi {
     private saveChatToLocalStorage;
     loadChatsFromLocalStorage(): SavedChat[];
     clearServerMemory(serverMemoryId: string): Promise<void>;
+    submitAgentConfiguration(domainId: number, agentProductId: string, subscriptionId: string, requiredQuestionsAnswers: YpStructuredAnswer[]): Promise<void>;
 }
 export {};
 //# sourceMappingURL=AssistantServerApi.d.ts.map

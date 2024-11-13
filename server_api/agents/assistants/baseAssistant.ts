@@ -13,6 +13,7 @@ import {
 import { FunctionDefinition } from "openai/resources/shared.mjs";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
+import { YpSubscription } from "../models/subscription.js";
 
 /**
  * Common modes that implementations might use
@@ -90,7 +91,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     console.log(`updateAiModelSession: ${message}`);
   }
 
-  processClientSystemMessage(clientEvent: YpAssistantClientSystemMessage) {
+  async processClientSystemMessage(clientEvent: YpAssistantClientSystemMessage) {
     console.log(
       `processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`
     );
@@ -101,6 +102,39 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       this.emit(
         "update-ai-model-session",
         "User is logged and lets move to the next step"
+      );
+    } else if (clientEvent.message === "agent_configuration_submitted") {
+      console.log(`agent_configuration_submitted emitting`);
+
+      try {
+        if (!this.memory.currentAgentStatus!.subscription) {
+          throw new Error("No subscription found");
+        }
+        const subscription = await YpSubscription.findByPk(this.memory.currentAgentStatus!.subscription!.id);
+        if (!subscription) {
+          throw new Error("No subscription found");
+        }
+        this.memory.currentAgentStatus!.subscription = subscription as YpSubscriptionAttributes;
+        this.memory.currentAgentStatus!.subscriptionState = subscription
+          ? "subscribed"
+          : "unsubscribed";
+        this.memory.currentAgentStatus!.configurationState =
+          subscription?.configuration?.requiredQuestionsAnswered &&
+          subscription?.configuration?.requiredQuestionsAnswered.length ==
+            this.memory.currentAgentStatus!.agentProduct.configuration
+              .requiredStructuredQuestions.length
+            ? "configured"
+            : "not_configured";
+
+         await this.saveMemory();
+
+      } catch (error) {
+        console.error(`Error finding subscription: ${error}`);
+      }
+
+      this.emit(
+        "update-ai-model-session",
+        "The agent configuration was submitted successfully, lets explore the options"
       );
     }
   }

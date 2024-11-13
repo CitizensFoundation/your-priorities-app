@@ -2,6 +2,7 @@ import { OpenAI } from "openai";
 import { EventEmitter } from "events";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
+import { YpSubscription } from "../models/subscription.js";
 /**
  * Common modes that implementations might use
  */
@@ -53,11 +54,39 @@ export class YpBaseAssistant extends YpBaseChatBot {
     async updateAiModelSession(message) {
         console.log(`updateAiModelSession: ${message}`);
     }
-    processClientSystemMessage(clientEvent) {
+    async processClientSystemMessage(clientEvent) {
         console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
         if (clientEvent.message === "user_logged_in") {
             console.log(`user_logged_in emitting`);
             this.emit("update-ai-model-session", "User is logged and lets move to the next step");
+        }
+        else if (clientEvent.message === "agent_configuration_submitted") {
+            console.log(`agent_configuration_submitted emitting`);
+            try {
+                if (!this.memory.currentAgentStatus.subscription) {
+                    throw new Error("No subscription found");
+                }
+                const subscription = await YpSubscription.findByPk(this.memory.currentAgentStatus.subscription.id);
+                if (!subscription) {
+                    throw new Error("No subscription found");
+                }
+                this.memory.currentAgentStatus.subscription = subscription;
+                this.memory.currentAgentStatus.subscriptionState = subscription
+                    ? "subscribed"
+                    : "unsubscribed";
+                this.memory.currentAgentStatus.configurationState =
+                    subscription?.configuration?.requiredQuestionsAnswered &&
+                        subscription?.configuration?.requiredQuestionsAnswered.length ==
+                            this.memory.currentAgentStatus.agentProduct.configuration
+                                .requiredStructuredQuestions.length
+                        ? "configured"
+                        : "not_configured";
+                await this.saveMemory();
+            }
+            catch (error) {
+                console.error(`Error finding subscription: ${error}`);
+            }
+            this.emit("update-ai-model-session", "The agent configuration was submitted successfully, lets explore the options");
         }
     }
     emit(event, ...args) {

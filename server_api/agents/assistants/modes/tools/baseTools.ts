@@ -12,6 +12,7 @@ export class BaseAssistantTools {
     await new Promise((resolve) => setTimeout(resolve, 1));
   }
 
+
   async updateCurrentAgentProduct(
     agentProduct: YpAgentProductAttributes,
     subscription: YpSubscriptionAttributes | null,
@@ -73,7 +74,10 @@ export class BaseAssistantTools {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
 
-    this.assistant.emit("update-ai-model-session", "Shown configuration widget");
+    this.assistant.emit(
+      "update-ai-model-session",
+      "Shown configuration widget"
+    );
   }
 
   async updateHaveShownLoginWidget(
@@ -103,6 +107,9 @@ export class BaseAssistantTools {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
 
-    this.assistant.emit("update-ai-model-session", "Cleared current agent product");
+    this.assistant.emit(
+      "update-ai-model-session",
+      "Cleared current agent product"
+    );
   }
 }

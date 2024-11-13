@@ -77,10 +77,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         const savedUuid = localStorage.getItem(storageKey);
         if (savedUuid) {
             this.clientMemoryUuid = savedUuid;
+            window.appGlobals.currentClientMemoryUuid = savedUuid;
         }
         else {
             this.clientMemoryUuid = crypto.randomUUID();
             localStorage.setItem(storageKey, this.clientMemoryUuid);
+            window.appGlobals.currentClientMemoryUuid = this.clientMemoryUuid;
         }
         this.setupServerApi();
     }
@@ -91,6 +93,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         super.connectedCallback();
         this.getMemoryFromServer();
         this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
+        this.addGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
+    }
+    async agentConfigurationSubmitted() {
+        const clientSystemMessage = {
+            type: "client_system_message",
+            sender: "system",
+            message: "agent_configuration_submitted",
+        };
+        this.ws.send(JSON.stringify(clientSystemMessage));
     }
     async userLoggedIn() {
         if (this.haveLoggedIn) {
@@ -146,6 +157,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.stopCanvasRendering();
         this.stopRecording();
         this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
+        this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
     }
     async setupVoiceCapabilities() { }
     get talkingHeadImage() {

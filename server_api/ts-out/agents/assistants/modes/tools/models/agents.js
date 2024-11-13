@@ -13,6 +13,12 @@ export class AgentModels {
         }
         return this.assistant.memory.currentAgentStatus.agentProduct;
     }
+    async getCurrentSubscription() {
+        if (!this.assistant.memory.currentAgentStatus?.subscription) {
+            throw new Error("No current subscription found");
+        }
+        return this.assistant.memory.currentAgentStatus.subscription;
+    }
     async getCurrentAgentAndWorkflow() {
         const agent = await this.getCurrentAgent();
         const currentRun = this.assistant.memory.currentAgentStatus?.agentRun;

@@ -24,6 +24,13 @@ export class AgentModels {
     return this.assistant.memory.currentAgentStatus.agentProduct;
   }
 
+  public async getCurrentSubscription(): Promise<YpSubscriptionAttributes> {
+    if (!this.assistant.memory.currentAgentStatus?.subscription) {
+      throw new Error("No current subscription found");
+    }
+    return this.assistant.memory.currentAgentStatus.subscription;
+  }
+
   public async getCurrentAgentAndWorkflow(): Promise<{
     agent: YpAgentProductAttributes;
     run: YpAgentProductRunAttributes | undefined;

@@ -46,20 +46,25 @@ export class YpAssistantServerApi extends YpServerApi {
     return response;
   }
 
-
-  public updateAssistantMemoryUserLoginStatus(domainId: number  ) {
+  public updateAssistantMemoryUserLoginStatus(domainId: number) {
     return this.fetchWrapper(
       this.baseUrlPath + `/${domainId}/updateAssistantMemoryLoginStatus`,
-      { method: 'PUT', body: JSON.stringify({ domainId, clientMemoryUuid: this.clientMemoryUuid }) }
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          domainId,
+          clientMemoryUuid: this.clientMemoryUuid,
+        }),
+      }
     );
   }
-
 
   public async getMemoryFromServer(domainId: number): Promise<{
     chatLog: PsSimpleChatLog[];
   }> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/memory?clientMemoryUuid=${this.clientMemoryUuid}`,
+      this.baseUrlPath +
+        `/${domainId}/memory?clientMemoryUuid=${this.clientMemoryUuid}`,
       {
         method: "GET",
       },
@@ -69,7 +74,8 @@ export class YpAssistantServerApi extends YpServerApi {
 
   public clearChatLogFromServer(domainId: number): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/chatlog?clientMemoryUuid=${this.clientMemoryUuid}`,
+      this.baseUrlPath +
+        `/${domainId}/chatlog?clientMemoryUuid=${this.clientMemoryUuid}`,
       {
         method: "DELETE",
       },
@@ -92,13 +98,16 @@ export class YpAssistantServerApi extends YpServerApi {
           currentMode,
           serverMemoryId,
           clientMemoryUuid: this.clientMemoryUuid,
-        })
+        }),
       },
       false
     );
   }
 
-  private saveChatToLocalStorage(serverMemoryId: string, chatLog: PsSimpleChatLog[]): void {
+  private saveChatToLocalStorage(
+    serverMemoryId: string,
+    chatLog: PsSimpleChatLog[]
+  ): void {
     try {
       const savedChats = this.loadChatsFromLocalStorage();
       if (chatLog.length > 0) {
@@ -110,7 +119,7 @@ export class YpAssistantServerApi extends YpServerApi {
 
         // Check if chat already exists
         const existingChatIndex = savedChats.findIndex(
-          chat => chat.serverMemoryId === serverMemoryId
+          (chat) => chat.serverMemoryId === serverMemoryId
         );
 
         if (existingChatIndex >= 0) {
@@ -119,10 +128,13 @@ export class YpAssistantServerApi extends YpServerApi {
           savedChats.push(newChat);
         }
 
-        localStorage.setItem(this.localStorageChatsKey, JSON.stringify(savedChats));
+        localStorage.setItem(
+          this.localStorageChatsKey,
+          JSON.stringify(savedChats)
+        );
       }
     } catch (error) {
-      console.error('Error saving chat to local storage:', error);
+      console.error("Error saving chat to local storage:", error);
     }
   }
 
@@ -131,18 +143,38 @@ export class YpAssistantServerApi extends YpServerApi {
       const storedChats = localStorage.getItem(this.localStorageChatsKey);
       return storedChats ? JSON.parse(storedChats) : [];
     } catch (error) {
-      console.error('Error loading chats from local storage:', error);
+      console.error("Error loading chats from local storage:", error);
       return [];
     }
   }
 
   public clearServerMemory(serverMemoryId: string): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/memory/${serverMemoryId}?clientMemoryUuid=${this.clientMemoryUuid}`,
+      this.baseUrlPath +
+        `/memory/${serverMemoryId}?clientMemoryUuid=${this.clientMemoryUuid}`,
       {
         method: "DELETE",
       },
       false
+    );
+  }
+
+  public submitAgentConfiguration(
+    domainId: number,
+    agentProductId: string,
+    subscriptionId: string,
+    requiredQuestionsAnswers: YpStructuredAnswer[]
+  ): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${domainId}/submitAgentConfiguration`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          agentProductId,
+          subscriptionId,
+          requiredQuestionsAnswers,
+        }),
+      }
     );
   }
 }

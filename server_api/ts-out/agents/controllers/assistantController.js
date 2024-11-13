@@ -41,6 +41,32 @@ export class AssistantController {
                 process.exit(1);
             }
         };
+        this.submitAgentConfiguration = async (req, res) => {
+            console.log(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
+            const { agentProductId, subscriptionId, requiredQuestionsAnswers } = req.body;
+            const memoryId = this.getMemoryUserId(req);
+            // Get subscription
+            const subscription = await YpSubscription.findOne({
+                where: {
+                    id: subscriptionId,
+                },
+            });
+            if (!subscription) {
+                res.sendStatus(404);
+                return;
+            }
+            try {
+                subscription.configuration.requiredQuestionsAnswered = requiredQuestionsAnswers;
+                subscription.changed("configuration", true);
+                await subscription.save();
+            }
+            catch (error) {
+                console.error("Error saving subscription:", error);
+                res.sendStatus(500);
+                return;
+            }
+            res.sendStatus(200);
+        };
         this.updateAssistantMemoryLoginStatus = async (req, res) => {
             if (req.user && req.params.domainId) {
                 let memoryId = this.getMemoryUserId(req);
@@ -157,6 +183,7 @@ export class AssistantController {
         this.router.get("/:domainId/memory", auth.can("view domain"), this.getMemory.bind(this));
         this.router.delete("/:domainId/chatlog", auth.can("view domain"), this.clearChatLog.bind(this));
         this.router.put("/:domainId/updateAssistantMemoryLoginStatus", this.updateAssistantMemoryLoginStatus.bind(this));
+        this.router.put("/:domainId/submitAgentConfiguration", this.submitAgentConfiguration.bind(this));
     }
     async startVoiceSession(req, res) {
         try {

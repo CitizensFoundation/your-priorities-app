@@ -68,6 +68,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   hasTranscriptSupport = false;
 
+  currentClientMemoryUuid: string | undefined;
+
   hasVideoUpload = false;
 
   hasAudioUpload = false;

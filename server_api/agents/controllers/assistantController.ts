@@ -94,6 +94,47 @@ export class AssistantController {
       "/:domainId/updateAssistantMemoryLoginStatus",
       this.updateAssistantMemoryLoginStatus.bind(this)
     );
+
+    this.router.put(
+      "/:domainId/submitAgentConfiguration",
+      this.submitAgentConfiguration.bind(this)
+    );
+  }
+
+  private submitAgentConfiguration = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
+    console.log(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
+
+    const { agentProductId, subscriptionId, requiredQuestionsAnswers } = req.body;
+
+    const memoryId = this.getMemoryUserId(req);
+
+    // Get subscription
+    const subscription = await YpSubscription.findOne({
+      where: {
+        id: subscriptionId,
+      },
+    });
+
+    if (!subscription) {
+      res.sendStatus(404);
+      return;
+    }
+
+    try {
+      subscription.configuration!.requiredQuestionsAnswered = requiredQuestionsAnswers;
+      subscription.changed("configuration", true);
+
+      await subscription.save();
+    } catch (error) {
+      console.error("Error saving subscription:", error);
+      res.sendStatus(500);
+      return;
+    }
+
+    res.sendStatus(200);
   }
 
   private updateAssistantMemoryLoginStatus = async (

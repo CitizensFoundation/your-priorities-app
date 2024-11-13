@@ -3,6 +3,7 @@ import { YpAiChatbotItemBase } from '../yp-chatbots/yp-chatbot-item-base.js';
 import "./widgets/yp-agent-chip.js";
 import "./widgets/yp-agent-chip-for-purchase.js";
 import "./widgets/yp-login-widget.js";
+import "./widgets/yp-agent-configuration-widget.js";
 export declare class YpAssistantItemBase extends YpAiChatbotItemBase {
     isVoiceMode: boolean;
     isListening: boolean;

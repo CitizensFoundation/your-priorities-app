@@ -127,7 +127,7 @@ export class AgentTools extends BaseAssistantTools {
     get showConfigurationWidget() {
         return {
             name: "show_configuration_widget",
-            description: "Show the configuration widget for the current agent",
+            description: "Show the configuration widget for the current agent, this is needed before running the agent workflow",
             type: "function",
             parameters: {
                 type: "object",
@@ -139,9 +139,13 @@ export class AgentTools extends BaseAssistantTools {
     async showConfigurationWidgetHandler(params) {
         try {
             const agent = await this.agentModels.getCurrentAgent();
+            const subscription = await this.agentModels.getCurrentSubscription();
             const html = `<yp-agent-configuration-widget
+        domainId="${this.assistant.domainId}"
         agentProductId="${agent.id}"
         agentName="${agent.name}"
+        subscriptionId="${subscription.id}"
+        agentImageUrl="${agent.configuration.avatar?.imageUrl}"
         requiredQuestions='${JSON.stringify(agent.configuration.requiredStructuredQuestions)}'
       ></yp-agent-configuration-widget>`;
             await this.updateShownConfigurationWidget();
