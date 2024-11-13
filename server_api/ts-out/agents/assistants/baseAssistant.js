@@ -32,12 +32,26 @@ export class YpBaseAssistant extends YpBaseChatBot {
             apiKey: process.env.OPENAI_API_KEY,
         });
         this.eventEmitter = new EventEmitter();
-        this.wsClientSocket.on("client_system_message", this.processClientSystemMessage.bind(this));
+        this.setupClientSystemMessageListener();
         this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
-    updateAiModelSession(message) {
+    setupClientSystemMessageListener() {
+        this.wsClientSocket.on("message", async (data) => {
+            try {
+                const message = JSON.parse(data.toString());
+                switch (message.type) {
+                    case "client_system_message":
+                        this.processClientSystemMessage(message);
+                        break;
+                }
+            }
+            catch (error) {
+                console.error("Error processing message:", error);
+            }
+        });
+    }
+    async updateAiModelSession(message) {
         console.log(`updateAiModelSession: ${message}`);
-        this.initializeModes();
     }
     processClientSystemMessage(clientEvent) {
         console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
@@ -221,6 +235,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
             await this.saveMemory();
         }
     }
+    async loadMemoryAsync() {
+        this.memory = (await this.loadMemory());
+    }
     getCleanedParams(params) {
         return typeof params === "string" ? JSON.parse(params) : params;
     }
@@ -238,17 +255,19 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Initialize modes from subclass definitions
      */
     async initializeModes() {
+        console.log("---------------------> initializeModes");
         await this.setupMemoryAsync();
         this.availableTools.clear();
         const modes = this.defineAvailableModes();
         for (const mode of modes) {
             this.modes.set(mode.name, mode);
+            console.log(`initializeModes: ${mode.name}`);
             // Register mode's functions
             for (const func of mode.tools) {
                 this.availableTools.set(func.name, func);
             }
         }
-        this.registerCoreFunctions();
+        //    this.registerCoreFunctions();
         // Set initial mode if none exists
         if (!this.memory.currentMode && modes.length > 0) {
             this.memory.currentMode = modes[0].name;
@@ -329,7 +348,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Get current mode's functions
      */
     getCurrentModeFunctions() {
-        this.initializeModes();
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode) {
             console.error(`No current mode found: ${this.memory.currentMode}`);
@@ -345,7 +363,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
      * Get current mode's system prompt
      */
     getCurrentSystemPrompt() {
-        this.initializeModes(); //TODO: Look into not calling this twice in those getters
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode) {
             console.error(`No current mode found: ${this.memory.currentMode}`);

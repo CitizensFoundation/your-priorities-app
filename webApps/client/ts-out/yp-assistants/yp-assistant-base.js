@@ -31,6 +31,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
         this.canvasCtx = null;
         this.renderLoopActive = false;
+        this.haveLoggedIn = false;
         this.renderLoop = () => {
             if (!this.renderLoopActive)
                 return;
@@ -92,10 +93,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
     }
     async userLoggedIn() {
+        if (this.haveLoggedIn) {
+            console.log("User already logged in for assistant");
+            return;
+        }
+        this.haveLoggedIn = true;
         await this.serverApi.updateAssistantMemoryUserLoginStatus(this.domainId);
         const clientSystemMessage = {
             type: "client_system_message",
-            sender: "user",
+            sender: "system",
             message: "user_logged_in",
         };
         this.ws.send(JSON.stringify(clientSystemMessage));

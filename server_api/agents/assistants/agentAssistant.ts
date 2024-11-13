@@ -53,7 +53,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   handleMemoryChanged(memory: YpBaseAssistantMemoryData) {
-    console.log(`memory changed: ${JSON.stringify(memory, null, 2)}`);
+    console.log(`Sending memory changed to client: ${JSON.stringify(this.simplifiedMemory, null, 2)}`);
     this.sendToClient(
       "system",
       JSON.stringify(this.simplifiedMemory),

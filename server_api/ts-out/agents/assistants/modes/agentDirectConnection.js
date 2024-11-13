@@ -49,7 +49,7 @@ export class DirectConversationMode extends BaseAssistantMode {
         }
         else {
             // User not logged in
-            tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow"));
+            tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow. Always show the login widget if the user asks to be logged in."));
             if (this.assistant.haveShownLoginWidget) {
                 tools.push(this.loginTools.clickGoogleLoginButton);
                 tools.push(this.loginTools.clickMainLoginButton);
@@ -58,6 +58,7 @@ export class DirectConversationMode extends BaseAssistantMode {
         return tools;
     }
     getMode() {
+        console.log("---------------------> getMode DirectConversationMode");
         const systemPrompt = this.getCurrentModeSystemPrompt();
         const tools = this.getCurrentModeTools();
         return {

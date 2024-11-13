@@ -22,6 +22,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private waveformCanvas;
     private canvasCtx;
     private renderLoopActive;
+    private haveLoggedIn;
     aiSpeakingTimeout: NodeJS.Timeout | undefined;
     serverApi: YpAssistantServerApi;
     clientMemoryUuid: string;

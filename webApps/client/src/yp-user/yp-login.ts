@@ -126,10 +126,8 @@ export class YpLogin extends YpBaseElement {
   reloadPageOnDialogClose = true;
 
   _logingDialogClose() {
-    debugger;
     if (this.reloadPageOnDialogClose) {
       setTimeout(() => {
-        debugger;
         window.location.reload();
       }, 350);
     }
@@ -1750,7 +1748,6 @@ export class YpLogin extends YpBaseElement {
   }
 
   _loginAfterSavePassword(user: YpUserData) {
-    debugger;
     if (this.redirectToURL) YpNavHelpers.redirectTo(this.redirectToURL);
     if (this.onLoginFunction) {
       this.onLoginFunction(user);

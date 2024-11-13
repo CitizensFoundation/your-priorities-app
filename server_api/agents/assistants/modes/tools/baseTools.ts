@@ -17,7 +17,6 @@ export class BaseAssistantTools {
     subscription: YpSubscriptionAttributes | null,
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    await this.waitTick();
     this.assistant.memory.currentAgentStatus = {
       agentProduct: agentProduct,
       subscription: subscription,
@@ -32,6 +31,8 @@ export class BaseAssistantTools {
 
     await this.assistant.saveMemory();
 
+    await this.waitTick();
+
     // Emit memory update event
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
@@ -44,13 +45,14 @@ export class BaseAssistantTools {
     agentRun: YpAgentProductRunAttributes,
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    await this.waitTick();
     if (!this.assistant.memory.currentAgentStatus) {
       throw new Error("No current agent status found");
     }
 
     this.assistant.memory.currentAgentStatus.agentRun = agentRun;
     await this.assistant.saveMemory();
+
+    await this.waitTick();
 
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
@@ -62,9 +64,10 @@ export class BaseAssistantTools {
   async updateShownConfigurationWidget(
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    await this.waitTick();
     this.assistant.memory.haveShownConfigurationWidget = true;
     await this.assistant.saveMemory();
+
+    await this.waitTick();
 
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
@@ -76,9 +79,10 @@ export class BaseAssistantTools {
   async updateHaveShownLoginWidget(
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    await this.waitTick();
     this.assistant.memory.haveShownLoginWidget = true;
     await this.assistant.saveMemory();
+
+    await this.waitTick();
 
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
@@ -90,9 +94,10 @@ export class BaseAssistantTools {
   async clearCurrentAgentProduct(
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    await this.waitTick();
     this.assistant.memory.currentAgentStatus = undefined;
     await this.assistant.saveMemory();
+
+    await this.waitTick();
 
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);

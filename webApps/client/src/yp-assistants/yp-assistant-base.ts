@@ -65,6 +65,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   private canvasCtx: CanvasRenderingContext2D | null = null;
   private renderLoopActive = false;
+
+  private haveLoggedIn = false;
+
   aiSpeakingTimeout: NodeJS.Timeout | undefined;
 
   serverApi!: YpAssistantServerApi;
@@ -96,10 +99,16 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async userLoggedIn() {
+    if (this.haveLoggedIn) {
+      console.log("User already logged in for assistant");
+      return;
+    }
+    this.haveLoggedIn = true;
     await this.serverApi.updateAssistantMemoryUserLoginStatus(this.domainId);
+
     const clientSystemMessage: YpAssistantMessage = {
       type: "client_system_message",
-      sender: "user",
+      sender: "system",
       message: "user_logged_in",
     };
     this.ws.send(JSON.stringify(clientSystemMessage));

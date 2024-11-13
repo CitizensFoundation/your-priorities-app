@@ -103,12 +103,14 @@ export class AssistantController {
     if (req.user && req.params.domainId) {
       let memoryId = this.getMemoryUserId(req);
       let redisKey = YpAgentAssistant.getRedisKey(memoryId);
+      console.log(`Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
       let memory = (await YpAgentAssistant.loadMemoryFromRedis(
         memoryId
       )) as YpBaseAssistantMemoryData;
       if (memory) {
         memory.currentUser = req.user;
         await req.redisClient.set(redisKey, JSON.stringify(memory));
+        console.log(`Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
       } else {
         console.error(
           `No memory found to update login status for id ${memoryId}`
@@ -191,6 +193,14 @@ export class AssistantController {
           } as YpBaseAssistantMemoryData;
 
           await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
+        } else {
+          if (req.user && !memory.currentUser) {
+            memory.currentUser = req.user;
+            await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
+          } else if (!req.user && memory.currentUser) {
+            memory.currentUser = undefined;
+            await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
+          }
         }
       }
     } catch (error) {

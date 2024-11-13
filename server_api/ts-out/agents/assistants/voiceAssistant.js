@@ -25,9 +25,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         };
         this.parentAssistant.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
-    updateAiModelSession(message) {
+    async updateAiModelSession(message) {
         console.log(`voiceAssistant: updateAiModelSession: ${message}`);
-        this.initializeVoiceSession(message);
+        console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser?.name}`);
+        this.parentAssistant.memory = await this.getLoadedMemory();
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser?.name}`);
+        await this.initializeVoiceSession(message);
     }
     async initializeMainAssistantVoiceConnection() {
         if (!this.voiceEnabled)
@@ -445,6 +449,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             console.error("No voice connection");
             return;
         }
+        await this.parentAssistant.initializeModes();
         console.log("======================> initializeVoiceSession current mode", this.parentAssistant.memory.currentMode);
         if (this.DEBUG) {
             console.log("======================> initializeVoiceSession system prompt", this.parentAssistant.getCurrentSystemPrompt());

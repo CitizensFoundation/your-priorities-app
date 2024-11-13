@@ -7,7 +7,6 @@ export class BaseAssistantTools {
         await new Promise((resolve) => setTimeout(resolve, 1));
     }
     async updateCurrentAgentProduct(agentProduct, subscription, options = { sendEvent: true }) {
-        await this.waitTick();
         this.assistant.memory.currentAgentStatus = {
             agentProduct: agentProduct,
             subscription: subscription,
@@ -19,6 +18,7 @@ export class BaseAssistantTools {
                 : "not_configured",
         };
         await this.assistant.saveMemory();
+        await this.waitTick();
         // Emit memory update event
         if (options.sendEvent) {
             this.assistant.emit("memory-changed", this.assistant.memory);
@@ -27,39 +27,39 @@ export class BaseAssistantTools {
         //this.assistant.emit("update-ai-model-session", "Updated agent product");
     }
     async updateAgentProductRun(agentRun, options = { sendEvent: true }) {
-        await this.waitTick();
         if (!this.assistant.memory.currentAgentStatus) {
             throw new Error("No current agent status found");
         }
         this.assistant.memory.currentAgentStatus.agentRun = agentRun;
         await this.assistant.saveMemory();
+        await this.waitTick();
         if (options.sendEvent) {
             this.assistant.emit("memory-changed", this.assistant.memory);
         }
         this.assistant.emit("update-ai-model-session", "Updated agent product run");
     }
     async updateShownConfigurationWidget(options = { sendEvent: true }) {
-        await this.waitTick();
         this.assistant.memory.haveShownConfigurationWidget = true;
         await this.assistant.saveMemory();
+        await this.waitTick();
         if (options.sendEvent) {
             this.assistant.emit("memory-changed", this.assistant.memory);
         }
         this.assistant.emit("update-ai-model-session", "Shown configuration widget");
     }
     async updateHaveShownLoginWidget(options = { sendEvent: true }) {
-        await this.waitTick();
         this.assistant.memory.haveShownLoginWidget = true;
         await this.assistant.saveMemory();
+        await this.waitTick();
         if (options.sendEvent) {
             this.assistant.emit("memory-changed", this.assistant.memory);
         }
         this.assistant.emit("update-ai-model-session", "Shown login widget");
     }
     async clearCurrentAgentProduct(options = { sendEvent: true }) {
-        await this.waitTick();
         this.assistant.memory.currentAgentStatus = undefined;
         await this.assistant.saveMemory();
+        await this.waitTick();
         if (options.sendEvent) {
             this.assistant.emit("memory-changed", this.assistant.memory);
         }

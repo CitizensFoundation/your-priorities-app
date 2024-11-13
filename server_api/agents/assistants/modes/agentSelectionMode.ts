@@ -34,7 +34,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
       tools.push(this.loginTools.logout);
       tools.push(this.subscriptionTools.listMyAgentSubscriptions);
     } else {
-      tools.push(this.loginTools.showLogin("Show login widget to the user only if they ask to be logged in or if they ask specfically to list all of their subscribed agents. You do not need to log in to connect to an agent."));
+      tools.push(this.loginTools.showLogin("Show login widget to the user if they ask to be logged in or if they ask specfically to list all of their subscribed agents. You do not need to log in to connect to an agent."));
       if (this.assistant.haveShownLoginWidget) {
         tools.push(this.loginTools.clickGoogleLoginButton);
       }
@@ -44,6 +44,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
   }
 
   public getMode(): AssistantChatbotMode {
+    console.log("---------------------> getMode AgentSelectionMode");
     const systemPrompt = this.getCurrentModeSystemPrompt();
     const tools = this.getCurrentModeTools();
 

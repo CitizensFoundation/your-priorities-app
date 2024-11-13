@@ -86,9 +86,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     );
   }
 
-  updateAiModelSession(message: string) {
+  async updateAiModelSession(message: string) {
     console.log(`voiceAssistant: updateAiModelSession: ${message}`);
-    this.initializeVoiceSession(message);
+    console.log(`--------------------> Logged in memory user: ${(this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser?.name}`);
+    this.parentAssistant.memory = await this.getLoadedMemory() as YpBaseAssistantMemoryData;
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    console.log(`--------------------> Logged in memory user: ${(this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser?.name}`);
+    await this.initializeVoiceSession(message);
   }
 
   async initializeMainAssistantVoiceConnection(): Promise<void> {
@@ -622,6 +626,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       console.error("No voice connection");
       return;
     }
+
+    await this.parentAssistant.initializeModes();
 
     console.log(
       "======================> initializeVoiceSession current mode",

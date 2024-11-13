@@ -45,10 +45,8 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.reloadPageOnDialogClose = true;
     }
     _logingDialogClose() {
-        debugger;
         if (this.reloadPageOnDialogClose) {
             setTimeout(() => {
-                debugger;
                 window.location.reload();
             }, 350);
         }
@@ -1505,7 +1503,6 @@ let YpLogin = class YpLogin extends YpBaseElement {
         }
     }
     _loginAfterSavePassword(user) {
-        debugger;
         if (this.redirectToURL)
             YpNavHelpers.redirectTo(this.redirectToURL);
         if (this.onLoginFunction) {
