@@ -21,11 +21,14 @@ export class DirectConversationMode extends BaseAssistantMode {
         const tools = [];
         if (this.assistant.isLoggedIn) {
             // User logged in
+            console.log("Mode: agent_direct_connection_mode, User logged in");
             tools.push(this.loginTools.logout);
             if (this.assistant.isSubscribedToCurrentAgent) {
                 // User is subscribed to the current agent
+                console.log("Mode: agent_direct_connection_mode, User is subscribed to the current agent");
                 if (this.assistant.hasConfiguredCurrentAgent) {
                     // User has configured the current agent
+                    console.log("Mode: agent_direct_connection_mode, User has configured the current agent");
                     tools.push(this.agentTools.showAgentWorkflowWidget);
                     if (this.assistant.isCurrentAgentRunning) {
                         tools.push(this.agentTools.stopCurrentAgentWorkflow);
@@ -36,21 +39,26 @@ export class DirectConversationMode extends BaseAssistantMode {
                 }
                 else {
                     // User has not configured the current agent
+                    console.log("Mode: agent_direct_connection_mode, User has not configured the current agent");
                     tools.push(this.agentTools.showConfigurationWidget);
                     if (this.assistant.haveShownConfigurationWidget) {
+                        console.log("Mode: agent_direct_connection_mode, User has shown the configuration widget");
                         tools.push(this.agentTools.submitConfiguration);
                     }
                 }
             }
             else {
                 // User is not subscribed to the current agent
+                console.log("Mode: agent_direct_connection_mode, User is not subscribed to the current agent");
                 tools.push(this.subscriptionTools.subscribeToCurrentAgentPlan);
             }
         }
         else {
             // User not logged in
+            console.log("Mode: agent_direct_connection_mode, User not logged in");
             tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow. Always show the login widget if the user asks to be logged in."));
             if (this.assistant.haveShownLoginWidget) {
+                console.log("Mode: agent_direct_connection_mode, User has shown the login widget");
                 tools.push(this.loginTools.clickGoogleLoginButton);
                 tools.push(this.loginTools.clickMainLoginButton);
             }
