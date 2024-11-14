@@ -1,5 +1,5 @@
 import { YpBaseElement } from "../../common/yp-base-element";
-export declare class YpAgentWorkflowWidget extends YpBaseElement {
+export declare class YpAgentRunWidget extends YpBaseElement {
     agentProductId: string;
     runId: string;
     agentName: string;
@@ -13,4 +13,4 @@ export declare class YpAgentWorkflowWidget extends YpBaseElement {
     private renderIcon;
     render(): import("lit-html").TemplateResult<1>;
 }
-//# sourceMappingURL=yp-agent-workflow-widget.d.ts.map
+//# sourceMappingURL=yp-agent-run-widget.d.ts.map

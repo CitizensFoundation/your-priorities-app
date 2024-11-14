@@ -21,7 +21,7 @@ export class AgentTools extends BaseAssistantTools {
         try {
             const { agent, run } = await this.agentModels.getCurrentAgentAndWorkflow();
             const workflowJson = JSON.stringify(agent.configuration.workflow);
-            const base64Workflow = btoa(workflowJson); // Base64 encoding
+            const base64Workflow = btoa(workflowJson);
             const html = `<yp-agent-workflow-widget
         agentProductId="${agent.id}"
         runId="${run?.id}"

@@ -181,6 +181,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 }
                 if (result.html) {
                     this.sendToClient("assistant", result.html, "html", true);
+                    this.addAssistantHtmlMessage(result.html);
                 }
                 if (result.clientEvents) {
                     console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
