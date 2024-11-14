@@ -88,6 +88,13 @@ export class SubscriptionModels {
             where: {
                 agent_product_id: agentProductId,
             },
+            include: [
+                {
+                    model: YpSubscriptionPlan,
+                    as: "Plan",
+                    attributes: ['id', 'configuration'],
+                },
+            ],
         }));
         return { agent, subscription };
     }

@@ -7,13 +7,15 @@ export class BaseAssistantTools {
         await new Promise((resolve) => setTimeout(resolve, 1));
     }
     async updateCurrentAgentProduct(agentProduct, subscription, options = { sendEvent: true }) {
+        const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
+        const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
         this.assistant.memory.currentAgentStatus = {
             agentProduct: agentProduct,
             subscription: subscription,
             subscriptionState: subscription ? "subscribed" : "unsubscribed",
-            configurationState: subscription?.configuration?.requiredQuestionsAnswered &&
-                subscription?.configuration?.requiredQuestionsAnswered.length ==
-                    agentProduct.configuration.requiredStructuredQuestions.length
+            configurationState: (requiredStructuredAnswers && requiredStructuredQuestions) &&
+                requiredStructuredAnswers.length ==
+                    requiredStructuredQuestions.length
                 ? "configured"
                 : "not_configured",
         };

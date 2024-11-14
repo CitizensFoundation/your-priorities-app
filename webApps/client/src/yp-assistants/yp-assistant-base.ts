@@ -424,6 +424,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           this.fireGlobal("assistant-requested-login-google-button-click");
         } else if (type === "logout") {
           this.fireGlobal("assistant-requested-logout-button-click");
+        } else if (type === "submit-agent-configuration") {
+          this.fireGlobal("assistant-requested-submit-agent-configuration");
         } else {
           console.error("No mode received in current_mode message");
         }

@@ -14,6 +14,14 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
         super();
         this.serverApi = new YpAssistantServerApi(window.appGlobals.currentClientMemoryUuid);
     }
+    connectedCallback() {
+        super.connectedCallback();
+        this.addGlobalListener("assistant-requested-submit-agent-configuration", this.submitConfiguration.bind(this));
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeGlobalListener("assistant-requested-submit-agent-configuration", this.submitConfiguration.bind(this));
+    }
     static get styles() {
         return [
             super.styles,
@@ -74,6 +82,7 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
     }
     async submitConfiguration() {
         console.log("submitConfiguration");
+        debugger;
         const answers = [];
         // Get answers from required questions
         if (this.requiredQuestions) {
@@ -85,7 +94,7 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
                     if (answer) {
                         answers.push({
                             uniqueId: question.uniqueId,
-                            value: answer
+                            value: answer,
                         });
                     }
                 }
@@ -93,6 +102,24 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
         }
         await this.serverApi.submitAgentConfiguration(this.domainId, this.agentId.toString(), this.subscriptionId, answers);
         this.fireGlobal("agent-configuration-submitted");
+    }
+    get parsedRequiredQuestions() {
+        try {
+            return JSON.parse(this.requiredQuestions);
+        }
+        catch (error) {
+            console.error("Error parsing required questions", error);
+            return [];
+        }
+    }
+    get parsedRequiredQuestionsAnswered() {
+        try {
+            return JSON.parse(this.requiredQuestionsAnswered);
+        }
+        catch (error) {
+            console.error("Error parsing required questions answered", error);
+            return [];
+        }
     }
     render() {
         return html `
@@ -102,12 +129,13 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
           <div class="agent-name">${this.agentName}</div>
           <div class="agent-description">${this.agentDescription}</div>
           <div id="surveyContainer">
-            ${JSON.parse(this.requiredQuestions).map((question, index) => html `
+            ${this.parsedRequiredQuestions.map((question, index) => html `
                 <yp-structured-question-edit
                   index="${index}"
                   id="structuredQuestion_${question.uniqueId ||
             `noId_${index}`}"
                   .question="${question}"
+                  .value="${this.parsedRequiredQuestionsAnswered.find((answer) => answer.uniqueId === question.uniqueId)?.value}"
                 >
                 </yp-structured-question-edit>
               `)}
@@ -143,6 +171,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentConfigurationWidget.prototype, "requiredQuestions", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentConfigurationWidget.prototype, "requiredQuestionsAnswered", void 0);
 YpAgentConfigurationWidget = __decorate([
     customElement("yp-agent-configuration-widget")
 ], YpAgentConfigurationWidget);

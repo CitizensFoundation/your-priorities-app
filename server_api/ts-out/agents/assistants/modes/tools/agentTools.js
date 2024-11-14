@@ -26,7 +26,7 @@ export class AgentTools extends BaseAssistantTools {
         runId="${run.id}"
         agentName="${agent.name}"
         agentDescription="${agent.description}"
-        workflowStatus="${run.status || 'not_started'}"
+        workflowStatus="${run.status || "not_started"}"
       ></yp-agent-workflow-widget>`;
                 return {
                     success: true,
@@ -42,7 +42,9 @@ export class AgentTools extends BaseAssistantTools {
             }
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Failed to show workflow widget";
+            const errorMessage = error instanceof Error
+                ? error.message
+                : "Failed to show workflow widget";
             console.error(errorMessage);
             return {
                 success: false,
@@ -146,17 +148,23 @@ export class AgentTools extends BaseAssistantTools {
         agentName="${agent.name}"
         subscriptionId="${subscription.id}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
-        requiredQuestions='${JSON.stringify(agent.configuration.requiredStructuredQuestions)}'
+        requiredQuestions='${JSON.stringify(subscription?.Plan?.configuration.requiredStructuredQuestions)}'
+        requiredQuestionsAnswered='${JSON.stringify(subscription?.configuration?.requiredQuestionsAnswered ?? [])}'
       ></yp-agent-configuration-widget>`;
             await this.updateShownConfigurationWidget();
             return {
                 success: true,
                 html,
-                data: { agent },
+                data: {
+                    agent,
+                    subscription,
+                },
             };
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Failed to show configuration widget";
+            const errorMessage = error instanceof Error
+                ? error.message
+                : "Failed to show configuration widget";
             console.error(errorMessage);
             return {
                 success: false,
@@ -167,7 +175,7 @@ export class AgentTools extends BaseAssistantTools {
     get submitConfiguration() {
         return {
             name: "submit_configuration",
-            description: "Submit the configuration for the current agent",
+            description: "Sends an event to the webapp to click on the submit button for the user for the configuration of the current agent",
             type: "function",
             parameters: {
                 type: "object",
@@ -189,7 +197,9 @@ export class AgentTools extends BaseAssistantTools {
             };
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Failed to submit configuration";
+            const errorMessage = error instanceof Error
+                ? error.message
+                : "Failed to submit configuration";
             console.error(errorMessage);
             return {
                 success: false,

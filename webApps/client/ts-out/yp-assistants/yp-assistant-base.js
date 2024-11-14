@@ -324,6 +324,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 else if (type === "logout") {
                     this.fireGlobal("assistant-requested-logout-button-click");
                 }
+                else if (type === "submit-agent-configuration") {
+                    this.fireGlobal("assistant-requested-submit-agent-configuration");
+                }
                 else {
                     console.error("No mode received in current_mode message");
                 }

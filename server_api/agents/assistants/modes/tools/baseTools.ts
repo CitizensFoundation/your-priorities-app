@@ -12,20 +12,21 @@ export class BaseAssistantTools {
     await new Promise((resolve) => setTimeout(resolve, 1));
   }
 
-
   async updateCurrentAgentProduct(
     agentProduct: YpAgentProductAttributes,
     subscription: YpSubscriptionAttributes | null,
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
+    const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
+    const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
     this.assistant.memory.currentAgentStatus = {
       agentProduct: agentProduct,
       subscription: subscription,
       subscriptionState: subscription ? "subscribed" : "unsubscribed",
       configurationState:
-        subscription?.configuration?.requiredQuestionsAnswered &&
-        subscription?.configuration?.requiredQuestionsAnswered.length ==
-          agentProduct.configuration.requiredStructuredQuestions.length
+        (requiredStructuredAnswers && requiredStructuredQuestions) &&
+        requiredStructuredAnswers.length ==
+          requiredStructuredQuestions.length
           ? "configured"
           : "not_configured",
     };

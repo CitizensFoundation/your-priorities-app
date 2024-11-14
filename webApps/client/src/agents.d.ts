@@ -26,6 +26,7 @@ interface YpAgentProductConfiguration {
   workflow: YpWorkflowConfiguration;
   templateWorkflowCommunityId: number;
   structuredAnswersOverride: YpStructuredAnswer[];
+  //TODO: This is duplicate from plan configuration, let's see which one we should use
   requiredStructuredQuestions: YpStructuredQuestionData[];
   settings?: Record<string, any>;
   integrations?: Record<string, any>;
@@ -77,6 +78,7 @@ interface YpSubscriptionPlanConfiguration {
   amount: number;
   currency: string;
   billing_cycle: YpSubscriptionBillingCycle;
+  requiredStructuredQuestions: YpStructuredQuestionData[];
   type: YpSubscriptionPlanType;
   max_runs_per_cycle: number;
   boosters: YpSubscriptionBoosterConfiguration[];

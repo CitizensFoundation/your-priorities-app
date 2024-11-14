@@ -28,12 +28,31 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
   @property({ type: String })
   requiredQuestions!: string;
 
+  @property({ type: String })
+  requiredQuestionsAnswered!: string;
+
   serverApi!: YpAssistantServerApi;
 
   constructor() {
     super();
     this.serverApi = new YpAssistantServerApi(
       window.appGlobals.currentClientMemoryUuid!
+    );
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener(
+      "assistant-requested-submit-agent-configuration",
+      this.submitConfiguration.bind(this)
+    );
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeGlobalListener(
+      "assistant-requested-submit-agent-configuration",
+      this.submitConfiguration.bind(this)
     );
   }
 
@@ -98,6 +117,7 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
 
   async submitConfiguration() {
     console.log("submitConfiguration");
+    debugger;
 
     const answers: YpStructuredAnswer[] = [];
 
@@ -106,7 +126,9 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
       const questions = JSON.parse(this.requiredQuestions);
       for (const question of questions) {
         const questionElement = this.shadowRoot!.querySelector(
-          `#structuredQuestion_${question.uniqueId || `noId_${questions.indexOf(question)}`}`
+          `#structuredQuestion_${
+            question.uniqueId || `noId_${questions.indexOf(question)}`
+          }`
         ) as any;
 
         if (questionElement) {
@@ -114,7 +136,7 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
           if (answer) {
             answers.push({
               uniqueId: question.uniqueId,
-              value: answer
+              value: answer,
             });
           }
         }
@@ -131,6 +153,24 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
     this.fireGlobal("agent-configuration-submitted");
   }
 
+  get parsedRequiredQuestions(): YpStructuredQuestionData[] {
+    try {
+      return JSON.parse(this.requiredQuestions);
+    } catch (error) {
+      console.error("Error parsing required questions", error);
+      return [];
+    }
+  }
+
+  get parsedRequiredQuestionsAnswered(): YpStructuredAnswer[] {
+    try {
+      return JSON.parse(this.requiredQuestionsAnswered);
+    } catch (error) {
+      console.error("Error parsing required questions answered", error);
+      return [];
+    }
+  }
+
   override render() {
     return html`
       <div class="agent-chip">
@@ -139,13 +179,16 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
           <div class="agent-name">${this.agentName}</div>
           <div class="agent-description">${this.agentDescription}</div>
           <div id="surveyContainer">
-            ${JSON.parse(this.requiredQuestions).map(
+            ${this.parsedRequiredQuestions.map(
               (question: YpStructuredQuestionData, index: number) => html`
                 <yp-structured-question-edit
                   index="${index}"
                   id="structuredQuestion_${question.uniqueId ||
                   `noId_${index}`}"
                   .question="${question}"
+                  .value="${this.parsedRequiredQuestionsAnswered.find(
+                    (answer) => answer.uniqueId === question.uniqueId
+                  )?.value}"
                 >
                 </yp-structured-question-edit>
               `

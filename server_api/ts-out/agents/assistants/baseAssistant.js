@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
+import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 /**
  * Common modes that implementations might use
  */
@@ -66,19 +67,29 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 if (!this.memory.currentAgentStatus.subscription) {
                     throw new Error("No subscription found");
                 }
-                const subscription = await YpSubscription.findByPk(this.memory.currentAgentStatus.subscription.id);
+                const subscription = await YpSubscription.findOne({
+                    where: {
+                        id: this.memory.currentAgentStatus.subscription.id,
+                    },
+                    include: [{
+                            model: YpSubscriptionPlan,
+                            as: 'Plan',
+                            attributes: ['id', 'configuration']
+                        }]
+                });
                 if (!subscription) {
                     throw new Error("No subscription found");
                 }
+                const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
+                const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
                 this.memory.currentAgentStatus.subscription = subscription;
                 this.memory.currentAgentStatus.subscriptionState = subscription
                     ? "subscribed"
                     : "unsubscribed";
                 this.memory.currentAgentStatus.configurationState =
-                    subscription?.configuration?.requiredQuestionsAnswered &&
-                        subscription?.configuration?.requiredQuestionsAnswered.length ==
-                            this.memory.currentAgentStatus.agentProduct.configuration
-                                .requiredStructuredQuestions.length
+                    (requiredStructuredAnswers && requiredStructuredQuestions) &&
+                        requiredStructuredAnswers.length ==
+                            requiredStructuredQuestions.length
                         ? "configured"
                         : "not_configured";
                 await this.saveMemory();
