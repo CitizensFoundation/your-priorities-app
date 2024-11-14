@@ -44,19 +44,20 @@ export class AssistantController {
         this.submitAgentConfiguration = async (req, res) => {
             console.log(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
             const { agentProductId, subscriptionId, requiredQuestionsAnswers } = req.body;
-            const memoryId = this.getMemoryUserId(req);
-            // Get subscription
-            const subscription = await YpSubscription.findOne({
-                where: {
-                    id: subscriptionId,
-                },
-            });
-            if (!subscription) {
-                res.sendStatus(404);
-                return;
-            }
             try {
-                subscription.configuration.requiredQuestionsAnswered = requiredQuestionsAnswers;
+                const memoryId = this.getMemoryUserId(req);
+                // Get subscription
+                const subscription = await YpSubscription.findOne({
+                    where: {
+                        id: subscriptionId,
+                    },
+                });
+                if (!subscription) {
+                    res.sendStatus(404);
+                    return;
+                }
+                subscription.configuration.requiredQuestionsAnswered =
+                    requiredQuestionsAnswers;
                 subscription.changed("configuration", true);
                 await subscription.save();
             }
@@ -69,19 +70,25 @@ export class AssistantController {
         };
         this.updateAssistantMemoryLoginStatus = async (req, res) => {
             if (req.user && req.params.domainId) {
-                let memoryId = this.getMemoryUserId(req);
-                let redisKey = YpAgentAssistant.getRedisKey(memoryId);
-                console.log(`Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
-                let memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
-                if (memory) {
-                    memory.currentUser = req.user;
-                    await req.redisClient.set(redisKey, JSON.stringify(memory));
-                    console.log(`Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
+                try {
+                    let memoryId = this.getMemoryUserId(req);
+                    let redisKey = YpAgentAssistant.getRedisKey(memoryId);
+                    console.log(`Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
+                    let memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
+                    if (memory) {
+                        memory.currentUser = req.user;
+                        await req.redisClient.set(redisKey, JSON.stringify(memory));
+                        console.log(`Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
+                    }
+                    else {
+                        console.error(`No memory found to update login status for id ${memoryId}`);
+                    }
+                    res.sendStatus(200);
                 }
-                else {
-                    console.error(`No memory found to update login status for id ${memoryId}`);
+                catch (error) {
+                    console.error("Error updating login status:", error);
+                    res.sendStatus(500);
                 }
-                res.sendStatus(200);
             }
             else {
                 res.sendStatus(401);

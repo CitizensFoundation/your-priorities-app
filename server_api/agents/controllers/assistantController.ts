@@ -105,26 +105,29 @@ export class AssistantController {
     req: YpRequest,
     res: express.Response
   ) => {
-    console.log(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
+    console.log(
+      `submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`
+    );
 
-    const { agentProductId, subscriptionId, requiredQuestionsAnswers } = req.body;
-
-    const memoryId = this.getMemoryUserId(req);
-
-    // Get subscription
-    const subscription = await YpSubscription.findOne({
-      where: {
-        id: subscriptionId,
-      },
-    });
-
-    if (!subscription) {
-      res.sendStatus(404);
-      return;
-    }
+    const { agentProductId, subscriptionId, requiredQuestionsAnswers } =
+      req.body;
 
     try {
-      subscription.configuration!.requiredQuestionsAnswered = requiredQuestionsAnswers;
+      const memoryId = this.getMemoryUserId(req);
+
+      // Get subscription
+      const subscription = await YpSubscription.findOne({
+        where: {
+          id: subscriptionId,
+        },
+      });
+
+      if (!subscription) {
+        res.sendStatus(404);
+        return;
+      }
+      subscription.configuration!.requiredQuestionsAnswered =
+        requiredQuestionsAnswers;
       subscription.changed("configuration", true);
 
       await subscription.save();
@@ -135,29 +138,38 @@ export class AssistantController {
     }
 
     res.sendStatus(200);
-  }
+  };
 
   private updateAssistantMemoryLoginStatus = async (
     req: YpRequest,
     res: express.Response
   ) => {
     if (req.user && req.params.domainId) {
-      let memoryId = this.getMemoryUserId(req);
-      let redisKey = YpAgentAssistant.getRedisKey(memoryId);
-      console.log(`Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
-      let memory = (await YpAgentAssistant.loadMemoryFromRedis(
-        memoryId
-      )) as YpBaseAssistantMemoryData;
-      if (memory) {
-        memory.currentUser = req.user;
-        await req.redisClient.set(redisKey, JSON.stringify(memory));
-        console.log(`Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
-      } else {
-        console.error(
-          `No memory found to update login status for id ${memoryId}`
+      try {
+        let memoryId = this.getMemoryUserId(req);
+        let redisKey = YpAgentAssistant.getRedisKey(memoryId);
+        console.log(
+          `Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`
         );
+        let memory = (await YpAgentAssistant.loadMemoryFromRedis(
+          memoryId
+        )) as YpBaseAssistantMemoryData;
+        if (memory) {
+          memory.currentUser = req.user;
+          await req.redisClient.set(redisKey, JSON.stringify(memory));
+          console.log(
+            `Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`
+          );
+        } else {
+          console.error(
+            `No memory found to update login status for id ${memoryId}`
+          );
+        }
+        res.sendStatus(200);
+      } catch (error) {
+        console.error("Error updating login status:", error);
+        res.sendStatus(500);
       }
-      res.sendStatus(200);
     } else {
       res.sendStatus(401);
     }
@@ -166,16 +178,15 @@ export class AssistantController {
   private defaultStartAgentMode: YpAssistantMode = "agent_selection_mode";
 
   private getMemoryUserId = (req: YpRequest) => {
-    const userIdentifier = req.body.clientMemoryUuid || req.query.clientMemoryUuid;
+    const userIdentifier =
+      req.body.clientMemoryUuid || req.query.clientMemoryUuid;
     if (!userIdentifier) {
       throw new Error("No user identifier found");
     }
     return `${req.params.domainId}-${userIdentifier}`;
-  }
+  };
 
   private clearChatLog = async (req: YpRequest, res: express.Response) => {
-
-
     try {
       const memoryId = this.getMemoryUserId(req);
       console.log(`Clearing chat log for memoryId: ${memoryId}`);
@@ -212,7 +223,6 @@ export class AssistantController {
   };
 
   private getMemory = async (req: YpRequest, res: express.Response) => {
-
     let memory: YpBaseAssistantMemoryData | undefined;
     let memoryId: string | undefined;
 
@@ -299,7 +309,7 @@ export class AssistantController {
         req.redisClient,
         false,
         parseInt(req.params.domainId),
-        memoryId,
+        memoryId
       );
 
       assistant.conversation(chatLog);

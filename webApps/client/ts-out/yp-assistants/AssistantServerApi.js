@@ -102,6 +102,7 @@ export class YpAssistantServerApi extends YpServerApi {
                 agentProductId,
                 subscriptionId,
                 requiredQuestionsAnswers,
+                clientMemoryUuid: this.clientMemoryUuid
             }),
         });
     }

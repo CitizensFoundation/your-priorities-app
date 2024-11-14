@@ -35,7 +35,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
   domainId: number;
 
-  DEBUG = true;
+  DEBUG = false;
 
   protected modes: Map<YpAssistantMode, AssistantChatbotMode> = new Map();
   protected availableTools: Map<string, AssistantChatbotTool> = new Map();

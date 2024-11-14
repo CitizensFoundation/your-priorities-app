@@ -8,7 +8,7 @@ import { YpAssistantServerApi } from "../AssistantServerApi.js";
 @customElement("yp-agent-configuration-widget")
 export class YpAgentConfigurationWidget extends YpBaseElement {
   @property({ type: Number })
-  agentId!: number;
+  agentProductId!: number;
 
   @property({ type: String })
   agentName!: string;
@@ -136,7 +136,7 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
           if (answer) {
             answers.push({
               uniqueId: question.uniqueId,
-              value: answer,
+              value: answer.value,
             });
           }
         }
@@ -145,7 +145,7 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
 
     await this.serverApi.submitAgentConfiguration(
       this.domainId,
-      this.agentId.toString(),
+      this.agentProductId.toString(),
       this.subscriptionId,
       answers
     );

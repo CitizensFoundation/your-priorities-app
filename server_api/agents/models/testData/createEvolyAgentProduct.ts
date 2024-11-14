@@ -49,9 +49,11 @@ async function createAgentProductsAndPlans() {
           shortName: "Wide Search",
           description:
             "Wide search for competitor strategies and market positions.",
+          shortDescription: "Wide search for competitor strategies and market positions.",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "agentOps",
-          shortDescription: "Wide search for competitor strategies and market positions.",
+          stepBackgroundColor: "#ffdc2f",
+          stepTextColor: "#211e1c"
         },
         {
           name: "Competitor Analysis Human Prioritization",
@@ -60,6 +62,8 @@ async function createAgentProductsAndPlans() {
           shortDescription: "Human prioritization of the wide search results.",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "engagmentFromOutputConnector",
+          stepBackgroundColor: "#e74c3c",
+          stepTextColor: "#ffffff",
         },
         {
           name: "Competitor Analysis Detailed Search",
@@ -69,14 +73,18 @@ async function createAgentProductsAndPlans() {
           shortDescription: "Detailed search for competitor strategies and market positions.",
           agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
           type: "agentOps",
+          stepBackgroundColor: "#1e90ff",
+          stepTextColor: "#ffffff",
         },
         {
           name: "Competitor Analysis Detailed Search Human Prioritization",
           shortName: "Detailed Search Human Prioritization",
           description: "Human prioritization of the detailed search results.",
+          shortDescription: "Human prioritization of the detailed search results.",
           agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
           type: "engagmentFromOutputConnector",
-          shortDescription: "Human prioritization of the detailed search results.",
+          stepBackgroundColor: "#2ecc71",
+          stepTextColor: "#ffffff",
         },
         {
           name: "Competitors Report",
@@ -86,6 +94,8 @@ async function createAgentProductsAndPlans() {
           shortDescription: "Report on the state of the market based on the competitors analysis.",
           agentClassUuid: "1cf3af64-a5f6-a7c1-91c1-51fb13c72f1a",
           type: "agentOps",
+          stepBackgroundColor: "#d486da",
+          stepTextColor: "#ffffff",
         },
       ],
     };

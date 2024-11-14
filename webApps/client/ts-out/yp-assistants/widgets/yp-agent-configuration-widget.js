@@ -94,13 +94,13 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
                     if (answer) {
                         answers.push({
                             uniqueId: question.uniqueId,
-                            value: answer,
+                            value: answer.value,
                         });
                     }
                 }
             }
         }
-        await this.serverApi.submitAgentConfiguration(this.domainId, this.agentId.toString(), this.subscriptionId, answers);
+        await this.serverApi.submitAgentConfiguration(this.domainId, this.agentProductId.toString(), this.subscriptionId, answers);
         this.fireGlobal("agent-configuration-submitted");
     }
     get parsedRequiredQuestions() {
@@ -152,7 +152,7 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
 };
 __decorate([
     property({ type: Number })
-], YpAgentConfigurationWidget.prototype, "agentId", void 0);
+], YpAgentConfigurationWidget.prototype, "agentProductId", void 0);
 __decorate([
     property({ type: String })
 ], YpAgentConfigurationWidget.prototype, "agentName", void 0);

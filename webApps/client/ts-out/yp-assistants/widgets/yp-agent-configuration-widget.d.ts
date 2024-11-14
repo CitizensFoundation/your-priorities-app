@@ -2,7 +2,7 @@ import { YpBaseElement } from "../../common/yp-base-element.js";
 import "@material/web/iconbutton/filled-icon-button.js";
 import { YpAssistantServerApi } from "../AssistantServerApi.js";
 export declare class YpAgentConfigurationWidget extends YpBaseElement {
-    agentId: number;
+    agentProductId: number;
     agentName: string;
     subscriptionId: string;
     domainId: number;

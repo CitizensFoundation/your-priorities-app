@@ -255,6 +255,8 @@ interface YpWorkflowStep {
   configuration?: Record<string, any>;
   dependencies?: number[];
   timeout?: number;
+  stepBackgroundColor?: string;
+  stepTextColor?: string;
 }
 
 interface YpWorkflowConfiguration {

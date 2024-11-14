@@ -15,7 +15,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     constructor(wsClientId, wsClients, redis, domainId, memoryId) {
         super(wsClientId, wsClients, memoryId);
         this.persistMemory = true;
-        this.DEBUG = true;
+        this.DEBUG = false;
         this.modes = new Map();
         this.availableTools = new Map();
         this.toolCallTimeout = 30000; // 30 seconds

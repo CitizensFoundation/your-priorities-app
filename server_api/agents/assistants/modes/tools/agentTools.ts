@@ -13,7 +13,8 @@ export class AgentTools extends BaseAssistantTools {
   get showAgentWorkflowWidget() {
     return {
       name: "show_agent_workflow_widget",
-      description: "Show the workflow widget for the current agent",
+      description:
+        "Show the workflow widget for the current agent show this to the user at the start of the conversation if the agent is not running",
       type: "function",
       parameters: {
         type: "object",
@@ -29,27 +30,23 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const { agent, run } =
         await this.agentModels.getCurrentAgentAndWorkflow();
+        const workflowJson = JSON.stringify(agent.configuration.workflow);
+        const base64Workflow = btoa(workflowJson); // Base64 encoding
 
-      if (run) {
-        const html = `<yp-agent-workflow-widget
+      const html = `<yp-agent-workflow-widget
         agentProductId="${agent.id}"
-        runId="${run.id}"
+        runId="${run?.id}"
         agentName="${agent.name}"
         agentDescription="${agent.description}"
-        workflowStatus="${run.status || "not_started"}"
+        workflow="${base64Workflow}"
+        workflowStatus="${run?.status || "not_started"}"
       ></yp-agent-workflow-widget>`;
 
-        return {
-          success: true,
-          html,
-          data: { agent, run },
-        };
-      } else {
-        return {
-          success: false,
-          error: "No current agent workflow found",
-        };
-      }
+      return {
+        success: true,
+        html,
+        data: { agent, run },
+      };
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -210,7 +207,8 @@ export class AgentTools extends BaseAssistantTools {
   get submitConfiguration() {
     return {
       name: "submit_configuration",
-      description: "Sends an event to the webapp to click on the submit button for the user for the configuration of the current agent",
+      description:
+        "Sends an event to the webapp to click on the submit button for the user for the configuration of the current agent",
       type: "function",
       parameters: {
         type: "object",
