@@ -42,9 +42,7 @@ export class YpBaseChatBot {
     loadMemory() {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log('===> Redis Debug 1 <===');
                 const memoryString = await redis.get(this.redisKey);
-                console.log('===> Redis Debug 2 <=== ');
                 if (memoryString) {
                     const memory = JSON.parse(memoryString);
                     resolve(memory);
