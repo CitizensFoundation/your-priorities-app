@@ -23,7 +23,7 @@ export class YpAgentProduct extends Model {
 
   // Associations
   declare User?: YpSubscriptionUser;
-  declare Group?: Group;
+  declare Group?: YpGroupData;
   declare BoosterPurchases?: YpAgentProductBoosterPurchase[];
   declare Subscriptions?: YpSubscription[];
   declare SubscriptionPlans?: YpSubscriptionPlan[];

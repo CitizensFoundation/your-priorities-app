@@ -53,9 +53,7 @@ export class SubscriptionTools extends BaseAssistantTools {
             };
         }
         catch (error) {
-            const errorMessage = error instanceof Error
-                ? error.message
-                : "Failed to load agent status";
+            const errorMessage = error instanceof Error ? error.message : "Failed to load agent status";
             console.error(`Failed to load agent status: ${errorMessage}`);
             return {
                 success: false,
@@ -108,9 +106,7 @@ export class SubscriptionTools extends BaseAssistantTools {
             };
         }
         catch (error) {
-            const errorMessage = error instanceof Error
-                ? error.message
-                : "Failed to load agent status";
+            const errorMessage = error instanceof Error ? error.message : "Failed to load agent status";
             console.error(`Failed to load agent status: ${errorMessage}`);
             return {
                 success: false,
@@ -127,15 +123,11 @@ export class SubscriptionTools extends BaseAssistantTools {
             parameters: {
                 type: "object",
                 properties: {
-                    agentProductId: { type: "number" },
-                    subscriptionPlanId: { type: "number" },
                     useHasVerballyConfirmedSubscribeWithTheAgentName: {
                         type: "boolean",
                     },
                 },
                 required: [
-                    "agentProductId",
-                    "subscriptionPlanId",
                     "useHasVerballyConfirmedSubscribeWithTheAgentName",
                 ],
             },
@@ -152,7 +144,17 @@ export class SubscriptionTools extends BaseAssistantTools {
                     error: "User must confirm subscription with the agent name before proceeding",
                 };
             }
-            const result = await this.subscriptionModels.subscribeToAgentPlan(params.agentProductId, params.subscriptionPlanId);
+            if (!this.assistant.memory.currentAgentStatus ||
+                !this.assistant.memory.currentAgentStatus.agentProduct ||
+                !this.assistant.memory.currentAgentStatus.subscription ||
+                !this.assistant.memory.currentAgentStatus.subscription.Plan) {
+                return {
+                    success: false,
+                    data: "No current agent selected",
+                    error: "No current agent selected",
+                };
+            }
+            const result = await this.subscriptionModels.subscribeToAgentPlan(this.assistant.memory.currentAgentStatus?.agentProduct.id, this.assistant.memory.currentAgentStatus?.subscription?.Plan.id);
             if (!result.success) {
                 return {
                     success: false,
@@ -187,9 +189,7 @@ export class SubscriptionTools extends BaseAssistantTools {
             };
         }
         catch (error) {
-            const errorMessage = error instanceof Error
-                ? error.message
-                : "Failed to subscribe to agent";
+            const errorMessage = error instanceof Error ? error.message : "Failed to subscribe to agent";
             console.error(`Failed to subscribe to agent: ${errorMessage}`);
             return {
                 success: false,
@@ -205,15 +205,11 @@ export class SubscriptionTools extends BaseAssistantTools {
             parameters: {
                 type: "object",
                 properties: {
-                    agentProductId: { type: "number" },
-                    subscriptionId: { type: "number" },
                     useHasVerballyConfirmedUnsubscribeWithTheAgentName: {
                         type: "boolean",
                     },
                 },
                 required: [
-                    "agentProductId",
-                    "subscriptionId",
                     "useHasVerballyConfirmedUnsubscribeWithTheAgentName",
                 ],
             },
@@ -230,8 +226,24 @@ export class SubscriptionTools extends BaseAssistantTools {
                     error: "User must verbally confirm unsubscription with the agent name before proceeding",
                 };
             }
-            const { agent, subscription } = await this.subscriptionModels.loadAgentProductAndSubscription(params.agentProductId);
-            const result = await this.subscriptionModels.unsubscribeFromAgentPlan(params.subscriptionId);
+            if (!this.assistant.memory.currentAgentStatus ||
+                !this.assistant.memory.currentAgentStatus.agentProduct ||
+                !this.assistant.memory.currentAgentStatus.subscription) {
+                return {
+                    success: false,
+                    data: "No current agent selected",
+                    error: "No current agent selected",
+                };
+            }
+            const { agent, subscription } = await this.subscriptionModels.loadAgentProductAndSubscription(this.assistant.memory.currentAgentStatus.agentProduct.id);
+            if (!subscription) {
+                return {
+                    success: false,
+                    data: "No subscription found",
+                    error: "No subscription found",
+                };
+            }
+            const result = await this.subscriptionModels.unsubscribeFromAgentPlan(subscription.id);
             if (!result.success) {
                 return {
                     success: false,
@@ -241,7 +253,7 @@ export class SubscriptionTools extends BaseAssistantTools {
             const html = `<div class="agent-chips"><yp-agent-chip
         isUnsubscribed="${true}"
         agentProductId="${agent.id}"
-        subscriptionId="${params.subscriptionId}"
+        subscriptionId="${subscription.id}"
         agentName="${agent.name}"
         agentDescription="${agent.description}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"

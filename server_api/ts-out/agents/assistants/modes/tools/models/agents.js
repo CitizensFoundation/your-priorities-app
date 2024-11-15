@@ -21,7 +21,7 @@ export class AgentModels {
     }
     async getCurrentAgentAndWorkflow() {
         const agent = await this.getCurrentAgent();
-        const currentRun = this.assistant.memory.currentAgentStatus?.agentRun;
+        const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
         if (!currentRun) {
             return {
                 agent,
@@ -54,7 +54,7 @@ export class AgentModels {
     }
     async stopAgentWorkflow() {
         const agent = await this.getCurrentAgent();
-        const currentRun = this.assistant.memory.currentAgentStatus?.agentRun;
+        const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
         if (!currentRun) {
             throw new Error("No active workflow found to stop");
         }

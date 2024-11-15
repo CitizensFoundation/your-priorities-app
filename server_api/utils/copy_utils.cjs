@@ -1491,7 +1491,7 @@ const copyCommunity = (
       },
     ],
     function (error) {
-      console.log("Done copying community");
+      console.log("Done copying community", newCommunity);
       if (error) {
         console.error(error);
         done(error);

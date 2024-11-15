@@ -16,10 +16,6 @@ import { PsAgentClass } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
 import WebSocket from "ws";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-09-30.acacia",
-});
-
 export class SubscriptionManager {
   constructor() {
     // Initialize if necessary
@@ -92,10 +88,13 @@ export class SubscriptionManager {
     domainId: number,
     subscriptionPlan?: YpSubscriptionPlan
   ): Promise<{ workflow: YpWorkflowConfiguration; requiredQuestions?: any[] }> {
+    console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
     const newCommunity = await this.cloneCommunityTemplate(
-      agentProduct.configuration.templateWorkflowCommunityId,
+      /*agentProduct.configuration.templateWorkflowCommunityId*/ 31081,
       domainId
     );
+
+    console.log("newCommunity", newCommunity);
 
     // Find the workflow group
     const workflowGroup = newCommunity.Groups.find(
@@ -116,6 +115,8 @@ export class SubscriptionManager {
 
     // Create a map of old group IDs to new group IDs
     const groupIdMap = newCommunity.groupMapping;
+
+    console.log("groupIdMap", groupIdMap);
 
     // Get the original top level agent and all its sub-agents
     const originalTopLevelAgent = await PsAgent.findByPk(topLevelAgentId, {
@@ -166,7 +167,10 @@ export class SubscriptionManager {
       group_id: workflowGroup.id,
     });
 
+    console.log("clonedTopLevelAgent", clonedTopLevelAgent);
+
     if (originalTopLevelAgent.Class?.class_base_id) {
+      console.log("Setting agentUuidMap", originalTopLevelAgent.Class.class_base_id, clonedTopLevelAgent.id);
       agentUuidMap.set(
         originalTopLevelAgent.Class.class_base_id,
         clonedTopLevelAgent.id
@@ -187,10 +191,14 @@ export class SubscriptionManager {
         agentUuidMap.set(subAgent.Class.class_base_id, clonedSubAgent.id);
       }
 
+      console.log("agentUuidMap", agentUuidMap);
+
       // Clone input connectors and update group IDs
       for (const connector of (subAgent.OutputConnectors ??
         []) as PsAgentConnector[]) {
         const connectorConfig = { ...connector.configuration };
+
+        console.log("connectorConfig", connectorConfig);
 
         // Update the group ID if it exists in the map
         if (
@@ -218,6 +226,8 @@ export class SubscriptionManager {
       for (const connector of (subAgent.OutputConnectors ??
         []) as PsAgentConnector[]) {
         const connectorConfig = { ...connector.configuration };
+
+        console.log("connectorConfig", connectorConfig);
 
         // Update the group ID if it exists in the map
         if (
@@ -281,6 +291,8 @@ export class SubscriptionManager {
       }
     );
 
+    console.log("updatedWorkflow", updatedWorkflow);
+
     return {
       workflow: updatedWorkflow,
       requiredQuestions: agentProduct.configuration.requiredStructuredQuestions,
@@ -312,6 +324,10 @@ export class SubscriptionManager {
       if (totalAmount === 0) {
         return { freeSubscription: true };
       }
+
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: "2024-09-30.acacia",
+      });
 
       // Create a PaymentIntent with Stripe
       const paymentIntent = await stripe.paymentIntents.create({
@@ -349,6 +365,10 @@ export class SubscriptionManager {
     paymentIntentId: string
   ): Promise<YpSubscription[]> {
     try {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: "2024-09-30.acacia",
+      });
+
       const paymentIntent = await stripe.paymentIntents.retrieve(
         paymentIntentId
       );
@@ -391,11 +411,10 @@ export class SubscriptionManager {
 
   // Start an agent run
   async startAgentRun(
-    agentProductId: number,
     subscriptionId: number,
     wsClients: Map<string, WebSocket>,
     wsClientId: string
-  ): Promise<YpAgentProductRun> {
+  ): Promise<{ agentRun: YpAgentProductRun, subscription: YpSubscription }> {
     try {
       // Check if the subscription is active
       const subscription = await YpSubscription.findByPk(subscriptionId, {
@@ -425,7 +444,7 @@ export class SubscriptionManager {
       }
 
       // Check if the agent product matches the subscription
-      if (subscription.agent_product_id !== agentProductId) {
+      if (subscription.agent_product_id !== subscription.AgentProduct.id) {
         throw new Error("Agent product does not match the subscription");
       }
 
@@ -438,24 +457,17 @@ export class SubscriptionManager {
       );
 
       // Create a new agent product run
-      const agentProductRun = await YpAgentProductRun.create({
+      const agentRun = await YpAgentProductRun.create({
         subscription_id: subscription.id,
         start_time: new Date(),
         workflow: workflow,
-        status: "running",
+        status: "ready",
       });
-
-      // Actually start the agent through the queue
-      await this.startFirstAgent(
-        agentProductRun,
-        wsClients,
-        wsClientId
-      );
 
       // Update runs used
       await this.incrementRunsUsed(subscription);
 
-      return agentProductRun;
+      return { agentRun, subscription };
     } catch (error: any) {
       throw new Error(`Error starting agent run: ${error.message}`);
     }

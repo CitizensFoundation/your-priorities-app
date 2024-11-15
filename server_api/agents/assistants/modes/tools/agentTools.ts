@@ -10,21 +10,21 @@ export class AgentTools extends BaseAssistantTools {
     this.agentModels = new AgentModels(assistant);
   }
 
-  get showAgentWorkflowWidget() {
+  get showAgentWorkflowOverviewWidget() {
     return {
-      name: "show_agent_workflow_widget",
+      name: "show_agent_workflow_overview_widget",
       description:
-        "Show the workflow widget for the current agent show this to the user at the start of the conversation if the agent is not running",
+        "Show the workflow widget overview for the current agent show this to the user at the start of the conversation if the agent is not running",
       type: "function",
       parameters: {
         type: "object",
         properties: {} as YpAgentEmptyProperties,
       },
-      handler: this.showAgentWorkflowWidgetHandler.bind(this),
+      handler: this.showAgentWorkflowOverviewWidgetHandler.bind(this),
     };
   }
 
-  public async showAgentWorkflowWidgetHandler(
+  public async showAgentWorkflowOverviewWidgetHandler(
     params: YpAgentEmptyProperties
   ): Promise<ToolExecutionResult> {
     try {
@@ -60,34 +60,114 @@ export class AgentTools extends BaseAssistantTools {
     }
   }
 
-  get startCurrentAgentWorkflow() {
+  get startNewAgentRun() {
     return {
-      name: "start_current_agent_workflow",
-      description: "Start the workflow for the current agent",
+      name: "start_new_agent_run",
+      description: "Start an new agent run and get a confirmation from the user and add to the hasVerballyConfirmedTheRun property",
       type: "function",
       parameters: {
         type: "object",
-        properties: {} as YpAgentEmptyProperties,
+        properties: {
+          hasVerballyConfirmedTheRun: {
+            type: "boolean",
+          },
+        } as YpAgentRunStartProperties,
+        required: [
+          "hasVerballyConfirmedTheRun",
+        ] as const satisfies readonly (keyof YpAgentRunStartParams)[],
       },
-      handler: this.startCurrentAgentWorkflowHandler.bind(this),
+      handler: this.startNewAgentRunHandler.bind(this),
     };
   }
 
-  public async startCurrentAgentWorkflowHandler(
-    params: YpAgentEmptyProperties
+  public async startNewAgentRunHandler(
+    params: YpAgentRunStartParams
   ): Promise<ToolExecutionResult> {
+    params = this.assistant.getCleanedParams(params) as YpAgentRunStartParams;
+
+    if (!params.hasVerballyConfirmedTheRun) {
+      return {
+        success: false,
+        error: "User did not verbally confirm starting the new run",
+      };
+    }
+
+    if (!this.assistant.memory.currentAgentStatus?.subscription) {
+      return {
+        success: false,
+        error: "No subscription found",
+      };
+    }
+
+    try {
+      const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(
+        this.assistant.memory.currentAgentStatus.subscription.id,
+        this.assistant.wsClients,
+        this.assistant.wsClientId
+      );
+
+      await this.updateAgentProductRun(agentRun);
+
+      const html = this.renderAgentRunWidget(
+        subscription.AgentProduct,
+        agentRun
+      );
+
+      return {
+        success: true,
+        html,
+        data: { agentRun, subscription },
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to start run";
+      console.error(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  }
+
+  get startCurrentRunAgentNextWorkflowStep() {
+    return {
+      name: "start_current_agent_run_next_workflow_step",
+      description: "Start the next workflow step for the current agent run",
+      type: "function",
+      parameters: {
+        type: "object",
+        properties: {
+          useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
+            type: "boolean",
+          },
+        } as YpAgentRunStartNextWorkflowStepProperties,
+        required: [
+          "useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName",
+        ] as const satisfies readonly (keyof YpAgentRunStartNextWorkflowStepParams)[],
+      },
+      handler: this.startCurrentRunAgentNextWorkflowStepHandler.bind(this),
+    };
+  }
+
+  public async startCurrentRunAgentNextWorkflowStepHandler(
+    params: YpAgentRunStartNextWorkflowStepParams
+  ): Promise<ToolExecutionResult> {
+    if (
+      !params.useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName
+    ) {
+      return {
+        success: false,
+        error:
+          "User did not confirm starting the next workflow step with the agent name",
+      };
+    }
+
     try {
       const result = await this.agentModels.startAgentWorkflow();
 
       await this.updateAgentProductRun(result.run);
 
-      const html = `<yp-agent-workflow-widget
-        agentProductId="${result.agent.id}"
-        workflowId="${result.run.id}"
-        agentName="${result.agent.name}"
-        workflowStatus="running"
-        showProgress="true"
-      ></yp-agent-workflow-widget>`;
+      const html = this.renderAgentRunWidget(result.agent, result.run);
 
       return {
         success: true,
@@ -112,24 +192,36 @@ export class AgentTools extends BaseAssistantTools {
       type: "function",
       parameters: {
         type: "object",
-        properties: {} as YpAgentEmptyProperties,
+        properties: {
+          useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: {
+            type: "boolean",
+          },
+        } as YpAgentRunStopCurrentWorkflowStepProperties,
+        required: [
+          "useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName",
+        ] as const satisfies readonly (keyof YpAgentRunStopCurrentWorkflowStepParams)[],
       },
       handler: this.stopCurrentAgentWorkflowHandler.bind(this),
     };
   }
 
   public async stopCurrentAgentWorkflowHandler(
-    params: YpAgentEmptyProperties
+    params: YpAgentRunStopCurrentWorkflowStepParams
   ): Promise<ToolExecutionResult> {
+    if (
+      !params.useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName
+    ) {
+      return {
+        success: false,
+        error:
+          "User did not confirm stopping the current workflow step with the agent name",
+      };
+    }
+
     try {
       const result = await this.agentModels.stopAgentWorkflow();
 
-      const html = `<yp-agent-workflow-widget
-        agentProductId="${result.agent.id}"
-        runId="${result.run.id}"
-        agentName="${result.agent.name}"
-        workflowStatus="stopped"
-      ></yp-agent-workflow-widget>`;
+      const html = this.renderAgentRunWidget(result.agent, result.run);
 
       return {
         success: true,
@@ -243,5 +335,18 @@ export class AgentTools extends BaseAssistantTools {
         error: errorMessage,
       };
     }
+  }
+  private renderAgentRunWidget(
+    agent: YpAgentProductAttributes,
+    run: YpAgentProductRunAttributes
+  ) {
+    return `<yp-agent-run-widget
+        agentProductId="${agent.id}"
+        runId="${run.id}"
+        agentName="${agent.name}"
+        agentImageUrl="${agent.configuration.avatar?.imageUrl}"
+        workflow="${JSON.stringify(run.workflow)}"
+        runStatus="${run.status}"
+      ></yp-agent-run-widget>`;
   }
 }

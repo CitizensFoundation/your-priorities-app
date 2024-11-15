@@ -17,21 +17,10 @@ export class BaseAssistantTools {
     subscription: YpSubscriptionAttributes | null,
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
-    const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
-    this.assistant.memory.currentAgentStatus = {
-      agentProduct: agentProduct,
-      subscription: subscription,
-      subscriptionState: subscription ? "subscribed" : "unsubscribed",
-      configurationState:
-        (requiredStructuredAnswers && requiredStructuredQuestions) &&
-        requiredStructuredAnswers.length ==
-          requiredStructuredQuestions.length
-          ? "configured"
-          : "not_configured",
-    };
-
-    await this.assistant.saveMemory();
+    await this.assistant.updateCurrentAgentProduct(
+      agentProduct,
+      subscription
+    );
 
     await this.waitTick();
 
@@ -51,7 +40,7 @@ export class BaseAssistantTools {
       throw new Error("No current agent status found");
     }
 
-    this.assistant.memory.currentAgentStatus.agentRun = agentRun;
+    this.assistant.memory.currentAgentStatus.activeAgentRun = agentRun;
     await this.assistant.saveMemory();
 
     await this.waitTick();

@@ -74,25 +74,18 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     include: [{
                             model: YpSubscriptionPlan,
                             as: 'Plan',
-                            attributes: ['id', 'configuration']
+                            attributes: ['id', 'configuration'],
+                            include: [{
+                                    model: YpAgentProduct,
+                                    as: 'AgentProduct',
+                                    attributes: ['id', 'configuration'],
+                                }]
                         }]
                 });
                 if (!subscription) {
                     throw new Error("No subscription found");
                 }
-                const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
-                const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
-                this.memory.currentAgentStatus.subscription = subscription;
-                this.memory.currentAgentStatus.subscriptionState = subscription
-                    ? "subscribed"
-                    : "unsubscribed";
-                this.memory.currentAgentStatus.configurationState =
-                    (requiredStructuredAnswers && requiredStructuredQuestions) &&
-                        requiredStructuredAnswers.length ==
-                            requiredStructuredQuestions.length
-                        ? "configured"
-                        : "not_configured";
-                await this.saveMemory();
+                await this.updateCurrentAgentProduct(subscription.Plan?.AgentProduct, subscription);
             }
             catch (error) {
                 console.error(`Error finding subscription: ${error}`);
@@ -105,6 +98,21 @@ export class YpBaseAssistant extends YpBaseChatBot {
     }
     on(event, listener) {
         this.eventEmitter.on(event, listener);
+    }
+    async updateCurrentAgentProduct(agentProduct, subscription) {
+        const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
+        const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
+        this.memory.currentAgentStatus = {
+            agentProduct: agentProduct,
+            subscription: subscription,
+            subscriptionState: subscription ? "subscribed" : "unsubscribed",
+            configurationState: (requiredStructuredAnswers && requiredStructuredQuestions) &&
+                requiredStructuredAnswers.length ==
+                    requiredStructuredQuestions.length
+                ? "configured"
+                : "not_configured",
+        };
+        await this.saveMemory();
     }
     /**
      * Convert tool result to message format

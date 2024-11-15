@@ -10,7 +10,7 @@ export class YpAgentProductRun extends Model {
   declare start_time: Date;
   declare end_time?: Date;
   declare duration?: number;
-  declare status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+  declare status: YpAgentProductRunStatus;
   declare input_data?: any;
   declare output_data?: any;
   declare error_message?: string;

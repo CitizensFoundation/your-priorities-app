@@ -6,6 +6,7 @@ import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import WebSocket from "ws";
 import ioredis from "ioredis";
 import { DirectConversationMode } from "./modes/agentDirectConnection.js";
+import { SubscriptionManager } from "../managers/subscriptionManager.js";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   public availableAgents: PsAgent[] = [];
@@ -13,6 +14,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
 
   private agentSelectionMode: AgentSelectionMode;
   private directConversationMode: DirectConversationMode;
+
+  public subscriptionManager: SubscriptionManager;
 
   constructor(
     wsClientId: string,
@@ -32,6 +35,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     );
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.directConversationMode = new DirectConversationMode(this);
+    this.subscriptionManager = new SubscriptionManager();
     this.on("memory-changed", this.handleMemoryChanged.bind(this));
   }
 
@@ -79,7 +83,15 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
 
   get isCurrentAgentRunning(): boolean {
     return (
-      this.memory.currentAgentStatus?.agentRun?.status === "running"
+      this.memory.currentAgentStatus?.activeAgentRun?.status === "running"
+    );
+  }
+
+  get isCurrentAgentActive(): boolean {
+    return (
+      this.memory.currentAgentStatus?.activeAgentRun?.status === "running" ||
+      this.memory.currentAgentStatus?.activeAgentRun?.status === "ready" ||
+      this.memory.currentAgentStatus?.activeAgentRun?.status === "waiting_on_user"
     );
   }
 
@@ -92,12 +104,12 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   get currentAgentWorkflow(): YpWorkflowConfiguration | undefined {
-    return this.memory.currentAgentStatus?.agentRun?.workflow;
+    return this.memory.currentAgentStatus?.activeAgentRun?.workflow;
   }
 
   get currentAgentWorkflowCurrentStep(): YpWorkflowStep | undefined {
-    return this.memory.currentAgentStatus?.agentRun?.workflow?.steps[
-      this.memory.currentAgentStatus?.agentRun?.workflow?.currentStepIndex ?? 0
+    return this.memory.currentAgentStatus?.activeAgentRun?.workflow?.steps[
+      this.memory.currentAgentStatus?.activeAgentRun?.workflow?.currentStepIndex ?? 0
     ];
   }
 

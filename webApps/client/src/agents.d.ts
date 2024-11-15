@@ -148,13 +148,17 @@ interface YpAgentProductRunOutputData {
   [key: string]: any;
 }
 
+
+type YpAgentProductRunStatus = "ready" | "running" | "waiting_on_user" | "completed" | "failed" | "cancelled";
+
 // YpAgentProductRunAttributes Interface
+
 interface YpAgentProductRunAttributes extends YpBaseModelAttributes {
   subscription_id: number;
   start_time: Date;
   end_time?: Date;
   duration?: number; // Duration in seconds
-  status: "pending" | "running" | "completed" | "failed" | "cancelled";
+  status: YpAgentProductRunStatus;
   workflow: YpWorkflowConfiguration;
   input_data?: YpAgentProductRunInputData;
   output_data?: YpAgentProductRunOutputData;
@@ -222,7 +226,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   haveShownConfigurationWidget?: boolean;
   currentAgentStatus?: {
     agentProduct: YpAgentProductAttributes;
-    agentRun?: YpAgentProductRunAttributes;
+    activeAgentRun?: YpAgentProductRunAttributes;
     subscription: YpSubscriptionAttributes | null;
     subscriptionState: YpAssistantAgentSubscriptionState;
     configurationState: YpAssistantAgentConfigurationState;
@@ -268,42 +272,65 @@ interface YpWorkflowConfiguration {
 ///
 
 interface YpAgentUnsubscribeProperties {
-  agentProductId: {
-    type: "number";
-  };
-  subscriptionId: {
-    type: "number";
-  };
   useHasVerballyConfirmedUnsubscribeWithTheAgentName: {
     type: "boolean";
   };
 }
 
 interface YpAgentUnsubscribeParams {
-  agentProductId: number;
-  subscriptionId: number;
   useHasVerballyConfirmedUnsubscribeWithTheAgentName: boolean;
 }
 
 //
 
 interface YpAgentSubscribeParams {
-  agentProductId: number;
-  subscriptionPlanId: number;
   useHasVerballyConfirmedSubscribeWithTheAgentName: boolean;
 }
 
 interface YpAgentSubscribeProperties {
-  agentProductId: {
-    type: "number";
-  };
-  subscriptionPlanId: {
-    type: "number";
-  };
   useHasVerballyConfirmedSubscribeWithTheAgentName: {
     type: "boolean";
   };
 }
+
+
+//
+
+interface YpAgentRunStartParams {
+  hasVerballyConfirmedTheRun: boolean;
+}
+
+interface YpAgentRunStartProperties {
+  hasVerballyConfirmedTheRun: {
+    type: "boolean";
+  };
+}
+
+//
+
+interface YpAgentRunStartNextWorkflowStepParams {
+  useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: boolean;
+}
+
+interface YpAgentRunStartNextWorkflowStepProperties {
+  useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
+    type: "boolean";
+  };
+}
+
+
+//
+
+interface YpAgentRunStopCurrentWorkflowStepParams {
+  useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: boolean;
+}
+
+interface YpAgentRunStopCurrentWorkflowStepProperties {
+  useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: {
+    type: "boolean";
+  };
+}
+
 
 //
 

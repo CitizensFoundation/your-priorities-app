@@ -21,71 +21,60 @@ export class SubscriptionTools extends BaseAssistantTools {
         type: "object",
         properties: {} as YpAgentEmptyProperties,
       },
-      handler:
-        this.listMyAgentSubscriptionsHandler.bind(
-          this
-        ),
+      handler: this.listMyAgentSubscriptionsHandler.bind(this),
     };
   }
 
   public async listMyAgentSubscriptionsHandler(
     params: YpAgentEmptyProperties
   ): Promise<ToolExecutionResult> {
-      params = this.assistant.getCleanedParams(
-        params
-      ) as YpAgentEmptyProperties;
-      console.log(
-        `handler: list_my_agent_subscriptions: ${JSON.stringify(
-          params,
-          null,
-          2
-        )}`
-      );
-      try {
-        const status = await this.subscriptionModels.loadUserAgentSubscriptions();
-        if (this.assistant.DEBUG) {
-          console.log(
-            `list_my_agent_subscriptions: ${JSON.stringify(status, null, 2)}`
-          );
-        }
+    params = this.assistant.getCleanedParams(params) as YpAgentEmptyProperties;
+    console.log(
+      `handler: list_my_agent_subscriptions: ${JSON.stringify(params, null, 2)}`
+    );
+    try {
+      const status = await this.subscriptionModels.loadUserAgentSubscriptions();
+      if (this.assistant.DEBUG) {
+        console.log(
+          `list_my_agent_subscriptions: ${JSON.stringify(status, null, 2)}`
+        );
+      }
 
-        let agentChips = "";
-        for (const agent of status.availableAgents) {
-          agentChips += `<yp-agent-chip
+      let agentChips = "";
+      for (const agent of status.availableAgents) {
+        agentChips += `<yp-agent-chip
                   agentProductId="${agent.agentProductId}"
                   subscriptionId="${agent.subscriptionId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
                   agentImageUrl="${agent.imageUrl}"
                 ></yp-agent-chip>`;
-        }
-        let html;
+      }
+      let html;
 
-        if (status.availableAgents.length > 0) {
-          html = `<div class="agent-chips">${agentChips}</div>`;
-        } else {
-          this.assistant.triggerResponseIfNeeded(
-            "The user is not subscribed to any agents, offer to show available agents for purchase"
-          );
-        }
+      if (status.availableAgents.length > 0) {
+        html = `<div class="agent-chips">${agentChips}</div>`;
+      } else {
+        this.assistant.triggerResponseIfNeeded(
+          "The user is not subscribed to any agents, offer to show available agents for purchase"
+        );
+      }
 
-        return {
-          success: true,
-          data: status,
-          html,
-          metadata: {
-            timestamp: new Date().toISOString(),
-          },
-        };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to load agent status";
-        console.error(`Failed to load agent status: ${errorMessage}`);
-        return {
-          success: false,
-          data: errorMessage,
+      return {
+        success: true,
+        data: status,
+        html,
+        metadata: {
+          timestamp: new Date().toISOString(),
+        },
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to load agent status";
+      console.error(`Failed to load agent status: ${errorMessage}`);
+      return {
+        success: false,
+        data: errorMessage,
         error: errorMessage,
       };
     }
@@ -100,19 +89,14 @@ export class SubscriptionTools extends BaseAssistantTools {
         type: "object",
         properties: {} as YpAgentEmptyProperties,
       },
-      handler:
-        this.listAllAgentsAvailableForSubscriptionHandler.bind(
-          this
-        ),
+      handler: this.listAllAgentsAvailableForSubscriptionHandler.bind(this),
     };
   }
 
   public async listAllAgentsAvailableForSubscriptionHandler(
     params: YpAgentEmptyProperties
   ): Promise<ToolExecutionResult> {
-    params = this.assistant.getCleanedParams(
-      params
-    ) as YpAgentEmptyProperties;
+    params = this.assistant.getCleanedParams(params) as YpAgentEmptyProperties;
 
     console.log(
       `handler: list_all_agents_available_for_purchase: ${JSON.stringify(
@@ -157,9 +141,7 @@ export class SubscriptionTools extends BaseAssistantTools {
       };
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to load agent status";
+        error instanceof Error ? error.message : "Failed to load agent status";
       console.error(`Failed to load agent status: ${errorMessage}`);
       return {
         success: false,
@@ -168,7 +150,6 @@ export class SubscriptionTools extends BaseAssistantTools {
       };
     }
   }
-
 
   get subscribeToCurrentAgentPlan() {
     return {
@@ -179,31 +160,22 @@ export class SubscriptionTools extends BaseAssistantTools {
       parameters: {
         type: "object",
         properties: {
-          agentProductId: { type: "number" },
-          subscriptionPlanId: { type: "number" },
           useHasVerballyConfirmedSubscribeWithTheAgentName: {
             type: "boolean",
           },
         } as YpAgentSubscribeProperties,
         required: [
-          "agentProductId",
-          "subscriptionPlanId",
           "useHasVerballyConfirmedSubscribeWithTheAgentName",
         ] as const satisfies readonly (keyof YpAgentSubscribeProperties)[],
       },
-      handler:
-        this.subscribeToCurrentAgentPlanHandler.bind(
-          this
-        ),
+      handler: this.subscribeToCurrentAgentPlanHandler.bind(this),
     };
   }
 
   public async subscribeToCurrentAgentPlanHandler(
     params: YpAgentSubscribeParams
   ): Promise<ToolExecutionResult> {
-    params = this.assistant.getCleanedParams(
-      params
-    ) as YpAgentSubscribeParams;
+    params = this.assistant.getCleanedParams(params) as YpAgentSubscribeParams;
     console.log(
       `handler: subscribe_to_current_agent_plan: ${JSON.stringify(
         params,
@@ -220,9 +192,22 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
+      if (
+        !this.assistant.memory.currentAgentStatus ||
+        !this.assistant.memory.currentAgentStatus.agentProduct ||
+        !this.assistant.memory.currentAgentStatus.subscription ||
+        !this.assistant.memory.currentAgentStatus.subscription.Plan
+      ) {
+        return {
+          success: false,
+          data: "No current agent selected",
+          error: "No current agent selected",
+        };
+      }
+
       const result = await this.subscriptionModels.subscribeToAgentPlan(
-        params.agentProductId,
-        params.subscriptionPlanId
+        this.assistant.memory.currentAgentStatus?.agentProduct.id,
+        this.assistant.memory.currentAgentStatus?.subscription?.Plan!.id
       );
 
       if (!result.success) {
@@ -232,7 +217,8 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      const agentPlans = await this.subscriptionModels.loadAgentSubscriptionPlans();
+      const agentPlans =
+        await this.subscriptionModels.loadAgentSubscriptionPlans();
 
       const agent = agentPlans.availablePlans.find(
         (a) => a.subscriptionPlanId === result.subscriptionPlanId
@@ -268,9 +254,7 @@ export class SubscriptionTools extends BaseAssistantTools {
       };
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to subscribe to agent";
+        error instanceof Error ? error.message : "Failed to subscribe to agent";
       console.error(`Failed to subscribe to agent: ${errorMessage}`);
       return {
         success: false,
@@ -279,34 +263,26 @@ export class SubscriptionTools extends BaseAssistantTools {
     }
   }
 
-
   get unsubscribeFromCurrentAgentSubscription() {
     return {
       name: "unsubscribe_from_current_agent_subscription",
-      description: "Unsubscribe from an existing agent subscription the user is subscribed to. User must verbally confirm unsubscription with the agent name before proceeding.",
+      description:
+        "Unsubscribe from an existing agent subscription the user is subscribed to. User must verbally confirm unsubscription with the agent name before proceeding.",
       type: "function",
       parameters: {
         type: "object",
         properties: {
-          agentProductId: { type: "number" },
-          subscriptionId: { type: "number" },
           useHasVerballyConfirmedUnsubscribeWithTheAgentName: {
             type: "boolean",
           },
         } as YpAgentUnsubscribeProperties,
         required: [
-          "agentProductId",
-          "subscriptionId",
           "useHasVerballyConfirmedUnsubscribeWithTheAgentName",
         ] as const satisfies readonly (keyof YpAgentUnsubscribeProperties)[],
       },
-      handler:
-        this.unsubscribeFromCurrentAgentSubscriptionHandler.bind(
-          this
-        ),
+      handler: this.unsubscribeFromCurrentAgentSubscriptionHandler.bind(this),
     };
   }
-
 
   public async unsubscribeFromCurrentAgentSubscriptionHandler(
     params: YpAgentUnsubscribeParams
@@ -330,12 +306,33 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      const { agent, subscription } = await this.subscriptionModels.loadAgentProductAndSubscription(
-        params.agentProductId
-      );
+      if (
+        !this.assistant.memory.currentAgentStatus ||
+        !this.assistant.memory.currentAgentStatus.agentProduct ||
+        !this.assistant.memory.currentAgentStatus.subscription
+      ) {
+        return {
+          success: false,
+          data: "No current agent selected",
+          error: "No current agent selected",
+        };
+      }
+
+      const { agent, subscription } =
+        await this.subscriptionModels.loadAgentProductAndSubscription(
+          this.assistant.memory.currentAgentStatus.agentProduct.id
+        );
+
+      if (!subscription) {
+        return {
+          success: false,
+          data: "No subscription found",
+          error: "No subscription found",
+        };
+      }
 
       const result = await this.subscriptionModels.unsubscribeFromAgentPlan(
-        params.subscriptionId
+        subscription.id
       );
 
       if (!result.success) {
@@ -348,7 +345,7 @@ export class SubscriptionTools extends BaseAssistantTools {
       const html = `<div class="agent-chips"><yp-agent-chip
         isUnsubscribed="${true}"
         agentProductId="${agent.id}"
-        subscriptionId="${params.subscriptionId}"
+        subscriptionId="${subscription.id}"
         agentName="${agent.name}"
         agentDescription="${agent.description}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
@@ -372,15 +369,11 @@ export class SubscriptionTools extends BaseAssistantTools {
         error instanceof Error
           ? error.message
           : "Failed to unsubscribe from agent";
-      console.error(
-        `Failed to unsubscribe from agent: ${errorMessage}`
-      );
+      console.error(`Failed to unsubscribe from agent: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage,
       };
     }
   }
-
-
 }

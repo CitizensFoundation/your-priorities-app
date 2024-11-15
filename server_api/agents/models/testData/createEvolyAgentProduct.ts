@@ -179,8 +179,9 @@ async function createAgentProductsAndPlans() {
               {
                 uniqueId: "businessDescription",
                 type: "textArea",
+                description: "Detailed description of the business, this is critical for the agent to understand the business and provide accurate results.",
                 value: "",
-                maxLength: 5000,
+                maxLength: 7500,
                 required: true,
                 rows: 5,
                 charCounter: true,

@@ -127,6 +127,7 @@ interface YpDropdownData {
 interface YpStructuredQuestionData {
   uniqueId?: string;
   text: string;
+  description?: string;
   type?: string;
   subType?: string;
   maxLength?: number;

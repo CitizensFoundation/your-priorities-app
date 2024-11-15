@@ -36,7 +36,7 @@ export class AgentModels {
     run: YpAgentProductRunAttributes | undefined;
   }> {
     const agent = await this.getCurrentAgent();
-    const currentRun = this.assistant.memory.currentAgentStatus?.agentRun;
+    const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
 
     if (!currentRun) {
       return {
@@ -90,7 +90,7 @@ export class AgentModels {
     message: string;
   }> {
     const agent = await this.getCurrentAgent();
-    const currentRun = this.assistant.memory.currentAgentStatus?.agentRun;
+    const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
 
     if (!currentRun) {
       throw new Error("No active workflow found to stop");
