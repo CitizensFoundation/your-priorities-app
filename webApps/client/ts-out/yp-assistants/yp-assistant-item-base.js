@@ -14,6 +14,7 @@ import "./widgets/yp-agent-chip-for-purchase.js";
 import "./widgets/yp-login-widget.js";
 import "./widgets/yp-agent-configuration-widget.js";
 import "./widgets/yp-agent-workflow-widget.js";
+import "./widgets/yp-agent-run-widget.js";
 let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase {
     constructor() {
         super(...arguments);

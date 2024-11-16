@@ -60,6 +60,47 @@ export class AgentTools extends BaseAssistantTools {
     }
   }
 
+  get showAgentRunWidget() {
+    return {
+      name: "show_agent_run_widget",
+      description: "Show the agent run widget for the current agent run",
+      type: "function",
+      parameters: {
+        type: "object",
+        properties: {} as YpAgentEmptyProperties,
+      },
+      handler: this.showAgentRunWidgetHandler.bind(this),
+    };
+  }
+
+  public async showAgentRunWidgetHandler(
+    params: YpAgentEmptyProperties
+  ): Promise<ToolExecutionResult> {
+    try {
+      const { agent, run } = await this.agentModels.getCurrentAgentAndWorkflow();
+      if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+        return {
+          success: false,
+          error: "No active agent run found",
+        };
+      }
+
+      const html = this.renderAgentRunWidget(agent, this.assistant.memory.currentAgentStatus.activeAgentRun);
+      return {
+        success: true,
+        html,
+        data: { agent, run },
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to show agent run widget";
+      console.error(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  }
+
   get startNewAgentRun() {
     return {
       name: "start_new_agent_run",
@@ -300,7 +341,7 @@ export class AgentTools extends BaseAssistantTools {
     return {
       name: "submit_configuration",
       description:
-        "Sends an event to the webapp to click on the submit button for the user for the configuration of the current agent",
+        "Sends an event to the webapp to click on the submit button for the user for the configuration of the current agent, this will submit the configuration to the agent",
       type: "function",
       parameters: {
         type: "object",
@@ -340,12 +381,13 @@ export class AgentTools extends BaseAssistantTools {
     agent: YpAgentProductAttributes,
     run: YpAgentProductRunAttributes
   ) {
+    const workflowBase64 = btoa(JSON.stringify(run.workflow));
     return `<yp-agent-run-widget
         agentProductId="${agent.id}"
         runId="${run.id}"
         agentName="${agent.name}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
-        workflow="${JSON.stringify(run.workflow)}"
+        workflow="${workflowBase64}"
         runStatus="${run.status}"
       ></yp-agent-run-widget>`;
   }

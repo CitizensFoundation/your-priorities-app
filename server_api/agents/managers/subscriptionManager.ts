@@ -473,7 +473,7 @@ export class SubscriptionManager {
       // Check runs limit
       await this.checkRunsLimit(subscription);
 
-      const workflow = await this.cloneCommunityWorkflowTemplate(
+      const workflowAndRequiredQuestions = await this.cloneCommunityWorkflowTemplate(
         subscription.AgentProduct,
         subscription.domain_id
       );
@@ -482,7 +482,7 @@ export class SubscriptionManager {
       const agentRun = await YpAgentProductRun.create({
         subscription_id: subscription.id,
         start_time: new Date(),
-        workflow: workflow,
+        workflow: workflowAndRequiredQuestions.workflow,
         status: "ready",
       });
 

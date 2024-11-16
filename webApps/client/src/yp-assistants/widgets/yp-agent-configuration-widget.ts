@@ -117,7 +117,6 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
 
   async submitConfiguration() {
     console.log("submitConfiguration");
-    debugger;
 
     const answers: YpStructuredAnswer[] = [];
 

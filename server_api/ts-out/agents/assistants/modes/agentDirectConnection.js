@@ -37,6 +37,10 @@ export class DirectConversationMode extends BaseAssistantMode {
                         if (!this.assistant.isCurrentAgentActive) {
                             tools.push(this.agentTools.startNewAgentRun);
                         }
+                        else {
+                            tools.push(this.agentTools.startCurrentRunAgentNextWorkflowStep);
+                            tools.push(this.agentTools.showAgentRunWidget);
+                        }
                     }
                     tools.push(this.agentTools.showConfigurationWidget);
                 }

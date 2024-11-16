@@ -164,7 +164,6 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         </svg>`;
     }
     render() {
-        debugger;
         if (!this.workflow ||
             !this.parsedWorkflow.steps ||
             this.parsedWorkflow.steps.length === 0) {

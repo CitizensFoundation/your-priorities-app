@@ -152,7 +152,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.renderLoopActive = false;
     }
     disconnectedCallback() {
-        debugger;
         super.disconnectedCallback();
         this.stopCanvasRendering();
         this.stopRecording();

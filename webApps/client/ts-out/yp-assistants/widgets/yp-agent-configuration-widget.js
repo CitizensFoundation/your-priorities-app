@@ -82,7 +82,6 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
     }
     async submitConfiguration() {
         console.log("submitConfiguration");
-        debugger;
         const answers = [];
         // Get answers from required questions
         if (this.requiredQuestions) {

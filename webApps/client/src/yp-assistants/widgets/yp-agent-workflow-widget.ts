@@ -148,7 +148,6 @@ export class YpAgentWorkflowWidget extends YpBaseElement {
   }
 
   override render() {
-    debugger;
     if (
       !this.workflow ||
       !this.parsedWorkflow.steps ||
