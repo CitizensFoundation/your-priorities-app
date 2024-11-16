@@ -21,6 +21,7 @@ interface DbData extends Model {
   updated_at: string;
   id: number;
   static findOne(options: any): Promise<any>;
+  static findAll(options: any): Promise<any>;
   static destroy(options: any): Promise<any>;
   static update(options: any, data: any): Promise<any>;
   static create(options: any): Promise<any>;
@@ -45,11 +46,8 @@ interface PostClass extends DbData {
 }
 
 interface GroupClass extends DbData {
-  configuration: {
-    ltp?: {
-      crt?: LtpCurrentRealityTreeData
-    }
-  };
+  description: string;
+  configuration: YpGroupConfiguration;
 }
 
 interface UserClass extends DbData {

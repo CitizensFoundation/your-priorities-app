@@ -11,6 +11,9 @@ import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
+import models from "../../models/index.cjs";
+const dbModels = models;
+const YpGroup = dbModels.Group;
 export class SubscriptionManager {
     constructor() {
         // Initialize if necessary
@@ -48,6 +51,7 @@ export class SubscriptionManager {
         }
     }
     async cloneCommunityTemplate(communityTemplateId, toDomainId) {
+        console.log("cloneCommunityTemplate", communityTemplateId, toDomainId);
         return new Promise((resolve, reject) => {
             copyCommunity(communityTemplateId, toDomainId, {
                 copyGroups: true,
@@ -70,16 +74,22 @@ export class SubscriptionManager {
     }
     async cloneCommunityWorkflowTemplate(agentProduct, domainId, subscriptionPlan) {
         console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
-        const newCommunity = await this.cloneCommunityTemplate(
-        /*agentProduct.configuration.templateWorkflowCommunityId*/ 31081, domainId);
+        let newCommunity = await this.cloneCommunityTemplate(
+        /*agentProduct.configuration.templateWorkflowCommunityId*/ 10054, domainId);
         console.log("newCommunity", newCommunity);
+        const groups = await YpGroup.findAll({
+            where: {
+                community_id: newCommunity.id
+            }
+        });
+        console.log("groups", groups);
         // Find the workflow group
-        const workflowGroup = newCommunity.Groups.find((group) => group.configuration.groupType == 2);
+        const workflowGroup = groups.find((group) => group.configuration.groupType == 3);
         if (!workflowGroup) {
             throw new Error("Workflow group not found");
         }
         // Get the top level agent ID from the workflow group configuration
-        const topLevelAgentId = workflowGroup.configuration.agent.topLevelAgentId;
+        const topLevelAgentId = workflowGroup.configuration.agents?.topLevelAgentId;
         if (!topLevelAgentId) {
             throw new Error("Top level agent ID not found in workflow group configuration");
         }
@@ -195,7 +205,7 @@ export class SubscriptionManager {
             }
         }
         // Update the workflow group configuration
-        workflowGroup.configuration.agent.topLevelAgentId = clonedTopLevelAgent.id;
+        workflowGroup.configuration.agents.topLevelAgentId = clonedTopLevelAgent.id;
         await workflowGroup.save();
         if (agentProduct.configuration.structuredAnswersOverride) {
             for (const override of agentProduct.configuration

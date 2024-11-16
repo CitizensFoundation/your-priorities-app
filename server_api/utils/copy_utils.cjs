@@ -1176,7 +1176,7 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
     function (error) {
       console.log("Done copying group");
       if (error) console.error(error);
-      done(error);
+      done(error, newGroup);
     }
   );
 };
