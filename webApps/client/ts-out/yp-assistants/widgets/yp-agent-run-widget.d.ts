@@ -4,6 +4,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     runId: string;
     agentName: string;
     agentDescription: string;
+    agentImageUrl: string;
     workflowStatus: string;
     workflow: string;
     get parsedWorkflow(): YpWorkflowConfiguration;
@@ -11,6 +12,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private getStepClass;
     private renderStep;
     private renderIcon;
+    private renderAgentHeader;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-run-widget.d.ts.map

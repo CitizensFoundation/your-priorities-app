@@ -8,6 +8,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   @property({ type: String }) runId = "";
   @property({ type: String }) agentName = "";
   @property({ type: String }) agentDescription = "";
+  @property({ type: String }) agentImageUrl = "";
   @property({ type: String }) workflowStatus = "not_started";
 
   @property({ type: String })
@@ -28,6 +29,12 @@ export class YpAgentRunWidget extends YpBaseElement {
       super.styles,
       css`
         :host {
+        }
+
+        .container {
+          padding: 12px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 4px;
         }
 
         .workflow-step {
@@ -167,6 +174,13 @@ export class YpAgentRunWidget extends YpBaseElement {
         </svg>`;
   }
 
+  private renderAgentHeader() {
+    return html`<div class="agent-header layout horizontal">
+      <div class="agent-header-title">${this.t('agentController')}</div>
+
+    </div>`;
+  }
+
   override render() {
     if (
       !this.workflow ||
@@ -177,7 +191,8 @@ export class YpAgentRunWidget extends YpBaseElement {
     }
 
     return html`
-      <div class="layout horizontal wrap">
+      <div class="layout horizontal wrap container">
+        ${this.renderAgentHeader()}
         ${this.parsedWorkflow.steps.map((step, index) =>
           this.renderStep(
             step,

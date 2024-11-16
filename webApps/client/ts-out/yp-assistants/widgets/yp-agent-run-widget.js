@@ -14,6 +14,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.runId = "";
         this.agentName = "";
         this.agentDescription = "";
+        this.agentImageUrl = "";
         this.workflowStatus = "not_started";
     }
     get parsedWorkflow() {
@@ -31,6 +32,12 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             super.styles,
             css `
         :host {
+        }
+
+        .container {
+          padding: 12px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 4px;
         }
 
         .workflow-step {
@@ -163,6 +170,12 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           />
         </svg>`;
     }
+    renderAgentHeader() {
+        return html `<div class="agent-header layout horizontal">
+      <div class="agent-header-title">${this.t('agentController')}</div>
+
+    </div>`;
+    }
     render() {
         if (!this.workflow ||
             !this.parsedWorkflow.steps ||
@@ -170,7 +183,8 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             return html `<div>No workflow configuration available</div>`;
         }
         return html `
-      <div class="layout horizontal wrap">
+      <div class="layout horizontal wrap container">
+        ${this.renderAgentHeader()}
         ${this.parsedWorkflow.steps.map((step, index) => this.renderStep(step, index, index === this.parsedWorkflow.currentStepIndex))}
       </div>
     `;
@@ -188,6 +202,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "agentDescription", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentRunWidget.prototype, "agentImageUrl", void 0);
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "workflowStatus", void 0);
