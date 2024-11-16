@@ -1,7 +1,8 @@
 import { YpBaseElement } from "../../common/yp-base-element";
 export declare class YpAgentRunWidget extends YpBaseElement {
-    agentProductId: string;
-    runId: string;
+    agentProductId: number;
+    runId: number;
+    agentId: number;
     agentName: string;
     agentDescription: string;
     agentImageUrl: string;
@@ -17,6 +18,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get shouldDisableStopButton(): boolean;
     get shouldDisableStartButton(): boolean;
     get isRunning(): boolean;
+    renderAgentRunningStatus(): import("lit-html").TemplateResult<1>;
     renderStartStopButtons(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }

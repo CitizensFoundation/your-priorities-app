@@ -10,8 +10,6 @@ import { YpBaseElement } from "../../common/yp-base-element";
 let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     constructor() {
         super(...arguments);
-        this.agentProductId = "";
-        this.runId = "";
         this.agentName = "";
         this.agentDescription = "";
         this.agentImageUrl = "";
@@ -106,7 +104,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
 
         .step-number[isNotActive] {
-          background-color:#eaeaea !important;
+          background-color: #eaeaea !important;
           color: var(--yp-sys-color-agent-black) !important;
         }
 
@@ -181,9 +179,13 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
-          <div class="step-number" ?isNotActive=${!isActive} style="
+          <div
+            class="step-number"
+            ?isNotActive=${!isActive}
+            style="
             background-color: ${step.stepBackgroundColor};
-            color: ${step.stepTextColor}">
+            color: ${step.stepTextColor}"
+          >
             ${index + 1}
           </div>
           <div class="flex"></div>
@@ -248,7 +250,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
       <div class="agent-header-title">${this.t("agentController")}</div>
       <div class="flex"></div>
       <div class="max-runs-per-cycle">
-        ${this.maxRunsPerCycle} ${this.t("runsPerMonth")}
+        ${this.maxRunsPerCycle} ${this.t("reportsPerMonth")}
       </div>
     </div>`;
     }
@@ -260,6 +262,9 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     get isRunning() {
         return this.workflowStatus === "running";
+    }
+    renderAgentRunningStatus() {
+        return html `<div class="agent-running-status"></div>`;
     }
     renderStartStopButtons() {
         return html `<div class="layout horizontal startStopButtons">
@@ -294,16 +299,20 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         <div class="layout horizontal wrap">
           ${this.parsedWorkflow.steps.map((step, index) => this.renderStep(step, index, index === this.parsedWorkflow.currentStepIndex))}
         </div>
+        ${this.isRunning && this.renderAgentRunningStatus()}
       </div>
     `;
     }
 };
 __decorate([
-    property({ type: String })
+    property({ type: Number })
 ], YpAgentRunWidget.prototype, "agentProductId", void 0);
 __decorate([
-    property({ type: String })
+    property({ type: Number })
 ], YpAgentRunWidget.prototype, "runId", void 0);
+__decorate([
+    property({ type: Number })
+], YpAgentRunWidget.prototype, "agentId", void 0);
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "agentName", void 0);

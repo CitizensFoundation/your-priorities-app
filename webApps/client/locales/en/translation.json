@@ -1,5 +1,6 @@
 {
   "start": "Start",
+  "reportsPerMonth": "reports per month",
   "runsPerMonth": "runs per month",
   "agentController": "Agent Controller",
   "loggedIn": "Logged in",

@@ -4,11 +4,14 @@ import { YpBaseElement } from "../../common/yp-base-element";
 
 @customElement("yp-agent-run-widget")
 export class YpAgentRunWidget extends YpBaseElement {
-  @property({ type: String })
-  agentProductId = "";
+  @property({ type: Number })
+  agentProductId!: number;
 
-  @property({ type: String })
-  runId = "";
+  @property({ type: Number })
+  runId!: number;
+
+  @property({ type: Number })
+  agentId!: number;
 
   @property({ type: String })
   agentName = "";
@@ -117,7 +120,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         .step-number[isNotActive] {
-          background-color:#eaeaea !important;
+          background-color: #eaeaea !important;
           color: var(--yp-sys-color-agent-black) !important;
         }
 
@@ -198,9 +201,13 @@ export class YpAgentRunWidget extends YpBaseElement {
     return html`
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
-          <div class="step-number" ?isNotActive=${!isActive} style="
+          <div
+            class="step-number"
+            ?isNotActive=${!isActive}
+            style="
             background-color: ${step.stepBackgroundColor};
-            color: ${step.stepTextColor}">
+            color: ${step.stepTextColor}"
+          >
             ${index + 1}
           </div>
           <div class="flex"></div>
@@ -267,7 +274,7 @@ export class YpAgentRunWidget extends YpBaseElement {
       <div class="agent-header-title">${this.t("agentController")}</div>
       <div class="flex"></div>
       <div class="max-runs-per-cycle">
-        ${this.maxRunsPerCycle} ${this.t("runsPerMonth")}
+        ${this.maxRunsPerCycle} ${this.t("reportsPerMonth")}
       </div>
     </div>`;
   }
@@ -282,6 +289,10 @@ export class YpAgentRunWidget extends YpBaseElement {
 
   get isRunning() {
     return this.workflowStatus === "running";
+  }
+
+  renderAgentRunningStatus() {
+    return html`<div class="agent-running-status"></div>`;
   }
 
   renderStartStopButtons() {
@@ -329,6 +340,7 @@ export class YpAgentRunWidget extends YpBaseElement {
             )
           )}
         </div>
+        ${this.isRunning && this.renderAgentRunningStatus()}
       </div>
     `;
   }
