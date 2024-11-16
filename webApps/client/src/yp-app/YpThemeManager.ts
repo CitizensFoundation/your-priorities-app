@@ -735,6 +735,14 @@ export class YpThemeManager {
           "--yp-sys-color-on-container-down",
           this.intToHex(onColorContainerDown)
         );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-agent-green",
+          "#2ecc71"
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-agent-black",
+          "#211e1c"
+        );
       }
 
       if (this.useLowestContainerSurface) {

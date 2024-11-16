@@ -15,7 +15,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.agentName = "";
         this.agentDescription = "";
         this.agentImageUrl = "";
-        this.workflowStatus = "not_started";
+        this.workflowStatus = "ready";
     }
     get parsedWorkflow() {
         try {
@@ -35,9 +35,11 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
 
         .container {
-          padding: 12px;
+          padding: 16px;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
+          width: 100%;
+          min-width: 700px;
         }
 
         .workflow-step {
@@ -46,8 +48,48 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           max-height: calc(86px - 24px);
           padding: 12px;
           border: 1px solid var(--md-sys-color-outline-variant);
-          margin: 12px;
           border-radius: 4px;
+          margin-right: 24px;
+          margin-top: 12px;
+          margin-bottom: 12px;
+        }
+
+        .agent-header-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--md-ref-typeface-brand);
+        }
+
+        .startStopButtons {
+          margin-top: 24px;
+          margin-bottom: 16px;
+        }
+
+        md-outlined-button {
+          --md-outlined-button-icon-size: 26px;
+        }
+
+        md-filled-button {
+          --md-filled-button-icon-size: 26px;
+        }
+
+        .max-runs-per-cycle {
+          font-size: 13px;
+          color: var(--md-sys-color-tertiary);
+          text-transform: uppercase;
+          font-weight: 500;
+          margin-top: 4px;
+        }
+
+        @media (max-width: 700px) {
+          .container {
+            min-width: 100%;
+          }
+
+          .workflow-step {
+            margin: 8px;
+          }
         }
 
         .step-number {
@@ -63,7 +105,34 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           transition: background-color 0.3s ease;
         }
 
-        .step-content {
+        .step-number[isNotActive] {
+          background-color:#eaeaea !important;
+          color: var(--yp-sys-color-agent-black) !important;
+        }
+
+        .startButton {
+          margin-right: 24px;
+        }
+
+        .startButton,
+        .stopButton {
+          width: 130px;
+        }
+
+        .startButtonFilled {
+          --md-filled-button-disabled-container-color: var(
+            --yp-sys-color-agent-green
+          );
+          --md-filled-button-disabled-label-text-color: #fff;
+          --md-filled-button-disabled-container-opacity: 1;
+          --md-filled-button-disabled-label-text-opacity: 1;
+          --md-filled-button-disabled-icon-color: #fff;
+          --md-filled-button-disabled-icon-opacity: 1;
+          --md-sys-color-on-primary: #ffffff;
+        }
+
+        .step-content[notActive] {
+          opacity: 0.5;
         }
 
         .step-header {
@@ -105,12 +174,16 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     renderStep(step, index, isSelected) {
         const stepClass = this.getStepClass(index);
-        const activeStepStyle = html `background-color: ${step.stepBackgroundColor};color: ${step.stepTextColor}`;
-        const isActive = isSelected && this.workflowStatus === "running";
+        const activeStepStyle = html `background-color:
+    ${step.stepBackgroundColor};color: ${step.stepTextColor}`;
+        debugger;
+        const isActive = isSelected && this.workflowStatus !== "running";
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
-          <div class="step-number" style="${isActive ? activeStepStyle : ""}">
+          <div class="step-number" ?isNotActive=${!isActive} style="
+            background-color: ${step.stepBackgroundColor};
+            color: ${step.stepTextColor}">
             ${index + 1}
           </div>
           <div class="flex"></div>
@@ -121,7 +194,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           </div>
         </div>
 
-        <div class="step-content">
+        <div class="step-content" ?notActive=${!isActive}>
           <div class="step-header">
             <h3 class="step-title">${step.shortName}</h3>
           </div>
@@ -172,8 +245,41 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     renderAgentHeader() {
         return html `<div class="agent-header layout horizontal">
-      <div class="agent-header-title">${this.t('agentController')}</div>
+      <div class="agent-header-title">${this.t("agentController")}</div>
+      <div class="flex"></div>
+      <div class="max-runs-per-cycle">
+        ${this.maxRunsPerCycle} ${this.t("runsPerMonth")}
+      </div>
+    </div>`;
+    }
+    get shouldDisableStopButton() {
+        return this.workflowStatus !== "running";
+    }
+    get shouldDisableStartButton() {
+        return this.workflowStatus === "running";
+    }
+    get isRunning() {
+        return this.workflowStatus === "running";
+    }
+    renderStartStopButtons() {
+        return html `<div class="layout horizontal startStopButtons">
+      ${this.isRunning
+            ? html ` <md-filled-button class="startButton startButtonFilled" disabled
+            ><md-icon slot="icon" class="startIcon">play_circle</md-icon
+            >${this.t("start")}</md-filled-button
+          >`
+            : html ` <md-outlined-button
+            class="startButton"
+            ?disabled=${this.shouldDisableStartButton}
+            ><md-icon slot="icon" class="startIcon">play_circle</md-icon
+            >${this.t("start")}</md-outlined-button
+          >`}
 
+      <md-outlined-button
+        class="stopButton"
+        ?disabled=${this.shouldDisableStopButton}
+        ><md-icon slot="icon" class="stopIcon">stop_circle</md-icon> ${this.t("stop")}</md-outlined-button
+      >
     </div>`;
     }
     render() {
@@ -183,9 +289,11 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             return html `<div>No workflow configuration available</div>`;
         }
         return html `
-      <div class="layout horizontal wrap container">
-        ${this.renderAgentHeader()}
-        ${this.parsedWorkflow.steps.map((step, index) => this.renderStep(step, index, index === this.parsedWorkflow.currentStepIndex))}
+      <div class="layout vertical container">
+        ${this.renderAgentHeader()} ${this.renderStartStopButtons()}
+        <div class="layout horizontal wrap">
+          ${this.parsedWorkflow.steps.map((step, index) => this.renderStep(step, index, index === this.parsedWorkflow.currentStepIndex))}
+        </div>
       </div>
     `;
     }
@@ -211,6 +319,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "workflow", void 0);
+__decorate([
+    property({ type: Number })
+], YpAgentRunWidget.prototype, "maxRunsPerCycle", void 0);
 YpAgentRunWidget = __decorate([
     customElement("yp-agent-run-widget")
 ], YpAgentRunWidget);

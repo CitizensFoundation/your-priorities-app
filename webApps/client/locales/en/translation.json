@@ -1,4 +1,7 @@
 {
+  "start": "Start",
+  "runsPerMonth": "runs per month",
+  "agentController": "Agent Controller",
   "loggedIn": "Logged in",
   "loginHere": "Login or Signup here",
   "agent_subscription_and_selection": "Agent Subscription and Selection",

@@ -33,7 +33,7 @@ export class AgentTools extends BaseAssistantTools {
             return {
                 success: true,
                 html,
-                data: { agent, run },
+                data: { agent, run, workflowJson },
             };
         }
         catch (error) {
@@ -69,14 +69,22 @@ export class AgentTools extends BaseAssistantTools {
                 };
             }
             const html = this.renderAgentRunWidget(agent, this.assistant.memory.currentAgentStatus.activeAgentRun);
+            //TODO: Create a unique identifer so we can make sure to only have one widget showing at the same time on the client but also in the
+            // chatLog history that we only have the latest html and json so not to confuse the model
             return {
                 success: true,
                 html,
-                data: { agent, run },
+                data: {
+                    agent,
+                    run,
+                    subscription: this.assistant.memory.currentAgentStatus?.subscription,
+                },
             };
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Failed to show agent run widget";
+            const errorMessage = error instanceof Error
+                ? error.message
+                : "Failed to show agent run widget";
             console.error(errorMessage);
             return {
                 success: false,
@@ -156,6 +164,7 @@ export class AgentTools extends BaseAssistantTools {
         };
     }
     async startCurrentRunAgentNextWorkflowStepHandler(params) {
+        params = this.assistant.getCleanedParams(params);
         if (!params.useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName) {
             return {
                 success: false,
@@ -201,6 +210,7 @@ export class AgentTools extends BaseAssistantTools {
         };
     }
     async stopCurrentAgentWorkflowHandler(params) {
+        params = this.assistant.getCleanedParams(params);
         if (!params.useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName) {
             return {
                 success: false,
@@ -307,6 +317,7 @@ export class AgentTools extends BaseAssistantTools {
         }
     }
     renderAgentRunWidget(agent, run) {
+        const subscription = this.assistant.memory.currentAgentStatus?.subscription;
         const workflowBase64 = btoa(JSON.stringify(run.workflow));
         return `<yp-agent-run-widget
         agentProductId="${agent.id}"
@@ -315,6 +326,7 @@ export class AgentTools extends BaseAssistantTools {
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
         workflow="${workflowBase64}"
         runStatus="${run.status}"
+        maxRunsPerCycle="${subscription?.Plan?.configuration.max_runs_per_cycle}"
       ></yp-agent-run-widget>`;
     }
 }

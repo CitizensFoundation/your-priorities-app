@@ -45,7 +45,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         html,
-        data: { agent, run },
+        data: { agent, run, workflowJson },
       };
     } catch (error) {
       const errorMessage =
@@ -77,7 +77,8 @@ export class AgentTools extends BaseAssistantTools {
     params: YpAgentEmptyProperties
   ): Promise<ToolExecutionResult> {
     try {
-      const { agent, run } = await this.agentModels.getCurrentAgentAndWorkflow();
+      const { agent, run } =
+        await this.agentModels.getCurrentAgentAndWorkflow();
       if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
         return {
           success: false,
@@ -85,14 +86,28 @@ export class AgentTools extends BaseAssistantTools {
         };
       }
 
-      const html = this.renderAgentRunWidget(agent, this.assistant.memory.currentAgentStatus.activeAgentRun);
+      const html = this.renderAgentRunWidget(
+        agent,
+        this.assistant.memory.currentAgentStatus.activeAgentRun
+      );
+
+      //TODO: Create a unique identifer so we can make sure to only have one widget showing at the same time on the client but also in the
+      // chatLog history that we only have the latest html and json so not to confuse the model
+
       return {
         success: true,
         html,
-        data: { agent, run },
+        data: {
+          agent,
+          run,
+          subscription: this.assistant.memory.currentAgentStatus?.subscription,
+        },
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to show agent run widget";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to show agent run widget";
       console.error(errorMessage);
       return {
         success: false,
@@ -104,7 +119,8 @@ export class AgentTools extends BaseAssistantTools {
   get startNewAgentRun() {
     return {
       name: "start_new_agent_run",
-      description: "Start an new agent run and get a confirmation from the user and add to the hasVerballyConfirmedTheRun property",
+      description:
+        "Start an new agent run and get a confirmation from the user and add to the hasVerballyConfirmedTheRun property",
       type: "function",
       parameters: {
         type: "object",
@@ -141,11 +157,12 @@ export class AgentTools extends BaseAssistantTools {
     }
 
     try {
-      const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(
-        this.assistant.memory.currentAgentStatus.subscription.id,
-        this.assistant.wsClients,
-        this.assistant.wsClientId
-      );
+      const { agentRun, subscription } =
+        await this.assistant.subscriptionManager.startAgentRun(
+          this.assistant.memory.currentAgentStatus.subscription.id,
+          this.assistant.wsClients,
+          this.assistant.wsClientId
+        );
 
       await this.updateAgentProductRun(agentRun);
 
@@ -193,6 +210,10 @@ export class AgentTools extends BaseAssistantTools {
   public async startCurrentRunAgentNextWorkflowStepHandler(
     params: YpAgentRunStartNextWorkflowStepParams
   ): Promise<ToolExecutionResult> {
+    params = this.assistant.getCleanedParams(
+      params
+    ) as YpAgentRunStartNextWorkflowStepParams;
+
     if (
       !params.useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName
     ) {
@@ -249,6 +270,10 @@ export class AgentTools extends BaseAssistantTools {
   public async stopCurrentAgentWorkflowHandler(
     params: YpAgentRunStopCurrentWorkflowStepParams
   ): Promise<ToolExecutionResult> {
+    params = this.assistant.getCleanedParams(
+      params
+    ) as YpAgentRunStopCurrentWorkflowStepParams;
+
     if (
       !params.useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName
     ) {
@@ -381,6 +406,7 @@ export class AgentTools extends BaseAssistantTools {
     agent: YpAgentProductAttributes,
     run: YpAgentProductRunAttributes
   ) {
+    const subscription = this.assistant.memory.currentAgentStatus?.subscription;
     const workflowBase64 = btoa(JSON.stringify(run.workflow));
     return `<yp-agent-run-widget
         agentProductId="${agent.id}"
@@ -389,6 +415,7 @@ export class AgentTools extends BaseAssistantTools {
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
         workflow="${workflowBase64}"
         runStatus="${run.status}"
+        maxRunsPerCycle="${subscription?.Plan?.configuration.max_runs_per_cycle}"
       ></yp-agent-run-widget>`;
   }
 }
