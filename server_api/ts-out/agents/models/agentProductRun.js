@@ -11,9 +11,9 @@ YpAgentProductRun.init({
     end_time: { type: DataTypes.DATE, allowNull: true },
     duration: { type: DataTypes.INTEGER, allowNull: true },
     status: {
-        type: DataTypes.ENUM('pending', 'running', 'completed', 'failed', 'cancelled'),
+        type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'pending',
+        defaultValue: 'ready',
     },
     input_data: { type: DataTypes.JSONB, allowNull: true, defaultValue: {} },
     output_data: { type: DataTypes.JSONB, allowNull: true, defaultValue: {} },

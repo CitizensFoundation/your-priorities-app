@@ -134,12 +134,14 @@ export class SubscriptionManager {
         }
         // Create a map to store agentClassUuid to new agent ID mappings
         const agentUuidMap = new Map();
+        const { uuid, user_id, class_id, configuration } = originalTopLevelAgent;
         // Clone the top level agent and store its mapping
         const clonedTopLevelAgent = await PsAgent.create({
-            ...originalTopLevelAgent.get({ plain: true }),
-            id: undefined,
-            parent_agent_id: undefined,
+            user_id,
+            class_id,
+            configuration,
             group_id: workflowGroup.id,
+            parent_agent_id: undefined
         });
         console.log("clonedTopLevelAgent", clonedTopLevelAgent);
         if (originalTopLevelAgent.Class?.class_base_id) {
@@ -148,11 +150,13 @@ export class SubscriptionManager {
         }
         // Clone sub-agents and their connectors
         for (const subAgent of originalTopLevelAgent.SubAgents ?? []) {
+            const { uuid, user_id, class_id, configuration } = subAgent;
             const clonedSubAgent = await PsAgent.create({
-                ...subAgent.get({ plain: true }),
-                id: undefined,
-                parent_agent_id: clonedTopLevelAgent.id,
+                user_id,
+                class_id,
+                configuration,
                 group_id: workflowGroup.id,
+                parent_agent_id: clonedTopLevelAgent.id,
             });
             // Store the mapping of agentClassUuid to new agent ID
             if (subAgent.Class?.class_base_id) {
@@ -169,11 +173,11 @@ export class SubscriptionManager {
                     groupIdMap.has(connectorConfig.groupId)) {
                     connectorConfig.groupId = groupIdMap.get(connectorConfig.groupId);
                 }
+                const { user_id, group_id, configuration, class_id } = connector;
                 const clonedConnector = await PsAgentConnector.create({
-                    ...connector.get({ plain: true }),
-                    id: undefined,
                     user_id: clonedSubAgent.user_id,
                     group_id: workflowGroup.id,
+                    class_id,
                     configuration: connectorConfig,
                 });
                 await sequelize.models.AgentInputConnectors.create({
@@ -191,11 +195,11 @@ export class SubscriptionManager {
                     groupIdMap.has(connectorConfig.groupId)) {
                     connectorConfig.groupId = groupIdMap.get(connectorConfig.groupId);
                 }
+                const { user_id, group_id, configuration, class_id } = connector;
                 const clonedConnector = await PsAgentConnector.create({
-                    ...connector.get({ plain: true }),
-                    id: undefined,
                     user_id: clonedSubAgent.user_id,
                     group_id: workflowGroup.id,
+                    class_id,
                     configuration: connectorConfig,
                 });
                 await sequelize.models.AgentOutputConnectors.create({
@@ -215,9 +219,11 @@ export class SubscriptionManager {
                     ...(originalTopLevelAgent.SubAgents ?? []),
                     originalTopLevelAgent,
                 ]) {
+                    console.log("update answers for agent", agent);
                     if (agent.configuration?.answers) {
                         const answerIndex = agent.configuration.answers.findIndex((a) => a.uniqueId === override.uniqueId);
                         if (answerIndex !== -1) {
+                            console.log("update answers for agent", agent.configuration.answers[answerIndex], override);
                             agent.configuration.answers[answerIndex] = {
                                 ...agent.configuration.answers[answerIndex],
                                 ...override,
