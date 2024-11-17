@@ -166,13 +166,13 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     async setupVoiceCapabilities() { }
     get talkingHeadImageUrl() {
         if (this.aiIsSpeaking) {
-            return "https://assets.evoly.ai/direct/talkingHead.png";
+            return "https://assets.evoly.ai/dl/8ddaf573eea398f9042aec7134e5dc37--retina-1.png";
         }
         else if (this.userIsSpeaking) {
-            return "https://assets.evoly.ai/direct/listeningHead.png";
+            return "https://assets.evoly.ai/dl/8ddaf573eea398f9042aec7134e5dc37--retina-1.png";
         }
         else
-            return "https://assets.evoly.ai/direct/idleHead.png";
+            return "https://assets.evoly.ai/dl/8ddaf573eea398f9042aec7134e5dc37--retina-1.png";
     }
     renderVoiceTalkingHead() {
         return html `
@@ -491,7 +491,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           left: 0;
           z-index: 10;
           width: 100vw;
-          height: 109px;
+          height: 116px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -547,11 +547,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           overflow: visible;
         }
 
-        .voiceName {
+        .assistantName {
           font-size: 22px;
           font-weight: 700;
           color: var(--md-sys-color-on-surface);
-          margin-bottom: 8px;
           line-height: 33px;
           font-family: var(--md-ref-typeface-brand);
         }
@@ -867,7 +866,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         </md-icon-button>`}`;
     }
     renderAssistantName() {
-        return html `<div class="voiceName">
+        return html `<div class="assistantName">
       ${this.directAgentName ? this.directAgentName : this.t("mainAssistant")}
     </div>`;
     }

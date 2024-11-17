@@ -13,23 +13,43 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
             super.styles,
             css `
         .purchase-info {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-top: 8px;
-          padding-top: 8px;
-          border-top: 1px solid var(--divider-color);
+          text-align: right;
         }
 
-        .price {
-          font-size: 1.2em;
-          font-weight: 600;
-          color: var(--primary-color);
+        .free-trial {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--yp-sys-color-agent-green);
+          text-transform: uppercase;
+          text-align: right;
+          margin-bottom: 8px;
+        }
+
+        .agent-name {
+          font-weight: 700;
+          font-family: var(--md-ref-typeface-brand);
+          font-size: 16px;
         }
 
         .runs-info {
-          color: var(--secondary-text-color);
-          font-size: 0.9em;
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--md-sys-color-tertiary);
+          text-transform: uppercase;
+        }
+
+        .price {
+          text-align: right;
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--md-ref-typeface-brand);
+        }
+
+        .agent-image {
+          width: 66px;
+          height: 66px;
+          margin-right: 16px;
         }
 
         md-filled-icon-button {
@@ -52,6 +72,13 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
         .agent-name[isSubscribed] {
           color: var(--yp-sys-color-up);
         }
+
+        .container {
+          width: 788px;
+          border: 1px solid #eaeaea;
+          padding: 16px;
+          margin-bottom: 16px;
+        }
       `,
         ];
     }
@@ -60,20 +87,40 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
     }
     render() {
         return html `
-      <div class="agent-chip">
-        <img src="${this.agentImageUrl}" alt="${this.agentName}" />
-        <div class="content">
-          <div class="agent-name" ?isSubscribed="${this.isSubscribed}">${this.agentName} ${this.getSubscribedStatus()}</div>
-          <div class="agent-description">${this.agentDescription}</div>
-          <div class="purchase-info">
-            <div class="${this.currency == "USD" ? "price" : "price-other-currency"}">${this.currency == "USD" ? "$" : this.currency + " "}${this.price}</div>
-            <div class="runs-info">
-              ${this.maxRunsPerCycle} runs per month
+      <div class="layout horizontal container">
+        <div>
+          <img
+            class="agent-image"
+            src="${this.agentImageUrl}"
+            alt="${this.agentName}"
+          />
+        </div>
+        <div class="layout vertical flex">
+          <div class="layout horizontal">
+            <div class="layout vertical">
+              <div class="runs-info">
+                ${this.maxRunsPerCycle} ${this.t("reportsPerMonth")}
+              </div>
+              <div class="agent-name" ?isSubscribed="${this.isSubscribed}">
+                ${this.agentName} ${this.getSubscribedStatus()}
+              </div>
             </div>
-            <md-filled-icon-button>
-              <md-icon>shopping_cart</md-icon>
-            </md-filled-icon-button>
+            <div class="flex"></div>
+            <div class="layout vertical self-end">
+              <div class="free-trial"><div ?hidden="${this.price > 0}">${this.t("freeTrial")}</div></div>
+              <div class="purchase-info">
+                <div
+                  class="${this.currency == "USD"
+            ? "price"
+            : "price-other-currency"}"
+                >
+                  ${this.currency == "USD" ? "$" : this.currency + " "}${this
+            .price}
+                </div>
+              </div>
+            </div>
           </div>
+          <div class="agent-description">${this.agentDescription}</div>
         </div>
       </div>
     `;

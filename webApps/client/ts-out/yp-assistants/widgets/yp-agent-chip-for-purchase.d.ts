@@ -5,7 +5,7 @@ export declare class YpAgentChipForPurchase extends YpAgentChip {
     maxRunsPerCycle: number;
     isSubscribed: string | undefined;
     static get styles(): (any[] | import("lit").CSSResult)[];
-    getSubscribedStatus(): "" | " (subscribed)";
+    getSubscribedStatus(): " (subscribed)" | "";
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-chip-for-purchase.d.ts.map

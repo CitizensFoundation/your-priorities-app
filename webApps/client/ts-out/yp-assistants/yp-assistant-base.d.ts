@@ -41,7 +41,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private stopCanvasRendering;
     disconnectedCallback(): void;
     setupVoiceCapabilities(): Promise<void>;
-    get talkingHeadImageUrl(): "https://assets.evoly.ai/direct/talkingHead.png" | "https://assets.evoly.ai/direct/listeningHead.png" | "https://assets.evoly.ai/direct/idleHead.png";
+    get talkingHeadImageUrl(): string;
     renderVoiceTalkingHead(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;

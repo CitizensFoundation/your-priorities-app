@@ -259,10 +259,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   get talkingHeadImageUrl() {
     if (this.aiIsSpeaking) {
-      return "https://assets.evoly.ai/direct/talkingHead.png";
+      return "https://assets.evoly.ai/dl/8ddaf573eea398f9042aec7134e5dc37--retina-1.png";
     } else if (this.userIsSpeaking) {
-      return "https://assets.evoly.ai/direct/listeningHead.png";
-    } else return "https://assets.evoly.ai/direct/idleHead.png";
+      return "https://assets.evoly.ai/dl/8ddaf573eea398f9042aec7134e5dc37--retina-1.png";
+    } else return "https://assets.evoly.ai/dl/8ddaf573eea398f9042aec7134e5dc37--retina-1.png";
   }
 
   renderVoiceTalkingHead() {
@@ -627,7 +627,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           left: 0;
           z-index: 10;
           width: 100vw;
-          height: 109px;
+          height: 116px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -683,11 +683,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           overflow: visible;
         }
 
-        .voiceName {
+        .assistantName {
           font-size: 22px;
           font-weight: 700;
           color: var(--md-sys-color-on-surface);
-          margin-bottom: 8px;
           line-height: 33px;
           font-family: var(--md-ref-typeface-brand);
         }
@@ -1007,7 +1006,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   renderAssistantName() {
-    return html`<div class="voiceName">
+    return html`<div class="assistantName">
       ${this.directAgentName ? this.directAgentName : this.t("mainAssistant")}
     </div>`;
   }
