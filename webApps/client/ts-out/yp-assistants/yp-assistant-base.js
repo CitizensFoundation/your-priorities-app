@@ -535,7 +535,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
 
         .hybrid-chat-messages {
-          padding-top: 120px;
+          padding-top: 140px;
           padding-bottom: 130px;
         }
 

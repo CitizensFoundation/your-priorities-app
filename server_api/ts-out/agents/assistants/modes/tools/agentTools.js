@@ -129,11 +129,15 @@ export class AgentTools extends BaseAssistantTools {
             const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(this.assistant.memory.currentAgentStatus.subscription.id, this.assistant.wsClients, this.assistant.wsClientId);
             await this.updateAgentProductRun(agentRun);
             const html = this.renderAgentRunWidget(subscription.AgentProduct, agentRun);
-            this.assistant.emit("update-ai-model-session", "Created new agent run ready to run the first workflow step");
+            this.assistant.emit("update-ai-model-session", "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally");
             return {
                 success: true,
                 html,
-                data: { agentRun, subscription },
+                data: {
+                    message: "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally",
+                    agentRun,
+                    subscription,
+                },
             };
         }
         catch (error) {

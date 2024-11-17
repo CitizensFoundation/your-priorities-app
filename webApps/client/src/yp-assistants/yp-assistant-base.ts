@@ -671,7 +671,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
 
         .hybrid-chat-messages {
-          padding-top: 120px;
+          padding-top: 140px;
           padding-bottom: 130px;
         }
 

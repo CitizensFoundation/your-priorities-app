@@ -13,8 +13,7 @@ export class AgentTools extends BaseAssistantTools {
   get showAgentWorkflowOverviewWidget() {
     return {
       name: "show_agent_workflow_overview_widget",
-      description:
-        "Show the workflow widget overview for the current agent.",
+      description: "Show the workflow widget overview for the current agent.",
       type: "function",
       parameters: {
         type: "object",
@@ -133,7 +132,8 @@ export class AgentTools extends BaseAssistantTools {
           "hasVerballyConfirmedTheRun",
         ] as const satisfies readonly (keyof YpAgentRunStartParams)[],
       },
-      handler: this.createNewAgentRunReadyToRunFirstWorkflowStepHandler.bind(this),
+      handler:
+        this.createNewAgentRunReadyToRunFirstWorkflowStepHandler.bind(this),
     };
   }
 
@@ -173,13 +173,18 @@ export class AgentTools extends BaseAssistantTools {
 
       this.assistant.emit(
         "update-ai-model-session",
-        "Created new agent run ready to run the first workflow step"
+        "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally"
       );
 
       return {
         success: true,
         html,
-        data: { agentRun, subscription },
+        data: {
+          message:
+            "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally",
+          agentRun,
+          subscription,
+        },
       };
     } catch (error) {
       const errorMessage =

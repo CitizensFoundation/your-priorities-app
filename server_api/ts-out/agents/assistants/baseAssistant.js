@@ -2,6 +2,7 @@ import { OpenAI } from "openai";
 import { EventEmitter } from "events";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
+import { YpSubscription } from "../models/subscription.js";
 /**
  * Common modes that implementations might use
  */
@@ -62,7 +63,20 @@ export class YpBaseAssistant extends YpBaseChatBot {
         else if (clientEvent.message === "agent_configuration_submitted") {
             console.log(`agent_configuration_submitted emitting`);
             try {
-                this.emit("update-ai-model-session", "The agent configuration was submitted successfully, lets explore the options");
+                if (!this.memory.currentAgentStatus.subscription) {
+                    throw new Error("No subscription found");
+                }
+                const subscription = await YpSubscription.findOne({
+                    where: {
+                        id: this.memory.currentAgentStatus.subscription.id,
+                        status: "active",
+                    }
+                });
+                if (!subscription) {
+                    throw new Error("No subscription found");
+                }
+                await this.updateCurrentAgentProductPlan(this.memory.currentAgentStatus.subscriptionPlan, subscription);
+                this.emit("update-ai-model-session", "The agent configuration was submitted successfully and the agent is ready to create its first agent run");
             }
             catch (error) {
                 console.error(`Error finding subscription: ${error}`);

@@ -109,9 +109,28 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
       try {
 
+        if (!this.memory.currentAgentStatus!.subscription) {
+          throw new Error("No subscription found");
+        }
+        const subscription = await YpSubscription.findOne({
+          where: {
+            id: this.memory.currentAgentStatus!.subscription!.id,
+            status: "active",
+          }
+        });
+
+        if (!subscription) {
+          throw new Error("No subscription found");
+        }
+
+        await this.updateCurrentAgentProductPlan(
+          this.memory.currentAgentStatus!.subscriptionPlan,
+          subscription as YpSubscriptionAttributes
+        );
+
         this.emit(
           "update-ai-model-session",
-          "The agent configuration was submitted successfully, lets explore the options"
+          "The agent configuration was submitted successfully and the agent is ready to create its first agent run"
         );
 
       } catch (error) {
