@@ -91,7 +91,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.eventEmitter.on(event, listener);
     }
     async updateCurrentAgentProductPlan(subscriptionPlan, subscription) {
-        const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
+        const requiredStructuredQuestions = subscriptionPlan.configuration.requiredStructuredQuestions;
         const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
         this.memory.currentAgentStatus = {
             subscriptionPlan,

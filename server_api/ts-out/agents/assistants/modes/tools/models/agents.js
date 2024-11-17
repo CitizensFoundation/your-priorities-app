@@ -19,6 +19,12 @@ export class AgentModels {
         }
         return this.assistant.memory.currentAgentStatus.subscription;
     }
+    async getCurrentSubscriptionPlan() {
+        if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan) {
+            throw new Error("No current subscription plan found");
+        }
+        return this.assistant.memory.currentAgentStatus.subscriptionPlan;
+    }
     async getCurrentAgentAndWorkflow() {
         const agent = await this.getCurrentAgent();
         const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
@@ -30,27 +36,44 @@ export class AgentModels {
         }
         return { agent, run: currentRun };
     }
-    async startAgentWorkflow() {
-        const agent = await this.getCurrentAgent();
-        if (!this.assistant.memory.currentAgentStatus?.subscription) {
-            throw new Error("No active subscription found for this agent");
+    async startCurrentWorkflowStep(agentRun) {
+        try {
+            const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRun.id);
+            if (!agentRunToUpdate) {
+                throw new Error("Agent run not found");
+            }
+            if (!this.assistant.memory.currentAgentStatus?.subscription) {
+                throw new Error("No active subscription found for this agent");
+            }
+            const workflow = agentRunToUpdate.workflow;
+            const totalSteps = workflow.steps.length;
+            let currentStepIndex = workflow.currentStepIndex;
+            const currentStep = workflow.steps[currentStepIndex];
+            const isLastStep = currentStepIndex >= totalSteps - 1;
+            if (currentStep.type !== "agentOps" && !isLastStep) {
+                workflow.currentStepIndex++;
+                currentStepIndex = workflow.currentStepIndex;
+            }
+            if (currentStepIndex >= totalSteps) {
+                throw new Error(`Agent run ${agentRun.id} is already at the last step of the workflow`);
+            }
+            const agentId = currentStep.agentId;
+            if (!agentId) {
+                throw new Error("No agent ID found in the current step");
+            }
+            // Start processing with websocket client ID
+            await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId);
+            agentRunToUpdate.changed("workflow", true);
+            await agentRunToUpdate.save();
+            return {
+                agentRun: agentRunToUpdate,
+                message: "Agent workflow started successfully",
+            };
         }
-        // Create new run
-        const newRun = await YpAgentProductRun.create({
-            subscription_id: this.assistant.memory.currentAgentStatus.subscription.id,
-            start_time: new Date(),
-            status: "running",
-            workflow: agent.configuration.workflow,
-        });
-        // Get or create a websocket client ID for this session
-        const wsClientId = this.assistant.memory?.redisKey || `client_${Date.now()}`;
-        // Start processing with websocket client ID
-        await this.queueManager.startAgentProcessingWithWsClient(agent.id, newRun.id, wsClientId);
-        return {
-            agent,
-            run: newRun,
-            message: "Agent workflow started successfully",
-        };
+        catch (error) {
+            console.error(error);
+            throw new Error("Error starting agent workflow step");
+        }
     }
     async stopAgentWorkflow() {
         const agent = await this.getCurrentAgent();

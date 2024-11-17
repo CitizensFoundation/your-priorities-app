@@ -15,10 +15,13 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.agentName = "";
         this.agentDescription = "";
         this.agentImageUrl = "";
-        this.workflowStatus = "ready";
+        this.runStatus = "ready";
         this.agentState = "stopped";
         this.latestMessage = "";
         this.api = new PsServerApi();
+    }
+    connectedCallback() {
+        super.connectedCallback();
         const workflow = this.parsedWorkflow;
         // Go through the workflow and set the this.agentId to the correct agent based on the workflow step
         if (workflow.steps[workflow.currentStepIndex] &&
@@ -28,6 +31,8 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         else {
             console.error("No agentId found in workflow");
         }
+        this.workflowGroupId = workflow.workflowGroupId;
+        this.updateAgentStatus();
     }
     get parsedWorkflow() {
         try {
@@ -38,10 +43,6 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             console.error("Failed to decode or parse workflow:", error);
             return { currentStepIndex: 0, steps: [] };
         }
-    }
-    connectedCallback() {
-        super.connectedCallback();
-        this.updateAgentStatus(); // Initial status check
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -58,7 +59,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     async updateAgentStatus() {
         try {
-            const status = await this.api.getAgentStatus(this.topLevelWorkflowGroupId, this.agentId);
+            const status = await this.api.getAgentStatus(this.workflowGroupId, this.agentId);
             if (status) {
                 this.agentState = status.state;
                 this.progress = status.progress;
@@ -78,7 +79,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     async startAgent() {
         try {
-            await this.api.startWorkflowAgent(this.topLevelWorkflowGroupId, this.agentId, this.wsClientId);
+            await this.api.startWorkflowAgent(this.workflowGroupId, this.agentId, this.wsClientId);
             this.agentState = "running";
             this.startStatusUpdates();
             this.requestUpdate();
@@ -89,7 +90,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     async stopAgent() {
         try {
-            await this.api.stopAgent(this.topLevelWorkflowGroupId, this.agentId);
+            await this.api.stopAgent(this.workflowGroupId, this.agentId);
             this.agentState = "stopped";
             this.stopStatusUpdates();
             this.requestUpdate();
@@ -251,20 +252,22 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         ];
     }
     getStepClass(index) {
-        if (this.workflowStatus === "stopped" || this.workflowStatus === "ready") {
+        if (this.runStatus === "cancelled" || this.runStatus === "ready") {
             return "";
         }
         if (index < this.parsedWorkflow.currentStepIndex) {
             return "step-completed";
         }
         if (index === this.parsedWorkflow.currentStepIndex) {
-            return this.workflowStatus === "running" ? "step-active" : "";
+            return this.runStatus === "running" ? "step-active" : "";
         }
         return "step-disabled";
     }
     renderStep(step, index, isSelected) {
         const stepClass = this.getStepClass(index);
-        const isActive = isSelected && this.workflowStatus !== "stopped";
+        const isActive = isSelected && (this.runStatus === "running" ||
+            this.runStatus === "waiting_on_user");
+        debugger;
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
@@ -344,13 +347,13 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     </div>`;
     }
     get shouldDisableStopButton() {
-        return this.workflowStatus !== "running";
+        return this.runStatus !== "running";
     }
     get shouldDisableStartButton() {
-        return this.workflowStatus === "running";
+        return this.runStatus === "running";
     }
     get isRunning() {
-        return this.workflowStatus === "running";
+        return this.runStatus === "running";
     }
     renderAgentRunningStatus() {
         return html `<div class="agent-running-status">
@@ -414,7 +417,7 @@ __decorate([
 ], YpAgentRunWidget.prototype, "wsClientId", void 0);
 __decorate([
     property({ type: Number })
-], YpAgentRunWidget.prototype, "topLevelWorkflowGroupId", void 0);
+], YpAgentRunWidget.prototype, "workflowGroupId", void 0);
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "agentName", void 0);
@@ -426,7 +429,7 @@ __decorate([
 ], YpAgentRunWidget.prototype, "agentImageUrl", void 0);
 __decorate([
     property({ type: String })
-], YpAgentRunWidget.prototype, "workflowStatus", void 0);
+], YpAgentRunWidget.prototype, "runStatus", void 0);
 __decorate([
     state()
 ], YpAgentRunWidget.prototype, "agentState", void 0);

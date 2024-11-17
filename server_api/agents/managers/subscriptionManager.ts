@@ -313,6 +313,8 @@ export class SubscriptionManager {
       }
     );
 
+    updatedWorkflow.workflowGroupId = workflowGroup.id;
+
     console.log("updatedWorkflow", updatedWorkflow);
 
     return {

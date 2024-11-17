@@ -126,7 +126,6 @@ export class YpStreamingLlmBase extends YpBaseElement {
         }
         const threshold = 10;
         let atBottom;
-        debugger;
         if (this.useMainWindowScroll) {
             atBottom =
                 this.$$(this.scrollElementSelector).scrollHeight -

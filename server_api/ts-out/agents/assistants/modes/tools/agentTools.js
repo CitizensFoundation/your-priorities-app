@@ -129,12 +129,13 @@ export class AgentTools extends BaseAssistantTools {
             const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(this.assistant.memory.currentAgentStatus.subscription.id, this.assistant.wsClients, this.assistant.wsClientId);
             await this.updateAgentProductRun(agentRun);
             const html = this.renderAgentRunWidget(subscription.AgentProduct, agentRun);
-            this.assistant.emit("update-ai-model-session", "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally");
+            const message = "You've created new agent run ready to run the first workflow step, out of many. It will not start automatically, the user needs to start it verbally.";
+            this.assistant.emit("update-ai-model-session", message);
             return {
                 success: true,
                 html,
                 data: {
-                    message: "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally",
+                    message,
                     agentRun,
                     subscription,
                 },
@@ -176,10 +177,17 @@ export class AgentTools extends BaseAssistantTools {
                 error: "User did not confirm starting the next workflow step with the agent name",
             };
         }
+        if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+            return {
+                success: false,
+                error: "No active agent run found",
+            };
+        }
+        const agentRun = this.assistant.memory.currentAgentStatus.activeAgentRun;
         try {
-            const result = await this.agentModels.startAgentWorkflow();
-            await this.updateAgentProductRun(result.run);
-            const html = this.renderAgentRunWidget(result.agent, result.run);
+            const result = await this.agentModels.startCurrentWorkflowStep(agentRun);
+            await this.updateAgentProductRun(result.agentRun);
+            const html = this.renderAgentRunWidget(this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct, result.agentRun);
             this.assistant.emit("update-ai-model-session", "Started the next workflow step for the current agent run");
             return {
                 success: true,
@@ -257,13 +265,14 @@ export class AgentTools extends BaseAssistantTools {
         try {
             const agent = await this.agentModels.getCurrentAgent();
             const subscription = await this.agentModels.getCurrentSubscription();
+            const subscriptionPlan = await this.agentModels.getCurrentSubscriptionPlan();
             const html = `<yp-agent-configuration-widget
         domainId="${this.assistant.domainId}"
         agentProductId="${agent.id}"
         agentName="${agent.name}"
         subscriptionId="${subscription.id}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
-        requiredQuestions='${JSON.stringify(subscription?.Plan?.configuration.requiredStructuredQuestions)}'
+        requiredQuestions='${JSON.stringify(subscriptionPlan.configuration.requiredStructuredQuestions)}'
         requiredQuestionsAnswered='${JSON.stringify(subscription?.configuration?.requiredQuestionsAnswered ?? [])}'
       ></yp-agent-configuration-widget>`;
             await this.updateShownConfigurationWidget();

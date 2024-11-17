@@ -266,6 +266,7 @@ interface YpWorkflowStep {
 interface YpWorkflowConfiguration {
   steps: YpWorkflowStep[];
   currentStepIndex: number;
+  workflowGroupId?: number;
   timeoutTotal?: number;
 }
 

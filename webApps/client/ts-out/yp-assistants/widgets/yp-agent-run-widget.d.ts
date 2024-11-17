@@ -4,11 +4,11 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     runId: number;
     agentId: number;
     wsClientId: string;
-    topLevelWorkflowGroupId: number;
+    workflowGroupId: number;
     agentName: string;
     agentDescription: string;
     agentImageUrl: string;
-    workflowStatus: string;
+    runStatus: YpAgentProductRunStatus;
     private agentState;
     private latestMessage;
     private progress;
@@ -17,8 +17,8 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     maxRunsPerCycle: number;
     private api;
     constructor();
-    get parsedWorkflow(): YpWorkflowConfiguration;
     connectedCallback(): void;
+    get parsedWorkflow(): YpWorkflowConfiguration;
     disconnectedCallback(): void;
     private startStatusUpdates;
     private stopStatusUpdates;

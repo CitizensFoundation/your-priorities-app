@@ -171,17 +171,16 @@ export class AgentTools extends BaseAssistantTools {
         agentRun
       );
 
-      this.assistant.emit(
-        "update-ai-model-session",
-        "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally"
-      );
+      const message =
+        "You've created new agent run ready to run the first workflow step, out of many. It will not start automatically, the user needs to start it verbally.";
+
+      this.assistant.emit("update-ai-model-session", message);
 
       return {
         success: true,
         html,
         data: {
-          message:
-            "Created new agent run ready to run the first workflow step. It will not start automatically, the user needs to start it verbally",
+          message,
           agentRun,
           subscription,
         },
@@ -234,12 +233,24 @@ export class AgentTools extends BaseAssistantTools {
       };
     }
 
+    if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+      return {
+        success: false,
+        error: "No active agent run found",
+      };
+    }
+
+    const agentRun = this.assistant.memory.currentAgentStatus.activeAgentRun!;
+
     try {
-      const result = await this.agentModels.startAgentWorkflow();
+      const result = await this.agentModels.startCurrentWorkflowStep(agentRun);
 
-      await this.updateAgentProductRun(result.run);
+      await this.updateAgentProductRun(result.agentRun);
 
-      const html = this.renderAgentRunWidget(result.agent, result.run);
+      const html = this.renderAgentRunWidget(
+        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct!,
+        result.agentRun
+      );
 
       this.assistant.emit(
         "update-ai-model-session",
@@ -340,6 +351,7 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const agent = await this.agentModels.getCurrentAgent();
       const subscription = await this.agentModels.getCurrentSubscription();
+      const subscriptionPlan = await this.agentModels.getCurrentSubscriptionPlan();
       const html = `<yp-agent-configuration-widget
         domainId="${this.assistant.domainId}"
         agentProductId="${agent.id}"
@@ -347,7 +359,7 @@ export class AgentTools extends BaseAssistantTools {
         subscriptionId="${subscription.id}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
         requiredQuestions='${JSON.stringify(
-          subscription?.Plan?.configuration.requiredStructuredQuestions
+          subscriptionPlan.configuration.requiredStructuredQuestions
         )}'
         requiredQuestionsAnswered='${JSON.stringify(
           subscription?.configuration?.requiredQuestionsAnswered ?? []

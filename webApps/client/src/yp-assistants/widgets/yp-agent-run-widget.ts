@@ -20,7 +20,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   wsClientId!: string;
 
   @property({ type: Number })
-  topLevelWorkflowGroupId!: number;
+  workflowGroupId!: number;
 
   @property({ type: String })
   agentName = "";
@@ -32,7 +32,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   agentImageUrl = "";
 
   @property({ type: String })
-  workflowStatus = "ready";
+  runStatus: YpAgentProductRunStatus = "ready";
 
   @state()
   private agentState: "running" | "paused" | "stopped" | "error" | "completed" =
@@ -57,7 +57,12 @@ export class YpAgentRunWidget extends YpBaseElement {
   constructor() {
     super();
     this.api = new PsServerApi();
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
     const workflow = this.parsedWorkflow;
+
     // Go through the workflow and set the this.agentId to the correct agent based on the workflow step
     if (
       workflow.steps[workflow.currentStepIndex] &&
@@ -67,6 +72,9 @@ export class YpAgentRunWidget extends YpBaseElement {
     } else {
       console.error("No agentId found in workflow");
     }
+    this.workflowGroupId = workflow.workflowGroupId!;
+
+    this.updateAgentStatus();
   }
 
   get parsedWorkflow(): YpWorkflowConfiguration {
@@ -79,10 +87,6 @@ export class YpAgentRunWidget extends YpBaseElement {
     }
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.updateAgentStatus(); // Initial status check
-  }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
@@ -106,7 +110,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   private async updateAgentStatus() {
     try {
       const status = await this.api.getAgentStatus(
-        this.topLevelWorkflowGroupId,
+        this.workflowGroupId,
         this.agentId
       );
       if (status) {
@@ -135,7 +139,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   private async startAgent() {
     try {
       await this.api.startWorkflowAgent(
-        this.topLevelWorkflowGroupId,
+        this.workflowGroupId,
         this.agentId,
         this.wsClientId
       );
@@ -149,7 +153,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
   private async stopAgent() {
     try {
-      await this.api.stopAgent(this.topLevelWorkflowGroupId, this.agentId);
+      await this.api.stopAgent(this.workflowGroupId, this.agentId);
       this.agentState = "stopped";
       this.stopStatusUpdates();
       this.requestUpdate();
@@ -312,14 +316,14 @@ export class YpAgentRunWidget extends YpBaseElement {
   }
 
   private getStepClass(index: number): string {
-    if (this.workflowStatus === "stopped" || this.workflowStatus === "ready") {
+    if (this.runStatus === "cancelled" || this.runStatus === "ready") {
       return "";
     }
     if (index < this.parsedWorkflow.currentStepIndex) {
       return "step-completed";
     }
     if (index === this.parsedWorkflow.currentStepIndex) {
-      return this.workflowStatus === "running" ? "step-active" : "";
+      return this.runStatus === "running" ? "step-active" : "";
     }
     return "step-disabled";
   }
@@ -331,7 +335,10 @@ export class YpAgentRunWidget extends YpBaseElement {
   ) {
     const stepClass = this.getStepClass(index);
 
-    const isActive = isSelected && this.workflowStatus !== "stopped";
+    const isActive = isSelected && (this.runStatus === "running" ||
+      this.runStatus === "waiting_on_user");
+
+    debugger;
 
     return html`
       <div class="workflow-step layout vertical">
@@ -415,15 +422,15 @@ export class YpAgentRunWidget extends YpBaseElement {
   }
 
   get shouldDisableStopButton() {
-    return this.workflowStatus !== "running";
+    return this.runStatus !== "running";
   }
 
   get shouldDisableStartButton() {
-    return this.workflowStatus === "running";
+    return this.runStatus === "running";
   }
 
   get isRunning() {
-    return this.workflowStatus === "running";
+    return this.runStatus === "running";
   }
 
   private renderAgentRunningStatus() {

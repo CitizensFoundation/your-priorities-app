@@ -242,6 +242,7 @@ export class SubscriptionManager {
             }
             return newStep;
         });
+        updatedWorkflow.workflowGroupId = workflowGroup.id;
         console.log("updatedWorkflow", updatedWorkflow);
         return {
             workflow: updatedWorkflow,

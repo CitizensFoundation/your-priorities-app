@@ -186,8 +186,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
     let atBottom;
 
-    debugger;
-
     if (this.useMainWindowScroll) {
       atBottom =
         this.$$(this.scrollElementSelector)!.scrollHeight -

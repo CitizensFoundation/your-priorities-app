@@ -156,7 +156,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     subscriptionPlan: YpSubscriptionPlanAttributes,
     subscription: YpSubscriptionAttributes | null
   ) {
-    const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
+    const requiredStructuredQuestions = subscriptionPlan.configuration.requiredStructuredQuestions;
     const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
     this.memory.currentAgentStatus = {
       subscriptionPlan,
