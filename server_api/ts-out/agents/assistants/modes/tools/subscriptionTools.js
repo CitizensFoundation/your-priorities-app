@@ -175,7 +175,7 @@ export class SubscriptionTools extends BaseAssistantTools {
           maxRunsPerCycle="${result.plan.configuration.max_runs_per_cycle}"
         ></yp-agent-chip-for-purchase></div>`;
             }
-            this.assistant.triggerResponseIfNeeded("Successfully subscribed to agent plan");
+            this.assistant.emit("update-ai-model-session", "Successfully subscribed to agent plan");
             return {
                 success: true,
                 html,
@@ -263,7 +263,7 @@ export class SubscriptionTools extends BaseAssistantTools {
         agentDescription="${plan.AgentProduct?.description}"
         agentImageUrl="${plan.AgentProduct?.configuration.avatar?.imageUrl}"
     ></yp-agent-chip></div>`;
-            this.assistant.triggerResponseIfNeeded("Successfully unsubscribed from agent subscription");
+            this.assistant.emit("update-ai-model-session", "Successfully unsubscribed from agent subscription");
             return {
                 success: true,
                 html,

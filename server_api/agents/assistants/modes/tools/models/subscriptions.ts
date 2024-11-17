@@ -308,6 +308,15 @@ export class SubscriptionModels {
 
       const userId = this.assistant.memory.currentUser?.id;
 
+      if (!userId) {
+        return {
+          success: false,
+          error: "User not found",
+        };
+      }
+
+      console.log(`-------> subscribing to agent plan ${subscriptionPlanId} for user ${userId}`);
+
       const subscription = await YpSubscription.create({
         subscription_plan_id: subscriptionPlanId,
         agent_product_id: agentProductId,

@@ -96,13 +96,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     );
     this.parentAssistant.memory =
       (await this.getLoadedMemory()) as YpBaseAssistantMemoryData;
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     console.log(
       `--------------------> Logged in memory user: ${
         (this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser
           ?.name
       }`
     );
+    await new Promise((resolve) => setTimeout(resolve, 100));
     await this.initializeVoiceSession(message);
   }
 
@@ -770,7 +770,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       } else {
         this.triggerResponse(customResponseMessage, false);
       }
-    }, 20);
+    }, 200);
   }
 
   async triggerResponse(message: string, cancelResponse = true): Promise<void> {

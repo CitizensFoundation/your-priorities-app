@@ -2,8 +2,6 @@ import { OpenAI } from "openai";
 import { EventEmitter } from "events";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
-import { YpSubscription } from "../models/subscription.js";
-import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 /**
  * Common modes that implementations might use
  */
@@ -64,28 +62,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
         else if (clientEvent.message === "agent_configuration_submitted") {
             console.log(`agent_configuration_submitted emitting`);
             try {
-                if (!this.memory.currentAgentStatus.subscription) {
-                    throw new Error("No subscription found");
-                }
-                const subscription = await YpSubscription.findOne({
-                    where: {
-                        id: this.memory.currentAgentStatus.subscription.id,
-                    },
-                    include: [{
-                            model: YpSubscriptionPlan,
-                            as: 'Plan',
-                            attributes: ['id', 'configuration', 'name', 'description'],
-                            include: [{
-                                    model: YpAgentProduct,
-                                    as: 'AgentProduct',
-                                    attributes: ['id', 'configuration', 'name', 'description'],
-                                }]
-                        }]
-                });
-                if (!subscription) {
-                    throw new Error("No subscription found");
-                }
-                await this.updateCurrentAgentProductPlan(subscription.Plan, subscription);
                 this.emit("update-ai-model-session", "The agent configuration was submitted successfully, lets explore the options");
             }
             catch (error) {

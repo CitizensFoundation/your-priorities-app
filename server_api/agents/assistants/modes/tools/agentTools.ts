@@ -116,11 +116,11 @@ export class AgentTools extends BaseAssistantTools {
     }
   }
 
-  get startNewAgentRun() {
+  get createNewAgentRunReadyToRunFirstWorkflowStep() {
     return {
-      name: "start_new_agent_run",
+      name: "create_new_agent_run_ready_to_run_first_workflow_step",
       description:
-        "Start an new agent run and get a confirmation from the user and add to the hasVerballyConfirmedTheRun property",
+        "Create a new agent run ready to run the first workflow step. Get a confirmation from the user and set the hasVerballyConfirmedTheRun property to true after the user confirms",
       type: "function",
       parameters: {
         type: "object",
@@ -133,11 +133,11 @@ export class AgentTools extends BaseAssistantTools {
           "hasVerballyConfirmedTheRun",
         ] as const satisfies readonly (keyof YpAgentRunStartParams)[],
       },
-      handler: this.startNewAgentRunHandler.bind(this),
+      handler: this.createNewAgentRunReadyToRunFirstWorkflowStepHandler.bind(this),
     };
   }
 
-  public async startNewAgentRunHandler(
+  public async createNewAgentRunReadyToRunFirstWorkflowStepHandler(
     params: YpAgentRunStartParams
   ): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as YpAgentRunStartParams;
@@ -169,6 +169,11 @@ export class AgentTools extends BaseAssistantTools {
       const html = this.renderAgentRunWidget(
         subscription.AgentProduct,
         agentRun
+      );
+
+      this.assistant.emit(
+        "update-ai-model-session",
+        "Created new agent run ready to run the first workflow step"
       );
 
       return {
@@ -230,6 +235,11 @@ export class AgentTools extends BaseAssistantTools {
       await this.updateAgentProductRun(result.run);
 
       const html = this.renderAgentRunWidget(result.agent, result.run);
+
+      this.assistant.emit(
+        "update-ai-model-session",
+        "Started the next workflow step for the current agent run"
+      );
 
       return {
         success: true,
@@ -340,6 +350,11 @@ export class AgentTools extends BaseAssistantTools {
       ></yp-agent-configuration-widget>`;
 
       await this.updateShownConfigurationWidget();
+
+      this.assistant.emit(
+        "update-ai-model-session",
+        "You've shown the configuration widget to the user"
+      );
 
       return {
         success: true,

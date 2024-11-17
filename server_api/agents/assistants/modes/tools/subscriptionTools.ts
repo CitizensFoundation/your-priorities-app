@@ -245,9 +245,7 @@ export class SubscriptionTools extends BaseAssistantTools {
         ></yp-agent-chip-for-purchase></div>`;
       }
 
-      this.assistant.triggerResponseIfNeeded(
-        "Successfully subscribed to agent plan"
-      );
+      this.assistant.emit("update-ai-model-session", "Successfully subscribed to agent plan");
 
       return {
         success: true,
@@ -366,7 +364,8 @@ export class SubscriptionTools extends BaseAssistantTools {
         agentImageUrl="${plan.AgentProduct?.configuration.avatar?.imageUrl}"
     ></yp-agent-chip></div>`;
 
-      this.assistant.triggerResponseIfNeeded(
+      this.assistant.emit(
+        "update-ai-model-session",
         "Successfully unsubscribed from agent subscription"
       );
 

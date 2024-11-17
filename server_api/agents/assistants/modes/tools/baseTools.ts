@@ -63,11 +63,6 @@ export class BaseAssistantTools {
     if (options.sendEvent) {
       this.assistant.emit("memory-changed", this.assistant.memory);
     }
-
-    this.assistant.emit(
-      "update-ai-model-session",
-      "Shown configuration widget"
-    );
   }
 
   async updateHaveShownLoginWidget(

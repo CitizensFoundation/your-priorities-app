@@ -108,32 +108,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       console.log(`agent_configuration_submitted emitting`);
 
       try {
-        if (!this.memory.currentAgentStatus!.subscription) {
-          throw new Error("No subscription found");
-        }
-        const subscription = await YpSubscription.findOne({
-          where: {
-            id: this.memory.currentAgentStatus!.subscription!.id,
-          },
-          include: [{
-            model: YpSubscriptionPlan,
-            as: 'Plan',
-            attributes: ['id', 'configuration','name','description'],
-            include: [{
-              model: YpAgentProduct,
-              as: 'AgentProduct',
-              attributes: ['id', 'configuration','name','description'],
-            }]
-          }]
-        });
-        if (!subscription) {
-          throw new Error("No subscription found");
-        }
 
-        await this.updateCurrentAgentProductPlan(
-          subscription.Plan,
-          subscription as YpSubscriptionAttributes
-        );
         this.emit(
           "update-ai-model-session",
           "The agent configuration was submitted successfully, lets explore the options"
