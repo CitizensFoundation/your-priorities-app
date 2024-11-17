@@ -251,7 +251,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         .startButton,
         .stopButton {
-          width: 130px;
+          width: 140px;
         }
 
         .startButtonFilled {
@@ -450,13 +450,13 @@ export class YpAgentRunWidget extends YpBaseElement {
       ${this.isRunning
         ? html` <md-filled-button class="startButton startButtonFilled" disabled
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
-            >${this.t("start")}</md-filled-button
+            >${this.t(this.agentState)}</md-filled-button
           >`
         : html` <md-outlined-button
             class="startButton"
             ?disabled=${this.shouldDisableStartButton}
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
-            >${this.t("start")}</md-outlined-button
+            >${this.t(this.agentState)}</md-outlined-button
           >`}
 
       <md-outlined-button

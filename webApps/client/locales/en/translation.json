@@ -1,4 +1,8 @@
 {
+  "running": "Running",
+  "stopped": "Stopped",
+  "cancelled": "Cancelled",
+  "ready": "Ready",
   "mainAssistant": "The Main Assistant",
   "start": "Start",
   "reportsPerMonth": "reports per month",
