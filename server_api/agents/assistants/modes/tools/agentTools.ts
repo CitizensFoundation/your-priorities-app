@@ -411,6 +411,7 @@ export class AgentTools extends BaseAssistantTools {
     return `<yp-agent-run-widget
         agentProductId="${agent.id}"
         runId="${run.id}"
+        wsClientId="${this.assistant.wsClientId}"
         agentName="${agent.name}"
         agentImageUrl="${agent.configuration.avatar?.imageUrl}"
         workflow="${workflowBase64}"

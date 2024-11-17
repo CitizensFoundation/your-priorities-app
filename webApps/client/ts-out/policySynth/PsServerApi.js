@@ -114,6 +114,12 @@ export class PsServerApi extends YpServerApiBase {
             method: 'GET',
         }, false);
     }
+    async startWorkflowAgent(groupId, agentId, wsClientId) {
+        return this.fetchWrapper(`/api/agents/${groupId}/${agentId}/startWorkflowAgent`, {
+            method: 'PUT',
+            body: JSON.stringify({ wsClientId }),
+        });
+    }
     async controlAgent(groupId, agentId, action) {
         return this.fetchWrapper(`/api/agents/${groupId}/${agentId}/control`, {
             method: 'POST',

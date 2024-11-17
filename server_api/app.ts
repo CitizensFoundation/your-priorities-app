@@ -517,7 +517,7 @@ export class YourPrioritiesApi {
       policySynthAgentsController.router
     );
 
-    const { AssistantController } = await import("./agents/controllers/assistantController.js");
+    const { AssistantController } = await import("./agents/controllers/assistantsController.js");
     const assistantController = new AssistantController(this.wsClients);
     this.app.use(assistantController.path, assistantController.router);
 

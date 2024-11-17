@@ -11,6 +11,7 @@ import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 import { YpSubscriptionUser } from "../models/subscriptionUser.js";
 import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
+import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -99,7 +100,31 @@ export class AssistantController {
       "/:domainId/submitAgentConfiguration",
       this.submitAgentConfiguration.bind(this)
     );
+
+    this.router.put(
+      "/:groupId/:agentId/startWorkflowAgent",
+      this.startWorkflowAgent.bind(this)
+    );
   }
+
+  private startWorkflowAgent = async (req: YpRequest, res: express.Response) => {
+    const { groupId, agentId, wsClientId } = req.params;
+
+    try {
+      const notificationManager = new NotificationAgentQueueManager(
+        this.wsClients
+      );
+      await notificationManager.startAgentProcessingWithWsClient(
+        parseInt(agentId),
+        parseInt(groupId),
+        wsClientId
+      );
+      res.sendStatus(200);
+    } catch (error: any) {
+      console.error("Error starting agent:", error);
+      res.sendStatus(500);
+    }
+  };
 
   private submitAgentConfiguration = async (
     req: YpRequest,

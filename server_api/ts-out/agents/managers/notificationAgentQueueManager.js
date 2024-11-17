@@ -16,6 +16,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         if (wsClient) {
             wsClient.send(JSON.stringify({ action, status, result, agentRunId, updatedWorkflow }));
         }
+        else {
+            console.error(`NotificationAgentQueueManager: WebSocket client with ID ${wsClientId} not found`);
+        }
         //TODO: Send email notification
     }
     async advanceWorkflowStepOrCompleteAgentRun(agentRunId, status, wsClientId, result) {

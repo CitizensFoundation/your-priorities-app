@@ -929,6 +929,8 @@ auth.entity("group", function (req, done) {
     if (!match)
         match = req.originalUrl.match(/agents\/(\w+)/);
     if (!match)
+        match = req.originalUrl.match(/assistants\/(\w+)/);
+    if (!match)
         match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/images\/(\w+)/);

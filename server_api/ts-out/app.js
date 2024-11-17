@@ -455,7 +455,7 @@ export class YourPrioritiesApi {
         const { PolicySynthAgentsController } = await import("./agents/controllers/policySynthAgents.js");
         const policySynthAgentsController = new PolicySynthAgentsController(this.wsClients);
         this.app.use(policySynthAgentsController.path, policySynthAgentsController.router);
-        const { AssistantController } = await import("./agents/controllers/assistantController.js");
+        const { AssistantController } = await import("./agents/controllers/assistantsController.js");
         const assistantController = new AssistantController(this.wsClients);
         this.app.use(assistantController.path, assistantController.router);
         // Setup those here so they wont override the ES controllers

@@ -4,16 +4,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { html, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { YpBaseElement } from "../../common/yp-base-element";
+import { html, css, nothing } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
+import { PsServerApi } from "../../policySynth/PsServerApi.js";
+// Assuming we have an API client
 let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     constructor() {
-        super(...arguments);
+        super();
         this.agentName = "";
         this.agentDescription = "";
         this.agentImageUrl = "";
         this.workflowStatus = "ready";
+        this.agentState = "stopped";
+        this.latestMessage = "";
+        this.api = new PsServerApi();
+        const workflow = this.parsedWorkflow;
+        // Go through the workflow and set the this.agentId to the correct agent based on the workflow step
+        this.agentId = workflow.steps[workflow.currentStepIndex].agentId;
     }
     get parsedWorkflow() {
         try {
@@ -23,6 +31,65 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         catch (error) {
             console.error("Failed to decode or parse workflow:", error);
             return { currentStepIndex: 0, steps: [] };
+        }
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        this.updateAgentStatus(); // Initial status check
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.stopStatusUpdates();
+    }
+    startStatusUpdates() {
+        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 1000);
+    }
+    stopStatusUpdates() {
+        if (this.statusInterval) {
+            clearInterval(this.statusInterval);
+            this.statusInterval = undefined;
+        }
+    }
+    async updateAgentStatus() {
+        try {
+            const status = await this.api.getAgentStatus(this.topLevelWorkflowGroupId, this.agentId);
+            if (status) {
+                this.agentState = status.state;
+                this.progress = status.progress;
+                this.latestMessage = status.messages[status.messages.length - 1] || "";
+                if (this.agentState === "stopped" || this.agentState === "error") {
+                    this.stopStatusUpdates();
+                }
+                else if (this.agentState === "running" && !this.statusInterval) {
+                    this.startStatusUpdates();
+                }
+                this.requestUpdate();
+            }
+        }
+        catch (error) {
+            console.error("Failed to get agent status:", error);
+        }
+    }
+    async startAgent() {
+        try {
+            await this.api.startWorkflowAgent(this.topLevelWorkflowGroupId, this.agentId, this.wsClientId);
+            this.agentState = "running";
+            this.startStatusUpdates();
+            this.requestUpdate();
+        }
+        catch (error) {
+            console.error("Failed to start agent:", error);
+        }
+    }
+    async stopAgent() {
+        try {
+            await this.api.stopAgent(this.topLevelWorkflowGroupId, this.agentId);
+            this.agentState = "stopped";
+            this.stopStatusUpdates();
+            this.requestUpdate();
+        }
+        catch (error) {
+            console.error("Failed to stop agent:", error);
         }
     }
     static get styles() {
@@ -155,11 +222,30 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           color: var(--md-sys-color-outline);
           fill: currentColor;
         }
+
+        .agent-running-status {
+          margin-top: 16px;
+        }
+
+        .statusMessage {
+          font-size: 11px;
+          text-align: center;
+          margin-top: 8px;
+          border-radius: 16px;
+          flex-grow: 1;
+          color: var(--md-sys-color-on-surface-variant);
+        }
+
+        md-linear-progress {
+          margin: 16px;
+          margin-bottom: 8px;
+          margin-top: 8px;
+        }
       `,
         ];
     }
     getStepClass(index) {
-        if (this.workflowStatus === "not_started") {
+        if (this.workflowStatus === "stopped" || this.workflowStatus === "ready") {
             return "";
         }
         if (index < this.parsedWorkflow.currentStepIndex) {
@@ -172,10 +258,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     renderStep(step, index, isSelected) {
         const stepClass = this.getStepClass(index);
-        const activeStepStyle = html `background-color:
-    ${step.stepBackgroundColor};color: ${step.stepTextColor}`;
-        debugger;
-        const isActive = isSelected && this.workflowStatus !== "running";
+        const isActive = isSelected && this.workflowStatus !== "stopped";
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
@@ -264,7 +347,14 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         return this.workflowStatus === "running";
     }
     renderAgentRunningStatus() {
-        return html `<div class="agent-running-status"></div>`;
+        return html `<div class="agent-running-status">
+      ${this.progress !== undefined
+            ? html `<md-linear-progress
+            value="${this.progress / 100}"
+          ></md-linear-progress>`
+            : html `<md-linear-progress indeterminate></md-linear-progress>`}
+      <div class="statusMessage">${this.latestMessage}</div>
+    </div>`;
     }
     renderStartStopButtons() {
         return html `<div class="layout horizontal startStopButtons">
@@ -299,7 +389,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         <div class="layout horizontal wrap">
           ${this.parsedWorkflow.steps.map((step, index) => this.renderStep(step, index, index === this.parsedWorkflow.currentStepIndex))}
         </div>
-        ${this.isRunning && this.renderAgentRunningStatus()}
+        ${this.isRunning ? this.renderAgentRunningStatus() : nothing}
       </div>
     `;
     }
@@ -315,6 +405,12 @@ __decorate([
 ], YpAgentRunWidget.prototype, "agentId", void 0);
 __decorate([
     property({ type: String })
+], YpAgentRunWidget.prototype, "wsClientId", void 0);
+__decorate([
+    property({ type: Number })
+], YpAgentRunWidget.prototype, "topLevelWorkflowGroupId", void 0);
+__decorate([
+    property({ type: String })
 ], YpAgentRunWidget.prototype, "agentName", void 0);
 __decorate([
     property({ type: String })
@@ -325,6 +421,15 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "workflowStatus", void 0);
+__decorate([
+    state()
+], YpAgentRunWidget.prototype, "agentState", void 0);
+__decorate([
+    state()
+], YpAgentRunWidget.prototype, "latestMessage", void 0);
+__decorate([
+    state()
+], YpAgentRunWidget.prototype, "progress", void 0);
 __decorate([
     property({ type: String })
 ], YpAgentRunWidget.prototype, "workflow", void 0);

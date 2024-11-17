@@ -23,6 +23,7 @@ export declare class PsServerApi extends YpServerApiBase {
     updateNode(groupId: number, agentId: number, updatedNode: PsAgentAttributes): Promise<void>;
     updateNodeConfiguration(groupId: number, nodeType: 'agent' | 'connector', nodeId: number, updatedConfig: Partial<PsAgentAttributes['configuration'] | PsAgentConnectorAttributes['configuration']>): Promise<void>;
     getAgentStatus(groupId: number, agentId: number): Promise<PsAgentStatus>;
+    startWorkflowAgent(groupId: number, agentId: number, wsClientId: string): Promise<any>;
     controlAgent(groupId: number, agentId: number, action: 'start' | 'pause' | 'stop'): Promise<any>;
     startAgent(groupId: number, agentId: number): Promise<any>;
     pauseAgent(groupId: number, agentId: number): Promise<any>;
