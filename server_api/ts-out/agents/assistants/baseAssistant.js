@@ -419,11 +419,12 @@ export class YpBaseAssistant extends YpBaseChatBot {
         }
         return `${this.defaultSystemPrompt}\n\n${currentMode.systemPrompt}`;
     }
-    sendAvatarUrlChange(url) {
+    sendAvatarUrlChange(url, avatarName) {
         this.wsClientSocket.send(JSON.stringify({
             sender: "system",
             type: "avatar_url_change",
             url,
+            data: avatarName,
         }));
     }
     /**

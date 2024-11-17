@@ -570,12 +570,13 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     return `${this.defaultSystemPrompt}\n\n${currentMode.systemPrompt}`;
   }
 
-  sendAvatarUrlChange(url: string | null) {
+  sendAvatarUrlChange(url: string | null, avatarName: string | null) {
     this.wsClientSocket.send(
       JSON.stringify({
         sender: "system",
         type: "avatar_url_change",
         url,
+        data: avatarName,
       } as YpAssistantMessage)
     );
   }

@@ -19,7 +19,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   domainId!: number;
 
   @property({ type: String })
-  temporaryAvatarUrl: string | undefined;
+  mainAssistantAvatarUrl: string | undefined;
+
+  @property({ type: String })
+  directAgentAvatarUrl: string | undefined;
+
+  @property({ type: String })
+  directAgentName: string | null = null;
 
   @state()
   private mediaRecorder: WavRecorder | null = null;
@@ -209,7 +215,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             color = "#ffdc2f";
           } else if (this.aiIsSpeaking) {
             frequencies = this.mediaRecorder?.getFrequencies("voice")?.values!;
-            color = "#1e90ff";
+            color = "#2ecc71";
             for (let i = 0; i < frequencies.length; i++) {
               frequencies[i] = frequencies[i] * 0.75;
             }
@@ -264,7 +270,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       <div class="layout horizontal" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
-          src="${this.temporaryAvatarUrl || this.talkingHeadImage}"
+          src="${this.directAgentAvatarUrl || this.mainAssistantAvatarUrl}"
           alt="Voice Assistant"
         />
       </div>
@@ -457,10 +463,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
         break;
       case "avatar_url_change":
-        if (data.url == null) {
-          this.temporaryAvatarUrl = undefined;
+        if (data.url == null || data.data == null) {
+          this.directAgentAvatarUrl = undefined;
+          this.directAgentName = null;
         } else {
-          this.temporaryAvatarUrl = data.url;
+          this.directAgentAvatarUrl = data.url;
+          this.directAgentName = data.data as string;
         }
         break;
 
@@ -558,6 +566,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return [
       super.styles,
       css`
+        .voice-mode-toggle {
+          margin-top: 16px;
+        }
+
         .chat-window {
           display: flex;
           flex-direction: column;
@@ -659,7 +671,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           font-size: 22px;
           font-weight: 700;
           color: var(--md-sys-color-on-surface);
-          margin-bottom: 16px;
+          margin-bottom: 8px;
           line-height: 33px;
           font-family: var(--md-ref-typeface-brand);
         }
@@ -722,8 +734,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           width: 100%;
           height: 60px;
           margin-top: 8px;
-          background: rgba(0, 0, 0, 0.05);
-          border-radius: 8px;
+          margin-left: 4px;
+          background: transparent;
+          border-radius: 0;
+          max-width: 100px;
         }
 
         .voice-controls {
@@ -896,7 +910,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             >
           `
         : nothing}
-      <md-icon-button class="voice-mode-toggle" @click="${this.clearHistory}">
+      <md-icon-button class="" @click="${this.clearHistory}">
         <md-icon>delete_history</md-icon>
       </md-icon-button>
 
@@ -974,8 +988,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         </md-icon-button>`}`;
   }
 
-  renderVoiceName() {
-    return html`<div class="voiceName">${this.t("voiceAssistant")}</div>`;
+  renderAssistantName() {
+    return html`<div class="voiceName">${this.directAgentName
+      ? this.directAgentName
+      : this.t("mainAssistant")}</div>`;
   }
 
   renderVoiceInput() {
@@ -983,7 +999,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       <div class="layout horizontal voiceAvatar">
         ${this.renderVoiceTalkingHead()}
         <div class="nameAndStartStop layout vertical">
-          ${this.renderVoiceName()}
+          ${this.renderAssistantName()}
           <div class="layout horizontal">
             ${this.renderStartStopVoiceButton()}
             <canvas id="waveformCanvas" class="waveform-canvas"></canvas>

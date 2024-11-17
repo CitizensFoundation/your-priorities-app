@@ -5,7 +5,9 @@ import { YpAssistantServerApi } from "./AssistantServerApi.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
     domainId: number;
-    temporaryAvatarUrl: string | undefined;
+    mainAssistantAvatarUrl: string | undefined;
+    directAgentAvatarUrl: string | undefined;
+    directAgentName: string | null;
     private mediaRecorder;
     private wavStreamPlayer;
     private isRecording;
@@ -61,7 +63,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     renderVoiceStartButton(): import("lit-html").TemplateResult<1>;
     renderChatInput(): import("lit-html").TemplateResult<1>;
     renderStartStopVoiceButton(): import("lit-html").TemplateResult<1>;
-    renderVoiceName(): import("lit-html").TemplateResult<1>;
+    renderAssistantName(): import("lit-html").TemplateResult<1>;
     renderVoiceInput(): import("lit-html").TemplateResult<1>;
 }
 declare global {

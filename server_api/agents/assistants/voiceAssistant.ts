@@ -88,10 +88,21 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   async updateAiModelSession(message: string) {
     console.log(`voiceAssistant: updateAiModelSession: ${message}`);
-    console.log(`--------------------> Logged in memory user: ${(this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser?.name}`);
-    this.parentAssistant.memory = await this.getLoadedMemory() as YpBaseAssistantMemoryData;
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    console.log(`--------------------> Logged in memory user: ${(this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser?.name}`);
+    console.log(
+      `--------------------> Logged in memory user: ${
+        (this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser
+          ?.name
+      }`
+    );
+    this.parentAssistant.memory =
+      (await this.getLoadedMemory()) as YpBaseAssistantMemoryData;
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log(
+      `--------------------> Logged in memory user: ${
+        (this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser
+          ?.name
+      }`
+    );
     await this.initializeVoiceSession(message);
   }
 
@@ -683,10 +694,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       instructions = `${this.parentAssistant.memory.currentAgentStatus?.agentProduct.configuration.avatar.systemPrompt}\n${instructions}`;
       this.parentAssistant.sendAvatarUrlChange(
         this.parentAssistant.memory.currentAgentStatus?.agentProduct
-          .configuration.avatar.imageUrl
+          .configuration.avatar.imageUrl,
+        this.parentAssistant.memory.currentAgentStatus?.agentProduct.name
       );
     } else {
-      this.parentAssistant.sendAvatarUrlChange(null);
+      this.parentAssistant.sendAvatarUrlChange(null, null);
     }
 
     if (chatHistory) {

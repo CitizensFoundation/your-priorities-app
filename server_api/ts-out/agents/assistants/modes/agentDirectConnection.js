@@ -58,6 +58,7 @@ export class DirectConversationMode extends BaseAssistantMode {
                 // User is not subscribed to the current agent
                 console.log("Mode: agent_direct_connection_mode, User is not subscribed to the current agent");
                 tools.push(this.subscriptionTools.subscribeToCurrentAgentPlan);
+                tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
             }
         }
         else {
