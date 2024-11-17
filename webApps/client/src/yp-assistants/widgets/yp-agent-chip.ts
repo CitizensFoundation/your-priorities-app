@@ -18,8 +18,8 @@ export class YpAgentChip extends YpBaseElement {
   @property({ type: String })
   agentImageUrl!: string;
 
-  @property({ type: String })
-  isSelected: string | undefined;
+  @property({ type: Boolean })
+  isSelected!: boolean;
 
   @property({ type: String })
   isUnsubscribed: string | undefined;
@@ -41,10 +41,12 @@ export class YpAgentChip extends YpBaseElement {
           background-color: var(--md-sys-color-surface-container-low);
           border-radius: 8px;
           gap: 16px;
+          margin-left: 128px;
+
         }
 
         .agent-chip[isSelected] {
-          background-color: var(--md-sys-color-surface-variant);
+          background-color: var(--md-sys-color-surface-container-lowest);
         }
 
         img {
@@ -75,6 +77,14 @@ export class YpAgentChip extends YpBaseElement {
           line-height: 1.4;
         }
 
+        .status {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--md-sys-color-tertiary);
+          text-transform: uppercase;
+          padding-left: 8px;
+        }
+
         md-filled-icon-button {
           margin-left: 32px;
           margin-top: 8px;
@@ -94,10 +104,9 @@ export class YpAgentChip extends YpBaseElement {
         <div class="content">
           <div class="layout horizontal">
             <div class="layout vertical">
-              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">${this.agentName} ${this.getStatus()}</div>
+              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">${this.agentName} <span class="status" ?hidden="${!this.getStatus()}">${this.getStatus()}</span></div>
               <div class="agent-description">${this.agentDescription}</div>
             </div>
-            <md-filled-icon-button><md-icon>play_arrow</md-icon></md-filled-icon-button>
           </div>
         </div>
       </div>

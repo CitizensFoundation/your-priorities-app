@@ -5,10 +5,10 @@ export declare class YpAgentChip extends YpBaseElement {
     agentName: string;
     agentDescription: string;
     agentImageUrl: string;
-    isSelected: string | undefined;
+    isSelected: boolean;
     isUnsubscribed: string | undefined;
     static get styles(): any[];
-    getStatus(): "" | "unsubscribed" | "selected";
+    getStatus(): "unsubscribed" | "selected" | "";
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-chip.d.ts.map
