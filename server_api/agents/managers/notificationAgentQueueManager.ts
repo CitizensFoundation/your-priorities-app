@@ -293,7 +293,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     agentId: number,
     agentRunId: number,
     wsClientId: string
-  ): Promise<boolean> {
+  ): Promise<string | undefined> {
     console.log(
       `NotificationAgentQueueManager: Starting agent processing for agent ${agentId}`
     );
@@ -305,7 +305,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       console.error(
         `NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`
       );
-      return false;
+      return undefined;
     }
 
     const queueName = agent.Class.configuration.queueName;
@@ -313,7 +313,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     console.log(
       `NotificationAgentQueueManager: Adding start-processing job to queue ${queueName} for agent ${agentId}`
     );
-    await queue.add("control-message", {
+    const job = await queue.add("control-message", {
       type: "start-processing",
       agentId: agent.id,
       wsClientId: wsClientId,
@@ -323,7 +323,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       `NotificationAgentQueueManager: Updating agent ${agentId} status to running`
     );
     await this.updateAgentStatus(agent.id, "running");
-    return true;
+    return job.id;
   }
 
   async pauseAgentProcessing(agentId: number): Promise<boolean> {

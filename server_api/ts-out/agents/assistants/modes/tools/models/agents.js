@@ -62,7 +62,11 @@ export class AgentModels {
                 throw new Error("No agent ID found in the current step");
             }
             // Start processing with websocket client ID
-            await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId);
+            const jobId = await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId);
+            if (!jobId) {
+                throw new Error("Failed to start agent processing");
+            }
+            workflow.steps[currentStepIndex].queueJobId = jobId;
             agentRunToUpdate.status = "running";
             agentRunToUpdate.changed("workflow", true);
             await agentRunToUpdate.save();
@@ -78,14 +82,15 @@ export class AgentModels {
     }
     async stopAgentWorkflow() {
         const agent = await this.getCurrentAgent();
-        const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
+        const currentRun = (await YpAgentProductRun.findByPk(this.assistant.memory.currentAgentStatus?.activeAgentRun?.id));
         if (!currentRun) {
             throw new Error("No active workflow found to stop");
         }
+        const currentStep = currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
         // Stop processing using queue manager
         await this.queueManager.pauseAgentProcessing(agent.id);
         // Update run status
-        currentRun.status = "cancelled";
+        currentRun.status = "stopped";
         currentRun.end_time = new Date();
         await currentRun.save();
         // Get current status from queue manager

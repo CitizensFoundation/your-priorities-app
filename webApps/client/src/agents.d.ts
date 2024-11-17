@@ -149,7 +149,7 @@ interface YpAgentProductRunOutputData {
 }
 
 
-type YpAgentProductRunStatus = "ready" | "running" | "waiting_on_user" | "completed" | "failed" | "cancelled";
+type YpAgentProductRunStatus = "ready" | "running" | "waiting_on_user" | "stopped" | "completed" | "failed" | "cancelled";
 
 // YpAgentProductRunAttributes Interface
 
@@ -261,6 +261,7 @@ interface YpWorkflowStep {
   timeout?: number;
   stepBackgroundColor?: string;
   stepTextColor?: string;
+  queueJobId?: string;
 }
 
 interface YpWorkflowConfiguration {
