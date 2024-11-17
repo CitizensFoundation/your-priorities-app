@@ -9,6 +9,7 @@ export declare abstract class YpStreamingLlmBase extends YpBaseElement {
     userScrolled: boolean;
     currentFollowUpQuestions: string;
     programmaticScroll: boolean;
+    disableAutoScroll: boolean;
     scrollStart: number;
     serverMemoryId: string | undefined;
     defaultDevWsPort: number;

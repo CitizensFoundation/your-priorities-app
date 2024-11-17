@@ -15,6 +15,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         this.userScrolled = false;
         this.currentFollowUpQuestions = "";
         this.programmaticScroll = false;
+        this.disableAutoScroll = false;
         this.scrollStart = 0;
         this.defaultDevWsPort = 4242;
         this.disableWebsockets = false;
@@ -103,6 +104,9 @@ export class YpStreamingLlmBase extends YpBaseElement {
         };
     }
     handleScroll() {
+        if (this.disableAutoScroll) {
+            return;
+        }
         if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
             console.error(`handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`);
             return;
@@ -153,6 +157,9 @@ export class YpStreamingLlmBase extends YpBaseElement {
         }
     }
     scrollDown() {
+        if (this.disableAutoScroll) {
+            return;
+        }
         if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
             this.programmaticScroll = true;
             const element = this.$$(this.scrollElementSelector);
@@ -242,6 +249,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpStreamingLlmBase.prototype, "programmaticScroll", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpStreamingLlmBase.prototype, "disableAutoScroll", void 0);
 __decorate([
     property({ type: Number })
 ], YpStreamingLlmBase.prototype, "scrollStart", void 0);

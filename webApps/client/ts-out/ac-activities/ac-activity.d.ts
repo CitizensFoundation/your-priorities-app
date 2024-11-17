@@ -15,8 +15,8 @@ export declare class AcActivity extends YpBaseElementWithLogin {
     postGroupId: number | undefined;
     userId: number | undefined;
     static get styles(): any[];
-    renderActivity(): import("lit-html").TemplateResult<1> | typeof nothing;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderActivity(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     fromTime(timeValue: string): any;
     fromLongTime(timeValue: string): any;
     get hasActivityAccess(): boolean;

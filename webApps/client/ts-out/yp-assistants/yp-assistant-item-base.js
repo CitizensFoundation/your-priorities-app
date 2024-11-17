@@ -93,7 +93,7 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
         <div class="chatGPTDialog layout vertical" ?error="${this.isError}">
           <div class="layout horizontal">
             <div class="layout vertical chatImage">
-              ${this.renderCGImage()}
+              ${!this.htmlToRender ? this.renderCGImage() : nothing}
             </div>
             <div class="layout vertical chatText">
               ${resolveMarkdown(this.message, {

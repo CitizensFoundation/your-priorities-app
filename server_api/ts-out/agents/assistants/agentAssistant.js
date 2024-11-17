@@ -39,7 +39,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         return this.memory.currentAgentStatus?.agentProduct;
     }
     get isSubscribedToCurrentAgent() {
-        return this.memory.currentAgentStatus?.subscription !== undefined;
+        console.log(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+        return this.memory.currentAgentStatus?.subscription != undefined;
     }
     get hasConfiguredCurrentAgent() {
         return this.memory.currentAgentStatus?.configurationState === "configured";

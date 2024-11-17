@@ -131,6 +131,10 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           max-width: 100vw;
         }
 
+        .top-app-bar[useLowestContainerColor] {
+          background-color: var(--md-sys-color-surface-container-lowest);
+        }
+
         .top-app-bar[restrict-width] {
         }
 
@@ -234,10 +238,12 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         this.isTitleLong = false;
         this.isMenuOpen = false;
         this.hideBreadcrumbs = false;
+        this.hideTitle = false;
         this.restrictWidth = false;
         this.disableArrowBasedNavigation = false;
         this.breadcrumbs = [];
         this.fixed = false;
+        this.useLowestContainerColor = false;
         this.titleString = "";
         this.lastScrollY = 0;
     }
@@ -305,14 +311,14 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             });
         }
         return html `
-      <div
+      <div ?useLowestContainerColor="${this.useLowestContainerColor}"
         class="${appBarClass} layout"
         ?restrict-width="${this.restrictWidth}"
       >
-        <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
+        <div class="middleContainer" ?restrict-width="${this.restrictWidth}" >
           <slot name="navigation"></slot>
           ${this.renderMyDomainsDropdown()}
-          <div class="title ${this.isTitleLong ? "expanded" : ""}">
+          <div class="title ${this.isTitleLong ? "expanded" : ""}" ?hidden="${this.hideTitle}">
             ${breadcrumbsWithTitle.map((crumb, index) => html `
                 ${crumb.isLink
             ? html `
@@ -350,6 +356,9 @@ __decorate([
 ], YpTopAppBar.prototype, "hideBreadcrumbs", void 0);
 __decorate([
     property({ type: Boolean })
+], YpTopAppBar.prototype, "hideTitle", void 0);
+__decorate([
+    property({ type: Boolean })
 ], YpTopAppBar.prototype, "restrictWidth", void 0);
 __decorate([
     property({ type: Boolean })
@@ -360,6 +369,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpTopAppBar.prototype, "fixed", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpTopAppBar.prototype, "useLowestContainerColor", void 0);
 __decorate([
     property({ type: String })
 ], YpTopAppBar.prototype, "backUrl", void 0);

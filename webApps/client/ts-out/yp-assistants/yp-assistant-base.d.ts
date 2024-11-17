@@ -9,6 +9,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private mediaRecorder;
     private wavStreamPlayer;
     private isRecording;
+    disableAutoScroll: boolean;
     userIsSpeaking: boolean;
     aiIsSpeaking: boolean;
     onlyUseTextField: boolean;
@@ -30,7 +31,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
     agentConfigurationSubmitted(): Promise<void>;
-    userLoggedIn(): Promise<void>;
+    userLoggedIn(event: CustomEvent): Promise<void>;
     firstUpdated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     getMemoryFromServer(): Promise<void>;
     private setupCanvasRendering;
@@ -57,7 +58,11 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     reallyClearHistory(): Promise<void>;
     clearHistory(): Promise<void>;
     static get styles(): (any[] | import("lit").CSSResult)[];
+    renderVoiceStartButton(): import("lit-html").TemplateResult<1>;
     renderChatInput(): import("lit-html").TemplateResult<1>;
+    renderStartStopVoiceButton(): import("lit-html").TemplateResult<1>;
+    renderVoiceName(): import("lit-html").TemplateResult<1>;
+    renderVoiceInput(): import("lit-html").TemplateResult<1>;
 }
 declare global {
     interface HTMLElementTagNameMap {

@@ -83,7 +83,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     _themeChanged(event: CustomEvent): void;
     renderSaveButton(): TemplateResult;
     renderTabs(): TemplateResult | typeof nothing;
-    renderTabPages(): TemplateResult<1> | typeof nothing;
+    renderTabPages(): typeof nothing | TemplateResult<1>;
     _generateLogo(event: CustomEvent): void;
     renderTabPage(configItems: Array<YpStructuredConfigData>, itemIndex: number): TemplateResult<1>;
     get collectionVideoURL(): string | undefined;
@@ -105,7 +105,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     _setVideoCover(event: CustomEvent): void;
     renderNameAndDescription(hideDescription?: boolean): TemplateResult;
     _descriptionChanged(event: CustomEvent): void;
-    render(): TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | TemplateResult<1>;
     _logoGeneratingInBackground(event: CustomEvent): void;
     _gotAiImage(event: CustomEvent): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;

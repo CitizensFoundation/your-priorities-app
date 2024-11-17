@@ -21,6 +21,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.mediaRecorder = null;
         this.wavStreamPlayer = null;
         this.isRecording = false;
+        this.disableAutoScroll = false;
         this.userIsSpeaking = false;
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
@@ -103,7 +104,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         };
         this.ws.send(JSON.stringify(clientSystemMessage));
     }
-    async userLoggedIn() {
+    async userLoggedIn(event) {
+        if (!event.detail) {
+            return;
+        }
         if (this.haveLoggedIn) {
             console.log("User already logged in for assistant");
             return;
@@ -171,22 +175,22 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     renderVoiceTalkingHead() {
         return html `
-      <div class="voice-header" ?voice-not-enabled="${!this.voiceEnabled}">
+      <div class="layout horizontal" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
           src="${this.temporaryAvatarUrl || this.talkingHeadImage}"
           alt="Voice Assistant"
         />
-        <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
       </div>
     `;
     }
     render() {
         return html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
+        <div class="layout horizontal">${this.renderVoiceInput()}</div>
         <div class="chat-messages" id="chat-messages">
           <yp-assistant-item-base
-            ?hidden="${!this.defaultInfoMessage}"
+            ?hidden="${true || !this.defaultInfoMessage}"
             class="chatElement assistant-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
@@ -213,22 +217,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ></yp-assistant-item-base>
               `)}
         </div>
-        <div
-          class="layout horizontal center-center chat-input"
-          style="position: relative;"
-        >
+        <div class="layout horizontal center-center chat-input">
           ${this.renderChatInput()}
-          <div
-            style="position: absolute; right:92px;bottom:116px;z-index: 100;"
-          >
-            ${this.renderVoiceTalkingHead()}
-          </div>
-          <div
-            class="currentMode"
-            style="position: absolute;left:84px;bottom:96px;z-index: 100;"
-          >
-            ${this.t(this.currentMode)}
-          </div>
         </div>
       </div>
     `;
@@ -438,9 +428,31 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
+        .voiceName {
+          font-size: 22px;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          margin-bottom: 16px;
+          line-height: 33px;
+          font-family: var(--md-ref-typeface-brand);
+        }
+        .nameAndStartStop {
+        margin-left: 16px;
+      }
         .voiceClose {
           margin-left: 20px;
           margin-right: 6px;
+        }
+
+        .voiceAvatar {
+          align-items: left;
+          align-self: flex-start;
+        }
+
+        md-icon.voiceModeToggleIcon {
+          --md-icon-size: 40px;
+          width: 40px;
+          height: 40px;
         }
 
         md-fab {
@@ -465,12 +477,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
 
         .voice-header {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          position: relative;
-          margin-top: -134px;
-          margin-right: -16px;
+          align-items: left;
         }
 
         .voice-header[voice-not-enabled] {
@@ -478,8 +485,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
 
         .talking-head-image {
-          width: 128px;
-          height: 128px;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
           object-fit: cover;
         }
 
@@ -492,9 +500,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
 
         .voice-controls {
-          display: flex;
-          align-items: center;
-          gap: 8px;
         }
 
         md-filled-tonal-button {
@@ -534,16 +539,16 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         .chat-window {
           display: flex;
           flex-direction: column;
-          height: calc(100vh - 510px);
+          height: calc(100vh - 60px);
           width: 100%;
           max-width: 1200px;
           margin: 0 auto;
           border-radius: 10px;
         }
 
-        .chat-window[expanded] {
+        /* .chat-window[expanded] {
           height: calc(100vh - 148px);
-        }
+        } */
 
         .chat-messages {
           display: flex;
@@ -574,6 +579,47 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding: 8px;
         }
 
+        md-filled-text-field {
+          flex: 1;
+          --md-filled-text-field-container-shape: 32px;
+          --md-filled-text-field-focus-active-indicator-color: transparent;
+          --md-filled-field-active-indicator-height: 0;
+          --md-filled-field-focus-active-indicator-height: 0;
+          --md-filled-field-hover-active-indicator-color: transparent;
+          border: none;
+          padding: 10px;
+          margin: 16px;
+          margin-bottom: 16px;
+          margin-left: 8px;
+          margin-right: 8px;
+          width: 650px;
+        }
+
+        .chatElement[thinking] {
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+
+        @media (max-width: 450px) {
+          md-filled-text-field {
+            width: 350px;
+          }
+
+          md-filled-text-field[focused] {
+            width: 100%;
+          }
+        }
+
+        @media (max-width: 400px) {
+          md-filled-text-field {
+            width: 320px;
+          }
+
+          md-filled-text-field[focused] {
+            width: 100%;
+          }
+        }
+
         @media (max-width: 600px) {
           .chat-window {
           }
@@ -585,58 +631,133 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       `,
         ];
     }
+    renderVoiceStartButton() {
+        return html `<svg
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="20" cy="20" r="20" fill="#2ECC71" />
+      <rect width="24" height="24" transform="translate(8 8)" fill="#2ECC71" />
+      <path
+        d="M15 29.5H17V31.5H15V29.5ZM20 20.5C21.66 20.5 23 19.16 23 17.5V11.5C23 9.84 21.66 8.5 20 8.5C18.34 8.5 17 9.84 17 11.5V17.5C17 19.16 18.34 20.5 20 20.5ZM19 11.5C19 10.95 19.45 10.5 20 10.5C20.55 10.5 21 10.95 21 11.5V17.5C21 18.06 20.56 18.5 20 18.5C19.45 18.5 19 18.05 19 17.5V11.5ZM19 29.5H21V31.5H19V29.5ZM23 29.5H25V31.5H23V29.5ZM27 17.5H25.3C25.3 20.5 22.76 22.6 20 22.6C17.24 22.6 14.7 20.5 14.7 17.5H13C13 20.91 15.72 23.73 19 24.22V27.5H21V24.22C24.28 23.73 27 20.91 27 17.5Z"
+        fill="white"
+      />
+    </svg> `;
+    }
     renderChatInput() {
         return html `
-      <div class="voice-controls">
-        <md-icon-button class="voice-mode-toggle" @click="${this.clearHistory}">
-          <md-icon>delete_history</md-icon>
-        </md-icon-button>
-
-        ${super.renderChatInput()}
-        ${this.voiceEnabled
+      ${this.showCleanupButton
             ? html `
-              <md-icon-button
-                hidden
-                id="voiceButton"
-                class="voice-button"
-                ?recording="${this.isRecording}"
-                @click="${this.toggleRecording}"
-              >
-                <md-icon>${this.isRecording ? "stop" : "mic"}</md-icon>
-              </md-icon-button>
-            `
+            <md-outlined-icon-button
+              class="restartButton"
+              @click="${() => this.fire("reset-chat")}"
+              ><md-icon>refresh</md-icon></md-outlined-icon-button
+            >
+          `
             : nothing}
-        ${!this.voiceEnabled
-            ? html `<md-fab
-              ?has-static-theme="${this.hasStaticTheme}"
-              lowered
-              size="large"
-              ?extended="${this.wide}"
-              class="voice-mode-toggle"
-              variant="primary"
-              @click="${this.toggleVoiceMode}"
-              .label="${!this.voiceEnabled
-                ? this.t("voiceAssistant")
-                : this.t("closeAssistant")}"
+      ${this.showCloseButton
+            ? html `
+            <md-outlined-icon-button
+              class="closeButton"
+              @click="${() => this.fire("chatbot-close")}"
+              ><md-icon>close</md-icon></md-outlined-icon-button
             >
-              <md-icon slot="icon"
-                >${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon
-              ></md-fab
-            > `
-            : html ` <md-text-button
-              class="voice-mode-toggle voiceClose"
-              @click="${this.toggleVoiceMode}"
-              .label="${!this.voiceEnabled
-                ? this.t("voiceAssistant")
-                : this.t("closeAssistant")}"
+          `
+            : nothing}
+      <md-icon-button class="voice-mode-toggle" @click="${this.clearHistory}">
+        <md-icon>delete_history</md-icon>
+      </md-icon-button>
+
+      ${this.onlyUseTextField || this.chatLog.length > 1
+            ? html `
+            <md-filled-text-field
+              class="textInput"
+              type="text"
+              hasTrailingIcon
+              id="chatInput"
+              rows="${this.chatLog.length > 1 ? "1" : "3"}"
+              @focus="${() => (this.inputIsFocused = true)}"
+              @blur="${() => (this.inputIsFocused = true)}"
+              @keyup="${(e) => {
+                if (e.key === "Enter") {
+                    this.sendChatMessage();
+                }
+            }}"
+              .label="${this.textInputLabel}"
             >
-              ${!this.voiceEnabled
-                ? this.t("voiceAssistant")
-                : this.t("closeAssistant")}
-              <md-icon slot="icon"
-                >${this.voiceEnabled ? "cancel" : "mic_none"}</md-icon
+              <md-icon
+                class="sendIcon"
+                @click="${this.sendChatMessage}"
+                slot="trailing-icon"
+                id="sendButton"
+                ?input-is-focused="${this.inputIsFocused}"
+                >arrow_circle_up</md-icon
               >
-            </md-text-button>`}
+            </md-filled-text-field>
+          `
+            : html `<md-filled-text-field
+            class="textInput"
+            type="textarea"
+            hasTrailingIcon
+            id="chatInput"
+            rows="3"
+            @focus="${() => (this.inputIsFocused = true)}"
+            @blur="${() => (this.inputIsFocused = true)}"
+            .label="${this.textInputLabel}"
+          >
+            <md-icon
+              class="sendIcon"
+              @click="${this.sendChatMessage}"
+              slot="trailing-icon"
+              id="sendButton"
+              ?input-is-focused="${this.inputIsFocused}"
+              >send</md-icon
+            ></md-filled-text-field
+          >`}
+    `;
+    }
+    renderStartStopVoiceButton() {
+        return html `${!this.voiceEnabled
+            ? html `<md-icon-button
+          ?has-static-theme="${this.hasStaticTheme}"
+          class="voice-mode-toggle"
+          @click="${this.toggleVoiceMode}"
+          .label="${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}"
+        >
+          <md-icon class="voiceModeToggleIcon">
+            ${this.renderVoiceStartButton()}</md-icon
+          ></md-icon-button
+        > `
+            : html ` <md-icon-button
+          class="voice-mode-toggle"
+          @click="${this.toggleVoiceMode}"
+          .label="${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}"
+        >
+          <md-icon class="voiceModeToggleIcon"> cancel</md-icon>
+        </md-icon-button>`}`;
+    }
+    renderVoiceName() {
+        return html `<div class="voiceName">${this.t("voiceAssistant")}</div>`;
+    }
+    renderVoiceInput() {
+        return html `
+      <div class="layout horizontal voiceAvatar">
+        ${this.renderVoiceTalkingHead()}
+        <div class="nameAndStartStop layout vertical">
+          ${this.renderVoiceName()}
+          <div class="layout horizontal">
+           ${this.renderStartStopVoiceButton()}
+            <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+          </div>
+        </div>
+        <div hidden class="currentMode">${this.t(this.currentMode)}</div>
       </div>
     `;
     }
@@ -659,6 +780,9 @@ __decorate([
 __decorate([
     state()
 ], YpAssistantBase.prototype, "isRecording", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAssistantBase.prototype, "disableAutoScroll", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "userIsSpeaking", void 0);

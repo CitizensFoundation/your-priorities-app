@@ -33,6 +33,8 @@ export class YpTopAppBar extends YpBaseElement {
   hideBreadcrumbs = false;
 
   @property({ type: Boolean })
+  hideTitle = false;
+  @property({ type: Boolean })
   restrictWidth = false;
 
   @property({ type: Boolean })
@@ -43,6 +45,9 @@ export class YpTopAppBar extends YpBaseElement {
 
   @property({ type: Boolean })
   fixed = false;
+
+  @property({ type: Boolean })
+  useLowestContainerColor = false;
 
   @property({ type: String })
   backUrl: string | undefined;
@@ -178,6 +183,10 @@ export class YpTopAppBar extends YpBaseElement {
           transition: top 0.3s;
           z-index: 2000;
           max-width: 100vw;
+        }
+
+        .top-app-bar[useLowestContainerColor] {
+          background-color: var(--md-sys-color-surface-container-lowest);
         }
 
         .top-app-bar[restrict-width] {
@@ -378,14 +387,14 @@ export class YpTopAppBar extends YpBaseElement {
     }
 
     return html`
-      <div
+      <div ?useLowestContainerColor="${this.useLowestContainerColor}"
         class="${appBarClass} layout"
         ?restrict-width="${this.restrictWidth}"
       >
-        <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
+        <div class="middleContainer" ?restrict-width="${this.restrictWidth}" >
           <slot name="navigation"></slot>
           ${this.renderMyDomainsDropdown()}
-          <div class="title ${this.isTitleLong ? "expanded" : ""}">
+          <div class="title ${this.isTitleLong ? "expanded" : ""}" ?hidden="${this.hideTitle}">
             ${breadcrumbsWithTitle.map(
               (crumb, index) => html`
                 ${crumb.isLink

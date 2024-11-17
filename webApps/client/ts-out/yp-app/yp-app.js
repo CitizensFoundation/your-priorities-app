@@ -45,6 +45,7 @@ import "../yp-post/yp-post.js";
 import { Corner } from "@material/web/menu/menu.js";
 import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
 import { YpGroupType } from "../yp-collection/ypGroupType.js";
+import "../yp-assistants/yp-agent-bundle.js";
 let YpApp = class YpApp extends YpBaseElement {
     constructor() {
         super();
@@ -321,7 +322,7 @@ let YpApp = class YpApp extends YpBaseElement {
         ?has-no-organizations="${!window.appGlobals.myDomains ||
             window.appGlobals.myDomains.length < 2}"
         slot="actionItems"
-        ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn}"
+        ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn || this.page === "agent_bundle"}"
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("navigationMenu")}"
@@ -439,7 +440,7 @@ let YpApp = class YpApp extends YpBaseElement {
 
       ${this.user
             ? html `
-        <div style="position: relative;">
+            <div style="position: relative;">
               <md-filled-tonal-icon-button
                 class="layout horizontal topActionItem"
                 @click="${this._openNotificationDrawer}"
@@ -455,8 +456,7 @@ let YpApp = class YpApp extends YpBaseElement {
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >
               </md-badge>
-
-        </div>
+            </div>
             <md-icon-button
               class="userImageNotificationContainer layout horizontal"
               @click="${this._openUserDrawer}"
@@ -489,8 +489,10 @@ let YpApp = class YpApp extends YpBaseElement {
         return html `
       <yp-top-app-bar
         role="navigation"
+        .useLowestContainerColor="${this.page === "agent_bundle"}"
         .restrictWidth="${!this.isFullScreenMode}"
         .titleString="${this.currentTitle || titleString}"
+        ?hideTitle="${this.page === "agent_bundle"}"
         aria-label="top navigation"
         ?fixed="${window.appGlobals.domain?.configuration.useFixedTopAppBar}"
         ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration
@@ -499,8 +501,8 @@ let YpApp = class YpApp extends YpBaseElement {
         ?hidden="${this.appMode !== "main" ||
             window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
-        <div slot="navigation">${this.renderNavigation()}</div>
-        <div slot="title"></div>
+        <div slot="navigation" >${this.renderNavigation()}</div>
+        <div slot="title" ?hidden="${this.page === "agent_bundle"}"></div>
         <div slot="action">${this.renderActionItems()}</div>
       </yp-top-app-bar>
       <div class="mainPage" ?hidden="${this.appMode !== "main"}">
@@ -521,6 +523,14 @@ let YpApp = class YpApp extends YpBaseElement {
                 case "organization":
                     pageHtml = cache(html `
             <yp-domain id="domainPage" .subRoute="${this.subRoute}"></yp-domain>
+          `);
+                    break;
+                case "agent_bundle":
+                    pageHtml = cache(html `
+            <yp-agent-bundle
+              id="agentBundlePage"
+              .subRoute="${this.subRoute}"
+            ></yp-agent-bundle>
           `);
                     break;
                 case "community":

@@ -29,6 +29,10 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   @property({ type: Boolean })
   programmaticScroll = false;
 
+
+  @property({ type: Boolean })
+  disableAutoScroll = false;
+
   @property({ type: Number })
   scrollStart: number = 0;
 
@@ -147,6 +151,10 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   handleScroll() {
+    if (this.disableAutoScroll) {
+      return;
+    }
+
     if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
       console.error(`handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`);
       return;
@@ -207,6 +215,10 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   scrollDown() {
+    if (this.disableAutoScroll) {
+      return;
+    }
+
     if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
       this.programmaticScroll = true;
       const element = this.$$(this.scrollElementSelector)!;
