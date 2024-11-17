@@ -27,6 +27,12 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
           align-self: start;
         }
 
+        .fixed {
+          position: fixed;
+          top: 136px;
+          left: 64px;
+        }
+
         yp-assistant,
         .assistantPlaceholder {
           width: 820px;
@@ -77,7 +83,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
   override render() {
     return html`
       <div class="layout horizontal center-center container">
-        <div class="selfStart">${this.renderLogo()}</div>
+        <div class="selfStart fixed">${this.renderLogo()}</div>
         ${this.domainId
           ? html` <yp-assistant
               id="assistant"

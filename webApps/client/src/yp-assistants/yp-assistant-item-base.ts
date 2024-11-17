@@ -64,6 +64,26 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
           border-radius: 8px;
         }
 
+        .userChatDialog {
+          color: var(--md-sys-color-on-surface);
+          background-color: var(--md-sys-color-surface-container);
+          padding: 8px;
+          margin: 16px;
+          line-height: 1.5;
+          margin-bottom: 0px;
+          border-radius: 50px;
+          margin-left: auto;
+        }
+
+
+        .chatText {
+          padding: 8px;
+          margin: 0;
+          font-size: 15px;
+          font-weight: 400;
+        }
+
+
         @keyframes pulse {
           0% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.1); opacity: 0.8; }
@@ -126,19 +146,9 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
   override renderUser() {
     return html`
       <div class="userChatDialog layout horizontal">
-        <div class="layout vertical chatImage">
-          ${this.renderRoboImage()}
-        </div>
-        <div class="layout vertical">
-          <div class="chatText">
+        <div class="flex"></div>
+        <div class="chatText">
             ${this.message}
-          </div>
-          ${this.renderVoiceStatus()}
-              ${this.htmlToRender ? html`
-                <div class="component-container">
-                  ${unsafeHTML(this.htmlToRender)}
-                </div>
-              ` : nothing}
         </div>
       </div>
     `;

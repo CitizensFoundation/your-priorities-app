@@ -72,6 +72,7 @@ import { YpGroupType } from "../yp-collection/ypGroupType.js";
 import { YpUserEdit } from "../yp-user/yp-user-edit.js";
 
 import "../yp-assistants/yp-agent-bundle.js";
+import { YpAssistant } from "../yp-assistants/yp-assistant.js";
 
 declare global {
   interface Window {
@@ -776,7 +777,7 @@ export class YpApp extends YpBaseElement {
         .titleString="${this.currentTitle || titleString}"
         ?hideTitle="${this.page === "agent_bundle"}"
         aria-label="top navigation"
-        ?fixed="${window.appGlobals.domain?.configuration.useFixedTopAppBar}"
+        ?fixed="${true || window.appGlobals.domain?.configuration.useFixedTopAppBar}"
         ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration
           .disableArrowBasedTopNavigation}"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
@@ -1460,6 +1461,13 @@ export class YpApp extends YpBaseElement {
           console.error("No page data, current page: " + this.page);
         }
       }
+    }
+
+    if (this.page === "assistant") {
+      (this.$$("#assistant") as YpAssistant).scrollDown();
+      document.body.style.backgroundColor = "var(--md-sys-color-surface-container-lowest)";
+    } else {
+      document.body.style.backgroundColor = "var(--md-sys-color-surface)";
     }
   }
 

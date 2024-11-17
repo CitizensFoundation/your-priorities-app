@@ -187,8 +187,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     render() {
         return html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
-        <div class="layout horizontal">${this.renderVoiceInput()}</div>
-        <div class="chat-messages" id="chat-messages">
+        <div class="voice-input">${this.renderVoiceInput()}</div>
+        <div class="hybrid-chat-messages" id="chat-messages">
           <yp-assistant-item-base
             ?hidden="${true || !this.defaultInfoMessage}"
             class="chatElement assistant-chat-element"
@@ -200,6 +200,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           ${this.chatLog
             .filter((chatElement) => !chatElement.hidden &&
             chatElement.type !== "hiddenContextMessage" &&
+            chatElement.type !== "thinking" &&
             (chatElement.message != "" || chatElement.html != ""))
             .map((chatElement) => html `
                 <yp-assistant-item-base
@@ -217,9 +218,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ></yp-assistant-item-base>
               `)}
         </div>
-        <div class="layout horizontal center-center chat-input">
-          ${this.renderChatInput()}
-        </div>
+        <div class="chat-input">${this.renderChatInput()}</div>
       </div>
     `;
     }
@@ -428,7 +427,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
-      .chat-window {
+        .chat-window {
           display: flex;
           flex-direction: column;
           height: 100%;
@@ -439,12 +438,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           border-radius: 10px;
           overflow: hidden;
         }
-        .chat-messages {
+        .hybrid-chat-messages {
           display: flex;
           flex-direction: column;
           flex: 1;
           padding: 20px;
-          overflow-y: scroll;
+          overflow-y: visible;
         }
 
         .you-chat-element {
@@ -468,6 +467,63 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding: 8px;
         }
 
+        .chat-window {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          border-radius: 10px;
+        }
+
+        .voice-input {
+          position: fixed;
+          top: 64px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+          width: 780px;
+          background: var(--md-sys-color-surface-container-lowest);
+        }
+
+        @media (max-width: 820px) {
+          .voice-input {
+            width: 100%;
+          }
+        }
+
+
+        .chat-input {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 10;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+          width: 780px;
+          background: var(--md-sys-color-surface-container-lowest);
+        }
+
+        .hybrid-chat-messages {
+          padding-top: 120px; /* Adjust according to the height of voice-input */
+          padding-bottom: 80px; /* Adjust according to the height of chat-input */
+          /* Remove any overflow properties to use the main scrollbar */
+        }
+
+        /* Remove flex properties and height constraints */
+        .chat-window,
+        .hybrid-chat-messages {
+          display: block;
+          height: auto;
+          overflow: visible;
+        }
+
+        /* Optional: Ensure the messages are displayed correctly */
+        .hybrid-chat-messages .chatElement {
+          max-width: 80%;
+          margin: 0 auto;
+        }
+
         .voiceName {
           font-size: 22px;
           font-weight: 700;
@@ -477,8 +533,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           font-family: var(--md-ref-typeface-brand);
         }
         .nameAndStartStop {
-        margin-left: 16px;
-      }
+          margin-left: 16px;
+        }
         .voiceClose {
           margin-left: 20px;
           margin-right: 6px;
@@ -580,8 +636,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           display: flex;
           flex-direction: column;
           height: calc(100vh - 60px);
-          width: 100%;
-          max-width: 1200px;
+          width: 1000px;
+          max-width: 1000px;
           margin: 0 auto;
           border-radius: 10px;
         }
@@ -793,7 +849,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         <div class="nameAndStartStop layout vertical">
           ${this.renderVoiceName()}
           <div class="layout horizontal">
-           ${this.renderStartStopVoiceButton()}
+            ${this.renderStartStopVoiceButton()}
             <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
           </div>
         </div>
