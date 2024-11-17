@@ -36,7 +36,7 @@ export class AgentModels {
         }
         return { agent, run: currentRun };
     }
-    async startCurrentWorkflowStep(agentRun) {
+    async startCurrentWorkflowStep(agentRun, structuredAnswersOverrides) {
         try {
             const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRun.id);
             if (!agentRunToUpdate) {
@@ -62,7 +62,7 @@ export class AgentModels {
                 throw new Error("No agent ID found in the current step");
             }
             // Start processing with websocket client ID
-            const jobId = await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId);
+            const jobId = await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId, structuredAnswersOverrides);
             if (!jobId) {
                 throw new Error("Failed to start agent processing");
             }

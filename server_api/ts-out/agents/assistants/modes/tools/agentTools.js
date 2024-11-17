@@ -185,9 +185,23 @@ export class AgentTools extends BaseAssistantTools {
         }
         const agentRun = this.assistant.memory.currentAgentStatus.activeAgentRun;
         try {
-            const result = await this.agentModels.startCurrentWorkflowStep(agentRun);
+            const structuredAnswersOverrides = [];
+            if (this.assistant.memory.currentAgentStatus?.subscription &&
+                this.assistant.memory.currentAgentStatus?.subscription.configuration
+                    ?.requiredQuestionsAnswered) {
+                structuredAnswersOverrides.push(...this.assistant.memory.currentAgentStatus.subscription
+                    .configuration.requiredQuestionsAnswered);
+            }
+            if (this.assistant.memory.currentAgentStatus?.subscriptionPlan &&
+                this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
+                    ?.configuration.structuredAnswersOverride) {
+                structuredAnswersOverrides.push(...this.assistant.memory.currentAgentStatus.subscriptionPlan
+                    .AgentProduct.configuration.structuredAnswersOverride);
+            }
+            const result = await this.agentModels.startCurrentWorkflowStep(agentRun, structuredAnswersOverrides);
             await this.updateAgentProductRun(result.agentRun);
-            const html = this.renderAgentRunWidget(this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct, result.agentRun);
+            const html = this.renderAgentRunWidget(this.assistant.memory.currentAgentStatus?.subscriptionPlan
+                .AgentProduct, result.agentRun);
             this.assistant.emit("update-ai-model-session", "Started the next workflow step for the current agent run");
             return {
                 success: true,

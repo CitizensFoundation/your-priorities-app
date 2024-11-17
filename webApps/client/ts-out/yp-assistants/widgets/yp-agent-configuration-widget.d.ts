@@ -18,6 +18,7 @@ export declare class YpAgentConfigurationWidget extends YpBaseElement {
     submitConfiguration(): Promise<void>;
     get parsedRequiredQuestions(): YpStructuredQuestionData[];
     get parsedRequiredQuestionsAnswered(): YpStructuredAnswer[];
+    private renderAgentHeader;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-configuration-widget.d.ts.map

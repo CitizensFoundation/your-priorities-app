@@ -292,7 +292,8 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
   async startAgentProcessingWithWsClient(
     agentId: number,
     agentRunId: number,
-    wsClientId: string
+    wsClientId: string,
+    structuredAnswersOverrides?: YpStructuredAnswer[]
   ): Promise<string | undefined> {
     console.log(
       `NotificationAgentQueueManager: Starting agent processing for agent ${agentId}`
@@ -313,11 +314,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     console.log(
       `NotificationAgentQueueManager: Adding start-processing job to queue ${queueName} for agent ${agentId}`
     );
+    const action = "start";
     const job = await queue.add("control-message", {
-      type: "start-processing",
+      type: `${action}Agent${agent.id}`,
       agentId: agent.id,
+      action: action,
       wsClientId: wsClientId,
       agentRunId: agentRunId,
+      structuredAnswersOverrides: structuredAnswersOverrides,
     });
     console.log(
       `NotificationAgentQueueManager: Updating agent ${agentId} status to running`

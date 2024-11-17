@@ -60,6 +60,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     reallyClearHistory(): Promise<void>;
     clearHistory(): Promise<void>;
     static get styles(): (any[] | import("lit").CSSResult)[];
+    renderTempLogoMoveToData(): import("lit-html").TemplateResult<1>;
     renderVoiceStartButton(): import("lit-html").TemplateResult<1>;
     renderChatInput(): import("lit-html").TemplateResult<1>;
     renderStartStopVoiceButton(): import("lit-html").TemplateResult<1>;

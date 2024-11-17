@@ -65,50 +65,34 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
           width: 100%;
         }
 
-        .agent-chip {
-          width: 100%;
-          display: flex;
-          align-items: center;
+        .container {
           padding: 16px;
-          background-color: var(--md-sys-color-surface-container-low);
-          border-radius: 8px;
-          gap: 16px;
+          border-radius: 4px;
+          width: 100%;
+          min-width: 820px;
         }
 
-        .agent-chip[isSelected] {
-          background-color: var(--md-sys-color-surface-variant);
+        @media (max-width: 820px) {
+          .container {
+            min-width: 100%;
+          }
         }
 
-        img {
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          object-fit: cover;
+        .agent-header-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--md-ref-typeface-brand);
+          margin-bottom: 8px;
         }
 
-        .content {
-          flex: 1;
-          min-width: 0;
-        }
-
-        .agent-name {
-          font-weight: 500;
-          font-size: 1.1em;
-          margin-bottom: 4px;
-        }
-
-        .agent-name[isUnsubscribed] {
-          color: var(--yp-sys-color-down);
-        }
-
-        .agent-description {
-          color: var(--secondary-text-color);
-          font-size: 0.9em;
-          line-height: 1.4;
+        md-filled-button {
+          margin-left: auto;
+          margin-top: 8px;
         }
 
         md-filled-icon-button {
-          margin-left: 32px;
+          margin-left: 8px;
           margin-top: 8px;
         }
       `,
@@ -154,7 +138,11 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
 
   get parsedRequiredQuestions(): YpStructuredQuestionData[] {
     try {
-      return JSON.parse(this.requiredQuestions);
+      const questions = JSON.parse(this.requiredQuestions);
+      questions.forEach((question: YpStructuredQuestionData) => {
+        question.rows = 14;
+      });
+      return questions;
     } catch (error) {
       console.error("Error parsing required questions", error);
       return [];
@@ -170,13 +158,19 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
     }
   }
 
+  private renderAgentHeader() {
+    return html`<div class="agent-header layout horizontal">
+      <div class="agent-header-title">${this.t("agentConfiguration")}</div>
+      <div class="flex"></div>
+
+    </div>`;
+  }
+
   override render() {
     return html`
-      <div class="agent-chip">
-        <img src="${this.agentImageUrl}" alt="${this.agentName}" />
+      <div class="layout vertical container">
+        ${this.renderAgentHeader()}
         <div class="content">
-          <div class="agent-name">${this.agentName}</div>
-          <div class="agent-description">${this.agentDescription}</div>
           <div id="surveyContainer">
             ${this.parsedRequiredQuestions.map(
               (question: YpStructuredQuestionData, index: number) => html`

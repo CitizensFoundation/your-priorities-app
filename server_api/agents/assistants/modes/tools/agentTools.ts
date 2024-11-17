@@ -243,12 +243,40 @@ export class AgentTools extends BaseAssistantTools {
     const agentRun = this.assistant.memory.currentAgentStatus.activeAgentRun!;
 
     try {
-      const result = await this.agentModels.startCurrentWorkflowStep(agentRun);
+      const structuredAnswersOverrides: YpStructuredAnswer[] = [];
+
+      if (
+        this.assistant.memory.currentAgentStatus?.subscription &&
+        this.assistant.memory.currentAgentStatus?.subscription.configuration
+          ?.requiredQuestionsAnswered
+      ) {
+        structuredAnswersOverrides.push(
+          ...this.assistant.memory.currentAgentStatus!.subscription!
+            .configuration!.requiredQuestionsAnswered!
+        );
+      }
+
+      if (
+        this.assistant.memory.currentAgentStatus?.subscriptionPlan &&
+        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
+          ?.configuration.structuredAnswersOverride
+      ) {
+        structuredAnswersOverrides.push(
+          ...this.assistant.memory.currentAgentStatus!.subscriptionPlan!
+            .AgentProduct!.configuration.structuredAnswersOverride!
+        );
+      }
+
+      const result = await this.agentModels.startCurrentWorkflowStep(
+        agentRun,
+        structuredAnswersOverrides
+      );
 
       await this.updateAgentProductRun(result.agentRun);
 
       const html = this.renderAgentRunWidget(
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct!,
+        this.assistant.memory.currentAgentStatus?.subscriptionPlan
+          .AgentProduct!,
         result.agentRun
       );
 
@@ -351,7 +379,8 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const agent = await this.agentModels.getCurrentAgent();
       const subscription = await this.agentModels.getCurrentSubscription();
-      const subscriptionPlan = await this.agentModels.getCurrentSubscriptionPlan();
+      const subscriptionPlan =
+        await this.agentModels.getCurrentSubscriptionPlan();
       const html = `<yp-agent-configuration-widget
         domainId="${this.assistant.domainId}"
         agentProductId="${agent.id}"

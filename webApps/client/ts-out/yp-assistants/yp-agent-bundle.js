@@ -38,7 +38,7 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
           width: 125px;
           height: 39px;
           margin-right: 64px;
-          z-index: 15;
+          z-index: 25;
         }
 
         .logoContainer {
@@ -75,7 +75,7 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
     render() {
         return html `
       <div class="layout horizontal center-center container">
-        <div class="selfStart fixed">${this.renderLogo()}</div>
+        <div class="selfStart fixed" hidden>${this.renderLogo()}</div>
         ${this.domainId
             ? html ` <yp-assistant
               id="assistant"

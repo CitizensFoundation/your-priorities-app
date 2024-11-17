@@ -99,7 +99,7 @@ interface YpSubscriptionPlanAttributes extends YpBaseModelAttributes {
 interface YpSubscriptionConfiguration {
   cancelledAt?: Date;
   cancelledByUserId?: number;
-  requiredQuestionsAnswered?: YpStructuredQuestionData[];
+  requiredQuestionsAnswered?: YpStructuredAnswer[];
 }
 
 // YpSubscriptionAttributes Interface

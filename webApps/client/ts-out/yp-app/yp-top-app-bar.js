@@ -63,7 +63,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     renderMyDomainsDropdown() {
         if (this.myDomains && this.myDomains.length > 1) {
             return html `
-        <md-icon-button id="domainTrigger" @click="${this._toggleMenu}">
+        <md-icon-button id="domainTrigger" @click="${this._toggleMenu}" ?hidden="${this.hideTitle}">
           <md-icon>unfold_more</md-icon>
         </md-icon-button>
         <md-menu

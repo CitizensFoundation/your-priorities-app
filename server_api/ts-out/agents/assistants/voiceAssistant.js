@@ -532,7 +532,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 }, 250);
             }
             else if (!customResponseMessage) {
-                this.triggerResponse("Say hi to the user", false);
+                this.triggerResponse("Say hi and offer to show the agents", false);
             }
             else {
                 this.triggerResponse(customResponseMessage, false);

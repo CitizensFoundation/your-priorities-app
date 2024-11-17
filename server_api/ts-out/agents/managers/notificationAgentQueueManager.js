@@ -175,7 +175,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         console.log(`AgentQueueManager: ${message}`);
         return message;
     }
-    async startAgentProcessingWithWsClient(agentId, agentRunId, wsClientId) {
+    async startAgentProcessingWithWsClient(agentId, agentRunId, wsClientId, structuredAnswersOverrides) {
         console.log(`NotificationAgentQueueManager: Starting agent processing for agent ${agentId}`);
         const agent = await PsAgent.findByPk(agentId, {
             include: [{ model: PsAgentClass, as: "Class" }],
@@ -187,11 +187,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         const queueName = agent.Class.configuration.queueName;
         const queue = this.getQueue(queueName);
         console.log(`NotificationAgentQueueManager: Adding start-processing job to queue ${queueName} for agent ${agentId}`);
+        const action = "start";
         const job = await queue.add("control-message", {
-            type: "start-processing",
+            type: `${action}Agent${agent.id}`,
             agentId: agent.id,
+            action: action,
             wsClientId: wsClientId,
             agentRunId: agentRunId,
+            structuredAnswersOverrides: structuredAnswersOverrides,
         });
         console.log(`NotificationAgentQueueManager: Updating agent ${agentId} status to running`);
         await this.updateAgentStatus(agent.id, "running");

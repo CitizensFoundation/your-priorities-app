@@ -56,7 +56,8 @@ export class AgentModels {
   }
 
   public async startCurrentWorkflowStep(
-    agentRun: YpAgentProductRunAttributes
+    agentRun: YpAgentProductRunAttributes,
+    structuredAnswersOverrides?: YpStructuredAnswer[]
   ): Promise<{
     agentRun: YpAgentProductRunAttributes;
     message: string;
@@ -105,7 +106,8 @@ export class AgentModels {
       const jobId = await this.queueManager.startAgentProcessingWithWsClient(
         agentId,
         agentRun.id,
-        this.assistant.wsClientId
+        this.assistant.wsClientId,
+        structuredAnswersOverrides
       );
 
       if (!jobId) {
