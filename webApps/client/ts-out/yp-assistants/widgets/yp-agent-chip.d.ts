@@ -8,7 +8,7 @@ export declare class YpAgentChip extends YpBaseElement {
     isSelected: string | undefined;
     isUnsubscribed: string | undefined;
     static get styles(): any[];
-    getStatus(): "" | "unsubscribed" | "selected";
+    getStatus(): "unsubscribed" | "" | "selected";
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-chip.d.ts.map

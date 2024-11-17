@@ -32,12 +32,14 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
         }
         else {
             return html `
-        <yp-login
-          id="userLogin"
-          class="loginSurface"
-          fullWithLoginButton
-          assistantMode
-        ></yp-login>
+        <div class="layout horizontal center-center">
+          <yp-login
+            id="userLogin"
+            class="loginSurface"
+            fullWithLoginButton
+            assistantMode
+          ></yp-login>
+        </div>
       `;
         }
     }

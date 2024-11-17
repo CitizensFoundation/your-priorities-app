@@ -164,7 +164,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
     }
     async setupVoiceCapabilities() { }
-    get talkingHeadImage() {
+    get talkingHeadImageUrl() {
         if (this.aiIsSpeaking) {
             return "https://assets.evoly.ai/direct/talkingHead.png";
         }
@@ -179,7 +179,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       <div class="layout horizontal" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
-          src="${this.directAgentAvatarUrl || this.mainAssistantAvatarUrl}"
+          src="${this.directAgentAvatarUrl ? this.directAgentAvatarUrl : this.talkingHeadImageUrl}"
           alt="Voice Assistant"
         />
       </div>
@@ -188,7 +188,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     render() {
         return html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
-        <div class="voice-input">${this.renderVoiceInput()}</div>
+        <div class="voice-input-container">
+          <div class="voice-input">${this.renderVoiceInput()}</div>
+        </div>
         <div class="hybrid-chat-messages" id="chat-messages">
           <yp-assistant-item-base
             ?hidden="${true || !this.defaultInfoMessage}"
@@ -219,7 +221,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ></yp-assistant-item-base>
               `)}
         </div>
-        <div class="chat-input">${this.renderChatInput()}</div>
+        <div class="chat-input-container">
+          <div class="chat-input">${this.renderChatInput()}</div>
+        </div>
       </div>
     `;
     }
@@ -445,19 +449,19 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           border-radius: 10px;
           overflow: hidden;
         }
+
         .hybrid-chat-messages {
           display: flex;
           flex-direction: column;
           flex: 1;
           padding: 20px;
           overflow-y: visible;
+          max-width: 960px;
         }
 
         .you-chat-element {
           align-self: flex-start;
-          max-width: 80%;
           justify-content: flex-start;
-          margin-right: 32px;
         }
 
         .assistant-chat-element {
@@ -481,13 +485,22 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           border-radius: 10px;
         }
 
+        .voice-input-container {
+          position: fixed;
+          top: 60px;
+          left: 0;
+          z-index: 10;
+          width: 100vw;
+          height: 109px;
+          background: var(--md-sys-color-surface-container-lowest);
+        }
+
         .voice-input {
           position: fixed;
-          top: 64px;
+          top: 60px;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 10;
-          width: 780px;
+          width: 936px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -497,14 +510,24 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           }
         }
 
+        .chat-input-container {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100vw;
+          z-index: 10;
+          height: 120px;
+          background: var(--md-sys-color-surface-container-lowest);
+        }
 
         .chat-input {
           position: fixed;
           bottom: 0;
           left: 0;
           right: 0;
-          z-index: 10;
+          z-index: 11;
           left: 50%;
+          height: 102px;
           transform: translateX(-50%);
           z-index: 10;
           width: 780px;
@@ -512,9 +535,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
 
         .hybrid-chat-messages {
-          padding-top: 120px; /* Adjust according to the height of voice-input */
-          padding-bottom: 80px; /* Adjust according to the height of chat-input */
-          /* Remove any overflow properties to use the main scrollbar */
+          padding-top: 120px;
+          padding-bottom: 130px;
         }
 
         /* Remove flex properties and height constraints */
@@ -525,12 +547,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           overflow: visible;
         }
 
-        /* Optional: Ensure the messages are displayed correctly */
-        .hybrid-chat-messages .chatElement {
-          max-width: 80%;
-          margin: 0 auto;
-        }
-
         .voiceName {
           font-size: 22px;
           font-weight: 700;
@@ -539,9 +555,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           line-height: 33px;
           font-family: var(--md-ref-typeface-brand);
         }
+
         .nameAndStartStop {
           margin-left: 16px;
         }
+
         .voiceClose {
           margin-left: 20px;
           margin-right: 6px;
@@ -665,7 +683,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
 
         .you-chat-element {
           align-self: flex-start;
-          max-width: 80%;
+          max-width: 100%;
           justify-content: flex-start;
           margin-right: 32px;
         }
@@ -849,9 +867,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         </md-icon-button>`}`;
     }
     renderAssistantName() {
-        return html `<div class="voiceName">${this.directAgentName
-            ? this.directAgentName
-            : this.t("mainAssistant")}</div>`;
+        return html `<div class="voiceName">
+      ${this.directAgentName ? this.directAgentName : this.t("mainAssistant")}
+    </div>`;
     }
     renderVoiceInput() {
         return html `

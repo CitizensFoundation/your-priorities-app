@@ -23,10 +23,10 @@ export class NavigationTools extends BaseAssistantTools {
             parameters: {
                 type: "object",
                 properties: {
-                    agentProductId: { type: "number" },
+                    subscriptionPlanId: { type: "number" },
                 },
                 required: [
-                    "agentProductId",
+                    "subscriptionPlanId",
                 ],
             },
             handler: this.connectToOneOfTheAgentsHandler.bind(this),
@@ -36,17 +36,20 @@ export class NavigationTools extends BaseAssistantTools {
         params = this.assistant.getCleanedParams(params);
         console.log(`handler: connect_to_one_of_the_agents: ${JSON.stringify(params, null, 2)}`);
         try {
-            const { agent, subscription } = await this.subscriptionModels.loadAgentProductAndSubscription(params.agentProductId);
-            console.log(`Loading: ${agent.name} ${subscription?.id}`);
-            this.updateCurrentAgentProduct(agent, subscription, { sendEvent: false });
-            await this.assistant.handleModeSwitch("agent_direct_connection_mode", `Directly connected to agent: ${agent.name}`, params);
+            const { plan, subscription } = await this.subscriptionModels.loadAgentProductPlanAndSubscription(params.subscriptionPlanId);
+            if (!plan?.AgentProduct) {
+                throw new Error(`Agent product with id ${params.subscriptionPlanId} not found`);
+            }
+            console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
+            this.updateCurrentAgentProductPlan(plan, subscription, { sendEvent: false });
+            await this.assistant.handleModeSwitch("agent_direct_connection_mode", `Directly connected to agent: ${plan?.AgentProduct?.name}`, params);
             const html = `<div class="agent-chips"><yp-agent-chip
           isSelected
-          agentProductId="${agent.id}"
+          agentProductId="${plan?.AgentProduct?.id}"
           subscriptionId="${subscription?.id}"
-          agentName="${agent.name}"
-          agentDescription="${agent.description}"
-          agentImageUrl="${agent.configuration.avatar?.imageUrl}"
+          agentName="${plan?.AgentProduct?.name}"
+          agentDescription="${plan?.AgentProduct?.description}"
+          agentImageUrl="${plan?.AgentProduct?.configuration.avatar?.imageUrl}"
         ></yp-agent-chip></div>`;
             this.assistant.triggerResponseIfNeeded("Agent selected");
             return {

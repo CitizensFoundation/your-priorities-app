@@ -144,37 +144,35 @@ export class SubscriptionTools extends BaseAssistantTools {
                     error: "User must confirm subscription with the agent name before proceeding",
                 };
             }
+            console.log(`-------> ${JSON.stringify(this.assistant.memory.currentAgentStatus, null, 2)}`);
             if (!this.assistant.memory.currentAgentStatus ||
-                !this.assistant.memory.currentAgentStatus.agentProduct ||
-                !this.assistant.memory.currentAgentStatus.subscription ||
-                !this.assistant.memory.currentAgentStatus.subscription.Plan) {
+                !this.assistant.memory.currentAgentStatus.subscriptionPlan) {
                 return {
                     success: false,
                     data: "No current agent selected",
                     error: "No current agent selected",
                 };
             }
-            const result = await this.subscriptionModels.subscribeToAgentPlan(this.assistant.memory.currentAgentStatus?.agentProduct.id, this.assistant.memory.currentAgentStatus?.subscription?.Plan.id);
-            if (!result.success) {
+            const result = await this.subscriptionModels.subscribeToAgentPlan(this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct.id, this.assistant.memory.currentAgentStatus?.subscriptionPlan.id);
+            if (!result.success || !result.subscription || !result.plan) {
                 return {
                     success: false,
-                    error: result.error,
+                    error: result.error || "Failed to subscribe to agent plan",
                 };
             }
-            const agentPlans = await this.subscriptionModels.loadAgentSubscriptionPlans();
-            const agent = agentPlans.availablePlans.find((a) => a.subscriptionPlanId === result.subscriptionPlanId);
+            await this.updateCurrentAgentProductPlan(result.plan, result.subscription);
             let html;
-            if (agent) {
+            if (result.plan?.AgentProduct) {
                 html = `<div class="agent-chips"><yp-agent-chip-for-purchase
           isSubscribed="${true}"
-          agentProductId="${agent.agentProductId}"
-          subscriptionPlanId="${result.subscriptionPlanId}"
-          agentName="${agent.name}"
-          agentDescription="${agent.description}"
-          agentImageUrl="${agent.imageUrl}"
-          price="${agent.price}"
-          currency="${agent.currency}"
-          maxRunsPerCycle="${agent.maxRunsPerCycle}"
+          agentProductId="${result.plan.AgentProduct.id}"
+          subscriptionPlanId="${result.plan.id}"
+          agentName="${result.plan.AgentProduct.name}"
+          agentDescription="${result.plan.AgentProduct.description}"
+          agentImageUrl="${result.plan.AgentProduct.configuration.avatar?.imageUrl}"
+          price="${result.plan.configuration.amount}"
+          currency="${result.plan.configuration.currency}"
+          maxRunsPerCycle="${result.plan.configuration.max_runs_per_cycle}"
         ></yp-agent-chip-for-purchase></div>`;
             }
             this.assistant.triggerResponseIfNeeded("Successfully subscribed to agent plan");
@@ -183,8 +181,8 @@ export class SubscriptionTools extends BaseAssistantTools {
                 html,
                 data: {
                     message: "Successfully subscribed to agent plan",
-                    subscriptionId: result.subscriptionId,
-                    agentProduct: agent,
+                    subscription: result.subscription,
+                    subscriptionPlan: result.plan,
                 },
             };
         }
@@ -227,20 +225,26 @@ export class SubscriptionTools extends BaseAssistantTools {
                 };
             }
             if (!this.assistant.memory.currentAgentStatus ||
-                !this.assistant.memory.currentAgentStatus.agentProduct ||
-                !this.assistant.memory.currentAgentStatus.subscription) {
+                !this.assistant.memory.currentAgentStatus.subscriptionPlan) {
                 return {
                     success: false,
                     data: "No current agent selected",
                     error: "No current agent selected",
                 };
             }
-            const { agent, subscription } = await this.subscriptionModels.loadAgentProductAndSubscription(this.assistant.memory.currentAgentStatus.agentProduct.id);
+            const { plan, subscription } = await this.subscriptionModels.loadAgentProductPlanAndSubscription(this.assistant.memory.currentAgentStatus.subscriptionPlan.id);
             if (!subscription) {
                 return {
                     success: false,
                     data: "No subscription found",
                     error: "No subscription found",
+                };
+            }
+            if (!plan) {
+                return {
+                    success: false,
+                    data: "No subscription plan found",
+                    error: "No subscription plan found",
                 };
             }
             const result = await this.subscriptionModels.unsubscribeFromAgentPlan(subscription.id);
@@ -250,13 +254,14 @@ export class SubscriptionTools extends BaseAssistantTools {
                     error: result.error,
                 };
             }
+            await this.updateCurrentAgentProductPlan(plan, subscription);
             const html = `<div class="agent-chips"><yp-agent-chip
         isUnsubscribed="${true}"
-        agentProductId="${agent.id}"
+        agentProductId="${plan.AgentProduct?.id}"
         subscriptionId="${subscription.id}"
-        agentName="${agent.name}"
-        agentDescription="${agent.description}"
-        agentImageUrl="${agent.configuration.avatar?.imageUrl}"
+        agentName="${plan.AgentProduct?.name}"
+        agentDescription="${plan.AgentProduct?.description}"
+        agentImageUrl="${plan.AgentProduct?.configuration.avatar?.imageUrl}"
     ></yp-agent-chip></div>`;
             this.assistant.triggerResponseIfNeeded("Successfully unsubscribed from agent subscription");
             return {
@@ -265,7 +270,7 @@ export class SubscriptionTools extends BaseAssistantTools {
                 data: {
                     message: "Successfully unsubscribed from agent subscription",
                     subscriptionId: result.subscriptionId,
-                    agentProduct: agent,
+                    subscriptionPlan: plan,
                 },
             };
         }

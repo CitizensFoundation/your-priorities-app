@@ -8,10 +8,10 @@ export class AgentModels {
         this.queueManager = new NotificationAgentQueueManager(this.assistant.wsClients);
     }
     async getCurrentAgent() {
-        if (!this.assistant.memory.currentAgentStatus?.agentProduct) {
+        if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct) {
             throw new Error("No current agent selected");
         }
-        return this.assistant.memory.currentAgentStatus.agentProduct;
+        return this.assistant.memory.currentAgentStatus.subscriptionPlan.AgentProduct;
     }
     async getCurrentSubscription() {
         if (!this.assistant.memory.currentAgentStatus?.subscription) {

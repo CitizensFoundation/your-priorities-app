@@ -18,10 +18,10 @@ export class AgentModels {
   }
 
   public async getCurrentAgent(): Promise<YpAgentProductAttributes> {
-    if (!this.assistant.memory.currentAgentStatus?.agentProduct) {
+    if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct) {
       throw new Error("No current agent selected");
     }
-    return this.assistant.memory.currentAgentStatus.agentProduct;
+    return this.assistant.memory.currentAgentStatus.subscriptionPlan.AgentProduct;
   }
 
   public async getCurrentSubscription(): Promise<YpSubscriptionAttributes> {

@@ -31,12 +31,14 @@ export class YpLoginWidget extends YpBaseElementWithLogin {
       return html`<div class="logged-in">${this.t("loggedIn")}</div>`;
     } else {
       return html`
-        <yp-login
-          id="userLogin"
-          class="loginSurface"
-          fullWithLoginButton
-          assistantMode
-        ></yp-login>
+        <div class="layout horizontal center-center">
+          <yp-login
+            id="userLogin"
+            class="loginSurface"
+            fullWithLoginButton
+            assistantMode
+          ></yp-login>
+        </div>
       `;
     }
   }

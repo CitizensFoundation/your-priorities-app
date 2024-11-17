@@ -12,13 +12,13 @@ export class BaseAssistantTools {
     await new Promise((resolve) => setTimeout(resolve, 1));
   }
 
-  async updateCurrentAgentProduct(
-    agentProduct: YpAgentProductAttributes,
+  async updateCurrentAgentProductPlan(
+    plan: YpSubscriptionPlanAttributes,
     subscription: YpSubscriptionAttributes | null,
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
-    await this.assistant.updateCurrentAgentProduct(
-      agentProduct,
+    await this.assistant.updateCurrentAgentProductPlan(
+      plan,
       subscription
     );
 

@@ -21,7 +21,13 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.api = new PsServerApi();
         const workflow = this.parsedWorkflow;
         // Go through the workflow and set the this.agentId to the correct agent based on the workflow step
-        this.agentId = workflow.steps[workflow.currentStepIndex].agentId;
+        if (workflow.steps[workflow.currentStepIndex] &&
+            workflow.steps[workflow.currentStepIndex].agentId) {
+            this.agentId = workflow.steps[workflow.currentStepIndex].agentId;
+        }
+        else {
+            console.error("No agentId found in workflow");
+        }
     }
     get parsedWorkflow() {
         try {

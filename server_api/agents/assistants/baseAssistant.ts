@@ -130,8 +130,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           throw new Error("No subscription found");
         }
 
-        await this.updateCurrentAgentProduct(
-          subscription.Plan?.AgentProduct as YpAgentProductAttributes,
+        await this.updateCurrentAgentProductPlan(
+          subscription.Plan,
           subscription as YpSubscriptionAttributes
         );
 
@@ -154,14 +154,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.eventEmitter.on(event, listener);
   }
 
-  async updateCurrentAgentProduct(
-    agentProduct: YpAgentProductAttributes,
+  async updateCurrentAgentProductPlan(
+    subscriptionPlan: YpSubscriptionPlanAttributes,
     subscription: YpSubscriptionAttributes | null
   ) {
     const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
     const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
     this.memory.currentAgentStatus = {
-      agentProduct: agentProduct,
+      subscriptionPlan,
       subscription: subscription,
       subscriptionState: subscription ? "subscribed" : "unsubscribed",
       configurationState:
@@ -657,10 +657,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     if (
       this.memory.currentMode === "agent_direct_connection_mode" &&
-      this.memory.currentAgentStatus?.agentProduct.configuration.avatar
+      this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct?.configuration.avatar
         ?.systemPrompt
     ) {
-      systemPrompt = `${this.memory.currentAgentStatus.agentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
+      systemPrompt = `${this.memory.currentAgentStatus.subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
     }
 
     const messages: ChatCompletionMessageParam[] = [

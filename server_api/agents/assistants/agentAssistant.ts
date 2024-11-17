@@ -70,7 +70,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   get currentAgent(): YpAgentProductAttributes | undefined {
-    return this.memory.currentAgentStatus?.agentProduct;
+    return this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct;
   }
 
   get isSubscribedToCurrentAgent(): boolean {

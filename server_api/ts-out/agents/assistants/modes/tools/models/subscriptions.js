@@ -20,6 +20,7 @@ export class SubscriptionModels {
                 where: {
                 //  status: 'active', // Only get active plans
                 },
+                attributes: ['id', 'configuration'],
                 include: [
                     {
                         model: YpAgentProduct,
@@ -79,14 +80,24 @@ export class SubscriptionModels {
             };
         }
     }
-    async loadAgentProductAndSubscription(agentProductId) {
-        const agent = (await YpAgentProduct.findByPk(agentProductId));
-        if (!agent) {
-            throw new Error(`Agent product with id ${agentProductId} not found`);
+    async loadAgentProductPlanAndSubscription(subscriptionPlanId) {
+        const plan = (await YpSubscriptionPlan.findOne({
+            where: {
+                id: subscriptionPlanId,
+            },
+            include: [
+                {
+                    model: YpAgentProduct,
+                    as: "AgentProduct",
+                },
+            ],
+        }));
+        if (!plan) {
+            throw new Error(`Agent product with id ${subscriptionPlanId} not found`);
         }
         const subscription = (await YpSubscription.findOne({
             where: {
-                agent_product_id: agentProductId,
+                subscription_plan_id: subscriptionPlanId,
             },
             include: [
                 {
@@ -96,7 +107,7 @@ export class SubscriptionModels {
                 },
             ],
         }));
-        return { agent, subscription };
+        return { subscription, plan };
     }
     async loadUserAgentSubscriptions() {
         try {
@@ -237,7 +248,17 @@ export class SubscriptionModels {
     }
     async subscribeToAgentPlan(agentProductId, subscriptionPlanId) {
         try {
-            const plan = await YpSubscriptionPlan.findByPk(subscriptionPlanId);
+            const plan = await YpSubscriptionPlan.findOne({
+                where: {
+                    id: subscriptionPlanId,
+                },
+                include: [
+                    {
+                        model: YpAgentProduct,
+                        as: "AgentProduct",
+                    },
+                ],
+            });
             if (!plan) {
                 return {
                     success: false,
@@ -257,8 +278,8 @@ export class SubscriptionModels {
             });
             return {
                 success: true,
-                subscriptionId: subscription.id,
-                subscriptionPlanId: subscriptionPlanId,
+                plan: plan,
+                subscription: subscription,
             };
         }
         catch (error) {

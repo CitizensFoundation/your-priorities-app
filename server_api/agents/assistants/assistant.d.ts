@@ -8,8 +8,8 @@ interface UnsubscribeResult {
 interface SubscribeResult {
   success: boolean;
   error?: string;
-  subscriptionId?: number;
-  subscriptionPlanId?: number;
+  plan?: YpSubscriptionPlanAttributes;
+  subscription?: YpSubscriptionAttributes;
 }
 
 interface AssistantAgent {

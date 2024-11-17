@@ -225,7 +225,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   haveShownLoginWidget?: boolean;
   haveShownConfigurationWidget?: boolean;
   currentAgentStatus?: {
-    agentProduct: YpAgentProductAttributes;
+    subscriptionPlan: YpSubscriptionPlanAttributes;
     activeAgentRun?: YpAgentProductRunAttributes;
     subscription: YpSubscriptionAttributes | null;
     subscriptionState: YpAssistantAgentSubscriptionState;
@@ -335,13 +335,13 @@ interface YpAgentRunStopCurrentWorkflowStepProperties {
 //
 
 interface YpAgentSelectProperties {
-  agentProductId: {
+  subscriptionPlanId: {
     type: "number";
   };
 }
 
 interface YpAgentSelectParams {
-  agentProductId: number;
+  subscriptionPlanId: number;
 }
 
 //

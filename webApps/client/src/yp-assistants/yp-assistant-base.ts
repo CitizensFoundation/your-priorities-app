@@ -257,7 +257,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   async setupVoiceCapabilities() {}
 
-  get talkingHeadImage() {
+  get talkingHeadImageUrl() {
     if (this.aiIsSpeaking) {
       return "https://assets.evoly.ai/direct/talkingHead.png";
     } else if (this.userIsSpeaking) {
@@ -270,7 +270,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       <div class="layout horizontal" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
-          src="${this.directAgentAvatarUrl || this.mainAssistantAvatarUrl}"
+          src="${this.directAgentAvatarUrl ? this.directAgentAvatarUrl : this.talkingHeadImageUrl}"
           alt="Voice Assistant"
         />
       </div>
@@ -280,7 +280,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   override render() {
     return html`
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
-        <div class="voice-input">${this.renderVoiceInput()}</div>
+        <div class="voice-input-container">
+          <div class="voice-input">${this.renderVoiceInput()}</div>
+        </div>
         <div class="hybrid-chat-messages" id="chat-messages">
           <yp-assistant-item-base
             ?hidden="${true || !this.defaultInfoMessage}"
@@ -316,7 +318,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
               `
             )}
         </div>
-        <div class="chat-input">${this.renderChatInput()}</div>
+        <div class="chat-input-container">
+          <div class="chat-input">${this.renderChatInput()}</div>
+        </div>
       </div>
     `;
   }
@@ -581,19 +585,19 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           border-radius: 10px;
           overflow: hidden;
         }
+
         .hybrid-chat-messages {
           display: flex;
           flex-direction: column;
           flex: 1;
           padding: 20px;
           overflow-y: visible;
+          max-width: 960px;
         }
 
         .you-chat-element {
           align-self: flex-start;
-          max-width: 80%;
           justify-content: flex-start;
-          margin-right: 32px;
         }
 
         .assistant-chat-element {
@@ -617,13 +621,22 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           border-radius: 10px;
         }
 
+        .voice-input-container {
+          position: fixed;
+          top: 60px;
+          left: 0;
+          z-index: 10;
+          width: 100vw;
+          height: 109px;
+          background: var(--md-sys-color-surface-container-lowest);
+        }
+
         .voice-input {
           position: fixed;
-          top: 64px;
+          top: 60px;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 10;
-          width: 780px;
+          width: 936px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -633,14 +646,24 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           }
         }
 
+        .chat-input-container {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100vw;
+          z-index: 10;
+          height: 120px;
+          background: var(--md-sys-color-surface-container-lowest);
+        }
 
         .chat-input {
           position: fixed;
           bottom: 0;
           left: 0;
           right: 0;
-          z-index: 10;
+          z-index: 11;
           left: 50%;
+          height: 102px;
           transform: translateX(-50%);
           z-index: 10;
           width: 780px;
@@ -648,9 +671,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
 
         .hybrid-chat-messages {
-          padding-top: 120px; /* Adjust according to the height of voice-input */
-          padding-bottom: 80px; /* Adjust according to the height of chat-input */
-          /* Remove any overflow properties to use the main scrollbar */
+          padding-top: 120px;
+          padding-bottom: 130px;
         }
 
         /* Remove flex properties and height constraints */
@@ -661,12 +683,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           overflow: visible;
         }
 
-        /* Optional: Ensure the messages are displayed correctly */
-        .hybrid-chat-messages .chatElement {
-          max-width: 80%;
-          margin: 0 auto;
-        }
-
         .voiceName {
           font-size: 22px;
           font-weight: 700;
@@ -675,9 +691,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           line-height: 33px;
           font-family: var(--md-ref-typeface-brand);
         }
+
         .nameAndStartStop {
           margin-left: 16px;
         }
+
         .voiceClose {
           margin-left: 20px;
           margin-right: 6px;
@@ -801,7 +819,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
         .you-chat-element {
           align-self: flex-start;
-          max-width: 80%;
+          max-width: 100%;
           justify-content: flex-start;
           margin-right: 32px;
         }
@@ -989,9 +1007,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   renderAssistantName() {
-    return html`<div class="voiceName">${this.directAgentName
-      ? this.directAgentName
-      : this.t("mainAssistant")}</div>`;
+    return html`<div class="voiceName">
+      ${this.directAgentName ? this.directAgentName : this.t("mainAssistant")}
+    </div>`;
   }
 
   renderVoiceInput() {

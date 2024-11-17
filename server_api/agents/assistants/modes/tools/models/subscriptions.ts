@@ -25,6 +25,7 @@ export class SubscriptionModels {
         where: {
           //  status: 'active', // Only get active plans
         },
+        attributes: ['id', 'configuration'],
         include: [
           {
             model: YpAgentProduct,
@@ -93,21 +94,29 @@ export class SubscriptionModels {
     }
   }
 
-  public async loadAgentProductAndSubscription(
-    agentProductId: number
+  public async loadAgentProductPlanAndSubscription(
+    subscriptionPlanId: number
   ): Promise<{
-    agent: YpAgentProductAttributes;
+    plan: YpSubscriptionPlanAttributes | null;
     subscription: YpSubscriptionAttributes | null;
   }> {
-    const agent = (await YpAgentProduct.findByPk(
-      agentProductId
-    )) as YpAgentProductAttributes;
-    if (!agent) {
-      throw new Error(`Agent product with id ${agentProductId} not found`);
+    const plan = (await YpSubscriptionPlan.findOne({
+      where: {
+        id: subscriptionPlanId,
+      },
+      include: [
+        {
+          model: YpAgentProduct,
+          as: "AgentProduct",
+        },
+      ],
+    })) as YpSubscriptionPlanAttributes;
+    if (!plan) {
+      throw new Error(`Agent product with id ${subscriptionPlanId} not found`);
     }
     const subscription = (await YpSubscription.findOne({
       where: {
-        agent_product_id: agentProductId,
+        subscription_plan_id: subscriptionPlanId,
       },
       include: [
         {
@@ -118,7 +127,7 @@ export class SubscriptionModels {
       ],
     })) as YpSubscriptionAttributes | null;
 
-    return { agent, subscription };
+    return { subscription, plan };
   }
 
   public async loadUserAgentSubscriptions(): Promise<AssistantAgentSubscriptionStatus> {
@@ -278,7 +287,17 @@ export class SubscriptionModels {
     subscriptionPlanId: number
   ): Promise<SubscribeResult> {
     try {
-      const plan = await YpSubscriptionPlan.findByPk(subscriptionPlanId);
+      const plan = await YpSubscriptionPlan.findOne({
+        where: {
+          id: subscriptionPlanId,
+        },
+        include: [
+          {
+            model: YpAgentProduct,
+            as: "AgentProduct",
+          },
+        ],
+      });
 
       if (!plan) {
         return {
@@ -302,8 +321,8 @@ export class SubscriptionModels {
 
       return {
         success: true,
-        subscriptionId: subscription.id,
-        subscriptionPlanId: subscriptionPlanId,
+        plan: plan as YpSubscriptionPlanAttributes,
+        subscription: subscription as YpSubscriptionAttributes,
       };
     } catch (error) {
       const errorMessage =

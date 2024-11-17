@@ -6,8 +6,8 @@ export class BaseAssistantTools {
     async waitTick() {
         await new Promise((resolve) => setTimeout(resolve, 1));
     }
-    async updateCurrentAgentProduct(agentProduct, subscription, options = { sendEvent: true }) {
-        await this.assistant.updateCurrentAgentProduct(agentProduct, subscription);
+    async updateCurrentAgentProductPlan(plan, subscription, options = { sendEvent: true }) {
+        await this.assistant.updateCurrentAgentProductPlan(plan, subscription);
         await this.waitTick();
         // Emit memory update event
         if (options.sendEvent) {

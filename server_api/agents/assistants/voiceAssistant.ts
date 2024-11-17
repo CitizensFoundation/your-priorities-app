@@ -158,8 +158,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     await this.sendCancelResponse();
 
-    if (this.parentAssistant.memory.currentAgentStatus?.agentProduct.name) {
-      this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${this.parentAssistant.memory.currentAgentStatus.agentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
+    if (
+      this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
+        .AgentProduct!.name
+    ) {
+      this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${
+        this.parentAssistant.memory.currentAgentStatus.subscriptionPlan
+          .AgentProduct!.name
+      }. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
     }
 
     this.sendToClient("assistant", "", "clear_audio_buffer");
@@ -684,18 +690,22 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     if (
       this.parentAssistant.memory.currentMode ===
         "agent_direct_connection_mode" &&
-      this.parentAssistant.memory.currentAgentStatus?.agentProduct.configuration
-        .avatar?.voiceName
+      this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
+        .AgentProduct!.configuration.avatar?.voiceName
     ) {
       voiceName =
-        this.parentAssistant.memory.currentAgentStatus?.agentProduct
-          .configuration.avatar.voiceName;
+        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
+          .AgentProduct!.configuration.avatar.voiceName;
 
-      instructions = `${this.parentAssistant.memory.currentAgentStatus?.agentProduct.configuration.avatar.systemPrompt}\n${instructions}`;
+      instructions = `${
+        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
+          .AgentProduct!.configuration.avatar.systemPrompt
+      }\n${instructions}`;
       this.parentAssistant.sendAvatarUrlChange(
-        this.parentAssistant.memory.currentAgentStatus?.agentProduct
-          .configuration.avatar.imageUrl,
-        this.parentAssistant.memory.currentAgentStatus?.agentProduct.name
+        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
+          .AgentProduct!.configuration.avatar.imageUrl,
+        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
+          .AgentProduct!.name
       );
     } else {
       this.parentAssistant.sendAvatarUrlChange(null, null);

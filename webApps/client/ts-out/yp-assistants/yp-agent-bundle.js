@@ -23,8 +23,8 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
 
         .fixed {
           position: fixed;
-          top: 136px;
-          left: 64px;
+          top: 156px;
+          left: 48px;
         }
 
         yp-assistant,
@@ -38,10 +38,12 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
           width: 125px;
           height: 39px;
           margin-right: 64px;
+          z-index: 15;
         }
 
         .logoContainer {
           padding: 16px;
+          z-index: 15;
         }
       `,
         ];

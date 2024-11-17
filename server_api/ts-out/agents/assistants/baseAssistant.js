@@ -85,7 +85,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 if (!subscription) {
                     throw new Error("No subscription found");
                 }
-                await this.updateCurrentAgentProduct(subscription.Plan?.AgentProduct, subscription);
+                await this.updateCurrentAgentProductPlan(subscription.Plan, subscription);
             }
             catch (error) {
                 console.error(`Error finding subscription: ${error}`);
@@ -99,11 +99,11 @@ export class YpBaseAssistant extends YpBaseChatBot {
     on(event, listener) {
         this.eventEmitter.on(event, listener);
     }
-    async updateCurrentAgentProduct(agentProduct, subscription) {
+    async updateCurrentAgentProductPlan(subscriptionPlan, subscription) {
         const requiredStructuredQuestions = subscription?.Plan?.configuration.requiredStructuredQuestions;
         const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
         this.memory.currentAgentStatus = {
-            agentProduct: agentProduct,
+            subscriptionPlan,
             subscription: subscription,
             subscriptionState: subscription ? "subscribed" : "unsubscribed",
             configurationState: (requiredStructuredAnswers && requiredStructuredQuestions) &&
@@ -486,9 +486,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
         await this.saveMemory();
         let systemPrompt = this.getCurrentSystemPrompt();
         if (this.memory.currentMode === "agent_direct_connection_mode" &&
-            this.memory.currentAgentStatus?.agentProduct.configuration.avatar
+            this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct?.configuration.avatar
                 ?.systemPrompt) {
-            systemPrompt = `${this.memory.currentAgentStatus.agentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
+            systemPrompt = `${this.memory.currentAgentStatus.subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
         }
         const messages = [
             {

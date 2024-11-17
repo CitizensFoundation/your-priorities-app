@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
-import { YpAiChatbotItemBase } from '../yp-chatbots/yp-chatbot-item-base.js';
+import { YpAiChatbotItemBase } from "../yp-chatbots/yp-chatbot-item-base.js";
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import "./widgets/yp-agent-chip.js";
@@ -55,8 +55,6 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
 
         .component-container {
           margin-top: 16px;
-          padding: 8px;
-          border-radius: 8px;
         }
 
         .userChatDialog {
@@ -70,6 +68,9 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
           margin-left: auto;
         }
 
+        .chatGPTDialog {
+          margin: 0;
+        }
 
         .chatText {
           padding: 8px;
@@ -78,43 +79,35 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
           font-weight: 400;
         }
 
-
         @keyframes pulse {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.1); opacity: 0.8; }
-          100% { transform: scale(1); opacity: 1; }
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
-      `
+      `,
         ];
-    }
-    renderVoiceStatus() {
-        if (!this.isVoiceMode)
-            return nothing;
-        return html `
-      <div class="voice-status">
-        ${this.isListening
-            ? html `
-              <md-icon class="voice-icon" listening>mic</md-icon>
-              <span>${this.t('Listening...')}</span>
-            `
-            : nothing}
-        ${this.isSpeaking
-            ? html `
-              <md-icon class="voice-icon" speaking>volume_up</md-icon>
-              <span>${this.t('Speaking...')}</span>
-            `
-            : nothing}
-      </div>
-    `;
     }
     renderChatGPT() {
         return html `
       <div class="layout vertical chatGPTDialogContainer">
         <div class="chatGPTDialog layout vertical" ?error="${this.isError}">
           <div class="layout horizontal">
-            <div class="layout vertical chatImage">
-              ${!this.htmlToRender ? this.renderCGImage() : nothing}
-            </div>
+            ${!this.htmlToRender
+            ? html `
+                  <div class="layout vertical chatImage">
+                    ${this.renderCGImage()}
+                  </div>
+                `
+            : nothing}
             <div class="layout vertical chatText">
               ${resolveMarkdown(this.message, {
             includeImages: true,
@@ -122,15 +115,16 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
             handleJsonBlocks: true,
             targetElement: this,
         })}
-              ${this.htmlToRender ? html `
-              <div class="component-container">
-                ${unsafeHTML(this.htmlToRender)}
-              </div>
-            ` : nothing}
+              ${this.htmlToRender
+            ? html `
+                    <div class="component-container">
+                      ${unsafeHTML(this.htmlToRender)}
+                    </div>
+                  `
+            : nothing}
             </div>
           </div>
         </div>
-
       </div>
     `;
     }
@@ -138,9 +132,7 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
         return html `
       <div class="userChatDialog layout horizontal">
         <div class="flex"></div>
-        <div class="chatText">
-            ${this.message}
-        </div>
+        <div class="chatText">${this.message}</div>
       </div>
     `;
     }
