@@ -428,6 +428,46 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
+      .chat-window {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          min-height: 45vh;
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+        .chat-messages {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          padding: 20px;
+          overflow-y: scroll;
+        }
+
+        .you-chat-element {
+          align-self: flex-start;
+          max-width: 80%;
+          justify-content: flex-start;
+          margin-right: 32px;
+        }
+
+        .assistant-chat-element {
+          align-self: flex-start;
+          justify-content: flex-start;
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .chat-input {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 8px;
+        }
+
         .voiceName {
           font-size: 22px;
           font-weight: 700;
