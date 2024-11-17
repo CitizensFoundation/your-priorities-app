@@ -108,6 +108,8 @@ export class AgentModels {
         this.assistant.wsClientId
       );
 
+      agentRunToUpdate.status = "running";
+
       agentRunToUpdate.changed("workflow", true);
       await agentRunToUpdate.save();
 

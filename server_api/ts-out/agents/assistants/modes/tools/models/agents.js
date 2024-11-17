@@ -63,6 +63,7 @@ export class AgentModels {
             }
             // Start processing with websocket client ID
             await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId);
+            agentRunToUpdate.status = "running";
             agentRunToUpdate.changed("workflow", true);
             await agentRunToUpdate.save();
             return {
