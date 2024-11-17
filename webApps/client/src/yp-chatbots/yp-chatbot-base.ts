@@ -98,7 +98,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     }, 420);
 
     setTimeout(() => {
-      this.chatMessagesElement!.addEventListener(
+      window.addEventListener(
         'scroll',
         this.handleScroll.bind(this)
       );
@@ -118,7 +118,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
 
 
     if (this.chatMessagesElement) {
-      this.chatMessagesElement.removeEventListener(
+      window.removeEventListener(
         'scroll',
         this.handleScroll.bind(this)
       );

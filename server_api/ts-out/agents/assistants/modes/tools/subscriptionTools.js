@@ -29,7 +29,7 @@ export class SubscriptionTools extends BaseAssistantTools {
             let agentChips = "";
             for (const agent of status.availableAgents) {
                 agentChips += `<yp-agent-chip
-                  agentProductId="${agent.agentProductId}"
+                  subscriptionPlanId="${agent.subscriptionPlanId}"
                   subscriptionId="${agent.subscriptionId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
@@ -85,7 +85,6 @@ export class SubscriptionTools extends BaseAssistantTools {
             let agentChips = "";
             for (const agent of status.availablePlans) {
                 agentChips += `<yp-agent-chip-for-purchase
-          agentProductId="${agent.agentProductId}"
           subscriptionPlanId="${agent.subscriptionPlanId}"
           agentName="${agent.name}"
           agentDescription="${agent.description}"
@@ -153,7 +152,8 @@ export class SubscriptionTools extends BaseAssistantTools {
                     error: "No current agent selected",
                 };
             }
-            const result = await this.subscriptionModels.subscribeToAgentPlan(this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct.id, this.assistant.memory.currentAgentStatus?.subscriptionPlan.id);
+            const result = await this.subscriptionModels.subscribeToAgentPlan(this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
+                .id, this.assistant.memory.currentAgentStatus?.subscriptionPlan.id);
             if (!result.success || !result.subscription || !result.plan) {
                 return {
                     success: false,

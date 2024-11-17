@@ -18,11 +18,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     constructor() {
         super();
         this.voiceEnabled = false;
+        this.useMainWindowScroll = true;
         this.directAgentName = null;
         this.mediaRecorder = null;
         this.wavStreamPlayer = null;
         this.isRecording = false;
-        this.disableAutoScroll = false;
         this.userIsSpeaking = false;
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
@@ -900,6 +900,9 @@ __decorate([
     property({ type: String })
 ], YpAssistantBase.prototype, "directAgentAvatarUrl", void 0);
 __decorate([
+    property({ type: Boolean })
+], YpAssistantBase.prototype, "useMainWindowScroll", void 0);
+__decorate([
     property({ type: String })
 ], YpAssistantBase.prototype, "directAgentName", void 0);
 __decorate([
@@ -911,9 +914,6 @@ __decorate([
 __decorate([
     state()
 ], YpAssistantBase.prototype, "isRecording", void 0);
-__decorate([
-    property({ type: Boolean })
-], YpAssistantBase.prototype, "disableAutoScroll", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "userIsSpeaking", void 0);

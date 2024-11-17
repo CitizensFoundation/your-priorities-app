@@ -6,6 +6,7 @@ export declare abstract class YpStreamingLlmBase extends YpBaseElement {
     wsEndpoint: string;
     ws: WebSocket;
     scrollElementSelector: string;
+    useMainWindowScroll: boolean;
     userScrolled: boolean;
     currentFollowUpQuestions: string;
     programmaticScroll: boolean;

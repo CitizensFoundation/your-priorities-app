@@ -13,8 +13,8 @@ interface SubscribeResult {
 }
 
 interface AssistantAgent {
-  agentProductId: number;
   subscriptionId: number;
+  subscriptionPlanId: number;
   name: string;
   description: string;
   imageUrl: string;
@@ -49,7 +49,6 @@ interface AssistantAgentBundle {
 }
 
 interface AssistantAgentPlan {
-  agentProductId: number;
   subscriptionPlanId: number;
   name: string;
   description: string;

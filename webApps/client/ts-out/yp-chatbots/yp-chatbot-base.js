@@ -43,7 +43,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
             this.chatInputField.focus();
         }, 420);
         setTimeout(() => {
-            this.chatMessagesElement.addEventListener('scroll', this.handleScroll.bind(this));
+            window.addEventListener('scroll', this.handleScroll.bind(this));
         }, 500);
     }
     updated(changedProperties) {
@@ -54,7 +54,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
     disconnectedCallback() {
         super.disconnectedCallback();
         if (this.chatMessagesElement) {
-            this.chatMessagesElement.removeEventListener('scroll', this.handleScroll.bind(this));
+            window.removeEventListener('scroll', this.handleScroll.bind(this));
         }
         if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);

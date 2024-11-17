@@ -118,11 +118,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           include: [{
             model: YpSubscriptionPlan,
             as: 'Plan',
-            attributes: ['id', 'configuration'],
+            attributes: ['id', 'configuration','name','description'],
             include: [{
               model: YpAgentProduct,
               as: 'AgentProduct',
-              attributes: ['id', 'configuration'],
+              attributes: ['id', 'configuration','name','description'],
             }]
           }]
         });
@@ -134,15 +134,19 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           subscription.Plan,
           subscription as YpSubscriptionAttributes
         );
+        this.emit(
+          "update-ai-model-session",
+          "The agent configuration was submitted successfully, lets explore the options"
+        );
 
       } catch (error) {
         console.error(`Error finding subscription: ${error}`);
+        this.emit(
+          "update-ai-model-session",
+          `Failed to submit agent configuration: ${error}`
+        );
       }
 
-      this.emit(
-        "update-ai-model-session",
-        "The agent configuration was submitted successfully, lets explore the options"
-      );
     }
   }
 

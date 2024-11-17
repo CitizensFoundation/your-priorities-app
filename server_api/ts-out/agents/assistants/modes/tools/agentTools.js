@@ -8,7 +8,7 @@ export class AgentTools extends BaseAssistantTools {
     get showAgentWorkflowOverviewWidget() {
         return {
             name: "show_agent_workflow_overview_widget",
-            description: "Show the workflow widget overview for the current agent show this to the user at the start of the conversation if the agent is not running",
+            description: "Show the workflow widget overview for the current agent.",
             type: "function",
             parameters: {
                 type: "object",

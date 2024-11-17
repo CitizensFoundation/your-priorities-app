@@ -43,7 +43,7 @@ export class SubscriptionTools extends BaseAssistantTools {
       let agentChips = "";
       for (const agent of status.availableAgents) {
         agentChips += `<yp-agent-chip
-                  agentProductId="${agent.agentProductId}"
+                  subscriptionPlanId="${agent.subscriptionPlanId}"
                   subscriptionId="${agent.subscriptionId}"
                   agentName="${agent.name}"
                   agentDescription="${agent.description}"
@@ -120,7 +120,6 @@ export class SubscriptionTools extends BaseAssistantTools {
       let agentChips = "";
       for (const agent of status.availablePlans) {
         agentChips += `<yp-agent-chip-for-purchase
-          agentProductId="${agent.agentProductId}"
           subscriptionPlanId="${agent.subscriptionPlanId}"
           agentName="${agent.name}"
           agentDescription="${agent.description}"
@@ -192,7 +191,13 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      console.log(`-------> ${JSON.stringify(this.assistant.memory.currentAgentStatus, null, 2)}`);
+      console.log(
+        `-------> ${JSON.stringify(
+          this.assistant.memory.currentAgentStatus,
+          null,
+          2
+        )}`
+      );
 
       if (
         !this.assistant.memory.currentAgentStatus ||
@@ -206,7 +211,8 @@ export class SubscriptionTools extends BaseAssistantTools {
       }
 
       const result = await this.subscriptionModels.subscribeToAgentPlan(
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct!.id,
+        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct!
+          .id,
         this.assistant.memory.currentAgentStatus?.subscriptionPlan.id
       );
 
@@ -217,7 +223,10 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      await this.updateCurrentAgentProductPlan(result.plan!, result.subscription);
+      await this.updateCurrentAgentProductPlan(
+        result.plan!,
+        result.subscription
+      );
 
       let html;
       if (result.plan?.AgentProduct) {
@@ -227,7 +236,9 @@ export class SubscriptionTools extends BaseAssistantTools {
           subscriptionPlanId="${result.plan.id}"
           agentName="${result.plan.AgentProduct!.name}"
           agentDescription="${result.plan.AgentProduct!.description}"
-          agentImageUrl="${result.plan.AgentProduct!.configuration.avatar?.imageUrl}"
+          agentImageUrl="${
+            result.plan.AgentProduct!.configuration.avatar?.imageUrl
+          }"
           price="${result.plan.configuration.amount}"
           currency="${result.plan.configuration.currency}"
           maxRunsPerCycle="${result.plan.configuration.max_runs_per_cycle}"

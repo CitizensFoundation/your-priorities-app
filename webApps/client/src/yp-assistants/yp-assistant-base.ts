@@ -24,6 +24,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: String })
   directAgentAvatarUrl: string | undefined;
 
+  @property({ type: Boolean })
+  override useMainWindowScroll = true;
+
   @property({ type: String })
   directAgentName: string | null = null;
 
@@ -35,9 +38,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   @state()
   private isRecording = false;
-
-  @property({ type: Boolean })
-  override disableAutoScroll = false;
 
   @state()
   userIsSpeaking = false;

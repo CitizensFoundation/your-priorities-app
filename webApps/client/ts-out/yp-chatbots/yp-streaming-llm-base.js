@@ -12,6 +12,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         this.chatLog = [];
         this.webSocketsErrorCount = 0;
         this.scrollElementSelector = "#chat-messages";
+        this.useMainWindowScroll = false;
         this.userScrolled = false;
         this.currentFollowUpQuestions = "";
         this.programmaticScroll = false;
@@ -107,20 +108,39 @@ export class YpStreamingLlmBase extends YpBaseElement {
         if (this.disableAutoScroll) {
             return;
         }
-        if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
+        if (this.programmaticScroll ||
+            (!this.$$(this.scrollElementSelector) && !this.useMainWindowScroll)) {
             console.error(`handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`);
             return;
         }
-        const currentScrollTop = this.$$(this.scrollElementSelector).scrollTop;
+        let currentScrollTop = 0;
+        if (this.$$(this.scrollElementSelector)) {
+            currentScrollTop = this.$$(this.scrollElementSelector).scrollTop;
+        }
+        else if (this.useMainWindowScroll) {
+            currentScrollTop = window.scrollY;
+        }
         if (this.scrollStart === 0) {
             // Initial scroll
             this.scrollStart = currentScrollTop;
         }
         const threshold = 10;
-        const atBottom = this.$$(this.scrollElementSelector).scrollHeight -
-            currentScrollTop -
-            this.$$(this.scrollElementSelector).clientHeight <=
-            threshold;
+        let atBottom;
+        debugger;
+        if (this.useMainWindowScroll) {
+            atBottom =
+                this.$$(this.scrollElementSelector).scrollHeight -
+                    currentScrollTop -
+                    this.$$(this.scrollElementSelector).clientHeight <=
+                    threshold;
+        }
+        else if (this.$$(this.scrollElementSelector)) {
+            atBottom =
+                document.documentElement.scrollHeight -
+                    currentScrollTop -
+                    window.innerHeight <=
+                    threshold;
+        }
         if (atBottom) {
             this.userScrolled = false;
             this.scrollStart = 0; // Reset scroll start
@@ -160,12 +180,19 @@ export class YpStreamingLlmBase extends YpBaseElement {
         if (this.disableAutoScroll) {
             return;
         }
-        if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
+        if (!this.userScrolled &&
+            (this.$$(this.scrollElementSelector) || this.useMainWindowScroll)) {
             this.programmaticScroll = true;
-            const element = this.$$(this.scrollElementSelector);
-            if (element.tagName === "INPUT" ||
-                element.tagName === "TEXTAREA" ||
-                element.tagName === "MD-OUTLINED-TEXT-FIELD") {
+            let element;
+            if (this.useMainWindowScroll) {
+                element = window.document.documentElement;
+            }
+            else if (this.$$(this.scrollElementSelector)) {
+                element = this.$$(this.scrollElementSelector);
+            }
+            if (element?.tagName === "INPUT" ||
+                element?.tagName === "TEXTAREA" ||
+                element?.tagName === "MD-OUTLINED-TEXT-FIELD") {
                 // Move the cursor to the end of the text
                 element.selectionStart = element.selectionEnd = element.value.length;
                 element.scrollTop = element.scrollHeight - 100;
@@ -240,6 +267,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpStreamingLlmBase.prototype, "scrollElementSelector", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpStreamingLlmBase.prototype, "useMainWindowScroll", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpStreamingLlmBase.prototype, "userScrolled", void 0);

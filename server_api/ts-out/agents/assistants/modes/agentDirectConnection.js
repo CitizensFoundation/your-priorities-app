@@ -26,6 +26,7 @@ export class DirectConversationMode extends BaseAssistantMode {
             if (this.assistant.isSubscribedToCurrentAgent) {
                 // User is subscribed to the current agent
                 console.log("Mode: agent_direct_connection_mode, User is subscribed to the current agent");
+                tools.push(this.subscriptionTools.unsubscribeFromCurrentAgentSubscription);
                 if (this.assistant.hasConfiguredCurrentAgent) {
                     // User has configured the current agent
                     console.log("Mode: agent_direct_connection_mode, User has configured the current agent");

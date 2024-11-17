@@ -20,7 +20,7 @@ export class SubscriptionModels {
                 where: {
                 //  status: 'active', // Only get active plans
                 },
-                attributes: ['id', 'configuration'],
+                attributes: ['id', 'configuration', 'name', 'description'],
                 include: [
                     {
                         model: YpAgentProduct,
@@ -44,10 +44,9 @@ export class SubscriptionModels {
             console.log(`-----------XXXXXXXXXXXXXXXx----------_> ${JSON.stringify(availablePlans, null, 2)}`);
             return {
                 availablePlans: availablePlans.map((plan) => ({
-                    agentProductId: plan.AgentProduct?.id || 0,
                     subscriptionPlanId: plan.id,
-                    name: plan.AgentProduct?.name || plan.name,
-                    description: plan.AgentProduct?.description || "No description available",
+                    name: plan.name,
+                    description: plan.description || "No description available",
                     imageUrl: plan.configuration?.imageUrl || "",
                     price: plan.configuration?.amount || 0,
                     currency: plan.configuration?.currency || "USD",
@@ -98,6 +97,7 @@ export class SubscriptionModels {
         const subscription = (await YpSubscription.findOne({
             where: {
                 subscription_plan_id: subscriptionPlanId,
+                status: "active"
             },
             include: [
                 {
@@ -151,9 +151,10 @@ export class SubscriptionModels {
                     {
                         model: YpSubscription,
                         as: "Subscription",
-                        //where: {
-                        //  domain_id: this.domainId
-                        //},
+                        where: {
+                            domain_id: this.assistant.domainId,
+                            status: "active",
+                        },
                         include: [
                             {
                                 model: YpAgentProduct,
@@ -169,10 +170,10 @@ export class SubscriptionModels {
             });
             return {
                 availableAgents: availableAgents.map((subscription) => ({
-                    agentProductId: subscription.AgentProduct.id,
+                    subscriptionPlanId: subscription.Plan.id,
                     subscriptionId: subscription.id,
-                    name: subscription.AgentProduct.name,
-                    description: subscription.AgentProduct.description,
+                    name: subscription.Plan.name,
+                    description: subscription.Plan.description || "",
                     imageUrl: subscription.Plan.configuration.imageUrl || "",
                     isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id ===
                         subscription.AgentProduct.id),

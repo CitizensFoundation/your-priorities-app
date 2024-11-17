@@ -7,11 +7,11 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     domainId: number;
     mainAssistantAvatarUrl: string | undefined;
     directAgentAvatarUrl: string | undefined;
+    useMainWindowScroll: boolean;
     directAgentName: string | null;
     private mediaRecorder;
     private wavStreamPlayer;
     private isRecording;
-    disableAutoScroll: boolean;
     userIsSpeaking: boolean;
     aiIsSpeaking: boolean;
     onlyUseTextField: boolean;

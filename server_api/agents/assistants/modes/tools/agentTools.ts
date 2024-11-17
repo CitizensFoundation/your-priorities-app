@@ -14,7 +14,7 @@ export class AgentTools extends BaseAssistantTools {
     return {
       name: "show_agent_workflow_overview_widget",
       description:
-        "Show the workflow widget overview for the current agent show this to the user at the start of the conversation if the agent is not running",
+        "Show the workflow widget overview for the current agent.",
       type: "function",
       parameters: {
         type: "object",
@@ -402,6 +402,7 @@ export class AgentTools extends BaseAssistantTools {
       };
     }
   }
+
   private renderAgentRunWidget(
     agent: YpAgentProductAttributes,
     run: YpAgentProductRunAttributes

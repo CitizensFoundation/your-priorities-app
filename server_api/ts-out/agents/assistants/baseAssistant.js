@@ -74,11 +74,11 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     include: [{
                             model: YpSubscriptionPlan,
                             as: 'Plan',
-                            attributes: ['id', 'configuration'],
+                            attributes: ['id', 'configuration', 'name', 'description'],
                             include: [{
                                     model: YpAgentProduct,
                                     as: 'AgentProduct',
-                                    attributes: ['id', 'configuration'],
+                                    attributes: ['id', 'configuration', 'name', 'description'],
                                 }]
                         }]
                 });
@@ -86,11 +86,12 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     throw new Error("No subscription found");
                 }
                 await this.updateCurrentAgentProductPlan(subscription.Plan, subscription);
+                this.emit("update-ai-model-session", "The agent configuration was submitted successfully, lets explore the options");
             }
             catch (error) {
                 console.error(`Error finding subscription: ${error}`);
+                this.emit("update-ai-model-session", `Failed to submit agent configuration: ${error}`);
             }
-            this.emit("update-ai-model-session", "The agent configuration was submitted successfully, lets explore the options");
         }
     }
     emit(event, ...args) {

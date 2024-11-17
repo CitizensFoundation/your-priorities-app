@@ -21,6 +21,9 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   scrollElementSelector = "#chat-messages";
 
   @property({ type: Boolean })
+  useMainWindowScroll = false;
+
+  @property({ type: Boolean })
   userScrolled = false;
 
   @property({ type: String })
@@ -28,7 +31,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
   @property({ type: Boolean })
   programmaticScroll = false;
-
 
   @property({ type: Boolean })
   disableAutoScroll = false;
@@ -136,7 +138,10 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     }
 
     //@ts-ignore
-    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), this.heartBeatRate);
+    this.heartbeatInterval = setInterval(
+      () => this.sendHeartbeat(),
+      this.heartBeatRate
+    );
     this.ws.onmessage = (messageEvent) => {
       const data = JSON.parse(messageEvent.data);
       if (data.clientId) {
@@ -155,23 +160,47 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       return;
     }
 
-    if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
-      console.error(`handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`);
+    if (
+      this.programmaticScroll ||
+      (!this.$$(this.scrollElementSelector) && !this.useMainWindowScroll)
+    ) {
+      console.error(
+        `handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`
+      );
       return;
     }
 
-    const currentScrollTop = this.$$(this.scrollElementSelector)!.scrollTop;
+    let currentScrollTop = 0;
+    if (this.$$(this.scrollElementSelector)) {
+      currentScrollTop = this.$$(this.scrollElementSelector)!.scrollTop;
+    } else if (this.useMainWindowScroll) {
+      currentScrollTop = window.scrollY;
+    }
+
     if (this.scrollStart === 0) {
       // Initial scroll
       this.scrollStart = currentScrollTop;
     }
 
     const threshold = 10;
-    const atBottom =
-      this.$$(this.scrollElementSelector)!.scrollHeight -
-        currentScrollTop -
-        this.$$(this.scrollElementSelector)!.clientHeight <=
-      threshold;
+
+    let atBottom;
+
+    debugger;
+
+    if (this.useMainWindowScroll) {
+      atBottom =
+        this.$$(this.scrollElementSelector)!.scrollHeight -
+          currentScrollTop -
+          this.$$(this.scrollElementSelector)!.clientHeight <=
+        threshold;
+    } else if (this.$$(this.scrollElementSelector)) {
+      atBottom =
+        document.documentElement.scrollHeight -
+          currentScrollTop -
+          window.innerHeight <=
+        threshold;
+    }
 
     if (atBottom) {
       this.userScrolled = false;
@@ -219,14 +248,22 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       return;
     }
 
-    if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
+    if (
+      !this.userScrolled &&
+      (this.$$(this.scrollElementSelector) || this.useMainWindowScroll)
+    ) {
       this.programmaticScroll = true;
-      const element = this.$$(this.scrollElementSelector)!;
+      let element;
+      if (this.useMainWindowScroll) {
+        element = window.document.documentElement;
+      } else if (this.$$(this.scrollElementSelector)) {
+        element = this.$$(this.scrollElementSelector)!;
+      }
 
       if (
-        element.tagName === "INPUT" ||
-        element.tagName === "TEXTAREA" ||
-        element.tagName === "MD-OUTLINED-TEXT-FIELD"
+        element?.tagName === "INPUT" ||
+        element?.tagName === "TEXTAREA" ||
+        element?.tagName === "MD-OUTLINED-TEXT-FIELD"
       ) {
         // Move the cursor to the end of the text
         (element as HTMLInputElement).selectionStart = (
@@ -235,7 +272,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
         element.scrollTop = element.scrollHeight - 100;
       } else {
         // For non-text field elements, use scrollTop and scrollHeight to scroll
-        element.scrollTop = element.scrollHeight;
+        element!.scrollTop = element!.scrollHeight;
       }
 
       setTimeout(() => {

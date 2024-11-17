@@ -199,7 +199,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
           model: this.voiceConfig.model,
           voice: this.voiceConfig.voice,
         };
-        this.initializeVoiceSession();
+        this.initializeVoiceSession(
+          "Say hi, show the agent workflow widget and always offer to explain"
+        );
       });
 
       ws.on("close", () => {
