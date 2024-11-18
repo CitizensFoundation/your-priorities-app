@@ -14,7 +14,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     async sendNotification(agent, action, wsClientId, status, result, agentRunId, updatedWorkflow) {
         const wsClient = this.wsClients.get(wsClientId);
         if (wsClient) {
-            wsClient.send(JSON.stringify({ type: "updated_workflow", action, status, result, agentRunId, updatedWorkflow }));
+            wsClient.send(JSON.stringify({ type: "updated_workflow", action, status, result, agentRunId, updatedWorkflow: { workflow: updatedWorkflow, status: status } }));
         }
         else {
             console.error(`NotificationAgentQueueManager: WebSocket client with ID ${wsClientId} not found`);
@@ -26,7 +26,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             console.log("NotificationAgentQueueManager: Advancing workflow step or completing agent run", agentRunId, status);
             // Get the agent run record
             const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
-                attributes: ["id", "workflow"],
+                attributes: ["id", "workflow", "status"],
             });
             if (!agentRun || !agentRun.workflow) {
                 console.error(`NotificationAgentQueueManager: Agent run ${agentRunId} or its workflow not found`);
@@ -48,8 +48,12 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 else {
                     nextStatus = "waiting_on_user";
                 }
-                await agentRun.update({ workflow: workflowConfig, status: nextStatus });
-                console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, workflowConfig);
+                agentRun.status = nextStatus;
+                agentRun.workflow = workflowConfig;
+                agentRun.changed("status", true);
+                agentRun.changed("workflow", true);
+                await agentRun.save();
+                console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, status, workflowConfig);
             }
             else {
                 // This was the last step, mark the workflow as completed

@@ -2,6 +2,7 @@ import { LitElement, html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { PsServerApi } from "../../policySynth/PsServerApi.js";
+import { YpNavHelpers } from "../../common/YpNavHelpers.js";
 
 // Assuming we have an API client
 
@@ -82,8 +83,9 @@ export class YpAgentRunWidget extends YpBaseElement {
     );
   }
 
-  updateWorkflow(updatedWorkflow: YpWorkflowConfiguration) {
-    this.workflow = JSON.stringify(updatedWorkflow);
+  updateWorkflow(updatedWorkflow: { workflow: YpWorkflowConfiguration, status: YpAgentProductRunStatus }) {
+    this.workflow = btoa(JSON.stringify(updatedWorkflow.workflow));
+    this.runStatus = updatedWorkflow.status;
     this.requestUpdate();
   }
 
@@ -193,6 +195,27 @@ export class YpAgentRunWidget extends YpBaseElement {
         :host {
         }
 
+        .inviteHeader {
+          font-size: 16px;
+          font-weight: 700;
+          margin-bottom: 8px;
+          font-family: var(--md-ref-typeface-brand);
+        }
+
+        .viewListButton {
+          --md-filled-button-container-color: var(--yp-sys-color-agent-blue);
+          --md-filled-button-label-text-color: #fff;
+        }
+
+        .waitingOnUserContainer {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 16px;
+          margin: 16px;
+        }
+
         .container {
           padding: 16px;
           border: 1px solid var(--md-sys-color-outline-variant);
@@ -235,7 +258,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         .max-runs-per-cycle {
           font-size: 13px;
-          color: var(--md-sys-color-tertiary);
+          color: var(--yp-sys-color-agent-blue);
           text-transform: uppercase;
           font-weight: 500;
           margin-top: 4px;
@@ -275,7 +298,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         .startButton,
         .stopButton {
-          width: 140px;
+          width: 190px;
         }
 
         .startButtonFilled {
@@ -452,6 +475,10 @@ export class YpAgentRunWidget extends YpBaseElement {
     return this.runStatus === "running";
   }
 
+  get isWaitingOnUser() {
+    return this.runStatus === "waiting_on_user";
+  }
+
   private renderAgentRunningStatus() {
     return html`<div class="agent-running-status">
       ${this.progress !== undefined
@@ -468,13 +495,13 @@ export class YpAgentRunWidget extends YpBaseElement {
       ${this.isRunning
         ? html` <md-filled-button class="startButton startButtonFilled" disabled
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
-            >${this.t(this.agentState)}</md-filled-button
+            >${this.t(this.runStatus)}</md-filled-button
           >`
         : html` <md-outlined-button
             class="startButton"
             ?disabled=${this.shouldDisableStartButton}
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
-            >${this.t(this.agentState)}</md-outlined-button
+            >${this.t(this.runStatus)}</md-outlined-button
           >`}
 
       <md-outlined-button
@@ -484,6 +511,29 @@ export class YpAgentRunWidget extends YpBaseElement {
           "stop"
         )}</md-outlined-button
       >
+    </div>`;
+  }
+
+  get groupId() {
+    return this.parsedWorkflow.steps[this.parsedWorkflow.currentStepIndex].groupId;
+  }
+
+  private viewList() {
+    window.open(`/group/${this.groupId}`, '_blank');
+    //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
+  }
+
+  renderWaitingOnUser() {
+    return html`<div class="layout horizontal center-center waitingOnUserContainer">
+      <div class="layout horizontal center-center flex">
+        <md-filled-button class="viewListButton" @click=${this.viewList}>${this.t("viewList")}</md-filled-button>
+      </div>
+      <div class="flex"></div>
+      <div class="layout vertical">
+        <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
+        <md-outlined-text-field type="textarea" rows="7" label="${this.t("enterOneEmailPerLine")}"></md-outlined-text-field>
+        <md-filled-button class="inviteButton">${this.t("invite")}</md-filled-button>
+      </div>
     </div>`;
   }
 
@@ -509,6 +559,7 @@ export class YpAgentRunWidget extends YpBaseElement {
           )}
         </div>
         ${this.isRunning ? this.renderAgentRunningStatus() : nothing}
+        ${this.isWaitingOnUser ? this.renderWaitingOnUser() : nothing}
       </div>
     `;
   }

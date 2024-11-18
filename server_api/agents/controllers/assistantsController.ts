@@ -113,23 +113,25 @@ export class AssistantController {
   }
 
   private getUpdatedWorkflow = async (req: YpRequest, res: express.Response) => {
-    const { groupId, runId } = req.params;
+    const { runId } = req.params;
+    const userId = req.user?.id;
     try {
       const agentRun = await YpAgentProductRun.findOne({
         where: {
           id: runId,
         },
-        attributes: ["workflow"],
+        attributes: ["workflow","status"],
         include: [{
           model: YpSubscription,
+          as: "Subscription",
           attributes: ["id"],
           where: {
-            group_id: groupId,
+            user_id: userId,
           },
           required: true,
         }],
       });
-      res.send({ workflow: agentRun?.workflow });
+      res.send({workflow: agentRun?.workflow, status: agentRun?.status} );
     } catch (error) {
       console.error("Error getting updated workflow:", error);
       res.sendStatus(500);

@@ -18,7 +18,10 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private api;
     constructor();
     connectedCallback(): void;
-    updateWorkflow(updatedWorkflow: YpWorkflowConfiguration): void;
+    updateWorkflow(updatedWorkflow: {
+        workflow: YpWorkflowConfiguration;
+        status: YpAgentProductRunStatus;
+    }): void;
     get parsedWorkflow(): YpWorkflowConfiguration;
     disconnectedCallback(): void;
     private startStatusUpdates;
@@ -34,8 +37,12 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get shouldDisableStopButton(): boolean;
     get shouldDisableStartButton(): boolean;
     get isRunning(): boolean;
+    get isWaitingOnUser(): boolean;
     private renderAgentRunningStatus;
     renderStartStopButtons(): import("lit-html").TemplateResult<1>;
+    get groupId(): number | undefined;
+    private viewList;
+    renderWaitingOnUser(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-run-widget.d.ts.map

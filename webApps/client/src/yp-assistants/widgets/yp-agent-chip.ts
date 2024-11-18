@@ -80,7 +80,7 @@ export class YpAgentChip extends YpBaseElement {
         .status {
           font-size: 16px;
           font-weight: 600;
-          color: var(--md-sys-color-tertiary);
+          color: var(--yp-sys-color-agent-blue);
           text-transform: uppercase;
           padding-left: 8px;
         }

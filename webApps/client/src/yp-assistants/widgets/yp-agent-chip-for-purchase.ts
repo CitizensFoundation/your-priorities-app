@@ -42,7 +42,7 @@ export class YpAgentChipForPurchase extends YpAgentChip {
         .runs-info {
           font-size: 13px;
           font-weight: 500;
-          color: var(--md-sys-color-tertiary);
+          color: var(--yp-sys-color-agent-blue);
           text-transform: uppercase;
         }
 

@@ -480,8 +480,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       case "updated_workflow":
         if (data.updatedWorkflow) {
           try {
-            const updatedWorkflow = JSON.parse(data.updatedWorkflow) as YpWorkflowConfiguration;
-            this.fireGlobal("yp-updated-agent-workflow", updatedWorkflow);
+            this.fireGlobal("yp-updated-agent-workflow", data.updatedWorkflow);
           } catch (e) {
             console.error("Error parsing updated workflow", e);
           }

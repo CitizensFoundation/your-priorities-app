@@ -213,12 +213,6 @@ type YpAssistantAgentSubscriptionState = "subscribed" | "unsubscribed";
 
 type YpAssistantAgentConfigurationState = "configured" | "not_configured";
 
-type YpAssistantAgentWorkflowRunningStatus =
-  | "running"
-  | "waiting_on_user"
-  | "completed"
-  | "not_running";
-
 interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   redisKey: string;
   currentMode: YpAssistantMode;

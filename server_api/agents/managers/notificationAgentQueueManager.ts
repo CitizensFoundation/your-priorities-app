@@ -31,7 +31,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     const wsClient = this.wsClients.get(wsClientId);
     if (wsClient) {
       wsClient.send(
-        JSON.stringify({ type:"updated_workflow", action, status, result, agentRunId, updatedWorkflow })
+        JSON.stringify({ type:"updated_workflow", action, status, result, agentRunId, updatedWorkflow: { workflow: updatedWorkflow, status: status } })
       );
     } else {
       console.error(
@@ -52,7 +52,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       console.log("NotificationAgentQueueManager: Advancing workflow step or completing agent run", agentRunId, status);
       // Get the agent run record
       const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
-        attributes: ["id", "workflow"],
+        attributes: ["id", "workflow", "status"],
       });
 
       if (!agentRun || !agentRun.workflow) {
@@ -73,14 +73,18 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       // Check if there are more steps
       if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
         workflowConfig.currentStepIndex++;
-        let nextStatus: YpAssistantAgentWorkflowRunningStatus;
+        let nextStatus: YpAgentProductRunStatus;
         if (workflowConfig.steps[workflowConfig.currentStepIndex].type === "agentOps") {
           nextStatus = "running";
         } else {
           nextStatus = "waiting_on_user";
         }
-        await agentRun.update({ workflow: workflowConfig, status: nextStatus });
-        console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, workflowConfig);
+        agentRun.status = nextStatus;
+        agentRun.workflow = workflowConfig;
+        agentRun.changed("status", true);
+        agentRun.changed("workflow", true);
+        await agentRun.save();
+        console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, status, workflowConfig);
       } else {
         // This was the last step, mark the workflow as completed
         await agentRun.update({ status: "completed", completedAt: new Date() });

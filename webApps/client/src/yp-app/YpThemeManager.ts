@@ -743,6 +743,10 @@ export class YpThemeManager {
           "--yp-sys-color-agent-black",
           "#211e1c"
         );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-agent-blue",
+          "#1e90ff"
+        );
       }
 
       if (this.useLowestContainerSurface) {

@@ -544,6 +544,7 @@ export class YpThemeManager {
                 document.documentElement.style.setProperty("--yp-sys-color-on-container-down", this.intToHex(onColorContainerDown));
                 document.documentElement.style.setProperty("--yp-sys-color-agent-green", "#2ecc71");
                 document.documentElement.style.setProperty("--yp-sys-color-agent-black", "#211e1c");
+                document.documentElement.style.setProperty("--yp-sys-color-agent-blue", "#1e90ff");
             }
             if (this.useLowestContainerSurface) {
                 themeCss["primary"] = themeCss["secondary"];

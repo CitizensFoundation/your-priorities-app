@@ -1,5 +1,5 @@
-import { YpServerApiBase } from '../common/YpServerApiBase.js';
-import { PsAiModelSize } from '@policysynth/agents/aiModelTypes.js';
+import { YpServerApiBase } from "../common/YpServerApiBase.js";
+import { PsAiModelSize } from "@policysynth/agents/aiModelTypes.js";
 export declare class PsServerApi extends YpServerApiBase {
     baseAgentsPath: string;
     constructor(urlPath?: string);
@@ -9,8 +9,8 @@ export declare class PsServerApi extends YpServerApiBase {
     removeAgentAiModel(groupId: number, agentId: number, modelId: number): Promise<void>;
     getDetailedAgentCosts(groupId: number, agentId: number): Promise<PsDetailedAgentCostResults[]>;
     addAgentAiModel(groupId: number, agentId: number, modelId: number, size: PsAiModelSize): Promise<void>;
-    updateAgentConfiguration(groupId: number, agentId: number, updatedConfig: Partial<PsAgentAttributes['configuration']>): Promise<void>;
-    addExistingConnector(groupId: number, agentId: number, connectorId: number, type: 'input' | 'output'): Promise<void>;
+    updateAgentConfiguration(groupId: number, agentId: number, updatedConfig: Partial<PsAgentAttributes["configuration"]>): Promise<void>;
+    addExistingConnector(groupId: number, agentId: number, connectorId: number, type: "input" | "output"): Promise<void>;
     createAgent(name: string, agentClassId: number, aiModels: {
         [key: string]: number;
     }, parentAgentId: number, groupId?: number): Promise<PsAgentAttributes>;
@@ -19,13 +19,16 @@ export declare class PsServerApi extends YpServerApiBase {
     getActiveAgentClasses(groupId: number): Promise<PsAgentClassAttributes[]>;
     getActiveConnectorClasses(groupId: number): Promise<PsAgentConnectorClassAttributes[]>;
     getAgentCosts(groupId: number, agentId: number): Promise<number>;
-    createConnector(groupId: number, agentId: number, connectorClassId: number, name: string, type: 'input' | 'output'): Promise<PsAgentConnectorAttributes>;
+    createConnector(groupId: number, agentId: number, connectorClassId: number, name: string, type: "input" | "output"): Promise<PsAgentConnectorAttributes>;
     updateNode(groupId: number, agentId: number, updatedNode: PsAgentAttributes): Promise<void>;
-    updateNodeConfiguration(groupId: number, nodeType: 'agent' | 'connector', nodeId: number, updatedConfig: Partial<PsAgentAttributes['configuration'] | PsAgentConnectorAttributes['configuration']>): Promise<void>;
+    updateNodeConfiguration(groupId: number, nodeType: "agent" | "connector", nodeId: number, updatedConfig: Partial<PsAgentAttributes["configuration"] | PsAgentConnectorAttributes["configuration"]>): Promise<void>;
     getAgentStatus(groupId: number, agentId: number): Promise<PsAgentStatus>;
-    getUpdatedWorkflow(groupId: number, runId: number): Promise<YpWorkflowConfiguration | null>;
+    getUpdatedWorkflow(groupId: number, runId: number): Promise<{
+        workflow: YpWorkflowConfiguration;
+        status: YpAgentProductRunStatus;
+    } | null>;
     startWorkflowAgent(groupId: number, agentId: number, wsClientId: string): Promise<any>;
-    controlAgent(groupId: number, agentId: number, action: 'start' | 'pause' | 'stop'): Promise<any>;
+    controlAgent(groupId: number, agentId: number, action: "start" | "pause" | "stop"): Promise<any>;
     startAgent(groupId: number, agentId: number): Promise<any>;
     pauseAgent(groupId: number, agentId: number): Promise<any>;
     stopAgent(groupId: number, agentId: number): Promise<any>;

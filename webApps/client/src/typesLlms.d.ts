@@ -54,7 +54,10 @@ interface YpAssistantMessage {
   hidden?: boolean;
   uniqueToken?: string;
   url?: string;
-  updatedWorkflow?: string;
+  updatedWorkflow?: {
+    workflow: YpWorkflowConfiguration;
+    status: YpAgentProductStatus;
+  };
 }
 
 interface YpAssistantClientSystemMessage extends YpAssistantMessage {
