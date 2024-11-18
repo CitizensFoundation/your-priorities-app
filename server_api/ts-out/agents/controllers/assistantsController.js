@@ -137,6 +137,17 @@ export class AssistantController {
                         memory.currentUser = undefined;
                     }
                     await req.redisClient.set(redisKey, JSON.stringify(memory));
+                    if (req.user) {
+                        //TODO: REMOVE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+                        await YpSubscription.destroy({
+                            where: {
+                                user_id: req.user?.id,
+                            },
+                        });
+                    }
+                    else {
+                        console.warn("No user found to clear runs for");
+                    }
                     res.sendStatus(200);
                 }
                 else {

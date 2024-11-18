@@ -29,6 +29,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         console.log(`voiceAssistant: updateAiModelSession: ${message}`);
         console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser
             ?.name}`);
+        await new Promise((resolve) => setTimeout(resolve, 100));
         this.parentAssistant.memory =
             (await this.getLoadedMemory());
         console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser

@@ -112,15 +112,22 @@ export class SubscriptionModels {
     async loadUserAgentSubscriptions() {
         try {
             // Get available agent products from user's subscriptions for their domain
-            const availableAgents = await YpSubscription.findAll({
+            const availableSubscriptions = await YpSubscription.findAll({
                 where: {
-                    //domain_id: this.domainId, //TODO: get working
-                    status: "active", // Only get active subscriptions
+                    user_id: this.assistant.memory.currentUser?.id,
+                    domain_id: this.assistant.domainId,
+                    status: "active",
                 },
                 include: [
                     {
                         model: YpSubscriptionPlan,
                         as: "Plan",
+                        include: [
+                            {
+                                model: YpAgentProduct,
+                                as: "AgentProduct",
+                            },
+                        ],
                     },
                     {
                         model: YpAgentProduct,
@@ -169,15 +176,7 @@ export class SubscriptionModels {
                 ],
             });
             return {
-                availableAgents: availableAgents.map((subscription) => ({
-                    subscriptionPlanId: subscription.Plan.id,
-                    subscriptionId: subscription.id,
-                    name: subscription.Plan.name,
-                    description: subscription.Plan.description || "",
-                    imageUrl: subscription.Plan.configuration.imageUrl || "",
-                    isRunning: runningAgents.some((run) => run.Subscription?.AgentProduct?.id ===
-                        subscription.AgentProduct.id),
-                })),
+                availableSubscriptions: availableSubscriptions,
                 runningAgents: runningAgents.map((run) => ({
                     runId: run.id,
                     agentProductId: run.Subscription?.AgentProduct?.id || 0,
@@ -197,7 +196,7 @@ export class SubscriptionModels {
         catch (error) {
             console.error("Error loading agent status:", error);
             return {
-                availableAgents: [],
+                availableSubscriptions: [],
                 runningAgents: [],
                 systemStatus: {
                     healthy: false,

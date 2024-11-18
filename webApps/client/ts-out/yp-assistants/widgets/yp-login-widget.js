@@ -28,11 +28,15 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
     }
     render() {
         if (this.isLoggedIn) {
-            return html `<div class="logged-in">${this.t("loggedIn")}</div>`;
+            return html `
+        <div class="layout horizontal center-center flex">
+          <div class="logged-in">${this.t("loggedIn")}</div>
+        </div>
+      `;
         }
         else {
             return html `
-        <div class="layout horizontal center-center">
+        <div class="layout horizontal center-center flex">
           <yp-login
             id="userLogin"
             class="loginSurface"

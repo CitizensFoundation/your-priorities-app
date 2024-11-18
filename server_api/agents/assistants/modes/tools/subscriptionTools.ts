@@ -41,18 +41,24 @@ export class SubscriptionTools extends BaseAssistantTools {
       }
 
       let agentChips = "";
-      for (const agent of status.availableAgents) {
-        agentChips += `<yp-agent-chip
-                  subscriptionPlanId="${agent.subscriptionPlanId}"
-                  subscriptionId="${agent.subscriptionId}"
-                  agentName="${agent.name}"
-                  agentDescription="${agent.description}"
-                  agentImageUrl="${agent.imageUrl}"
-                ></yp-agent-chip>`;
+      for (const subscription of status.availableSubscriptions) {
+        agentChips += `<div class="agent-chips"><yp-agent-chip-for-purchase
+          isSubscribed="${true}"
+          agentProductId="${subscription.Plan?.AgentProduct?.id}"
+          subscriptionPlanId="${subscription.Plan?.id}"
+          agentName="${subscription.Plan?.AgentProduct?.name}"
+          agentDescription="${subscription.Plan?.AgentProduct?.description}"
+          agentImageUrl="${
+            subscription.Plan?.AgentProduct?.configuration.avatar?.imageUrl
+          }"
+          price="${subscription.Plan?.configuration.amount}"
+          currency="${subscription.Plan?.configuration.currency}"
+          maxRunsPerCycle="${subscription.Plan?.configuration.max_runs_per_cycle}"
+        ></yp-agent-chip-for-purchase></div>`;
       }
       let html;
 
-      if (status.availableAgents.length > 0) {
+      if (status.availableSubscriptions.length > 0) {
         html = `<div class="agent-chips">${agentChips}</div>`;
       } else {
         this.assistant.triggerResponseIfNeeded(

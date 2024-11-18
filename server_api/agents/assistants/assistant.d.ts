@@ -32,7 +32,7 @@ interface AssistantAgentRun {
 }
 
 interface AssistantAgentSubscriptionStatus {
-  availableAgents: Array<AssistantAgent>;
+  availableSubscriptions: Array<YpSubscriptionAttributes>;
   runningAgents: Array<AssistantAgentRun>;
   systemStatus: {
     healthy: boolean;

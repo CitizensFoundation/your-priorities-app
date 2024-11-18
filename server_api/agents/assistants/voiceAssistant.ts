@@ -94,6 +94,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
           ?.name
       }`
     );
+    await new Promise((resolve) => setTimeout(resolve, 100));
     this.parentAssistant.memory =
       (await this.getLoadedMemory()) as YpBaseAssistantMemoryData;
     console.log(
