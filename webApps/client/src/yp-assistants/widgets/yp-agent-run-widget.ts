@@ -260,6 +260,21 @@ export class YpAgentRunWidget extends YpBaseElement {
           margin-bottom: 16px;
         }
 
+        md-linear-progress {
+          --md-linear-progress-active-indicator-color: var(--yp-sys-color-agent-green);
+          max-width: 420px;
+          width: 420px;
+          margin: 24px;
+        }
+
+        @media (max-width: 700px) {
+          md-linear-progress {
+            max-width: 300px;
+            width: 300px;
+          }
+        }
+
+
         md-outlined-button {
           --md-outlined-button-icon-size: 26px;
         }
@@ -357,18 +372,12 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         .statusMessage {
-          font-size: 11px;
+          font-size: 15px;
           text-align: center;
+          margin: 16px;
           margin-top: 8px;
-          border-radius: 16px;
           flex-grow: 1;
           color: var(--md-sys-color-on-surface-variant);
-        }
-
-        md-linear-progress {
-          margin: 16px;
-          margin-bottom: 8px;
-          margin-top: 8px;
         }
       `,
     ];
@@ -492,7 +501,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   }
 
   private renderAgentRunningStatus() {
-    return html`<div class="agent-running-status">
+    return html`<div class="agent-running-status layout vertical center-center">
       ${this.progress !== undefined
         ? html`<md-linear-progress
             value="${this.progress / 100}"

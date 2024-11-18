@@ -104,7 +104,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                             include: [{ model: PsAgentClass, as: "Class" }],
                         });
                         const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
-                            attributes: ["id", "status", "workflow", "configuration"],
+                            attributes: ["id", "status", "workflow"],
                         });
                         if (!agentRun) {
                             console.error(`NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`);

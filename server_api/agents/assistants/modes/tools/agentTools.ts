@@ -432,7 +432,7 @@ export class AgentTools extends BaseAssistantTools {
     return {
       name: "submit_configuration",
       description:
-        "Sends an event to the webapp to click on the submit button for the user for the configuration of the current agent, this will submit the configuration to the agent",
+        "Submit the configuration for the current agent by clicking the submit button for the user",
       type: "function",
       parameters: {
         type: "object",
@@ -454,7 +454,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         clientEvents: [clientEvent],
-        data: { message: "Web app asked to submit configuration" },
+        data: { message: "Submitted configuration for the current agent successfully" },
       };
     } catch (error) {
       const errorMessage =

@@ -159,7 +159,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             });
 
             const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
-              attributes: ["id", "status", "workflow","configuration"],
+              attributes: ["id", "status", "workflow"],
             });
 
             if (!agentRun) {

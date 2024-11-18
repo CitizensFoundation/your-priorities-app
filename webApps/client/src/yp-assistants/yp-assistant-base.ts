@@ -294,6 +294,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.chatLog.forEach((element, index) => {
       if (element.uniqueToken) {
         tokenLastIndex.set(element.uniqueToken, index);
+        console.error(`tokenLastIndex: ${element.uniqueToken} -> ${index}`);
       }
     });
 
