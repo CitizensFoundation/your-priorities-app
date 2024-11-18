@@ -200,7 +200,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.chatLog.forEach((element, index) => {
             if (element.uniqueToken) {
                 tokenLastIndex.set(element.uniqueToken, index);
-                console.error(`tokenLastIndex: ${element.uniqueToken} -> ${index}`);
             }
         });
         // Second pass: filter out elements with tokens unless they're the last occurrence

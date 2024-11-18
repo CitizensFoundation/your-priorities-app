@@ -528,6 +528,7 @@ export class YourPrioritiesApi {
         this.app.use("/domain", index);
         this.app.use("/community", index);
         this.app.use("/organization", index);
+        this.app.use("/agent_bundle", index);
         this.app.use("/group", index);
         this.app.use("/post", index);
         this.app.use("/user", index);
