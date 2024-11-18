@@ -57,7 +57,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.removeGlobalListener("yp-updated-agent-workflow", this.updateWorkflow.bind(this));
     }
     startStatusUpdates() {
-        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 10000);
+        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 1200);
     }
     stopStatusUpdates() {
         if (this.statusInterval) {

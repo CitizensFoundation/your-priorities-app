@@ -115,7 +115,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   private startStatusUpdates() {
     this.statusInterval = window.setInterval(
       () => this.updateAgentStatus(),
-      10000
+      1200
     );
   }
 
