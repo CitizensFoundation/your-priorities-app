@@ -96,6 +96,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         html,
+        uniqueToken: "agentRunWidget",
         data: {
           agent,
           run,
@@ -179,6 +180,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         html,
+        uniqueToken: "agentRunWidget",
         data: {
           message,
           agentRun,
@@ -288,6 +290,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         html,
+        uniqueToken: "agentRunWidget",
         data: result,
       };
     } catch (error) {
@@ -346,6 +349,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         html,
+        uniqueToken: "agentRunWidget",
         data: result,
       };
     } catch (error) {
@@ -405,6 +409,7 @@ export class AgentTools extends BaseAssistantTools {
       return {
         success: true,
         html,
+        uniqueToken: "agentConfigurationWidget",
         data: {
           agent,
           subscription,

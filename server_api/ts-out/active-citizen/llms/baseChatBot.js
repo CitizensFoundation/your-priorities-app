@@ -155,7 +155,7 @@ export class YpBaseChatBot {
             redisKey: this.redisKey,
         };
     }
-    sendToClient(sender, message, type = "stream", hiddenContextMessage = false) {
+    sendToClient(sender, message, type = "stream", uniqueToken = undefined, hiddenContextMessage = false) {
         try {
             if (DEBUG) {
                 console.log(`sendToClient: ${JSON.stringify({ sender, type, message, hiddenContextMessage }, null, 2)}`);
@@ -166,6 +166,7 @@ export class YpBaseChatBot {
                 message: type === "html" ? undefined : message,
                 html: type === "html" ? message : undefined,
                 hiddenContextMessage,
+                uniqueToken,
             }));
             this.lastSentToUserAt = new Date();
         }

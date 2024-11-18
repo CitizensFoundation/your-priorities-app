@@ -179,7 +179,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     console.error(`No data returned from tool execution: ${toolCall.name}`);
                 }
                 if (result.html) {
-                    this.sendToClient("assistant", result.html, "html", true);
+                    this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
                     this.addAssistantHtmlMessage(result.html);
                 }
                 if (result.clientEvents) {

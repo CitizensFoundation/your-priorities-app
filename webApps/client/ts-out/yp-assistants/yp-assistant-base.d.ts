@@ -43,6 +43,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     setupVoiceCapabilities(): Promise<void>;
     get talkingHeadImageUrl(): string;
     renderVoiceTalkingHead(): import("lit-html").TemplateResult<1>;
+    get chatLogWithDeduplicatedWidgets(): YpAssistantMessage[];
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
     startRecording(): Promise<void>;

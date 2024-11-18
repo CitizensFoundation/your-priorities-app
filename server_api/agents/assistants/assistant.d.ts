@@ -82,6 +82,7 @@ interface ToolExecutionResult<T = unknown> {
   success: boolean;
   data?: T;
   html?: string;
+  uniqueToken?: string;
   clientEvents?: ToolClientEvent[];
   error?: string;
   metadata?: Record<string, unknown>;

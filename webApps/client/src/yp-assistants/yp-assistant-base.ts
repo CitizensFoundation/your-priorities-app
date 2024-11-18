@@ -277,6 +277,24 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     `;
   }
 
+  get chatLogWithDeduplicatedWidgets() {
+    // Keep track of seen tokens and their last occurrence
+    const tokenLastIndex = new Map<string, number>();
+
+    // First pass: find last occurrence of each token
+    this.chatLog.forEach((element, index) => {
+      if (element.uniqueToken) {
+        tokenLastIndex.set(element.uniqueToken, index);
+      }
+    });
+
+    // Second pass: filter out elements with tokens unless they're the last occurrence
+    return this.chatLog.filter((element, index) => {
+      if (!element.uniqueToken) return true;
+      return tokenLastIndex.get(element.uniqueToken) === index;
+    });
+  }
+
   override render() {
     return html`
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
@@ -292,7 +310,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             type="info"
             sender="assistant"
           ></yp-assistant-item-base>
-          ${this.chatLog
+          ${this.chatLogWithDeduplicatedWidgets
             .filter(
               (chatElement) =>
                 !chatElement.hidden &&

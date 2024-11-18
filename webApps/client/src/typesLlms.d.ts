@@ -50,6 +50,7 @@ interface YpAssistantMessage {
   refinedCausesSuggestions?: string[];
   base64Audio?: string;
   hidden?: boolean;
+  uniqueToken?: string;
   url?: string;
 }
 

@@ -438,7 +438,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
 
     if (result.html) {
-      this.sendToClient("assistant", result.html, "html", true);
+      this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
       this.parentAssistant.addAssistantHtmlMessage(result.html);
     }
 

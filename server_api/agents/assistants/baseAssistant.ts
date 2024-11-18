@@ -283,7 +283,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         }
 
         if (result.html) {
-          this.sendToClient("assistant", result.html, "html", true);
+          this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
           this.addAssistantHtmlMessage(result.html);
         }
 

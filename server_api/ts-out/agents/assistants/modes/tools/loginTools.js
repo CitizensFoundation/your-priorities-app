@@ -30,6 +30,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
             return {
                 success: true,
                 html,
+                uniqueToken: "loginWidget",
                 data: { message: "Login widget shown successfully" },
                 metadata: {
                     timestamp: new Date().toISOString(),

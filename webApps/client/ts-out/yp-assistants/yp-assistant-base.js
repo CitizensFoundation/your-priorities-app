@@ -185,6 +185,22 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       </div>
     `;
     }
+    get chatLogWithDeduplicatedWidgets() {
+        // Keep track of seen tokens and their last occurrence
+        const tokenLastIndex = new Map();
+        // First pass: find last occurrence of each token
+        this.chatLog.forEach((element, index) => {
+            if (element.uniqueToken) {
+                tokenLastIndex.set(element.uniqueToken, index);
+            }
+        });
+        // Second pass: filter out elements with tokens unless they're the last occurrence
+        return this.chatLog.filter((element, index) => {
+            if (!element.uniqueToken)
+                return true;
+            return tokenLastIndex.get(element.uniqueToken) === index;
+        });
+    }
     render() {
         return html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
@@ -200,7 +216,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             type="info"
             sender="assistant"
           ></yp-assistant-item-base>
-          ${this.chatLog
+          ${this.chatLogWithDeduplicatedWidgets
             .filter((chatElement) => !chatElement.hidden &&
             chatElement.type !== "hiddenContextMessage" &&
             chatElement.type !== "thinking" &&
