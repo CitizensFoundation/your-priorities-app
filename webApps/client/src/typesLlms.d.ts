@@ -9,6 +9,7 @@ type YpAssistantMessageType =
   | "html"
   | "clear_audio_buffer"
   | "audio"
+  | "updated_workflow"
   | "message"
   | "hiddenContextMessage"
   | "end"
@@ -53,6 +54,7 @@ interface YpAssistantMessage {
   hidden?: boolean;
   uniqueToken?: string;
   url?: string;
+  updatedWorkflow?: string;
 }
 
 interface YpAssistantClientSystemMessage extends YpAssistantMessage {

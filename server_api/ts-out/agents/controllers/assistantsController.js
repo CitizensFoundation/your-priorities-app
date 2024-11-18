@@ -42,6 +42,30 @@ export class AssistantController {
                 process.exit(1);
             }
         };
+        this.getUpdatedWorkflow = async (req, res) => {
+            const { groupId, runId } = req.params;
+            try {
+                const agentRun = await YpAgentProductRun.findOne({
+                    where: {
+                        id: runId,
+                    },
+                    attributes: ["workflow"],
+                    include: [{
+                            model: YpSubscription,
+                            attributes: ["id"],
+                            where: {
+                                group_id: groupId,
+                            },
+                            required: true,
+                        }],
+                });
+                res.send({ workflow: agentRun?.workflow });
+            }
+            catch (error) {
+                console.error("Error getting updated workflow:", error);
+                res.sendStatus(500);
+            }
+        };
         this.startWorkflowAgent = async (req, res) => {
             const { groupId, agentId, wsClientId } = req.params;
             try {
@@ -216,6 +240,7 @@ export class AssistantController {
         this.router.put("/:domainId/updateAssistantMemoryLoginStatus", this.updateAssistantMemoryLoginStatus.bind(this));
         this.router.put("/:domainId/submitAgentConfiguration", this.submitAgentConfiguration.bind(this));
         this.router.put("/:groupId/:agentId/startWorkflowAgent", this.startWorkflowAgent.bind(this));
+        this.router.get("/:groupId/:runId/updatedWorkflow", this.getUpdatedWorkflow.bind(this));
     }
     async startVoiceSession(req, res) {
         try {

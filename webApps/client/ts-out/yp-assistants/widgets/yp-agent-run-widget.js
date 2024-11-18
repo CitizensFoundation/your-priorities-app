@@ -33,6 +33,11 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
         this.workflowGroupId = workflow.workflowGroupId;
         this.updateAgentStatus();
+        this.addGlobalListener("yp-updated-agent-workflow", this.updateWorkflow.bind(this));
+    }
+    updateWorkflow(updatedWorkflow) {
+        this.workflow = JSON.stringify(updatedWorkflow);
+        this.requestUpdate();
     }
     get parsedWorkflow() {
         try {
@@ -47,6 +52,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     disconnectedCallback() {
         super.disconnectedCallback();
         this.stopStatusUpdates();
+        this.removeGlobalListener("yp-updated-agent-workflow", this.updateWorkflow.bind(this));
     }
     startStatusUpdates() {
         this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 10000);
@@ -64,11 +70,19 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
                 this.agentState = status.state;
                 this.progress = status.progress;
                 this.latestMessage = status.messages[status.messages.length - 1] || "";
-                if (this.agentState === "stopped" || this.agentState === "error") {
+                if (this.agentState === "stopped" ||
+                    this.agentState === "error" ||
+                    this.agentState === "completed") {
                     this.stopStatusUpdates();
                 }
                 else if (this.agentState === "running" && !this.statusInterval) {
                     this.startStatusUpdates();
+                }
+                if (this.agentState === "completed") {
+                    const updatedWorkflow = await this.api.getUpdatedWorkflow(this.workflowGroupId, this.runId);
+                    if (updatedWorkflow) {
+                        this.updateWorkflow(updatedWorkflow);
+                    }
                 }
                 this.requestUpdate();
             }
@@ -265,8 +279,8 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     }
     renderStep(step, index, isSelected) {
         const stepClass = this.getStepClass(index);
-        const isActive = isSelected && (this.runStatus === "running" ||
-            this.runStatus === "waiting_on_user");
+        const isActive = isSelected &&
+            (this.runStatus === "running" || this.runStatus === "waiting_on_user");
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">

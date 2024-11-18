@@ -31,7 +31,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     const wsClient = this.wsClients.get(wsClientId);
     if (wsClient) {
       wsClient.send(
-        JSON.stringify({ action, status, result, agentRunId, updatedWorkflow })
+        JSON.stringify({ type:"updated_workflow", action, status, result, agentRunId, updatedWorkflow })
       );
     } else {
       console.error(

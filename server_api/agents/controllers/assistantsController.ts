@@ -105,7 +105,37 @@ export class AssistantController {
       "/:groupId/:agentId/startWorkflowAgent",
       this.startWorkflowAgent.bind(this)
     );
+
+    this.router.get(
+      "/:groupId/:runId/updatedWorkflow",
+      this.getUpdatedWorkflow.bind(this)
+    );
   }
+
+  private getUpdatedWorkflow = async (req: YpRequest, res: express.Response) => {
+    const { groupId, runId } = req.params;
+    try {
+      const agentRun = await YpAgentProductRun.findOne({
+        where: {
+          id: runId,
+        },
+        attributes: ["workflow"],
+        include: [{
+          model: YpSubscription,
+          attributes: ["id"],
+          where: {
+            group_id: groupId,
+          },
+          required: true,
+        }],
+      });
+      res.send({ workflow: agentRun?.workflow });
+    } catch (error) {
+      console.error("Error getting updated workflow:", error);
+      res.sendStatus(500);
+    }
+  }
+
 
   private startWorkflowAgent = async (req: YpRequest, res: express.Response) => {
     const { groupId, agentId, wsClientId } = req.params;

@@ -253,6 +253,16 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<PsAgentStatus>;
   }
 
+  public async getUpdatedWorkflow(groupId: number, runId: number): Promise<YpWorkflowConfiguration | null> {
+    return this.fetchWrapper(
+    `/api/assistants/${groupId}/${runId}/updatedWorkflow`,
+      {
+        method: 'GET',
+      },
+      false
+    ) as Promise<YpWorkflowConfiguration | null>;
+  }
+
   async startWorkflowAgent(groupId: number, agentId: number, wsClientId: string) {
     return this.fetchWrapper(`/api/agents/${groupId}/${agentId}/startWorkflowAgent`, {
       method: 'PUT',

@@ -477,7 +477,16 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           }, 2500);
         }
         break;
-
+      case "updated_workflow":
+        if (data.updatedWorkflow) {
+          try {
+            const updatedWorkflow = JSON.parse(data.updatedWorkflow) as YpWorkflowConfiguration;
+            this.fireGlobal("yp-updated-agent-workflow", updatedWorkflow);
+          } catch (e) {
+            console.error("Error parsing updated workflow", e);
+          }
+        }
+        break;
       case "current_mode":
         if (data.mode) {
           this.currentMode = data.mode;

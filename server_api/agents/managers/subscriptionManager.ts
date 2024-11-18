@@ -196,6 +196,9 @@ export class SubscriptionManager {
       );
     }
 
+    const agentInputConnectorGroupsIds = new Map<number, number>();
+    const agentOutputConnectorGroupsIds = new Map<number, number>();
+
     // Clone sub-agents and their connectors
     for (const subAgent of originalTopLevelAgent.SubAgents ?? []) {
       const { uuid, user_id, class_id, configuration } = subAgent;
@@ -221,7 +224,7 @@ export class SubscriptionManager {
       }
 
       // Clone input connectors and update group IDs
-      for (const connector of (subAgent.OutputConnectors ??
+      for (const connector of (subAgent.InputConnectors ??
         []) as PsAgentConnector[]) {
         const connectorConfig = { ...connector.configuration };
 
@@ -233,6 +236,7 @@ export class SubscriptionManager {
           groupIdMap.has(connectorConfig.groupId)
         ) {
           connectorConfig.groupId = groupIdMap.get(connectorConfig.groupId);
+          agentInputConnectorGroupsIds.set(clonedSubAgent.id, connectorConfig.groupId);
         }
 
         const { user_id, group_id, configuration, class_id } = connector;
@@ -263,6 +267,7 @@ export class SubscriptionManager {
           groupIdMap.has(connectorConfig.groupId)
         ) {
           connectorConfig.groupId = groupIdMap.get(connectorConfig.groupId);
+          agentOutputConnectorGroupsIds.set(clonedSubAgent.id, connectorConfig.groupId);
         }
 
         const { user_id, group_id, configuration, class_id } = connector;
@@ -317,6 +322,12 @@ export class SubscriptionManager {
         const newStep = { ...step };
         if (step.agentClassUuid && agentUuidMap.has(step.agentClassUuid)) {
           newStep.agentId = agentUuidMap.get(step.agentClassUuid);
+        }
+
+        if (newStep.type === "engagmentFromInputConnector" && newStep.agentId) {
+          newStep.groupId = agentInputConnectorGroupsIds.get(newStep.agentId);
+        } else if (newStep.type === "engagmentFromOutputConnector" && newStep.agentId) {
+          newStep.groupId = agentOutputConnectorGroupsIds.get(newStep.agentId);
         }
         return newStep;
       }

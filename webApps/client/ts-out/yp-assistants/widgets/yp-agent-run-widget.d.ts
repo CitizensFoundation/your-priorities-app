@@ -18,6 +18,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private api;
     constructor();
     connectedCallback(): void;
+    updateWorkflow(updatedWorkflow: YpWorkflowConfiguration): void;
     get parsedWorkflow(): YpWorkflowConfiguration;
     disconnectedCallback(): void;
     private startStatusUpdates;
