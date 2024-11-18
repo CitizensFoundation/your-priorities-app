@@ -1,8 +1,9 @@
-import { LitElement, html, css, nothing } from "lit";
+import { LitElement, html, css, nothing, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { PsServerApi } from "../../policySynth/PsServerApi.js";
 import { YpNavHelpers } from "../../common/YpNavHelpers.js";
+import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
 
 // Assuming we have an API client
 
@@ -83,7 +84,10 @@ export class YpAgentRunWidget extends YpBaseElement {
     );
   }
 
-  updateWorkflow(updatedWorkflow: { workflow: YpWorkflowConfiguration, status: YpAgentProductRunStatus }) {
+  updateWorkflow(updatedWorkflow: {
+    workflow: YpWorkflowConfiguration;
+    status: YpAgentProductRunStatus;
+  }) {
     this.workflow = btoa(JSON.stringify(updatedWorkflow.workflow));
     this.runStatus = updatedWorkflow.status;
     this.requestUpdate();
@@ -122,6 +126,17 @@ export class YpAgentRunWidget extends YpBaseElement {
     }
   }
 
+  get latestMessageMarkdown(): string {
+    if (this.latestMessage && this.latestMessage.includes("<markdownReport>")) {
+      const startIndex = this.latestMessage.indexOf("<markdownReport>");
+      const endIndex = this.latestMessage.indexOf("</markdownReport>");
+      if (startIndex !== -1 && endIndex !== -1) {
+        return this.latestMessage.substring(startIndex + 16, endIndex);
+      }
+    }
+    return "";
+  }
+
   private async updateAgentStatus() {
     try {
       const status = await this.api.getAgentStatus(
@@ -149,7 +164,10 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         if (this.agentState === "completed") {
-          const updatedWorkflow = await this.api.getUpdatedWorkflow(this.workflowGroupId, this.runId);
+          const updatedWorkflow = await this.api.getUpdatedWorkflow(
+            this.workflowGroupId,
+            this.runId
+          );
           if (updatedWorkflow) {
             this.updateWorkflow(updatedWorkflow);
           }
@@ -193,6 +211,10 @@ export class YpAgentRunWidget extends YpBaseElement {
       super.styles,
       css`
         :host {
+        }
+
+        .completedContainer {
+          margin: 16px;
         }
 
         .inviteContainer {
@@ -261,7 +283,9 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         md-linear-progress {
-          --md-linear-progress-active-indicator-color: var(--yp-sys-color-agent-green);
+          --md-linear-progress-active-indicator-color: var(
+            --yp-sys-color-agent-green
+          );
           max-width: 420px;
           width: 420px;
           margin: 24px;
@@ -273,7 +297,6 @@ export class YpAgentRunWidget extends YpBaseElement {
             width: 300px;
           }
         }
-
 
         md-outlined-button {
           --md-outlined-button-icon-size: 26px;
@@ -401,7 +424,9 @@ export class YpAgentRunWidget extends YpBaseElement {
 
     const isActive =
       isSelected &&
-      (this.runStatus === "running" || this.runStatus === "waiting_on_user");
+      (this.runStatus === "running" ||
+        this.runStatus === "waiting_on_user" ||
+        this.runStatus === "completed");
 
     return html`
       <div class="workflow-step layout vertical">
@@ -500,6 +525,10 @@ export class YpAgentRunWidget extends YpBaseElement {
     return this.runStatus === "waiting_on_user";
   }
 
+  get isCompleted() {
+    return this.runStatus === "completed";
+  }
+
   private renderAgentRunningStatus() {
     return html`<div class="agent-running-status layout vertical center-center">
       ${this.progress !== undefined
@@ -536,23 +565,45 @@ export class YpAgentRunWidget extends YpBaseElement {
   }
 
   get groupId() {
-    return this.parsedWorkflow.steps[this.parsedWorkflow.currentStepIndex].groupId;
+    return this.parsedWorkflow.steps[this.parsedWorkflow.currentStepIndex]
+      .groupId;
   }
 
   private viewList() {
-    window.open(`/group/${this.groupId}`, '_blank');
+    window.open(`/group/${this.groupId}`, "_blank");
     //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
   }
 
+  renderCompleted(): TemplateResult {
+    return html`<div class="layout vertical center-center completedContainer">
+      ${resolveMarkdown(this.latestMessageMarkdown, {
+        includeImages: true,
+        includeCodeBlockClassNames: true,
+        handleJsonBlocks: true,
+        targetElement: this,
+      })}
+    </div>` as unknown as TemplateResult;
+  }
+
   renderWaitingOnUser() {
-    return html`<div class="layout horizontal center-center waitingOnUserContainer">
+    return html`<div
+      class="layout horizontal center-center waitingOnUserContainer"
+    >
       <div class="layout horizontal center-center flex">
-        <md-filled-button class="viewListButton" @click=${this.viewList}>${this.t("viewList")}</md-filled-button>
+        <md-filled-button class="viewListButton" @click=${this.viewList}
+          >${this.t("viewList")}</md-filled-button
+        >
       </div>
       <div class="layout vertical inviteContainer">
         <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
-        <md-outlined-text-field type="textarea" rows="7" label="${this.t("enterOneEmailPerLine")}"></md-outlined-text-field>
-        <md-filled-button class="inviteButton">${this.t("inviteToList")}</md-filled-button>
+        <md-outlined-text-field
+          type="textarea"
+          rows="7"
+          label="${this.t("enterOneEmailPerLine")}"
+        ></md-outlined-text-field>
+        <md-filled-button class="inviteButton"
+          >${this.t("inviteToList")}</md-filled-button
+        >
       </div>
     </div>`;
   }
@@ -578,6 +629,7 @@ export class YpAgentRunWidget extends YpBaseElement {
             )
           )}
         </div>
+        ${this.isCompleted ? this.renderCompleted() : nothing}
         ${this.isRunning ? this.renderAgentRunningStatus() : nothing}
         ${this.isWaitingOnUser ? this.renderWaitingOnUser() : nothing}
       </div>

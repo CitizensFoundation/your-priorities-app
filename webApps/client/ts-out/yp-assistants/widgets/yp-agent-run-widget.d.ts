@@ -1,3 +1,4 @@
+import { TemplateResult } from "lit";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 export declare class YpAgentRunWidget extends YpBaseElement {
     agentProductId: number;
@@ -26,6 +27,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     disconnectedCallback(): void;
     private startStatusUpdates;
     private stopStatusUpdates;
+    get latestMessageMarkdown(): string;
     private updateAgentStatus;
     private startAgent;
     private stopAgent;
@@ -38,11 +40,13 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get shouldDisableStartButton(): boolean;
     get isRunning(): boolean;
     get isWaitingOnUser(): boolean;
+    get isCompleted(): boolean;
     private renderAgentRunningStatus;
-    renderStartStopButtons(): import("lit-html").TemplateResult<1>;
+    renderStartStopButtons(): TemplateResult<1>;
     get groupId(): number | undefined;
     private viewList;
-    renderWaitingOnUser(): import("lit-html").TemplateResult<1>;
-    render(): import("lit-html").TemplateResult<1>;
+    renderCompleted(): TemplateResult;
+    renderWaitingOnUser(): TemplateResult<1>;
+    render(): TemplateResult<1>;
 }
 //# sourceMappingURL=yp-agent-run-widget.d.ts.map

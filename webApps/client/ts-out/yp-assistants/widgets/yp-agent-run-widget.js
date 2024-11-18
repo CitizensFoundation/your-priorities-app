@@ -8,6 +8,7 @@ import { html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { PsServerApi } from "../../policySynth/PsServerApi.js";
+import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
 // Assuming we have an API client
 let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     constructor() {
@@ -64,6 +65,16 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             this.statusInterval = undefined;
         }
     }
+    get latestMessageMarkdown() {
+        if (this.latestMessage && this.latestMessage.includes("<markdownReport>")) {
+            const startIndex = this.latestMessage.indexOf("<markdownReport>");
+            const endIndex = this.latestMessage.indexOf("</markdownReport>");
+            if (startIndex !== -1 && endIndex !== -1) {
+                return this.latestMessage.substring(startIndex + 16, endIndex);
+            }
+        }
+        return "";
+    }
     async updateAgentStatus() {
         try {
             const status = await this.api.getAgentStatus(this.workflowGroupId, this.agentId);
@@ -119,6 +130,10 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             super.styles,
             css `
         :host {
+        }
+
+        .completedContainer {
+          margin: 16px;
         }
 
         .inviteContainer {
@@ -187,7 +202,9 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
 
         md-linear-progress {
-          --md-linear-progress-active-indicator-color: var(--yp-sys-color-agent-green);
+          --md-linear-progress-active-indicator-color: var(
+            --yp-sys-color-agent-green
+          );
           max-width: 420px;
           width: 420px;
           margin: 24px;
@@ -199,7 +216,6 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             width: 300px;
           }
         }
-
 
         md-outlined-button {
           --md-outlined-button-icon-size: 26px;
@@ -323,7 +339,9 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     renderStep(step, index, isSelected) {
         const stepClass = this.getStepClass(index);
         const isActive = isSelected &&
-            (this.runStatus === "running" || this.runStatus === "waiting_on_user");
+            (this.runStatus === "running" ||
+                this.runStatus === "waiting_on_user" ||
+                this.runStatus === "completed");
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
@@ -414,6 +432,9 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     get isWaitingOnUser() {
         return this.runStatus === "waiting_on_user";
     }
+    get isCompleted() {
+        return this.runStatus === "completed";
+    }
     renderAgentRunningStatus() {
         return html `<div class="agent-running-status layout vertical center-center">
       ${this.progress !== undefined
@@ -446,21 +467,42 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     </div>`;
     }
     get groupId() {
-        return this.parsedWorkflow.steps[this.parsedWorkflow.currentStepIndex].groupId;
+        return this.parsedWorkflow.steps[this.parsedWorkflow.currentStepIndex]
+            .groupId;
     }
     viewList() {
-        window.open(`/group/${this.groupId}`, '_blank');
+        window.open(`/group/${this.groupId}`, "_blank");
         //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
     }
+    renderCompleted() {
+        return html `<div class="layout vertical center-center completedContainer">
+      ${resolveMarkdown(this.latestMessageMarkdown, {
+            includeImages: true,
+            includeCodeBlockClassNames: true,
+            handleJsonBlocks: true,
+            targetElement: this,
+        })}
+    </div>`;
+    }
     renderWaitingOnUser() {
-        return html `<div class="layout horizontal center-center waitingOnUserContainer">
+        return html `<div
+      class="layout horizontal center-center waitingOnUserContainer"
+    >
       <div class="layout horizontal center-center flex">
-        <md-filled-button class="viewListButton" @click=${this.viewList}>${this.t("viewList")}</md-filled-button>
+        <md-filled-button class="viewListButton" @click=${this.viewList}
+          >${this.t("viewList")}</md-filled-button
+        >
       </div>
       <div class="layout vertical inviteContainer">
         <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
-        <md-outlined-text-field type="textarea" rows="7" label="${this.t("enterOneEmailPerLine")}"></md-outlined-text-field>
-        <md-filled-button class="inviteButton">${this.t("inviteToList")}</md-filled-button>
+        <md-outlined-text-field
+          type="textarea"
+          rows="7"
+          label="${this.t("enterOneEmailPerLine")}"
+        ></md-outlined-text-field>
+        <md-filled-button class="inviteButton"
+          >${this.t("inviteToList")}</md-filled-button
+        >
       </div>
     </div>`;
     }
@@ -476,6 +518,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         <div class="layout horizontal wrap">
           ${this.parsedWorkflow.steps.map((step, index) => this.renderStep(step, index, index === this.parsedWorkflow.currentStepIndex))}
         </div>
+        ${this.isCompleted ? this.renderCompleted() : nothing}
         ${this.isRunning ? this.renderAgentRunningStatus() : nothing}
         ${this.isWaitingOnUser ? this.renderWaitingOnUser() : nothing}
       </div>
