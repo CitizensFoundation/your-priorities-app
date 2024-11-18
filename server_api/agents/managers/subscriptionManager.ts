@@ -473,7 +473,8 @@ export class SubscriptionManager {
       }
 
       // Check runs limit
-      await this.checkRunsLimit(subscription);
+      //TODO: Activate this again !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+      //await this.checkRunsLimit(subscription);
 
       const workflowAndRequiredQuestions = await this.cloneCommunityWorkflowTemplate(
         subscription.AgentProduct,
@@ -594,7 +595,9 @@ export class SubscriptionManager {
     runsUsed += 1;
 
     if (runsUsed > plan.configuration.max_runs_per_cycle) {
-      throw new Error("Maximum runs per cycle exceeded");
+      console.error("Maximum runs per cycle exceeded");
+      //TODO: Look into activating this again !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+      //throw new Error("Maximum runs per cycle exceeded");
     }
 
     subscription.metadata = { ...subscription.metadata, runs_used: runsUsed };

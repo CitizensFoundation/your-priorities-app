@@ -66,6 +66,7 @@ export class DirectConversationMode extends BaseAssistantMode {
             // User not logged in
             console.log("Mode: agent_direct_connection_mode, User not logged in");
             tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow. Always show the login widget if the user asks to be logged in."));
+            tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
             if (this.assistant.haveShownLoginWidget) {
                 console.log("Mode: agent_direct_connection_mode, User has shown the login widget");
                 tools.push(this.loginTools.clickGoogleLoginButton);
