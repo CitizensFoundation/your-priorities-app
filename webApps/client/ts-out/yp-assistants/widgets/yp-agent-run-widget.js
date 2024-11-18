@@ -121,10 +121,16 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         :host {
         }
 
+        .inviteContainer {
+          margin-right: 8px;
+          margin-left: 8px;
+        }
+
         .inviteHeader {
+          margin-top: 16px;
           font-size: 16px;
           font-weight: 700;
-          margin-bottom: 8px;
+          margin-bottom: 12px;
           font-family: var(--md-ref-typeface-brand);
         }
 
@@ -133,13 +139,19 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           --md-filled-button-label-text-color: #fff;
         }
 
+        .inviteButton {
+          margin-top: 16px;
+          max-width: 140px;
+          margin-left: auto;
+          margin-bottom: 24px;
+        }
+
         .waitingOnUserContainer {
           height: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 16px;
-          margin: 16px;
+          margin-top: 16px;
         }
 
         .container {
@@ -436,11 +448,10 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
       <div class="layout horizontal center-center flex">
         <md-filled-button class="viewListButton" @click=${this.viewList}>${this.t("viewList")}</md-filled-button>
       </div>
-      <div class="flex"></div>
-      <div class="layout vertical">
+      <div class="layout vertical inviteContainer">
         <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
         <md-outlined-text-field type="textarea" rows="7" label="${this.t("enterOneEmailPerLine")}"></md-outlined-text-field>
-        <md-filled-button class="inviteButton">${this.t("invite")}</md-filled-button>
+        <md-filled-button class="inviteButton">${this.t("inviteToList")}</md-filled-button>
       </div>
     </div>`;
     }
