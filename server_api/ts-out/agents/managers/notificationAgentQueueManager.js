@@ -103,18 +103,25 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                         const agent = await PsAgent.findByPk(agentId, {
                             include: [{ model: PsAgentClass, as: "Class" }],
                         });
+                        const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
+                            attributes: ["id", "status", "workflow", "configuration"],
+                        });
+                        if (!agentRun) {
+                            console.error(`NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`);
+                            return;
+                        }
                         console.log("NotificationAgentQueueManager: Agent", agent);
                         let updatedWorkflow;
                         if (agentRunId) {
                             updatedWorkflow =
-                                await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, "completed", wsClientId, returnvalue);
+                                await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, agentRun.status, wsClientId, returnvalue);
                         }
                         else {
                             console.error(`NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`);
                         }
                         if (agent) {
                             // Send notification email
-                            await this.sendNotification(agent, type, wsClientId, "completed", returnvalue, agentRunId, updatedWorkflow);
+                            await this.sendNotification(agent, type, wsClientId, agentRun.status, returnvalue, agentRunId, updatedWorkflow);
                         }
                         else {
                             console.error(`NotificationAgentQueueManager: Agent with ID ${agentId} not found.`);

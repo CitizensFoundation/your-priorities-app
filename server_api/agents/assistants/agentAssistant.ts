@@ -25,14 +25,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     domainId: number,
     memoryId: string
   ) {
-    super(
-      wsClientId,
-      wsClients,
-      redis,
-      voiceEnabled,
-      domainId,
-      memoryId
-    );
+    super(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId);
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.directConversationMode = new DirectConversationMode(this);
     this.subscriptionManager = new SubscriptionManager();
@@ -57,7 +50,13 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   handleMemoryChanged(memory: YpBaseAssistantMemoryData) {
-    console.log(`Sending memory changed to client: ${JSON.stringify(this.simplifiedMemory, null, 2)}`);
+    console.log(
+      `Sending memory changed to client: ${JSON.stringify(
+        this.simplifiedMemory,
+        null,
+        2
+      )}`
+    );
     this.sendToClient(
       "system",
       JSON.stringify(this.simplifiedMemory),
@@ -74,7 +73,13 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   get isSubscribedToCurrentAgent(): boolean {
-    console.log(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+    console.log(
+      `-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(
+        this.memory.currentAgentStatus,
+        null,
+        2
+      )}`
+    );
     return this.memory.currentAgentStatus?.subscription != undefined;
   }
 
@@ -83,16 +88,15 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   get isCurrentAgentRunning(): boolean {
-    return (
-      this.memory.currentAgentStatus?.activeAgentRun?.status === "running"
-    );
+    return this.memory.currentAgentStatus?.activeAgentRun?.status === "running";
   }
 
   get isCurrentAgentActive(): boolean {
     return (
       this.memory.currentAgentStatus?.activeAgentRun?.status === "running" ||
       this.memory.currentAgentStatus?.activeAgentRun?.status === "ready" ||
-      this.memory.currentAgentStatus?.activeAgentRun?.status === "waiting_on_user"
+      this.memory.currentAgentStatus?.activeAgentRun?.status ===
+        "waiting_on_user"
     );
   }
 
@@ -110,7 +114,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
 
   get currentAgentWorkflowCurrentStep(): YpWorkflowStep | undefined {
     return this.memory.currentAgentStatus?.activeAgentRun?.workflow?.steps[
-      this.memory.currentAgentStatus?.activeAgentRun?.workflow?.currentStepIndex ?? 0
+      this.memory.currentAgentStatus?.activeAgentRun?.workflow
+        ?.currentStepIndex ?? 0
     ];
   }
 
@@ -132,5 +137,4 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
       this.voiceBot.triggerResponse(message);
     }
   }
-
 }

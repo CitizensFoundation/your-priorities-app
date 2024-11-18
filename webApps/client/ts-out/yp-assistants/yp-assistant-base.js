@@ -105,6 +105,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         };
         this.ws.send(JSON.stringify(clientSystemMessage));
     }
+    async agentRunChanged() {
+        const clientSystemMessage = {
+            type: "client_system_message",
+            sender: "system",
+            message: "agent_run_changed",
+        };
+        this.ws.send(JSON.stringify(clientSystemMessage));
+    }
     async userLoggedIn(event) {
         if (!event.detail) {
             return;
@@ -364,6 +372,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 if (data.updatedWorkflow) {
                     try {
                         this.fireGlobal("yp-updated-agent-workflow", data.updatedWorkflow);
+                        this.agentRunChanged();
                     }
                     catch (e) {
                         console.error("Error parsing updated workflow", e);

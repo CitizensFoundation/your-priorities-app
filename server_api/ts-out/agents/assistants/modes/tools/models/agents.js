@@ -48,12 +48,15 @@ export class AgentModels {
             const workflow = agentRunToUpdate.workflow;
             const totalSteps = workflow.steps.length;
             let currentStepIndex = workflow.currentStepIndex;
-            const currentStep = workflow.steps[currentStepIndex];
+            let currentStep = workflow.steps[currentStepIndex];
             const isLastStep = currentStepIndex >= totalSteps - 1;
+            console.log(`oldStep: ${JSON.stringify(currentStep, null, 2)}`);
             if (currentStep.type !== "agentOps" && !isLastStep) {
                 workflow.currentStepIndex++;
                 currentStepIndex = workflow.currentStepIndex;
+                currentStep = workflow.steps[currentStepIndex];
             }
+            console.log(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
             if (currentStepIndex >= totalSteps) {
                 throw new Error(`Agent run ${agentRun.id} is already at the last step of the workflow`);
             }

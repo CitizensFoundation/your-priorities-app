@@ -158,6 +158,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
+            const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
+              attributes: ["id", "status", "workflow","configuration"],
+            });
+
+            if (!agentRun) {
+              console.error(
+                `NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`
+              );
+              return;
+            }
+
             console.log("NotificationAgentQueueManager: Agent", agent);
 
             let updatedWorkflow;
@@ -166,7 +177,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               updatedWorkflow =
                 await this.advanceWorkflowStepOrCompleteAgentRun(
                   agentRunId,
-                  "completed",
+                  agentRun.status,
                   wsClientId,
                   returnvalue
                 );
@@ -182,7 +193,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 agent,
                 type,
                 wsClientId,
-                "completed",
+                agentRun.status,
                 returnvalue,
                 agentRunId,
                 updatedWorkflow

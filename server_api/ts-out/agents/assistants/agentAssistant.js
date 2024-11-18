@@ -46,12 +46,13 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         return this.memory.currentAgentStatus?.configurationState === "configured";
     }
     get isCurrentAgentRunning() {
-        return (this.memory.currentAgentStatus?.activeAgentRun?.status === "running");
+        return this.memory.currentAgentStatus?.activeAgentRun?.status === "running";
     }
     get isCurrentAgentActive() {
         return (this.memory.currentAgentStatus?.activeAgentRun?.status === "running" ||
             this.memory.currentAgentStatus?.activeAgentRun?.status === "ready" ||
-            this.memory.currentAgentStatus?.activeAgentRun?.status === "waiting_on_user");
+            this.memory.currentAgentStatus?.activeAgentRun?.status ===
+                "waiting_on_user");
     }
     get haveShownConfigurationWidget() {
         return this.memory.haveShownConfigurationWidget ?? false;
@@ -63,7 +64,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         return this.memory.currentAgentStatus?.activeAgentRun?.workflow;
     }
     get currentAgentWorkflowCurrentStep() {
-        return this.memory.currentAgentStatus?.activeAgentRun?.workflow?.steps[this.memory.currentAgentStatus?.activeAgentRun?.workflow?.currentStepIndex ?? 0];
+        return this.memory.currentAgentStatus?.activeAgentRun?.workflow?.steps[this.memory.currentAgentStatus?.activeAgentRun?.workflow
+            ?.currentStepIndex ?? 0];
     }
     get isCurrentAgentWaitingOnUserInput() {
         const currentStep = this.currentAgentWorkflowCurrentStep;

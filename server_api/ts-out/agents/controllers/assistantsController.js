@@ -208,12 +208,19 @@ export class AssistantController {
                     else {
                         if (req.user && !memory.currentUser) {
                             memory.currentUser = req.user;
-                            await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
                         }
                         else if (!req.user && memory.currentUser) {
                             memory.currentUser = undefined;
-                            await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
                         }
+                        if (memory.currentAgentStatus?.activeAgentRun) {
+                            const agentRun = await YpAgentProductRun.findOne({
+                                where: {
+                                    id: memory.currentAgentStatus.activeAgentRun.id,
+                                },
+                            });
+                            memory.currentAgentStatus.activeAgentRun = agentRun;
+                        }
+                        await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
                     }
                 }
             }

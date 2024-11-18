@@ -15,6 +15,7 @@ import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
+import { YpAgentProductRun } from "../models/agentProductRun.js";
 
 /**
  * Common modes that implementations might use
@@ -92,7 +93,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     console.log(`updateAiModelSession: ${message}`);
   }
 
-  async processClientSystemMessage(clientEvent: YpAssistantClientSystemMessage) {
+  async processClientSystemMessage(
+    clientEvent: YpAssistantClientSystemMessage
+  ) {
     console.log(
       `processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`
     );
@@ -108,7 +111,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       console.log(`agent_configuration_submitted emitting`);
 
       try {
-
         if (!this.memory.currentAgentStatus!.subscription) {
           throw new Error("No subscription found");
         }
@@ -116,7 +118,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           where: {
             id: this.memory.currentAgentStatus!.subscription!.id,
             status: "active",
-          }
+          },
         });
 
         if (!subscription) {
@@ -132,7 +134,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           "update-ai-model-session",
           "The agent configuration was submitted successfully and the agent is ready to create its first agent run"
         );
-
       } catch (error) {
         console.error(`Error finding subscription: ${error}`);
         this.emit(
@@ -140,7 +141,39 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           `Failed to submit agent configuration: ${error}`
         );
       }
+    } else if (clientEvent.message === "agent_run_changed") {
+      try {
+        console.log(`agent_run_changed`);
+        if (!this.memory.currentAgentStatus?.activeAgentRun) {
+          throw new Error("No active agent run found");
+        }
+        const agentRun = await YpAgentProductRun.findOne({
+          where: {
+            id: this.memory.currentAgentStatus!.activeAgentRun?.id,
+          },
+        });
 
+        if (!agentRun) {
+          throw new Error("No agent run found");
+        }
+
+        this.memory.currentAgentStatus!.activeAgentRun =
+          agentRun as YpAgentProductRunAttributes;
+        await this.saveMemory();
+
+        console.log(`agent_run_changed emitting`);
+
+        this.emit(
+          "update-ai-model-session",
+          `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, null, 2)}`
+        );
+      } catch (error) {
+        console.error(`Error finding agent run: ${error}`);
+        this.emit(
+          "update-ai-model-session",
+          `Failed to update agent run status: ${error}`
+        );
+      }
     }
   }
 
@@ -156,16 +189,19 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     subscriptionPlan: YpSubscriptionPlanAttributes,
     subscription: YpSubscriptionAttributes | null
   ) {
-    const requiredStructuredQuestions = subscriptionPlan.configuration.requiredStructuredQuestions;
-    const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
+    const requiredStructuredQuestions =
+      subscriptionPlan.configuration.requiredStructuredQuestions;
+    const requiredStructuredAnswers =
+      subscription?.configuration?.requiredQuestionsAnswered;
     this.memory.currentAgentStatus = {
+      activeAgentRun: this.memory.currentAgentStatus?.activeAgentRun,
       subscriptionPlan,
       subscription: subscription,
       subscriptionState: subscription ? "subscribed" : "unsubscribed",
       configurationState:
-        (requiredStructuredAnswers && requiredStructuredQuestions) &&
-        requiredStructuredAnswers.length ==
-          requiredStructuredQuestions.length
+        requiredStructuredAnswers &&
+        requiredStructuredQuestions &&
+        requiredStructuredAnswers.length == requiredStructuredQuestions.length
           ? "configured"
           : "not_configured",
     };
@@ -285,7 +321,13 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         }
 
         if (result.html) {
-          this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
+          this.sendToClient(
+            "assistant",
+            result.html,
+            "html",
+            result.uniqueToken,
+            true
+          );
           this.addAssistantHtmlMessage(result.html, result.uniqueToken);
         }
 
@@ -450,7 +492,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       }
     }
 
-//    this.registerCoreFunctions();
+    //    this.registerCoreFunctions();
 
     // Set initial mode if none exists
     if (!this.memory.currentMode && modes.length > 0) {
@@ -657,8 +699,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     if (
       this.memory.currentMode === "agent_direct_connection_mode" &&
-      this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct?.configuration.avatar
-        ?.systemPrompt
+      this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
+        ?.configuration.avatar?.systemPrompt
     ) {
       systemPrompt = `${this.memory.currentAgentStatus.subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
     }
@@ -814,7 +856,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     await this.saveMemory();
   }
 
-  async addAssistantHtmlMessage(html: string, uniqueToken?: string): Promise<void> {
+  async addAssistantHtmlMessage(
+    html: string,
+    uniqueToken?: string
+  ): Promise<void> {
     this.memory.chatLog!.push({
       sender: "assistant",
       html,

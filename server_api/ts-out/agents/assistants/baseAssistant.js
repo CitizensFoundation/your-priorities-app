@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
+import { YpAgentProductRun } from "../models/agentProductRun.js";
 /**
  * Common modes that implementations might use
  */
@@ -70,7 +71,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     where: {
                         id: this.memory.currentAgentStatus.subscription.id,
                         status: "active",
-                    }
+                    },
                 });
                 if (!subscription) {
                     throw new Error("No subscription found");
@@ -81,6 +82,31 @@ export class YpBaseAssistant extends YpBaseChatBot {
             catch (error) {
                 console.error(`Error finding subscription: ${error}`);
                 this.emit("update-ai-model-session", `Failed to submit agent configuration: ${error}`);
+            }
+        }
+        else if (clientEvent.message === "agent_run_changed") {
+            try {
+                console.log(`agent_run_changed`);
+                if (!this.memory.currentAgentStatus?.activeAgentRun) {
+                    throw new Error("No active agent run found");
+                }
+                const agentRun = await YpAgentProductRun.findOne({
+                    where: {
+                        id: this.memory.currentAgentStatus.activeAgentRun?.id,
+                    },
+                });
+                if (!agentRun) {
+                    throw new Error("No agent run found");
+                }
+                this.memory.currentAgentStatus.activeAgentRun =
+                    agentRun;
+                await this.saveMemory();
+                console.log(`agent_run_changed emitting`);
+                this.emit("update-ai-model-session", `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, null, 2)}`);
+            }
+            catch (error) {
+                console.error(`Error finding agent run: ${error}`);
+                this.emit("update-ai-model-session", `Failed to update agent run status: ${error}`);
             }
         }
     }
@@ -94,12 +120,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
         const requiredStructuredQuestions = subscriptionPlan.configuration.requiredStructuredQuestions;
         const requiredStructuredAnswers = subscription?.configuration?.requiredQuestionsAnswered;
         this.memory.currentAgentStatus = {
+            activeAgentRun: this.memory.currentAgentStatus?.activeAgentRun,
             subscriptionPlan,
             subscription: subscription,
             subscriptionState: subscription ? "subscribed" : "unsubscribed",
-            configurationState: (requiredStructuredAnswers && requiredStructuredQuestions) &&
-                requiredStructuredAnswers.length ==
-                    requiredStructuredQuestions.length
+            configurationState: requiredStructuredAnswers &&
+                requiredStructuredQuestions &&
+                requiredStructuredAnswers.length == requiredStructuredQuestions.length
                 ? "configured"
                 : "not_configured",
         };
@@ -478,8 +505,8 @@ export class YpBaseAssistant extends YpBaseChatBot {
         await this.saveMemory();
         let systemPrompt = this.getCurrentSystemPrompt();
         if (this.memory.currentMode === "agent_direct_connection_mode" &&
-            this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct?.configuration.avatar
-                ?.systemPrompt) {
+            this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
+                ?.configuration.avatar?.systemPrompt) {
             systemPrompt = `${this.memory.currentAgentStatus.subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
         }
         const messages = [
