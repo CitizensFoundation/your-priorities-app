@@ -49,6 +49,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     result: any
   ) {
     try {
+      console.log("NotificationAgentQueueManager: Advancing workflow step or completing agent run", agentRunId, status);
       // Get the agent run record
       const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
         attributes: ["id", "workflow"],
@@ -72,10 +73,18 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       // Check if there are more steps
       if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
         workflowConfig.currentStepIndex++;
-        await agentRun.update({ workflow: workflowConfig });
+        let nextStatus: YpAssistantAgentWorkflowRunningStatus;
+        if (workflowConfig.steps[workflowConfig.currentStepIndex].type === "agentOps") {
+          nextStatus = "running";
+        } else {
+          nextStatus = "waiting_on_user";
+        }
+        await agentRun.update({ workflow: workflowConfig, status: nextStatus });
+        console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, workflowConfig);
       } else {
         // This was the last step, mark the workflow as completed
         await agentRun.update({ status: "completed", completedAt: new Date() });
+        console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, "to completed");
       }
 
       return workflowConfig;
@@ -133,15 +142,19 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         );
 
         try {
+          console.log("NotificationAgentQueueManager: Job completed in queue", queueName, jobId);
           // Retrieve the job instance
           const job = await newQueue.getJob(jobId);
           if (job) {
             const { agentId, type, wsClientId, agentRunId } = job.data;
+            console.log("NotificationAgentQueueManager: Job data", job.data);
 
             // Load the agent database record
             const agent = await PsAgent.findByPk(agentId, {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
+
+            console.log("NotificationAgentQueueManager: Agent", agent);
 
             let updatedWorkflow;
 

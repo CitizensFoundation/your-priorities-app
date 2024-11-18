@@ -49,7 +49,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.stopStatusUpdates();
     }
     startStatusUpdates() {
-        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 1000);
+        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 10000);
     }
     stopStatusUpdates() {
         if (this.statusInterval) {

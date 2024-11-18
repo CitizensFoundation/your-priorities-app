@@ -16,6 +16,7 @@ type YpAssistantMessageType =
   | "noStreaming"
   | "error"
   | "info"
+  | "voice_input"
   | "modeChange"
   | "agentStart"
   | "agentCompleted"

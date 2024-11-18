@@ -194,7 +194,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 tokenLastIndex.set(element.uniqueToken, index);
             }
         });
-        debugger;
         // Second pass: filter out elements with tokens unless they're the last occurrence
         return this.chatLog.filter((element, index) => {
             if (!element.uniqueToken)
@@ -320,6 +319,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 message: data.message || "",
                 html: data.html,
             });
+            this.scrollDown();
             return;
         }
         switch (data.type) {

@@ -793,7 +793,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     await this.saveMemory();
 
-    this.sendToClient("system", newMode, "modeChange", true);
+    this.sendToClient("system", newMode, "modeChange", undefined, true);
   }
 
   async addUserMessage(message: string): Promise<void> {
