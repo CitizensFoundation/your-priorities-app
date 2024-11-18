@@ -12,7 +12,7 @@ import Stripe from "stripe";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
 import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
-import { PsAgentClass } from "@policysynth/agents/dbModels/index.js";
+import { PsAgentClass, PsAiModel } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
 import WebSocket from "ws";
 import models from "../../models/index.cjs";
@@ -153,6 +153,10 @@ export class SubscriptionManager {
               },
             },
             {
+              model: PsAiModel,
+              as: "AiModels",
+            },
+            {
               model: PsAgentConnector,
               as: "InputConnectors",
             },
@@ -210,6 +214,11 @@ export class SubscriptionManager {
       }
 
       console.log("agentUuidMap", agentUuidMap);
+
+      const subAgentAiModels = await subAgent.getAiModels();
+      if (subAgentAiModels && subAgentAiModels.length > 0) {
+        await clonedSubAgent.setAiModels(subAgentAiModels);
+      }
 
       // Clone input connectors and update group IDs
       for (const connector of (subAgent.OutputConnectors ??
@@ -465,11 +474,6 @@ export class SubscriptionManager {
 
       if (!subscription || subscription.status !== "active") {
         throw new Error("Subscription is not active");
-      }
-
-      // Check if the agent product matches the subscription
-      if (subscription.agent_product_id !== subscription.AgentProduct.id) {
-        throw new Error("Agent product does not match the subscription");
       }
 
       // Check runs limit

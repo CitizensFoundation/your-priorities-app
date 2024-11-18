@@ -264,7 +264,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         // Generate a user-friendly message based on the tool result
         const resultMessage = `<contextFromRetrievedData>${JSON.stringify(resultData, null, 2)}</contextFromRetrievedData>`;
         if (resultData) {
-            this.sendToClient("assistant", resultMessage, "hiddenContextMessage", true);
+            this.sendToClient("assistant", resultMessage, "hiddenContextMessage", result.uniqueToken, true);
             if (toolName === "switch_mode") {
                 const createResponse = {
                     type: "response.create",
@@ -289,7 +289,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }
         if (result.html) {
             this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
-            this.parentAssistant.addAssistantHtmlMessage(result.html);
+            this.parentAssistant.addAssistantHtmlMessage(result.html, result.uniqueToken);
         }
         if (result.clientEvents) {
             console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);

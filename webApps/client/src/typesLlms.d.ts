@@ -66,4 +66,5 @@ interface PsSimpleChatLog {
   message: string;
   type: YpAssistantMessageType;
   hiddenContextMessage?: boolean;
+  uniqueToken?: string;
 }

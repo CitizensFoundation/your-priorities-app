@@ -413,6 +413,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         "assistant",
         resultMessage,
         "hiddenContextMessage",
+        result.uniqueToken,
         true
       );
       if (toolName === "switch_mode") {
@@ -439,7 +440,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     if (result.html) {
       this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
-      this.parentAssistant.addAssistantHtmlMessage(result.html);
+      this.parentAssistant.addAssistantHtmlMessage(result.html, result.uniqueToken);
     }
 
     if (result.clientEvents) {

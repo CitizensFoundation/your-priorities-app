@@ -166,12 +166,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 // Generate a user-friendly message based on the tool result
                 const resultMessage = `<contextFromRetrievedData>${JSON.stringify(resultData, null, 2)}</contextFromRetrievedData>`;
                 if (resultData) {
-                    this.sendToClient("assistant", resultMessage, "hiddenContextMessage", true);
+                    this.sendToClient("assistant", resultMessage, "hiddenContextMessage", result.uniqueToken, true);
                     this.memory.chatLog.push({
                         sender: "system",
                         hiddenContextMessage: true,
                         message: resultMessage,
                         type: "hiddenContextMessage",
+                        uniqueToken: result.uniqueToken,
                     });
                     await this.saveMemoryIfNeeded();
                 }
@@ -180,7 +181,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 }
                 if (result.html) {
                     this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
-                    this.addAssistantHtmlMessage(result.html);
+                    this.addAssistantHtmlMessage(result.html, result.uniqueToken);
                 }
                 if (result.clientEvents) {
                     console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
@@ -591,12 +592,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
         });
         await this.saveMemory();
     }
-    async addAssistantHtmlMessage(html) {
+    async addAssistantHtmlMessage(html, uniqueToken) {
         this.memory.chatLog.push({
             sender: "assistant",
             html,
             message: "",
             type: "html",
+            uniqueToken,
         });
         await this.saveMemory();
     }

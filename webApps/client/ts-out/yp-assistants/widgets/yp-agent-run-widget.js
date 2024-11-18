@@ -267,7 +267,6 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         const stepClass = this.getStepClass(index);
         const isActive = isSelected && (this.runStatus === "running" ||
             this.runStatus === "waiting_on_user");
-        debugger;
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">

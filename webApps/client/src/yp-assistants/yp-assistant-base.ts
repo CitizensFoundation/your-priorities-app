@@ -288,6 +288,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       }
     });
 
+    debugger;
+
     // Second pass: filter out elements with tokens unless they're the last occurrence
     return this.chatLog.filter((element, index) => {
       if (!element.uniqueToken) return true;

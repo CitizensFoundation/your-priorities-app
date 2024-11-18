@@ -267,6 +267,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             "assistant",
             resultMessage,
             "hiddenContextMessage",
+            result.uniqueToken,
             true
           );
           this.memory.chatLog!.push({
@@ -274,6 +275,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             hiddenContextMessage: true,
             message: resultMessage,
             type: "hiddenContextMessage",
+            uniqueToken: result.uniqueToken,
           } as PsSimpleChatLog);
           await this.saveMemoryIfNeeded();
         } else {
@@ -284,7 +286,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         if (result.html) {
           this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
-          this.addAssistantHtmlMessage(result.html);
+          this.addAssistantHtmlMessage(result.html, result.uniqueToken);
         }
 
         if (result.clientEvents) {
@@ -812,12 +814,13 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     await this.saveMemory();
   }
 
-  async addAssistantHtmlMessage(html: string): Promise<void> {
+  async addAssistantHtmlMessage(html: string, uniqueToken?: string): Promise<void> {
     this.memory.chatLog!.push({
       sender: "assistant",
       html,
       message: "",
       type: "html",
+      uniqueToken,
     });
     await this.saveMemory();
   }
