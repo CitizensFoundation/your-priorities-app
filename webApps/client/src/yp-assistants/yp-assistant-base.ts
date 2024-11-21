@@ -10,6 +10,8 @@ import { WavRenderer } from "./wave-renderer.js";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 import { YpServerApi } from "../common/YpServerApi.js";
 
+import "./yp-assistant-welcome.js";
+
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: Boolean })
@@ -29,6 +31,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   @property({ type: String })
   directAgentName: string | null = null;
+
+  @property({ type: Boolean })
+  welcomeScreenOpen = true;
+
+  //TODO: Read from agentbundle db object
+  @property({ type: String })
+  welcomeTextHtml = `I am your onboarding agent for Amplifier and I can talk, just click on the mic <span class="green">to talk to me</span>`;
 
   @state()
   private mediaRecorder: WavRecorder | null = null;
@@ -304,7 +313,19 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     });
   }
 
+  startInVoiceMode() {
+    this.welcomeScreenOpen = false;
+    this.toggleVoiceMode();
+  }
+
   override render() {
+    if (this.welcomeScreenOpen) {
+      return html`<yp-assistant-welcome
+        @yp-start-voice-mode="${this.startInVoiceMode}"
+        .welcomeTextHtml="${this.welcomeTextHtml}"
+        .avatarUrl="${this.directAgentAvatarUrl ? this.directAgentAvatarUrl : this.talkingHeadImageUrl}"
+      ></yp-assistant-welcome>`;
+    }
     return html`
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="voice-input-container">

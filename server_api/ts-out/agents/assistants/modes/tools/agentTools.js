@@ -160,12 +160,12 @@ export class AgentTools extends BaseAssistantTools {
             parameters: {
                 type: "object",
                 properties: {
-                    useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
+                    userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
                         type: "boolean",
                     },
                 },
                 required: [
-                    "useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName",
+                    "userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName",
                 ],
             },
             handler: this.startCurrentRunAgentNextWorkflowStepHandler.bind(this),
@@ -173,7 +173,7 @@ export class AgentTools extends BaseAssistantTools {
     }
     async startCurrentRunAgentNextWorkflowStepHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        if (!params.useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName) {
+        if (!params.userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName) {
             return {
                 success: false,
                 error: "User did not confirm starting the next workflow step with the agent name",
@@ -242,7 +242,7 @@ export class AgentTools extends BaseAssistantTools {
     }
     async stopCurrentAgentWorkflowHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        if (!params.useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName) {
+        if (!params.userHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName) {
             return {
                 success: false,
                 error: "User did not confirm stopping the current workflow step with the agent name",

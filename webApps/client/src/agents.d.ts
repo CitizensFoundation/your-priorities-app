@@ -306,11 +306,11 @@ interface YpAgentRunStartProperties {
 //
 
 interface YpAgentRunStartNextWorkflowStepParams {
-  useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: boolean;
+  userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: boolean;
 }
 
 interface YpAgentRunStartNextWorkflowStepProperties {
-  useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
+  userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
     type: "boolean";
   };
 }
@@ -319,11 +319,11 @@ interface YpAgentRunStartNextWorkflowStepProperties {
 //
 
 interface YpAgentRunStopCurrentWorkflowStepParams {
-  useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: boolean;
+  userHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: boolean;
 }
 
 interface YpAgentRunStopCurrentWorkflowStepProperties {
-  useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: {
+  userHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: {
     type: "boolean";
   };
 }

@@ -206,12 +206,12 @@ export class AgentTools extends BaseAssistantTools {
       parameters: {
         type: "object",
         properties: {
-          useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
+          userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName: {
             type: "boolean",
           },
         } as YpAgentRunStartNextWorkflowStepProperties,
         required: [
-          "useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName",
+          "userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName",
         ] as const satisfies readonly (keyof YpAgentRunStartNextWorkflowStepParams)[],
       },
       handler: this.startCurrentRunAgentNextWorkflowStepHandler.bind(this),
@@ -226,7 +226,7 @@ export class AgentTools extends BaseAssistantTools {
     ) as YpAgentRunStartNextWorkflowStepParams;
 
     if (
-      !params.useHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName
+      !params.userHasVerballyConfirmedStartOfNextWorkflowStepWithTheAgentName
     ) {
       return {
         success: false,
@@ -332,7 +332,7 @@ export class AgentTools extends BaseAssistantTools {
     ) as YpAgentRunStopCurrentWorkflowStepParams;
 
     if (
-      !params.useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName
+      !params.userHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName
     ) {
       return {
         success: false,

@@ -84,7 +84,7 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
             ></yp-assistant>`
             : html `<div class="assistantPlaceholder"></div>`}
 
-        <div class="selfStart agentBundleLogo"></div>
+        <div hidden class="selfStart agentBundleLogo"></div>
       </div>
     `;
     }

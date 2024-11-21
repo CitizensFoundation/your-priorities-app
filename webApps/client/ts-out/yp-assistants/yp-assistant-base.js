@@ -14,12 +14,16 @@ import { WavRecorder } from "../tools/wavTools/wav_recorder.js";
 import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import { WavRenderer } from "./wave-renderer.js";
+import "./yp-assistant-welcome.js";
 let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbotBase {
     constructor() {
         super();
         this.voiceEnabled = false;
         this.useMainWindowScroll = true;
         this.directAgentName = null;
+        this.welcomeScreenOpen = true;
+        //TODO: Read from agentbundle db object
+        this.welcomeTextHtml = `I am your onboarding agent for Amplifier and I can talk, just click on the mic <span class="green">to talk to me</span>`;
         this.mediaRecorder = null;
         this.wavStreamPlayer = null;
         this.isRecording = false;
@@ -209,7 +213,18 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             return tokenLastIndex.get(element.uniqueToken) === index;
         });
     }
+    startInVoiceMode() {
+        this.welcomeScreenOpen = false;
+        this.toggleVoiceMode();
+    }
     render() {
+        if (this.welcomeScreenOpen) {
+            return html `<yp-assistant-welcome
+        @yp-start-voice-mode="${this.startInVoiceMode}"
+        .welcomeTextHtml="${this.welcomeTextHtml}"
+        .avatarUrl="${this.directAgentAvatarUrl ? this.directAgentAvatarUrl : this.talkingHeadImageUrl}"
+      ></yp-assistant-welcome>`;
+        }
         return html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="voice-input-container">
@@ -972,6 +987,12 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAssistantBase.prototype, "directAgentName", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAssistantBase.prototype, "welcomeScreenOpen", void 0);
+__decorate([
+    property({ type: String })
+], YpAssistantBase.prototype, "welcomeTextHtml", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "mediaRecorder", void 0);

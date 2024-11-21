@@ -434,6 +434,9 @@ router.get("/organization*", function (req, res) {
 router.get("/community*", function (req, res) {
     sendIndex(req, res);
 });
+router.get("/agent_bundle*", function (req, res) {
+    sendIndex(req, res);
+});
 router.get("/group*", function (req, res) {
     sendIndex(req, res);
 });

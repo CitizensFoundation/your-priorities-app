@@ -2,6 +2,7 @@ import { PropertyValueMap } from "lit";
 import { YpChatbotBase } from "../yp-chatbots/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
+import "./yp-assistant-welcome.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
     domainId: number;
@@ -9,6 +10,8 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     directAgentAvatarUrl: string | undefined;
     useMainWindowScroll: boolean;
     directAgentName: string | null;
+    welcomeScreenOpen: boolean;
+    welcomeTextHtml: string;
     private mediaRecorder;
     private wavStreamPlayer;
     private isRecording;
@@ -45,6 +48,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     get talkingHeadImageUrl(): string;
     renderVoiceTalkingHead(): import("lit-html").TemplateResult<1>;
     get chatLogWithDeduplicatedWidgets(): YpAssistantMessage[];
+    startInVoiceMode(): void;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
     startRecording(): Promise<void>;
