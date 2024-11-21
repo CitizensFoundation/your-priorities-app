@@ -24,8 +24,8 @@ let YpAssistantWelcome = class YpAssistantWelcome extends YpBaseElementWithLogin
 
 
         .voice-mode-toggle {
-          margin-top: 60px;
-          margin-bottom: 60px;
+          margin-top: 70px;
+          margin-bottom: 70px;
         }
 
         md-icon.voiceModeToggleIcon {
@@ -66,9 +66,10 @@ let YpAssistantWelcome = class YpAssistantWelcome extends YpBaseElementWithLogin
         .messageMeText {
           --md-text-button-label-text-size: 20px;
           --md-text-button-label-text-line-height: 40px;
-          margin-top: 40px;
+          margin-top: 46px;
           --md-text-button-label-text-weight: 700;
           border-radius: 0;
+          --md-text-button-label-text-color: var(--md-sys-color-on-surface);
           border-bottom: 3px solid var(--md-sys-color-primary-container);
         }
 

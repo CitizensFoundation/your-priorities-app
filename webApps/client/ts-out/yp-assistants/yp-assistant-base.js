@@ -63,10 +63,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                             color = "#ffdc2f";
                         }
                         else if (this.aiIsSpeaking) {
-                            frequencies = this.mediaRecorder?.getFrequencies("voice")?.values;
+                            frequencies = this.wavStreamPlayer?.getFrequencies("voice")?.values;
                             color = "#2ecc71";
                             for (let i = 0; i < frequencies.length; i++) {
-                                frequencies[i] = frequencies[i] * 0.75;
+                                frequencies[i] = frequencies[i] * 0.15;
                             }
                         }
                         WavRenderer.drawBars(this.waveformCanvas, this.canvasCtx, frequencies, color, 10, 0, 8);
@@ -191,7 +191,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       <div class="layout horizontal" ?voice-not-enabled="${!this.voiceEnabled}">
         <img
           class="talking-head-image"
-          src="${this.directAgentAvatarUrl ? this.directAgentAvatarUrl : this.talkingHeadImageUrl}"
+          src="${this.directAgentAvatarUrl
+            ? this.directAgentAvatarUrl
+            : this.talkingHeadImageUrl}"
           alt="Voice Assistant"
         />
       </div>
@@ -222,7 +224,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             return html `<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
         .welcomeTextHtml="${this.welcomeTextHtml}"
-        .avatarUrl="${this.directAgentAvatarUrl ? this.directAgentAvatarUrl : this.talkingHeadImageUrl}"
+        .avatarUrl="${this.directAgentAvatarUrl
+                ? this.directAgentAvatarUrl
+                : this.talkingHeadImageUrl}"
       ></yp-assistant-welcome>`;
         }
         return html `
@@ -379,7 +383,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     this.aiIsSpeaking = true;
                     clearTimeout(this.aiSpeakingTimeout);
                     this.aiSpeakingTimeout = setTimeout(() => {
-                        this.aiIsSpeaking = false;
+                        //this.aiIsSpeaking = false;
                     }, 2500);
                 }
                 break;
@@ -414,12 +418,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 break;
             case "clear_audio_buffer":
                 await this.resetWaveformPlayer();
+                this.aiIsSpeaking = false;
                 break;
             case "listening_start":
                 if (this.lastChatUiElement) {
                     this.lastChatUiElement.isSpeaking = true;
                 }
                 this.userIsSpeaking = true;
+                this.aiIsSpeaking = false;
                 await this.resetWaveformPlayer();
                 break;
             case "listening_stop":
@@ -485,6 +491,25 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        .pulsing {
+          animation: pulse 2.75s infinite;
+        }
+
         .voice-mode-toggle {
           margin-top: 16px;
         }
@@ -665,7 +690,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           width: 100%;
           height: 60px;
           margin-top: 8px;
-          margin-left: 4px;
+          margin-left: 16px;
           background: transparent;
           border-radius: 0;
           max-width: 100px;
@@ -924,20 +949,25 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     `;
     }
     renderStartStopVoiceButton() {
-        return html `${!this.voiceEnabled
-            ? html `<md-icon-button
-          ?has-static-theme="${this.hasStaticTheme}"
-          class="voice-mode-toggle"
-          @click="${this.toggleVoiceMode}"
-          .label="${!this.voiceEnabled
-                ? this.t("voiceAssistant")
-                : this.t("closeAssistant")}"
-        >
-          <md-icon class="voiceModeToggleIcon">
-            ${this.renderVoiceStartButton()}</md-icon
-          ></md-icon-button
-        > `
-            : html ` <md-icon-button
+        return html `
+      <md-icon-button
+        class="voice-mode-toggle ${this.voiceEnabled ? 'pulsing' : ''}"
+        @click="${this.toggleVoiceMode}"
+        .label="${this.voiceEnabled
+            ? this.t("closeAssistant")
+            : this.t("voiceAssistant")}"
+        aria-pressed="${this.voiceEnabled}"
+        aria-label="${this.voiceEnabled
+            ? this.t("closeAssistant")
+            : this.t("voiceAssistant")}"
+      >
+        <md-icon class="voiceModeToggleIcon">
+          ${this.renderVoiceStartButton()}
+        </md-icon>
+      </md-icon-button>
+
+      ${this.voiceEnabled
+            ? html ` <md-icon-button hidden
           class="voice-mode-toggle"
           @click="${this.toggleVoiceMode}"
           .label="${!this.voiceEnabled
@@ -945,7 +975,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 : this.t("closeAssistant")}"
         >
           <md-icon class="voiceModeToggleIcon"> cancel</md-icon>
-        </md-icon-button>`}`;
+          </md-icon-button>
+        `
+            : nothing}
+    `;
     }
     renderAssistantName() {
         return html `<div class="assistantName">
@@ -955,8 +988,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     renderVoiceInput() {
         return html `
       <div class="layout horizontal voiceAvatar">
-        ${this.renderTempLogoMoveToData()}
-        ${this.renderVoiceTalkingHead()}
+        ${this.renderTempLogoMoveToData()} ${this.renderVoiceTalkingHead()}
         <div class="nameAndStartStop layout vertical">
           ${this.renderAssistantName()}
           <div class="layout horizontal">
