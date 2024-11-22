@@ -175,6 +175,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           border-radius: 4px;
           width: 100%;
           min-width: 700px;
+          min-height: 500px;
         }
 
         .workflow-step {

@@ -310,8 +310,8 @@ export class AgentTools extends BaseAssistantTools {
 
   get stopCurrentAgentWorkflow() {
     return {
-      name: "stop_current_agent_workflow",
-      description: "Stop the currently running agent workflow",
+      name: "stop_current_agent_workflow_step",
+      description: "Stop the currently running agent workflow step",
       type: "function",
       parameters: {
         type: "object",
@@ -346,9 +346,16 @@ export class AgentTools extends BaseAssistantTools {
     }
 
     try {
-      const result = await this.agentModels.stopAgentWorkflow();
+      const result = await this.agentModels.stopCurrentWorkflowStep();
 
       const html = this.renderAgentRunWidget(result.agent, result.run);
+
+      await this.updateAgentProductRun(result.run);
+
+      this.assistant.emit(
+        "update-ai-model-session",
+        "We have stopped the current workflow step for the current agent run"
+      );
 
       return {
         success: true,

@@ -164,11 +164,12 @@ export class AgentModels {
     return agentRun.run!.workflow.steps[agentRun.run!.workflow.currentStepIndex + 1];
   }
 
-  public async stopAgentWorkflow(): Promise<{
+  public async stopCurrentWorkflowStep(): Promise<{
     agent: YpAgentProductAttributes;
     run: YpAgentProductRunAttributes;
     message: string;
   }> {
+    console.log("---------------------> stopCurrentWorkflowStep");
     const agent = await this.getCurrentAgent();
     const currentRun =
       (await YpAgentProductRun.findByPk(
@@ -185,7 +186,7 @@ export class AgentModels {
     await this.queueManager.pauseAgentProcessing(agent.id);
 
     // Update run status
-    currentRun.status = "stopped";
+    currentRun.status = "ready";
     currentRun.end_time = new Date();
     await (currentRun as YpAgentProductRun).save();
 

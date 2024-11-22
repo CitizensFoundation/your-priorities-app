@@ -471,6 +471,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         type: "html",
         message: data.message || "",
         html: data.html,
+        uniqueToken: data.uniqueToken,
       });
       this.scrollDown();
       return;
@@ -616,6 +617,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   async reallyClearHistory() {
     await this.serverApi.clearChatLogFromServer(this.domainId);
     this.chatLog = [];
+    this.welcomeScreenOpen = true;
     this.requestUpdate();
   }
 

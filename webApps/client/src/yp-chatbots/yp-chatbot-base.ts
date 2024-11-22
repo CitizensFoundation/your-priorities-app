@@ -111,6 +111,11 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     super.updated(changedProperties);
     if (changedProperties.has('themeDarkMode')) {
     }
+
+    if (changedProperties.has('chatLog')) {
+      const a = this.chatLog;
+      debugger;
+    }
   }
 
   override disconnectedCallback(): void {
@@ -140,21 +145,18 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     this.infoMessage = message!;
     data.rawMessage = data.rawMessage || rawMessage;
 
-    debugger;
-
     const dataCopy = { ...data };
 
+    let newChatLog = this.chatLog;
     if (dataCopy.uniqueToken) {
-      this.chatLog = this.chatLog.filter(
+      newChatLog = this.chatLog.filter(
         (msg) => msg.uniqueToken !== dataCopy.uniqueToken
       );
     }
 
-    this.chatLog.push(dataCopy);
+    newChatLog.push(dataCopy);
 
-    debugger;
-
-    this.requestUpdate();
+    this.chatLog = newChatLog;
 
     if (changeButtonDisabledState !== undefined) {
       this.sendButton!.disabled = changeButtonDisabledState;

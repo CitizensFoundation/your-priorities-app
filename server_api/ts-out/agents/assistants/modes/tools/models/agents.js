@@ -107,7 +107,8 @@ export class AgentModels {
         }
         return agentRun.run.workflow.steps[agentRun.run.workflow.currentStepIndex + 1];
     }
-    async stopAgentWorkflow() {
+    async stopCurrentWorkflowStep() {
+        console.log("---------------------> stopCurrentWorkflowStep");
         const agent = await this.getCurrentAgent();
         const currentRun = (await YpAgentProductRun.findByPk(this.assistant.memory.currentAgentStatus?.activeAgentRun?.id));
         if (!currentRun) {
@@ -117,7 +118,7 @@ export class AgentModels {
         // Stop processing using queue manager
         await this.queueManager.pauseAgentProcessing(agent.id);
         // Update run status
-        currentRun.status = "stopped";
+        currentRun.status = "ready";
         currentRun.end_time = new Date();
         await currentRun.save();
         // Get current status from queue manager

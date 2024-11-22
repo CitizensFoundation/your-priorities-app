@@ -345,6 +345,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 type: "html",
                 message: data.message || "",
                 html: data.html,
+                uniqueToken: data.uniqueToken,
             });
             this.scrollDown();
             return;
@@ -480,6 +481,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     async reallyClearHistory() {
         await this.serverApi.clearChatLogFromServer(this.domainId);
         this.chatLog = [];
+        this.welcomeScreenOpen = true;
         this.requestUpdate();
     }
     async clearHistory() {
