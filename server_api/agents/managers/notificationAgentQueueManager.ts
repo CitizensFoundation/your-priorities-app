@@ -358,19 +358,28 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     return job.id;
   }
 
-  async pauseAgentProcessing(agentId: number): Promise<boolean> {
+  async stopAgentProcessing(agentId: number, wsClientId: string, agentRunId: number): Promise<boolean> {
     const agent = await PsAgent.findByPk(agentId, {
       include: [{ model: PsAgentClass, as: "Class" }],
     });
-    if (!agent || !agent.Class) return false;
+
+    if (!agent || !agent.Class) {
+      throw Error(`NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`);
+    }
 
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);
+    const action = "stop";
+    console.log(`NotificationAgentQueueManager: Adding stop-processing job to queue ${queueName} for agent ${agentId} ${action}`);
     await queue.add("control-message", {
-      type: "pause-processing",
+      type: `${action}Agent${agent.id}`,
       agentId: agent.id,
+      action: action,
+      wsClientId: wsClientId,
+      agentRunId: agentRunId,
     });
-    await this.updateAgentStatus(agent.id, "paused");
+
+    await this.updateAgentStatus(agent.id, "stopped");
     return true;
   }
 

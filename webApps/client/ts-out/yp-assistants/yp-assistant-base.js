@@ -63,7 +63,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                             color = "#ffdc2f";
                         }
                         else if (this.aiIsSpeaking) {
-                            frequencies = this.wavStreamPlayer?.getFrequencies("voice")?.values;
+                            frequencies =
+                                this.wavStreamPlayer?.getFrequencies("voice")?.values;
                             color = "#2ecc71";
                             for (let i = 0; i < frequencies.length; i++) {
                                 frequencies[i] = frequencies[i] * 0.15;
@@ -482,6 +483,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         await this.serverApi.clearChatLogFromServer(this.domainId);
         this.chatLog = [];
         this.welcomeScreenOpen = true;
+        this.directAgentAvatarUrl = undefined;
+        if (this.voiceEnabled) {
+            this.toggleVoiceMode();
+        }
         this.requestUpdate();
     }
     async clearHistory() {
@@ -953,7 +958,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     renderStartStopVoiceButton() {
         return html `
       <md-icon-button
-        class="voice-mode-toggle ${this.voiceEnabled ? 'pulsing' : ''}"
+        class="voice-mode-toggle ${this.voiceEnabled ? "pulsing" : ""}"
         @click="${this.toggleVoiceMode}"
         .label="${this.voiceEnabled
             ? this.t("closeAssistant")
@@ -969,16 +974,18 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       </md-icon-button>
 
       ${this.voiceEnabled
-            ? html ` <md-icon-button hidden
-          class="voice-mode-toggle"
-          @click="${this.toggleVoiceMode}"
-          .label="${!this.voiceEnabled
+            ? html `
+            <md-icon-button
+              hidden
+              class="voice-mode-toggle"
+              @click="${this.toggleVoiceMode}"
+              .label="${!this.voiceEnabled
                 ? this.t("voiceAssistant")
                 : this.t("closeAssistant")}"
-        >
-          <md-icon class="voiceModeToggleIcon"> cancel</md-icon>
-          </md-icon-button>
-        `
+            >
+              <md-icon class="voiceModeToggleIcon"> cancel</md-icon>
+            </md-icon-button>
+          `
             : nothing}
     `;
     }

@@ -116,7 +116,7 @@ export class AgentModels {
         }
         const currentStep = currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
         // Stop processing using queue manager
-        await this.queueManager.pauseAgentProcessing(agent.id);
+        await this.queueManager.stopAgentProcessing(agent.id, this.assistant.wsClientId, currentRun.id);
         // Update run status
         currentRun.status = "ready";
         currentRun.end_time = new Date();
