@@ -55,6 +55,16 @@ export class AgentModels {
     return { agent, run: currentRun };
   }
 
+  public convertToUnderscores(str: string): string {
+    return str
+      .replace(/\s+/g, '_')           // Replace spaces with underscores
+      .replace(/([A-Z])/g, '_$1')     // Add underscore before capital letters
+      .replace(/^_/, '')              // Remove leading underscore
+      .replace(/-/g, '_')             // Replace hyphens with underscores
+      .replace(/_+/g, '_')            // Replace multiple underscores with single
+      .toLowerCase();
+  }
+
   public async startCurrentWorkflowStep(
     agentRun: YpAgentProductRunAttributes,
     structuredAnswersOverrides?: YpStructuredAnswer[]
@@ -135,6 +145,23 @@ export class AgentModels {
       console.error(error);
       throw new Error("Error starting agent workflow step");
     }
+  }
+
+  public async getCurrentWorkflowStep(): Promise<YpWorkflowStep> {
+    const agentRun = await this.getCurrentAgentAndWorkflow();
+    return agentRun.run!.workflow.steps[agentRun.run!.workflow.currentStepIndex];
+  }
+
+  public async getNextWorkflowStep(): Promise<YpWorkflowStep | undefined> {
+    const agentRun = await this.getCurrentAgentAndWorkflow();
+    //TODO: look into this deal with the difference between agentOps and engagment
+    if (agentRun.run!.workflow.currentStepIndex === 0) {
+      return agentRun.run!.workflow.steps[0];
+    }
+    if (agentRun.run!.workflow.currentStepIndex >= agentRun.run!.workflow.steps.length - 1) {
+      return undefined;
+    }
+    return agentRun.run!.workflow.steps[agentRun.run!.workflow.currentStepIndex + 1];
   }
 
   public async stopAgentWorkflow(): Promise<{

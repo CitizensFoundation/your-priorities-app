@@ -152,10 +152,14 @@ export class AgentTools extends BaseAssistantTools {
             };
         }
     }
-    get startCurrentRunAgentNextWorkflowStep() {
+    async startCurrentRunAgentNextWorkflowStep() {
+        const nextWorkflowStep = await this.agentModels.getNextWorkflowStep();
+        if (!nextWorkflowStep) {
+            throw new Error("No next workflow step found");
+        }
         return {
-            name: "start_current_agent_run_next_workflow_step",
-            description: "Start the next workflow step for the current agent run",
+            name: `start_next_workflow_step_for_${this.agentModels.convertToUnderscores(nextWorkflowStep.name)}`,
+            description: `Start the next workflow step for this current agent run. ${nextWorkflowStep.description}`,
             type: "function",
             parameters: {
                 type: "object",
@@ -229,12 +233,12 @@ export class AgentTools extends BaseAssistantTools {
             parameters: {
                 type: "object",
                 properties: {
-                    useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: {
+                    userHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName: {
                         type: "boolean",
                     },
                 },
                 required: [
-                    "useHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName",
+                    "userHasVerballyConfirmedStopCurrentWorkflowStepWithTheAgentName",
                 ],
             },
             handler: this.stopCurrentAgentWorkflowHandler.bind(this),

@@ -288,6 +288,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             console.error(`No data returned from tool execution: ${event.name}`);
         }
         if (result.html) {
+            console.log("--------------------------------============================>  handleResponseDone result.html with token: ", result.uniqueToken);
             this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
             this.parentAssistant.addAssistantHtmlMessage(result.html, result.uniqueToken);
         }

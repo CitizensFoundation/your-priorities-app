@@ -63,7 +63,13 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
     addToChatLogWithMessage(data, message = undefined, changeButtonDisabledState = undefined, changeButtonLabelTo = undefined, refinedCausesSuggestions = undefined, rawMessage = undefined) {
         this.infoMessage = message;
         data.rawMessage = data.rawMessage || rawMessage;
-        this.chatLog = [...this.chatLog, data];
+        debugger;
+        const dataCopy = { ...data };
+        if (dataCopy.uniqueToken) {
+            this.chatLog = this.chatLog.filter((msg) => msg.uniqueToken !== dataCopy.uniqueToken);
+        }
+        this.chatLog.push(dataCopy);
+        debugger;
         this.requestUpdate();
         if (changeButtonDisabledState !== undefined) {
             this.sendButton.disabled = changeButtonDisabledState;

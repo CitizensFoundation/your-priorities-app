@@ -422,7 +422,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   /**
    * Abstract method that subclasses must implement to define their modes
    */
-  abstract defineAvailableModes(): AssistantChatbotMode[];
+  abstract defineAvailableModes(): Promise<AssistantChatbotMode[]>  ;
 
   async setupMemory(memoryId: string | undefined = undefined) {
     // DO nothing override call from constructor
@@ -480,7 +480,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.availableTools.clear();
 
-    const modes = this.defineAvailableModes();
+    const modes = await this.defineAvailableModes();
 
     for (const mode of modes) {
       this.modes.set(mode.name, mode);

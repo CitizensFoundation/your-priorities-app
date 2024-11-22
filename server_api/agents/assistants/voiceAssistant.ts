@@ -439,6 +439,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
 
     if (result.html) {
+      console.log("--------------------------------============================>  handleResponseDone result.html with token: ", result.uniqueToken);
       this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
       this.parentAssistant.addAssistantHtmlMessage(result.html, result.uniqueToken);
     }

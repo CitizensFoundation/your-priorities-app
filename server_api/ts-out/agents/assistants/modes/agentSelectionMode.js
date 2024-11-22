@@ -14,7 +14,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
         systemPrompt += this.renderCommon();
         return systemPrompt;
     }
-    getCurrentModeTools() {
+    async getCurrentModeTools() {
         const tools = [
             this.subscriptionTools.listAllAgentsAvailableForSubscription,
             this.navigationTools.connectDirectlyToAgent,
@@ -32,10 +32,10 @@ export class AgentSelectionMode extends BaseAssistantMode {
         }
         return tools;
     }
-    getMode() {
+    async getMode() {
         console.log("---------------------> getMode AgentSelectionMode");
         const systemPrompt = this.getCurrentModeSystemPrompt();
-        const tools = this.getCurrentModeTools();
+        const tools = await this.getCurrentModeTools();
         return {
             name: "agent_selection_mode",
             description: "List available agents the user is subscribed to or available for purchase then connect the user to the agent selected by the user",

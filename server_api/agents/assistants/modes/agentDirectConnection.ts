@@ -26,65 +26,95 @@ export class DirectConversationMode extends BaseAssistantMode {
     return systemPrompt;
   }
 
-  protected getCurrentModeTools(): AssistantChatbotTool[] {
-    const tools: AssistantChatbotTool[] = [
-    ];
+  protected async getCurrentModeTools(): Promise<AssistantChatbotTool[]> {
+    const tools: AssistantChatbotTool[] = [];
 
-    if (this.assistant.isLoggedIn) {
-      // User logged in
-      console.log("Mode: agent_direct_connection_mode, User logged in");
-      tools.push(this.loginTools.logout);
+    try {
+      if (this.assistant.isLoggedIn) {
+        // User logged in
+        console.log("Mode: agent_direct_connection_mode, User logged in");
+        tools.push(this.loginTools.logout);
 
-      if (this.assistant.isSubscribedToCurrentAgent) {
-        // User is subscribed to the current agent
-        console.log("Mode: agent_direct_connection_mode, User is subscribed to the current agent");
-        tools.push(this.subscriptionTools.unsubscribeFromCurrentAgentSubscription);
-        if (this.assistant.hasConfiguredCurrentAgent) {
-          // User has configured the current agent
-          console.log("Mode: agent_direct_connection_mode, User has configured the current agent");
-          tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
-          if (this.assistant.isCurrentAgentRunning) {
-            tools.push(this.agentTools.stopCurrentAgentWorkflow);
-          } else {
-            if (!this.assistant.isCurrentAgentActive) {
-              tools.push(this.agentTools.createNewAgentRunReadyToRunFirstWorkflowStep);
+        if (this.assistant.isSubscribedToCurrentAgent) {
+          // User is subscribed to the current agent
+          console.log(
+            "Mode: agent_direct_connection_mode, User is subscribed to the current agent"
+          );
+          tools.push(
+            this.subscriptionTools.unsubscribeFromCurrentAgentSubscription
+          );
+          if (this.assistant.hasConfiguredCurrentAgent) {
+            // User has configured the current agent
+            console.log(
+              "Mode: agent_direct_connection_mode, User has configured the current agent"
+            );
+            tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
+            if (this.assistant.isCurrentAgentRunning) {
+              tools.push(this.agentTools.stopCurrentAgentWorkflow);
             } else {
-              tools.push(this.agentTools.startCurrentRunAgentNextWorkflowStep);
-              tools.push(this.agentTools.showAgentRunWidget);
+              if (!this.assistant.isCurrentAgentActive) {
+                tools.push(
+                  this.agentTools.createNewAgentRunReadyToRunFirstWorkflowStep
+                );
+              } else {
+                const nextWorkflowStep =
+                  await this.agentTools.agentModels.getNextWorkflowStep();
+                if (nextWorkflowStep) {
+                  tools.push(
+                    await this.agentTools.startCurrentRunAgentNextWorkflowStep()
+                  );
+                }
+                tools.push(this.agentTools.showAgentRunWidget);
+              }
+            }
+            tools.push(this.agentTools.showConfigurationWidget);
+          } else {
+            // User has not configured the current agent
+            console.log(
+              "Mode: agent_direct_connection_mode, User has not configured the current agent"
+            );
+            tools.push(this.agentTools.showConfigurationWidget);
+            if (this.assistant.haveShownConfigurationWidget) {
+              console.log(
+                "Mode: agent_direct_connection_mode, User has shown the configuration widget"
+              );
+              tools.push(this.agentTools.submitConfiguration);
             }
           }
-          tools.push(this.agentTools.showConfigurationWidget);
         } else {
-          // User has not configured the current agent
-          console.log("Mode: agent_direct_connection_mode, User has not configured the current agent");
-          tools.push(this.agentTools.showConfigurationWidget);
-          if (this.assistant.haveShownConfigurationWidget) {
-            console.log("Mode: agent_direct_connection_mode, User has shown the configuration widget");
-            tools.push(this.agentTools.submitConfiguration);
-          }
+          // User is not subscribed to the current agent
+          console.log(
+            "Mode: agent_direct_connection_mode, User is not subscribed to the current agent"
+          );
+          tools.push(this.subscriptionTools.subscribeToCurrentAgentPlan);
+          tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
         }
       } else {
-        // User is not subscribed to the current agent
-        console.log("Mode: agent_direct_connection_mode, User is not subscribed to the current agent");
-        tools.push(this.subscriptionTools.subscribeToCurrentAgentPlan);
+        // User not logged in
+        console.log("Mode: agent_direct_connection_mode, User not logged in");
+        tools.push(
+          this.loginTools.showLogin(
+            "Show login widget to the user if wants to subscribe to an agent or start an agent workflow. Always show the login widget if the user asks to be logged in."
+          )
+        );
         tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
+        if (this.assistant.haveShownLoginWidget) {
+          console.log(
+            "Mode: agent_direct_connection_mode, User has shown the login widget"
+          );
+          tools.push(this.loginTools.clickGoogleLoginButton);
+          tools.push(this.loginTools.clickMainLoginButton);
+        }
       }
-    } else {
-      // User not logged in
-      console.log("Mode: agent_direct_connection_mode, User not logged in");
-      tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow. Always show the login widget if the user asks to be logged in."));
-      tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
-      if (this.assistant.haveShownLoginWidget) {
-        console.log("Mode: agent_direct_connection_mode, User has shown the login widget");
-        tools.push(this.loginTools.clickGoogleLoginButton);
-        tools.push(this.loginTools.clickMainLoginButton);
-      }
-    }
 
-    return tools;
+      return tools;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 
-  public getMode(): AssistantChatbotMode {
+  public async getMode(): Promise<AssistantChatbotMode> {
     console.log("---------------------> getMode DirectConversationMode");
     const systemPrompt = this.getCurrentModeSystemPrompt();
     const tools = this.getCurrentModeTools();
@@ -94,7 +124,7 @@ export class DirectConversationMode extends BaseAssistantMode {
       description:
         "Direct connection to an agent the user is subscribed to or available for purchase",
       systemPrompt: systemPrompt,
-      tools: tools,
+      tools: await tools,
       allowedTransitions: ["agent_direct_connection_mode"],
     };
   }

@@ -24,7 +24,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
     return systemPrompt;
   }
 
-  protected getCurrentModeTools(): AssistantChatbotTool[] {
+  protected async getCurrentModeTools(): Promise<AssistantChatbotTool[]> {
     const tools: AssistantChatbotTool[] = [
       this.subscriptionTools.listAllAgentsAvailableForSubscription,
       this.navigationTools.connectDirectlyToAgent,
@@ -44,10 +44,10 @@ export class AgentSelectionMode extends BaseAssistantMode {
     return tools;
   }
 
-  public getMode(): AssistantChatbotMode {
+  public async getMode(): Promise<AssistantChatbotMode> {
     console.log("---------------------> getMode AgentSelectionMode");
     const systemPrompt = this.getCurrentModeSystemPrompt();
-    const tools = this.getCurrentModeTools();
+    const tools = await this.getCurrentModeTools();
 
     return {
       name: "agent_selection_mode",

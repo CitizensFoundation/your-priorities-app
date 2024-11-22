@@ -32,10 +32,10 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     this.on("memory-changed", this.handleMemoryChanged.bind(this));
   }
 
-  defineAvailableModes(): AssistantChatbotMode[] {
+  async defineAvailableModes(): Promise<AssistantChatbotMode[]> {
     return [
-      this.agentSelectionMode.getMode(),
-      this.directConversationMode.getMode(),
+      await this.agentSelectionMode.getMode(),
+      await this.directConversationMode.getMode(),
     ];
   }
 

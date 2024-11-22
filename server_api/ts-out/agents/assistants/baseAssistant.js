@@ -326,7 +326,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         console.log("---------------------> initializeModes");
         await this.setupMemoryAsync();
         this.availableTools.clear();
-        const modes = this.defineAvailableModes();
+        const modes = await this.defineAvailableModes();
         for (const mode of modes) {
             this.modes.set(mode.name, mode);
             console.log(`initializeModes: ${mode.name}`);

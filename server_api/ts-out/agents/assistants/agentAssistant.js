@@ -13,10 +13,10 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         this.subscriptionManager = new SubscriptionManager();
         this.on("memory-changed", this.handleMemoryChanged.bind(this));
     }
-    defineAvailableModes() {
+    async defineAvailableModes() {
         return [
-            this.agentSelectionMode.getMode(),
-            this.directConversationMode.getMode(),
+            await this.agentSelectionMode.getMode(),
+            await this.directConversationMode.getMode(),
         ];
     }
     get simplifiedMemory() {
