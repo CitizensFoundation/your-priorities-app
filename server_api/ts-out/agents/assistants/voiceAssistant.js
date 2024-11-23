@@ -458,9 +458,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }
         await this.parentAssistant.initializeModes();
         console.log("======================> initializeVoiceSession current mode", this.parentAssistant.memory.currentMode);
-        if (this.DEBUG) {
-            console.log("======================> initializeVoiceSession system prompt", this.parentAssistant.getCurrentSystemPrompt());
-        }
+        console.log("======================> initializeVoiceSession system prompt", this.parentAssistant.getCurrentSystemPrompt());
         console.log("======================> initializeVoiceSession functions", this.parentAssistant.getCurrentModeFunctions());
         let chatHistory;
         if (this.parentAssistant.memory &&
@@ -496,7 +494,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (chatHistory) {
             instructions += `\n\n<ImportantPreviousChatHistory>\n${chatHistory}\n</ImportantPreviousChatHistory>`;
         }
-        console.log("initializeVoiceSession final instructions", instructions);
+        if (this.DEBUG) {
+            console.log("initializeVoiceSession final instructions", instructions);
+        }
         // Then update the session with full configuration
         const sessionConfig = {
             type: "session.update",
@@ -520,7 +520,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 },
             },
         };
-        console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
+        if (this.DEBUG) {
+            console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
+        }
         this.sendToVoiceConnection(sessionConfig);
         setTimeout(() => {
             if (this.exitMessageFromDirectAgentConversation &&

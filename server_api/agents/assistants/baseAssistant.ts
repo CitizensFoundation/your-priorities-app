@@ -332,9 +332,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         }
 
         if (result.clientEvents) {
-          console.log(
-            `clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`
-          );
+          if (this.DEBUG) {
+            console.log(
+              `clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`
+            );
+          }
 
           for (const clientEvent of result.clientEvents) {
             this.sendToClient(
@@ -730,10 +732,12 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         "======================> conversation currentMode",
         this.memory?.currentMode
       );
+      if (this.DEBUG) {
       console.log(
         "======================> conversation",
         JSON.stringify(messages, null, 2)
-      );
+        );
+      }
       console.log(
         "======================> conversation",
         JSON.stringify(tools, null, 2)

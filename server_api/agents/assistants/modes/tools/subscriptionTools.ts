@@ -251,7 +251,10 @@ export class SubscriptionTools extends BaseAssistantTools {
         ></yp-agent-chip-for-purchase></div>`;
       }
 
-      this.assistant.emit("update-ai-model-session", "Successfully subscribed to agent plan");
+      this.assistant.emit(
+        "update-ai-model-session",
+        "Successfully subscribed to agent plan, now show the configuration tool/widget"
+      );
 
       return {
         success: true,

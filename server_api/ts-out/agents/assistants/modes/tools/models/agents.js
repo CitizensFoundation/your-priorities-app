@@ -115,8 +115,11 @@ export class AgentModels {
             throw new Error("No active workflow found to stop");
         }
         const currentStep = currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
+        if (!currentStep.agentId) {
+            throw new Error("No agent ID found in the current step");
+        }
         // Stop processing using queue manager
-        await this.queueManager.stopAgentProcessing(agent.id, this.assistant.wsClientId, currentRun.id);
+        await this.queueManager.stopAgentProcessing(currentStep.agentId, this.assistant.wsClientId, currentRun.id);
         // Update run status
         currentRun.status = "ready";
         currentRun.end_time = new Date();

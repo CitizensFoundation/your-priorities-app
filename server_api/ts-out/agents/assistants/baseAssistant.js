@@ -211,7 +211,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     this.addAssistantHtmlMessage(result.html, result.uniqueToken);
                 }
                 if (result.clientEvents) {
-                    console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
+                    if (this.DEBUG) {
+                        console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
+                    }
                     for (const clientEvent of result.clientEvents) {
                         this.sendToClient("assistant", clientEvent.details, clientEvent.name);
                     }
@@ -527,7 +529,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 },
             }));
             console.log("======================> conversation currentMode", this.memory?.currentMode);
-            console.log("======================> conversation", JSON.stringify(messages, null, 2));
+            if (this.DEBUG) {
+                console.log("======================> conversation", JSON.stringify(messages, null, 2));
+            }
             console.log("======================> conversation", JSON.stringify(tools, null, 2));
             const stream = await this.openaiClient.chat.completions.create({
                 model: this.modelName,

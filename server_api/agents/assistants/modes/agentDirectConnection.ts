@@ -48,7 +48,6 @@ export class DirectConversationMode extends BaseAssistantMode {
             console.log(
               "Mode: agent_direct_connection_mode, User has configured the current agent"
             );
-            tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
             if (this.assistant.isCurrentAgentRunning) {
               tools.push(this.agentTools.stopCurrentAgentWorkflow);
             } else {
@@ -64,7 +63,8 @@ export class DirectConversationMode extends BaseAssistantMode {
                     await this.agentTools.startCurrentRunAgentNextWorkflowStep()
                   );
                 }
-                tools.push(this.agentTools.showAgentRunWidget);
+                //TODO: Do we need this if the user looses the widget in their chat history?
+                //tools.push(this.agentTools.showAgentRunWidget);
               }
             }
             tools.push(this.agentTools.showConfigurationWidget);

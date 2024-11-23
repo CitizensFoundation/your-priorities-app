@@ -359,6 +359,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
   }
 
   async stopAgentProcessing(agentId: number, wsClientId: string, agentRunId: number): Promise<boolean> {
+    console.log(`NotificationAgentQueueManager: Stopping agent processing for agent ${agentId}`);
     const agent = await PsAgent.findByPk(agentId, {
       include: [{ model: PsAgentClass, as: "Class" }],
     });

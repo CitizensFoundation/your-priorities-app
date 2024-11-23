@@ -29,7 +29,9 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         };
     }
     handleMemoryChanged(memory) {
-        console.log(`Sending memory changed to client: ${JSON.stringify(this.simplifiedMemory, null, 2)}`);
+        if (this.DEBUG) {
+            console.log(`Sending memory changed to client: ${JSON.stringify(this.simplifiedMemory, null, 2)}`);
+        }
         this.sendToClient("system", JSON.stringify(this.simplifiedMemory), "memory-changed");
     }
     get isLoggedIn() {
@@ -39,7 +41,9 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         return this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct;
     }
     get isSubscribedToCurrentAgent() {
-        console.log(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+        if (this.DEBUG) {
+            console.log(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+        }
         return this.memory.currentAgentStatus?.subscription != undefined;
     }
     get hasConfiguredCurrentAgent() {
