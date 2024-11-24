@@ -220,10 +220,19 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.welcomeScreenOpen = false;
         this.toggleVoiceMode();
     }
+    async startInTextMode() {
+        this.welcomeScreenOpen = false;
+        await this.updateComplete;
+        // wait 300 ms
+        setTimeout(() => {
+            this.chatInputField.focus();
+        }, 300);
+    }
     render() {
         if (this.welcomeScreenOpen) {
             return html `<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
+        @yp-start-text-mode="${this.startInTextMode}"
         .welcomeTextHtml="${this.welcomeTextHtml}"
         .avatarUrl="${this.directAgentAvatarUrl
                 ? this.directAgentAvatarUrl
@@ -349,6 +358,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 uniqueToken: data.uniqueToken,
             });
             await this.updateComplete;
+            await new Promise((resolve) => setTimeout(resolve, 100));
             this.scrollDown();
             return;
         }

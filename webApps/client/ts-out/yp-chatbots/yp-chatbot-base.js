@@ -40,7 +40,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
     firstUpdated(_changedProperties) {
         // focus the text input
         setTimeout(() => {
-            this.chatInputField.focus();
+            this.chatInputField?.focus();
         }, 420);
         setTimeout(() => {
             window.addEventListener('scroll', this.handleScroll.bind(this));

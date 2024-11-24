@@ -106,6 +106,10 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
     this.fire("yp-start-voice-mode", event);
   }
 
+  startInTextMode(event: CustomEvent) {
+    this.fire("yp-start-text-mode", event);
+  }
+
   renderVoiceStartIcon() {
     return html`<svg
       width="40"
@@ -177,7 +181,7 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
             ${this.t("orifyoucanttalkmessage")}
           </div>
           <div class="layout vertical center-center">
-            <md-text-button class="messageMeText"
+            <md-text-button class="messageMeText" @click="${this.startInTextMode}"
               >${this.t("messageMe")}
             </md-text-button>
           </div>

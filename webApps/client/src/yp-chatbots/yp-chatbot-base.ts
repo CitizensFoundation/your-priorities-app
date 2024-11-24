@@ -94,7 +94,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
   ): void {
     // focus the text input
     setTimeout(() => {
-      this.chatInputField!.focus();
+      this.chatInputField?.focus();
     }, 420);
 
     setTimeout(() => {

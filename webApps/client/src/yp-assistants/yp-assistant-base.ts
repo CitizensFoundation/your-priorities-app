@@ -322,10 +322,20 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.toggleVoiceMode();
   }
 
+  async startInTextMode() {
+    this.welcomeScreenOpen = false;
+    await this.updateComplete;
+    // wait 300 ms
+    setTimeout(() => {
+      this.chatInputField!.focus();
+    }, 300);
+  }
+
   override render() {
     if (this.welcomeScreenOpen) {
       return html`<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
+        @yp-start-text-mode="${this.startInTextMode}"
         .welcomeTextHtml="${this.welcomeTextHtml}"
         .avatarUrl="${this.directAgentAvatarUrl
           ? this.directAgentAvatarUrl
@@ -474,7 +484,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         html: data.html,
         uniqueToken: data.uniqueToken,
       });
+
       await this.updateComplete;
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
       this.scrollDown();
       return;
     }

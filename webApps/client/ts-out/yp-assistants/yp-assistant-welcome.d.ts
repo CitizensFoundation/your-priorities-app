@@ -4,6 +4,7 @@ export declare class YpAssistantWelcome extends YpBaseElementWithLogin {
     avatarUrl: string;
     static get styles(): any[];
     startInVoiceMode(event: CustomEvent): void;
+    startInTextMode(event: CustomEvent): void;
     renderVoiceStartIcon(): import("lit-html").TemplateResult<1>;
     renderVoiceIconButton(): import("lit-html").TemplateResult<1>;
     renderVoiceButton(): import("lit-html").TemplateResult<1>;
