@@ -75,7 +75,6 @@ export declare class YpApp extends YpBaseElement {
     userDrawerOpened: boolean;
     navDrawerOpened: boolean;
     notificationDrawerOpened: boolean;
-    languageLoaded: boolean;
     currentTheme?: YpThemeConfiguration;
     keepOpenForPost: string | undefined;
     keepOpenForGroup: string | undefined;

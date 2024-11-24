@@ -183,9 +183,6 @@ export class YpApp extends YpBaseElement {
   @property({ type: Boolean })
   notificationDrawerOpened = false;
 
-  @property({ type: Boolean })
-  languageLoaded = false;
-
   @property({ type: Object })
   currentTheme?: YpThemeConfiguration;
 

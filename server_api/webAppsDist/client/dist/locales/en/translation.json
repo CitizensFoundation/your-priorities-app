@@ -1,4 +1,7 @@
 {
+  "stopTalking": "Stop",
+  "startTalking": "Talk",
+  "talkToTheAssistant": "Talk to the assistant",
   "orifyoucanttalkmessage":"Or if you can't talk now you can also",
   "messageMe": "message me",
   "agentConfiguration": "Agent Configuration",

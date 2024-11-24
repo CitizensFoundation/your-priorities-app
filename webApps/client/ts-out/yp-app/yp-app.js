@@ -63,7 +63,6 @@ let YpApp = class YpApp extends YpBaseElement {
         this.userDrawerOpened = false;
         this.navDrawerOpened = false;
         this.notificationDrawerOpened = false;
-        this.languageLoaded = false;
         this.breadcrumbs = [];
         this.anchor = null;
         this.previousSearches = [];
@@ -1597,9 +1596,6 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "notificationDrawerOpened", void 0);
-__decorate([
-    property({ type: Boolean })
-], YpApp.prototype, "languageLoaded", void 0);
 __decorate([
     property({ type: Object })
 ], YpApp.prototype, "currentTheme", void 0);
