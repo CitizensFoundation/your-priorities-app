@@ -26,10 +26,10 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 
 export const CollectionTabTypes: Record<string, number> = {
-  Assistant: 0,
-  Collection: 1,
-  Newsfeed: 2,
-  Map: 3,
+  Collection: 0,
+  Newsfeed: 1,
+  Map: 2,
+  Assistant: 3,
 };
 
 export abstract class YpCollection extends YpBaseElementWithLogin {

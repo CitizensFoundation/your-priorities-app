@@ -19,10 +19,10 @@ import "../yp-assistants/yp-assistant.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export const CollectionTabTypes = {
-    Assistant: 0,
-    Collection: 1,
-    Newsfeed: 2,
-    Map: 3,
+    Collection: 0,
+    Newsfeed: 1,
+    Map: 2,
+    Assistant: 3,
 };
 export class YpCollection extends YpBaseElementWithLogin {
     constructor(collectionType, collectionItemType, collectionCreateFabIcon, collectionCreateFabLabel) {

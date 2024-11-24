@@ -18,6 +18,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         super(...arguments);
         this.filter = "newest";
         this.statusFilter = "open";
+        this.hideCategories = false;
         this.noPosts = false;
         this.showSearchIcon = false;
         this.grid = false;
@@ -274,6 +275,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             </md-outlined-text-field>
           </div>
           <yp-posts-filter
+            ?hidden="${this.hideCategories}"
             @click="${this._tapOnFilter}"
             .subTitle="${this.subTitle ? this.subTitle : ""}"
             class="filter"
@@ -745,6 +747,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpPostsList.prototype, "statusFilter", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPostsList.prototype, "hideCategories", void 0);
 __decorate([
     property({ type: Array })
 ], YpPostsList.prototype, "posts", void 0);

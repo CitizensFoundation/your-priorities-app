@@ -61,6 +61,7 @@ export declare class YpGroup extends YpCollection {
     renderGroupFolder(): TemplateResult<1>;
     get isNewPost(): boolean | undefined;
     render(): TemplateResult<1>;
+    get hideBigHeaders(): string | number | undefined;
     renderYpGroup(): TemplateResult<1>;
 }
 //# sourceMappingURL=yp-group.d.ts.map

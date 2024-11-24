@@ -891,7 +891,7 @@ export class YpGroup extends YpCollection {
 
   //TODO: Fix moving on to the next group with focus if 0 ideas in Open
   override renderTabs() {
-    if (this.collection && !this.tabsHidden) {
+    if (this.collection && !this.tabsHidden && !this.hideBigHeaders) {
       return html`
         <div class="layout vertical center-center">
           <md-tabs
@@ -933,18 +933,24 @@ export class YpGroup extends YpCollection {
 
   renderPostList(statusFilter: string): TemplateResult {
     return this.collection
-      ? html`<div class="layout vertical center-center">
-          <yp-posts-list
-            id="${statusFilter}PostList"
-            role="main"
-            aria-label="${this.t("posts.posts")}"
-            .selectedGroupTab="${this.selectedGroupTab}"
-            .listRoute="${this.subRoute}"
-            .statusFilter="${statusFilter}"
-            .searchingFor="${this.searchingFor}"
-            .group="${this.collection as YpGroupData}"
-          ></yp-posts-list>
-        </div> `
+      ? html`
+          ${this.hideBigHeaders
+            ? html` <div class="smallHeader">${this.collection.name} <span class="smallHeaderCounter">${(this.tabCounters && this.tabCounters["open"]!=undefined) ? `(${this.tabCounters["open"]})` : ""}</span></div>`
+            : nothing}
+          <div class="layout vertical center-center">
+            <yp-posts-list
+              id="${statusFilter}PostList"
+              role="main"
+              ?hideCategories="${this.hideBigHeaders}"
+              aria-label="${this.t("posts.posts")}"
+              .selectedGroupTab="${this.selectedGroupTab}"
+              .listRoute="${this.subRoute}"
+              .statusFilter="${statusFilter}"
+              .searchingFor="${this.searchingFor}"
+              .group="${this.collection as YpGroupData}"
+            ></yp-posts-list>
+          </div>
+        `
       : html``;
   }
 
@@ -1023,7 +1029,7 @@ export class YpGroup extends YpCollection {
   }
 
   override renderHeader() {
-    return this.collection && !this.noHeader
+    return this.collection && !this.noHeader && !this.hideBigHeaders
       ? html`
           <div class="layout vertical center-center header">
             <yp-group-header
@@ -1066,6 +1072,21 @@ export class YpGroup extends YpCollection {
       css`
         yp-posts-list {
           width: calc(100% - 66px);
+        }
+
+        .smallHeader {
+          margin-left: 60px;
+          font-size: 36px;
+          font-weight: 700;
+          font-family: var(--md-ref-typeface-brand);
+        }
+
+        .smallHeaderCounter {
+          font-size: 30px;
+          font-weight: 700;
+          font-family: var(--md-ref-typeface-brand);
+          padding-left: 16px;
+          padding-bottom: 2px;
         }
 
         @media (max-width: 768px) {
@@ -1160,6 +1181,10 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  get hideBigHeaders() {
+    return window.appGlobals.originalQueryParameters.forAgentBundle;
+  }
+
   renderYpGroup() {
     return html`
       <div class="layout vertical center-center">
@@ -1169,7 +1194,8 @@ export class YpGroup extends YpCollection {
             ${this.renderTabs()}
             <div class="flex"></div>
             <yp-post-card-add
-              ?hidden=${(this.collection!.configuration as YpGroupConfiguration)
+              ?hidden=${this.hideBigHeaders ||
+              (this.collection!.configuration as YpGroupConfiguration)
                 .hideNewPost}
               class="createFab"
               .group="${this.collection}"

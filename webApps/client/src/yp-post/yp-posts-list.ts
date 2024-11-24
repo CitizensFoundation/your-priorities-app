@@ -33,6 +33,9 @@ export class YpPostsList extends YpBaseElement {
   @property({ type: String })
   statusFilter = "open";
 
+  @property({ type: Boolean })
+  hideCategories = false;
+
   @property({ type: Array })
   posts: Array<YpPostData> | undefined;
 
@@ -326,6 +329,7 @@ export class YpPostsList extends YpBaseElement {
             </md-outlined-text-field>
           </div>
           <yp-posts-filter
+            ?hidden="${this.hideCategories}"
             @click="${this._tapOnFilter}"
             .subTitle="${this.subTitle ? this.subTitle : ""}"
             class="filter"

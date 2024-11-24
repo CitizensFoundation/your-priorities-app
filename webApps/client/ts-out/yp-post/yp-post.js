@@ -494,7 +494,6 @@ let YpPost = class YpPost extends YpCollection {
     }
     connectedCallback() {
         super.connectedCallback();
-        this.addListener("yp-debate-info", this._updateDebateInfo);
         this.addListener("yp-post-image-count", this._updatePostImageCount);
         document.addEventListener("keydown", this.handleKeydown.bind(this));
     }

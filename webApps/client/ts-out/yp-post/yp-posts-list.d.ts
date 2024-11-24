@@ -9,6 +9,7 @@ export declare class YpPostsList extends YpBaseElement {
     subTitle: string | undefined;
     filter: string;
     statusFilter: string;
+    hideCategories: boolean;
     posts: Array<YpPostData> | undefined;
     userId: number | undefined;
     group: YpGroupData;
