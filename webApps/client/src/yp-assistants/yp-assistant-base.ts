@@ -37,7 +37,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   //TODO: Read from agentbundle db object
   @property({ type: String })
-  welcomeTextHtml = `I am your onboarding agent for Amplifier and I can talk, just click on the mic <span class="green">to talk to me</span>`;
+  welcomeTextHtml = `I am your assistant for Amplifier and you can <span class="green">to talk to me</span>`;
 
   @state()
   private mediaRecorder: WavRecorder | null = null;
@@ -685,6 +685,29 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           max-width: 940px;
         }
 
+        .talkToTheAssistantButton {
+          --md-elevated-button-label-text-color: #FFF;
+          --md-elevated-button-focus-label-text-color: #FFF;
+          --md-elevated-button-hover-label-text-color: #FFF;
+          --md-elevated-button-container-shadow-color: var(--yp-sys-color-agent-green);
+          --md-elevated-button-container-height: 39px;
+          --md-elevated-button-container-color: var(--yp-sys-color-agent-green);
+          --md-elevated-button-label-text-weight: 600;
+          --md-elevated-button-label-text-size: 14px;
+          height: 39px;
+          margin-top: 32px;
+        }
+
+        .stopVoiceButton {
+          height: 39px;
+          margin-top: 32px;
+          --md-outlined-button-label-text-color: var(--yp-sys-color-agent-black);
+          --md-outlined-button-focus-label-text-color: var(--yp-sys-color-agent-black);
+          --md-outlined-button-hover-label-text-color: var(--yp-sys-color-agent-black);
+          --md-outlined-button-label-text-weight: 600;
+          --md-outlined-button-label-text-size: 14px;
+        }
+
         .you-chat-element {
           align-self: flex-start;
           justify-content: flex-start;
@@ -717,7 +740,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           left: 0;
           z-index: 10;
           width: 100vw;
-          height: 116px;
+          height: 124px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -779,10 +802,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           color: var(--md-sys-color-on-surface);
           line-height: 33px;
           font-family: var(--md-ref-typeface-brand);
+          margin-top: -6px;
+          margin-left: 8px;
         }
 
         .nameAndStartStop {
-          margin-left: 16px;
+          margin-left: 24px;
         }
 
         .voiceClose {
@@ -841,7 +866,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           width: 100%;
           height: 60px;
           margin-top: 8px;
-          margin-left: 16px;
+          margin-left: 24px;
           background: transparent;
           border-radius: 0;
           max-width: 100px;
@@ -1103,7 +1128,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     `;
   }
 
-  renderStartStopVoiceButton() {
+  renderStartStopVoiceIconButton() {
     return html`
       <md-icon-button
         class="voice-mode-toggle ${this.voiceEnabled ? "pulsing" : ""}"
@@ -1135,6 +1160,26 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             </md-icon-button>
           `
         : nothing}
+    `;
+  }
+
+  renderStartStopVoiceButton() {
+    return html`
+      ${this.voiceEnabled
+        ? html`
+            <md-outlined-button
+              class="stopVoiceButton"
+              @click="${this.toggleVoiceMode}"
+            >
+              ${this.t("stopTalking")}
+            </md-outlined-button>
+          `
+        : html`<md-elevated-button
+            class="talkToTheAssistantButton"
+            @click="${this.toggleVoiceMode}"
+          >
+            ${this.t("startTalking")}
+          </md-elevated-button>`}
     `;
   }
 

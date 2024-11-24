@@ -19,6 +19,7 @@ export class YpBaseElement extends LitElement {
         this.largeFont = false;
         this.themeColor = "#002255";
         this.hasStaticTheme = false;
+        this.languageLoaded = false;
         this.installMediaQueryWatcher = (mediaQuery, layoutChangedCallback) => {
             let mql = window.matchMedia(mediaQuery);
             mql.addListener((e) => layoutChangedCallback(e.matches));
@@ -147,6 +148,7 @@ export class YpBaseElement extends LitElement {
         if (this.rtl !== undefined) {
             this._setupRtl();
         }
+        this.languageLoaded = true;
         //this.requestUpdate();
     }
     fire(eventName, data = {}, target = this) {
@@ -287,4 +289,7 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpBaseElement.prototype, "hasStaticTheme", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpBaseElement.prototype, "languageLoaded", void 0);
 //# sourceMappingURL=yp-base-element.js.map

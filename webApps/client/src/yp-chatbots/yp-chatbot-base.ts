@@ -111,11 +111,6 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     super.updated(changedProperties);
     if (changedProperties.has('themeDarkMode')) {
     }
-
-    if (changedProperties.has('chatLog')) {
-      const a = this.chatLog;
-      debugger;
-    }
   }
 
   override disconnectedCallback(): void {

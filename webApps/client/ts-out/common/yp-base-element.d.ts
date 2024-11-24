@@ -10,6 +10,7 @@ export declare class YpBaseElement extends LitElement {
     themeDarkMode: boolean | undefined;
     themeHighContrast: boolean | undefined;
     hasStaticTheme: boolean;
+    languageLoaded: boolean;
     static darkModeLocalStorageKey: string;
     static highContrastLocalStorageKey: string;
     static get styles(): any;

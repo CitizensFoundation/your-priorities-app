@@ -33,6 +33,9 @@ export class YpBaseElement extends LitElement {
   @property({ type: Boolean })
   hasStaticTheme = false;
 
+  @property({ type: Boolean })
+  languageLoaded = false;
+
   static darkModeLocalStorageKey = "md3-yp-dark-mode";
   static highContrastLocalStorageKey = "md3-yp-high-contrast-mode";
 
@@ -220,6 +223,7 @@ export class YpBaseElement extends LitElement {
     if (this.rtl !== undefined) {
       this._setupRtl();
     }
+    this.languageLoaded = true;
     //this.requestUpdate();
   }
 

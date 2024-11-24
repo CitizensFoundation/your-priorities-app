@@ -77,6 +77,7 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
           margin: 0;
         }
 
+
         .chatText {
           padding: 8px;
           margin: 0;

@@ -69,6 +69,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     renderTempLogoMoveToData(): import("lit-html").TemplateResult<1>;
     renderVoiceStartButton(): import("lit-html").TemplateResult<1>;
     renderChatInput(): import("lit-html").TemplateResult<1>;
+    renderStartStopVoiceIconButton(): import("lit-html").TemplateResult<1>;
     renderStartStopVoiceButton(): import("lit-html").TemplateResult<1>;
     renderAssistantName(): import("lit-html").TemplateResult<1>;
     renderVoiceInput(): import("lit-html").TemplateResult<1>;

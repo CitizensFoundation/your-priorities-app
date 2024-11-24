@@ -19,6 +19,21 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
     return [
       super.styles,
       css`
+
+        .talkToTheAssistantButton {
+          margin-top: 60px;
+          margin-bottom: 60px;
+          --md-elevated-button-label-text-color: #FFF;
+          --md-elevated-button-focus-label-text-color: #FFF;
+          --md-elevated-button-hover-label-text-color: #FFF;
+          --md-elevated-button-pressed-label-text-color: #FFF;
+          --md-elevated-button-container-shadow-color: var(--yp-sys-color-agent-green);
+          --md-elevated-button-container-height: 69px;
+          --md-elevated-button-container-color: var(--yp-sys-color-agent-green);
+          --md-elevated-button-label-text-weight: 600;
+          --md-elevated-button-label-text-size: 16px;
+        }
+
         .talking-head-image {
           width: 120px;
           height: 120px;
@@ -67,14 +82,17 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
         .mainText {
           font-size: 20px;
           font-weight: 400;
+          width: 360px;
         }
 
         .messageMeText {
-          --md-text-button-label-text-size: 20px;
+          --md-text-button-label-text-size: 16px;
           --md-text-button-label-text-line-height: 40px;
           margin-top: 46px;
           --md-text-button-label-text-weight: 700;
           border-radius: 0;
+          padding-left: 0;
+          padding-right: 0;
           --md-text-button-label-text-color: var(--md-sys-color-on-surface);
           border-bottom: 3px solid var(--md-sys-color-primary-container);
         }
@@ -105,7 +123,7 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
     </svg> `;
   }
 
-  renderVoiceButton() {
+  renderVoiceIconButton() {
     return html`<md-icon-button
       ?has-static-theme="${this.hasStaticTheme}"
       class="voice-mode-toggle"
@@ -116,6 +134,15 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
         ${this.renderVoiceStartIcon()}</md-icon
       ></md-icon-button
     >`;
+  }
+
+  renderVoiceButton() {
+    return html`<md-elevated-button
+      class="talkToTheAssistantButton"
+      @click="${this.startInVoiceMode}"
+    >
+      ${this.t("talkToTheAssistant")}
+    </md-elevated-button>`;
   }
 
   renderVoiceTalkingHead() {
@@ -131,24 +158,28 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
   }
 
   override render() {
+    if (!this.languageLoaded) return html``;
+
     return html`
       <div class="layout vertical center-center welcomeContainer">
-        <div class="layout horizontal">
-          ${this.renderVoiceTalkingHead()}
-          <div class="layout vertical mainContent">
-            <div class="title">${this.t("welcome")}</div>
-            <div class="mainText">${unsafeHTML(this.welcomeTextHtml)}</div>
-            <div class="layout vertical center-center">
-              ${this.renderVoiceButton()}
+        <div class="layout vertical mainContent center-center">
+          <div class="layout horizontal">
+            ${this.renderVoiceTalkingHead()}
+            <div class="layout vertical">
+              <div class="title">${this.t("welcome")}</div>
+              <div class="mainText">${unsafeHTML(this.welcomeTextHtml)}</div>
             </div>
-            <div class="mainText layout vertical center-center">
-              ${this.t("orifyoucanttalkmessage")}
-            </div>
-            <div class="layout vertical center-center">
-              <md-text-button class="messageMeText"
-                >${this.t("messageMe")}
-              </md-text-button>
-            </div>
+          </div>
+          <div class="layout vertical center-center">
+            ${this.renderVoiceButton()}
+          </div>
+          <div class="mainText layout vertical center-center">
+            ${this.t("orifyoucanttalkmessage")}
+          </div>
+          <div class="layout vertical center-center">
+            <md-text-button class="messageMeText"
+              >${this.t("messageMe")}
+            </md-text-button>
           </div>
         </div>
       </div>

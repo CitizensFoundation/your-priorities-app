@@ -1,8 +1,25 @@
 // createAgentProductsAndPlans.ts
 
 import { YpAgentProduct } from "../agentProduct.js";
+import { YpSubscriptionPlan } from "../subscriptionPlan.js";
 
 async function setupAgentProductsConfiguration() {
+  const CompetitorAgentFreeTrialPlan = await YpSubscriptionPlan.findByPk(1);
+  if (CompetitorAgentFreeTrialPlan) {
+    await CompetitorAgentFreeTrialPlan.update({
+      name: "Competitor Agent Free Trial",
+      description: "Free trial for the Competitor Agent",
+    });
+  }
+
+  const CompetitorAgentPlan = await YpSubscriptionPlan.findByPk(2);
+  if (CompetitorAgentPlan) {
+    await CompetitorAgentPlan.update({
+      name: "Competitor Agent",
+      description: "Competitor Agent",
+    });
+  }
+
   const CompetitorAgentFreeTrial = await YpAgentProduct.findByPk(1);
   if (CompetitorAgentFreeTrial) {
     const configuration = {
@@ -11,9 +28,9 @@ async function setupAgentProductsConfiguration() {
 
       There are five stages:
       1. Wide Search: You need to search for competitor strategies and market positions.
-      2. Human Prioritization: You need to prioritize the wide search results.
+      2. People Prioritization: You need to prioritize the wide search results.
       3. Detailed Search: You need to search for competitor strategies and market positions in more detail.
-      4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
+      4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
       5. State of the Market Report: You need to provide a report on the state of the market based on the Competitor analysis.
 
       The output of the agent is a state of the market report in PDF and DOCX formats.
@@ -42,9 +59,9 @@ async function setupAgentProductsConfiguration() {
 
         There are five stages:
         1. Wide Search: You need to search for competitor strategies and market positions.
-        2. Human Prioritization: You need to prioritize the wide search results.
+        2. People Prioritization: You need to prioritize the wide search results.
         3. Detailed Search: You need to search for competitor strategies and market positions in more detail.
-        4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
+        4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
         5. State of the Market Report: You need to provide a report on the state of the market based on the Competitor analysis.
 
         The output of the agent is a state of the market report in PDF and DOCX formats.
@@ -71,9 +88,9 @@ async function setupAgentProductsConfiguration() {
 
           There are five stages:
           1. Wide Search: You need to search for leads and potential client contacts.
-          2. Human Prioritization: You need to prioritize the wide search results.
+          2. People Prioritization: You need to prioritize the wide search results.
           3. Detailed Search: You need to search for leads and potential client contacts in more detail.
-          4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
+          4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
           5. Leads and Potential Client Contacts Report: You need to provide a report on the leads and potential client contacts.
 
           The output of the agent is a list of leads and potential client contacts in XLS format.
@@ -99,9 +116,9 @@ async function setupAgentProductsConfiguration() {
 
           There are six stages:
           1. Wide Search: You need to search for innovative ideas for production processes.
-          2. Human Prioritization: You need to prioritize the wide search results.
+          2. People Prioritization: You need to prioritize the wide search results.
           3. Detailed Search: You need to search for innovative ideas for production processes in more detail.
-          4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
+          4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
           5. Genetic Algorithm: The agent uses a genetic algorithm to generate innovative ideas for production processes.
           6. Innovative Ideas for Production Processes Report: You need to provide a report on the innovative ideas for production processes.
 
@@ -125,9 +142,9 @@ async function setupAgentProductsConfiguration() {
           systemPrompt: `You are the Marketing Ops Agent. You are an expert in optimizing marketing operations and campaign strategies. You are given a business description and you need to optimize marketing operations and campaign strategies. You need to provide a report on the optimized marketing operations and campaign strategies.
 
           Our comprehensive content creation and distribution workflow includes:
-          1. Automated Blog Creation with Human Refinement
+          1. Automated Blog Creation with People Refinement
              - AI-generated initial blog drafts
-             - Human expert review and enhancement
+             - People expert review and enhancement
              - SEO optimization and content polishing
 
           2. Multi-Format Content Transformation
@@ -169,9 +186,9 @@ async function setupAgentProductsConfiguration() {
 
           There are five stages:
           1. Wide Search: You need to search for funding opportunities and investment strategies.
-          2. Human Prioritization: You need to prioritize the wide search results.
+          2. People Prioritization: You need to prioritize the wide search results.
           3. Detailed Search: You need to search for funding opportunities and investment strategies in more detail.
-          4. Detailed Search Human Prioritization: You need to prioritize the detailed search results.
+          4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
           5. Funding Opportunities and Investment Strategies Report: You need to provide a report on the funding opportunities and investment strategies.
 
           The output of the agent is a list of funding opportunities and investment strategies in XLS format.
