@@ -55,14 +55,16 @@ export class AgentModels {
     return { agent, run: currentRun };
   }
 
-  public convertToUnderscores(str: string): string {
-    return str
+  public convertToUnderscoresWithMaxLength(str: string): string {
+    const converted = str
       .replace(/\s+/g, '_')           // Replace spaces with underscores
       .replace(/([A-Z])/g, '_$1')     // Add underscore before capital letters
       .replace(/^_/, '')              // Remove leading underscore
       .replace(/-/g, '_')             // Replace hyphens with underscores
       .replace(/_+/g, '_')            // Replace multiple underscores with single
       .toLowerCase();
+
+    return converted.length > 34 ? converted.slice(0, 34) : converted;
   }
 
   public async startCurrentWorkflowStep(

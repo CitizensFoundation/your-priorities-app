@@ -348,6 +348,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 html: data.html,
                 uniqueToken: data.uniqueToken,
             });
+            await this.updateComplete;
             this.scrollDown();
             return;
         }

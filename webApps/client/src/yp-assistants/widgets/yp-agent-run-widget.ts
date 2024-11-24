@@ -153,6 +153,8 @@ export class YpAgentRunWidget extends YpBaseElement {
         this.progress = status.progress;
         this.latestMessage = status.messages[status.messages.length - 1] || "";
 
+        debugger;
+
         if (
           this.agentState === "stopped" ||
           this.agentState === "error" ||
@@ -177,32 +179,6 @@ export class YpAgentRunWidget extends YpBaseElement {
       }
     } catch (error) {
       console.error("Failed to get agent status:", error);
-    }
-  }
-
-  private async startAgent() {
-    try {
-      await this.api.startWorkflowAgent(
-        this.workflowGroupId,
-        this.agentId,
-        this.wsClientId
-      );
-      this.agentState = "running";
-      this.startStatusUpdates();
-      this.requestUpdate();
-    } catch (error) {
-      console.error("Failed to start agent:", error);
-    }
-  }
-
-  private async stopAgent() {
-    try {
-      await this.api.stopAgent(this.workflowGroupId, this.agentId);
-      this.agentState = "stopped";
-      this.stopStatusUpdates();
-      this.requestUpdate();
-    } catch (error) {
-      console.error("Failed to stop agent:", error);
     }
   }
 

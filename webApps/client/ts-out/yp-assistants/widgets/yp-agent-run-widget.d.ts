@@ -29,8 +29,6 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private stopStatusUpdates;
     get latestMessageMarkdown(): string;
     private updateAgentStatus;
-    private startAgent;
-    private stopAgent;
     static get styles(): any[];
     private getStepClass;
     private renderStep;

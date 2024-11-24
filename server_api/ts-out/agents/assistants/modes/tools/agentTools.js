@@ -158,7 +158,7 @@ export class AgentTools extends BaseAssistantTools {
             throw new Error("No next workflow step found");
         }
         return {
-            name: `start_next_workflow_step_for_${this.agentModels.convertToUnderscores(nextWorkflowStep.name)}`,
+            name: `start_next_workflow_step_for_${this.agentModels.convertToUnderscoresWithMaxLength(nextWorkflowStep.name)}`,
             description: `Start the next workflow step for this current agent run. ${nextWorkflowStep.description}`,
             type: "function",
             parameters: {
@@ -208,7 +208,7 @@ export class AgentTools extends BaseAssistantTools {
             await this.updateAgentProductRun(result.agentRun);
             const html = this.renderAgentRunWidget(this.assistant.memory.currentAgentStatus?.subscriptionPlan
                 .AgentProduct, result.agentRun);
-            this.assistant.emit("update-ai-model-session", "Started the next workflow step for the current agent run");
+            this.assistant.emit("update-ai-model-session", "You have started the next workflow step for the current agent run, now offer the user to discuss the agent more or to deactivate yourself until the job is completed or if a problem occurs. Then let the user know you will email them a notification when the task is completed or if a problem occurs.");
             return {
                 success: true,
                 html,
@@ -273,9 +273,38 @@ export class AgentTools extends BaseAssistantTools {
             };
         }
     }
+    get deactivateAgent() {
+        return {
+            name: "deactivate_yourself_until_later",
+            description: "Deactivate yourself after long running task has started, then you will be reactivated automatically when the task is completed or if a problem occurs",
+            type: "function",
+            parameters: {
+                type: "object",
+                properties: {},
+            },
+            handler: this.deactivateAgentHandler.bind(this),
+        };
+    }
+    async deactivateAgentHandler(params) {
+        try {
+            //await this.agentModels.deactivateAgent();
+            return {
+                success: true,
+                data: { message: "Deactivated the current agent" },
+            };
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to deactivate agent";
+            console.error(errorMessage);
+            return {
+                success: false,
+                error: errorMessage,
+            };
+        }
+    }
     get showConfigurationWidget() {
         return {
-            name: "show_configuration_widget_if_configuration_is_not_submitted_or_needs_to_be_shown_again",
+            name: "show_configuration_widget_if_needed_or_user_asks_to_show_it",
             description: "Show the configuration widget for the current agent, this is needed before running the agent workflow",
             type: "function",
             parameters: {
@@ -343,7 +372,9 @@ export class AgentTools extends BaseAssistantTools {
             return {
                 success: true,
                 clientEvents: [clientEvent],
-                data: { message: "Submitted configuration for the current agent successfully" },
+                data: {
+                    message: "Submitted configuration for the current agent successfully",
+                },
             };
         }
         catch (error) {

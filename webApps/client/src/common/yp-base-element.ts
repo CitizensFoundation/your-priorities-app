@@ -105,6 +105,7 @@ export class YpBaseElement extends LitElement {
       window.appGlobals.locale
     ) {
       this.language = window.appGlobals.locale;
+      this.languageLoaded = true;
       this._setupRtl();
     } else {
       this.language = "";

@@ -33,6 +33,7 @@ export class DirectConversationMode extends BaseAssistantMode {
                         console.log("Mode: agent_direct_connection_mode, User has configured the current agent");
                         if (this.assistant.isCurrentAgentRunning) {
                             tools.push(this.agentTools.stopCurrentAgentWorkflow);
+                            tools.push(this.agentTools.deactivateAgent);
                         }
                         else {
                             if (!this.assistant.isCurrentAgentActive) {

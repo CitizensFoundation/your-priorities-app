@@ -236,7 +236,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
         break;
     }
 
-    if (data.type !== "stream_followup") {
+    if (data.type !== "stream_followup" && data.type !== "voice_input") {
       this.scrollDown();
     }
   }

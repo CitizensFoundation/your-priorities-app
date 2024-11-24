@@ -50,6 +50,7 @@ export class DirectConversationMode extends BaseAssistantMode {
             );
             if (this.assistant.isCurrentAgentRunning) {
               tools.push(this.agentTools.stopCurrentAgentWorkflow);
+              tools.push(this.agentTools.deactivateAgent);
             } else {
               if (!this.assistant.isCurrentAgentActive) {
                 tools.push(

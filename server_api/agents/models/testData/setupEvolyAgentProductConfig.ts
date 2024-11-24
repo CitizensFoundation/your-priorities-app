@@ -8,7 +8,7 @@ async function setupAgentProductsConfiguration() {
   if (CompetitorAgentFreeTrialPlan) {
     await CompetitorAgentFreeTrialPlan.update({
       name: "Competitor Agent Free Trial",
-      description: "Free trial for the Competitor Agent",
+      description: "Competitive reports give detailed insights into competitors' strategies, product changes, and market moves - all synthesized into actionable market intelligence for your business.",
     });
   }
 
@@ -16,13 +16,22 @@ async function setupAgentProductsConfiguration() {
   if (CompetitorAgentPlan) {
     await CompetitorAgentPlan.update({
       name: "Competitor Agent",
-      description: "Competitor Agent",
+      description: "Competitive reports give detailed insights into competitors' strategies, product changes, and market moves - all synthesized into actionable market intelligence for your business.",
     });
   }
 
+  const LeadGenerationAgentPlan = await YpSubscriptionPlan.findByPk(3);
+  if (LeadGenerationAgentPlan) {
+    await LeadGenerationAgentPlan.update({
+      name: "Lead Generation Agent",
+      description: "Define your ideal customer, and receive curated lead lists you can sync to your CRM - turning potential prospects into qualified opportunities.",
+    });
+  }
+
+
   const CompetitorAgentFreeTrial = await YpAgentProduct.findByPk(1);
   if (CompetitorAgentFreeTrial) {
-    const configuration = {
+    const configuration: Partial<YpAgentProductConfiguration> = {
       avatar: {
         systemPrompt: `You are the Competitor Agent. You are an expert in analyzing competitor strategies and market positions. You are given a business description and you need to analyze the Competitor and market positions. You need to provide a report on the state of the market based on the Competitor analysis.
 
@@ -43,11 +52,14 @@ async function setupAgentProductsConfiguration() {
         imageUrl:
           "https://assets.evoly.ai/dl/754a1e727d768b1107826c1deb67b6ac--retina-1.png",
         voiceName: "shimmer",
-
       },
+      displayName: "Competitor Agent <span class='textMuted'>Monthly Plan</span>",
+      displayDescription: "Plan includes <span class='textBold'>1 run per month</span> and details for <span class='text-bold'>3 key competitors</span>.",
     }
     await CompetitorAgentFreeTrial.update({
       configuration: configuration,
+      name: "Competitor Agent Monthly Plan",
+      description: "Competitive reports give detailed insights into competitors' strategies, product changes, and market moves - all synthesized into actionable market intelligence for your business.",
     });
   }
 
@@ -56,6 +68,8 @@ async function setupAgentProductsConfiguration() {
     if (!CompetitorAgent.configuration?.avatar) {
       CompetitorAgent.configuration.avatar = {
         systemPrompt: `You are the Competitor Agent. You are an expert in analyzing competitor strategies and market positions. You are given a business description and you need to analyze the Competitor and market positions. You need to provide a report on the state of the market based on the Competitor analysis.
+
+        Competitive reports give detailed insights into competitors' strategies, product changes, and market moves - all synthesized into actionable market intelligence for your business.
 
         There are five stages:
         1. Wide Search: You need to search for competitor strategies and market positions.
@@ -76,7 +90,14 @@ async function setupAgentProductsConfiguration() {
         voiceName: "shimmer",
       };
     }
+    CompetitorAgent.configuration.displayName = "Competitor Agent <span class='textMuted'>Monthly Plan</span>";
+    CompetitorAgent.configuration.displayDescription = "Plan includes <span class='textBold'>2 runs per month</span> and details for <span class='text-bold'>12 key competitors</span>.";
+
     await CompetitorAgent.save();
+    await CompetitorAgent.update({
+      name: "Competitor Agent",
+      description: "Competitive reports give detailed insights into competitors' strategies, product changes, and market moves - all synthesized into actionable market intelligence for your business.",
+    });
   }
 
   const leadGenerationAgent = await YpAgentProduct.findByPk(3);
@@ -103,33 +124,39 @@ async function setupAgentProductsConfiguration() {
             "https://assets.evoly.ai/dl/f86bf2c221801b4c56d71b098c36ef54--retina-1.png",
           voiceName: "ash",
         },
+        displayName: "Lead Generation Agent <span class='textMuted'>Monthly Plan</span>",
+        displayDescription: "Plan includes <span class='textBold'>4 runs per month</span> and details for <span class='text-bold'>100 leads</span>.",
       },
     });
   }
 
-  const productionInnovationAgent = await YpAgentProduct.findByPk(4);
-  if (productionInnovationAgent) {
-    await productionInnovationAgent.update({
+  const productInnovationAgent = await YpAgentProduct.findByPk(4);
+  if (productInnovationAgent) {
+    await productInnovationAgent.update({
+      name: "Product Innovation Agent",
+      description: "Innovative ideas for product processes that can help you create new or improved products and services.",
       configuration: {
         avatar: {
-          systemPrompt: `You are the Production Innovation Agent. You are an expert in generating innovative ideas for production processes. You are given a business description and you need to generate innovative ideas for production processes. You need to provide a report on the innovative ideas for production processes.
+          systemPrompt: `You are the Product Innovation Agent. You are an expert in generating innovative ideas for product processes. You are given a business description and you need to generate innovative ideas for product processes. You need to provide a report on the innovative ideas for product processes.
 
           There are six stages:
-          1. Wide Search: You need to search for innovative ideas for production processes.
+          1. Wide Search: You need to search for innovative ideas for product processes.
           2. People Prioritization: You need to prioritize the wide search results.
-          3. Detailed Search: You need to search for innovative ideas for production processes in more detail.
+          3. Detailed Search: You need to search for innovative ideas for product processes in more detail.
           4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
-          5. Genetic Algorithm: The agent uses a genetic algorithm to generate innovative ideas for production processes.
-          6. Innovative Ideas for Production Processes Report: You need to provide a report on the innovative ideas for production processes.
+          5. Genetic Algorithm: The agent uses a genetic algorithm to generate innovative ideas for product processes.
+          6. Innovative Ideas for Product Processes Report: You need to provide a report on the innovative ideas for product processes.
 
-          The output of the agent is a list of innovative ideas for production processes in XLS format.
+          The output of the agent is a list of innovative ideas for product processes in XLS format.
 
-          You are a production innovation expert and you are very good at what you do, help educate the user about production innovation.
+          You are a product innovation expert and you are very good at what you do, help educate the user about product innovation.
           `,
           imageUrl:
             "https://assets.evoly.ai/dl/1d91f5bfb69446f57c678a4a3e873d35--retina-1.png",
           voiceName: "coral",
         },
+        displayName: "Product Innovation Agent <span class='textMuted'>Monthly Plan</span>",
+        displayDescription: "Plan includes <span class='textBold'>4 runs per month</span> and details for <span class='text-bold'>100 innovative ideas</span>.",
       },
     });
   }
@@ -173,6 +200,8 @@ async function setupAgentProductsConfiguration() {
             "https://assets.evoly.ai/dl/6f8757bfb637206ddae009597aa4ab6d--retina-1.png",
           voiceName: "alloy",
         },
+        displayName: "Marketing Ops Agent <span class='textMuted'>Monthly Plan</span>",
+        displayDescription: "Plan includes <span class='textBold'>8 runs per month</span> and details for <span class='text-bold'>100 pieces of content</span>.",
       },
     });
   }
@@ -199,6 +228,8 @@ async function setupAgentProductsConfiguration() {
             "https://assets.evoly.ai/dl/f80b64c1ab385e6f3ec0d3f552f38801--retina-1.png",
           voiceName: "ballad",
         },
+        displayName: "Funding Agent <span class='textMuted'>Monthly Plan</span>",
+        displayDescription: "Plan includes <span class='textBold'>2 runs per month</span> and details for <span class='text-bold'>20 funding opportunities</span>.",
       },
     });
   }

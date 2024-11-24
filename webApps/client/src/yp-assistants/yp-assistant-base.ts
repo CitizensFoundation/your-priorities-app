@@ -474,6 +474,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         html: data.html,
         uniqueToken: data.uniqueToken,
       });
+      await this.updateComplete;
       this.scrollDown();
       return;
     }

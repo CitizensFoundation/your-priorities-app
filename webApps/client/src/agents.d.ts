@@ -23,6 +23,8 @@ interface YpAgentProductAttributes extends YpBaseModelAttributes {
 }
 
 interface YpAgentProductConfiguration {
+  displayName?: string;
+  displayDescription?: string;
   workflow: YpWorkflowConfiguration;
   templateWorkflowCommunityId: number;
   structuredAnswersOverride: YpStructuredAnswer[];

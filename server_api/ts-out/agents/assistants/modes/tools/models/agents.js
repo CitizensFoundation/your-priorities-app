@@ -36,14 +36,15 @@ export class AgentModels {
         }
         return { agent, run: currentRun };
     }
-    convertToUnderscores(str) {
-        return str
+    convertToUnderscoresWithMaxLength(str) {
+        const converted = str
             .replace(/\s+/g, '_') // Replace spaces with underscores
             .replace(/([A-Z])/g, '_$1') // Add underscore before capital letters
             .replace(/^_/, '') // Remove leading underscore
             .replace(/-/g, '_') // Replace hyphens with underscores
             .replace(/_+/g, '_') // Replace multiple underscores with single
             .toLowerCase();
+        return converted.length > 34 ? converted.slice(0, 34) : converted;
     }
     async startCurrentWorkflowStep(agentRun, structuredAnswersOverrides) {
         try {
