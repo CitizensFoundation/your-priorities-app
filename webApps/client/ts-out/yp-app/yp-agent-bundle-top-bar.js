@@ -22,8 +22,14 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
           position: fixed;
           top: 0;
           left: 50%;
-          margin-top: 12px;
+          padding-top: 12px;
           transform: translateX(-50%);
+        }
+
+        .topBar[for-agent-bundle] {
+          z-index: 100;
+          background: var(--md-sys-color-surface-container-lowest);
+          padding-bottom: 12px;
         }
 
         .loginOrUserButton {
@@ -47,14 +53,16 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
           );
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
         }
-
-
       `,
         ];
     }
     constructor() {
         super();
         this.hasStaticBadgeTheme = false;
+    }
+    get inForAgentBundle() {
+        return (window.appGlobals.originalQueryParameters.forAgentBundle &&
+            this.page !== "agent_bundle");
     }
     updated(changedProperties) {
         super.updated(changedProperties);
@@ -148,7 +156,10 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
     }
     render() {
         return html `<div class="layout vertical center-center">
-      <div class="topBar layout horizontal">
+      <div
+        class="topBar layout horizontal"
+        ?for-agent-bundle="${this.inForAgentBundle}"
+      >
         <div class="agentBundleLogo">${this.renderLogo()}</div>
         <div class="flex"></div>
         ${this.renderUser()}
@@ -162,6 +173,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentBundleTopBar.prototype, "numberOfUnViewedNotifications", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentBundleTopBar.prototype, "page", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpAgentBundleTopBar.prototype, "hasStaticBadgeTheme", void 0);

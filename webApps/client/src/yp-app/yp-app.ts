@@ -774,6 +774,7 @@ export class YpApp extends YpBaseElement {
       return html` <yp-agent-bundle-top-bar
         .numberOfUnViewedNotifications="${this.numberOfUnViewedNotifications}"
         .hasStaticBadgeTheme="${this.hasStaticBadgeTheme}"
+        .page="${this.page}"
         @open-notification-drawer="${this._openNotificationDrawer}"
         @open-user-drawer="${this._openUserDrawer}"
       ></yp-agent-bundle-top-bar>`;

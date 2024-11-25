@@ -7,9 +7,11 @@ import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login";
 export declare class YpAgentBundleTopBar extends YpBaseElementWithLogin {
     private domain;
     numberOfUnViewedNotifications: string | undefined;
+    page: string | undefined;
     hasStaticBadgeTheme: boolean;
     static get styles(): any[];
     constructor();
+    get inForAgentBundle(): boolean | "" | 0 | undefined;
     updated(changedProperties: PropertyValues): void;
     connectedCallback(): void;
     renderLogo(): TemplateResult<1>;

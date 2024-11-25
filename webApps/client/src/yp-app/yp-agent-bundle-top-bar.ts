@@ -27,6 +27,9 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
   @property({ type: String })
   numberOfUnViewedNotifications: string | undefined;
 
+  @property({ type: String })
+  page: string | undefined;
+
   @property({ type: Boolean })
   hasStaticBadgeTheme = false;
 
@@ -39,8 +42,14 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
           position: fixed;
           top: 0;
           left: 50%;
-          margin-top: 12px;
+          padding-top: 12px;
           transform: translateX(-50%);
+        }
+
+        .topBar[for-agent-bundle] {
+          z-index: 100;
+          background: var(--md-sys-color-surface-container-lowest);
+          padding-bottom: 12px;
         }
 
         .loginOrUserButton {
@@ -64,14 +73,19 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
           );
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
         }
-
-
       `,
     ];
   }
 
   constructor() {
     super();
+  }
+
+  get inForAgentBundle() {
+    return (
+      window.appGlobals.originalQueryParameters.forAgentBundle &&
+      this.page !== "agent_bundle"
+    );
   }
 
   override updated(changedProperties: PropertyValues) {
@@ -138,7 +152,7 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
   }
 
   renderUser() {
-    if (!this.languageLoaded)  {
+    if (!this.languageLoaded) {
       return nothing;
     }
 
@@ -184,7 +198,10 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
 
   override render(): TemplateResult {
     return html`<div class="layout vertical center-center">
-      <div class="topBar layout horizontal">
+      <div
+        class="topBar layout horizontal"
+        ?for-agent-bundle="${this.inForAgentBundle}"
+      >
         <div class="agentBundleLogo">${this.renderLogo()}</div>
         <div class="flex"></div>
         ${this.renderUser()}
