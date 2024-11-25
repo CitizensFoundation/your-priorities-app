@@ -44,6 +44,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     renderStartStopButtons(): TemplateResult<1>;
     get groupId(): number | undefined;
     private viewList;
+    openMarkdownReport(): void;
     renderCompleted(): TemplateResult;
     renderWaitingOnUser(): TemplateResult<1>;
     render(): TemplateResult<1>;

@@ -740,6 +740,12 @@ export class YpThemeManager {
           "#2ecc71"
         );
         document.documentElement.style.setProperty(
+          "--yp-sys-color-agent-green-10",
+          "#d5f6e3"
+        );
+
+
+        document.documentElement.style.setProperty(
           "--yp-sys-color-agent-black",
           "#211e1c"
         );

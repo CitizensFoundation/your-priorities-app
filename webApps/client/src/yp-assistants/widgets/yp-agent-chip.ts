@@ -2,7 +2,7 @@ import { customElement, property } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { css, html } from "lit";
 
-import '@material/web/iconbutton/filled-icon-button.js';
+import "@material/web/iconbutton/filled-icon-button.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 @customElement("yp-agent-chip")
@@ -43,11 +43,19 @@ export class YpAgentChip extends YpBaseElement {
           border-radius: 8px;
           gap: 16px;
           margin-left: 128px;
-
         }
 
         .agent-chip[isSelected] {
-          background-color: var(--md-sys-color-surface-container-lowest);
+          background-color: var(--yp-sys-color-agent-green-10);
+          margin-left: 0;
+          width: calc(768px - 44px);
+          padding: 16px;
+          border-radius: 4px;
+        }
+
+
+        .selectedSwitchTo {
+          margin-top: 4px;
         }
 
         img {
@@ -66,6 +74,10 @@ export class YpAgentChip extends YpBaseElement {
           font-weight: 500;
           font-size: 1.1em;
           margin-bottom: 4px;
+        }
+
+        .selectedImage {
+          margin-right: 16px;
         }
 
         .agent-name[isUnsubscribed] {
@@ -103,22 +115,62 @@ export class YpAgentChip extends YpBaseElement {
   }
 
   getStatus() {
-    return this.isUnsubscribed ? "unsubscribed" : this.isSelected ? "selected" : "";
+    return this.isUnsubscribed
+      ? "unsubscribed"
+      : this.isSelected
+      ? "selected"
+      : "";
   }
 
   override render() {
-    return html`
-      <div class="agent-chip" ?isSelected="${this.isSelected}" ?isUnsubscribed="${this.isUnsubscribed}">
-        <img src="${this.agentImageUrl}" alt="${unsafeHTML(this.agentName)}" />
-        <div class="content">
-          <div class="layout horizontal">
-            <div class="layout vertical">
-              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">${unsafeHTML(this.agentName)} <span class="status" ?hidden="${!this.getStatus()}">${this.getStatus()}</span></div>
-              <div class="agent-description">${unsafeHTML(this.agentDescription)}</div>
+    if (this.isSelected) {
+      return html`
+        <div
+          class="agent-chip layout vertical center-center"
+          ?isSelected="${this.isSelected}"
+          ?isUnsubscribed="${this.isUnsubscribed}"
+        >
+          <div class="layout horizontal center-center">
+            <img class="selectedImage" src="${this.agentImageUrl}" alt="${this.agentName}" />
+            <div class="layout vertical center-center">
+              <div class="agent-name-container selectedSwitchTo">
+                ${this.t("youHaveSwitchedTo")}
+              </div>
+              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">
+                ${this.agentName}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      return html`
+        <div
+          class="agent-chip"
+          ?isSelected="${this.isSelected}"
+          ?isUnsubscribed="${this.isUnsubscribed}"
+        >
+          <img src="${this.agentImageUrl}" alt="${this.agentName}" />
+          <div class="content">
+            <div class="layout horizontal">
+              <div class="layout vertical">
+                <div
+                  class="agent-name"
+                  ?isUnsubscribed="${this.isUnsubscribed}"
+                >
+                  ${this.agentName}
+                  <span class="status" ?hidden="${!this.getStatus()}"
+                    >${this.getStatus()}</span
+                  >
+                </div>
+                <div class="agent-description" ?hidden="${this.isSelected}">
+                  ${this.agentDescription}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
   }
 }

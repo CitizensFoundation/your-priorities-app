@@ -22,6 +22,10 @@ export class YpLoginWidget extends YpBaseElementWithLogin {
           padding: 16px;
           border: 1px solid var(--yp-sys-color-up);
         }
+
+        .container {
+          width: 768px;
+        }
       `,
     ];
   }
@@ -29,13 +33,13 @@ export class YpLoginWidget extends YpBaseElementWithLogin {
   override render() {
     if (this.isLoggedIn) {
       return html`
-        <div class="layout horizontal center-center flex">
+        <div class="layout horizontal center-center container">
           <div class="logged-in">${this.t("loggedIn")}</div>
         </div>
       `;
     } else {
       return html`
-        <div class="layout horizontal center-center flex">
+        <div class="layout horizontal center-center container">
           <yp-login
             id="userLogin"
             class="loginSurface"

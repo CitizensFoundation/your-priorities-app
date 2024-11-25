@@ -12,6 +12,7 @@ import { YpServerApi } from "../common/YpServerApi.js";
 
 import "./yp-assistant-welcome.js";
 import { cache } from "lit/directives/cache.js";
+import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -63,6 +64,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   @state()
   currentMode = "";
+
+  @state()
+  markdownReportOpen = false;
+
+  @state()
+  currentMarkdownReport: string | undefined;
 
   @state()
   isExpanded = false;
@@ -121,6 +128,18 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "agent-configuration-submitted",
       this.agentConfigurationSubmitted.bind(this)
     );
+    this.addGlobalListener("yp-open", this.openMarkdownReport.bind(this));
+  }
+
+  async openMarkdownReport(event: CustomEvent) {
+    if (!event.detail) {
+      return;
+    }
+    this.currentMarkdownReport = event.detail.markdownReport;
+
+    if (this.currentMarkdownReport) {
+      this.markdownReportOpen = true;
+    }
   }
 
   async agentConfigurationSubmitted() {
@@ -332,6 +351,25 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }, 300);
   }
 
+  renderMarkdownReport() {
+    return html`<div class="markdownContainer layout vertical">
+      <div class="layout horizontal">
+        <md-icon-button @click=${() => (this.markdownReportOpen = false)}
+          ><md-icon>close</md-icon></md-icon-button
+        >
+        <div class="flex"></div>
+      </div>
+      <div>
+        ${resolveMarkdown(this.currentMarkdownReport!, {
+          includeImages: true,
+          includeCodeBlockClassNames: true,
+          handleJsonBlocks: true,
+          targetElement: this,
+        })}
+      </div>
+    </div>`;
+  }
+
   override render() {
     if (this.welcomeScreenOpen) {
       return html`<yp-assistant-welcome
@@ -343,6 +381,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           : this.talkingHeadImageUrl}"
       ></yp-assistant-welcome>`;
     }
+
+    if (this.markdownReportOpen && this.currentMarkdownReport) {
+      return this.renderMarkdownReport();
+    }
+
     return html`${cache(html`
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="voice-input-container">

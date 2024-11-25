@@ -230,7 +230,7 @@ export class YpAgentRunWidget extends YpBaseElement {
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
           width: 100%;
-          min-width: 794px;
+          min-width: 804px;
           min-height: 500px;
         }
 
@@ -488,7 +488,7 @@ export class YpAgentRunWidget extends YpBaseElement {
       <div class="agent-header-title">${this.t("agentController")}</div>
       <div class="flex"></div>
       <div class="max-runs-per-cycle">
-        ${this.maxRunsPerCycle} ${this.t("reportsPerMonth")}
+        ${/*this.maxRunsPerCycle*/ 1} ${this.t("reportPerMonth")}
       </div>
     </div>`;
   }
@@ -563,14 +563,20 @@ export class YpAgentRunWidget extends YpBaseElement {
     //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
   }
 
+  openMarkdownReport() {
+    this.fire("yp-open-markdown-report", {
+      markdownReport: this.latestMessageMarkdown
+    });
+  }
+
   renderCompleted(): TemplateResult {
-    return html`<div class="layout vertical center-center completedContainer">
-      ${resolveMarkdown(this.latestMessageMarkdown, {
-        includeImages: true,
-        includeCodeBlockClassNames: true,
-        handleJsonBlocks: true,
-        targetElement: this,
-      })}
+    return html`<div
+    class="layout horizontal center-center waitingOnUserContainer"
+  >
+    <div class="layout horizontal center-center flex">
+      <md-filled-button class="viewListButton" @click=${this.openMarkdownReport}
+        >${this.t("viewReport")}</md-filled-button
+      >
     </div>` as unknown as TemplateResult;
   }
 

@@ -20,6 +20,8 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     onlyUseTextField: boolean;
     chatLogFromServer: YpAssistantMessage[] | undefined;
     currentMode: string;
+    markdownReportOpen: boolean;
+    currentMarkdownReport: string | undefined;
     isExpanded: boolean;
     voiceButton: HTMLElement;
     textInputLabel: string;
@@ -35,6 +37,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     constructor();
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
+    openMarkdownReport(event: CustomEvent): Promise<void>;
     agentConfigurationSubmitted(): Promise<void>;
     agentRunChanged(): Promise<void>;
     userLoggedIn(event: CustomEvent): Promise<void>;
@@ -50,6 +53,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     get chatLogWithDeduplicatedWidgets(): YpAssistantMessage[];
     startInVoiceMode(): void;
     startInTextMode(): Promise<void>;
+    renderMarkdownReport(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
     startRecording(): Promise<void>;

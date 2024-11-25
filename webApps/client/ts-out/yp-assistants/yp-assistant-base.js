@@ -16,6 +16,7 @@ import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import { WavRenderer } from "./wave-renderer.js";
 import "./yp-assistant-welcome.js";
 import { cache } from "lit/directives/cache.js";
+import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbotBase {
     constructor() {
         super();
@@ -32,6 +33,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.aiIsSpeaking = false;
         this.onlyUseTextField = true;
         this.currentMode = "";
+        this.markdownReportOpen = false;
         this.isExpanded = false;
         this.textInputLabel = "Message the assistant";
         this.defaultInfoMessage = "I'm your friendly chat assistant";
@@ -102,6 +104,16 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.getMemoryFromServer();
         this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
         this.addGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
+        this.addGlobalListener("yp-open", this.openMarkdownReport.bind(this));
+    }
+    async openMarkdownReport(event) {
+        if (!event.detail) {
+            return;
+        }
+        this.currentMarkdownReport = event.detail.markdownReport;
+        if (this.currentMarkdownReport) {
+            this.markdownReportOpen = true;
+        }
     }
     async agentConfigurationSubmitted() {
         const clientSystemMessage = {
@@ -229,6 +241,24 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             this.chatInputField.focus();
         }, 300);
     }
+    renderMarkdownReport() {
+        return html `<div class="markdownContainer layout vertical">
+      <div class="layout horizontal">
+        <md-icon-button @click=${() => (this.markdownReportOpen = false)}
+          ><md-icon>close</md-icon></md-icon-button
+        >
+        <div class="flex"></div>
+      </div>
+      <div>
+        ${resolveMarkdown(this.currentMarkdownReport, {
+            includeImages: true,
+            includeCodeBlockClassNames: true,
+            handleJsonBlocks: true,
+            targetElement: this,
+        })}
+      </div>
+    </div>`;
+    }
     render() {
         if (this.welcomeScreenOpen) {
             return html `<yp-assistant-welcome
@@ -239,6 +269,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ? this.directAgentAvatarUrl
                 : this.talkingHeadImageUrl}"
       ></yp-assistant-welcome>`;
+        }
+        if (this.markdownReportOpen && this.currentMarkdownReport) {
+            return this.renderMarkdownReport();
         }
         return html `${cache(html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
@@ -1153,6 +1186,12 @@ __decorate([
 __decorate([
     state()
 ], YpAssistantBase.prototype, "currentMode", void 0);
+__decorate([
+    state()
+], YpAssistantBase.prototype, "markdownReportOpen", void 0);
+__decorate([
+    state()
+], YpAssistantBase.prototype, "currentMarkdownReport", void 0);
 __decorate([
     state()
 ], YpAssistantBase.prototype, "isExpanded", void 0);
