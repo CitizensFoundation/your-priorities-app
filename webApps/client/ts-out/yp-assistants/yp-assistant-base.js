@@ -248,13 +248,19 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         await this.updateComplete;
         this.scrollDown();
     }
+    async downloadPdf() {
+        console.log("downloadPdf");
+    }
     renderMarkdownReport() {
         return html `<div class="markdownContainer layout vertical">
       <div class="layout horizontal">
-        <md-icon-button @click=${this.closeMarkdownReport}
+        <md-icon-button class="closeMarkdownReportButton" @click=${this.closeMarkdownReport}
           ><md-icon>close</md-icon></md-icon-button
         >
         <div class="flex"></div>
+        <md-text-button class="downloadPdfButton" @click=${this.downloadPdf}
+          >${this.t("downloadPdf")}</md-text-button
+        >
       </div>
       <div class="markdownInnerContainer">
         ${resolveMarkdown(this.currentMarkdownReport, {
@@ -552,8 +558,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding-top: 48px;
         }
 
+        .closeMarkdownReportButton, .downloadPdfButton {
+          margin-bottom: 8px;
+        }
+
         .markdownInnerContainer {
-          max-width: 860px;
+          max-width: 900px;
           border: 1px solid var(--md-sys-color-outline-variant, #f00);
           padding: 32px;
           padding-left: 48px;

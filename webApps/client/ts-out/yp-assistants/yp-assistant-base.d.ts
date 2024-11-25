@@ -54,6 +54,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     startInVoiceMode(): void;
     startInTextMode(): Promise<void>;
     closeMarkdownReport(): Promise<void>;
+    downloadPdf(): Promise<void>;
     renderMarkdownReport(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
