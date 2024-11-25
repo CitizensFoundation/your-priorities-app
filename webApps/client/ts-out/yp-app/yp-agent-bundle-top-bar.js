@@ -155,7 +155,7 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
             @click="${() => this.fire("open-user-drawer")}"
             slot="actionItems"
           >
-            <yp-user-image id="userImage" small .user="${this.loggedInUser}">
+            <yp-user-image id="userImage" useImageBorder medium .user="${this.loggedInUser}">
             </yp-user-image>
           </md-icon-button>
         `

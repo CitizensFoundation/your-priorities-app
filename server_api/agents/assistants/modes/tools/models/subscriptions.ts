@@ -58,8 +58,8 @@ export class SubscriptionModels {
       return {
         availablePlans: availablePlans.map((plan) => ({
           subscriptionPlanId: plan.id,
-          name: plan.name,
-          description: plan.description || "No description available",
+          name: plan.AgentProduct?.configuration?.displayName || "No name available",
+          description: plan.AgentProduct?.description || "No description available",
           imageUrl: plan.configuration?.imageUrl || "",
           price: plan.configuration?.amount || 0,
           currency: plan.configuration?.currency || "USD",

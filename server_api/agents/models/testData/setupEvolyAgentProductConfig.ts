@@ -28,6 +28,13 @@ async function setupAgentProductsConfiguration() {
     });
   }
 
+  const ProductInnovationAgentPlan = await YpSubscriptionPlan.findByPk(4);
+  if (ProductInnovationAgentPlan) {
+    await ProductInnovationAgentPlan.update({
+      name: "Lead Generation Agent",
+      description: "Define your ideal customer, and receive curated lead lists you can sync to your CRM - turning potential prospects into qualified opportunities.",
+    });
+  }
 
   const CompetitorAgentFreeTrial = await YpAgentProduct.findByPk(1);
   if (CompetitorAgentFreeTrial) {
@@ -93,6 +100,7 @@ async function setupAgentProductsConfiguration() {
     CompetitorAgent.configuration.displayName = "Competitor Agent <span class='textMuted'>Monthly Plan</span>";
     CompetitorAgent.configuration.displayDescription = "Plan includes <span class='textBold'>2 runs per month</span> and details for <span class='text-bold'>12 key competitors</span>.";
 
+    CompetitorAgent.changed("configuration", true);
     await CompetitorAgent.save();
     await CompetitorAgent.update({
       name: "Competitor Agent",
@@ -103,6 +111,7 @@ async function setupAgentProductsConfiguration() {
   const leadGenerationAgent = await YpAgentProduct.findByPk(3);
   if (leadGenerationAgent) {
     await leadGenerationAgent.update({
+      description: "Define your ideal customer, and receive curated lead lists you can sync to your CRM - turning potential prospects into qualified opportunities.",
       configuration: {
         avatar: {
           systemPrompt: `You are the Lead Generation Agent. You are an expert in generating leads and potential client contacts. You are given a business description and you need to generate leads and potential client contacts. You need to provide a report on the leads and potential client contacts.
@@ -134,7 +143,7 @@ async function setupAgentProductsConfiguration() {
   if (productInnovationAgent) {
     await productInnovationAgent.update({
       name: "Product Innovation Agent",
-      description: "Innovative ideas for product processes that can help you create new or improved products and services.",
+      description: "Fresh product ideas come with market context, user needs analysis, and implementation considerations - turning market gaps into new innovations.",
       configuration: {
         avatar: {
           systemPrompt: `You are the Product Innovation Agent. You are an expert in generating innovative ideas for product processes. You are given a business description and you need to generate innovative ideas for product processes. You need to provide a report on the innovative ideas for product processes.
@@ -164,6 +173,7 @@ async function setupAgentProductsConfiguration() {
   const marketingOpsAgent = await YpAgentProduct.findByPk(5);
   if (marketingOpsAgent) {
     await marketingOpsAgent.update({
+      description: "Choose from AI-generated blog posts, refine them to your taste, and watch as they automatically spread across your social channels - keeping your brand consistently visible and engaging.",
       configuration: {
         avatar: {
           systemPrompt: `You are the Marketing Ops Agent. You are an expert in optimizing marketing operations and campaign strategies. You are given a business description and you need to optimize marketing operations and campaign strategies. You need to provide a report on the optimized marketing operations and campaign strategies.
@@ -209,6 +219,7 @@ async function setupAgentProductsConfiguration() {
   const fundingAgent = await YpAgentProduct.findByPk(6);
   if (fundingAgent) {
     await fundingAgent.update({
+      description: "Potential investors are identified with details about their portfolio, investment focus, and recent activities - turning raw investor data into actionable opportunities.",
       configuration: {
         avatar: {
           systemPrompt: `You are the Funding Agent. You are an expert in identifying and analyzing funding opportunities and investment strategies. You are given a business description and you need to identify and analyze funding opportunities and investment strategies. You need to provide a report on the funding opportunities and investment strategies.

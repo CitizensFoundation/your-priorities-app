@@ -8,6 +8,7 @@ export declare class YpUserImage extends YpBaseElement {
     user: YpUserData;
     noDefault: boolean;
     noProfileImage: boolean;
+    useImageBorder: boolean;
     static get styles(): any[];
     render(): import("lit-html").TemplateResult<1>;
     get userTitle(): string;

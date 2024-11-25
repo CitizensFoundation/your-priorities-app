@@ -28,6 +28,9 @@ export class YpUserImage extends YpBaseElement {
   @property({ type: Boolean })
   noProfileImage = false;
 
+  @property({ type: Boolean })
+  useImageBorder = false;
+
   static override get styles() {
     return [
       super.styles,
@@ -37,6 +40,10 @@ export class YpUserImage extends YpBaseElement {
           vertical-align: text-top;
           height: 48px;
           width: 48px;
+        }
+
+        yp-image[use-image-border] {
+          border: 1px solid var(--md-sys-color-primary-container, #F00);
         }
 
         .small {
@@ -106,6 +113,7 @@ export class YpUserImage extends YpBaseElement {
               ? html`
                   <yp-image
                     sizing="cover"
+                    ?use-image-border="${this.useImageBorder}"
                     .alt="${this.userTitle}"
                     .title="${this.userTitle}"
                     preload

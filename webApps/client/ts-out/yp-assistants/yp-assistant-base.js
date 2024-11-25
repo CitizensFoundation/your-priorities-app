@@ -15,6 +15,7 @@ import { WavStreamPlayer } from "../tools/wavTools/wav_stream_player.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import { WavRenderer } from "./wave-renderer.js";
 import "./yp-assistant-welcome.js";
+import { cache } from "lit/directives/cache.js";
 let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbotBase {
     constructor() {
         super();
@@ -239,7 +240,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 : this.talkingHeadImageUrl}"
       ></yp-assistant-welcome>`;
         }
-        return html `
+        return html `${cache(html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="voice-input-container">
           <div class="voice-input">${this.renderVoiceInput()}</div>
@@ -278,7 +279,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           <div class="chat-input">${this.renderChatInput()}</div>
         </div>
       </div>
-    `;
+    `)}`;
     }
     toggleRecording() {
         if (this.isRecording) {
@@ -495,9 +496,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.chatLog = [];
         this.welcomeScreenOpen = true;
         this.directAgentAvatarUrl = undefined;
-        if (this.voiceEnabled) {
-            this.toggleVoiceMode();
-        }
+        this.stopCanvasRendering();
         this.requestUpdate();
     }
     async clearHistory() {
@@ -641,7 +640,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           position: fixed;
           top: 0;
           padding-top: 28px;
-          padding-bottom: 24px;
+          padding-bottom: 8px;
           left: 50%;
           transform: translateX(-50%);
           width: 768px;
@@ -660,7 +659,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           left: 0;
           width: 100vw;
           z-index: 10;
-          height: 100px;
+          height: 90px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -671,7 +670,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           right: 0;
           z-index: 11;
           left: 50%;
-          height: 102px;
+          height: 90px;
           transform: translateX(-50%);
           z-index: 10;
           width: 768px;
@@ -859,12 +858,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           margin-bottom: 16px;
           margin-left: 0;
           margin-right: 0;
-          padding: 16px;
-          width: 768px;
+          padding: 0px;
+          width: 768px !important;
           --md-filled-text-field-container-color: #f4f4f4;
           --md-filled-text-field-hover-container-color: #f4f4f4;
-
-          --md-icon-size:32px;
+          --md-icon-size: 32px;
         }
 
         md-filled-text-field[dark-mode] {
@@ -1094,12 +1092,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           ${this.renderAssistantName()}
           <div class="layout horizontal">
             ${this.renderStartStopVoiceButton()}
-            ${this.voiceEnabled
-            ? html `<canvas
-                  id="waveformCanvas"
-                  class="waveform-canvas"
-                ></canvas>`
-            : this.renderResetChatButton()}
+            <canvas
+              ?hidden="${!this.voiceEnabled}"
+              id="waveformCanvas"
+              class="waveform-canvas"
+            ></canvas>
+            ${this.voiceEnabled ? html `` : this.renderResetChatButton()}
           </div>
         </div>
         <div hidden class="currentMode">${this.t(this.currentMode)}</div>

@@ -516,7 +516,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   private renderAgentRunningStatus() {
     return html`<div class="agent-running-status layout vertical center-center">
       ${this.progress !== undefined
-        ? html`<md-linear-progress
+        ? html`<md-linear-progress indeterminate
             value="${this.progress / 100}"
           ></md-linear-progress>`
         : html`<md-linear-progress indeterminate></md-linear-progress>`}

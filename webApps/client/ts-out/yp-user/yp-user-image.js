@@ -17,6 +17,7 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
         this.medium = false;
         this.noDefault = false;
         this.noProfileImage = false;
+        this.useImageBorder = false;
     }
     static get styles() {
         return [
@@ -27,6 +28,10 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
           vertical-align: text-top;
           height: 48px;
           width: 48px;
+        }
+
+        yp-image[use-image-border] {
+          border: 1px solid var(--md-sys-color-primary-container, #F00);
         }
 
         .small {
@@ -95,6 +100,7 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
                 ? html `
                   <yp-image
                     sizing="cover"
+                    ?use-image-border="${this.useImageBorder}"
                     .alt="${this.userTitle}"
                     .title="${this.userTitle}"
                     preload
@@ -208,6 +214,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpUserImage.prototype, "noProfileImage", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpUserImage.prototype, "useImageBorder", void 0);
 YpUserImage = __decorate([
     customElement('yp-user-image')
 ], YpUserImage);

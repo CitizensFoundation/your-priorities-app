@@ -1,6 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import { YpAgentChip } from "./yp-agent-chip.js";
 import { css, html } from "lit";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 @customElement("yp-agent-chip-for-purchase")
 export class YpAgentChipForPurchase extends YpAgentChip {
@@ -112,7 +113,7 @@ export class YpAgentChipForPurchase extends YpAgentChip {
                 ${this.maxRunsPerCycle} ${this.t("reportsPerMonth")}
               </div>
               <div class="agent-name" ?isSubscribed="${this.isSubscribed}">
-                ${this.agentName} ${this.getSubscribedStatus()}
+                ${unsafeHTML(this.agentName)} ${this.getSubscribedStatus()}
               </div>
             </div>
             <div class="flex"></div>
@@ -130,7 +131,7 @@ export class YpAgentChipForPurchase extends YpAgentChip {
               </div>
             </div>
           </div>
-          <div class="agent-description">${this.agentDescription}</div>
+          <div class="agent-description">${unsafeHTML(this.agentDescription)}</div>
         </div>
       </div>
     `;

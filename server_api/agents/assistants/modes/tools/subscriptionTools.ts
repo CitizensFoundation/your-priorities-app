@@ -124,7 +124,8 @@ export class SubscriptionTools extends BaseAssistantTools {
       }
 
       let agentChips = "";
-      for (const agent of status.availablePlans) {
+      const sortedPlans = [...status.availablePlans].sort((a, b) => b.price - a.price);
+      for (const agent of sortedPlans) {
         agentChips += `<yp-agent-chip-for-purchase
           subscriptionPlanId="${agent.subscriptionPlanId}"
           agentName="${agent.name}"
@@ -240,7 +241,7 @@ export class SubscriptionTools extends BaseAssistantTools {
           isSubscribed="${true}"
           agentProductId="${result.plan.AgentProduct!.id}"
           subscriptionPlanId="${result.plan.id}"
-          agentName="${result.plan.AgentProduct!.name}"
+          agentName="${result.plan.AgentProduct!.configuration.displayName}"
           agentDescription="${result.plan.AgentProduct!.description}"
           agentImageUrl="${
             result.plan.AgentProduct!.configuration.avatar?.imageUrl

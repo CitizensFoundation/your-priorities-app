@@ -11,6 +11,7 @@ import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dia
 import { YpServerApi } from "../common/YpServerApi.js";
 
 import "./yp-assistant-welcome.js";
+import { cache } from "lit/directives/cache.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -342,7 +343,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           : this.talkingHeadImageUrl}"
       ></yp-assistant-welcome>`;
     }
-    return html`
+    return html`${cache(html`
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
         <div class="voice-input-container">
           <div class="voice-input">${this.renderVoiceInput()}</div>
@@ -386,7 +387,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           <div class="chat-input">${this.renderChatInput()}</div>
         </div>
       </div>
-    `;
+    `)}`;
   }
 
   toggleRecording() {
@@ -634,9 +635,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.chatLog = [];
     this.welcomeScreenOpen = true;
     this.directAgentAvatarUrl = undefined;
-    if (this.voiceEnabled) {
-      this.toggleVoiceMode();
-    }
+    this.stopCanvasRendering();
     this.requestUpdate();
   }
 
@@ -788,7 +787,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           position: fixed;
           top: 0;
           padding-top: 28px;
-          padding-bottom: 24px;
+          padding-bottom: 8px;
           left: 50%;
           transform: translateX(-50%);
           width: 768px;
@@ -807,7 +806,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           left: 0;
           width: 100vw;
           z-index: 10;
-          height: 100px;
+          height: 90px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -818,7 +817,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           right: 0;
           z-index: 11;
           left: 50%;
-          height: 102px;
+          height: 90px;
           transform: translateX(-50%);
           z-index: 10;
           width: 768px;
@@ -1006,12 +1005,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           margin-bottom: 16px;
           margin-left: 0;
           margin-right: 0;
-          padding: 16px;
-          width: 768px;
+          padding: 0px;
+          width: 768px !important;
           --md-filled-text-field-container-color: #f4f4f4;
           --md-filled-text-field-hover-container-color: #f4f4f4;
-
-          --md-icon-size:32px;
+          --md-icon-size: 32px;
         }
 
         md-filled-text-field[dark-mode] {
@@ -1248,12 +1246,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           ${this.renderAssistantName()}
           <div class="layout horizontal">
             ${this.renderStartStopVoiceButton()}
-            ${this.voiceEnabled
-              ? html`<canvas
-                  id="waveformCanvas"
-                  class="waveform-canvas"
-                ></canvas>`
-              : this.renderResetChatButton()}
+            <canvas
+              ?hidden="${!this.voiceEnabled}"
+              id="waveformCanvas"
+              class="waveform-canvas"
+            ></canvas>
+            ${this.voiceEnabled ? html`` : this.renderResetChatButton()}
           </div>
         </div>
         <div hidden class="currentMode">${this.t(this.currentMode)}</div>

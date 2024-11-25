@@ -8,6 +8,7 @@ import { customElement, property } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { css, html } from "lit";
 import '@material/web/iconbutton/filled-icon-button.js';
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 let YpAgentChip = class YpAgentChip extends YpBaseElement {
     static get styles() {
         return [
@@ -70,6 +71,14 @@ let YpAgentChip = class YpAgentChip extends YpBaseElement {
           padding-left: 8px;
         }
 
+        .textMuted {
+          opacity: 0.5;
+        }
+
+        .textBold {
+          font-weight: 700;
+        }
+
         md-filled-icon-button {
           margin-left: 32px;
           margin-top: 8px;
@@ -83,12 +92,12 @@ let YpAgentChip = class YpAgentChip extends YpBaseElement {
     render() {
         return html `
       <div class="agent-chip" ?isSelected="${this.isSelected}" ?isUnsubscribed="${this.isUnsubscribed}">
-        <img src="${this.agentImageUrl}" alt="${this.agentName}" />
+        <img src="${this.agentImageUrl}" alt="${unsafeHTML(this.agentName)}" />
         <div class="content">
           <div class="layout horizontal">
             <div class="layout vertical">
-              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">${this.agentName} <span class="status" ?hidden="${!this.getStatus()}">${this.getStatus()}</span></div>
-              <div class="agent-description">${this.agentDescription}</div>
+              <div class="agent-name" ?isUnsubscribed="${this.isUnsubscribed}">${unsafeHTML(this.agentName)} <span class="status" ?hidden="${!this.getStatus()}">${this.getStatus()}</span></div>
+              <div class="agent-description">${unsafeHTML(this.agentDescription)}</div>
             </div>
           </div>
         </div>
