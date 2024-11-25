@@ -142,9 +142,9 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
 
     const dataCopy = { ...data };
 
-    let newChatLog = this.chatLog;
+    let newChatLog = [...this.chatLog];
     if (dataCopy.uniqueToken) {
-      newChatLog = this.chatLog.filter(
+      newChatLog = newChatLog.filter(
         (msg) => msg.uniqueToken !== dataCopy.uniqueToken
       );
     }

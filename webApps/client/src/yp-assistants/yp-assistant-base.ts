@@ -128,7 +128,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "agent-configuration-submitted",
       this.agentConfigurationSubmitted.bind(this)
     );
-    this.addGlobalListener("yp-open", this.openMarkdownReport.bind(this));
+    this.addListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
   }
 
   async openMarkdownReport(event: CustomEvent) {
@@ -139,6 +139,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
     if (this.currentMarkdownReport) {
       this.markdownReportOpen = true;
+      window.scrollTo(0, 0);
     }
   }
 
@@ -292,6 +293,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "agent-configuration-submitted",
       this.agentConfigurationSubmitted.bind(this)
     );
+    this.removeGlobalListener(
+      "yp-open-markdown-report",
+      this.openMarkdownReport.bind(this)
+    );
   }
 
   async setupVoiceCapabilities() {}
@@ -351,15 +356,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }, 300);
   }
 
+  async closeMarkdownReport() {
+    this.markdownReportOpen = false;
+    await this.updateComplete;
+    this.scrollDown();
+  }
+
   renderMarkdownReport() {
     return html`<div class="markdownContainer layout vertical">
       <div class="layout horizontal">
-        <md-icon-button @click=${() => (this.markdownReportOpen = false)}
+        <md-icon-button @click=${this.closeMarkdownReport}
           ><md-icon>close</md-icon></md-icon-button
         >
         <div class="flex"></div>
       </div>
-      <div>
+      <div class="markdownInnerContainer">
         ${resolveMarkdown(this.currentMarkdownReport!, {
           includeImages: true,
           includeCodeBlockClassNames: true,
@@ -698,6 +709,18 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return [
       super.styles,
       css`
+        .markdownContainer {
+          padding-top: 48px;
+        }
+
+        .markdownInnerContainer {
+          max-width: 860px;
+          border: 1px solid var(--md-sys-color-outline-variant, #f00);
+          padding: 32px;
+          padding-left: 48px;
+          padding-right: 48px;
+        }
+
         @keyframes pulse {
           0% {
             transform: scale(1);

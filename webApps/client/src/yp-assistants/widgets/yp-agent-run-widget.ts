@@ -187,6 +187,10 @@ export class YpAgentRunWidget extends YpBaseElement {
         :host {
         }
 
+        .viewReportButton {
+          margin-top: 32px;
+        }
+
         .completedContainer {
           margin: 16px;
         }
@@ -574,9 +578,10 @@ export class YpAgentRunWidget extends YpBaseElement {
     class="layout horizontal center-center waitingOnUserContainer"
   >
     <div class="layout horizontal center-center flex">
-      <md-filled-button class="viewListButton" @click=${this.openMarkdownReport}
+      <md-filled-button class="viewListButton viewReportButton" @click=${this.openMarkdownReport}
         >${this.t("viewReport")}</md-filled-button
-      >
+        >
+      </div>
     </div>` as unknown as TemplateResult;
   }
 

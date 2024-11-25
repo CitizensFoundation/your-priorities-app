@@ -64,9 +64,9 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         this.infoMessage = message;
         data.rawMessage = data.rawMessage || rawMessage;
         const dataCopy = { ...data };
-        let newChatLog = this.chatLog;
+        let newChatLog = [...this.chatLog];
         if (dataCopy.uniqueToken) {
-            newChatLog = this.chatLog.filter((msg) => msg.uniqueToken !== dataCopy.uniqueToken);
+            newChatLog = newChatLog.filter((msg) => msg.uniqueToken !== dataCopy.uniqueToken);
         }
         newChatLog.push(dataCopy);
         this.chatLog = newChatLog;

@@ -104,7 +104,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.getMemoryFromServer();
         this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
         this.addGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
-        this.addGlobalListener("yp-open", this.openMarkdownReport.bind(this));
+        this.addListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
     }
     async openMarkdownReport(event) {
         if (!event.detail) {
@@ -113,6 +113,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.currentMarkdownReport = event.detail.markdownReport;
         if (this.currentMarkdownReport) {
             this.markdownReportOpen = true;
+            window.scrollTo(0, 0);
         }
     }
     async agentConfigurationSubmitted() {
@@ -188,6 +189,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.stopRecording();
         this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
         this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
+        this.removeGlobalListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
     }
     async setupVoiceCapabilities() { }
     get talkingHeadImageUrl() {
@@ -241,15 +243,20 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             this.chatInputField.focus();
         }, 300);
     }
+    async closeMarkdownReport() {
+        this.markdownReportOpen = false;
+        await this.updateComplete;
+        this.scrollDown();
+    }
     renderMarkdownReport() {
         return html `<div class="markdownContainer layout vertical">
       <div class="layout horizontal">
-        <md-icon-button @click=${() => (this.markdownReportOpen = false)}
+        <md-icon-button @click=${this.closeMarkdownReport}
           ><md-icon>close</md-icon></md-icon-button
         >
         <div class="flex"></div>
       </div>
-      <div>
+      <div class="markdownInnerContainer">
         ${resolveMarkdown(this.currentMarkdownReport, {
             includeImages: true,
             includeCodeBlockClassNames: true,
@@ -541,6 +548,18 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return [
             super.styles,
             css `
+        .markdownContainer {
+          padding-top: 48px;
+        }
+
+        .markdownInnerContainer {
+          max-width: 860px;
+          border: 1px solid var(--md-sys-color-outline-variant, #f00);
+          padding: 32px;
+          padding-left: 48px;
+          padding-right: 48px;
+        }
+
         @keyframes pulse {
           0% {
             transform: scale(1);
