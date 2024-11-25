@@ -74,7 +74,7 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
         }
 
         .container {
-          width: 768px;
+          width: calc(768px - 48px);
           border: 1px solid #eaeaea;
           padding: 16px;
           margin-bottom: 16px;

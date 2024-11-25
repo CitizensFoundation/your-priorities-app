@@ -116,7 +116,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
 
         .inviteContainer {
-          margin-right: 8px;
+          margin-right: 24px;
           margin-left: 8px;
         }
 
@@ -464,7 +464,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             .groupId;
     }
     viewList() {
-        window.open(`/group/${this.groupId}`, "_blank");
+        window.open(`/group/${this.groupId}?forAgentBundle=true`, "_blank");
         //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
     }
     renderCompleted() {

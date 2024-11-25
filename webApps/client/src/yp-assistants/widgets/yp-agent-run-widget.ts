@@ -194,7 +194,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         .inviteContainer {
-          margin-right: 8px;
+          margin-right: 24px;
           margin-left: 8px;
         }
 
@@ -561,7 +561,7 @@ export class YpAgentRunWidget extends YpBaseElement {
   }
 
   private viewList() {
-    window.open(`/group/${this.groupId}`, "_blank");
+    window.open(`/group/${this.groupId}?forAgentBundle=true`, "_blank");
     //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
   }
 

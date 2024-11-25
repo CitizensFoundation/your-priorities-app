@@ -68,8 +68,8 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
         .container {
           border-radius: 4px;
           width: 100%;
-          max-width: calc(768px - 8px);
-          width: calc(768px - 8px);
+          max-width: calc(768px - 12px);
+          width: calc(768px - 12px);
         }
 
         @media (max-width: 820px) {
@@ -94,6 +94,13 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
         md-filled-icon-button {
           margin-left: 8px;
           margin-top: 8px;
+        }
+
+        md-filled-button[has-static-theme] {
+          --md-filled-button-container-color: var(
+            --md-sys-color-primary-container
+          );
+          --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
         }
       `,
     ];
@@ -189,7 +196,7 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
           </div>
         </div>
         <div class="layout horizontal">
-          <md-filled-button @click="${this.submitConfiguration}">
+          <md-filled-button ?has-static-theme="${this.hasStaticTheme} @click="${this.submitConfiguration}">
             ${this.t("Submit")}
           </md-filled-button>
         </div>
