@@ -34,6 +34,7 @@ export declare class YpPost extends YpCollection {
     goToNextPost(): void;
     renderNavigationButtons(): TemplateResult<1>;
     get isEditingPost(): boolean | undefined;
+    get forAgentBundle(): string | number | undefined;
     render(): TemplateResult<1>;
     get tabDebateCount(): string;
     get tabPhotosCount(): string;

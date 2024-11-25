@@ -726,7 +726,15 @@ let YpGroup = class YpGroup extends YpCollection {
         return this.collection
             ? html `
           ${this.hideBigHeaders
-                ? html ` <div class="smallHeader">${this.collection.name} <span class="smallHeaderCounter">${(this.tabCounters && this.tabCounters["open"] != undefined) ? `(${this.tabCounters["open"]})` : ""}</span></div>`
+                ? html `
+                <div class="smallHeader">
+                  ${this.collection.name}
+                  <span class="smallHeaderCounter"
+                    >${this.tabCounters && this.tabCounters["open"] != undefined
+                    ? `(${this.tabCounters["open"]})`
+                    : ""}</span
+                  >
+                </div>`
                 : nothing}
           <div class="layout vertical center-center">
             <yp-posts-list
@@ -849,10 +857,21 @@ let YpGroup = class YpGroup extends YpCollection {
           width: calc(100% - 66px);
         }
 
+        .smallHeaderFixedTop {
+          position: absolute;
+          top: 0;
+          z-index: 0;
+          left: 0;
+          right: 0;
+          height: 96px;
+          min-height: 96px;
+        }
+
         .smallHeader {
           margin-left: 60px;
           font-size: 36px;
           font-weight: 700;
+          margin-top: 96px;
           font-family: var(--md-ref-typeface-brand);
         }
 

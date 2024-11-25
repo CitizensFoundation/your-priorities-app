@@ -95,6 +95,10 @@ let YpPost = class YpPost extends YpCollection {
           padding: 32px;
         }
 
+        .outerFrameContainer[for-agent-bundle] {
+          margin-top: 48px;
+        }
+
         .frameContainer {
           max-width: 970px;
           width: 970px;
@@ -403,11 +407,14 @@ let YpPost = class YpPost extends YpCollection {
     get isEditingPost() {
         return (this.subRoute?.endsWith("/edit") || this.subRoute?.endsWith("/edit/"));
     }
+    get forAgentBundle() {
+        return window.appGlobals.originalQueryParameters.forAgentBundle;
+    }
     render() {
         //TODO: Bottom add new post button
         if (this.post && !this.isEditingPost) {
             return html `
-        <div class="layout vertical center-center outerFrameContainer">
+        <div ?for-agent-bundle="${this.forAgentBundle}" class="layout vertical center-center outerFrameContainer">
           <div class="frameContainer">
             <div class="layout vertical">
               ${this.renderPostStaticHeader()} ${this.renderPostHeader()}

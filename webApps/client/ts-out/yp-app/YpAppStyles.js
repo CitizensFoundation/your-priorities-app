@@ -132,6 +132,10 @@ export const YpAppStyles = css `
     margin-top: 52px;
   }
 
+  .mainPage[agentBundle] {
+    margin-top: 0;
+  }
+
   #helpIconButton {
     margin-right: 4px;
   }

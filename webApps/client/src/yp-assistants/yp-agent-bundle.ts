@@ -85,7 +85,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
   override render() {
     return html`
       <div class="layout horizontal center-center container">
-        <div class="selfStart fixed" hidden>${this.renderLogo()}</div>
+        <div class="selfStart fixed" hidden></div>
         ${this.domainId
           ? html` <yp-assistant
               id="assistant"

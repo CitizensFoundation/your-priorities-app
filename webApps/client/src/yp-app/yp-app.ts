@@ -50,6 +50,7 @@ import "../yp-collection/yp-community.js";
 import "../yp-collection/yp-group.js";
 
 import "./yp-app-nav-drawer.js";
+import "./yp-agent-bundle-top-bar.js";
 
 import { YpDomain } from "../yp-collection/yp-domain.js";
 import { YpCommunity } from "../yp-collection/yp-community.js";
@@ -587,7 +588,8 @@ export class YpApp extends YpBaseElement {
         ?has-no-organizations="${!window.appGlobals.myDomains ||
         window.appGlobals.myDomains.length < 2}"
         slot="actionItems"
-        ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn || this.page === "agent_bundle"}"
+        ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn ||
+        this.page === "agent_bundle"}"
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("navigationMenu")}"
@@ -754,7 +756,7 @@ export class YpApp extends YpBaseElement {
     `;
   }
 
-  renderMainApp() {
+  renderTopBar() {
     let titleString =
       this.goForwardToPostId && this.goForwardPostName
         ? this.goForwardPostName
@@ -765,27 +767,48 @@ export class YpApp extends YpBaseElement {
       titleString = "";
     }
 
-
-    return html`
-      <yp-top-app-bar
+    if (
+      this.page === "agent_bundle" ||
+      window.appGlobals.originalQueryParameters.forAgentBundle
+    ) {
+      return html` <yp-agent-bundle-top-bar
+        .numberOfUnViewedNotifications="${this.numberOfUnViewedNotifications}"
+        .hasStaticBadgeTheme="${this.hasStaticBadgeTheme}"
+        @open-notification-drawer="${this._openNotificationDrawer}"
+        @open-user-drawer="${this._openUserDrawer}"
+      ></yp-agent-bundle-top-bar>`;
+    } else {
+      return html` <yp-top-app-bar
         role="navigation"
         .useLowestContainerColor="${this.page === "agent_bundle"}"
         .restrictWidth="${!this.isFullScreenMode}"
         .titleString="${this.currentTitle || titleString}"
         ?hideTitle="${this.page === "agent_bundle"}"
         aria-label="top navigation"
-        ?fixed="${true || window.appGlobals.domain?.configuration.useFixedTopAppBar}"
+        ?fixed="${true ||
+        window.appGlobals.domain?.configuration.useFixedTopAppBar}"
         ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration
           .disableArrowBasedTopNavigation}"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
         window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
-        <div slot="navigation" >${this.renderNavigation()}</div>
+        <div slot="navigation">${this.renderNavigation()}</div>
         <div slot="title" ?hidden="${this.page === "agent_bundle"}"></div>
         <div slot="action">${this.renderActionItems()}</div>
-      </yp-top-app-bar>
-      <div class="mainPage" ?hidden="${this.appMode !== "main"}">
+      </yp-top-app-bar>`;
+    }
+  }
+
+  renderMainApp() {
+    return html`
+      ${this.renderTopBar()}
+      <div
+        class="mainPage"
+        ?agentBundle="${this.page === "agent_bundle" ||
+        window.appGlobals.originalQueryParameters.forAgentBundle}"
+        ?hidden="${this.appMode !== "main"}"
+      >
         ${this.renderPage()}
       </div>
     `;
@@ -862,7 +885,7 @@ export class YpApp extends YpBaseElement {
     return pageHtml;
   }
 
-  renderTopBar() {
+  renderDrawers() {
     return html`
       <yp-drawer
         id="leftDrawer"
@@ -999,7 +1022,7 @@ export class YpApp extends YpBaseElement {
 
   override render() {
     return html`
-      ${this.renderTopBar()} ${this.renderMainApp()}
+      ${this.renderDrawers()} ${this.renderMainApp()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       ${this.renderAdminApp()} ${this.renderPromotionApp()}
       ${this.renderFooter()}
@@ -1462,7 +1485,8 @@ export class YpApp extends YpBaseElement {
 
     if (this.page === "assistant") {
       (this.$$("#assistant") as YpAssistant).scrollDown();
-      document.body.style.backgroundColor = "var(--md-sys-color-surface-container-lowest)";
+      document.body.style.backgroundColor =
+        "var(--md-sys-color-surface-container-lowest)";
     } else {
       document.body.style.backgroundColor = "var(--md-sys-color-surface)";
     }
@@ -1775,7 +1799,9 @@ export class YpApp extends YpBaseElement {
       });
     } else {
       this.breadcrumbs = [];
-      (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
+      if (this.$$("yp-top-app-bar")) {
+        (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
+      }
     }
 
     if (header.currentTheme) {
@@ -1795,7 +1821,9 @@ export class YpApp extends YpBaseElement {
       this.breadcrumbs = [...this.breadcrumbs, newBreadcrumb];
     }
 
-    (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
+    if (this.$$("yp-top-app-bar")) {
+      (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
+    }
   }
 
   goBack() {

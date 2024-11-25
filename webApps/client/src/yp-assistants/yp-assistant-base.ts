@@ -750,20 +750,24 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
         .voice-input-container {
           position: fixed;
-          top: 60px;
-          left: 0;
+          padding-top: 12px;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
           z-index: 10;
-          width: 100vw;
+          width: 768px;
           height: 124px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
         .voice-input {
           position: fixed;
-          top: 60px;
+          top: 0;
+          padding-top: 28px;
+          padding-bottom: 24px;
           left: 50%;
           transform: translateX(-50%);
-          width: 936px;
+          width: 800px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -1034,24 +1038,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     ];
   }
 
-  renderTempLogoMoveToData() {
-    return html`<div class="logoContainer">
-      ${this.themeDarkMode
-        ? html`
-            <img
-              class="agentBundleLogo"
-              src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/amplifierLogo.png"
-            />
-          `
-        : html`
-            <img
-              class="agentBundleLogo"
-              src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/amplifierLogo.png"
-            />
-          `}
-    </div> `;
-  }
-
   renderVoiceStartButton() {
     return html`<svg
       width="40"
@@ -1206,7 +1192,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   renderVoiceInput() {
     return html`
       <div class="layout horizontal voiceAvatar">
-        ${this.renderTempLogoMoveToData()} ${this.renderVoiceTalkingHead()}
+        ${this.renderVoiceTalkingHead()}
         <div class="nameAndStartStop layout vertical">
           ${this.renderAssistantName()}
           <div class="layout horizontal">
