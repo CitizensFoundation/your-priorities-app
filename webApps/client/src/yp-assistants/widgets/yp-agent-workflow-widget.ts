@@ -31,13 +31,20 @@ export class YpAgentWorkflowWidget extends YpBaseElement {
         }
 
         .workflow-step {
-          width: calc(241px - 20px);
+          width: calc(241px - 55px);
           height: calc(158px - 24px);
           max-height: calc(158px - 24px);
           padding: 12px;
           border: 1px solid var(--md-sys-color-outline-variant);
           margin: 12px;
+          margin-left: 0;
           border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+          .workflow-step {
+            margin: 8px;
+          }
         }
 
         .step-number {

@@ -228,10 +228,11 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         .container {
           padding: 16px;
+          padding-right: 0;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
           width: 100%;
-          min-width: 700px;
+          min-width: 794px;
           min-height: 500px;
         }
 
@@ -283,12 +284,20 @@ export class YpAgentRunWidget extends YpBaseElement {
           --md-filled-button-icon-size: 26px;
         }
 
+        md-filled-button.startButton[has-static-theme] {
+          --md-filled-button-container-color: var(
+            --md-sys-color-primary-container
+          );
+          --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
+        }
+
         .max-runs-per-cycle {
           font-size: 13px;
           color: var(--yp-sys-color-agent-blue);
           text-transform: uppercase;
           font-weight: 500;
           margin-top: 4px;
+          margin-right: 16px;
         }
 
         @media (max-width: 700px) {
@@ -325,7 +334,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         .startButton,
         .stopButton {
-          width: 190px;
+          --md-filled-button-label-text-weight: 600;
         }
 
         .startButtonFilled {
@@ -517,6 +526,10 @@ export class YpAgentRunWidget extends YpBaseElement {
     </div>`;
   }
 
+  get runStatusForButton() {
+    return this.runStatus === "running" ? "stop" : "start";
+  }
+
   renderStartStopButtons() {
     return html`<div class="layout horizontal startStopButtons">
       ${this.isRunning
@@ -524,11 +537,12 @@ export class YpAgentRunWidget extends YpBaseElement {
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
             >${this.t(this.runStatus)}</md-filled-button
           >`
-        : html` <md-outlined-button
+        : html` <md-filled-button
             class="startButton"
+            ?has-static-theme=${this.hasStaticTheme}
             ?disabled=${this.shouldDisableStartButton}
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
-            >${this.t(this.runStatus)}</md-outlined-button
+            >${this.t(this.runStatusForButton)}</md-filled-button
           >`}
 
       <md-outlined-button

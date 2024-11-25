@@ -66,10 +66,10 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
         }
 
         .container {
-          padding: 16px;
           border-radius: 4px;
           width: 100%;
-          min-width: 820px;
+          max-width: calc(768px - 8px);
+          width: calc(768px - 8px);
         }
 
         @media (max-width: 820px) {

@@ -52,6 +52,22 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
           padding-bottom: 12px;
         }
 
+        @media (max-width: 1200px) {
+          .topBar {
+            width: 100%;
+            padding-bottom: 12px;
+            padding-left: 16px;
+            padding-right: 16px;
+          }
+        }
+
+        @media (max-width: 820px) {
+          .topBar {
+            z-index: 100;
+            background: var(--md-sys-color-surface-container-lowest);
+          }
+        }
+
         .loginOrUserButton {
           margin-top: 12px;
         }

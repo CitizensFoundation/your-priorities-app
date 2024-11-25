@@ -82,7 +82,7 @@ export class YpAgentChipForPurchase extends YpAgentChip {
         }
 
         .container {
-          width: 788px;
+          width: 768px;
           border: 1px solid #eaeaea;
           padding: 16px;
           margin-bottom: 16px;

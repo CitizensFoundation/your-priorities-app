@@ -358,7 +358,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 uniqueToken: data.uniqueToken,
             });
             await this.updateComplete;
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 50));
             this.scrollDown();
             return;
         }
@@ -538,7 +538,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           height: 100%;
           min-height: 45vh;
           width: 100%;
-          max-width: 1200px;
+          max-width: 768px;
           margin: 0 auto;
           border-radius: 10px;
           overflow: hidden;
@@ -549,14 +549,16 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           flex-direction: column;
           flex: 1;
           overflow-y: visible;
-          max-width: 940px;
+          max-width: 768px;
         }
 
         .talkToTheAssistantButton {
-          --md-elevated-button-label-text-color: #FFF;
-          --md-elevated-button-focus-label-text-color: #FFF;
-          --md-elevated-button-hover-label-text-color: #FFF;
-          --md-elevated-button-container-shadow-color: var(--yp-sys-color-agent-green);
+          --md-elevated-button-label-text-color: #fff;
+          --md-elevated-button-focus-label-text-color: #fff;
+          --md-elevated-button-hover-label-text-color: #fff;
+          --md-elevated-button-container-shadow-color: var(
+            --yp-sys-color-agent-green
+          );
           --md-elevated-button-container-height: 39px;
           --md-elevated-button-container-color: var(--yp-sys-color-agent-green);
           --md-elevated-button-label-text-weight: 600;
@@ -565,12 +567,31 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           margin-top: 32px;
         }
 
+        .resetChatButton {
+          margin-top: 32px;
+          margin-left: 24px;
+          height: 39px;
+          --md-text-button-label-text-weight: 600;
+          --md-text-button-label-text-size: 14px;
+          --md-text-button-label-text-color: var(--yp-sys-color-agent-black);
+          --md-text-button-focus-label-text-color: var(--yp-sys-color-agent-black);
+          --md-text-button-hover-label-text-color: var(--yp-sys-color-agent-black);
+          --md-text-button-container-color: var(--yp-sys-color-agent-black);
+
+        }
+
         .stopVoiceButton {
           height: 39px;
           margin-top: 32px;
-          --md-outlined-button-label-text-color: var(--yp-sys-color-agent-black);
-          --md-outlined-button-focus-label-text-color: var(--yp-sys-color-agent-black);
-          --md-outlined-button-hover-label-text-color: var(--yp-sys-color-agent-black);
+          --md-outlined-button-label-text-color: var(
+            --yp-sys-color-agent-black
+          );
+          --md-outlined-button-focus-label-text-color: var(
+            --yp-sys-color-agent-black
+          );
+          --md-outlined-button-hover-label-text-color: var(
+            --yp-sys-color-agent-black
+          );
           --md-outlined-button-label-text-weight: 600;
           --md-outlined-button-label-text-size: 14px;
         }
@@ -591,12 +612,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 8px;
+          padding: 0;
         }
 
         .chat-window {
           width: 100%;
-          max-width: 1200px;
+          max-width: 768px;
           margin: 0 auto;
           border-radius: 10px;
         }
@@ -620,7 +641,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding-bottom: 24px;
           left: 50%;
           transform: translateX(-50%);
-          width: 800px;
+          width: 768px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -636,7 +657,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           left: 0;
           width: 100vw;
           z-index: 10;
-          height: 120px;
+          height: 100px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -650,7 +671,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           height: 102px;
           transform: translateX(-50%);
           z-index: 10;
-          width: 860px;
+          width: 768px;
+          padding: 0;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -784,8 +806,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           display: flex;
           flex-direction: column;
           height: calc(100vh - 60px);
-          width: 1000px;
-          max-width: 1000px;
+          width: 768px;
+          max-width: 768px;
           margin: 0 auto;
           border-radius: 10px;
         }
@@ -820,7 +842,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 8px;
         }
 
         md-filled-text-field {
@@ -831,11 +852,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           --md-filled-field-focus-active-indicator-height: 0;
           --md-filled-field-hover-active-indicator-color: transparent;
           border: none;
-          padding: 10px;
           margin: 16px;
           margin-bottom: 16px;
-          margin-left: 8px;
-          margin-right: 8px;
+          margin-left: 0;
+          margin-right: 0;
+          padding: 0;
           width: 650px;
         }
 
@@ -926,9 +947,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             >
           `
             : nothing}
-      <md-icon-button class="" @click="${this.clearHistory}">
-        <md-icon>delete_history</md-icon>
-      </md-icon-button>
 
       ${this.onlyUseTextField || this.chatLog.length > 1
             ? html `
@@ -1031,6 +1049,13 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           </md-elevated-button>`}
     `;
     }
+    renderResetChatButton() {
+        return html `<md-text-button
+      class="resetChatButton"
+      @click="${this.clearHistory}"
+      >${this.t("resetChat")}</md-text-button
+    >`;
+    }
     renderAssistantName() {
         return html `<div class="assistantName">
       ${this.directAgentName ? this.directAgentName : this.t("mainAssistant")}
@@ -1044,7 +1069,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           ${this.renderAssistantName()}
           <div class="layout horizontal">
             ${this.renderStartStopVoiceButton()}
-            <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+            ${this.voiceEnabled
+            ? html `<canvas
+                  id="waveformCanvas"
+                  class="waveform-canvas"
+                ></canvas>`
+            : this.renderResetChatButton()}
           </div>
         </div>
         <div hidden class="currentMode">${this.t(this.currentMode)}</div>

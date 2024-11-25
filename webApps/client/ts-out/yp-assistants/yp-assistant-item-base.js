@@ -60,8 +60,10 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
         .userChatDialog {
           color: var(--md-sys-color-on-surface);
           background-color: var(--md-sys-color-surface-container);
-          padding: 8px;
+          padding: 0px;
           margin: 16px;
+          margin-left: 0;
+          margin-right: 0;
           line-height: 1.5;
           margin-bottom: 0px;
           border-radius: 50px;
@@ -74,7 +76,7 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
 
 
         .chatText {
-          padding: 8px;
+          padding: 16px;
           margin: 0;
           font-size: 15px;
           font-weight: 400;
@@ -109,7 +111,7 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
                   </div>
                 `
             : nothing}
-            <div class="layout vertical chatText">
+            <div class="layout vertical">
               ${resolveMarkdown(this.message, {
             includeImages: true,
             includeCodeBlockClassNames: true,
