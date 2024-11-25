@@ -19,9 +19,9 @@ async function setupAgentProductsConfiguration() {
           stepTextColor: "#211e1c",
         },
         {
-          name: "Competitor Analysis People Prioritization",
+          name: "Competitor Analysis People Review",
           shortName: "People review",
-          description: "People prioritization of the wide search results.",
+          description: "People Review of the wide search results.",
           shortDescription: "People prioritize the the wide search results.",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "engagmentFromOutputConnector",
@@ -41,9 +41,9 @@ async function setupAgentProductsConfiguration() {
           stepTextColor: "#ffffff",
         },
         {
-          name: "Competitor Analysis Detailed Search People Prioritization",
-          shortName: "People prioritization",
-          description: "People prioritization of the detailed search results.",
+          name: "Competitor Analysis Detailed Search People Review",
+          shortName: "People Review",
+          description: "People Review of the detailed search results.",
           shortDescription:
             "People prioritize the detailed search results.",
           agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",

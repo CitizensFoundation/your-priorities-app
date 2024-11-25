@@ -37,9 +37,9 @@ async function setupAgentProductsConfiguration() {
 
       There are five stages:
       1. Wide Search: You need to search for competitor strategies and market positions.
-      2. People Prioritization: You need to prioritize the wide search results.
+      2. People Review: You need to prioritize the wide search results.
       3. Detailed Search: You need to search for competitor strategies and market positions in more detail.
-      4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
+      4. Detailed Search People Review: You need to prioritize the detailed search results.
       5. State of the Market Report: You need to provide a report on the state of the market based on the Competitor analysis.
 
       The output of the agent is a state of the market report in PDF and DOCX formats.
@@ -73,9 +73,9 @@ async function setupAgentProductsConfiguration() {
 
         There are five stages:
         1. Wide Search: You need to search for competitor strategies and market positions.
-        2. People Prioritization: You need to prioritize the wide search results.
+        2. People Review: You need to prioritize the wide search results.
         3. Detailed Search: You need to search for competitor strategies and market positions in more detail.
-        4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
+        4. Detailed Search People Review: You need to prioritize the detailed search results.
         5. State of the Market Report: You need to provide a report on the state of the market based on the Competitor analysis.
 
         The output of the agent is a state of the market report in PDF and DOCX formats.
@@ -109,9 +109,9 @@ async function setupAgentProductsConfiguration() {
 
           There are five stages:
           1. Wide Search: You need to search for leads and potential client contacts.
-          2. People Prioritization: You need to prioritize the wide search results.
+          2. People Review: You need to prioritize the wide search results.
           3. Detailed Search: You need to search for leads and potential client contacts in more detail.
-          4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
+          4. Detailed Search People Review: You need to prioritize the detailed search results.
           5. Leads and Potential Client Contacts Report: You need to provide a report on the leads and potential client contacts.
 
           The output of the agent is a list of leads and potential client contacts in XLS format.
@@ -141,9 +141,9 @@ async function setupAgentProductsConfiguration() {
 
           There are six stages:
           1. Wide Search: You need to search for innovative ideas for product processes.
-          2. People Prioritization: You need to prioritize the wide search results.
+          2. People Review: You need to prioritize the wide search results.
           3. Detailed Search: You need to search for innovative ideas for product processes in more detail.
-          4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
+          4. Detailed Search People Review: You need to prioritize the detailed search results.
           5. Genetic Algorithm: The agent uses a genetic algorithm to generate innovative ideas for product processes.
           6. Innovative Ideas for Product Processes Report: You need to provide a report on the innovative ideas for product processes.
 
@@ -215,9 +215,9 @@ async function setupAgentProductsConfiguration() {
 
           There are five stages:
           1. Wide Search: You need to search for funding opportunities and investment strategies.
-          2. People Prioritization: You need to prioritize the wide search results.
+          2. People Review: You need to prioritize the wide search results.
           3. Detailed Search: You need to search for funding opportunities and investment strategies in more detail.
-          4. Detailed Search People Prioritization: You need to prioritize the detailed search results.
+          4. Detailed Search People Review: You need to prioritize the detailed search results.
           5. Funding Opportunities and Investment Strategies Report: You need to provide a report on the funding opportunities and investment strategies.
 
           The output of the agent is a list of funding opportunities and investment strategies in XLS format.

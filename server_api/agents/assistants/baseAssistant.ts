@@ -165,7 +165,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         this.emit(
           "update-ai-model-session",
-          `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, null, 2)}`
+          `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, null, 2)} offer the user assistance with this next step in the workflow`
         );
       } catch (error) {
         console.error(`Error finding agent run: ${error}`);
