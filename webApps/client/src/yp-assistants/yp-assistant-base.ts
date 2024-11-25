@@ -70,7 +70,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   voiceButton!: HTMLElement;
 
   @property({ type: String })
-  override textInputLabel = "Ask me anything with text or...";
+  override textInputLabel = "Message the assistant";
 
   @property({ type: String })
   override defaultInfoMessage: string | undefined =
@@ -721,10 +721,13 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           --md-text-button-label-text-weight: 600;
           --md-text-button-label-text-size: 14px;
           --md-text-button-label-text-color: var(--yp-sys-color-agent-black);
-          --md-text-button-focus-label-text-color: var(--yp-sys-color-agent-black);
-          --md-text-button-hover-label-text-color: var(--yp-sys-color-agent-black);
+          --md-text-button-focus-label-text-color: var(
+            --yp-sys-color-agent-black
+          );
+          --md-text-button-hover-label-text-color: var(
+            --yp-sys-color-agent-black
+          );
           --md-text-button-container-color: var(--yp-sys-color-agent-black);
-
         }
 
         .stopVoiceButton {
@@ -1003,8 +1006,18 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           margin-bottom: 16px;
           margin-left: 0;
           margin-right: 0;
-          padding: 0;
-          width: 650px;
+          padding: 16px;
+          width: 768px;
+          --md-filled-text-field-container-color: #f4f4f4;
+          --md-filled-text-field-hover-container-color: #f4f4f4;
+
+          --md-icon-size:32px;
+        }
+
+        md-filled-text-field[dark-mode] {
+          --md-filled-text-field-container-color: var(
+            --md-sys-color-surface-container-highest
+          );
         }
 
         .chatElement[thinking] {
@@ -1096,12 +1109,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             >
           `
         : nothing}
-
       ${this.onlyUseTextField || this.chatLog.length > 1
         ? html`
             <md-filled-text-field
               class="textInput"
               type="text"
+              ?dark-mode="${this.themeDarkMode}"
               hasTrailingIcon
               id="chatInput"
               rows="${this.chatLog.length > 1 ? "1" : "3"}"
@@ -1120,8 +1133,20 @@ export abstract class YpAssistantBase extends YpChatbotBase {
                 slot="trailing-icon"
                 id="sendButton"
                 ?input-is-focused="${this.inputIsFocused}"
-                >arrow_circle_up</md-icon
-              >
+                ><svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="16" cy="16" r="16" fill="#D7D7D7" />
+                  <path
+                    d="M8.5332 16L9.8492 17.316L15.0665 12.108V23.4667H16.9332V12.108L22.1412 17.3253L23.4665 16L15.9999 8.53333L8.5332 16Z"
+                    fill="#F4F4F4"
+                  />
+                </svg>
+              </md-icon>
             </md-filled-text-field>
           `
         : html`<md-filled-text-field

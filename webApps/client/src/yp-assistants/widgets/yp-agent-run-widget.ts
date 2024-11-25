@@ -153,8 +153,6 @@ export class YpAgentRunWidget extends YpBaseElement {
         this.progress = status.progress;
         this.latestMessage = status.messages[status.messages.length - 1] || "";
 
-        debugger;
-
         if (
           this.agentState === "stopped" ||
           this.agentState === "error" ||

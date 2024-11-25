@@ -82,7 +82,6 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
                 this.agentState = status.state;
                 this.progress = status.progress;
                 this.latestMessage = status.messages[status.messages.length - 1] || "";
-                debugger;
                 if (this.agentState === "stopped" ||
                     this.agentState === "error" ||
                     this.agentState === "completed") {
