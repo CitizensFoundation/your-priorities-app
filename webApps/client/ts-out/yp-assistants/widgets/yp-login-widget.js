@@ -15,17 +15,24 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
             super.styles,
             css `
         .logged-in {
-          font-size: 1.2em;
-          font-weight: bold;
+          width: 768px !important;
+          font-size: 22px;
+          font-weight: 700;
+          font-family: var(--md-ref-typeface-brand);
           margin-top: 16px;
           margin-bottom: 16px;
           text-align: center;
-          padding: 16px;
-          border: 1px solid var(--yp-sys-color-up);
+          padding: 0;
+          background-color: var(--yp-sys-color-agent-green-10);
+          border-radius: 4px;
         }
 
         .container {
-          width: 768px;
+          width: calc(768px - 42px);
+        }
+
+        yp-login {
+          width: 430px;
         }
       `,
         ];
@@ -33,7 +40,7 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
     render() {
         if (this.isLoggedIn) {
             return html `
-        <div class="layout horizontal center-center container">
+        <div class="layout horizontal center-center container logged-in">
           <div class="logged-in">${this.t("loggedIn")}</div>
         </div>
       `;

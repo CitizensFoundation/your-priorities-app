@@ -83,7 +83,7 @@ export class NavigationTools extends BaseAssistantTools {
           isSelected
           agentProductId="${plan?.AgentProduct?.id}"
           subscriptionId="${subscription?.id}"
-          agentName="${plan?.AgentProduct?.name}"
+          agentName="${plan?.name}"
           agentDescription="${plan?.AgentProduct?.description}"
           agentImageUrl="${plan?.AgentProduct?.configuration.avatar?.imageUrl}"
         ></yp-agent-chip></div>`;
