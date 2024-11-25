@@ -1,5 +1,10 @@
 {
+  "resetChat": "Reset chat",
   "stopTalking": "Stop",
+  "downloadPdf": "Download PDF",
+  "viewReport": "View report",
+  "reportPerMonth": "report per month",
+  "youHaveSwitchedTo": "You have now switched to",
   "startTalking": "Talk",
   "talkToTheAssistant": "Talk to the assistant",
   "orifyoucanttalkmessage":"Or if you can't talk now you can also",
