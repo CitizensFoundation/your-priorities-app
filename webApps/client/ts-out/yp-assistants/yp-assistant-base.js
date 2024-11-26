@@ -253,18 +253,18 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     renderMarkdownReport() {
         return html `<div class="markdownContainer layout vertical">
-      <div class="layout horizontal">
-        <md-icon-button
-          class="closeMarkdownReportButton"
-          @click=${this.closeMarkdownReport}
-          ><md-icon>close</md-icon></md-icon-button
-        >
-        <div class="flex"></div>
-        <md-text-button class="downloadPdfButton" @click=${this.downloadPdf}
-          >${this.t("downloadPdf")}</md-text-button
-        >
-      </div>
       <div class="markdownInnerContainer">
+        <div class="layout horizontal">
+          <md-filled-tonal-icon-button
+            class="closeMarkdownReportButton"
+            @click=${this.closeMarkdownReport}
+            ><md-icon>close</md-icon></md-filled-tonal-icon-button
+          >
+          <div class="flex"></div>
+          <md-filled-button ?has-static-theme="${this.hasStaticTheme}" class="downloadPdfButton" @click=${this.downloadPdf}
+            >${this.t("downloadPdf")}</md-filled-button
+          >
+        </div>
         ${resolveMarkdown(this.currentMarkdownReport, {
             includeImages: true,
             includeCodeBlockClassNames: true,
@@ -275,7 +275,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     </div>`;
     }
     render() {
-        if (this.welcomeScreenOpen) {
+        if (false && this.welcomeScreenOpen) {
             return html `<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
         @yp-start-text-mode="${this.startInTextMode}"
@@ -561,8 +561,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding-top: 48px;
         }
 
-        .sendChatIcon {
+        md-filled-button[has-static-theme] {
+          --md-filled-button-container-color: var(
+            --md-sys-color-primary-container
+          );
+          --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
+        }
 
+        .sendChatIcon {
+          margin-right: 24px;
         }
         .closeMarkdownReportButton,
         .downloadPdfButton {
@@ -575,6 +582,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding: 32px;
           padding-left: 48px;
           padding-right: 48px;
+          padding-top: 20px;
         }
 
         @keyframes pulse {
@@ -923,6 +931,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           --md-filled-field-active-indicator-height: 0;
           --md-filled-field-focus-active-indicator-height: 0;
           --md-filled-field-hover-active-indicator-color: transparent;
+          --md-filled-field-leading-space: 24px;
+
           border: none;
           margin: 16px;
           margin-bottom: 16px;
@@ -1055,7 +1065,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           slot="trailing-icon"
           id="sendButton"
           ?input-is-focused="${this.inputIsFocused}"
-          ><svg
+        >
+          <svg
             width="32"
             height="32"
             viewBox="0 0 32 32"
@@ -1068,7 +1079,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
               fill="#F4F4F4"
             />
           </svg>
-      </div>
+        </div>
       </md-filled-text-field>
     `;
     }

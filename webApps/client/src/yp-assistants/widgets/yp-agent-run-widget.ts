@@ -230,10 +230,9 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         .container {
           padding: 16px;
-          padding-right: 0;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
-          width: calc(768px - 32px);
+          width: calc(768px - 48px);
           min-height: 500px;
         }
 
@@ -251,9 +250,9 @@ export class YpAgentRunWidget extends YpBaseElement {
           padding: 12px;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
-          margin-right: 20px;
-          margin-top: 12px;
-          margin-bottom: 12px;
+          margin-right: 16px;
+          margin-top: 8px;
+          margin-bottom: 8px;
         }
 
         .agent-header-title {
@@ -598,12 +597,12 @@ export class YpAgentRunWidget extends YpBaseElement {
     return html`<div
       class="layout horizontal center-center waitingOnUserContainer"
     >
-      <div class="layout horizontal center-center flex" style="max-width: 50%">
+      <div class="layout horizontal center-center flex">
         <md-filled-button class="viewListButton" @click=${this.viewList}
           >${this.t("viewList")}</md-filled-button
         >
       </div>
-      <div class="layout vertical center-center" style="max-width: 50%">
+      <div class="layout vertical center-center flex">
         <div class="layout vertical inviteContainer">
           <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
           <md-outlined-text-field

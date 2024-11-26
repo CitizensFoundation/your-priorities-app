@@ -76,7 +76,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     // Default voice configuration
     this.voiceConfig = {
       model: "gpt-4o-realtime-preview-2024-10-01",
-      voice: "verse",
+      voice: "echo",
       modalities: ["text", "audio"],
     };
 
@@ -202,7 +202,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
           voice: this.voiceConfig.voice,
         };
         this.initializeVoiceSession(
-          "Say hi and welcome the user, then show the agent workflow widget with the provided function/tool. Finally explain the workflow to the user"
+          "Say hi and welcome the user, offer to explain and if the user wants an explaination show the workflow UI widget with 'show_agent_workflow_overview_widget' function you have access to call"
         );
       });
 
