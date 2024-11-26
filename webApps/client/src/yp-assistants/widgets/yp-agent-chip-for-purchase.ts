@@ -82,23 +82,35 @@ export class YpAgentChipForPurchase extends YpAgentChip {
           color: var(--yp-sys-color-up);
         }
 
+        .subscribed-status {
+          color: var(--yp-sys-color-agent-green);
+          text-transform: uppercase;
+          font-weight: 600;
+          font-size: 14px;
+          margin-left: 4px;
+        }
+
         .container {
           width: calc(768px - 48px);
           border: 1px solid #eaeaea;
           padding: 16px;
           margin-bottom: 16px;
         }
+
+        .container[isSubscribed] {
+          border: 1px solid var(--yp-sys-color-agent-green);
+        }
       `,
     ];
   }
 
   getSubscribedStatus() {
-    return this.isSubscribed ? " (subscribed)" : "";
+    return this.isSubscribed ? this.t('subscribed') : "";
   }
 
   override render() {
     return html`
-      <div class="layout horizontal container">
+      <div class="layout horizontal container" ?isSubscribed="${this.isSubscribed}">
         <div>
           <img
             class="agent-image"
@@ -112,8 +124,8 @@ export class YpAgentChipForPurchase extends YpAgentChip {
               <div class="runs-info">
                 ${this.maxRunsPerCycle} ${this.t("reportsPerMonth")}
               </div>
-              <div class="agent-name" ?isSubscribed="${this.isSubscribed}">
-                ${unsafeHTML(this.agentName)} ${this.getSubscribedStatus()}
+              <div class="agent-name">
+                ${unsafeHTML(this.agentName)} <span class="subscribed-status">${this.getSubscribedStatus()}</span>
               </div>
             </div>
             <div class="flex"></div>

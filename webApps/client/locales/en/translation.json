@@ -1,5 +1,6 @@
 {
   "resetChat": "Reset chat",
+  "subscribed": "Subscribed",
   "bottomAmplifierDisclaimer": "This is an alpha version of the Amplifier so the agent can make mistakes",
   "stopTalking": "Stop",
   "peopleStep": "People step",
@@ -33,7 +34,7 @@
   "runsPerMonth": "runs per month",
   "agentController": "Agent Controller",
   "loggedIn": "Logged in",
-  "loginHere": "Login or Signup here",
+  "loginHere": "Log in or Sign up",
   "agent_subscription_and_selection": "Agent Subscription and Selection",
   "agent_direct_conversation": "Agent Direct Conversation",
   "closeAssistant": "Close Assistant",

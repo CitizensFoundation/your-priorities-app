@@ -272,7 +272,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
       case 'end':
         this.lastChatUiElement?.stopJsonLoading();
         this.sendButton!.disabled = false;
-        this.sendButton!.innerHTML = this.t('Send');
+        //this.sendButton!.innerHTML = this.t('Send');
         this.infoMessage = this.defaultInfoMessage;
         break;
       case 'hiddenContextMessage':
@@ -295,7 +295,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
           undefined
         );
         this.sendButton!.disabled = false;
-        this.sendButton!.innerHTML = this.t('Send');
+        //this.sendButton!.innerHTML = this.t('Send');
         this.infoMessage = this.defaultInfoMessage;
         this.requestUpdate();
         break;

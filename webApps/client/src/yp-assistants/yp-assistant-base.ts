@@ -128,7 +128,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "agent-configuration-submitted",
       this.agentConfigurationSubmitted.bind(this)
     );
-    this.addListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
+    this.addListener(
+      "yp-open-markdown-report",
+      this.openMarkdownReport.bind(this)
+    );
   }
 
   async openMarkdownReport(event: CustomEvent) {
@@ -369,7 +372,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   renderMarkdownReport() {
     return html`<div class="markdownContainer layout vertical">
       <div class="layout horizontal">
-        <md-icon-button class="closeMarkdownReportButton" @click=${this.closeMarkdownReport}
+        <md-icon-button
+          class="closeMarkdownReportButton"
+          @click=${this.closeMarkdownReport}
           ><md-icon>close</md-icon></md-icon-button
         >
         <div class="flex"></div>
@@ -445,7 +450,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             )}
         </div>
         <div class="chat-input-container">
-          <div class="chat-input">${this.renderChatInput()}</div>
+          <div class="chat-input">${this.renderChatAssistantInput()}</div>
         </div>
       </div>
     `)}`;
@@ -698,6 +703,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.directAgentAvatarUrl = undefined;
     this.stopCanvasRendering();
     this.requestUpdate();
+    location.reload();
   }
 
   async clearHistory() {
@@ -720,7 +726,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           padding-top: 48px;
         }
 
-        .closeMarkdownReportButton, .downloadPdfButton {
+        .sendChatIcon {
+
+        }
+        .closeMarkdownReportButton,
+        .downloadPdfButton {
           margin-bottom: 8px;
         }
 
@@ -1167,11 +1177,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   renderBottomDisclaimer() {
     return html`<div class="bottomDisclaimer">
-              ${this.t("bottomAmplifierDisclaimer")}
+      ${this.t("bottomAmplifierDisclaimer")}
     </div>`;
   }
 
-  override renderChatInput() {
+  renderChatAssistantInput() {
     return html`
       ${this.showCleanupButton
         ? html`
@@ -1192,66 +1202,42 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           `
         : nothing}
 
-
-      ${this.onlyUseTextField || this.chatLog.length > 1
-        ? html`
-            <md-filled-text-field
-              class="textInput"
-              type="text"
-              ?dark-mode="${this.themeDarkMode}"
-              hasTrailingIcon
-              id="chatInput"
-              rows="${this.chatLog.length > 1 ? "1" : "3"}"
-              @focus="${() => (this.inputIsFocused = true)}"
-              @blur="${() => (this.inputIsFocused = true)}"
-              @keyup="${(e: KeyboardEvent) => {
-                if (e.key === "Enter") {
-                  this.sendChatMessage();
-                }
-              }}"
-              .label="${this.textInputLabel}"
-            >
-              <md-icon
-                class="sendIcon"
-                @click="${this.sendChatMessage}"
-                slot="trailing-icon"
-                id="sendButton"
-                ?input-is-focused="${this.inputIsFocused}"
-                ><svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="16" cy="16" r="16" fill="#D7D7D7" />
-                  <path
-                    d="M8.5332 16L9.8492 17.316L15.0665 12.108V23.4667H16.9332V12.108L22.1412 17.3253L23.4665 16L15.9999 8.53333L8.5332 16Z"
-                    fill="#F4F4F4"
-                  />
-                </svg>
-              </md-icon>
-            </md-filled-text-field>
-          `
-        : html`<md-filled-text-field
-            class="textInput"
-            type="textarea"
-            hasTrailingIcon
-            id="chatInput"
-            rows="3"
-            @focus="${() => (this.inputIsFocused = true)}"
-            @blur="${() => (this.inputIsFocused = true)}"
-            .label="${this.textInputLabel}"
+      <md-filled-text-field
+        class="textInput"
+        type="text"
+        ?dark-mode="${this.themeDarkMode}"
+        hasTrailingIcon
+        id="chatInput"
+        @focus="${() => (this.inputIsFocused = true)}"
+        @blur="${() => (this.inputIsFocused = true)}"
+        @keyup="${(e: KeyboardEvent) => {
+          if (e.key === "Enter") {
+            this.sendChatMessage();
+          }
+        }}"
+        .label="${this.textInputLabel}"
+      >
+        <div
+          class="sendChatIcon"
+          @click="${this.sendChatMessage}"
+          slot="trailing-icon"
+          id="sendButton"
+          ?input-is-focused="${this.inputIsFocused}"
+          ><svg
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <md-icon
-              class="sendIcon"
-              @click="${this.sendChatMessage}"
-              slot="trailing-icon"
-              id="sendButton"
-              ?input-is-focused="${this.inputIsFocused}"
-              >send</md-icon
-            ></md-filled-text-field
-          >`}
+            <circle cx="16" cy="16" r="16" fill="#D7D7D7" />
+            <path
+              d="M8.5332 16L9.8492 17.316L15.0665 12.108V23.4667H16.9332V12.108L22.1412 17.3253L23.4665 16L15.9999 8.53333L8.5332 16Z"
+              fill="#F4F4F4"
+            />
+          </svg>
+      </div>
+      </md-filled-text-field>
     `;
   }
 

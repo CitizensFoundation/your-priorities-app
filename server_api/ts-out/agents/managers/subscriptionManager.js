@@ -75,7 +75,7 @@ export class SubscriptionManager {
     async cloneCommunityWorkflowTemplate(agentProduct, domainId, currentUser) {
         console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
         let newCommunity = await this.cloneCommunityTemplate(
-        /*agentProduct.configuration.templateWorkflowCommunityId*/ 10054 /*11*/, domainId);
+        /*agentProduct.configuration.templateWorkflowCommunityId*/ /*10054*/ 11, domainId);
         console.log("newCommunity", newCommunity);
         const groups = await YpGroup.findAll({
             where: {

@@ -174,7 +174,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
             case 'end':
                 this.lastChatUiElement?.stopJsonLoading();
                 this.sendButton.disabled = false;
-                this.sendButton.innerHTML = this.t('Send');
+                //this.sendButton!.innerHTML = this.t('Send');
                 this.infoMessage = this.defaultInfoMessage;
                 break;
             case 'hiddenContextMessage':
@@ -187,7 +187,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
                 }
                 this.addToChatLogWithMessage(wsMessage, wsMessage.message, undefined, undefined);
                 this.sendButton.disabled = false;
-                this.sendButton.innerHTML = this.t('Send');
+                //this.sendButton!.innerHTML = this.t('Send');
                 this.infoMessage = this.defaultInfoMessage;
                 this.requestUpdate();
                 break;

@@ -80,7 +80,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
 
         .welcome {
           font-family: var(--md-ref-typeface-brand);
-          font-size: 28px;
+          font-size: 22px;
           font-weight: 700;
           margin-bottom: 24px;
         }

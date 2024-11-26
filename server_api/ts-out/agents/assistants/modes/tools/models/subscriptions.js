@@ -94,20 +94,23 @@ export class SubscriptionModels {
         if (!plan) {
             throw new Error(`Agent product with id ${subscriptionPlanId} not found`);
         }
-        const subscription = (await YpSubscription.findOne({
-            where: {
-                subscription_plan_id: subscriptionPlanId,
-                status: "active",
-                user_id: this.assistant.memory.currentUser?.id,
-            },
-            include: [
-                {
-                    model: YpSubscriptionPlan,
-                    as: "Plan",
-                    attributes: ['id', 'configuration'],
+        let subscription = null;
+        if (this.assistant.memory.currentUser) {
+            subscription = (await YpSubscription.findOne({
+                where: {
+                    subscription_plan_id: subscriptionPlanId,
+                    status: "active",
+                    user_id: this.assistant.memory.currentUser?.id,
                 },
-            ],
-        }));
+                include: [
+                    {
+                        model: YpSubscriptionPlan,
+                        as: "Plan",
+                        attributes: ['id', 'configuration'],
+                    },
+                ],
+            }));
+        }
         return { subscription, plan };
     }
     async loadUserAgentSubscriptions() {

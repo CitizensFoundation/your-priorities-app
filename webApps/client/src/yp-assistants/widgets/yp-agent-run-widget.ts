@@ -196,7 +196,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         .inviteContainer {
-          margin-right: 24px;
+          margin-right: 8px;
           margin-left: 8px;
         }
 
@@ -251,7 +251,7 @@ export class YpAgentRunWidget extends YpBaseElement {
           padding: 12px;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
-          margin-right: 24px;
+          margin-right: 20px;
           margin-top: 12px;
           margin-bottom: 12px;
         }
@@ -526,7 +526,8 @@ export class YpAgentRunWidget extends YpBaseElement {
   private renderAgentRunningStatus() {
     return html`<div class="agent-running-status layout vertical center-center">
       ${this.progress !== undefined
-        ? html`<md-linear-progress indeterminate
+        ? html`<md-linear-progress
+            indeterminate
             value="${this.progress / 100}"
           ></md-linear-progress>`
         : html`<md-linear-progress indeterminate></md-linear-progress>`}
@@ -575,17 +576,19 @@ export class YpAgentRunWidget extends YpBaseElement {
 
   openMarkdownReport() {
     this.fire("yp-open-markdown-report", {
-      markdownReport: this.latestMessageMarkdown
+      markdownReport: this.latestMessageMarkdown,
     });
   }
 
   renderCompleted(): TemplateResult {
     return html`<div
-    class="layout horizontal center-center waitingOnUserContainer"
-  >
-    <div class="layout horizontal center-center flex">
-      <md-filled-button class="viewListButton viewReportButton" @click=${this.openMarkdownReport}
-        >${this.t("viewReport")}</md-filled-button
+      class="layout horizontal center-center waitingOnUserContainer"
+    >
+      <div class="layout horizontal center-center flex">
+        <md-filled-button
+          class="viewListButton viewReportButton"
+          @click=${this.openMarkdownReport}
+          >${this.t("viewReport")}</md-filled-button
         >
       </div>
     </div>` as unknown as TemplateResult;
@@ -595,21 +598,23 @@ export class YpAgentRunWidget extends YpBaseElement {
     return html`<div
       class="layout horizontal center-center waitingOnUserContainer"
     >
-      <div class="layout horizontal center-center flex">
+      <div class="layout horizontal center-center flex" style="max-width: 50%">
         <md-filled-button class="viewListButton" @click=${this.viewList}
           >${this.t("viewList")}</md-filled-button
         >
       </div>
-      <div class="layout vertical inviteContainer">
-        <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
-        <md-outlined-text-field
-          type="textarea"
-          rows="7"
-          label="${this.t("enterOneEmailPerLine")}"
-        ></md-outlined-text-field>
-        <md-filled-button class="inviteButton"
-          >${this.t("inviteToList")}</md-filled-button
-        >
+      <div class="layout vertical center-center" style="max-width: 50%">
+        <div class="layout vertical inviteContainer">
+          <div class="inviteHeader">${this.t("invitePeopleAsReviewers")}</div>
+          <md-outlined-text-field
+            type="textarea"
+            rows="7"
+            label="${this.t("enterOneEmailPerLine")}"
+          ></md-outlined-text-field>
+          <md-filled-button class="inviteButton"
+            >${this.t("inviteToList")}</md-filled-button
+          >
+        </div>
       </div>
     </div>`;
   }
