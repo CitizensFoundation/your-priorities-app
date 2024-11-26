@@ -186,6 +186,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       },
     };
 
+
     try {
       const ws = new WebSocket(
         `${url}?model=${this.voiceConfig.model}`,
@@ -201,7 +202,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
           voice: this.voiceConfig.voice,
         };
         this.initializeVoiceSession(
-          "Say hi, show the agent workflow widget and always offer to explain"
+          "Say hi and welcome the user, then show the agent workflow widget with the provided function/tool. Finally explain the workflow to the user"
         );
       });
 

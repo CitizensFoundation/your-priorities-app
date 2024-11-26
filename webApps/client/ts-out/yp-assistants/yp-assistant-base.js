@@ -25,7 +25,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.directAgentName = null;
         this.welcomeScreenOpen = true;
         //TODO: Read from agentbundle db object
-        this.welcomeTextHtml = `I am your assistant for Amplifier and you can <span class="green">to talk to me</span>`;
+        this.welcomeTextHtml = `I am your assistant for Amplifier and I can talk, just <span class="green">click the button</span>`;
         this.mediaRecorder = null;
         this.wavStreamPlayer = null;
         this.isRecording = false;
@@ -721,7 +721,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           left: 0;
           width: 100vw;
           z-index: 10;
-          height: 90px;
+          height: 56px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -732,12 +732,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           right: 0;
           z-index: 11;
           left: 50%;
-          height: 90px;
+          height: 56px;
           transform: translateX(-50%);
           z-index: 10;
           width: 768px;
           padding: 0;
-          margin-bottom: 8px;
+          margin-bottom: 24px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 

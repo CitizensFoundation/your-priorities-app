@@ -130,6 +130,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           subscription as YpSubscriptionAttributes
         );
 
+
+        const html = `<yp-configuration-submitted></yp-configuration-submitted>`;
+
+        this.wsClientSocket.send(
+          JSON.stringify({
+            type: "html",
+            html,
+          })
+        );
+
         this.emit(
           "update-ai-model-session",
           "The agent configuration was submitted successfully and the agent is ready to create its first agent run"

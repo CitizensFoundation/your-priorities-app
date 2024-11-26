@@ -39,7 +39,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   //TODO: Read from agentbundle db object
   @property({ type: String })
-  welcomeTextHtml = `I am your assistant for Amplifier and you can <span class="green">to talk to me</span>`;
+  welcomeTextHtml = `I am your assistant for Amplifier and I can talk, just <span class="green">click the button</span>`;
 
   @state()
   private mediaRecorder: WavRecorder | null = null;
@@ -883,7 +883,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           left: 0;
           width: 100vw;
           z-index: 10;
-          height: 90px;
+          height: 56px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 
@@ -894,12 +894,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           right: 0;
           z-index: 11;
           left: 50%;
-          height: 90px;
+          height: 56px;
           transform: translateX(-50%);
           z-index: 10;
           width: 768px;
           padding: 0;
-          margin-bottom: 8px;
+          margin-bottom: 24px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 

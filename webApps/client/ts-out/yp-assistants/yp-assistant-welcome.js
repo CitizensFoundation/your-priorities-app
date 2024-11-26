@@ -29,12 +29,14 @@ let YpAssistantWelcome = class YpAssistantWelcome extends YpBaseElementWithLogin
         }
 
         .talking-head-image {
-          width: 120px;
-          height: 120px;
+          width: 128px;
+          height: 128px;
           border-radius: 50%;
           object-fit: cover;
           align-self: start;
           margin-right: 40px;
+          margin-bottom: 16px;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         }
 
 
@@ -58,7 +60,7 @@ let YpAssistantWelcome = class YpAssistantWelcome extends YpBaseElementWithLogin
         }
 
         .mainContent {
-          max-width: 460px;
+          max-width: 480px;
         }
 
         .green {
@@ -76,7 +78,7 @@ let YpAssistantWelcome = class YpAssistantWelcome extends YpBaseElementWithLogin
         .mainText {
           font-size: 20px;
           font-weight: 400;
-          width: 360px;
+          width: 380px;
         }
 
         .messageMeText {
@@ -154,7 +156,7 @@ let YpAssistantWelcome = class YpAssistantWelcome extends YpBaseElementWithLogin
         return html `
       <div class="layout vertical center-center welcomeContainer">
         <div class="layout vertical mainContent center-center">
-          <div class="layout horizontal">
+          <div class="layout vertical">
             ${this.renderVoiceTalkingHead()}
             <div class="layout vertical">
               <div class="title">${this.t("welcome")}</div>

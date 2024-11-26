@@ -79,6 +79,11 @@ export class YpBaseAssistant extends YpBaseChatBot {
                     throw new Error("No subscription found");
                 }
                 await this.updateCurrentAgentProductPlan(this.memory.currentAgentStatus.subscriptionPlan, subscription);
+                const html = `<yp-configuration-submitted></yp-configuration-submitted>`;
+                this.wsClientSocket.send(JSON.stringify({
+                    type: "html",
+                    html,
+                }));
                 this.emit("update-ai-model-session", "The agent configuration was submitted successfully and the agent is ready to create its first agent run");
             }
             catch (error) {

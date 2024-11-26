@@ -15,7 +15,7 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
             super.styles,
             css `
         .logged-in {
-          width: 768px !important;
+          width: 756px !important;
           font-size: 15px;
           font-weight: 500;
           font-family: var(--md-ref-typeface-brand);
