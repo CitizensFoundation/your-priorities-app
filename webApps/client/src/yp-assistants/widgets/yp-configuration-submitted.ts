@@ -7,13 +7,13 @@ import { YpBaseElementWithLogin } from "../../common/yp-base-element-with-login.
 
 import "../../yp-user/yp-login.js";
 
-@customElement("yp-login-widget")
-export class YpLoginWidget extends YpBaseElementWithLogin {
+@customElement("yp-configuration-submitted")
+export class YpConfigurationSubmitted extends YpBaseElement {
   static override get styles() {
     return [
       super.styles,
       css`
-        .logged-in {
+        .confirmation {
           width: 768px !important;
           font-size: 15px;
           font-weight: 500;
@@ -35,7 +35,7 @@ export class YpLoginWidget extends YpBaseElementWithLogin {
           width: 430px;
         }
 
-        .logged-in-text {
+        .confirmation-text {
           font-weight: 700;
           text-transform: lowercase;
         }
@@ -44,25 +44,13 @@ export class YpLoginWidget extends YpBaseElementWithLogin {
   }
 
   override render() {
-    if (this.isLoggedIn) {
-      return html`
-        <div class="layout horizontal center-center container logged-in">
-          <div class="logged-in">
-            ${this.t("youAre")} <span class="logged-in-text">${this.t("loggedIn")}</span>
-          </div>
+    return html`
+      <div class="layout horizontal center-center container confirmation">
+        <div class="confirmation">
+          ${this.t("configuration")}
+          <span class="confirmation-text">${this.t("submitted")}</span>
         </div>
-      `;
-    } else {
-      return html`
-        <div class="layout horizontal center-center container">
-          <yp-login
-            id="userLogin"
-            class="loginSurface"
-            fullWithLoginButton
-            assistantMode
-          ></yp-login>
-        </div>
-      `;
-    }
+      </div>
+    `;
   }
 }

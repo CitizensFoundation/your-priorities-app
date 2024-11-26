@@ -737,6 +737,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           z-index: 10;
           width: 768px;
           padding: 0;
+          margin-bottom: 8px;
           background: var(--md-sys-color-surface-container-lowest);
         }
 

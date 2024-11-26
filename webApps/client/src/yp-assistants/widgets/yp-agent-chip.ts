@@ -70,9 +70,14 @@ export class YpAgentChip extends YpBaseElement {
           min-width: 0;
         }
 
-        .agent-name {
+        .agent-name-container {
           font-weight: 500;
-          font-size: 1.1em;
+          font-size: 15px;
+        }
+
+        .agent-name {
+          font-weight: 700;
+          font-size: 15px;
           margin-bottom: 4px;
         }
 

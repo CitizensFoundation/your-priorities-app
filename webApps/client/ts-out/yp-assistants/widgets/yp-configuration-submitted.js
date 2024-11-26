@@ -5,16 +5,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { customElement } from "lit/decorators.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
 import { css, html } from "lit";
 import "@material/web/iconbutton/filled-icon-button.js";
-import { YpBaseElementWithLogin } from "../../common/yp-base-element-with-login.js";
 import "../../yp-user/yp-login.js";
-let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
+let YpConfigurationSubmitted = class YpConfigurationSubmitted extends YpBaseElement {
     static get styles() {
         return [
             super.styles,
             css `
-        .logged-in {
+        .confirmation {
           width: 768px !important;
           font-size: 15px;
           font-weight: 500;
@@ -36,7 +36,7 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
           width: 430px;
         }
 
-        .logged-in-text {
+        .confirmation-text {
           font-weight: 700;
           text-transform: lowercase;
         }
@@ -44,31 +44,18 @@ let YpLoginWidget = class YpLoginWidget extends YpBaseElementWithLogin {
         ];
     }
     render() {
-        if (this.isLoggedIn) {
-            return html `
-        <div class="layout horizontal center-center container logged-in">
-          <div class="logged-in">
-            ${this.t("youAre")} <span class="logged-in-text">${this.t("loggedIn")}</span>
-          </div>
+        return html `
+      <div class="layout horizontal center-center container confirmation">
+        <div class="confirmation">
+          ${this.t("configuration")}
+          <span class="confirmation-text">${this.t("submitted")}</span>
         </div>
-      `;
-        }
-        else {
-            return html `
-        <div class="layout horizontal center-center container">
-          <yp-login
-            id="userLogin"
-            class="loginSurface"
-            fullWithLoginButton
-            assistantMode
-          ></yp-login>
-        </div>
-      `;
-        }
+      </div>
+    `;
     }
 };
-YpLoginWidget = __decorate([
-    customElement("yp-login-widget")
-], YpLoginWidget);
-export { YpLoginWidget };
-//# sourceMappingURL=yp-login-widget.js.map
+YpConfigurationSubmitted = __decorate([
+    customElement("yp-configuration-submitted")
+], YpConfigurationSubmitted);
+export { YpConfigurationSubmitted };
+//# sourceMappingURL=yp-configuration-submitted.js.map

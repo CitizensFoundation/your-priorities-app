@@ -5,6 +5,7 @@ import "./widgets/yp-login-widget.js";
 import "./widgets/yp-agent-configuration-widget.js";
 import "./widgets/yp-agent-workflow-widget.js";
 import "./widgets/yp-agent-run-widget.js";
+import "./widgets/yp-configuration-submitted.js";
 export declare class YpAssistantItemBase extends YpAiChatbotItemBase {
     isVoiceMode: boolean;
     isListening: boolean;
