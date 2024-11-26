@@ -275,7 +275,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     </div>`;
     }
     render() {
-        if (false && this.welcomeScreenOpen) {
+        if (this.welcomeScreenOpen) {
             return html `<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
         @yp-start-text-mode="${this.startInTextMode}"

@@ -394,7 +394,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   override render() {
-    if (false && this.welcomeScreenOpen) {
+    if (this.welcomeScreenOpen) {
       return html`<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
         @yp-start-text-mode="${this.startInTextMode}"

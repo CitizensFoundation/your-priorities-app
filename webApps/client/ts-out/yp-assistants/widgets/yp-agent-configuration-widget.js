@@ -141,7 +141,7 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
           </div>
         </div>
         <div class="layout horizontal">
-          <md-filled-button ?has-static-theme="${this.hasStaticTheme} @click="${this.submitConfiguration}">
+          <md-filled-button ?has-static-theme="${this.hasStaticTheme}" @click="${this.submitConfiguration}">
             ${this.t("Submit")}
           </md-filled-button>
         </div>
