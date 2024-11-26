@@ -97,7 +97,8 @@ export class SubscriptionModels {
         const subscription = (await YpSubscription.findOne({
             where: {
                 subscription_plan_id: subscriptionPlanId,
-                status: "active"
+                status: "active",
+                user_id: this.assistant.memory.currentUser?.id,
             },
             include: [
                 {
@@ -211,6 +212,7 @@ export class SubscriptionModels {
             const subscription = await YpSubscription.findOne({
                 where: {
                     id: subscriptionId,
+                    user_id: this.assistant.memory.currentUser?.id,
                     domain_id: this.assistant.domainId,
                     status: "active",
                 },

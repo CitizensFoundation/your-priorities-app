@@ -95,7 +95,7 @@ export class SubscriptionManager {
   ): Promise<{ workflow: YpWorkflowConfiguration; requiredQuestions?: any[] }> {
     console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
     let newCommunity = await this.cloneCommunityTemplate(
-      /*agentProduct.configuration.templateWorkflowCommunityId*/ /*10054*/  11,
+      /*agentProduct.configuration.templateWorkflowCommunityId*/ 10054  /*11*/,
       domainId
     );
 
@@ -126,7 +126,7 @@ export class SubscriptionManager {
       );
     }
 
-    for (const group of groups) {
+    /*for (const group of groups) {
       const hasAdmin = await group.hasGroupAdmins(currentUser);
       if (!hasAdmin) {
         await group.addGroupAdmins(currentUser);
@@ -134,7 +134,7 @@ export class SubscriptionManager {
       } else {
         console.log("Group already has the user as admin", currentUser.id);
       }
-    }
+    }*/
 
     // Create a map of old group IDs to new group IDs
     const groupIdMap = newCommunity.groupMapping;

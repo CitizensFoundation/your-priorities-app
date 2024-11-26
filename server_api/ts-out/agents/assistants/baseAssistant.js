@@ -81,6 +81,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 await this.updateCurrentAgentProductPlan(this.memory.currentAgentStatus.subscriptionPlan, subscription);
                 const html = `<yp-configuration-submitted></yp-configuration-submitted>`;
                 this.wsClientSocket.send(JSON.stringify({
+                    sender: "assistant",
                     type: "html",
                     html,
                 }));

@@ -188,7 +188,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         .viewReportButton {
-          margin-top: 32px;
+          margin-top: 24px;
         }
 
         .completedContainer {
@@ -233,10 +233,8 @@ export class YpAgentRunWidget extends YpBaseElement {
           padding-right: 0;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;
-          width: 100%;
-          min-width: 813px;
+          width: calc(768px - 32px);
           min-height: 500px;
-          margin-left: -40px;
         }
 
         @media (max-width: 820px) {
@@ -248,9 +246,8 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         .workflow-step {
-          width: calc(241px - 20px);
-          height: calc(158px - 24px);
-          max-height: calc(86px - 24px);
+          width: 196px;
+          height: 86px;
           padding: 12px;
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 4px;

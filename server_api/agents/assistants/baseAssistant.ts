@@ -135,6 +135,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         this.wsClientSocket.send(
           JSON.stringify({
+            sender: "assistant",
             type: "html",
             html,
           })

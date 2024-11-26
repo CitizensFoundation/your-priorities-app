@@ -200,7 +200,8 @@ export class AgentSubscriptionController {
       const { agentRun, subscription } = await this.subscriptionManager.startAgentRun(
         subscriptionId,
         this.wsClients,
-        wsClientId
+        wsClientId,
+        req.user
       );
 
       res.status(201).json({ agentRun, subscription });

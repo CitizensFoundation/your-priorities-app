@@ -75,7 +75,7 @@ export class AgentSubscriptionController {
                 const agentProductId = parseInt(req.body.agentProductId);
                 const subscriptionId = parseInt(req.params.subscriptionId);
                 const wsClientId = req.body.wsClientId;
-                const { agentRun, subscription } = await this.subscriptionManager.startAgentRun(subscriptionId, this.wsClients, wsClientId);
+                const { agentRun, subscription } = await this.subscriptionManager.startAgentRun(subscriptionId, this.wsClients, wsClientId, req.user);
                 res.status(201).json({ agentRun, subscription });
             }
             catch (error) {
