@@ -120,6 +120,13 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         .inviteContainer {
           margin-right: 8px;
           margin-left: 8px;
+          width: 320px;
+        }
+
+        @media (max-width: 700px) {
+          .inviteContainer {
+            min-width: 100%;
+          }
         }
 
         .inviteHeader {
