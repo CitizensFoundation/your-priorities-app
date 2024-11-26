@@ -1,6 +1,12 @@
 {
   "resetChat": "Reset chat",
+  "bottomAmplifierDisclaimer": "This is an alpha version of the Amplifier so the agent can make mistakes",
   "stopTalking": "Stop",
+  "peopleStep": "People step",
+  "aiStep": "AI step",
+  "youAre": "You are",
+  "configuration": "Configuration",
+  "submitted": "submitted",
   "downloadPdf": "Download PDF",
   "viewReport": "View report",
   "reportPerMonth": "report per month",
