@@ -162,7 +162,9 @@ export class AgentTools extends BaseAssistantTools {
         await this.assistant.subscriptionManager.startAgentRun(
           this.assistant.memory.currentAgentStatus.subscription.id,
           this.assistant.wsClients,
-          this.assistant.wsClientId
+          this.assistant.wsClientId,
+          //TODO: Fix this type casting
+          this.assistant.memory.currentUser as unknown as UserClass
         );
 
       await this.updateAgentProductRun(agentRun);

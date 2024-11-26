@@ -1000,6 +1000,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       />
     </svg> `;
     }
+    renderBottomDisclaimer() {
+        return html `<div class="bottomDisclaimer">
+              ${this.t("bottomAmplifierDisclaimer")}
+    </div>`;
+    }
     renderChatInput() {
         return html `
       ${this.showCleanupButton
@@ -1020,6 +1025,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             >
           `
             : nothing}
+
+
       ${this.onlyUseTextField || this.chatLog.length > 1
             ? html `
             <md-filled-text-field

@@ -127,7 +127,9 @@ export class AgentTools extends BaseAssistantTools {
             };
         }
         try {
-            const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(this.assistant.memory.currentAgentStatus.subscription.id, this.assistant.wsClients, this.assistant.wsClientId);
+            const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(this.assistant.memory.currentAgentStatus.subscription.id, this.assistant.wsClients, this.assistant.wsClientId, 
+            //TODO: Fix this type casting
+            this.assistant.memory.currentUser);
             await this.updateAgentProductRun(agentRun);
             const html = this.renderAgentRunWidget(subscription.AgentProduct, agentRun);
             const message = "You've created new agent run ready to run the first workflow step, out of many. It will not start automatically, the user needs to start it verbally.";

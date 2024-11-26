@@ -91,11 +91,11 @@ export class SubscriptionManager {
   async cloneCommunityWorkflowTemplate(
     agentProduct: YpAgentProduct,
     domainId: number,
-    subscriptionPlan?: YpSubscriptionPlan
+    currentUser: UserClass
   ): Promise<{ workflow: YpWorkflowConfiguration; requiredQuestions?: any[] }> {
     console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
     let newCommunity = await this.cloneCommunityTemplate(
-      /*agentProduct.configuration.templateWorkflowCommunityId*/ 10054  /*11*/,
+      /*agentProduct.configuration.templateWorkflowCommunityId*/ /*10054*/  11,
       domainId
     );
 
@@ -124,6 +124,16 @@ export class SubscriptionManager {
       throw new Error(
         "Top level agent ID not found in workflow group configuration"
       );
+    }
+
+    for (const group of groups) {
+      const hasAdmin = await group.hasGroupAdmins(currentUser);
+      if (!hasAdmin) {
+        await group.addGroupAdmins(currentUser);
+        console.log("Added current user as group admin", currentUser.id);
+      } else {
+        console.log("Group already has the user as admin", currentUser.id);
+      }
     }
 
     // Create a map of old group IDs to new group IDs
@@ -457,7 +467,8 @@ export class SubscriptionManager {
   async startAgentRun(
     subscriptionId: number,
     wsClients: Map<string, WebSocket>,
-    wsClientId: string
+    wsClientId: string,
+    currentUser: UserClass
   ): Promise<{ agentRun: YpAgentProductRun, subscription: YpSubscription }> {
     try {
       // Check if the subscription is active
@@ -493,7 +504,8 @@ export class SubscriptionManager {
 
       const workflowAndRequiredQuestions = await this.cloneCommunityWorkflowTemplate(
         subscription.AgentProduct,
-        subscription.domain_id
+        subscription.domain_id,
+        currentUser
       );
 
       // Create a new agent product run

@@ -48,6 +48,8 @@ interface PostClass extends DbData {
 interface GroupClass extends DbData {
   description: string;
   configuration: YpGroupConfiguration;
+  hasGroupAdmins(user: UserClass): Promise<boolean>;
+  addGroupAdmins(user: UserClass): Promise<void>;
 }
 
 interface UserClass extends DbData {

@@ -1164,6 +1164,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     </svg> `;
   }
 
+  renderBottomDisclaimer() {
+    return html`<div class="bottomDisclaimer">
+              ${this.t("bottomAmplifierDisclaimer")}
+    </div>`;
+  }
+
   override renderChatInput() {
     return html`
       ${this.showCleanupButton
@@ -1184,6 +1190,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             >
           `
         : nothing}
+
+
       ${this.onlyUseTextField || this.chatLog.length > 1
         ? html`
             <md-filled-text-field

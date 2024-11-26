@@ -72,10 +72,10 @@ export class SubscriptionManager {
             });
         });
     }
-    async cloneCommunityWorkflowTemplate(agentProduct, domainId, subscriptionPlan) {
+    async cloneCommunityWorkflowTemplate(agentProduct, domainId, currentUser) {
         console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
         let newCommunity = await this.cloneCommunityTemplate(
-        /*agentProduct.configuration.templateWorkflowCommunityId*/ 10054 /*11*/, domainId);
+        /*agentProduct.configuration.templateWorkflowCommunityId*/ /*10054*/ 11, domainId);
         console.log("newCommunity", newCommunity);
         const groups = await YpGroup.findAll({
             where: {
@@ -92,6 +92,16 @@ export class SubscriptionManager {
         const topLevelAgentId = workflowGroup.configuration.agents?.topLevelAgentId;
         if (!topLevelAgentId) {
             throw new Error("Top level agent ID not found in workflow group configuration");
+        }
+        for (const group of groups) {
+            const hasAdmin = await group.hasGroupAdmins(currentUser);
+            if (!hasAdmin) {
+                await group.addGroupAdmins(currentUser);
+                console.log("Added current user as group admin", currentUser.id);
+            }
+            else {
+                console.log("Group already has the user as admin", currentUser.id);
+            }
         }
         // Create a map of old group IDs to new group IDs
         const groupIdMap = newCommunity.groupMapping;
@@ -357,7 +367,7 @@ export class SubscriptionManager {
         }
     }
     // Start an agent run
-    async startAgentRun(subscriptionId, wsClients, wsClientId) {
+    async startAgentRun(subscriptionId, wsClients, wsClientId, currentUser) {
         try {
             // Check if the subscription is active
             const subscription = await YpSubscription.findByPk(subscriptionId, {
@@ -387,7 +397,7 @@ export class SubscriptionManager {
             // Check runs limit
             //TODO: Activate this again !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             //await this.checkRunsLimit(subscription);
-            const workflowAndRequiredQuestions = await this.cloneCommunityWorkflowTemplate(subscription.AgentProduct, subscription.domain_id);
+            const workflowAndRequiredQuestions = await this.cloneCommunityWorkflowTemplate(subscription.AgentProduct, subscription.domain_id, currentUser);
             // Create a new agent product run
             const agentRun = await YpAgentProductRun.create({
                 subscription_id: subscription.id,
