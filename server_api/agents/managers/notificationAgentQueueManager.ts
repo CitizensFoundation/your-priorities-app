@@ -84,6 +84,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         agentRun.changed("status", true);
         agentRun.changed("workflow", true);
         await agentRun.save();
+
+        //TODO: UPDATE AGENT MEMORY
+
         console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, status, workflowConfig);
       } else {
         // This was the last step, mark the workflow as completed

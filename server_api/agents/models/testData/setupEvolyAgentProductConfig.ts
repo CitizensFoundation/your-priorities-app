@@ -65,7 +65,7 @@ async function setupAgentProductsConfiguration() {
     }
     await CompetitorAgentFreeTrial.update({
       configuration: configuration,
-      name: "Competitor Agent Monthly Plan",
+      name: "Competitor Agent",
       description: "Competitive reports give detailed insights into competitors' strategies, product changes, and market moves - all synthesized into actionable market intelligence for your business.",
     });
   }

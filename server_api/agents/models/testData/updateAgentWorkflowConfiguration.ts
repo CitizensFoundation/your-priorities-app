@@ -22,7 +22,7 @@ async function setupAgentProductsConfiguration() {
           name: "Competitor Analysis People Review",
           shortName: "People review",
           description: "People Review of the wide search results.",
-          shortDescription: "People prioritize the the wide search results.",
+          shortDescription: "People prioritize the wide search results.",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#e74c3c",
