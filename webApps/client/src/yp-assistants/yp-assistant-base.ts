@@ -205,6 +205,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         this.currentMode = currentMode;
 
         if (chatLog && chatLog.length > 0) {
+          this.loadLastDirectAvatarUrlAndName();
           this.chatLogFromServer = chatLog.map((chatLogItem: any) => ({
             ...chatLogItem,
             date: new Date(chatLogItem.date),
@@ -553,6 +554,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
   }
 
+  saveLastDirectAvatarUrlAndName() {
+    localStorage.setItem("lastDirectAvatarUrl", this.directAgentAvatarUrl || "");
+    localStorage.setItem("lastDirectAvatarName", this.directAgentName || "");
+  }
+
+  loadLastDirectAvatarUrlAndName() {
+    this.directAgentAvatarUrl = localStorage.getItem("lastDirectAvatarUrl") || undefined;
+    this.directAgentName = localStorage.getItem("lastDirectAvatarName") || null;
+  }
+
+  resetLastDirectAvatarUrlAndName() {
+    localStorage.removeItem("lastDirectAvatarUrl");
+    localStorage.removeItem("lastDirectAvatarName");
+  }
+
   async resetWaveformPlayer() {
     await this.wavStreamPlayer?.interrupt();
     this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
@@ -642,6 +658,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         } else {
           this.directAgentAvatarUrl = data.url;
           this.directAgentName = data.data as string;
+          this.saveLastDirectAvatarUrlAndName();
         }
         break;
 
@@ -724,6 +741,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.chatLog = [];
     this.welcomeScreenOpen = true;
     this.directAgentAvatarUrl = undefined;
+    this.resetLastDirectAvatarUrlAndName();
     this.stopCanvasRendering();
     this.requestUpdate();
     location.reload();

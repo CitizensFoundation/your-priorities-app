@@ -161,6 +161,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 const { chatLog, modeData, currentMode } = (await this.serverApi.getMemoryFromServer(this.domainId));
                 this.currentMode = currentMode;
                 if (chatLog && chatLog.length > 0) {
+                    this.loadLastDirectAvatarUrlAndName();
                     this.chatLogFromServer = chatLog.map((chatLogItem) => ({
                         ...chatLogItem,
                         date: new Date(chatLogItem.date),
@@ -407,6 +408,18 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             }));
         }
     }
+    saveLastDirectAvatarUrlAndName() {
+        localStorage.setItem("lastDirectAvatarUrl", this.directAgentAvatarUrl || "");
+        localStorage.setItem("lastDirectAvatarName", this.directAgentName || "");
+    }
+    loadLastDirectAvatarUrlAndName() {
+        this.directAgentAvatarUrl = localStorage.getItem("lastDirectAvatarUrl") || undefined;
+        this.directAgentName = localStorage.getItem("lastDirectAvatarName") || null;
+    }
+    resetLastDirectAvatarUrlAndName() {
+        localStorage.removeItem("lastDirectAvatarUrl");
+        localStorage.removeItem("lastDirectAvatarName");
+    }
     async resetWaveformPlayer() {
         await this.wavStreamPlayer?.interrupt();
         this.wavStreamPlayer = new WavStreamPlayer({ sampleRate: 24000 });
@@ -495,6 +508,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 else {
                     this.directAgentAvatarUrl = data.url;
                     this.directAgentName = data.data;
+                    this.saveLastDirectAvatarUrlAndName();
                 }
                 break;
             case "clear_audio_buffer":
@@ -563,6 +577,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.chatLog = [];
         this.welcomeScreenOpen = true;
         this.directAgentAvatarUrl = undefined;
+        this.resetLastDirectAvatarUrlAndName();
         this.stopCanvasRendering();
         this.requestUpdate();
         location.reload();
