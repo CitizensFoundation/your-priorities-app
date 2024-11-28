@@ -89,14 +89,12 @@ export class YpAgentRunWidget extends YpBaseElement {
 
   async setupInitialWorkflow() {
     try {
-     this.parseWorkflow();
+      this.parseWorkflow();
 
-     await this.getUpdatedWorkflow();
+      await this.getUpdatedWorkflow();
     } catch (error) {
       console.error("Failed to setup initial workflow", error);
     }
-
-
   }
 
   updateWorkflow(updatedWorkflow: {
@@ -195,7 +193,6 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         if (this.agentState === "completed") {
-
         }
 
         this.requestUpdate();
@@ -570,6 +567,14 @@ export class YpAgentRunWidget extends YpBaseElement {
     return this.runStatus === "running" ? "stop" : "start";
   }
 
+  async startNextWorkflowStep() {
+    this.fire("yp-start-next-workflow-step", { agentId: this.agentId });
+  }
+
+  async stopCurrentWorkflowStep() {
+    this.fire("yp-stop-current-workflow-step", { agentId: this.agentId });
+  }
+
   renderStartStopButtons() {
     return html`<div class="layout horizontal startStopButtons">
       ${this.isRunning
@@ -581,6 +586,7 @@ export class YpAgentRunWidget extends YpBaseElement {
             class="startButton"
             ?has-static-theme=${this.hasStaticTheme}
             ?disabled=${this.shouldDisableStartButton}
+            @click=${this.startNextWorkflowStep}
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
             >${this.t(this.runStatusForButton)}</md-filled-button
           >`}
@@ -588,6 +594,7 @@ export class YpAgentRunWidget extends YpBaseElement {
       <md-outlined-button
         class="stopButton"
         ?disabled=${this.shouldDisableStopButton}
+        @click=${this.stopCurrentWorkflowStep}
         ><md-icon slot="icon" class="stopIcon">stop_circle</md-icon> ${this.t(
           "stop"
         )}</md-outlined-button

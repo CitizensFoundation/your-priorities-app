@@ -132,6 +132,43 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "yp-open-markdown-report",
       this.openMarkdownReport.bind(this)
     );
+    this.addListener("yp-start-next-workflow-step", this.startNextWorkflowStep);
+    this.addListener(
+      "yp-stop-current-workflow-step",
+      this.stopCurrentWorkflowStep
+    );
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.stopCanvasRendering();
+
+    this.stopRecording();
+    this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
+    this.removeGlobalListener(
+      "agent-configuration-submitted",
+      this.agentConfigurationSubmitted.bind(this)
+    );
+    this.removeGlobalListener(
+      "yp-open-markdown-report",
+      this.openMarkdownReport.bind(this)
+    );
+  }
+
+  async startNextWorkflowStep(event: CustomEvent) {
+    this.sendChatMessage(
+      "Please start the next workflow step, I confirm and accept"
+    );
+    //TODO: Do this later
+    //await this.serverApi.startNextWorkflowStep(event.detail.agentId);
+  }
+
+  async stopCurrentWorkflowStep(event: CustomEvent) {
+    this.sendChatMessage(
+      "Please stop the current workflow step, I confirm and accept"
+    );
+    //TODO: Do this later
+    //await this.serverApi.stopCurrentWorkflowStep(event.detail.agentId);
   }
 
   async openMarkdownReport(event: CustomEvent) {
@@ -293,22 +330,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.renderLoopActive = false;
   }
 
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.stopCanvasRendering();
-
-    this.stopRecording();
-    this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
-    this.removeGlobalListener(
-      "agent-configuration-submitted",
-      this.agentConfigurationSubmitted.bind(this)
-    );
-    this.removeGlobalListener(
-      "yp-open-markdown-report",
-      this.openMarkdownReport.bind(this)
-    );
-  }
-
   async setupVoiceCapabilities() {}
 
   get talkingHeadImageUrl() {
@@ -412,7 +433,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       </div>
     </div>`;
   }
-
 
   override render() {
     if (this.welcomeScreenOpen && this.chatLog.length === 0) {
@@ -555,12 +575,16 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   saveLastDirectAvatarUrlAndName() {
-    localStorage.setItem("lastDirectAvatarUrl", this.directAgentAvatarUrl || "");
+    localStorage.setItem(
+      "lastDirectAvatarUrl",
+      this.directAgentAvatarUrl || ""
+    );
     localStorage.setItem("lastDirectAvatarName", this.directAgentName || "");
   }
 
   loadLastDirectAvatarUrlAndName() {
-    this.directAgentAvatarUrl = localStorage.getItem("lastDirectAvatarUrl") || undefined;
+    this.directAgentAvatarUrl =
+      localStorage.getItem("lastDirectAvatarUrl") || undefined;
     this.directAgentName = localStorage.getItem("lastDirectAvatarName") || null;
   }
 

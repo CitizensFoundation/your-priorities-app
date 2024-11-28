@@ -40,7 +40,7 @@ export declare abstract class YpChatbotBase extends YpStreamingLlmBase {
     addToChatLogWithMessage(data: YpAssistantMessage, message?: string | undefined, changeButtonDisabledState?: boolean | undefined, changeButtonLabelTo?: string | undefined, refinedCausesSuggestions?: string[] | undefined, rawMessage?: string | undefined): void;
     get lastChatUiElement(): YpAiChatbotItemBase;
     addChatBotElement(wsMessage: YpAssistantMessage): Promise<void>;
-    abstract sendChatMessage(): Promise<void>;
+    abstract sendChatMessage(message?: string): Promise<void>;
     static get styles(): any[];
     followUpQuestion(event: CustomEvent): void;
     renderChatInput(): import("lit-html").TemplateResult<1>;

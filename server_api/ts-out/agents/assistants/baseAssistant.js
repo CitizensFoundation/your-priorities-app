@@ -45,14 +45,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
     }
     setupClientSystemMessageListener() {
         console.log('setupClientSystemMessageListener called for wsClientId:', this.wsClientId);
-        // Check the number of 'message' listeners before adding a new one
-        const listenerCountBefore = this.wsClientSocket.listenerCount('message');
-        console.log('Number of "message" listeners before adding:', listenerCountBefore);
         this.wsClientSocket.on("message", async (data) => {
-            //console.log('wsClientSocket "message" event received for wsClientId:', this.wsClientId);
             try {
                 const message = JSON.parse(data.toString());
-                //console.log('Received message:', message);
                 switch (message.type) {
                     case "client_system_message":
                         console.log('Processing client_system_message:', message);
@@ -66,7 +61,6 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 console.error("Error processing message:", error);
             }
         });
-        // Check the number of 'message' listeners after adding the new one
         const listenerCountAfter = this.wsClientSocket.listenerCount('message');
         console.log('Number of "message" listeners after adding:', listenerCountAfter);
     }

@@ -8,8 +8,10 @@ import { customElement } from "lit/decorators.js";
 import { YpAssistantBase } from "./yp-assistant-base.js";
 import { YpLanguages } from "../common/languages/ypLanguages.js";
 let YpAssistant = class YpAssistant extends YpAssistantBase {
-    async sendChatMessage() {
-        const message = this.chatInputField.value;
+    async sendChatMessage(message) {
+        if (message === undefined) {
+            message = this.chatInputField.value;
+        }
         if (message.length === 0)
             return;
         //this.ws.send(message);

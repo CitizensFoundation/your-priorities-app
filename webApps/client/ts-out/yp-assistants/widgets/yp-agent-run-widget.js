@@ -470,6 +470,12 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     get runStatusForButton() {
         return this.runStatus === "running" ? "stop" : "start";
     }
+    async startNextWorkflowStep() {
+        this.fire("yp-start-next-workflow-step", { agentId: this.agentId });
+    }
+    async stopCurrentWorkflowStep() {
+        this.fire("yp-stop-current-workflow-step", { agentId: this.agentId });
+    }
     renderStartStopButtons() {
         return html `<div class="layout horizontal startStopButtons">
       ${this.isRunning
@@ -481,6 +487,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             class="startButton"
             ?has-static-theme=${this.hasStaticTheme}
             ?disabled=${this.shouldDisableStartButton}
+            @click=${this.startNextWorkflowStep}
             ><md-icon slot="icon" class="startIcon">play_circle</md-icon
             >${this.t(this.runStatusForButton)}</md-filled-button
           >`}
@@ -488,6 +495,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
       <md-outlined-button
         class="stopButton"
         ?disabled=${this.shouldDisableStopButton}
+        @click=${this.stopCurrentWorkflowStep}
         ><md-icon slot="icon" class="stopIcon">stop_circle</md-icon> ${this.t("stop")}</md-outlined-button
       >
     </div>`;

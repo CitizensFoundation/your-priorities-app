@@ -44,6 +44,28 @@ export class AssistantController {
                 process.exit(1);
             }
         };
+        this.startNextWorkflowStep = async (req, res) => {
+            const { groupId, agentId } = req.params;
+            try {
+                //await this.agentQueueManager.startNextWorkflowStep(parseInt(agentId), parseInt(groupId));
+                res.sendStatus(200);
+            }
+            catch (error) {
+                console.error("Error starting next workflow step:", error);
+                res.sendStatus(500);
+            }
+        };
+        this.stopCurrentWorkflowStep = async (req, res) => {
+            const { groupId, agentId } = req.params;
+            try {
+                //await this.agentQueueManager.stopCurrentWorkflowStep(parseInt(agentId), parseInt(groupId));
+                res.sendStatus(200);
+            }
+            catch (error) {
+                console.error("Error stopping current workflow step:", error);
+                res.sendStatus(500);
+            }
+        };
         this.getUpdatedWorkflow = async (req, res) => {
             const { runId } = req.params;
             const userId = req.user?.id;
@@ -246,6 +268,8 @@ export class AssistantController {
         this.router.put("/:domainId/submitAgentConfiguration", this.submitAgentConfiguration.bind(this));
         this.router.put("/:groupId/:agentId/startWorkflowAgent", this.startWorkflowAgent.bind(this));
         this.router.get("/:groupId/:runId/updatedWorkflow", this.getUpdatedWorkflow.bind(this));
+        this.router.post("/:groupId/:agentId/startNextWorkflowStep", this.startNextWorkflowStep.bind(this));
+        this.router.post("/:groupId/:agentId/stopCurrentWorkflowStep", this.stopCurrentWorkflowStep.bind(this));
     }
     async startVoiceSession(req, res) {
         try {

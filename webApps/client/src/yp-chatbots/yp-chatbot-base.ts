@@ -314,7 +314,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     this.scrollDown();
   }
 
-  abstract sendChatMessage(): Promise<void>;
+  abstract sendChatMessage(message?: string): Promise<void>;
 
   static override get styles() {
     return [

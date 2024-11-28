@@ -105,6 +105,26 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.addGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
         this.addGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
         this.addListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
+        this.addListener("yp-start-next-workflow-step", this.startNextWorkflowStep);
+        this.addListener("yp-stop-current-workflow-step", this.stopCurrentWorkflowStep);
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.stopCanvasRendering();
+        this.stopRecording();
+        this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
+        this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
+        this.removeGlobalListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
+    }
+    async startNextWorkflowStep(event) {
+        this.sendChatMessage("Please start the next workflow step, I confirm and accept");
+        //TODO: Do this later
+        //await this.serverApi.startNextWorkflowStep(event.detail.agentId);
+    }
+    async stopCurrentWorkflowStep(event) {
+        this.sendChatMessage("Please stop the current workflow step, I confirm and accept");
+        //TODO: Do this later
+        //await this.serverApi.stopCurrentWorkflowStep(event.detail.agentId);
     }
     async openMarkdownReport(event) {
         if (!event.detail) {
@@ -188,14 +208,6 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     }
     stopCanvasRendering() {
         this.renderLoopActive = false;
-    }
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.stopCanvasRendering();
-        this.stopRecording();
-        this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
-        this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
-        this.removeGlobalListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
     }
     async setupVoiceCapabilities() { }
     get talkingHeadImageUrl() {
@@ -413,7 +425,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         localStorage.setItem("lastDirectAvatarName", this.directAgentName || "");
     }
     loadLastDirectAvatarUrlAndName() {
-        this.directAgentAvatarUrl = localStorage.getItem("lastDirectAvatarUrl") || undefined;
+        this.directAgentAvatarUrl =
+            localStorage.getItem("lastDirectAvatarUrl") || undefined;
         this.directAgentName = localStorage.getItem("lastDirectAvatarName") || null;
     }
     resetLastDirectAvatarUrlAndName() {

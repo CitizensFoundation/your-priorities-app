@@ -15,6 +15,36 @@ export class YpAssistantServerApi extends YpServerApi {
     this.clientMemoryUuid = clientMemoryUuid;
   }
 
+  public async startNextWorkflowStep(
+    groupId: number,
+    agentId: string
+  ): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${groupId}/startNextWorkflowStep`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          agentId,
+        }),
+      }
+    );
+  }
+
+  public async stopCurrentWorkflowStep(
+    groupId: number,
+    agentId: string
+  ): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${groupId}/stopCurrentWorkflowStep`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          agentId,
+        }),
+      }
+    );
+  }
+
   public async sendChatMessage(
     domainId: number,
     wsClientId: string,
@@ -173,7 +203,7 @@ export class YpAssistantServerApi extends YpServerApi {
           agentProductId,
           subscriptionId,
           requiredQuestionsAnswers,
-          clientMemoryUuid: this.clientMemoryUuid
+          clientMemoryUuid: this.clientMemoryUuid,
         }),
       }
     );

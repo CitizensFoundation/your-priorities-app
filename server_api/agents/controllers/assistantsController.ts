@@ -112,6 +112,39 @@ export class AssistantController {
       "/:groupId/:runId/updatedWorkflow",
       this.getUpdatedWorkflow.bind(this)
     );
+
+    this.router.post(
+      "/:groupId/:agentId/startNextWorkflowStep",
+      this.startNextWorkflowStep.bind(this)
+    );
+
+    this.router.post(
+      "/:groupId/:agentId/stopCurrentWorkflowStep",
+      this.stopCurrentWorkflowStep.bind(this)
+    );
+  }
+
+  private startNextWorkflowStep = async (req: YpRequest, res: express.Response) => {
+    const { groupId, agentId } = req.params;
+
+    try {
+      //await this.agentQueueManager.startNextWorkflowStep(parseInt(agentId), parseInt(groupId));
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error starting next workflow step:", error);
+      res.sendStatus(500);
+    }
+  }
+
+  private stopCurrentWorkflowStep = async (req: YpRequest, res: express.Response) => {
+    const { groupId, agentId } = req.params;
+    try {
+      //await this.agentQueueManager.stopCurrentWorkflowStep(parseInt(agentId), parseInt(groupId));
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error stopping current workflow step:", error);
+      res.sendStatus(500);
+    }
   }
 
   private getUpdatedWorkflow = async (req: YpRequest, res: express.Response) => {

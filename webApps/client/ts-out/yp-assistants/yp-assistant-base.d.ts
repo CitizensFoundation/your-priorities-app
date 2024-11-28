@@ -37,6 +37,9 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     constructor();
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
+    disconnectedCallback(): void;
+    startNextWorkflowStep(event: CustomEvent): Promise<void>;
+    stopCurrentWorkflowStep(event: CustomEvent): Promise<void>;
     openMarkdownReport(event: CustomEvent): Promise<void>;
     agentConfigurationSubmitted(): Promise<void>;
     agentRunChanged(): Promise<void>;
@@ -46,7 +49,6 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     private setupCanvasRendering;
     private renderLoop;
     private stopCanvasRendering;
-    disconnectedCallback(): void;
     setupVoiceCapabilities(): Promise<void>;
     get talkingHeadImageUrl(): string;
     renderVoiceTalkingHead(): import("lit-html").TemplateResult<1>;

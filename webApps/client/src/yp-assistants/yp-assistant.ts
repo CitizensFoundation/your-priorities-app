@@ -6,8 +6,10 @@ import { YpAssistantServerApi } from "./AssistantServerApi.js";
 @customElement("yp-assistant")
 export class YpAssistant extends YpAssistantBase {
 
-  override async sendChatMessage() {
-    const message = this.chatInputField!.value;
+  override async sendChatMessage(message?: string) {
+    if (message === undefined) {
+      message = this.chatInputField!.value;
+    }
 
     if (message.length === 0) return;
 

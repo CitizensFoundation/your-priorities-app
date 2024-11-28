@@ -11,6 +11,8 @@ import "./widgets/yp-agent-configuration-widget.js";
 import "./widgets/yp-agent-workflow-widget.js";
 import "./widgets/yp-agent-run-widget.js";
 import "./widgets/yp-configuration-submitted.js";
+import { YpServerApi } from "../common/YpServerApi.js";
+import { YpAssistantServerApi } from "./AssistantServerApi.js";
 
 @customElement("yp-assistant-item-base")
 export class YpAssistantItemBase extends YpAiChatbotItemBase {
