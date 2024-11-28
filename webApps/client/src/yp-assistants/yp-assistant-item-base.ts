@@ -127,7 +127,10 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
 
   override renderChatGPT() {
     return html`
-      <div class="layout vertical chatGPTDialogContainer">
+      <div
+        class="layout vertical chatGPTDialogContainer"
+        ?hidden="${this.message == "" && this.htmlToRender == ""}"
+      >
         <div class="chatGPTDialog layout vertical" ?error="${this.isError}">
           <div class="layout horizontal">
             ${!this.htmlToRender

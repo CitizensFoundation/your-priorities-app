@@ -118,7 +118,10 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
     }
     renderChatGPT() {
         return html `
-      <div class="layout vertical chatGPTDialogContainer">
+      <div
+        class="layout vertical chatGPTDialogContainer"
+        ?hidden="${this.message == "" && this.htmlToRender == ""}"
+      >
         <div class="chatGPTDialog layout vertical" ?error="${this.isError}">
           <div class="layout horizontal">
             ${!this.htmlToRender

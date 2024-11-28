@@ -471,7 +471,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: this.getCurrentSystemPrompt(),
+        content: this.getCurrentSystemPrompt()+
+          `\n IMPORTANT: Do not output function content in text form at all, that is already provided by the function to the user, like the list of agents available for subscription, this information is already being displayed by the function to the user so no need to repeat it in text, just make a general comment`,
       },
       ...this.convertToOpenAIMessages(this.memory.chatLog || []),
       {
@@ -488,6 +489,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       },
       ...toolResponses,
     ];
+
+    console.log(
+      `handleToolResponses: ${JSON.stringify(messages, null, 2)}`
+    );
 
     try {
       const stream = await this.openaiClient.chat.completions.create({
@@ -595,84 +600,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     }
   }
 
-  /**
-   * Register core functions available in all modes
-   */
-  registerCoreFunctions(): void {
-    return;
-    const allModesText = Array.from(this.modes.entries())
-      .map(([key, mode]) => `${key}: ${mode.description}`)
-      .join("\n");
-    console.log(`registerCoreFunctions all modes: ${allModesText}`);
-    const switchModeFunction: AssistantChatbotTool = {
-      name: "switch_mode",
-      type: "function",
-      description: `Switch to a different conversation mode. Never switch to and from the same mode. If there is a relevant
-       agentProductId in the context or chat history, use it if you are switching to a direct conversation mode with an agent.
-       Here are all the available modes: ${allModesText}`,
-      parameters: {
-        type: "object",
-        properties: {
-          newMode: {
-            type: "string",
-            enum: Array.from(this.modes.keys()),
-          },
-          agentProductId: { type: "number" },
-          reason: { type: "string" },
-        },
-        required: ["newMode"],
-      },
-
-      /*resultSchema: {
-        type: "object",
-        properties: {
-          previousMode: { type: "string" },
-          newMode: { type: "string" },
-          timestamp: { type: "string" },
-          transitionReason: { type: "string" },
-        },
-      },*/
-      handler: async (params): Promise<ToolExecutionResult> => {
-        try {
-          params = this.getCleanedParams(params);
-          const previousMode = this.memory.currentMode;
-          console.log(
-            `Switching from ${previousMode} to ${
-              params.newMode
-            } ${JSON.stringify(this.memory, null, 2)}`
-          );
-          await this.handleModeSwitch(params.newMode, params.reason, params);
-
-          return {
-            success: true,
-            data: {
-              previousMode,
-              oldMode: previousMode,
-              newMode: params.newMode,
-              timestamp: new Date().toISOString(),
-              transitionReason: params.reason || "No reason provided",
-            },
-            metadata: {
-              modeHistoryLength: this.memory.modeHistory?.length || 0,
-            },
-          };
-        } catch (error) {
-          console.error("Error switching mode:", error);
-          return {
-            success: false,
-            error:
-              error instanceof Error ? error.message : "Failed to switch mode",
-            metadata: {
-              attemptedMode: params.mode,
-              currentMode: this.memory.currentMode,
-            },
-          };
-        }
-      },
-    };
-
-    this.availableTools.set(switchModeFunction.name, switchModeFunction);
-  }
 
   /**
    * Get current mode's functions
@@ -788,6 +715,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    * Main conversation handler with updated function handling
    */
   async conversation(chatLog: PsSimpleChatLog[]) {
+    await this.loadMemoryAsync();
+
     await this.initializeModes();
 
     await this.setChatLog(chatLog);

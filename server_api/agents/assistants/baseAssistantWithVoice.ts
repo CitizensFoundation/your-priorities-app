@@ -33,7 +33,6 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
   }
 
   async initialize() {
-    this.registerCoreFunctions();
     await this.initializeModes();
 
     if (this.voiceEnabled) {

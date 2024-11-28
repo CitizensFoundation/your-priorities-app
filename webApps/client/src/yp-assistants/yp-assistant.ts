@@ -25,7 +25,7 @@ export class YpAssistant extends YpAssistantBase {
       message: message,
     });
 
-    this.addThinkingChatBotMessage();
+    // this.addThinkingChatBotMessage();
 
     await this.serverApi.sendChatMessage(
       this.domainId,
@@ -34,5 +34,9 @@ export class YpAssistant extends YpAssistantBase {
       YpLanguages.getEnglishName(this.language),
       this.currentMode
     );
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    this.scrollDown();
   }
 }
