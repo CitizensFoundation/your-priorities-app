@@ -122,7 +122,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     get subscribeToCurrentAgentPlan() {
         return {
             name: "subscribe_to_current_agent_plan",
-            description: "Subscribe to the current agent plan. User must confirm subscription with the agent name before proceeding.",
+            description: "Subscribe to the current agent plan. User must confirm subscription with the agent name before proceeding. The user needs to subscribe to the agent before it can be used.",
             type: "function",
             parameters: {
                 type: "object",

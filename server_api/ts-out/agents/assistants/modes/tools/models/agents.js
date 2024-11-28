@@ -119,7 +119,7 @@ export class AgentModels {
         // Stop processing using queue manager
         await this.queueManager.stopAgentProcessing(currentStep.agentId, this.assistant.wsClientId, currentRun.id);
         // Update run status
-        currentRun.status = "ready";
+        currentRun.status = "stopped";
         currentRun.end_time = new Date();
         await currentRun.save();
         // Get current status from queue manager

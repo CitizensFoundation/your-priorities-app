@@ -10,6 +10,7 @@ export declare class YpAgentConfigurationWidget extends YpBaseElement {
     agentImageUrl: string;
     requiredQuestions: string;
     requiredQuestionsAnswered: string;
+    haveSubmittedConfigurationPastSecond: boolean;
     serverApi: YpAssistantServerApi;
     constructor();
     connectedCallback(): void;

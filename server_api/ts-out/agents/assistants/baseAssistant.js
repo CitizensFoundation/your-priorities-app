@@ -110,9 +110,9 @@ export class YpBaseAssistant extends YpBaseChatBot {
     }
     async processClientSystemMessage(clientEvent) {
         console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
+        await this.loadMemoryAsync();
         if (clientEvent.message === "user_logged_in") {
             console.log(`user_logged_in emitting`);
-            await this.loadMemoryAsync();
             this.emit("update-ai-model-session", "User is logged in, lets move to the next step");
         }
         else if (clientEvent.message === "agent_configuration_submitted") {
@@ -203,6 +203,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 ? "configured"
                 : "not_configured",
         };
+        console.log(`updateCurrentAgentProductPlan: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
         await this.saveMemory();
     }
     /**

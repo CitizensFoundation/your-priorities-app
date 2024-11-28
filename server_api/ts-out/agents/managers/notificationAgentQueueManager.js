@@ -116,12 +116,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                         }
                         console.log("NotificationAgentQueueManager: Agent", agent);
                         let updatedWorkflow;
-                        if (agentRunId) {
-                            updatedWorkflow =
-                                await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, agentRun.status, wsClientId, returnvalue);
+                        if (agentRun.status === "completed") {
+                            if (agentRunId) {
+                                updatedWorkflow =
+                                    await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, agentRun.status, wsClientId, returnvalue);
+                            }
+                            else {
+                                console.error(`NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`);
+                            }
                         }
                         else {
-                            console.error(`NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`);
+                            console.warn(`NotificationAgentQueueManager: Agent run ${agentRunId} is not completed, status ${agentRun.status} but the job completed`);
                         }
                         if (agent) {
                             // Send notification email
@@ -154,9 +159,18 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                         const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
                             attributes: ["id", "status", "workflow"],
                         });
-                        if (agent) {
+                        if (agent && agentRun) {
                             // Send notification email
-                            await this.sendNotification(agent, type, wsClientId, "failed", failedReason, agentRunId);
+                            //TODO: Fix this, the agent run should not be marked as failed if the job failed
+                            /*await this.sendNotification(
+                              agent,
+                              type,
+                              wsClientId,
+                              "failed",
+                              failedReason,
+                              agentRunId,
+                              agentRun.workflow
+                            );*/
                         }
                         else {
                             console.error(`NotificationAgentQueueManager: Agent with ID ${agentId} not found.`);
@@ -166,7 +180,8 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                             return;
                         }
                         agentRun.workflow.steps[agentRun.workflow.currentStepIndex].endTime = new Date();
-                        agentRun.status = "failed";
+                        //TODO: Fix this, the agent run should not be marked as failed if the job failed
+                        //agentRun.status = "failed";
                         agentRun.changed("status", true);
                         agentRun.changed("workflow", true);
                         await agentRun.save();

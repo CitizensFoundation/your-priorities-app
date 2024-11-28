@@ -31,6 +31,9 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
   @property({ type: String })
   requiredQuestionsAnswered!: string;
 
+  @property({ type: Boolean })
+  haveSubmittedConfigurationPastSecond = false;
+
   serverApi!: YpAssistantServerApi;
 
   constructor() {
@@ -108,6 +111,16 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
 
   async submitConfiguration() {
     console.log("submitConfiguration");
+
+    if (this.haveSubmittedConfigurationPastSecond) {
+      console.error("Already submitted configuration past second", new Error().stack);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this.haveSubmittedConfigurationPastSecond = false;
+      return;
+    } else {
+      this.haveSubmittedConfigurationPastSecond = true;
+    }
 
     const answers: YpStructuredAnswer[] = [];
 

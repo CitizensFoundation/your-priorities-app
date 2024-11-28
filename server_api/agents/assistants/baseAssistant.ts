@@ -154,10 +154,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       `processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`
     );
 
+    await this.loadMemoryAsync();
+
     if (clientEvent.message === "user_logged_in") {
       console.log(`user_logged_in emitting`);
-
-      await this.loadMemoryAsync();
 
       this.emit(
         "update-ai-model-session",
@@ -296,6 +296,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           ? "configured"
           : "not_configured",
     };
+
+    console.log(
+      `updateCurrentAgentProductPlan: ${JSON.stringify(
+        this.memory.currentAgentStatus,
+        null,
+        2
+      )}`
+    );
 
     await this.saveMemory();
   }

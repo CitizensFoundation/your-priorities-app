@@ -12,6 +12,7 @@ import { YpAssistantServerApi } from "../AssistantServerApi.js";
 let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBaseElement {
     constructor() {
         super();
+        this.haveSubmittedConfigurationPastSecond = false;
         this.serverApi = new YpAssistantServerApi(window.appGlobals.currentClientMemoryUuid);
     }
     connectedCallback() {
@@ -73,6 +74,15 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
     }
     async submitConfiguration() {
         console.log("submitConfiguration");
+        if (this.haveSubmittedConfigurationPastSecond) {
+            console.error("Already submitted configuration past second", new Error().stack);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            this.haveSubmittedConfigurationPastSecond = false;
+            return;
+        }
+        else {
+            this.haveSubmittedConfigurationPastSecond = true;
+        }
         const answers = [];
         // Get answers from required questions
         if (this.requiredQuestions) {
@@ -173,6 +183,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAgentConfigurationWidget.prototype, "requiredQuestionsAnswered", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAgentConfigurationWidget.prototype, "haveSubmittedConfigurationPastSecond", void 0);
 YpAgentConfigurationWidget = __decorate([
     customElement("yp-agent-configuration-widget")
 ], YpAgentConfigurationWidget);
