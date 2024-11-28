@@ -167,6 +167,7 @@ export class YpBaseChatBot {
                 html: type === "html" ? message : undefined,
                 hiddenContextMessage,
                 uniqueToken,
+                avatarUrl: sender === "assistant" ? this.currentAssistantAvatarUrl : undefined,
             }));
             this.lastSentToUserAt = new Date();
         }
@@ -176,7 +177,7 @@ export class YpBaseChatBot {
     }
     async streamWebSocketResponses(stream) {
         return new Promise(async (resolve, reject) => {
-            this.sendToClient("assistant", "", "start");
+            this.sendToClient("assistant", "", "start", this.currentAssistantAvatarUrl);
             try {
                 let botMessage = "";
                 for await (const part of stream) {

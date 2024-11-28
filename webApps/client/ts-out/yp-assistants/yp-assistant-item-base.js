@@ -33,6 +33,13 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
         return [
             super.styles,
             css `
+        .avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 8px;
+        }
+
         .voice-status {
           display: flex;
           align-items: center;
@@ -66,7 +73,7 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
           margin-left: 0;
           margin-right: 0;
           line-height: 1.5;
-          margin-bottom: 0px;
+          margin-bottom: 8px;
           border-radius: 50px;
           margin-left: auto;
         }
@@ -75,9 +82,10 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
           margin: 0;
         }
 
-
         .chatText {
-          padding: 16px;
+          padding: 8px;
+          padding-left: 16px;
+          padding-right: 16px;
           margin: 0;
           font-size: 15px;
           font-weight: 400;
@@ -100,6 +108,14 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
       `,
         ];
     }
+    renderAvatar() {
+        if (this.avatarUrl) {
+            return html `<img class="avatar" src="${this.avatarUrl}" />`;
+        }
+        else {
+            return this.renderCGImage();
+        }
+    }
     renderChatGPT() {
         return html `
       <div class="layout vertical chatGPTDialogContainer">
@@ -108,7 +124,7 @@ let YpAssistantItemBase = class YpAssistantItemBase extends YpAiChatbotItemBase 
             ${!this.htmlToRender
             ? html `
                   <div class="layout vertical chatImage">
-                    ${this.renderCGImage()}
+                    ${this.renderAvatar()}
                   </div>
                 `
             : nothing}
@@ -153,6 +169,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAssistantItemBase.prototype, "htmlToRender", void 0);
+__decorate([
+    property({ type: String })
+], YpAssistantItemBase.prototype, "avatarUrl", void 0);
 YpAssistantItemBase = __decorate([
     customElement("yp-assistant-item-base")
 ], YpAssistantItemBase);

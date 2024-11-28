@@ -51,7 +51,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     get talkingHeadImageUrl(): string;
     renderVoiceTalkingHead(): import("lit-html").TemplateResult<1>;
     get chatLogWithDeduplicatedWidgets(): YpAssistantMessage[];
-    startInVoiceMode(): void;
+    startInVoiceMode(): Promise<void>;
     startInTextMode(): Promise<void>;
     closeMarkdownReport(): Promise<void>;
     downloadPdf(): Promise<void>;

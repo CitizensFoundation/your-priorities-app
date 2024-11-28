@@ -3,6 +3,7 @@ type YpAssistantMessageType =
   | "moderation_error"
   | "start"
   | "ui_click"
+  | "heartbeat_ack"
   | "client_system_message"
   | "component"
   | "memory-changed"
@@ -54,6 +55,7 @@ interface YpAssistantMessage {
   hidden?: boolean;
   uniqueToken?: string;
   url?: string;
+  avatarUrl?: string;
   updatedWorkflow?: {
     workflow: YpWorkflowConfiguration;
     status: YpAgentProductStatus;
@@ -68,6 +70,7 @@ type YpSenderType = "assistant" | "user" | "system";
 
 interface PsSimpleChatLog {
   html?: string;
+  avatarUrl?: string;
   sender: YpSenderType;
   message: string;
   type: YpAssistantMessageType;

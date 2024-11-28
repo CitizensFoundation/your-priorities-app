@@ -90,6 +90,8 @@ export class AgentModels {
         currentStep = workflow.steps[currentStepIndex];
       }
 
+      currentStep.startTime = new Date();
+
       console.log(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
 
       if (currentStepIndex >= totalSteps) {

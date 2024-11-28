@@ -231,17 +231,25 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             return tokenLastIndex.get(element.uniqueToken) === index;
         });
     }
-    startInVoiceMode() {
+    async startInVoiceMode() {
         this.welcomeScreenOpen = false;
         this.toggleVoiceMode();
+        await this.updateComplete;
+        // wait 10 ms
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        this.scrollDown();
     }
     async startInTextMode() {
         this.welcomeScreenOpen = false;
         await this.updateComplete;
+        // wait 10 ms
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        this.scrollDown();
         // wait 300 ms
         setTimeout(() => {
+            this.scrollDown();
             this.chatInputField.focus();
-        }, 300);
+        }, 200);
     }
     async closeMarkdownReport() {
         this.markdownReportOpen = false;
@@ -315,11 +323,13 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                   .clusterId="${this.clusterId}"
                   class="chatElement ${chatElement.sender}-chat-element"
                   .detectedLanguage="${this.language}"
-                  .message="${chatElement.message}"
-                  .htmlToRender="${chatElement.html}"
+                  .avatarUrl="${chatElement.avatarUrl ||
+            this.talkingHeadImageUrl}"
+                  .message="${chatElement.message || ""}"
+                  .htmlToRender="${chatElement.html || ""}"
                   @scroll-down-enabled="${() => (this.userScrolled = false)}"
-                  .type="${chatElement.type}"
-                  .sender="${chatElement.sender}"
+                  .type="${chatElement.type || "message"}"
+                  .sender="${chatElement.sender || "assistant"}"
                 ></yp-assistant-item-base>
               `)}
         </div>
@@ -404,6 +414,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 type: "html",
                 message: data.message || "",
                 html: data.html,
+                avatarUrl: data.avatarUrl,
                 uniqueToken: data.uniqueToken,
             });
             await this.updateComplete;

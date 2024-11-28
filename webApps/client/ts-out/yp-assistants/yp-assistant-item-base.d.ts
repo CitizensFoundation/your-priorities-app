@@ -11,9 +11,11 @@ export declare class YpAssistantItemBase extends YpAiChatbotItemBase {
     isListening: boolean;
     isSpeaking: boolean;
     htmlToRender?: string;
+    avatarUrl?: string;
     firstUpdated(changedProps: Map<string, any>): void;
     updated(changedProps: Map<string, any>): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
+    renderAvatar(): import("lit-html").TemplateResult<1>;
     renderChatGPT(): import("lit-html").TemplateResult<1>;
     renderUser(): import("lit-html").TemplateResult<1>;
 }

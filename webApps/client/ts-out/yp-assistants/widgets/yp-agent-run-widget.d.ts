@@ -19,6 +19,8 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private api;
     constructor();
     connectedCallback(): void;
+    parseWorkflow(): void;
+    setupInitialWorkflow(): Promise<void>;
     updateWorkflow(updatedWorkflow: {
         workflow: YpWorkflowConfiguration;
         status: YpAgentProductRunStatus;
@@ -28,6 +30,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private startStatusUpdates;
     private stopStatusUpdates;
     get latestMessageMarkdown(): string;
+    getUpdatedWorkflow(): Promise<void>;
     private updateAgentStatus;
     static get styles(): any[];
     private getStepClass;

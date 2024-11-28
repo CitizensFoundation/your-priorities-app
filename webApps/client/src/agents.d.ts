@@ -247,6 +247,8 @@ interface YpWorkflowStep {
   description: string;
   shortDescription: string;
   agentClassUuid: string;
+  startTime?: Date;
+  endTime?: Date;
   agentId?: number;
   groupId?: number;
   type:

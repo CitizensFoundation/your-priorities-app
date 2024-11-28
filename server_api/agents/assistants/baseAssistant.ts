@@ -718,6 +718,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         data: avatarName,
       } as YpAssistantMessage)
     );
+
+    this.currentAssistantAvatarUrl = url || undefined;
   }
 
   /**
@@ -795,6 +797,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     let systemPrompt = this.getCurrentSystemPrompt();
 
     const subscriptionPlan = await this.getCurrentSubscriptionPlan();
+
+    if (
+      subscriptionPlan &&
+      subscriptionPlan.AgentProduct?.configuration.avatar?.imageUrl
+    ) {
+      this.currentAssistantAvatarUrl =
+        subscriptionPlan.AgentProduct!.configuration.avatar.imageUrl;
+    } else {
+      this.currentAssistantAvatarUrl = undefined;
+    }
 
     if (
       this.memory.currentMode === "agent_direct_connection_mode" &&
@@ -954,8 +966,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     await this.loadMemoryAsync();
     this.memory.chatLog!.push({
       sender: "assistant",
-      message,
+      message: message,
       type: "message",
+      avatarUrl: this.currentAssistantAvatarUrl,
     });
     await this.saveMemory();
   }
@@ -1161,6 +1174,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
                 sender: "assistant",
                 message: botMessage,
                 type: "message",
+                avatarUrl: this.currentAssistantAvatarUrl,
               });
               await this.saveMemoryIfNeeded();
             }

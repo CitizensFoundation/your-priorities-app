@@ -63,18 +63,8 @@ export class YpAgentRunWidget extends YpBaseElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    const workflow = this.parsedWorkflow;
 
-    // Go through the workflow and set the this.agentId to the correct agent based on the workflow step
-    if (
-      workflow.steps[workflow.currentStepIndex] &&
-      workflow.steps[workflow.currentStepIndex].agentId
-    ) {
-      this.agentId = workflow.steps[workflow.currentStepIndex].agentId!;
-    } else {
-      console.error("No agentId found in workflow");
-    }
-    this.workflowGroupId = workflow.workflowGroupId!;
+    this.setupInitialWorkflow();
 
     this.updateAgentStatus();
 
@@ -84,12 +74,38 @@ export class YpAgentRunWidget extends YpBaseElement {
     );
   }
 
+  parseWorkflow() {
+    const workflow = this.parsedWorkflow;
+    if (
+      workflow.steps[workflow.currentStepIndex] &&
+      workflow.steps[workflow.currentStepIndex].agentId
+    ) {
+      this.agentId = workflow.steps[workflow.currentStepIndex].agentId!;
+    } else {
+      console.error("No agentId found in workflow");
+    }
+    this.workflowGroupId = workflow.workflowGroupId!;
+  }
+
+  async setupInitialWorkflow() {
+    try {
+     this.parseWorkflow();
+
+     await this.getUpdatedWorkflow();
+    } catch (error) {
+      console.error("Failed to setup initial workflow", error);
+    }
+
+
+  }
+
   updateWorkflow(updatedWorkflow: {
     workflow: YpWorkflowConfiguration;
     status: YpAgentProductRunStatus;
   }) {
     this.workflow = btoa(JSON.stringify(updatedWorkflow.workflow));
     this.runStatus = updatedWorkflow.status;
+    this.parseWorkflow();
     this.requestUpdate();
   }
 
@@ -137,6 +153,16 @@ export class YpAgentRunWidget extends YpBaseElement {
     return "";
   }
 
+  async getUpdatedWorkflow() {
+    const updatedWorkflow = await this.api.getUpdatedWorkflow(
+      this.workflowGroupId,
+      this.runId
+    );
+    if (updatedWorkflow) {
+      this.updateWorkflow(updatedWorkflow);
+    }
+  }
+
   private async updateAgentStatus() {
     try {
       const status = await this.api.getAgentStatus(
@@ -144,6 +170,11 @@ export class YpAgentRunWidget extends YpBaseElement {
         this.agentId
       );
       if (status) {
+        if (status.state !== this.agentState) {
+          console.log(`state ${status.state} !== ${this.agentState}`);
+          await this.getUpdatedWorkflow();
+        }
+
         this.agentState = status.state as
           | "running"
           | "paused"
@@ -164,13 +195,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         if (this.agentState === "completed") {
-          const updatedWorkflow = await this.api.getUpdatedWorkflow(
-            this.workflowGroupId,
-            this.runId
-          );
-          if (updatedWorkflow) {
-            this.updateWorkflow(updatedWorkflow);
-          }
+
         }
 
         this.requestUpdate();
@@ -631,7 +656,7 @@ export class YpAgentRunWidget extends YpBaseElement {
       !this.parsedWorkflow.steps ||
       this.parsedWorkflow.steps.length === 0
     ) {
-      return html`<div>No workflow configuration available</div>`;
+      return html`<md-linear-progress indeterminate></md-linear-progress>`;
     }
 
     return html`

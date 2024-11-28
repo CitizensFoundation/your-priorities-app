@@ -56,6 +56,7 @@ export class AgentModels {
                 currentStepIndex = workflow.currentStepIndex;
                 currentStep = workflow.steps[currentStepIndex];
             }
+            currentStep.startTime = new Date();
             console.log(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
             if (currentStepIndex >= totalSteps) {
                 throw new Error(`Agent run ${agentRunId} is already at the last step of the workflow`);
