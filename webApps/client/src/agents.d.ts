@@ -222,9 +222,9 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   haveShownLoginWidget?: boolean;
   haveShownConfigurationWidget?: boolean;
   currentAgentStatus?: {
-    subscriptionPlan: YpSubscriptionPlanAttributes;
-    activeAgentRun?: YpAgentProductRunAttributes;
-    subscription: YpSubscriptionAttributes | null;
+    subscriptionPlanId: number;
+    activeAgentRunId?: number;
+    subscriptionId: number | null;
     subscriptionState: YpAssistantAgentSubscriptionState;
     configurationState: YpAssistantAgentConfigurationState;
   };

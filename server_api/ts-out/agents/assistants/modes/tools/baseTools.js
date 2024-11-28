@@ -7,7 +7,7 @@ export class BaseAssistantTools {
         await new Promise((resolve) => setTimeout(resolve, 1));
     }
     async updateCurrentAgentProductPlan(plan, subscription, options = { sendEvent: true }) {
-        await this.assistant.updateCurrentAgentProductPlan(plan, subscription);
+        await this.assistant.updateCurrentAgentProductPlan(plan.id, subscription?.id ?? null);
         await this.waitTick();
         // Emit memory update event
         if (options.sendEvent) {
@@ -20,7 +20,8 @@ export class BaseAssistantTools {
         if (!this.assistant.memory.currentAgentStatus) {
             throw new Error("No current agent status found");
         }
-        this.assistant.memory.currentAgentStatus.activeAgentRun = agentRun;
+        await this.assistant.loadMemoryAsync();
+        this.assistant.memory.currentAgentStatus.activeAgentRunId = agentRun.id;
         await this.assistant.saveMemory();
         await this.waitTick();
         if (options.sendEvent) {

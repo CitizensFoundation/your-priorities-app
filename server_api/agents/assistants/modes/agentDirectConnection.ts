@@ -18,10 +18,10 @@ export class DirectConversationMode extends BaseAssistantMode {
   loginTools = new LoginAssistantTools(this.assistant);
   agentTools = new AgentTools(this.assistant);
 
-  protected getCurrentModeSystemPrompt(): string {
+  protected async getCurrentModeSystemPrompt(): Promise<string> {
     let systemPrompt = ``; // Is filled in dynamically
 
-    systemPrompt += this.renderCommon();
+    systemPrompt += await this.renderCommon();
 
     return systemPrompt;
   }
@@ -35,7 +35,7 @@ export class DirectConversationMode extends BaseAssistantMode {
         console.log("Mode: agent_direct_connection_mode, User logged in");
         tools.push(this.loginTools.logout);
 
-        if (this.assistant.isSubscribedToCurrentAgent) {
+        if (this.assistant.isSubscribedToCurrentAgentProduct) {
           // User is subscribed to the current agent
           console.log(
             "Mode: agent_direct_connection_mode, User is subscribed to the current agent"
@@ -43,16 +43,16 @@ export class DirectConversationMode extends BaseAssistantMode {
           tools.push(
             this.subscriptionTools.unsubscribeFromCurrentAgentSubscription
           );
-          if (this.assistant.hasConfiguredCurrentAgent) {
+          if (this.assistant.hasConfiguredcurrentAgentProduct) {
             // User has configured the current agent
             console.log(
               "Mode: agent_direct_connection_mode, User has configured the current agent"
             );
-            if (this.assistant.isCurrentAgentRunning) {
+            if (await this.assistant.isCurrentAgentRunning()) {
               tools.push(this.agentTools.stopCurrentAgentWorkflow);
               tools.push(this.agentTools.deactivateAgent);
             } else {
-              if (!this.assistant.isCurrentAgentActive) {
+              if (!(await this.assistant.isCurrentAgentActive())) {
                 tools.push(
                   this.agentTools.createNewAgentRunReadyToRunFirstWorkflowStep
                 );
@@ -117,15 +117,15 @@ export class DirectConversationMode extends BaseAssistantMode {
 
   public async getMode(): Promise<AssistantChatbotMode> {
     console.log("---------------------> getMode DirectConversationMode");
-    const systemPrompt = this.getCurrentModeSystemPrompt();
-    const tools = this.getCurrentModeTools();
+    const systemPrompt = await this.getCurrentModeSystemPrompt();
+    const tools = await this.getCurrentModeTools();
 
     return {
       name: "agent_direct_connection_mode",
       description:
         "Direct connection to an agent the user is subscribed to or available for purchase",
       systemPrompt: systemPrompt,
-      tools: await tools,
+      tools: tools,
       allowedTransitions: ["agent_direct_connection_mode"],
     };
   }

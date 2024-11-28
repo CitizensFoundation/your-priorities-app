@@ -149,16 +149,18 @@ export class SubscriptionTools extends BaseAssistantTools {
                 };
             }
             console.log(`-------> ${JSON.stringify(this.assistant.memory.currentAgentStatus, null, 2)}`);
-            if (!this.assistant.memory.currentAgentStatus ||
-                !this.assistant.memory.currentAgentStatus.subscriptionPlan) {
+            const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+            if (!subscriptionPlan) {
+                throw new Error("No subscription plan found");
+            }
+            if (!subscriptionPlan) {
                 return {
                     success: false,
                     data: "No current agent selected",
                     error: "No current agent selected",
                 };
             }
-            const result = await this.subscriptionModels.subscribeToAgentPlan(this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
-                .id, this.assistant.memory.currentAgentStatus?.subscriptionPlan.id);
+            const result = await this.subscriptionModels.subscribeToAgentPlan(subscriptionPlan.AgentProduct.id, subscriptionPlan.id);
             if (!result.success || !result.subscription || !result.plan) {
                 return {
                     success: false,
@@ -229,15 +231,15 @@ export class SubscriptionTools extends BaseAssistantTools {
                     error: "User must verbally confirm unsubscription with the agent name before proceeding",
                 };
             }
-            if (!this.assistant.memory.currentAgentStatus ||
-                !this.assistant.memory.currentAgentStatus.subscriptionPlan) {
+            const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+            if (!subscriptionPlan) {
                 return {
                     success: false,
                     data: "No current agent selected",
                     error: "No current agent selected",
                 };
             }
-            const { plan, subscription } = await this.subscriptionModels.loadAgentProductPlanAndSubscription(this.assistant.memory.currentAgentStatus.subscriptionPlan.id);
+            const { plan, subscription } = await this.subscriptionModels.loadAgentProductPlanAndSubscription(subscriptionPlan.id);
             if (!subscription) {
                 return {
                     success: false,

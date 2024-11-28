@@ -88,22 +88,15 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   async updateAiModelSession(message: string) {
     console.log(`voiceAssistant: updateAiModelSession: ${message}`);
+
     console.log(
       `--------------------> Logged in memory user: ${
         (this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser
           ?.name
       }`
     );
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    this.parentAssistant.memory =
-      (await this.getLoadedMemory()) as YpBaseAssistantMemoryData;
-    console.log(
-      `--------------------> Logged in memory user: ${
-        (this.parentAssistant.memory as YpBaseAssistantMemoryData).currentUser
-          ?.name
-      }`
-    );
-    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
     await this.initializeVoiceSession(message);
   }
 
@@ -159,13 +152,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     await this.sendCancelResponse();
 
-    if (
-      this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-        .AgentProduct!.name
-    ) {
+    const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
+
+    if (subscriptionPlan?.AgentProduct!.name) {
       this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${
-        this.parentAssistant.memory.currentAgentStatus.subscriptionPlan
-          .AgentProduct!.name
+        subscriptionPlan.AgentProduct!.name
       }. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
     }
 
@@ -225,15 +216,16 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
   async destroyDirectAgentVoiceConnection() {
     if (this.directAgentVoiceConnection) {
+      await this.parentAssistant.loadMemoryAsync();
       this.directAgentVoiceConnection.ws.close();
       this.directAgentVoiceConnection.connected = false;
       this.directAgentVoiceConnection = undefined;
       this.parentAssistant.memory.chatLog!.push({
         sender: "user",
         message:
-          "Thank you for the information, I would not like to speak to the main assistant about selecting agents or managing subscriptions",
+          "Thank you for the information, I would now like to speak to the main assistant about selecting agents or managing subscriptions",
       } as PsSimpleChatLog);
-      await this.saveMemory();
+      await this.parentAssistant.saveMemory();
     }
   }
 
@@ -691,25 +683,22 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     let voiceName = this.voiceConfig.voice;
 
+    const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
+
     if (
       this.parentAssistant.memory.currentMode ===
+
         "agent_direct_connection_mode" &&
-      this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-        .AgentProduct!.configuration.avatar?.voiceName
+      subscriptionPlan?.AgentProduct!.configuration.avatar?.voiceName
     ) {
-      voiceName =
-        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-          .AgentProduct!.configuration.avatar.voiceName;
+      voiceName = subscriptionPlan.AgentProduct!.configuration.avatar.voiceName;
 
       instructions = `${
-        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-          .AgentProduct!.configuration.avatar.systemPrompt
+        subscriptionPlan.AgentProduct!.configuration.avatar.systemPrompt
       }\n${instructions}`;
       this.parentAssistant.sendAvatarUrlChange(
-        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-          .AgentProduct!.configuration.avatar.imageUrl,
-        this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-          .AgentProduct!.name
+        subscriptionPlan.AgentProduct!.configuration.avatar.imageUrl,
+        subscriptionPlan.AgentProduct!.name
       );
     } else {
       this.parentAssistant.sendAvatarUrlChange(null, null);

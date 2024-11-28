@@ -78,20 +78,24 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const { agent, run } =
         await this.agentModels.getCurrentAgentAndWorkflow();
-      if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+
+      const agentRun = await this.assistant.getCurrentAgentRun();
+      if (!agentRun) {
         return {
           success: false,
           error: "No active agent run found",
         };
       }
 
-      const html = this.renderAgentRunWidget(
+      const html = await this.renderAgentRunWidget(
         agent,
-        this.assistant.memory.currentAgentStatus.activeAgentRun
+        agentRun
       );
 
       //TODO: Create a unique identifer so we can make sure to only have one widget showing at the same time on the client but also in the
       // chatLog history that we only have the latest html and json so not to confuse the model
+
+      const subscription = await this.assistant.getCurrentSubscription();
 
       return {
         success: true,
@@ -100,7 +104,7 @@ export class AgentTools extends BaseAssistantTools {
         data: {
           agent,
           run,
-          subscription: this.assistant.memory.currentAgentStatus?.subscription,
+          subscription,
         },
       };
     } catch (error) {
@@ -150,7 +154,7 @@ export class AgentTools extends BaseAssistantTools {
       };
     }
 
-    if (!this.assistant.memory.currentAgentStatus?.subscription) {
+    if (!this.assistant.memory.currentAgentStatus?.subscriptionId) {
       return {
         success: false,
         error: "No subscription found",
@@ -160,7 +164,7 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const { agentRun, subscription } =
         await this.assistant.subscriptionManager.startAgentRun(
-          this.assistant.memory.currentAgentStatus.subscription.id,
+          this.assistant.memory.currentAgentStatus.subscriptionId,
           this.assistant.wsClients,
           this.assistant.wsClientId,
           //TODO: Fix this type casting
@@ -169,7 +173,7 @@ export class AgentTools extends BaseAssistantTools {
 
       await this.updateAgentProductRun(agentRun);
 
-      const html = this.renderAgentRunWidget(
+      const html = await this.renderAgentRunWidget(
         subscription.AgentProduct,
         agentRun
       );
@@ -242,57 +246,62 @@ export class AgentTools extends BaseAssistantTools {
           "User did not confirm starting the next workflow step with the agent name",
       };
     }
+    const agentRun = await this.assistant.getCurrentAgentRun();
 
-    if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+
+    if (!agentRun) {
       return {
         success: false,
         error: "No active agent run found",
       };
     }
 
-    const agentRun = this.assistant.memory.currentAgentStatus.activeAgentRun!;
 
     try {
       const structuredAnswersOverrides: YpStructuredAnswer[] = [];
 
+      const subscription = await this.assistant.getCurrentSubscription();
+
+      const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+
+      if (!subscriptionPlan) {
+        throw new Error("No subscription plan found");
+      }
+
       if (
-        this.assistant.memory.currentAgentStatus?.subscription &&
-        this.assistant.memory.currentAgentStatus?.subscription.configuration
-          ?.requiredQuestionsAnswered
+        subscription &&
+        subscription.configuration?.requiredQuestionsAnswered
       ) {
         structuredAnswersOverrides.push(
-          ...this.assistant.memory.currentAgentStatus!.subscription!
-            .configuration!.requiredQuestionsAnswered!
+          ...subscription.configuration!.requiredQuestionsAnswered!
         );
       }
 
       if (
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan &&
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
-          ?.configuration.structuredAnswersOverride
+        subscriptionPlan &&
+        subscriptionPlan.AgentProduct?.configuration.structuredAnswersOverride
       ) {
         structuredAnswersOverrides.push(
-          ...this.assistant.memory.currentAgentStatus!.subscriptionPlan!
-            .AgentProduct!.configuration.structuredAnswersOverride!
+          ...subscriptionPlan.AgentProduct!.configuration
+            .structuredAnswersOverride!
         );
       }
 
       const result = await this.agentModels.startCurrentWorkflowStep(
-        agentRun,
+        agentRun.id,
         structuredAnswersOverrides
       );
 
       await this.updateAgentProductRun(result.agentRun);
 
-      const html = this.renderAgentRunWidget(
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan
-          .AgentProduct!,
+      const html = await this.renderAgentRunWidget(
+        subscriptionPlan.AgentProduct!,
         result.agentRun
       );
 
       this.assistant.emit(
         "update-ai-model-session",
-        "You have started the next workflow step for the current agent run, now offer the user to discuss the agent more or to deactivate yourself until the job is completed or if a problem occurs. Then let the user know you will email them a notification when the task is completed or if a problem occurs."
+        "You have started the next workflow step for the current agent run, now offer the user to deactivate yourself, using your  until the job is completed or if a problem occurs. Then let the user know you will email them a notification when the task is completed or if a problem occurs."
       );
 
       return {
@@ -352,7 +361,7 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const result = await this.agentModels.stopCurrentWorkflowStep();
 
-      const html = this.renderAgentRunWidget(result.agent, result.run);
+      const html = await this.renderAgentRunWidget(result.agent, result.run);
 
       await this.updateAgentProductRun(result.run);
 
@@ -430,10 +439,15 @@ export class AgentTools extends BaseAssistantTools {
     params: YpAgentEmptyProperties
   ): Promise<ToolExecutionResult> {
     try {
-      const agent = await this.agentModels.getCurrentAgent();
-      const subscription = await this.agentModels.getCurrentSubscription();
+      const agent = await this.assistant.getCurrentAgentProduct();
+      const subscription = await this.assistant.getCurrentSubscription();
       const subscriptionPlan =
-        await this.agentModels.getCurrentSubscriptionPlan();
+        await this.assistant.getCurrentSubscriptionPlan();
+
+      if (!agent || !subscription || !subscriptionPlan) {
+        throw new Error("No agent, subscription or subscription plan found");
+      }
+
       const html = `<yp-agent-configuration-widget
         domainId="${this.assistant.domainId}"
         agentProductId="${agent.id}"
@@ -520,11 +534,11 @@ export class AgentTools extends BaseAssistantTools {
     }
   }
 
-  private renderAgentRunWidget(
+  private async renderAgentRunWidget(
     agent: YpAgentProductAttributes,
     run: YpAgentProductRunAttributes
   ) {
-    const subscription = this.assistant.memory.currentAgentStatus?.subscription;
+    const subscription = await this.assistant.getCurrentSubscription();
     const workflowBase64 = btoa(JSON.stringify(run.workflow));
     return `<yp-agent-run-widget
         agentProductId="${agent.id}"

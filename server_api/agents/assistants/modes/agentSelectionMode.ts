@@ -16,10 +16,10 @@ export class AgentSelectionMode extends BaseAssistantMode {
   navigationTools = new NavigationTools(this.assistant);
   loginTools = new LoginAssistantTools(this.assistant);
 
-  protected getCurrentModeSystemPrompt(): string {
+  protected async getCurrentModeSystemPrompt(): Promise<string> {
     let systemPrompt = `You are the main AI agent assistant. Help users select AI agents to subscribe to or connect to. Use your tools when needed.`;
 
-    systemPrompt += this.renderCommon();
+    systemPrompt += await this.renderCommon();
 
     return systemPrompt;
   }
@@ -46,7 +46,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
 
   public async getMode(): Promise<AssistantChatbotMode> {
     console.log("---------------------> getMode AgentSelectionMode");
-    const systemPrompt = this.getCurrentModeSystemPrompt();
+    const systemPrompt = await this.getCurrentModeSystemPrompt();
     const tools = await this.getCurrentModeTools();
 
     return {

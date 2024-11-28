@@ -7,34 +7,24 @@ export class AgentModels {
         this.subscriptionModels = new SubscriptionModels(assistant);
         this.queueManager = new NotificationAgentQueueManager(this.assistant.wsClients);
     }
-    async getCurrentAgent() {
-        if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct) {
-            throw new Error("No current agent selected");
-        }
-        return this.assistant.memory.currentAgentStatus.subscriptionPlan.AgentProduct;
-    }
-    async getCurrentSubscription() {
-        if (!this.assistant.memory.currentAgentStatus?.subscription) {
-            throw new Error("No current subscription found");
-        }
-        return this.assistant.memory.currentAgentStatus.subscription;
-    }
-    async getCurrentSubscriptionPlan() {
-        if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan) {
-            throw new Error("No current subscription plan found");
-        }
-        return this.assistant.memory.currentAgentStatus.subscriptionPlan;
-    }
     async getCurrentAgentAndWorkflow() {
-        const agent = await this.getCurrentAgent();
-        const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
-        if (!currentRun) {
+        const agent = await this.assistant.getCurrentAgentProduct();
+        const currentRun = await this.assistant.getCurrentAgentRun();
+        if (!currentRun && !agent) {
+            throw new Error("No agent or run found");
+        }
+        else if (!currentRun) {
             return {
-                agent,
+                agent: agent,
                 run: undefined,
             };
         }
-        return { agent, run: currentRun };
+        else {
+            return {
+                agent: agent,
+                run: currentRun,
+            };
+        }
     }
     convertToUnderscoresWithMaxLength(str) {
         const converted = str
@@ -46,13 +36,13 @@ export class AgentModels {
             .toLowerCase();
         return converted.length > 34 ? converted.slice(0, 34) : converted;
     }
-    async startCurrentWorkflowStep(agentRun, structuredAnswersOverrides) {
+    async startCurrentWorkflowStep(agentRunId, structuredAnswersOverrides) {
         try {
-            const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRun.id);
+            const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRunId);
             if (!agentRunToUpdate) {
                 throw new Error("Agent run not found");
             }
-            if (!this.assistant.memory.currentAgentStatus?.subscription) {
+            if (!this.assistant.memory.currentAgentStatus?.subscriptionId) {
                 throw new Error("No active subscription found for this agent");
             }
             const workflow = agentRunToUpdate.workflow;
@@ -68,14 +58,14 @@ export class AgentModels {
             }
             console.log(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
             if (currentStepIndex >= totalSteps) {
-                throw new Error(`Agent run ${agentRun.id} is already at the last step of the workflow`);
+                throw new Error(`Agent run ${agentRunId} is already at the last step of the workflow`);
             }
             const agentId = currentStep.agentId;
             if (!agentId) {
                 throw new Error("No agent ID found in the current step");
             }
             // Start processing with websocket client ID
-            const jobId = await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRun.id, this.assistant.wsClientId, structuredAnswersOverrides);
+            const jobId = await this.queueManager.startAgentProcessingWithWsClient(agentId, agentRunId, this.assistant.wsClientId, structuredAnswersOverrides);
             if (!jobId) {
                 throw new Error("Failed to start agent processing");
             }
@@ -99,6 +89,9 @@ export class AgentModels {
     }
     async getNextWorkflowStep() {
         const agentRun = await this.getCurrentAgentAndWorkflow();
+        if (!agentRun.run) {
+            return undefined;
+        }
         //TODO: look into this deal with the difference between agentOps and engagment
         if (agentRun.run.workflow.currentStepIndex === 0) {
             return agentRun.run.workflow.steps[0];
@@ -110,12 +103,15 @@ export class AgentModels {
     }
     async stopCurrentWorkflowStep() {
         console.log("---------------------> stopCurrentWorkflowStep");
-        const agent = await this.getCurrentAgent();
-        const currentRun = (await YpAgentProductRun.findByPk(this.assistant.memory.currentAgentStatus?.activeAgentRun?.id));
+        const agent = await this.assistant.getCurrentAgentProduct();
+        const currentRun = (await YpAgentProductRun.findByPk(this.assistant.memory.currentAgentStatus?.activeAgentRunId));
         if (!currentRun) {
             throw new Error("No active workflow found to stop");
         }
         const currentStep = currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
+        if (!agent) {
+            throw new Error("No agent found");
+        }
         if (!currentStep.agentId) {
             throw new Error("No agent ID found in the current step");
         }
@@ -137,7 +133,10 @@ export class AgentModels {
         };
     }
     async checkAgentStatus() {
-        const agent = await this.getCurrentAgent();
+        const agent = await this.assistant.getCurrentAgentProduct();
+        if (!agent) {
+            throw new Error("No agent found");
+        }
         return this.queueManager.getAgentStatus(agent.id);
     }
 }

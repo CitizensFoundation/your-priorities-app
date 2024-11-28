@@ -214,6 +214,9 @@ export class AssistantController {
         if (memory) {
           memory.currentUser = req.user;
           await req.redisClient.set(redisKey, JSON.stringify(memory));
+
+            //TODO: Check if needed, wait for 300ms to make sure redis is saved
+            await new Promise((resolve) => setTimeout(resolve, 300));
           console.log(
             `Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`
           );
@@ -317,15 +320,6 @@ export class AssistantController {
             memory.currentUser = req.user;
           } else if (!req.user && memory.currentUser) {
             memory.currentUser = undefined;
-          }
-
-          if (memory.currentAgentStatus?.activeAgentRun) {
-            const agentRun = await YpAgentProductRun.findOne({
-              where: {
-                id: memory.currentAgentStatus.activeAgentRun.id,
-              },
-            });
-            memory.currentAgentStatus.activeAgentRun = agentRun as YpAgentProductRunAttributes;
           }
 
           await req.redisClient.set(memory.redisKey, JSON.stringify(memory));

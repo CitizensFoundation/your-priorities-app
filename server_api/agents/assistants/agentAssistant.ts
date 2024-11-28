@@ -7,6 +7,10 @@ import WebSocket from "ws";
 import ioredis from "ioredis";
 import { DirectConversationMode } from "./modes/agentDirectConnection.js";
 import { SubscriptionManager } from "../managers/subscriptionManager.js";
+import { YpSubscriptionPlan } from "agents/models/subscriptionPlan.js";
+import { YpAgentProductRun } from "agents/models/agentProductRun.js";
+import { YpSubscription } from "agents/models/subscription.js";
+import { YpAgentProduct } from "agents/models/agentProduct.js";
 
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   public availableAgents: PsAgent[] = [];
@@ -70,11 +74,8 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     return this.memory.currentUser !== undefined;
   }
 
-  get currentAgent(): YpAgentProductAttributes | undefined {
-    return this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct;
-  }
 
-  get isSubscribedToCurrentAgent(): boolean {
+  get isSubscribedToCurrentAgentProduct(): boolean {
     if (this.DEBUG) {
       console.log(
         `-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(
@@ -84,23 +85,24 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
       )}`
       );
     }
-    return this.memory.currentAgentStatus?.subscription != undefined;
+    return this.memory.currentAgentStatus?.subscriptionId != undefined;
   }
 
-  get hasConfiguredCurrentAgent(): boolean {
+  get hasConfiguredcurrentAgentProduct(): boolean {
     return this.memory.currentAgentStatus?.configurationState === "configured";
   }
 
-  get isCurrentAgentRunning(): boolean {
-    return this.memory.currentAgentStatus?.activeAgentRun?.status === "running";
+  async isCurrentAgentRunning(): Promise<boolean> {
+    const agentRun = await this.getCurrentAgentRun();
+    return agentRun?.status === "running";
   }
 
-  get isCurrentAgentActive(): boolean {
+  async isCurrentAgentActive(): Promise<boolean> {
+    const agentRun = await this.getCurrentAgentRun();
     return (
-      this.memory.currentAgentStatus?.activeAgentRun?.status === "running" ||
-      this.memory.currentAgentStatus?.activeAgentRun?.status === "ready" ||
-      this.memory.currentAgentStatus?.activeAgentRun?.status ===
-        "waiting_on_user"
+      agentRun?.status === "running" ||
+      agentRun?.status === "ready" ||
+      agentRun?.status === "waiting_on_user"
     );
   }
 
@@ -112,19 +114,20 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     return this.memory.haveShownLoginWidget ?? false;
   }
 
-  get currentAgentWorkflow(): YpWorkflowConfiguration | undefined {
-    return this.memory.currentAgentStatus?.activeAgentRun?.workflow;
+  async getCurrentAgentWorkflow(): Promise<YpWorkflowConfiguration | undefined> {
+    const agentRun = await this.getCurrentAgentRun();
+    return agentRun?.workflow;
   }
 
-  get currentAgentWorkflowCurrentStep(): YpWorkflowStep | undefined {
-    return this.memory.currentAgentStatus?.activeAgentRun?.workflow?.steps[
-      this.memory.currentAgentStatus?.activeAgentRun?.workflow
-        ?.currentStepIndex ?? 0
+  async getCurrentAgentWorkflowCurrentStep(): Promise<YpWorkflowStep | undefined> {
+    const agentRun = await this.getCurrentAgentRun();
+    return agentRun?.workflow?.steps[
+      agentRun?.workflow?.currentStepIndex ?? 0
     ];
   }
 
-  get isCurrentAgentWaitingOnUserInput(): boolean {
-    const currentStep = this.currentAgentWorkflowCurrentStep;
+  async isCurrentAgentWaitingOnUserInput(): Promise<boolean> {
+    const currentStep = await this.getCurrentAgentWorkflowCurrentStep();
 
     if (!currentStep) {
       return false;

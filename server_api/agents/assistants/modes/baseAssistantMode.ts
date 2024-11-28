@@ -36,7 +36,7 @@ export class BaseAssistantMode {
     return `Status: ${agentRun.status}, Started: ${agentRun.start_time}, Workflow: ${this.renderSimplifiedWorkflow(agentRun.workflow)}`;
   }
 
-  protected renderCommon() {
+  async renderCommon() {
     if (!this.memory.currentMode) {
       return "";
     }
@@ -44,26 +44,30 @@ export class BaseAssistantMode {
       `renderCommon: currentConversationMode ${this.memory.currentMode}`
     );
     let modeInfo = `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>\n`;
-    if (this.assistant.currentAgent) {
-      modeInfo += `<currentAgent>${this.assistant.currentAgent.name}</currentAgent>\n`;
+    const currentAgentProduct = await this.assistant.getCurrentAgentProduct();
+
+    const currentAgentWorkflow = await this.assistant.getCurrentAgentWorkflow();
+
+    if (currentAgentProduct) {
+      modeInfo += `<currentAgent>${currentAgentProduct.name}</currentAgent>\n`;
     }
-    if (this.assistant.isCurrentAgentActive) {
+    if (await this.assistant.isCurrentAgentActive()) {
       modeInfo += `<currentAgentRunStatus>${this.renderSimplifiedAgentRun(
-        this.assistant.memory.currentAgentStatus?.activeAgentRun
+        await this.assistant.getCurrentAgentRun()
       )}</currentAgentRunStatus>\n`;
       modeInfo += `<currentWorkflowStep>${this.renderSimplifiedWorkflowStep(
-        this.assistant.currentAgentWorkflow?.steps[
-          this.assistant.currentAgentWorkflow?.currentStepIndex
+        currentAgentWorkflow?.steps[
+          currentAgentWorkflow?.currentStepIndex
         ]
       )}</currentWorkflowStep>\n`;
       if (
-        this.assistant.currentAgentWorkflow?.currentStepIndex != undefined &&
-        this.assistant.currentAgentWorkflow?.currentStepIndex + 1 <
-          this.assistant.currentAgentWorkflow?.steps.length
+        currentAgentWorkflow?.currentStepIndex != undefined &&
+        currentAgentWorkflow?.currentStepIndex + 1 <
+          currentAgentWorkflow?.steps.length
       ) {
         modeInfo += `<nextWorkflowStep>${JSON.stringify(
-          this.assistant.currentAgentWorkflow?.steps[
-            this.assistant.currentAgentWorkflow?.currentStepIndex + 1
+          currentAgentWorkflow?.steps[
+            currentAgentWorkflow?.currentStepIndex + 1
           ],
           null,
           2

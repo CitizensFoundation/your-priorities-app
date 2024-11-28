@@ -18,8 +18,8 @@ export class BaseAssistantTools {
     options: { sendEvent: boolean } = { sendEvent: true }
   ) {
     await this.assistant.updateCurrentAgentProductPlan(
-      plan,
-      subscription
+      plan.id,
+      subscription?.id ?? null
     );
 
     await this.waitTick();
@@ -40,7 +40,10 @@ export class BaseAssistantTools {
       throw new Error("No current agent status found");
     }
 
-    this.assistant.memory.currentAgentStatus.activeAgentRun = agentRun;
+    await this.assistant.loadMemoryAsync();
+
+    this.assistant.memory.currentAgentStatus.activeAgentRunId = agentRun.id;
+
     await this.assistant.saveMemory();
 
     await this.waitTick();

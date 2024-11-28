@@ -206,10 +206,13 @@ export class SubscriptionTools extends BaseAssistantTools {
         )}`
       );
 
-      if (
-        !this.assistant.memory.currentAgentStatus ||
-        !this.assistant.memory.currentAgentStatus.subscriptionPlan
-      ) {
+      const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+
+      if (!subscriptionPlan) {
+        throw new Error("No subscription plan found");
+      }
+
+      if (!subscriptionPlan) {
         return {
           success: false,
           data: "No current agent selected",
@@ -218,9 +221,8 @@ export class SubscriptionTools extends BaseAssistantTools {
       }
 
       const result = await this.subscriptionModels.subscribeToAgentPlan(
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct!
-          .id,
-        this.assistant.memory.currentAgentStatus?.subscriptionPlan.id
+        subscriptionPlan.AgentProduct!.id,
+        subscriptionPlan.id
       );
 
       if (!result.success || !result.subscription || !result.plan) {
@@ -320,10 +322,9 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      if (
-        !this.assistant.memory.currentAgentStatus ||
-        !this.assistant.memory.currentAgentStatus.subscriptionPlan
-      ) {
+      const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+
+      if (!subscriptionPlan) {
         return {
           success: false,
           data: "No current agent selected",
@@ -333,7 +334,7 @@ export class SubscriptionTools extends BaseAssistantTools {
 
       const { plan, subscription } =
         await this.subscriptionModels.loadAgentProductPlanAndSubscription(
-          this.assistant.memory.currentAgentStatus.subscriptionPlan.id
+          subscriptionPlan.id
         );
 
       if (!subscription) {

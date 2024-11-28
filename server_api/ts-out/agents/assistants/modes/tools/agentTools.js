@@ -62,15 +62,17 @@ export class AgentTools extends BaseAssistantTools {
     async showAgentRunWidgetHandler(params) {
         try {
             const { agent, run } = await this.agentModels.getCurrentAgentAndWorkflow();
-            if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+            const agentRun = await this.assistant.getCurrentAgentRun();
+            if (!agentRun) {
                 return {
                     success: false,
                     error: "No active agent run found",
                 };
             }
-            const html = this.renderAgentRunWidget(agent, this.assistant.memory.currentAgentStatus.activeAgentRun);
+            const html = await this.renderAgentRunWidget(agent, agentRun);
             //TODO: Create a unique identifer so we can make sure to only have one widget showing at the same time on the client but also in the
             // chatLog history that we only have the latest html and json so not to confuse the model
+            const subscription = await this.assistant.getCurrentSubscription();
             return {
                 success: true,
                 html,
@@ -78,7 +80,7 @@ export class AgentTools extends BaseAssistantTools {
                 data: {
                     agent,
                     run,
-                    subscription: this.assistant.memory.currentAgentStatus?.subscription,
+                    subscription,
                 },
             };
         }
@@ -120,18 +122,18 @@ export class AgentTools extends BaseAssistantTools {
                 error: "User did not verbally confirm starting the new run",
             };
         }
-        if (!this.assistant.memory.currentAgentStatus?.subscription) {
+        if (!this.assistant.memory.currentAgentStatus?.subscriptionId) {
             return {
                 success: false,
                 error: "No subscription found",
             };
         }
         try {
-            const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(this.assistant.memory.currentAgentStatus.subscription.id, this.assistant.wsClients, this.assistant.wsClientId, 
+            const { agentRun, subscription } = await this.assistant.subscriptionManager.startAgentRun(this.assistant.memory.currentAgentStatus.subscriptionId, this.assistant.wsClients, this.assistant.wsClientId, 
             //TODO: Fix this type casting
             this.assistant.memory.currentUser);
             await this.updateAgentProductRun(agentRun);
-            const html = this.renderAgentRunWidget(subscription.AgentProduct, agentRun);
+            const html = await this.renderAgentRunWidget(subscription.AgentProduct, agentRun);
             const message = "You've created new agent run ready to run the first workflow step, out of many. It will not start automatically, the user needs to start it verbally.";
             this.assistant.emit("update-ai-model-session", message);
             return {
@@ -185,32 +187,33 @@ export class AgentTools extends BaseAssistantTools {
                 error: "User did not confirm starting the next workflow step with the agent name",
             };
         }
-        if (!this.assistant.memory.currentAgentStatus?.activeAgentRun) {
+        const agentRun = await this.assistant.getCurrentAgentRun();
+        if (!agentRun) {
             return {
                 success: false,
                 error: "No active agent run found",
             };
         }
-        const agentRun = this.assistant.memory.currentAgentStatus.activeAgentRun;
         try {
             const structuredAnswersOverrides = [];
-            if (this.assistant.memory.currentAgentStatus?.subscription &&
-                this.assistant.memory.currentAgentStatus?.subscription.configuration
-                    ?.requiredQuestionsAnswered) {
-                structuredAnswersOverrides.push(...this.assistant.memory.currentAgentStatus.subscription
-                    .configuration.requiredQuestionsAnswered);
+            const subscription = await this.assistant.getCurrentSubscription();
+            const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+            if (!subscriptionPlan) {
+                throw new Error("No subscription plan found");
             }
-            if (this.assistant.memory.currentAgentStatus?.subscriptionPlan &&
-                this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct
-                    ?.configuration.structuredAnswersOverride) {
-                structuredAnswersOverrides.push(...this.assistant.memory.currentAgentStatus.subscriptionPlan
-                    .AgentProduct.configuration.structuredAnswersOverride);
+            if (subscription &&
+                subscription.configuration?.requiredQuestionsAnswered) {
+                structuredAnswersOverrides.push(...subscription.configuration.requiredQuestionsAnswered);
             }
-            const result = await this.agentModels.startCurrentWorkflowStep(agentRun, structuredAnswersOverrides);
+            if (subscriptionPlan &&
+                subscriptionPlan.AgentProduct?.configuration.structuredAnswersOverride) {
+                structuredAnswersOverrides.push(...subscriptionPlan.AgentProduct.configuration
+                    .structuredAnswersOverride);
+            }
+            const result = await this.agentModels.startCurrentWorkflowStep(agentRun.id, structuredAnswersOverrides);
             await this.updateAgentProductRun(result.agentRun);
-            const html = this.renderAgentRunWidget(this.assistant.memory.currentAgentStatus?.subscriptionPlan
-                .AgentProduct, result.agentRun);
-            this.assistant.emit("update-ai-model-session", "You have started the next workflow step for the current agent run, now offer the user to discuss the agent more or to deactivate yourself until the job is completed or if a problem occurs. Then let the user know you will email them a notification when the task is completed or if a problem occurs.");
+            const html = await this.renderAgentRunWidget(subscriptionPlan.AgentProduct, result.agentRun);
+            this.assistant.emit("update-ai-model-session", "You have started the next workflow step for the current agent run, now offer the user to deactivate yourself, using your  until the job is completed or if a problem occurs. Then let the user know you will email them a notification when the task is completed or if a problem occurs.");
             return {
                 success: true,
                 html,
@@ -256,7 +259,7 @@ export class AgentTools extends BaseAssistantTools {
         }
         try {
             const result = await this.agentModels.stopCurrentWorkflowStep();
-            const html = this.renderAgentRunWidget(result.agent, result.run);
+            const html = await this.renderAgentRunWidget(result.agent, result.run);
             await this.updateAgentProductRun(result.run);
             this.assistant.emit("update-ai-model-session", "We have stopped the current workflow step for the current agent run");
             return {
@@ -318,9 +321,12 @@ export class AgentTools extends BaseAssistantTools {
     }
     async showConfigurationWidgetHandler(params) {
         try {
-            const agent = await this.agentModels.getCurrentAgent();
-            const subscription = await this.agentModels.getCurrentSubscription();
-            const subscriptionPlan = await this.agentModels.getCurrentSubscriptionPlan();
+            const agent = await this.assistant.getCurrentAgentProduct();
+            const subscription = await this.assistant.getCurrentSubscription();
+            const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+            if (!agent || !subscription || !subscriptionPlan) {
+                throw new Error("No agent, subscription or subscription plan found");
+            }
             const html = `<yp-agent-configuration-widget
         domainId="${this.assistant.domainId}"
         agentProductId="${agent.id}"
@@ -390,8 +396,8 @@ export class AgentTools extends BaseAssistantTools {
             };
         }
     }
-    renderAgentRunWidget(agent, run) {
-        const subscription = this.assistant.memory.currentAgentStatus?.subscription;
+    async renderAgentRunWidget(agent, run) {
+        const subscription = await this.assistant.getCurrentSubscription();
         const workflowBase64 = btoa(JSON.stringify(run.workflow));
         return `<yp-agent-run-widget
         agentProductId="${agent.id}"

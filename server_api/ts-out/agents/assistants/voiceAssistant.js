@@ -29,12 +29,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         console.log(`voiceAssistant: updateAiModelSession: ${message}`);
         console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser
             ?.name}`);
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        this.parentAssistant.memory =
-            (await this.getLoadedMemory());
-        console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser
-            ?.name}`);
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 150));
         await this.initializeVoiceSession(message);
     }
     async initializeMainAssistantVoiceConnection() {
@@ -79,10 +74,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         if (!this.voiceEnabled)
             return;
         await this.sendCancelResponse();
-        if (this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-            .AgentProduct.name) {
-            this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${this.parentAssistant.memory.currentAgentStatus.subscriptionPlan
-                .AgentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
+        const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
+        if (subscriptionPlan?.AgentProduct.name) {
+            this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${subscriptionPlan.AgentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
         }
         this.sendToClient("assistant", "", "clear_audio_buffer");
         if (this.directAgentVoiceConnection) {
@@ -126,14 +120,15 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     async destroyDirectAgentVoiceConnection() {
         if (this.directAgentVoiceConnection) {
+            await this.parentAssistant.loadMemoryAsync();
             this.directAgentVoiceConnection.ws.close();
             this.directAgentVoiceConnection.connected = false;
             this.directAgentVoiceConnection = undefined;
             this.parentAssistant.memory.chatLog.push({
                 sender: "user",
-                message: "Thank you for the information, I would not like to speak to the main assistant about selecting agents or managing subscriptions",
+                message: "Thank you for the information, I would now like to speak to the main assistant about selecting agents or managing subscriptions",
             });
-            await this.saveMemory();
+            await this.parentAssistant.saveMemory();
         }
     }
     destroyAssistantVoiceConnection() {
@@ -475,18 +470,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         let instructions = this.parentAssistant.getCurrentSystemPrompt() || "";
         //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< initializeVoiceSession current mode", JSON.stringify(this.parentAssistant.memory, null, 2));
         let voiceName = this.voiceConfig.voice;
+        const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
         if (this.parentAssistant.memory.currentMode ===
             "agent_direct_connection_mode" &&
-            this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-                .AgentProduct.configuration.avatar?.voiceName) {
-            voiceName =
-                this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-                    .AgentProduct.configuration.avatar.voiceName;
-            instructions = `${this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-                .AgentProduct.configuration.avatar.systemPrompt}\n${instructions}`;
-            this.parentAssistant.sendAvatarUrlChange(this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-                .AgentProduct.configuration.avatar.imageUrl, this.parentAssistant.memory.currentAgentStatus?.subscriptionPlan
-                .AgentProduct.name);
+            subscriptionPlan?.AgentProduct.configuration.avatar?.voiceName) {
+            voiceName = subscriptionPlan.AgentProduct.configuration.avatar.voiceName;
+            instructions = `${subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n${instructions}`;
+            this.parentAssistant.sendAvatarUrlChange(subscriptionPlan.AgentProduct.configuration.avatar.imageUrl, subscriptionPlan.AgentProduct.name);
         }
         else {
             this.parentAssistant.sendAvatarUrlChange(null, null);

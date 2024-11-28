@@ -17,42 +17,27 @@ export class AgentModels {
     this.queueManager = new NotificationAgentQueueManager(this.assistant.wsClients);
   }
 
-  public async getCurrentAgent(): Promise<YpAgentProductAttributes> {
-    if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan.AgentProduct) {
-      throw new Error("No current agent selected");
-    }
-    return this.assistant.memory.currentAgentStatus.subscriptionPlan.AgentProduct;
-  }
-
-  public async getCurrentSubscription(): Promise<YpSubscriptionAttributes> {
-    if (!this.assistant.memory.currentAgentStatus?.subscription) {
-      throw new Error("No current subscription found");
-    }
-    return this.assistant.memory.currentAgentStatus.subscription;
-  }
-
-  public async getCurrentSubscriptionPlan(): Promise<YpSubscriptionPlanAttributes> {
-    if (!this.assistant.memory.currentAgentStatus?.subscriptionPlan) {
-      throw new Error("No current subscription plan found");
-    }
-    return this.assistant.memory.currentAgentStatus.subscriptionPlan;
-  }
 
   public async getCurrentAgentAndWorkflow(): Promise<{
     agent: YpAgentProductAttributes;
     run: YpAgentProductRunAttributes | undefined;
   }> {
-    const agent = await this.getCurrentAgent();
-    const currentRun = this.assistant.memory.currentAgentStatus?.activeAgentRun;
+    const agent = await this.assistant.getCurrentAgentProduct();
+    const currentRun = await this.assistant.getCurrentAgentRun();
 
-    if (!currentRun) {
+    if (!currentRun && !agent) {
+      throw new Error("No agent or run found");
+    } else if (!currentRun) {
       return {
-        agent,
+        agent: agent!,
         run: undefined,
       };
+    } else {
+      return {
+        agent: agent!,
+        run: currentRun,
+      };
     }
-
-    return { agent, run: currentRun };
   }
 
   public convertToUnderscoresWithMaxLength(str: string): string {
@@ -68,7 +53,7 @@ export class AgentModels {
   }
 
   public async startCurrentWorkflowStep(
-    agentRun: YpAgentProductRunAttributes,
+    agentRunId: number,
     structuredAnswersOverrides?: YpStructuredAnswer[]
   ): Promise<{
     agentRun: YpAgentProductRunAttributes;
@@ -77,13 +62,13 @@ export class AgentModels {
 
     try {
 
-      const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRun.id);
+      const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRunId);
 
       if (!agentRunToUpdate) {
         throw new Error("Agent run not found");
       }
 
-      if (!this.assistant.memory.currentAgentStatus?.subscription) {
+      if (!this.assistant.memory.currentAgentStatus?.subscriptionId) {
         throw new Error("No active subscription found for this agent");
       }
 
@@ -109,7 +94,7 @@ export class AgentModels {
 
       if (currentStepIndex >= totalSteps) {
         throw new Error(
-          `Agent run ${agentRun.id} is already at the last step of the workflow`
+          `Agent run ${agentRunId} is already at the last step of the workflow`
         );
       }
 
@@ -122,7 +107,7 @@ export class AgentModels {
       // Start processing with websocket client ID
       const jobId = await this.queueManager.startAgentProcessingWithWsClient(
         agentId,
-        agentRun.id,
+        agentRunId,
         this.assistant.wsClientId,
         structuredAnswersOverrides
       );
@@ -156,6 +141,10 @@ export class AgentModels {
 
   public async getNextWorkflowStep(): Promise<YpWorkflowStep | undefined> {
     const agentRun = await this.getCurrentAgentAndWorkflow();
+    if (!agentRun.run) {
+      return undefined;
+    }
+
     //TODO: look into this deal with the difference between agentOps and engagment
     if (agentRun.run!.workflow.currentStepIndex === 0) {
       return agentRun.run!.workflow.steps[0];
@@ -172,10 +161,11 @@ export class AgentModels {
     message: string;
   }> {
     console.log("---------------------> stopCurrentWorkflowStep");
-    const agent = await this.getCurrentAgent();
+    const agent = await this.assistant.getCurrentAgentProduct();
+
     const currentRun =
       (await YpAgentProductRun.findByPk(
-        this.assistant.memory.currentAgentStatus?.activeAgentRun?.id
+        this.assistant.memory.currentAgentStatus?.activeAgentRunId
       ))!;
 
     if (!currentRun) {
@@ -183,6 +173,10 @@ export class AgentModels {
     }
 
     const currentStep = currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
+
+    if (!agent) {
+      throw new Error("No agent found");
+    }
 
     if (!currentStep.agentId) {
       throw new Error("No agent ID found in the current step");
@@ -210,7 +204,10 @@ export class AgentModels {
   }
 
   public async checkAgentStatus(): Promise<PsAgentStatus | null> {
-    const agent = await this.getCurrentAgent();
+    const agent = await this.assistant.getCurrentAgentProduct();
+    if (!agent) {
+      throw new Error("No agent found");
+    }
     return this.queueManager.getAgentStatus(agent.id);
   }
 }

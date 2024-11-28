@@ -37,26 +37,24 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     get isLoggedIn() {
         return this.memory.currentUser !== undefined;
     }
-    get currentAgent() {
-        return this.memory.currentAgentStatus?.subscriptionPlan.AgentProduct;
-    }
-    get isSubscribedToCurrentAgent() {
+    get isSubscribedToCurrentAgentProduct() {
         if (this.DEBUG) {
             console.log(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
         }
-        return this.memory.currentAgentStatus?.subscription != undefined;
+        return this.memory.currentAgentStatus?.subscriptionId != undefined;
     }
-    get hasConfiguredCurrentAgent() {
+    get hasConfiguredcurrentAgentProduct() {
         return this.memory.currentAgentStatus?.configurationState === "configured";
     }
-    get isCurrentAgentRunning() {
-        return this.memory.currentAgentStatus?.activeAgentRun?.status === "running";
+    async isCurrentAgentRunning() {
+        const agentRun = await this.getCurrentAgentRun();
+        return agentRun?.status === "running";
     }
-    get isCurrentAgentActive() {
-        return (this.memory.currentAgentStatus?.activeAgentRun?.status === "running" ||
-            this.memory.currentAgentStatus?.activeAgentRun?.status === "ready" ||
-            this.memory.currentAgentStatus?.activeAgentRun?.status ===
-                "waiting_on_user");
+    async isCurrentAgentActive() {
+        const agentRun = await this.getCurrentAgentRun();
+        return (agentRun?.status === "running" ||
+            agentRun?.status === "ready" ||
+            agentRun?.status === "waiting_on_user");
     }
     get haveShownConfigurationWidget() {
         return this.memory.haveShownConfigurationWidget ?? false;
@@ -64,15 +62,16 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     get haveShownLoginWidget() {
         return this.memory.haveShownLoginWidget ?? false;
     }
-    get currentAgentWorkflow() {
-        return this.memory.currentAgentStatus?.activeAgentRun?.workflow;
+    async getCurrentAgentWorkflow() {
+        const agentRun = await this.getCurrentAgentRun();
+        return agentRun?.workflow;
     }
-    get currentAgentWorkflowCurrentStep() {
-        return this.memory.currentAgentStatus?.activeAgentRun?.workflow?.steps[this.memory.currentAgentStatus?.activeAgentRun?.workflow
-            ?.currentStepIndex ?? 0];
+    async getCurrentAgentWorkflowCurrentStep() {
+        const agentRun = await this.getCurrentAgentRun();
+        return agentRun?.workflow?.steps[agentRun?.workflow?.currentStepIndex ?? 0];
     }
-    get isCurrentAgentWaitingOnUserInput() {
-        const currentStep = this.currentAgentWorkflowCurrentStep;
+    async isCurrentAgentWaitingOnUserInput() {
+        const currentStep = await this.getCurrentAgentWorkflowCurrentStep();
         if (!currentStep) {
             return false;
         }

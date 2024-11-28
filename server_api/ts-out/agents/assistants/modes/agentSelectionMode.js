@@ -9,9 +9,9 @@ export class AgentSelectionMode extends BaseAssistantMode {
         this.navigationTools = new NavigationTools(this.assistant);
         this.loginTools = new LoginAssistantTools(this.assistant);
     }
-    getCurrentModeSystemPrompt() {
+    async getCurrentModeSystemPrompt() {
         let systemPrompt = `You are the main AI agent assistant. Help users select AI agents to subscribe to or connect to. Use your tools when needed.`;
-        systemPrompt += this.renderCommon();
+        systemPrompt += await this.renderCommon();
         return systemPrompt;
     }
     async getCurrentModeTools() {
@@ -34,7 +34,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
     }
     async getMode() {
         console.log("---------------------> getMode AgentSelectionMode");
-        const systemPrompt = this.getCurrentModeSystemPrompt();
+        const systemPrompt = await this.getCurrentModeSystemPrompt();
         const tools = await this.getCurrentModeTools();
         return {
             name: "agent_selection_mode",
