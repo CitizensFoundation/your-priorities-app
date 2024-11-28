@@ -25,6 +25,8 @@ export class AssistantController {
     constructor(wsClients) {
         this.path = "/api/assistants";
         this.router = express.Router();
+        this.chatAssistantInstances = new Map();
+        this.voiceAssistantInstances = new Map();
         this.initializeModels = async () => {
             try {
                 console.log(`All Models Loaded Init`);
@@ -250,7 +252,12 @@ export class AssistantController {
             const { wsClientId, currentMode } = req.body;
             const memoryId = this.getMemoryUserId(req);
             console.log(`Starting chat session for client: ${wsClientId}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, parseInt(req.params.domainId), memoryId);
+            let assistant = this.voiceAssistantInstances.get(wsClientId);
+            if (assistant) {
+                assistant.removeClientSystemMessageListener();
+            }
+            assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, parseInt(req.params.domainId), memoryId);
+            this.voiceAssistantInstances.set(wsClientId, assistant);
             await assistant.initialize();
             res.status(200).json({
                 message: "Voice session initialized",
@@ -267,7 +274,11 @@ export class AssistantController {
             const { wsClientId, chatLog, currentMode } = req.body;
             const memoryId = this.getMemoryUserId(req);
             console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, parseInt(req.params.domainId), memoryId);
+            let assistant = this.chatAssistantInstances.get(wsClientId);
+            if (!assistant) {
+                assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, parseInt(req.params.domainId), memoryId);
+                this.chatAssistantInstances.set(wsClientId, assistant);
+            }
             assistant.conversation(chatLog);
             res.status(200).json({
                 message: "Chat session initialized",

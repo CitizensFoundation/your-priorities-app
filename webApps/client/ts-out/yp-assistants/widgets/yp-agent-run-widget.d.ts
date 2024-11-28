@@ -43,7 +43,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get isWaitingOnUser(): boolean;
     get isCompleted(): boolean;
     private renderAgentRunningStatus;
-    get runStatusForButton(): "start" | "stop";
+    get runStatusForButton(): "stop" | "start";
     renderStartStopButtons(): TemplateResult<1>;
     get groupId(): number | undefined;
     private viewList;

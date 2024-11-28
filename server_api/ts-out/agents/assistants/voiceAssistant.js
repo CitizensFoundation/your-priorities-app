@@ -73,8 +73,13 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeDirectAgentVoiceConnection() {
         if (!this.voiceEnabled)
             return;
+        //TODO: Wait because of Redis update or something figure it out
+        //await new Promise((resolve) => setTimeout(resolve, 150));
         await this.sendCancelResponse();
         const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
+        if (!subscriptionPlan) {
+            throw new Error("No subscription plan found");
+        }
         if (subscriptionPlan?.AgentProduct.name) {
             this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${subscriptionPlan.AgentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
         }

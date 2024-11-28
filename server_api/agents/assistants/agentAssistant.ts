@@ -102,6 +102,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     return (
       agentRun?.status === "running" ||
       agentRun?.status === "ready" ||
+      agentRun?.status === "stopped" ||
       agentRun?.status === "waiting_on_user"
     );
   }

@@ -24,7 +24,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         super.connectedCallback();
         this.setupInitialWorkflow();
         this.updateAgentStatus();
-        this.addGlobalListener("yp-updated-agent-workflow", this.updateWorkflow.bind(this));
+        this.addGlobalListener("yp-updated-agent-workflow", this.setupInitialWorkflow.bind(this));
     }
     parseWorkflow() {
         const workflow = this.parsedWorkflow;
@@ -65,7 +65,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     disconnectedCallback() {
         super.disconnectedCallback();
         this.stopStatusUpdates();
-        this.removeGlobalListener("yp-updated-agent-workflow", this.updateWorkflow.bind(this));
+        this.removeGlobalListener("yp-updated-agent-workflow", this.setupInitialWorkflow.bind(this));
     }
     startStatusUpdates() {
         this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 1200);

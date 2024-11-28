@@ -14,7 +14,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     async sendNotification(agent, action, wsClientId, status, result, agentRunId, updatedWorkflow) {
         const wsClient = this.wsClients.get(wsClientId);
         if (wsClient) {
-            wsClient.send(JSON.stringify({ type: "updated_workflow", action, status, result, agentRunId, updatedWorkflow: { workflow: updatedWorkflow, status: status } }));
+            wsClient.send(JSON.stringify({
+                type: "updated_workflow",
+                action,
+                status,
+                result,
+                agentRunId,
+                updatedWorkflow: { workflow: updatedWorkflow, status: status },
+            }));
         }
         else {
             console.error(`NotificationAgentQueueManager: WebSocket client with ID ${wsClientId} not found`);
@@ -38,12 +45,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 await agentRun.update({ status: "failed", completedAt: new Date() });
                 return;
             }
-            workflowConfig.steps[workflowConfig.currentStepIndex].endTime = new Date();
+            workflowConfig.steps[workflowConfig.currentStepIndex].endTime =
+                new Date();
             // Check if there are more steps
             if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
                 workflowConfig.currentStepIndex++;
                 let nextStatus;
-                if (workflowConfig.steps[workflowConfig.currentStepIndex].type === "agentOps") {
+                if (workflowConfig.steps[workflowConfig.currentStepIndex].type ===
+                    "agentOps") {
                     nextStatus = "running";
                 }
                 else {
@@ -59,7 +68,8 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             }
             else {
                 // This was the last step, mark the workflow as completed
-                agentRun.changed("workflow", true);
+                agentRun.status = "completed";
+                agentRun.changed("status", true);
                 await agentRun.save();
                 await agentRun.update({ status: "completed", completedAt: new Date() });
                 console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, "to completed");
@@ -116,7 +126,8 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                         }
                         console.log("NotificationAgentQueueManager: Agent", agent);
                         let updatedWorkflow;
-                        if (agentRun.status === "completed") {
+                        if (agentRun.status === "running" ||
+                            agentRun.status === "waiting_on_user") {
                             if (agentRunId) {
                                 updatedWorkflow =
                                     await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, agentRun.status, wsClientId, returnvalue);

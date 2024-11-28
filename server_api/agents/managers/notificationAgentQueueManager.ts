@@ -31,7 +31,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     const wsClient = this.wsClients.get(wsClientId);
     if (wsClient) {
       wsClient.send(
-        JSON.stringify({ type:"updated_workflow", action, status, result, agentRunId, updatedWorkflow: { workflow: updatedWorkflow, status: status } })
+        JSON.stringify({
+          type: "updated_workflow",
+          action,
+          status,
+          result,
+          agentRunId,
+          updatedWorkflow: { workflow: updatedWorkflow, status: status },
+        })
       );
     } else {
       console.error(
@@ -49,7 +56,11 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     result: any
   ) {
     try {
-      console.log("NotificationAgentQueueManager: Advancing workflow step or completing agent run", agentRunId, status);
+      console.log(
+        "NotificationAgentQueueManager: Advancing workflow step or completing agent run",
+        agentRunId,
+        status
+      );
       // Get the agent run record
       const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
         attributes: ["id", "workflow", "status"],
@@ -70,13 +81,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         return;
       }
 
-      workflowConfig.steps[workflowConfig.currentStepIndex].endTime = new Date();
+      workflowConfig.steps[workflowConfig.currentStepIndex].endTime =
+        new Date();
 
       // Check if there are more steps
       if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
         workflowConfig.currentStepIndex++;
         let nextStatus: YpAgentProductRunStatus;
-        if (workflowConfig.steps[workflowConfig.currentStepIndex].type === "agentOps") {
+        if (
+          workflowConfig.steps[workflowConfig.currentStepIndex].type ===
+          "agentOps"
+        ) {
           nextStatus = "running";
         } else {
           nextStatus = "waiting_on_user";
@@ -89,14 +104,24 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
 
         //TODO: UPDATE AGENT MEMORY
 
-        console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, status, workflowConfig);
+        console.log(
+          "NotificationAgentQueueManager: Updated workflow for agent run",
+          agentRunId,
+          status,
+          workflowConfig
+        );
       } else {
         // This was the last step, mark the workflow as completed
-        agentRun.changed("workflow", true);
+        agentRun.status = "completed";
+        agentRun.changed("status", true);
         await agentRun.save();
 
         await agentRun.update({ status: "completed", completedAt: new Date() });
-        console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, "to completed");
+        console.log(
+          "NotificationAgentQueueManager: Updated workflow for agent run",
+          agentRunId,
+          "to completed"
+        );
       }
 
       return workflowConfig;
@@ -154,7 +179,11 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         );
 
         try {
-          console.log("NotificationAgentQueueManager: Job completed in queue", queueName, jobId);
+          console.log(
+            "NotificationAgentQueueManager: Job completed in queue",
+            queueName,
+            jobId
+          );
           // Retrieve the job instance
           const job = await newQueue.getJob(jobId);
           if (job) {
@@ -181,7 +210,10 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
 
             let updatedWorkflow;
 
-            if (agentRun.status === "completed") {
+            if (
+              agentRun.status === "running" ||
+              agentRun.status === "waiting_on_user"
+            ) {
               if (agentRunId) {
                 updatedWorkflow =
                   await this.advanceWorkflowStepOrCompleteAgentRun(
@@ -196,7 +228,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 );
               }
             } else {
-              console.warn(`NotificationAgentQueueManager: Agent run ${agentRunId} is not completed, status ${agentRun.status} but the job completed`);
+              console.warn(
+                `NotificationAgentQueueManager: Agent run ${agentRunId} is not completed, status ${agentRun.status} but the job completed`
+              );
             }
 
             if (agent) {
@@ -239,7 +273,10 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
           const job = await newQueue.getJob(jobId);
           if (job) {
             const { agentId, type, wsClientId, agentRunId } = job.data;
-            console.log("NotificationAgentQueueManager: FAILED Job data", job.data);
+            console.log(
+              "NotificationAgentQueueManager: FAILED Job data",
+              job.data
+            );
 
             // Load the agent database record
             const agent = await PsAgent.findByPk(agentId, {
@@ -275,13 +312,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               return;
             }
 
-            agentRun.workflow.steps[agentRun.workflow.currentStepIndex].endTime = new Date();
+            agentRun.workflow.steps[
+              agentRun.workflow.currentStepIndex
+            ].endTime = new Date();
             //TODO: Fix this, the agent run should not be marked as failed if the job failed
             //agentRun.status = "failed";
             agentRun.changed("status", true);
             agentRun.changed("workflow", true);
             await agentRun.save();
-
           } else {
             console.error(`Job with ID ${jobId} not found.`);
           }
@@ -392,20 +430,30 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     return job.id;
   }
 
-  async stopAgentProcessing(agentId: number, wsClientId: string, agentRunId: number): Promise<boolean> {
-    console.log(`NotificationAgentQueueManager: Stopping agent processing for agent ${agentId}`);
+  async stopAgentProcessing(
+    agentId: number,
+    wsClientId: string,
+    agentRunId: number
+  ): Promise<boolean> {
+    console.log(
+      `NotificationAgentQueueManager: Stopping agent processing for agent ${agentId}`
+    );
     const agent = await PsAgent.findByPk(agentId, {
       include: [{ model: PsAgentClass, as: "Class" }],
     });
 
     if (!agent || !agent.Class) {
-      throw Error(`NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`);
+      throw Error(
+        `NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`
+      );
     }
 
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);
     const action = "stop";
-    console.log(`NotificationAgentQueueManager: Adding stop-processing job to queue ${queueName} for agent ${agentId} ${action}`);
+    console.log(
+      `NotificationAgentQueueManager: Adding stop-processing job to queue ${queueName} for agent ${agentId} ${action}`
+    );
     await queue.add("control-message", {
       type: `${action}Agent${agent.id}`,
       agentId: agent.id,

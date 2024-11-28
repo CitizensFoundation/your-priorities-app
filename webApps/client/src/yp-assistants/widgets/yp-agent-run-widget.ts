@@ -70,7 +70,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
     this.addGlobalListener(
       "yp-updated-agent-workflow",
-      this.updateWorkflow.bind(this)
+      this.setupInitialWorkflow.bind(this)
     );
   }
 
@@ -124,7 +124,7 @@ export class YpAgentRunWidget extends YpBaseElement {
     this.stopStatusUpdates();
     this.removeGlobalListener(
       "yp-updated-agent-workflow",
-      this.updateWorkflow.bind(this)
+      this.setupInitialWorkflow.bind(this)
     );
   }
 

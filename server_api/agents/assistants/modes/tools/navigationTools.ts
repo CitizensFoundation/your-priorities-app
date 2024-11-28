@@ -71,7 +71,7 @@ export class NavigationTools extends BaseAssistantTools {
 
       console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`)
 
-      this.updateCurrentAgentProductPlan(plan, subscription, { sendEvent: false});
+      await this.updateCurrentAgentProductPlan(plan, subscription, { sendEvent: false});
 
       await this.assistant.handleModeSwitch(
         "agent_direct_connection_mode",

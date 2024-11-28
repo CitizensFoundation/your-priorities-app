@@ -41,7 +41,7 @@ export class NavigationTools extends BaseAssistantTools {
                 throw new Error(`Agent product with id ${params.subscriptionPlanId} not found`);
             }
             console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
-            this.updateCurrentAgentProductPlan(plan, subscription, { sendEvent: false });
+            await this.updateCurrentAgentProductPlan(plan, subscription, { sendEvent: false });
             await this.assistant.handleModeSwitch("agent_direct_connection_mode", `Directly connected to agent: ${plan?.AgentProduct?.name}`, params);
             const html = `<div class="agent-chips"><yp-agent-chip
           isSelected

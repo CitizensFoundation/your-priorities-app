@@ -40,20 +40,35 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.setupClientSystemMessageListener();
         this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
+    removeClientSystemMessageListener() {
+        this.wsClientSocket.removeAllListeners("message");
+    }
     setupClientSystemMessageListener() {
+        console.log('setupClientSystemMessageListener called for wsClientId:', this.wsClientId);
+        // Check the number of 'message' listeners before adding a new one
+        const listenerCountBefore = this.wsClientSocket.listenerCount('message');
+        console.log('Number of "message" listeners before adding:', listenerCountBefore);
         this.wsClientSocket.on("message", async (data) => {
+            //console.log('wsClientSocket "message" event received for wsClientId:', this.wsClientId);
             try {
                 const message = JSON.parse(data.toString());
+                //console.log('Received message:', message);
                 switch (message.type) {
                     case "client_system_message":
+                        console.log('Processing client_system_message:', message);
                         this.processClientSystemMessage(message);
                         break;
+                    default:
+                    //console.log('Unhandled message type:', message.type);
                 }
             }
             catch (error) {
                 console.error("Error processing message:", error);
             }
         });
+        // Check the number of 'message' listeners after adding the new one
+        const listenerCountAfter = this.wsClientSocket.listenerCount('message');
+        console.log('Number of "message" listeners after adding:', listenerCountAfter);
     }
     async getCurrentAgentProduct() {
         if (this.memory.currentAgentStatus?.subscriptionPlanId) {
@@ -622,6 +637,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
             mode: this.memory.currentMode,
         }));
         await this.saveMemory();
+        console.log("handleModeSwitch: CurrentMode after save", this.memory.currentMode);
         this.sendToClient("system", newMode, "modeChange", undefined, true);
     }
     async addUserMessage(message) {

@@ -153,6 +153,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         if (changedProperties) {
             super.firstUpdated(changedProperties);
         }
+        this.scrollDown();
     }
     async getMemoryFromServer() {
         if (!this.chatLog || this.chatLog.length === 0) {
@@ -167,6 +168,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                     }));
                     this.chatLog = this.chatLogFromServer;
                     this.requestUpdate();
+                    await this.updateComplete;
+                    //TODO: Figure this out better
+                    await new Promise((resolve) => setTimeout(resolve, 15));
+                    this.scrollDown();
                 }
             }
             catch (error) {
@@ -269,7 +274,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             ><md-icon>close</md-icon></md-filled-tonal-icon-button
           >
           <div class="flex"></div>
-          <md-filled-button ?has-static-theme="${this.hasStaticTheme}" class="downloadPdfButton" @click=${this.downloadPdf}
+          <md-filled-button
+            ?has-static-theme="${this.hasStaticTheme}"
+            class="downloadPdfButton"
+            @click=${this.downloadPdf}
             >${this.t("downloadPdf")}</md-filled-button
           >
         </div>
@@ -283,7 +291,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     </div>`;
     }
     render() {
-        if (this.welcomeScreenOpen) {
+        if (this.welcomeScreenOpen && this.chatLog.length === 0) {
             return html `<yp-assistant-welcome
         @yp-start-voice-mode="${this.startInVoiceMode}"
         @yp-start-text-mode="${this.startInTextMode}"

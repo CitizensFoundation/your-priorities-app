@@ -40,6 +40,8 @@ export class AssistantController {
   public path = "/api/assistants";
   public router = express.Router();
   public wsClients: Map<string, WebSocket>;
+  public chatAssistantInstances = new Map<string, YpAgentAssistant>();
+  public voiceAssistantInstances = new Map<string, YpAgentAssistant>();
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
@@ -345,14 +347,19 @@ export class AssistantController {
       const memoryId = this.getMemoryUserId(req);
       console.log(`Starting chat session for client: ${wsClientId}`);
 
-      const assistant = new YpAgentAssistant(
+      let assistant = this.voiceAssistantInstances.get(wsClientId);
+      if (assistant) {
+        assistant.removeClientSystemMessageListener();
+      }
+      assistant = new YpAgentAssistant(
         wsClientId,
         this.wsClients,
         req.redisClient,
-        true,
-        parseInt(req.params.domainId),
-        memoryId
-      );
+          true,
+          parseInt(req.params.domainId),
+          memoryId
+        );
+      this.voiceAssistantInstances.set(wsClientId, assistant);
 
       await assistant.initialize();
 
@@ -374,14 +381,18 @@ export class AssistantController {
         `Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`
       );
 
-      const assistant = new YpAgentAssistant(
-        wsClientId,
-        this.wsClients,
-        req.redisClient,
-        false,
-        parseInt(req.params.domainId),
-        memoryId
-      );
+      let assistant = this.chatAssistantInstances.get(wsClientId);
+      if (!assistant) {
+        assistant = new YpAgentAssistant(
+          wsClientId,
+          this.wsClients,
+          req.redisClient,
+          false,
+          parseInt(req.params.domainId),
+          memoryId
+        );
+        this.chatAssistantInstances.set(wsClientId, assistant);
+      }
 
       assistant.conversation(chatLog);
 

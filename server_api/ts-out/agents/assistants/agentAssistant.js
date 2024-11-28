@@ -54,6 +54,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         const agentRun = await this.getCurrentAgentRun();
         return (agentRun?.status === "running" ||
             agentRun?.status === "ready" ||
+            agentRun?.status === "stopped" ||
             agentRun?.status === "waiting_on_user");
     }
     get haveShownConfigurationWidget() {
