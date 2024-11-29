@@ -213,7 +213,12 @@ export class AgentTools extends BaseAssistantTools {
             const result = await this.agentModels.startCurrentWorkflowStep(agentRun.id, structuredAnswersOverrides);
             await this.updateAgentProductRun(result.agentRun);
             const html = await this.renderAgentRunWidget(subscriptionPlan.AgentProduct, result.agentRun);
-            this.assistant.emit("update-ai-model-session", "You have started the next workflow step for the current agent run, now offer the user to deactivate yourself, using your  until the job is completed or if a problem occurs. Then let the user know you will email them a notification when the task is completed or if a problem occurs.");
+            this.assistant.emit("update-ai-model-session", "You have started the next workflow step for the current agent run, let the user know you will email them a notification when the task is completed or if a problem occurs.");
+            setTimeout(() => {
+                /*this.assistant.triggerResponseIfNeeded(
+                  "Offer the user to deactivate yourself as long running agents are in progress."
+                );*/
+            }, 25000);
             return {
                 success: true,
                 html,

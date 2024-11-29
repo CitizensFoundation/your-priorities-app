@@ -189,7 +189,9 @@ module.exports = (sequelize, DataTypes) => {
                 email: options.email,
                 token: options.token,
                 invite_id: options.invite_id,
-                sender_name: options.sender_name
+                sender_name: options.sender_name,
+                invite_type: options.invite_type,
+                invite_link: options.invite_link,
             },
             community_id: options.community_id,
             group_id: options.group_id,

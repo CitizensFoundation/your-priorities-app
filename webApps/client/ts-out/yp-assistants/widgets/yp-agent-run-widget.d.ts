@@ -16,6 +16,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private statusInterval;
     workflow: string;
     maxRunsPerCycle: number;
+    private emailsInput;
     private api;
     constructor();
     connectedCallback(): void;
@@ -43,11 +44,12 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get isWaitingOnUser(): boolean;
     get isCompleted(): boolean;
     private renderAgentRunningStatus;
-    get runStatusForButton(): "start" | "stop";
+    get runStatusForButton(): "stop" | "start";
     startNextWorkflowStep(): Promise<void>;
     stopCurrentWorkflowStep(): Promise<void>;
     renderStartStopButtons(): TemplateResult<1>;
     get groupId(): number | undefined;
+    sendEmailInvitesForAnons(): Promise<void>;
     private viewList;
     openMarkdownReport(): void;
     renderCompleted(): TemplateResult;

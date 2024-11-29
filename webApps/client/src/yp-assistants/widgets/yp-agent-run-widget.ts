@@ -1,9 +1,10 @@
 import { LitElement, html, css, nothing, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { PsServerApi } from "../../policySynth/PsServerApi.js";
 import { YpNavHelpers } from "../../common/YpNavHelpers.js";
 import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
+import { YpSnackbar } from "../../yp-app/yp-snackbar.js";
 
 // Assuming we have an API client
 
@@ -53,6 +54,9 @@ export class YpAgentRunWidget extends YpBaseElement {
 
   @property({ type: Number })
   maxRunsPerCycle!: number;
+
+  @query("#emails")
+  private emailsInput!: HTMLInputElement;
 
   private api: PsServerApi;
 
@@ -447,6 +451,7 @@ export class YpAgentRunWidget extends YpBaseElement {
     const isActive =
       isSelected &&
       (this.runStatus === "running" ||
+        this.runStatus === "stopped" ||
         this.runStatus === "waiting_on_user" ||
         this.runStatus === "completed");
 
@@ -607,6 +612,16 @@ export class YpAgentRunWidget extends YpBaseElement {
       .groupId;
   }
 
+  async sendEmailInvitesForAnons() {
+    this.fireGlobal("yp-send-email-invites-for-anons", {
+      groupId: this.groupId,
+      agentId: this.agentId,
+      emails: this.emailsInput.value,
+    });
+
+    this.emailsInput.value = "";
+  }
+
   private viewList() {
     window.open(`/group/${this.groupId}?forAgentBundle=true`, "_blank");
     //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
@@ -647,9 +662,12 @@ export class YpAgentRunWidget extends YpBaseElement {
           <md-outlined-text-field
             type="textarea"
             rows="7"
+            id="emails"
             label="${this.t("enterOneEmailPerLine")}"
           ></md-outlined-text-field>
-          <md-filled-button class="inviteButton"
+          <md-filled-button
+            class="inviteButton"
+            @click=${this.sendEmailInvitesForAnons}
             >${this.t("inviteToList")}</md-filled-button
           >
         </div>

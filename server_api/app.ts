@@ -128,6 +128,7 @@ import {
 import WebSocket, { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
 import { RedisClientType } from "@redis/client";
+import { Op } from "sequelize";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -162,6 +163,7 @@ export class YourPrioritiesApi {
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
+    this.addInviteAsAnonMiddleWare();
     this.setupStaticFileServing();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
@@ -180,6 +182,7 @@ export class YourPrioritiesApi {
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
+    this.addInviteAsAnonMiddleWare();
     this.setupStaticFileServing();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
@@ -268,6 +271,72 @@ export class YourPrioritiesApi {
         next();
       }
     );
+  }
+
+  addInviteAsAnonMiddleWare(): void {
+    this.app.use(async (req: YpRequest, res: express.Response, next: NextFunction) => {
+      if (!req.user && req.query.anonInvite === '1' && req.query.token) {
+        const token = req.query.token;
+        try {
+          //TODO: Fix this "as any" in all places
+          const invite = await (models as any).Invite.findOne({
+            where: {
+              token,
+              joined_at: null,
+              type: (models as any).Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON,
+              deleted: false,
+              [Op.or]: [
+                { expires_at: null },
+                { expires_at: { [Op.gt]: new Date() } },
+              ],
+            },
+          });
+
+          if (invite) {
+            const anonEmail = req.sessionID + "_anonymous@citizens.is";
+            let user = await (models as any).User.findOne({ where: { email: anonEmail } });
+            if (!user) {
+              user = await (models as any).User.create({
+                email: anonEmail,
+                name: "Anonymous User",
+                notifications_settings: (models as any).AcNotification.anonymousNotificationSettings,
+                status: 'active',
+                profile_data: { isAnonymousUser: true },
+              });
+            }
+
+            await new Promise<void>((resolve, reject) => {
+                req.logIn(user, (error) => (error ? reject(error) : resolve()));
+            });
+
+            // Associate user with community
+            if (invite.community_id) {
+              const community = await (models as any).Community.findByPk(invite.community_id);
+              if (community) {
+                await community.addCommunityUsers(req.user);
+              }
+            }
+
+            // Associate user with group
+            if (invite.group_id) {
+              const group = await (models as any).Group.findByPk(invite.group_id);
+              if (group) {
+                await group.addGroupUsers(req.user);
+              }
+            }
+
+            // Mark invite as used
+            invite.joined_at = new Date();
+            await invite.save();
+
+            return next();
+          }
+        } catch (err) {
+          log.error("Error in anonInvite middleware", { err });
+        }
+      }
+      next();
+    });
   }
 
   forceHttps(): void {

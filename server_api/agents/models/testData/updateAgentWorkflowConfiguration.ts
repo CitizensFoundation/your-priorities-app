@@ -20,9 +20,9 @@ async function setupAgentProductsConfiguration() {
         },
         {
           name: "Competitor Analysis People Review",
-          shortName: "People review",
-          description: "People Review of the wide search results.",
-          shortDescription: "People prioritize the wide search results.",
+          shortName: "Vetting competitors",
+          description: "People Review to vet key competitors",
+          shortDescription: "People Review to vet key competitors",
           agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#e74c3c",
@@ -42,10 +42,10 @@ async function setupAgentProductsConfiguration() {
         },
         {
           name: "Competitor Analysis Detailed Search People Review",
-          shortName: "People Review",
-          description: "People Review of the detailed search results.",
+          shortName: "Key competitors",
+          description: "People review of key competitors",
           shortDescription:
-            "People prioritize the detailed search results.",
+            "People review of key competitors",
           agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#2ecc71",

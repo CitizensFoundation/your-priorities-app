@@ -110,6 +110,7 @@ process.on("unhandledRejection", (reason, promise) => {
 import { botsWithJavascript, isBadBot, } from "./bot_control.js";
 import { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { Op } from "sequelize";
 export class YourPrioritiesApi {
     constructor(port = undefined) {
         this.determineVersion = (req) => {
@@ -202,6 +203,7 @@ export class YourPrioritiesApi {
         this.handleShortenedRedirects();
         this.initializeRateLimiting();
         this.setupDomainAndCommunity();
+        this.addInviteAsAnonMiddleWare();
         this.setupStaticFileServing();
         this.setupSitemapRoute();
         this.initializePassportStrategies();
@@ -219,6 +221,7 @@ export class YourPrioritiesApi {
         this.handleShortenedRedirects();
         this.initializeRateLimiting();
         this.setupDomainAndCommunity();
+        this.addInviteAsAnonMiddleWare();
         this.setupStaticFileServing();
         this.setupSitemapRoute();
         this.initializePassportStrategies();
@@ -290,6 +293,66 @@ export class YourPrioritiesApi {
     addDirnameToRequest() {
         this.app.use((req, res, next) => {
             req.dirName = __dirname;
+            next();
+        });
+    }
+    addInviteAsAnonMiddleWare() {
+        this.app.use(async (req, res, next) => {
+            if (!req.user && req.query.anonInvite === '1' && req.query.token) {
+                const token = req.query.token;
+                try {
+                    //TODO: Fix this "as any" in all places
+                    const invite = await models.Invite.findOne({
+                        where: {
+                            token,
+                            joined_at: null,
+                            type: models.Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON,
+                            deleted: false,
+                            [Op.or]: [
+                                { expires_at: null },
+                                { expires_at: { [Op.gt]: new Date() } },
+                            ],
+                        },
+                    });
+                    if (invite) {
+                        const anonEmail = req.sessionID + "_anonymous@citizens.is";
+                        let user = await models.User.findOne({ where: { email: anonEmail } });
+                        if (!user) {
+                            user = await models.User.create({
+                                email: anonEmail,
+                                name: "Anonymous User",
+                                notifications_settings: models.AcNotification.anonymousNotificationSettings,
+                                status: 'active',
+                                profile_data: { isAnonymousUser: true },
+                            });
+                        }
+                        await new Promise((resolve, reject) => {
+                            req.logIn(user, (error) => (error ? reject(error) : resolve()));
+                        });
+                        // Associate user with community
+                        if (invite.community_id) {
+                            const community = await models.Community.findByPk(invite.community_id);
+                            if (community) {
+                                await community.addCommunityUsers(req.user);
+                            }
+                        }
+                        // Associate user with group
+                        if (invite.group_id) {
+                            const group = await models.Group.findByPk(invite.group_id);
+                            if (group) {
+                                await group.addGroupUsers(req.user);
+                            }
+                        }
+                        // Mark invite as used
+                        invite.joined_at = new Date();
+                        await invite.save();
+                        return next();
+                    }
+                }
+                catch (err) {
+                    log.error("Error in anonInvite middleware", { err });
+                }
+            }
             next();
         });
     }

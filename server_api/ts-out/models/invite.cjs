@@ -38,6 +38,7 @@ module.exports = function (sequelize, DataTypes) {
     Invite.INVITE_TO_COMMUNITY = 1;
     Invite.INVITE_TO_IDEA = 2;
     Invite.INVITE_TO_FRIEND = 3;
+    Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON = 4;
     Invite.checkIfColumnExists = function (columnName) {
         const a = this.rawAttributes;
         const b = this.rawAttributes[columnName];

@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { html, css, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { PsServerApi } from "../../policySynth/PsServerApi.js";
 // Assuming we have an API client
@@ -361,6 +361,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         const stepClass = this.getStepClass(index);
         const isActive = isSelected &&
             (this.runStatus === "running" ||
+                this.runStatus === "stopped" ||
                 this.runStatus === "waiting_on_user" ||
                 this.runStatus === "completed");
         return html `
@@ -504,6 +505,14 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         return this.parsedWorkflow.steps[this.parsedWorkflow.currentStepIndex]
             .groupId;
     }
+    async sendEmailInvitesForAnons() {
+        this.fireGlobal("yp-send-email-invites-for-anons", {
+            groupId: this.groupId,
+            agentId: this.agentId,
+            emails: this.emailsInput.value,
+        });
+        this.emailsInput.value = "";
+    }
     viewList() {
         window.open(`/group/${this.groupId}?forAgentBundle=true`, "_blank");
         //YpNavHelpers.redirectTo(`/group/${this.groupId}`);
@@ -541,9 +550,12 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
           <md-outlined-text-field
             type="textarea"
             rows="7"
+            id="emails"
             label="${this.t("enterOneEmailPerLine")}"
           ></md-outlined-text-field>
-          <md-filled-button class="inviteButton"
+          <md-filled-button
+            class="inviteButton"
+            @click=${this.sendEmailInvitesForAnons}
             >${this.t("inviteToList")}</md-filled-button
           >
         </div>
@@ -611,6 +623,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpAgentRunWidget.prototype, "maxRunsPerCycle", void 0);
+__decorate([
+    query("#emails")
+], YpAgentRunWidget.prototype, "emailsInput", void 0);
 YpAgentRunWidget = __decorate([
     customElement("yp-agent-run-widget")
 ], YpAgentRunWidget);

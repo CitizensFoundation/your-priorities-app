@@ -13,6 +13,7 @@ import { YpServerApi } from "../common/YpServerApi.js";
 import "./yp-assistant-welcome.js";
 import { cache } from "lit/directives/cache.js";
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
+import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
@@ -137,6 +138,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "yp-stop-current-workflow-step",
       this.stopCurrentWorkflowStep
     );
+    this.addGlobalListener(
+      "yp-send-email-invites-for-anons",
+      this.sendEmailInvitesForAnons.bind(this)
+    );
   }
 
   override disconnectedCallback() {
@@ -153,6 +158,30 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "yp-open-markdown-report",
       this.openMarkdownReport.bind(this)
     );
+    this.removeGlobalListener(
+      "yp-send-email-invites-for-anons",
+      this.sendEmailInvitesForAnons.bind(this)
+    );
+  }
+
+  async sendEmailInvitesForAnons(event: CustomEvent) {
+    if (!event.detail) {
+      return;
+    }
+
+    try {
+      await this.serverApi.sendEmailInvitesForAnons(
+        event.detail.groupId,
+        event.detail.agentId,
+        event.detail.emails
+      );
+      window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
+        toast.labelText = this.t("haveSentInvites");
+        toast.open = true;
+      });
+    } catch (error) {
+      console.error("Error sending email invites for anons:", error);
+    }
   }
 
   async startNextWorkflowStep(event: CustomEvent) {
@@ -696,6 +725,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         }
         this.userIsSpeaking = true;
         this.aiIsSpeaking = false;
+
         await this.resetWaveformPlayer();
         break;
 
@@ -1173,6 +1203,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           --md-filled-text-field-container-color: #f4f4f4;
           --md-filled-text-field-hover-container-color: #f4f4f4;
           --md-icon-size: 32px;
+          --md-filled-text-field-label-text-color: #808080;
         }
 
         md-filled-text-field[dark-mode] {

@@ -38,6 +38,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    sendEmailInvitesForAnons(event: CustomEvent): Promise<void>;
     startNextWorkflowStep(event: CustomEvent): Promise<void>;
     stopCurrentWorkflowStep(event: CustomEvent): Promise<void>;
     openMarkdownReport(event: CustomEvent): Promise<void>;

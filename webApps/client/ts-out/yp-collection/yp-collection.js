@@ -133,7 +133,7 @@ export class YpCollection extends YpBaseElementWithLogin {
             this.collection = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
             this.refresh();
             if (this.collectionType == "domain") {
-                this.selectedTab = CollectionTabTypes.Assistant;
+                //this.selectedTab = CollectionTabTypes.Assistant;
             }
         }
         else {
@@ -453,7 +453,7 @@ export class YpCollection extends YpBaseElementWithLogin {
             @change="${this._selectTab}"
             .activeTabIndex="${this.selectedTab}"
           >
-            ${this.renderAssistantTab()}
+            ${ /*this.renderAssistantTab()*/nothing}
             <md-secondary-tab
               ?has-static-theme="${this.hasStaticTheme}"
               ?hidden="${this.hideCollection}"

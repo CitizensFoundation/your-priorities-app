@@ -8,6 +8,7 @@ export declare class YpAssistantServerApi extends YpServerApi {
     clientMemoryUuid: string;
     constructor(clientMemoryUuid: string, urlPath?: string);
     startNextWorkflowStep(groupId: number, agentId: string): Promise<void>;
+    sendEmailInvitesForAnons(groupId: number, agentId: string, emails: string): Promise<void>;
     stopCurrentWorkflowStep(groupId: number, agentId: string): Promise<void>;
     sendChatMessage(domainId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string, currentMode?: string | undefined, serverMemoryId?: string): Promise<{
         serverMemoryId: string;

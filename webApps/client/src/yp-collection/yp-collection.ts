@@ -225,7 +225,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       )) as YpCollectionData | undefined;
       this.refresh();
       if (this.collectionType == "domain") {
-        this.selectedTab = CollectionTabTypes.Assistant;
+        //this.selectedTab = CollectionTabTypes.Assistant;
       }
     } else {
       console.error("No collection id for getCollection");
@@ -585,7 +585,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
             @change="${this._selectTab}"
             .activeTabIndex="${this.selectedTab}"
           >
-            ${this.renderAssistantTab()}
+            ${/*this.renderAssistantTab()*/ nothing}
             <md-secondary-tab
               ?has-static-theme="${this.hasStaticTheme}"
               ?hidden="${this.hideCollection}"

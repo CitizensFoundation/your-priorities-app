@@ -1547,6 +1547,100 @@ router.post(
 );
 
 router.post(
+  "/:groupId/sendEmailInvitesForAnons",
+  auth.can("edit group"),
+  async function (req, res) {
+    try {
+      const group = await models.Group.findOne({
+        where: { id: req.params.groupId },
+        attributes: ["id", "community_id"],
+      });
+
+      const emails = req.body.emails;
+
+      if (!emails) {
+        res.sendStatus(400);
+        log.error("No emails provided", {
+          emails,
+        });
+        return;
+      }
+
+      const emailArray = emails.split(",").map((email) => email.trim());
+
+      // Validate each email
+      const validEmails = emailArray.filter((email) => {
+        // Basic email validation regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      });
+
+      if (validEmails.length !== emailArray.length) {
+        log.error("Invalid email addresses", {
+          invalidEmails: emailArray.filter(
+            (email) => !validEmails.includes(email)
+          ),
+        });
+      }
+
+      for (const email of validEmails) {
+        const token = crypto.randomBytes(20).toString("hex");
+
+        const invite = await models.Invite.create({
+          token,
+          expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year expiry
+          type: models.Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON,
+          community_id: group.community_id,
+          from_user_id: req.user.id,
+        });
+
+        const inviteLink = `/group/${group.id}?anonInvite=1&token=${token}`;
+
+        const createActivityPromise = new Promise((resolve, reject) => {
+          models.AcActivity.inviteCreated(
+            {
+              email: email,
+              user_id: null,
+              sender_user_id: req.user.id,
+              sender_name: req.user.name,
+              group_id: group.id,
+              community_id: group.community_id,
+              domain_id: req.ypDomain.id,
+              invite_id: invite.id,
+              invite_link: inviteLink,
+              invite_type: models.Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON,
+              token: token,
+            },
+            function (error) {
+              if (error) {
+                reject(error);
+              } else {
+                resolve();
+              }
+            }
+          );
+        });
+
+        await createActivityPromise;
+
+        log.info("Invite Created", {
+          email,
+          inviteId: invite.id,
+          inviteLink,
+        });
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      log.error("Error inviting user emails as anons", {
+        error,
+      });
+      res.sendStatus(500);
+    }
+  }
+);
+
+router.post(
   "/:groupId/:userEmail/invite_user",
   auth.can("edit group"),
   function (req, res) {

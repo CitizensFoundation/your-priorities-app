@@ -107,6 +107,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.addListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
         this.addListener("yp-start-next-workflow-step", this.startNextWorkflowStep);
         this.addListener("yp-stop-current-workflow-step", this.stopCurrentWorkflowStep);
+        this.addGlobalListener("yp-send-email-invites-for-anons", this.sendEmailInvitesForAnons.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -115,6 +116,22 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.removeGlobalListener("yp-logged-in", this.userLoggedIn.bind(this));
         this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
         this.removeGlobalListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
+        this.removeGlobalListener("yp-send-email-invites-for-anons", this.sendEmailInvitesForAnons.bind(this));
+    }
+    async sendEmailInvitesForAnons(event) {
+        if (!event.detail) {
+            return;
+        }
+        try {
+            await this.serverApi.sendEmailInvitesForAnons(event.detail.groupId, event.detail.agentId, event.detail.emails);
+            window.appDialogs.getDialogAsync("masterToast", (toast) => {
+                toast.labelText = this.t("haveSentInvites");
+                toast.open = true;
+            });
+        }
+        catch (error) {
+            console.error("Error sending email invites for anons:", error);
+        }
     }
     async startNextWorkflowStep(event) {
         this.sendChatMessage("Please start the next workflow step, I confirm and accept");
@@ -990,6 +1007,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           --md-filled-text-field-container-color: #f4f4f4;
           --md-filled-text-field-hover-container-color: #f4f4f4;
           --md-icon-size: 32px;
+          --md-filled-text-field-label-text-color: #808080;
         }
 
         md-filled-text-field[dark-mode] {
