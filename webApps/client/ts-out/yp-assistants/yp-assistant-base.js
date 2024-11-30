@@ -127,6 +127,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             window.appDialogs.getDialogAsync("masterToast", (toast) => {
                 toast.labelText = this.t("haveSentInvites");
                 toast.open = true;
+                debugger;
             });
         }
         catch (error) {

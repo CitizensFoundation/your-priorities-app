@@ -39,6 +39,8 @@ export class YpAssistant extends YpAssistantBase {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
+    this.chatInputField?.focus();
+
     this.scrollDown();
   }
 }

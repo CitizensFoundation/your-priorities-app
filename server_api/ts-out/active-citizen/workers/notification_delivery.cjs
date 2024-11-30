@@ -177,6 +177,7 @@ NotificationDeliveryWorker.prototype.process = function (notificationJson, callb
                         template: 'user_invite',
                         user: user ? user : { id: null, email: notification.AcActivities[0].object.email, name: notification.AcActivities[0].object.email },
                         sender_name: notification.AcActivities[0].object.sender_name,
+                        invite_link: notification.AcActivities[0].object.invite_link,
                         domain: domain,
                         community: community,
                         group: group,

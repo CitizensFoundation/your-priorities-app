@@ -1566,7 +1566,9 @@ router.post(
         return;
       }
 
-      const emailArray = emails.split(",").map((email) => email.trim());
+      const emailArray = emails
+        .split("\n")
+        .map((email) => email.trim());
 
       // Validate each email
       const validEmails = emailArray.filter((email) => {
@@ -1594,7 +1596,7 @@ router.post(
           from_user_id: req.user.id,
         });
 
-        const inviteLink = `/group/${group.id}?anonInvite=1&token=${token}`;
+        const invite_link = `/group/${group.id}?anonInvite=1&token=${token}`;
 
         const createActivityPromise = new Promise((resolve, reject) => {
           models.AcActivity.inviteCreated(
@@ -1607,7 +1609,7 @@ router.post(
               community_id: group.community_id,
               domain_id: req.ypDomain.id,
               invite_id: invite.id,
-              invite_link: inviteLink,
+              invite_link: invite_link,
               invite_type: models.Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON,
               token: token,
             },
@@ -1626,7 +1628,7 @@ router.post(
         log.info("Invite Created", {
           email,
           inviteId: invite.id,
-          inviteLink,
+          invite_link,
         });
       }
 

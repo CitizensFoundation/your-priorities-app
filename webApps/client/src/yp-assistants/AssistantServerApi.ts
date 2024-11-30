@@ -32,7 +32,7 @@ export class YpAssistantServerApi extends YpServerApi {
 
   public sendEmailInvitesForAnons(groupId: number, agentId: string, emails: string): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/sendEmailInvitesForAnons`,
+      `/api/groups/${groupId}/sendEmailInvitesForAnons`,
       {
         method: "POST",
         body: JSON.stringify({

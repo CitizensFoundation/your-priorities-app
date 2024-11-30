@@ -178,6 +178,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
         toast.labelText = this.t("haveSentInvites");
         toast.open = true;
+        debugger;
       });
     } catch (error) {
       console.error("Error sending email invites for anons:", error);

@@ -31,6 +31,7 @@ export class YpSnackbar extends YpBaseElement {
         }
 
         .snackbar {
+          z-index: 1000;
           display: flex;
           align-items: center;
           justify-content: space-between;

@@ -15,7 +15,7 @@ export class YpAssistantServerApi extends YpServerApi {
         });
     }
     sendEmailInvitesForAnons(groupId, agentId, emails) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/sendEmailInvitesForAnons`, {
+        return this.fetchWrapper(`/api/groups/${groupId}/sendEmailInvitesForAnons`, {
             method: "POST",
             body: JSON.stringify({
                 agentId,
