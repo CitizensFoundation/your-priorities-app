@@ -1,6 +1,6 @@
 # Your Priorities Version 9
 
-![image](https://github.com/user-attachments/assets/e9773879-7e0f-493c-8150-9fc77dda1389)
+![image](https://github.com/user-attachments/assets/29975875-2071-489a-b876-feb17f39b1ae)
 
 ## The Top Rated Citizen Engagement Platform
 Your Priorities is a platform we've been refining since 2008. It's recognized as the world's leading citizen engagement tool.
