@@ -118,6 +118,12 @@ export class PsServerApi extends YpServerApiBase {
             method: "GET",
         }, false);
     }
+    async advanceOrStopCurrentAgentRun(groupId, agentId, runId, status, wsClientId) {
+        return this.fetchWrapper(`/api/assistants/${groupId}/${agentId}/${runId}/advanceOrStopWorkflow`, {
+            method: "PUT",
+            body: JSON.stringify({ status, wsClientId }),
+        });
+    }
     async getUpdatedWorkflow(groupId, runId) {
         return this.fetchWrapper(`/api/assistants/${groupId}/${runId}/updatedWorkflow`, {
             method: "GET",

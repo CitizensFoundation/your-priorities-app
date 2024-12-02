@@ -165,6 +165,26 @@ export class YpAgentRunWidget extends YpBaseElement {
     }
   }
 
+  async makeSureRunIsStoppedOrAdvanced() {
+    const currentStepIndex = this.parsedWorkflow.currentStepIndex;
+    const secondsToWaitForQueueToAdvanceStep = 4;
+    await new Promise((resolve) => setTimeout(resolve, secondsToWaitForQueueToAdvanceStep * 1000));
+
+    if (
+      this.parsedWorkflow.currentStepIndex === currentStepIndex &&
+      this.runStatus === "running"
+    ) {
+      await this.api.advanceOrStopCurrentAgentRun(
+        this.workflowGroupId,
+        this.agentId,
+        this.runId,
+        "completed",
+        this.wsClientId
+      );
+      await this.getUpdatedWorkflow();
+    }
+  }
+
   private async updateAgentStatus() {
     try {
       const status = await this.api.getAgentStatus(
@@ -198,6 +218,7 @@ export class YpAgentRunWidget extends YpBaseElement {
 
         if (this.agentState === "completed") {
           this.getUpdatedWorkflow();
+          this.makeSureRunIsStoppedOrAdvanced();
         }
 
         this.requestUpdate();

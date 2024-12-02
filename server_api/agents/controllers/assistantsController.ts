@@ -25,6 +25,7 @@ interface YpRequest extends express.Request {
   useNewVersion?: boolean;
 }
 
+
 const models: Models = {
   YpAgentProduct,
   YpAgentProductBundle,
@@ -122,9 +123,42 @@ export class AssistantController {
       "/:groupId/:agentId/stopCurrentWorkflowStep",
       this.stopCurrentWorkflowStep.bind(this)
     );
+
+    this.router.put(
+      "/:groupId/:agentId/:runId/advanceOrStopWorkflow",
+      this.advanceOrStopCurrentWorkflowStep.bind(this)
+    );
   }
 
-  private startNextWorkflowStep = async (req: YpRequest, res: express.Response) => {
+
+  private advanceOrStopCurrentWorkflowStep = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
+    const { groupId, agentId, runId } = req.params;
+    const { status, wsClientId } = req.body;
+
+    try {
+      const notificationManager = new NotificationAgentQueueManager(
+        this.wsClients
+      );
+
+      await notificationManager.advanceWorkflowStepOrCompleteAgentRun(
+        parseInt(runId),
+        status,
+        wsClientId
+      );
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error advancing or stopping workflow:", error);
+      res.sendStatus(500);
+    }
+  };
+
+  private startNextWorkflowStep = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
     const { groupId, agentId } = req.params;
 
     try {
@@ -134,9 +168,12 @@ export class AssistantController {
       console.error("Error starting next workflow step:", error);
       res.sendStatus(500);
     }
-  }
+  };
 
-  private stopCurrentWorkflowStep = async (req: YpRequest, res: express.Response) => {
+  private stopCurrentWorkflowStep = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
     const { groupId, agentId } = req.params;
     try {
       //await this.agentQueueManager.stopCurrentWorkflowStep(parseInt(agentId), parseInt(groupId));
@@ -145,9 +182,12 @@ export class AssistantController {
       console.error("Error stopping current workflow step:", error);
       res.sendStatus(500);
     }
-  }
+  };
 
-  private getUpdatedWorkflow = async (req: YpRequest, res: express.Response) => {
+  private getUpdatedWorkflow = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
     const { runId } = req.params;
     const userId = req.user?.id;
     try {
@@ -155,26 +195,30 @@ export class AssistantController {
         where: {
           id: runId,
         },
-        attributes: ["workflow","status"],
-        include: [{
-          model: YpSubscription,
-          as: "Subscription",
-          attributes: ["id"],
-          where: {
-            user_id: userId,
+        attributes: ["workflow", "status"],
+        include: [
+          {
+            model: YpSubscription,
+            as: "Subscription",
+            attributes: ["id"],
+            where: {
+              user_id: userId,
+            },
+            required: true,
           },
-          required: true,
-        }],
+        ],
       });
-      res.send({workflow: agentRun?.workflow, status: agentRun?.status} );
+      res.send({ workflow: agentRun?.workflow, status: agentRun?.status });
     } catch (error) {
       console.error("Error getting updated workflow:", error);
       res.sendStatus(500);
     }
-  }
+  };
 
-
-  private startWorkflowAgent = async (req: YpRequest, res: express.Response) => {
+  private startWorkflowAgent = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
     const { groupId, agentId, wsClientId } = req.params;
 
     try {
@@ -250,8 +294,8 @@ export class AssistantController {
           memory.currentUser = req.user;
           await req.redisClient.set(redisKey, JSON.stringify(memory));
 
-            //TODO: Check if needed, wait for 300ms to make sure redis is saved
-            await new Promise((resolve) => setTimeout(resolve, 300));
+          //TODO: Check if needed, wait for 300ms to make sure redis is saved
+          await new Promise((resolve) => setTimeout(resolve, 300));
           console.log(
             `Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`
           );
@@ -388,10 +432,10 @@ export class AssistantController {
         wsClientId,
         this.wsClients,
         req.redisClient,
-          true,
-          parseInt(req.params.domainId),
-          memoryId
-        );
+        true,
+        parseInt(req.params.domainId),
+        memoryId
+      );
       this.voiceAssistantInstances.set(wsClientId, assistant);
 
       await assistant.initialize();

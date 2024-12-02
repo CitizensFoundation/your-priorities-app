@@ -131,11 +131,61 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     }
   }
 
+  async goBackOneWorkflowStepIfNeeded(
+    agentRunId: number,
+    status: string,
+    wsClientId: string,
+    currentWorkflowStepIndex: number | undefined = undefined
+  ) {
+    // Get the agent run record
+    const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
+      attributes: ["id", "workflow", "status"],
+    });
+
+    if (!agentRun || !agentRun.workflow) {
+      console.error(
+        `NotificationAgentQueueManager: Agent run ${agentRunId} or its workflow not found`
+      );
+      return;
+    }
+
+    const workflowConfig = agentRun.workflow as YpWorkflowConfiguration;
+    if (
+      currentWorkflowStepIndex !== undefined &&
+      currentWorkflowStepIndex !== workflowConfig.currentStepIndex
+    ) {
+      console.error(
+        "NotificationAgentQueueManager: Current workflow step index is undefined or matches the current step index, not advancing to the next step"
+      );
+      return;
+    }
+
+    if (currentWorkflowStepIndex === 0) {
+      return;
+    } else {
+      let lastStatus: YpAgentProductRunStatus;
+      if (
+        workflowConfig.steps[workflowConfig.currentStepIndex].type ===
+        "agentOps"
+      ) {
+        lastStatus = "waiting_on_user";
+      } else {
+        lastStatus = "running";
+      }
+      agentRun.status = lastStatus;
+      workflowConfig.currentStepIndex--;
+      agentRun.workflow = workflowConfig;
+      agentRun.changed("workflow", true);
+      agentRun.changed("status", true);
+      await agentRun.save();
+    }
+  }
+
   async advanceWorkflowStepOrCompleteAgentRun(
     agentRunId: number,
     status: string,
     wsClientId: string,
-    result: any
+    currentWorkflowStepIndex: number | undefined = undefined
   ) {
     try {
       console.log(
@@ -163,8 +213,15 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         return;
       }
 
-      workflowConfig.steps[workflowConfig.currentStepIndex].endTime =
-        new Date();
+      if (
+        currentWorkflowStepIndex !== undefined &&
+        currentWorkflowStepIndex !== workflowConfig.currentStepIndex
+      ) {
+        console.error(
+          "NotificationAgentQueueManager: Current workflow step index is undefined or matches the current step index, not advancing to the next step"
+        );
+        return;
+      }
 
       // Check if there are more steps
       if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
@@ -184,7 +241,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         agentRun.changed("workflow", true);
         await agentRun.save();
 
-        //TODO: UPDATE AGENT MEMORY
+        //TODO: UPDATE AGENT MEMORY, Maybe
 
         console.log(
           "NotificationAgentQueueManager: Updated workflow for agent run",
@@ -304,8 +361,16 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
           // Retrieve the job instance
           const job = await newQueue.getJob(jobId);
           if (job) {
-            const { agentId, type, wsClientId, agentRunId } = job.data;
+            const {
+              agentId,
+              type,
+              wsClientId,
+              agentRunId,
+              currentWorkflowStepIndex,
+            } = job.data;
             console.log("NotificationAgentQueueManager: Job data", job.data);
+
+            console.log("NotificationAgentQueueManager: currentWorkflowStepIndex", currentWorkflowStepIndex);
 
             // Load the agent database record
             const agent = await PsAgent.findByPk(agentId, {
@@ -335,7 +400,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                     agentRunId,
                     agentRun.status,
                     wsClientId,
-                    returnvalue
+                    currentWorkflowStepIndex
                   );
               } else {
                 console.error(
@@ -357,6 +422,19 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               } else {
                 console.error(
                   `NotificationAgentQueueManager: Agent with ID ${agentId} not found.`
+                );
+              }
+            } else if (agentRun.status === "stopped") {
+              if (agentRunId) {
+                updatedWorkflow = await this.goBackOneWorkflowStepIfNeeded(
+                  agentRunId,
+                  agentRun.status,
+                  wsClientId,
+                  currentWorkflowStepIndex
+                );
+              } else {
+                console.error(
+                  `NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`
                 );
               }
             } else {
@@ -523,6 +601,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       return undefined;
     }
 
+    const agentRun = await this.getAgentRun(agentRunId);
+
+    if (!agentRun) {
+      console.error(
+        `NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`
+      );
+      return undefined;
+    }
+
+    const currentWorkflow = agentRun.workflow as YpWorkflowConfiguration;
+
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);
     console.log(
@@ -536,6 +625,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       wsClientId: wsClientId,
       agentRunId: agentRunId,
       structuredAnswersOverrides: structuredAnswersOverrides,
+      currentWorkflowStepIndex: currentWorkflow.currentStepIndex,
     });
     console.log(
       `NotificationAgentQueueManager: Updating agent ${agentId} status to running`
@@ -562,6 +652,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       );
     }
 
+    const agentRun = await this.getAgentRun(agentRunId);
+
+    if (!agentRun) {
+      console.error(
+        `NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`
+      );
+      return false;
+    }
+
+    const currentWorkflow = agentRun.workflow as YpWorkflowConfiguration;
+
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);
     const action = "stop";
@@ -574,6 +675,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       action: action,
       wsClientId: wsClientId,
       agentRunId: agentRunId,
+      currentWorkflowStepIndex: currentWorkflow.currentStepIndex,
     });
 
     await this.updateAgentStatus(agent.id, "stopped");

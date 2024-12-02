@@ -32,6 +32,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private stopStatusUpdates;
     get latestMessageMarkdown(): string;
     getUpdatedWorkflow(): Promise<void>;
+    makeSureRunIsStoppedOrAdvanced(): Promise<void>;
     private updateAgentStatus;
     static get styles(): any[];
     private getStepClass;
@@ -44,7 +45,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get isWaitingOnUser(): boolean;
     get isCompleted(): boolean;
     private renderAgentRunningStatus;
-    get runStatusForButton(): "start" | "stop";
+    get runStatusForButton(): "stop" | "start";
     startNextWorkflowStep(): Promise<void>;
     stopCurrentWorkflowStep(): Promise<void>;
     renderStartStopButtons(): TemplateResult<1>;

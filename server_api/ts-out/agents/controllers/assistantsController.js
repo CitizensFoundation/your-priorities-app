@@ -44,6 +44,19 @@ export class AssistantController {
                 process.exit(1);
             }
         };
+        this.advanceOrStopCurrentWorkflowStep = async (req, res) => {
+            const { groupId, agentId, runId } = req.params;
+            const { status, wsClientId } = req.body;
+            try {
+                const notificationManager = new NotificationAgentQueueManager(this.wsClients);
+                await notificationManager.advanceWorkflowStepOrCompleteAgentRun(parseInt(runId), status, wsClientId);
+                res.sendStatus(200);
+            }
+            catch (error) {
+                console.error("Error advancing or stopping workflow:", error);
+                res.sendStatus(500);
+            }
+        };
         this.startNextWorkflowStep = async (req, res) => {
             const { groupId, agentId } = req.params;
             try {
@@ -75,7 +88,8 @@ export class AssistantController {
                         id: runId,
                     },
                     attributes: ["workflow", "status"],
-                    include: [{
+                    include: [
+                        {
                             model: YpSubscription,
                             as: "Subscription",
                             attributes: ["id"],
@@ -83,7 +97,8 @@ export class AssistantController {
                                 user_id: userId,
                             },
                             required: true,
-                        }],
+                        },
+                    ],
                 });
                 res.send({ workflow: agentRun?.workflow, status: agentRun?.status });
             }
@@ -270,6 +285,7 @@ export class AssistantController {
         this.router.get("/:groupId/:runId/updatedWorkflow", this.getUpdatedWorkflow.bind(this));
         this.router.post("/:groupId/:agentId/startNextWorkflowStep", this.startNextWorkflowStep.bind(this));
         this.router.post("/:groupId/:agentId/stopCurrentWorkflowStep", this.stopCurrentWorkflowStep.bind(this));
+        this.router.put("/:groupId/:agentId/:runId/advanceOrStopWorkflow", this.advanceOrStopCurrentWorkflowStep.bind(this));
     }
     async startVoiceSession(req, res) {
         try {

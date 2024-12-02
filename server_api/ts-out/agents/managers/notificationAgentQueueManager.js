@@ -88,7 +88,42 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             return;
         }
     }
-    async advanceWorkflowStepOrCompleteAgentRun(agentRunId, status, wsClientId, result) {
+    async goBackOneWorkflowStepIfNeeded(agentRunId, status, wsClientId, currentWorkflowStepIndex = undefined) {
+        // Get the agent run record
+        const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
+            attributes: ["id", "workflow", "status"],
+        });
+        if (!agentRun || !agentRun.workflow) {
+            console.error(`NotificationAgentQueueManager: Agent run ${agentRunId} or its workflow not found`);
+            return;
+        }
+        const workflowConfig = agentRun.workflow;
+        if (currentWorkflowStepIndex !== undefined &&
+            currentWorkflowStepIndex !== workflowConfig.currentStepIndex) {
+            console.error("NotificationAgentQueueManager: Current workflow step index is undefined or matches the current step index, not advancing to the next step");
+            return;
+        }
+        if (currentWorkflowStepIndex === 0) {
+            return;
+        }
+        else {
+            let lastStatus;
+            if (workflowConfig.steps[workflowConfig.currentStepIndex].type ===
+                "agentOps") {
+                lastStatus = "waiting_on_user";
+            }
+            else {
+                lastStatus = "running";
+            }
+            agentRun.status = lastStatus;
+            workflowConfig.currentStepIndex--;
+            agentRun.workflow = workflowConfig;
+            agentRun.changed("workflow", true);
+            agentRun.changed("status", true);
+            await agentRun.save();
+        }
+    }
+    async advanceWorkflowStepOrCompleteAgentRun(agentRunId, status, wsClientId, currentWorkflowStepIndex = undefined) {
         try {
             console.log("NotificationAgentQueueManager: Advancing workflow step or completing agent run", agentRunId, status);
             // Get the agent run record
@@ -105,8 +140,11 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 await agentRun.update({ status: "failed", completedAt: new Date() });
                 return;
             }
-            workflowConfig.steps[workflowConfig.currentStepIndex].endTime =
-                new Date();
+            if (currentWorkflowStepIndex !== undefined &&
+                currentWorkflowStepIndex !== workflowConfig.currentStepIndex) {
+                console.error("NotificationAgentQueueManager: Current workflow step index is undefined or matches the current step index, not advancing to the next step");
+                return;
+            }
             // Check if there are more steps
             if (workflowConfig.currentStepIndex < workflowConfig.steps.length - 1) {
                 workflowConfig.currentStepIndex++;
@@ -123,7 +161,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 agentRun.changed("status", true);
                 agentRun.changed("workflow", true);
                 await agentRun.save();
-                //TODO: UPDATE AGENT MEMORY
+                //TODO: UPDATE AGENT MEMORY, Maybe
                 console.log("NotificationAgentQueueManager: Updated workflow for agent run", agentRunId, status, workflowConfig);
             }
             else {
@@ -205,8 +243,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                     // Retrieve the job instance
                     const job = await newQueue.getJob(jobId);
                     if (job) {
-                        const { agentId, type, wsClientId, agentRunId } = job.data;
+                        const { agentId, type, wsClientId, agentRunId, currentWorkflowStepIndex, } = job.data;
                         console.log("NotificationAgentQueueManager: Job data", job.data);
+                        console.log("NotificationAgentQueueManager: currentWorkflowStepIndex", currentWorkflowStepIndex);
                         // Load the agent database record
                         const agent = await PsAgent.findByPk(agentId, {
                             include: [{ model: PsAgentClass, as: "Class" }],
@@ -222,7 +261,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                             agentRun.status === "waiting_on_user") {
                             if (agentRunId) {
                                 updatedWorkflow =
-                                    await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, agentRun.status, wsClientId, returnvalue);
+                                    await this.advanceWorkflowStepOrCompleteAgentRun(agentRunId, agentRun.status, wsClientId, currentWorkflowStepIndex);
                             }
                             else {
                                 console.error(`NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`);
@@ -233,6 +272,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                             }
                             else {
                                 console.error(`NotificationAgentQueueManager: Agent with ID ${agentId} not found.`);
+                            }
+                        }
+                        else if (agentRun.status === "stopped") {
+                            if (agentRunId) {
+                                updatedWorkflow = await this.goBackOneWorkflowStepIfNeeded(agentRunId, agentRun.status, wsClientId, currentWorkflowStepIndex);
+                            }
+                            else {
+                                console.error(`NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`);
                             }
                         }
                         else {
@@ -342,6 +389,12 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             console.error(`NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`);
             return undefined;
         }
+        const agentRun = await this.getAgentRun(agentRunId);
+        if (!agentRun) {
+            console.error(`NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`);
+            return undefined;
+        }
+        const currentWorkflow = agentRun.workflow;
         const queueName = agent.Class.configuration.queueName;
         const queue = this.getQueue(queueName);
         console.log(`NotificationAgentQueueManager: Adding start-processing job to queue ${queueName} for agent ${agentId}`);
@@ -353,6 +406,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             wsClientId: wsClientId,
             agentRunId: agentRunId,
             structuredAnswersOverrides: structuredAnswersOverrides,
+            currentWorkflowStepIndex: currentWorkflow.currentStepIndex,
         });
         console.log(`NotificationAgentQueueManager: Updating agent ${agentId} status to running`);
         await this.updateAgentStatus(agent.id, "running");
@@ -366,6 +420,12 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         if (!agent || !agent.Class) {
             throw Error(`NotificationAgentQueueManager: Agent or Agent Class not found for agent ${agentId}`);
         }
+        const agentRun = await this.getAgentRun(agentRunId);
+        if (!agentRun) {
+            console.error(`NotificationAgentQueueManager: Agent run with ID ${agentRunId} not found.`);
+            return false;
+        }
+        const currentWorkflow = agentRun.workflow;
         const queueName = agent.Class.configuration.queueName;
         const queue = this.getQueue(queueName);
         const action = "stop";
@@ -376,6 +436,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             action: action,
             wsClientId: wsClientId,
             agentRunId: agentRunId,
+            currentWorkflowStepIndex: currentWorkflow.currentStepIndex,
         });
         await this.updateAgentStatus(agent.id, "stopped");
         return true;
