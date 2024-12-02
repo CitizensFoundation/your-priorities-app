@@ -270,14 +270,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     async startInVoiceMode() {
         this.welcomeScreenOpen = false;
         this.toggleVoiceMode();
+        window.appGlobals.activity(`Assistant - start voice mode`);
         await this.updateComplete;
-        // wait 10 ms
         await new Promise((resolve) => setTimeout(resolve, 10));
         this.scrollDown();
     }
     async startInTextMode() {
         this.welcomeScreenOpen = false;
         await this.updateComplete;
+        window.appGlobals.activity(`Assistant - start text mode`);
         // wait 10 ms
         await new Promise((resolve) => setTimeout(resolve, 10));
         this.scrollDown();
@@ -605,6 +606,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
     }
     async reallyClearHistory() {
+        window.appGlobals.activity(`Assistant - really clear history`);
         await this.serverApi.clearChatLogFromServer(this.domainId);
         this.chatLog = [];
         this.welcomeScreenOpen = true;
@@ -615,6 +617,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         location.reload();
     }
     async clearHistory() {
+        window.appGlobals.activity(`Assistant - clear history`);
         window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
             dialog.open(this.t("confirmClearHistory"), this.reallyClearHistory.bind(this));
         });
@@ -1150,11 +1153,19 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       </md-filled-text-field>
     `;
     }
+    startVoiceButtonClick() {
+        window.appGlobals.activity(`Assistant - start talking`);
+        this.toggleVoiceMode();
+    }
+    stopVoiceButtonClick() {
+        window.appGlobals.activity(`Assistant - stop talking`);
+        this.toggleVoiceMode();
+    }
     renderStartStopVoiceIconButton() {
         return html `
       <md-icon-button
         class="voice-mode-toggle ${this.voiceEnabled ? "pulsing" : ""}"
-        @click="${this.toggleVoiceMode}"
+        @click="${this.startVoiceButtonClick}"
         .label="${this.voiceEnabled
             ? this.t("closeAssistant")
             : this.t("voiceAssistant")}"
@@ -1173,7 +1184,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             <md-icon-button
               hidden
               class="voice-mode-toggle"
-              @click="${this.toggleVoiceMode}"
+              @click="${this.stopVoiceButtonClick}"
               .label="${!this.voiceEnabled
                 ? this.t("voiceAssistant")
                 : this.t("closeAssistant")}"
@@ -1190,14 +1201,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             ? html `
             <md-outlined-button
               class="stopVoiceButton"
-              @click="${this.toggleVoiceMode}"
+              @click="${this.stopVoiceButtonClick}"
             >
               ${this.t("stopTalking")}
             </md-outlined-button>
           `
             : html `<md-elevated-button
             class="talkToTheAssistantButton"
-            @click="${this.toggleVoiceMode}"
+            @click="${this.startVoiceButtonClick}"
           >
             ${this.t("startTalking")}
           </md-elevated-button>`}

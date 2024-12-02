@@ -407,8 +407,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.welcomeScreenOpen = false;
     this.toggleVoiceMode();
 
+    window.appGlobals.activity(`Assistant - start voice mode`);
+
     await this.updateComplete;
-    // wait 10 ms
+
     await new Promise((resolve) => setTimeout(resolve, 10));
     this.scrollDown();
   }
@@ -416,6 +418,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   async startInTextMode() {
     this.welcomeScreenOpen = false;
     await this.updateComplete;
+    window.appGlobals.activity(`Assistant - start text mode`);
+
     // wait 10 ms
     await new Promise((resolve) => setTimeout(resolve, 10));
     this.scrollDown();
@@ -793,6 +797,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async reallyClearHistory() {
+    window.appGlobals.activity(`Assistant - really clear history`);
     await this.serverApi.clearChatLogFromServer(this.domainId);
     this.chatLog = [];
     this.welcomeScreenOpen = true;
@@ -804,6 +809,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async clearHistory() {
+    window.appGlobals.activity(`Assistant - clear history`);
     window.appDialogs.getDialogAsync(
       "confirmationDialog",
       (dialog: YpConfirmationDialog) => {
@@ -1350,11 +1356,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     `;
   }
 
+  startVoiceButtonClick() {
+    window.appGlobals.activity(`Assistant - start talking`);
+    this.toggleVoiceMode();
+  }
+
+  stopVoiceButtonClick() {
+    window.appGlobals.activity(`Assistant - stop talking`);
+    this.toggleVoiceMode();
+  }
+
   renderStartStopVoiceIconButton() {
     return html`
       <md-icon-button
         class="voice-mode-toggle ${this.voiceEnabled ? "pulsing" : ""}"
-        @click="${this.toggleVoiceMode}"
+        @click="${this.startVoiceButtonClick}"
         .label="${this.voiceEnabled
           ? this.t("closeAssistant")
           : this.t("voiceAssistant")}"
@@ -1373,7 +1389,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             <md-icon-button
               hidden
               class="voice-mode-toggle"
-              @click="${this.toggleVoiceMode}"
+              @click="${this.stopVoiceButtonClick}"
               .label="${!this.voiceEnabled
                 ? this.t("voiceAssistant")
                 : this.t("closeAssistant")}"
@@ -1391,14 +1407,14 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         ? html`
             <md-outlined-button
               class="stopVoiceButton"
-              @click="${this.toggleVoiceMode}"
+              @click="${this.stopVoiceButtonClick}"
             >
               ${this.t("stopTalking")}
             </md-outlined-button>
           `
         : html`<md-elevated-button
             class="talkToTheAssistantButton"
-            @click="${this.toggleVoiceMode}"
+            @click="${this.startVoiceButtonClick}"
           >
             ${this.t("startTalking")}
           </md-elevated-button>`}
