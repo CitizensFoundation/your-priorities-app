@@ -70,16 +70,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.name} ready`;
     const content = `Next workflow step is ready: ${currentWorkflowStep?.description}`;
 
-    const link = `https://app.evoly.ai/agent_bundle/${agentRun.Subscription?.Plan?.AgentProduct?.AgentBundles?.[0]?.id || 1}?needsLogin=true`;
+    const bundleId =
+      agentRun.Subscription?.Plan?.AgentProduct?.AgentBundles?.[0]?.id || 1;
 
-    await this.sendNotificationEmail(agent, subject, content, link);
+    await this.sendNotificationEmail(agent, subject, content, bundleId);
   }
 
   async sendNotificationEmail(
     agent: PsAgent,
     subject: string,
     content: string,
-    link: string
+    bundleId: number
   ) {
     const group = (await Group.findOne({
       where: { id: agent.group_id },
@@ -87,11 +88,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         { model: User, as: "GroupAdmins" },
         {
           model: Community,
-          attributes: ["id","name"],
-          include: [{ model: Domain, attributes: ["id","name","domain_name"] }],
+          attributes: ["id", "name"],
+          include: [
+            { model: Domain, attributes: ["id", "name", "domain_name"] },
+          ],
         },
       ],
     })) as YpGroupData;
+    const link = `https://app.${group.Community?.Domain?.domain_name}/agent_bundle/${bundleId}?needsLogin=true`;
 
     if (group && group.GroupAdmins && group.GroupAdmins.length > 0) {
       const admins = group.GroupAdmins.filter((admin) => admin.email);
