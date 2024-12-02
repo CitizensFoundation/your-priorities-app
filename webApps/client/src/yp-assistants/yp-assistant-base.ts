@@ -709,6 +709,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         if (data.url == null || data.data == null) {
           this.directAgentAvatarUrl = undefined;
           this.directAgentName = null;
+          this.resetLastDirectAvatarUrlAndName();
         } else {
           this.directAgentAvatarUrl = data.url;
           this.directAgentName = data.data as string;

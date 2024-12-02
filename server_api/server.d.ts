@@ -39,6 +39,10 @@ interface DomainClass extends DbData {
   };
 }
 
+interface CommunityClass extends DbData {
+  Domain: DomainClass;
+}
+
 interface PostClass extends DbData {
   data?: {
     crt?: LtpCurrentRealityTreeData

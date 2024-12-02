@@ -197,6 +197,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         }
 
         if (this.agentState === "completed") {
+          this.getUpdatedWorkflow();
         }
 
         this.requestUpdate();

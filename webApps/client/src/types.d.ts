@@ -604,6 +604,8 @@ interface YpGroupData extends YpCollectionData {
   GroupLogoImages?: Array<YpImageData>;
   Groups?: Array<YpGroupData>;
   CommunityLink?: YpCommunityData;
+  GroupAdmins?: Array<YpUserData>;
+  GroupUsers?: Array<YpUserData>;
 }
 
 interface YpBaseMedia {

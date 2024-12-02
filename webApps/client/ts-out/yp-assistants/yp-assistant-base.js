@@ -535,6 +535,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 if (data.url == null || data.data == null) {
                     this.directAgentAvatarUrl = undefined;
                     this.directAgentName = null;
+                    this.resetLastDirectAvatarUrlAndName();
                 }
                 else {
                     this.directAgentAvatarUrl = data.url;

@@ -5,6 +5,17 @@ import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
 import WebSocket from "ws";
 import { YpAgentProductRun } from "../models/agentProductRun.js";
+import models from "../../models/index.cjs";
+import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
+import { YpAgentProduct } from "../models/agentProduct.js";
+import { YpSubscription } from "../models/subscription.js";
+import { YpAgentProductBundle } from "../models/agentProductBundle.js";
+import queue from "../../active-citizen/workers/queue.cjs";
+const dbModels: Models = models;
+const Group = dbModels.Group as GroupClass;
+const User = dbModels.User as UserClass;
+const Community = dbModels.Community as CommunityClass;
+const Domain = dbModels.Domain as DomainClass;
 
 export class NotificationAgentQueueManager extends AgentQueueManager {
   redisClient!: Redis;
@@ -21,6 +32,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
 
   async sendNotification(
     agent: PsAgent,
+    agentRun: YpAgentProductRun,
     action: string,
     wsClientId: string,
     status: string,
@@ -28,6 +40,11 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     agentRunId?: number,
     updatedWorkflow?: YpWorkflowConfiguration
   ) {
+    console.log(
+      "NotificationAgentQueueManager: Sending notification",
+      agentRunId,
+      updatedWorkflow
+    );
     const wsClient = this.wsClients.get(wsClientId);
     if (wsClient) {
       wsClient.send(
@@ -46,7 +63,68 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       );
     }
 
-    //TODO: Send email notification
+    const currentWorkflowStep =
+      updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex];
+
+    // Send email notification
+    const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.name} ready`;
+    const content = `Next workflow step is ready: ${currentWorkflowStep?.description}`;
+
+    const link = `https://app.evoly.ai/agent_bundle/${agentRun.Subscription?.Plan?.AgentProduct?.AgentBundles?.[0]?.id || 1}?needsLogin=true`;
+
+    await this.sendNotificationEmail(agent, subject, content, link);
+  }
+
+  async sendNotificationEmail(
+    agent: PsAgent,
+    subject: string,
+    content: string,
+    link: string
+  ) {
+    const group = (await Group.findOne({
+      where: { id: agent.group_id },
+      include: [
+        { model: User, as: "GroupAdmins" },
+        {
+          model: Community,
+          attributes: ["id","name"],
+          include: [{ model: Domain, attributes: ["id","name","domain_name"] }],
+        },
+      ],
+    })) as YpGroupData;
+
+    if (group && group.GroupAdmins && group.GroupAdmins.length > 0) {
+      const admins = group.GroupAdmins.filter((admin) => admin.email);
+
+      const emailContent = `
+        <div>
+          <h1>${subject}</h1>
+          <p>${content}</p>
+          ${link ? `<p><a href="${link}">${link}</a></p>` : ""}
+        </div>
+      `;
+
+      for (let u = 0; u < Math.min(admins.length, 50); u++) {
+        queue.add(
+          "send-one-email",
+          {
+            subject: subject,
+            template: "general_user_notification",
+            user: admins[u],
+            domain: group.Community?.Domain,
+            group: group,
+            object: agent,
+            header: "",
+            content: emailContent,
+            link: link,
+          },
+          { priority: "high" }
+        );
+      }
+    } else {
+      console.error("No group admins with email found");
+      return;
+    }
   }
 
   async advanceWorkflowStepOrCompleteAgentRun(
@@ -133,6 +211,41 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     }
   }
 
+  async getAgentRun(agentRunId: number): Promise<YpAgentProductRun | null> {
+    return await YpAgentProductRun.findOne({
+      where: { id: agentRunId },
+      attributes: ["id", "status", "workflow"],
+      include: [
+        {
+          model: YpSubscription,
+          as: "Subscription",
+          attributes: ["id"],
+          include: [
+            {
+              model: YpSubscriptionPlan,
+              attributes: ["id", "name"],
+              as: "Plan",
+              include: [
+                {
+                  model: YpAgentProduct,
+                  attributes: ["id", "name", "description"],
+                  as: "AgentProduct",
+                  include: [
+                    {
+                      model: YpAgentProductBundle,
+                      attributes: ["id", "name"],
+                      as: "AgentBundles",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  }
+
   getQueue(queueName: string): Queue {
     console.log(
       `NotificationAgentQueueManager: Getting queue for ${queueName}`
@@ -195,9 +308,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
-            const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
-              attributes: ["id", "status", "workflow"],
-            });
+            const agentRun = await this.getAgentRun(agentRunId);
 
             if (!agentRun) {
               console.error(
@@ -227,26 +338,26 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                   `NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`
                 );
               }
-            } else {
-              console.warn(
-                `NotificationAgentQueueManager: Agent run ${agentRunId} is not completed, status ${agentRun.status} but the job completed`
-              );
-            }
-
-            if (agent) {
-              // Send notification email
-              await this.sendNotification(
-                agent,
-                type,
-                wsClientId,
-                agentRun.status,
-                returnvalue,
-                agentRunId,
-                updatedWorkflow
-              );
+              if (agent) {
+                // Send websocket notification
+                await this.sendNotification(
+                  agent,
+                  agentRun,
+                  type,
+                  wsClientId,
+                  agentRun.status,
+                  returnvalue,
+                  agentRunId,
+                  updatedWorkflow
+                );
+              } else {
+                console.error(
+                  `NotificationAgentQueueManager: Agent with ID ${agentId} not found.`
+                );
+              }
             } else {
               console.error(
-                `NotificationAgentQueueManager: Agent with ID ${agentId} not found.`
+                `NotificationAgentQueueManager: Agent run ${agentRunId} is not completed, status ${agentRun.status} but the job completed`
               );
             }
           } else {
@@ -283,15 +394,14 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
-            const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
-              attributes: ["id", "status", "workflow"],
-            });
+            const agentRun = await this.getAgentRun(agentRunId);
 
             if (agent && agentRun) {
               // Send notification email
               //TODO: Fix this, the agent run should not be marked as failed if the job failed
               /*await this.sendNotification(
                 agent,
+                agentRun,
                 type,
                 wsClientId,
                 "failed",

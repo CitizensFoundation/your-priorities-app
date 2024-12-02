@@ -44,13 +44,13 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.wsClientSocket.removeAllListeners("message");
     }
     setupClientSystemMessageListener() {
-        console.log('setupClientSystemMessageListener called for wsClientId:', this.wsClientId);
+        console.log("setupClientSystemMessageListener called for wsClientId:", this.wsClientId);
         this.wsClientSocket.on("message", async (data) => {
             try {
                 const message = JSON.parse(data.toString());
                 switch (message.type) {
                     case "client_system_message":
-                        console.log('Processing client_system_message:', message);
+                        console.log("Processing client_system_message:", message);
                         this.processClientSystemMessage(message);
                         break;
                     default:
@@ -61,7 +61,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
                 console.error("Error processing message:", error);
             }
         });
-        const listenerCountAfter = this.wsClientSocket.listenerCount('message');
+        const listenerCountAfter = this.wsClientSocket.listenerCount("message");
         console.log('Number of "message" listeners after adding:', listenerCountAfter);
     }
     async getCurrentAgentProduct() {
@@ -83,7 +83,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
     }
     async getCurrentSubscriptionPlan() {
         if (this.memory.currentAgentStatus?.subscriptionPlanId) {
-            return await YpSubscriptionPlan.findOne({
+            return (await YpSubscriptionPlan.findOne({
                 where: { id: this.memory.currentAgentStatus.subscriptionPlanId },
                 include: [
                     {
@@ -91,23 +91,23 @@ export class YpBaseAssistant extends YpBaseChatBot {
                         as: "AgentProduct",
                     },
                 ],
-            });
+            }));
         }
         return undefined;
     }
     async getCurrentSubscription() {
         if (this.memory.currentAgentStatus?.subscriptionId) {
-            return await YpSubscription.findOne({
+            return (await YpSubscription.findOne({
                 where: { id: this.memory.currentAgentStatus.subscriptionId },
-            });
+            }));
         }
         return undefined;
     }
     async getCurrentAgentRun() {
         if (this.memory.currentAgentStatus?.activeAgentRunId) {
-            return await YpAgentProductRun.findOne({
+            return (await YpAgentProductRun.findOne({
                 where: { id: this.memory.currentAgentStatus.activeAgentRunId },
-            });
+            }));
         }
         else {
             console.error("No active agent run found");
@@ -224,7 +224,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         }
         return {
             role: "tool",
-            content: JSON.stringify(result.data),
+            content: JSON.stringify(result.data) || result.html || "",
             tool_call_id: toolCall.id,
             name: toolCall.name,
         };
@@ -535,6 +535,10 @@ export class YpBaseAssistant extends YpBaseChatBot {
         if (this.memory.currentMode === "agent_direct_connection_mode" &&
             subscriptionPlan?.AgentProduct?.configuration.avatar?.systemPrompt) {
             systemPrompt = `${subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
+        }
+        if (this.currentAssistantAvatarUrl &&
+            subscriptionPlan?.AgentProduct?.name) {
+            this.sendAvatarUrlChange(this.currentAssistantAvatarUrl, subscriptionPlan.AgentProduct.name);
         }
         const messages = [
             {

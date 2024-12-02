@@ -80,7 +80,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   }
 
   setupClientSystemMessageListener() {
-    console.log('setupClientSystemMessageListener called for wsClientId:', this.wsClientId);
+    console.log(
+      "setupClientSystemMessageListener called for wsClientId:",
+      this.wsClientId
+    );
 
     this.wsClientSocket.on("message", async (data: Buffer) => {
       try {
@@ -88,23 +91,27 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         switch (message.type) {
           case "client_system_message":
-            console.log('Processing client_system_message:', message);
+            console.log("Processing client_system_message:", message);
             this.processClientSystemMessage(message);
             break;
           default:
-            //console.log('Unhandled message type:', message.type);
+          //console.log('Unhandled message type:', message.type);
         }
       } catch (error) {
         console.error("Error processing message:", error);
       }
     });
 
-    const listenerCountAfter = this.wsClientSocket.listenerCount('message');
-    console.log('Number of "message" listeners after adding:', listenerCountAfter);
+    const listenerCountAfter = this.wsClientSocket.listenerCount("message");
+    console.log(
+      'Number of "message" listeners after adding:',
+      listenerCountAfter
+    );
   }
 
-
-  async getCurrentAgentProduct(): Promise<YpAgentProductAttributes | undefined> {
+  async getCurrentAgentProduct(): Promise<
+    YpAgentProductAttributes | undefined
+  > {
     if (this.memory.currentAgentStatus?.subscriptionPlanId) {
       const subscriptionPlan = await YpSubscriptionPlan.findOne({
         where: {
@@ -122,9 +129,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     return undefined;
   }
 
-  async getCurrentSubscriptionPlan(): Promise<YpSubscriptionPlanAttributes | undefined> {
+  async getCurrentSubscriptionPlan(): Promise<
+    YpSubscriptionPlanAttributes | undefined
+  > {
     if (this.memory.currentAgentStatus?.subscriptionPlanId) {
-      return await YpSubscriptionPlan.findOne({
+      return (await YpSubscriptionPlan.findOne({
         where: { id: this.memory.currentAgentStatus.subscriptionPlanId },
         include: [
           {
@@ -132,25 +141,27 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             as: "AgentProduct",
           },
         ],
-      }) as YpSubscriptionPlanAttributes | undefined;
+      })) as YpSubscriptionPlanAttributes | undefined;
     }
     return undefined;
   }
 
-  async getCurrentSubscription(): Promise<YpSubscriptionAttributes | undefined> {
+  async getCurrentSubscription(): Promise<
+    YpSubscriptionAttributes | undefined
+  > {
     if (this.memory.currentAgentStatus?.subscriptionId) {
-      return await YpSubscription.findOne({
+      return (await YpSubscription.findOne({
         where: { id: this.memory.currentAgentStatus.subscriptionId },
-      }) as YpSubscriptionAttributes | undefined;
+      })) as YpSubscriptionAttributes | undefined;
     }
     return undefined;
   }
 
   async getCurrentAgentRun(): Promise<YpAgentProductRunAttributes | undefined> {
     if (this.memory.currentAgentStatus?.activeAgentRunId) {
-      return await YpAgentProductRun.findOne({
+      return (await YpAgentProductRun.findOne({
         where: { id: this.memory.currentAgentStatus.activeAgentRunId },
-      }) as YpAgentProductRunAttributes | undefined;
+      })) as YpAgentProductRunAttributes | undefined;
     } else {
       console.error("No active agent run found");
     }
@@ -272,7 +283,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     subscriptionPlanId: number,
     subscriptionId: number | null
   ) {
-
     const subscriptionPlan = await YpSubscriptionPlan.findOne({
       where: {
         id: subscriptionPlanId,
@@ -336,7 +346,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     }
     return {
       role: "tool",
-      content: JSON.stringify(result.data),
+      content: JSON.stringify(result.data) || result.html || "",
       tool_call_id: toolCall.id,
       name: toolCall.name,
     };
@@ -493,7 +503,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: this.getCurrentSystemPrompt()+
+        content:
+          this.getCurrentSystemPrompt() +
           `\n IMPORTANT: Do not output function content in text form at all, that is already provided by the function to the user, like the list of agents available for subscription, this information is already being displayed by the function to the user so no need to repeat it in text, just make a general comment`,
       },
       ...this.convertToOpenAIMessages(this.memory.chatLog || []),
@@ -512,9 +523,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       ...toolResponses,
     ];
 
-    console.log(
-      `handleToolResponses: ${JSON.stringify(messages, null, 2)}`
-    );
+    console.log(`handleToolResponses: ${JSON.stringify(messages, null, 2)}`);
 
     try {
       const stream = await this.openaiClient.chat.completions.create({
@@ -621,7 +630,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       this.memory.currentMode = modes[0].name;
     }
   }
-
 
   /**
    * Get current mode's functions
@@ -766,6 +774,16 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       systemPrompt = `${subscriptionPlan.AgentProduct.configuration.avatar.systemPrompt}\n\n${systemPrompt}`;
     }
 
+    if (
+      this.currentAssistantAvatarUrl &&
+      subscriptionPlan?.AgentProduct?.name
+    ) {
+      this.sendAvatarUrlChange(
+        this.currentAssistantAvatarUrl,
+        subscriptionPlan.AgentProduct!.name
+      );
+    }
+
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
@@ -900,7 +918,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     await this.saveMemory();
 
-    console.log("handleModeSwitch: CurrentMode after save", this.memory.currentMode);
+    console.log(
+      "handleModeSwitch: CurrentMode after save",
+      this.memory.currentMode
+    );
 
     this.sendToClient("system", newMode, "modeChange", undefined, true);
   }

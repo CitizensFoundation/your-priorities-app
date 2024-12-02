@@ -26,6 +26,7 @@ i18n
     preload: ['en', 'fr', 'mk', 'cy', 'sk', 'bg', 'cs', 'it', 'da', 'kl', 'th', 'es', 'cnr', 'lv', 'et', 'el', 'sv', 'sq', 'uz', 'uk', 'ca', 'hr', 'ro', 'ru',
         'ro_md', 'pt_br', 'hu', 'tr', 'is', 'nl', 'no', 'pl', 'zh_tw', 'ky'],
     fallbackLng: 'en',
+    lowerCaseLng: true,
     // this is the defaults
     backend: {
         // path where resources get loaded from

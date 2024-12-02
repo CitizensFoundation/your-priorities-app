@@ -27,6 +27,7 @@ export class YpSubscription extends Model {
   // Associations
   declare User: YpSubscriptionUser;
   declare AgentProduct: YpAgentProduct;
+  declare SubscriptionPlan: YpSubscriptionPlan;
   declare Plan: YpSubscriptionPlan;
 }
 
