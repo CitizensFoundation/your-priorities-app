@@ -1,21 +1,38 @@
-declare module 'lit-flexbox-literals';
-declare module 'wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js';
-declare module 'lit-google-map';
-declare module 'twemoji';
-declare module 'luxon';
-declare module 'ga';
-declare module 'wavesurfer.js';
-declare module 'datamaps';
-declare module 'iso-639-1/src/data.js';
-declare module 'iso-639-1' {
+declare module "lit-flexbox-literals";
+declare module "wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js";
+declare module "lit-google-map";
+declare module "twemoji";
+declare module "luxon";
+declare module "ga";
+declare module "wavesurfer.js";
+declare module "datamaps";
+declare module "iso-639-1/src/data.js";
+declare module "iso-639-1" {
   export function getName(code: string): string;
   export function getCode(name: string): string;
   export function getAllNames(): Array<string>;
   export function getAllCodes(): Array<string>;
 }
 
-type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
-type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
+type MaterialColorScheme =
+  | "tonal"
+  | "vibrant"
+  | "expressive"
+  | "content"
+  | "neutral"
+  | "monochrome"
+  | "fidelity"
+  | "dynamic";
+type MaterialDynamicVariants =
+  | "monochrome"
+  | "neutral"
+  | "tonalSpot"
+  | "vibrant"
+  | "expressive"
+  | "fidelity"
+  | "content"
+  | "rainbow"
+  | "fruitSalad";
 
 interface YpLanguageData {
   englishName: string;
@@ -69,19 +86,19 @@ interface YpRadioButtonData {
   skipTo?: string;
   originalText?: string;
   subType?:
-    | 'number'
-    | 'text'
-    | 'search'
-    | 'tel'
-    | 'url'
-    | 'email'
-    | 'password'
-    | 'date'
-    | 'month'
-    | 'week'
-    | 'time'
-    | 'datetime-local'
-    | 'color';
+    | "number"
+    | "text"
+    | "search"
+    | "tel"
+    | "url"
+    | "email"
+    | "password"
+    | "date"
+    | "month"
+    | "week"
+    | "time"
+    | "datetime-local"
+    | "color";
 }
 
 interface YpCheckboxData {
@@ -89,19 +106,19 @@ interface YpCheckboxData {
   isSpecify?: boolean;
   originalText?: string;
   subType?:
-    | 'number'
-    | 'text'
-    | 'search'
-    | 'tel'
-    | 'url'
-    | 'email'
-    | 'password'
-    | 'date'
-    | 'month'
-    | 'week'
-    | 'time'
-    | 'datetime-local'
-    | 'color';
+    | "number"
+    | "text"
+    | "search"
+    | "tel"
+    | "url"
+    | "email"
+    | "password"
+    | "date"
+    | "month"
+    | "week"
+    | "time"
+    | "datetime-local"
+    | "color";
 }
 
 interface YpDropdownData {
@@ -109,31 +126,59 @@ interface YpDropdownData {
   isSpecify?: boolean;
   originalText?: string;
   subType?:
-    | 'number'
-    | 'text'
-    | 'search'
-    | 'tel'
-    | 'url'
-    | 'email'
-    | 'password'
-    | 'date'
-    | 'month'
-    | 'week'
-    | 'time'
-    | 'datetime-local'
-    | 'color';
+    | "number"
+    | "text"
+    | "search"
+    | "tel"
+    | "url"
+    | "email"
+    | "password"
+    | "date"
+    | "month"
+    | "week"
+    | "time"
+    | "datetime-local"
+    | "color";
 }
+
+type YpStructuredQuestionType =
+| "textField"
+| "textArea"
+| "textFieldLong"
+| "textAreaLong"
+| "textAreaJson"
+| "textfield"
+| "textarea"
+| "textfieldlong"
+| "textarealong"
+| "textareajson"
+| "checkboxes"
+| "checkbox"
+| "textheader"
+| "segment"
+| "textdescription"
+| "seperator"
+| "dropdown"
+| "radios"
+| "numberField"
+| "html"
+| "textHeader"
+| "textDescription"
+| "seperator"
+| "dropdown"
+| "password";
 
 interface YpStructuredQuestionData {
   uniqueId?: string;
   text: string;
   description?: string;
-  type?: string;
+  type: YpStructuredQuestionType;
   subType?: string;
   maxLength?: number;
   value?: string | number | boolean;
   questionIndex?: number;
   required?: boolean;
+  hiddenToUser?: boolean;
   halfWidthDesktop?: boolean;
   extraTopMargin?: boolean;
   lessBottomMargin?: boolean;
@@ -158,11 +203,6 @@ interface YpErrorData {
   offlineSendLater?: boolean;
 }
 
-interface YpStructuredQuestionJson extends YpStructuredQuestionData {
-  uniqueId: string;
-  type: string;
-}
-
 interface YpStructuredAnswer {
   uniqueId: string;
   value: string | boolean | number;
@@ -174,7 +214,7 @@ interface YpLtpConfiguration {
     nodes?: any; //LtpCurrentRealityTreeDataNode[];
     prompts?: Record<number, string>;
     undesirerableEffects?: string[];
-  }
+  };
 }
 
 interface AoiSiteStats {
@@ -216,8 +256,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hidePostCover?: boolean;
   hidePostDescription?: boolean;
   allowWhatsAppSharing?: boolean;
-  structuredQuestionsJson?: Array<YpStructuredQuestionJson>;
-  registrationQuestionsJson?: Array<YpStructuredQuestionJson>;
+  structuredQuestionsJson?: Array<YpStructuredQuestionData>;
+  registrationQuestionsJson?: Array<YpStructuredQuestionData>;
   hideVoteCount?: boolean;
   customVoteUpHoverText?: string;
   customVoteDownHoverText?: string;
@@ -321,7 +361,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   staticHtml?: {
     content: string;
     media: Array<YpSimpleGroupMediaData>;
-  },
+  };
   useNewVersion?: boolean;
   agents?: YpPsAgentConfiguration;
 }
@@ -375,7 +415,7 @@ interface YpReportData {
   progress?: number;
   data?: {
     reportUrl?: string;
-  }
+  };
 }
 
 interface YpGroupDataVizData {
@@ -430,7 +470,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   customUserRegistrationText?: string;
   customSamlLoginText?: string;
   samlLoginButtonUrl?: string;
-  welcomeHtmlInsteadOfCommunitiesList ?: string;
+  welcomeHtmlInsteadOfCommunitiesList?: string;
   hideAppBarIfWelcomeHtml?: boolean;
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateCommunities?: boolean;
@@ -732,7 +772,6 @@ interface YpUserProfileData {
   isAnonymousUser?: boolean;
   saml_show_confirm_email_completed?: boolean;
   hasApiKey?: boolean;
-
 }
 
 interface YpGenerateAiImageStartResponse {
@@ -744,7 +783,7 @@ interface YpGenerateAiImageResponse extends YpGenerateAiImageStartResponse {
   data?: {
     imageId?: number;
     imageUrl?: string;
-  }
+  };
   flagged?: boolean;
 }
 
@@ -1080,6 +1119,8 @@ interface YpStructuredConfigData extends YpStructuredQuestionData {
   disabled?: boolean;
   onChange?: Function;
   defaultValue?: string | number | boolean;
+  type: YpStructuredQuestionType;
+
 }
 
 interface YpConfigTabData {

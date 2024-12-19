@@ -1530,6 +1530,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
                 text: question,
                 maxLength: parseInt(maxLength),
                 value: "",
+                type: "textfield",
             });
         }
         if (!this.newPost &&

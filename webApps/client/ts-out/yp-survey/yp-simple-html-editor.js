@@ -13,7 +13,7 @@ import "@material/web/iconbutton/icon-button.js";
 let YpSimpleHtmlEditor = class YpSimpleHtmlEditor extends YpBaseElement {
     constructor() {
         super(...arguments);
-        this.question = { maxLength: 0, text: "" };
+        this.question = { maxLength: 0, text: "", type: "html" };
         this.useSmallFont = false;
         this.value = "";
         this.characterCount = 0;

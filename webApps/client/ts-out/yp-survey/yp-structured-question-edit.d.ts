@@ -53,7 +53,7 @@ export declare class YpStructuredQuestionEdit extends YpBaseElement {
     get textWithLinks(): string;
     _resizeScrollerIfNeeded(): void;
     checkValidity(): boolean;
-    get isInputField(): boolean | "" | undefined;
+    get isInputField(): boolean;
     focus(): void;
     cleanValue(value: string): string;
     checkRadioButtonValidity(): boolean;

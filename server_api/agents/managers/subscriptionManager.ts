@@ -12,7 +12,7 @@ import Stripe from "stripe";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
 import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
-import { PsAgentClass, PsAiModel } from "@policysynth/agents/dbModels/index.js";
+import { PsAgentClass, PsAiModel, User } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
 import WebSocket from "ws";
 import models from "../../models/index.cjs";
@@ -95,9 +95,7 @@ export class SubscriptionManager {
   ): Promise<{ workflow: YpWorkflowConfiguration; requiredQuestions?: any[] }> {
     console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
     let newCommunity = await this.cloneCommunityTemplate(
-      11
-      /*10054*/
-      /*agentProduct.configuration.templateWorkflowCommunityId*/,
+      agentProduct.configuration.templateWorkflowCommunityId,
       domainId
     );
 
@@ -128,15 +126,23 @@ export class SubscriptionManager {
       );
     }
 
-    /*for (const group of groups) {
-      const hasAdmin = await group.hasGroupAdmins(currentUser);
+    const dbModels: Models = models;
+    const UserModel = dbModels.User; // Ensure you're using the same User model from dbModels
+
+    const userInstance = await UserModel.findByPk(currentUser.id);
+    if (!userInstance) {
+      throw new Error("User not found");
+    }
+
+    for (const group of groups) {
+      const hasAdmin = await group.hasGroupAdmins(userInstance);
       if (!hasAdmin) {
-        await group.addGroupAdmins(currentUser);
-        console.log("Added current user as group admin", currentUser.id);
+        await group.addGroupAdmins(userInstance);
+        console.log("Added current user as group admin", userInstance.id);
       } else {
-        console.log("Group already has the user as admin", currentUser.id);
+        console.log("Group already has the user as admin", userInstance.id);
       }
-    }*/
+    }
 
     // Create a map of old group IDs to new group IDs
     const groupIdMap = newCommunity.groupMapping;

@@ -1816,6 +1816,7 @@ export class YpPostEdit extends YpEditBase {
         text: question,
         maxLength: parseInt(maxLength),
         value: "",
+        type: "textfield",
       });
     }
     if (
@@ -2301,8 +2302,8 @@ export class YpPostEdit extends YpEditBase {
                   question.type.toLowerCase() === "dropdown"
                 ) {
                   this.liveQuestionIds.push(index);
-                  this.uniqueIdsToElementIndexes[question.uniqueId] = index;
-                  this.liveUniqueIds.push(question.uniqueId);
+                  this.uniqueIdsToElementIndexes[question.uniqueId!] = index;
+                  this.liveUniqueIds.push(question.uniqueId!);
                 }
               }
             );

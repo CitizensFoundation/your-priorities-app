@@ -71,6 +71,7 @@ const updateJobStatusIfNeeded = (jobId, totalPosts, processedCount, lastReported
         models.AcBackgroundJob.update({ progress }, { where: { id: jobId } }).then(() => {
             done(null, true);
         }).catch((error) => {
+            console.log("Error updating job status", { error: error });
             done(error);
         });
     }

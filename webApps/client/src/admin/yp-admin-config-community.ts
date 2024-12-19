@@ -1010,7 +1010,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             </yp-file-upload>
           `,
         },
-      ],
+      ] as Array<YpStructuredConfigData>,
     };
   }
 
@@ -1080,7 +1080,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               : nothing}
           `,
         },
-      ],
+      ] as Array<YpStructuredConfigData>,
     };
   }
 

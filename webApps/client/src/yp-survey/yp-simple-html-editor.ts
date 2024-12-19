@@ -13,7 +13,7 @@ import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js"
 @customElement("yp-simple-html-editor")
 export class YpSimpleHtmlEditor extends YpBaseElement {
   @property({ type: Object })
-  question: YpStructuredQuestionData = { maxLength: 0, text: "" };
+  question: YpStructuredQuestionData = { maxLength: 0, text: "", type: "html" };
 
   @property({ type: Number })
   index: number | undefined;

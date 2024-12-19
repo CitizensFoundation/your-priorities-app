@@ -109,6 +109,7 @@ export class PolicySynthAgentsController {
     const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro");
     const openAio1Preview = await findLatestActiveModel("o1 Preview");
     const openAio1Mini = await findLatestActiveModel("o1 Mini");
+    const openAio11712 = await findLatestActiveModel("o1 24");
 
     const groupAccessConfig = [];
 
@@ -151,6 +152,13 @@ export class PolicySynthAgentsController {
       groupAccessConfig.push( {
         aiModelId: geminiPro!.id,
         apiKey: process.env.GEMINI_API_KEY,
+      })
+    }
+
+    if (openAio11712 && process.env.OPENAI_API_KEY) {
+      groupAccessConfig.push( {
+        aiModelId: openAio11712!.id,
+        apiKey: process.env.OPENAI_API_KEY,
       })
     }
 
@@ -340,6 +348,38 @@ export class PolicySynthAgentsController {
       });
     } else {
       console.log("Test O preview models already exist");
+    }
+
+    const testO1712Model = await PsAiModel.findOne({
+      where: {
+        name: "o1 24",
+      },
+    });
+
+    if (!testO1712Model) {
+      const openAio11712Config: PsAiModelConfiguration = {
+        type: PsAiModelType.TextReasoning,
+        modelSize: PsAiModelSize.Medium,
+        provider: "openai",
+        prices: {
+          costInTokensPerMillion: 15.0,
+          costOutTokensPerMillion: 60.0,
+          currency: "USD",
+        },
+        maxTokensOut: 100000,
+        defaultTemperature: 0.0,
+        model: "o1-2024-12-17",
+        active: true,
+      };
+
+      const openAio11712 = await PsAiModel.create({
+        name: "o1 24",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAio11712Config,
+      });
+    } else {
+      console.log("Test o1 1712 models already exist");
     }
   }
 

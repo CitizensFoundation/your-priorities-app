@@ -74,9 +74,7 @@ export class SubscriptionManager {
     }
     async cloneCommunityWorkflowTemplate(agentProduct, domainId, currentUser) {
         console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
-        let newCommunity = await this.cloneCommunityTemplate(11
-        /*10054*/
-        /*agentProduct.configuration.templateWorkflowCommunityId*/ , domainId);
+        let newCommunity = await this.cloneCommunityTemplate(agentProduct.configuration.templateWorkflowCommunityId, domainId);
         console.log("newCommunity", newCommunity);
         const groups = await YpGroup.findAll({
             where: {
@@ -94,15 +92,22 @@ export class SubscriptionManager {
         if (!topLevelAgentId) {
             throw new Error("Top level agent ID not found in workflow group configuration");
         }
-        /*for (const group of groups) {
-          const hasAdmin = await group.hasGroupAdmins(currentUser);
-          if (!hasAdmin) {
-            await group.addGroupAdmins(currentUser);
-            console.log("Added current user as group admin", currentUser.id);
-          } else {
-            console.log("Group already has the user as admin", currentUser.id);
-          }
-        }*/
+        const dbModels = models;
+        const UserModel = dbModels.User; // Ensure you're using the same User model from dbModels
+        const userInstance = await UserModel.findByPk(currentUser.id);
+        if (!userInstance) {
+            throw new Error("User not found");
+        }
+        for (const group of groups) {
+            const hasAdmin = await group.hasGroupAdmins(userInstance);
+            if (!hasAdmin) {
+                await group.addGroupAdmins(userInstance);
+                console.log("Added current user as group admin", userInstance.id);
+            }
+            else {
+                console.log("Group already has the user as admin", userInstance.id);
+            }
+        }
         // Create a map of old group IDs to new group IDs
         const groupIdMap = newCommunity.groupMapping;
         console.log("groupIdMap", groupIdMap);

@@ -170,7 +170,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
             window.appGlobals.originalQueryParameters.accessToken as string
           )
         ) {
-          window.location.href = "https://getwaitlist.com/waitlist/21516";
+          window.location.href = "https://evoly.ai/en/amplifier/";
         } else {
           localStorage.setItem(
             "temporaryAmpliferAlphaAccessId",
@@ -178,7 +178,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
           );
         }
       } else {
-        window.location.href = "https://getwaitlist.com/waitlist/21516";
+        window.location.href = "https://evoly.ai/en/amplifier/";
       }
     }
     this.requestUpdate();

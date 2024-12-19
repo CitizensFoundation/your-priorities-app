@@ -58,46 +58,12 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     _getWebAppTab(): {
         name: string;
         icon: string;
-        items: ({
-            text: string;
-            type: string;
-            maxLength: number;
-            templateData?: undefined;
-        } | {
-            text: string;
-            type: string;
-            templateData: import("lit-html").TemplateResult<1>;
-            maxLength?: undefined;
-        })[];
+        items: Array<YpStructuredConfigData>;
     };
     _getSamlTab(): {
         name: string;
         icon: string;
-        items: ({
-            text: string;
-            type: string;
-            disabled: boolean;
-            rows?: undefined;
-            maxRows?: undefined;
-            maxLength?: undefined;
-            templateData?: undefined;
-        } | {
-            text: string;
-            type: string;
-            rows: number;
-            maxRows: number;
-            maxLength: number;
-            disabled?: undefined;
-            templateData?: undefined;
-        } | {
-            text: string;
-            type: string;
-            templateData: import("lit-html").TemplateResult<1>;
-            disabled?: undefined;
-            rows?: undefined;
-            maxRows?: undefined;
-            maxLength?: undefined;
-        })[];
+        items: Array<YpStructuredConfigData>;
     };
     setupConfigTabs(): YpConfigTabData[];
     _appHomeScreenIconImageUploaded(event: CustomEvent): void;

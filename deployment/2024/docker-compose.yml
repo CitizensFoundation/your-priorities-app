@@ -123,24 +123,6 @@ services:
     healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
 
-  minio2:
-    <<: *minio-common
-    command: server --address localhost:9002 --console-address localhost:9003 /minio_data
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9002/minio/health/live"]
-
-  minio3:
-    <<: *minio-common
-    command: server --address localhost:9004 --console-address localhost:9005 /minio_data
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9004/minio/health/live"]
-
-  minio4:
-    <<: *minio-common
-    command: server --address localhost:9006 --console-address localhost:9007 /minio_data
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9006/minio/health/live"]
-
   mc:
     image: minio/mc:latest
     depends_on:
