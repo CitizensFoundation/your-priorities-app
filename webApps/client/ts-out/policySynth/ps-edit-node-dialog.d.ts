@@ -12,6 +12,7 @@ export declare class PsEditNodeDialog extends YpBaseElement {
     groupId: number;
     private activeAiModels;
     private selectedAiModels;
+    private selectedReasoningModels;
     private currentModels;
     private api;
     connectedCallback(): Promise<void>;
@@ -27,7 +28,7 @@ export declare class PsEditNodeDialog extends YpBaseElement {
     render(): import("lit-html").TemplateResult<1>;
     _renderNodeEditHeadline(): import("lit-html").TemplateResult<1>;
     _renderEditForm(): import("lit-html").TemplateResult<1>;
-    _renderAiModelSelector(): "" | import("lit-html").TemplateResult<1>;
+    _renderAiModelSelector(): import("lit-html").TemplateResult<1> | "";
     _getInitialAnswers(): {
         uniqueId: string;
         value: unknown;

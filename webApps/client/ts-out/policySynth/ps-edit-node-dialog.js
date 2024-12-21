@@ -21,6 +21,7 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
         this.open = false;
         this.activeAiModels = [];
         this.selectedAiModels = {};
+        this.selectedReasoningModels = {};
         this.currentModels = {};
         this.api = new PsServerApi();
     }
@@ -141,6 +142,7 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
     }
     _handleAiModelsChanged(e) {
         this.selectedAiModels = e.detail.selectedAiModelIds;
+        this.selectedReasoningModels = e.detail.selectedReasoningModelIds;
     }
     _handleSave() {
         const updatedConfig = {};
@@ -153,14 +155,18 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
                 }
             }
         });
-        let aiModelUpdates;
+        let aiModelUpdates = [];
         if (this.nodeToEditInfo.Class.configuration.requestedAiModelSizes) {
-            aiModelUpdates = Object.entries(this.selectedAiModels).map(([size, modelId]) => {
-                return {
+            aiModelUpdates = [
+                ...Object.entries(this.selectedAiModels).map(([size, modelId]) => ({
                     size: size,
                     modelId: modelId,
-                };
-            });
+                })),
+                ...Object.entries(this.selectedReasoningModels).map(([size, modelId]) => ({
+                    size: size,
+                    modelId: modelId,
+                }))
+            ];
         }
         this.dispatchEvent(new CustomEvent('save', {
             detail: {
@@ -216,6 +222,9 @@ __decorate([
 __decorate([
     state()
 ], PsEditNodeDialog.prototype, "selectedAiModels", void 0);
+__decorate([
+    state()
+], PsEditNodeDialog.prototype, "selectedReasoningModels", void 0);
 __decorate([
     state()
 ], PsEditNodeDialog.prototype, "currentModels", void 0);

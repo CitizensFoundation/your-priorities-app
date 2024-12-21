@@ -24,6 +24,8 @@ export class PsEditNodeDialog extends YpBaseElement {
   @state() private selectedAiModels: {
     [key in PsAiModelSize]?: number | null;
   } = {};
+  @state() private selectedReasoningModels: { [key in PsAiModelSize]?: number | null } = {};
+
   @state() private currentModels: {
     [key in PsAiModelSize]?: PsAiModelAttributes;
   } = {};
@@ -165,6 +167,7 @@ export class PsEditNodeDialog extends YpBaseElement {
 
   _handleAiModelsChanged(e: CustomEvent) {
     this.selectedAiModels = e.detail.selectedAiModelIds;
+    this.selectedReasoningModels = e.detail.selectedReasoningModelIds;
   }
 
   _handleSave() {
@@ -183,17 +186,19 @@ export class PsEditNodeDialog extends YpBaseElement {
       }
     );
 
-    let aiModelUpdates;
+    let aiModelUpdates: { size: PsAiModelSize; modelId: number | null }[] = [];
 
     if (this.nodeToEditInfo.Class.configuration.requestedAiModelSizes) {
-      aiModelUpdates = Object.entries(this.selectedAiModels).map(
-        ([size, modelId]) => {
-          return {
-            size: size as PsAiModelSize,
-            modelId: modelId as number | null,
-          };
-        }
-      );
+      aiModelUpdates = [
+        ...Object.entries(this.selectedAiModels).map(([size, modelId]) => ({
+          size: size as PsAiModelSize,
+          modelId: modelId as number | null,
+        })),
+        ...Object.entries(this.selectedReasoningModels).map(([size, modelId]) => ({
+          size: size as PsAiModelSize,
+          modelId: modelId as number | null,
+        }))
+      ];
     }
 
     this.dispatchEvent(
