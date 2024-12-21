@@ -13,6 +13,7 @@ import '@material/web/select/filled-select.js';
 import '@material/web/select/select-option.js';
 import '../yp-survey/yp-structured-question-edit.js';
 import './ps-ai-model-selector.js';
+import { PsAiModelType } from '@policysynth/agents/aiModelTypes.js';
 import { PsServerApi } from './PsServerApi.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
@@ -23,6 +24,7 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
         this.selectedAiModels = {};
         this.selectedReasoningModels = {};
         this.currentModels = {};
+        this.currentReasoningModels = {};
         this.api = new PsServerApi();
     }
     async connectedCallback() {
@@ -44,17 +46,35 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
     }
     initializeCurrentModels() {
         if (this.nodeToEditInfo && this.nodeToEditInfo.AiModels) {
-            this.currentModels = this._getCurrentModels();
+            this._getCurrentModels();
         }
     }
+    isReasoningModel(modelType) {
+        return (modelType === PsAiModelType.TextReasoning ||
+            modelType === PsAiModelType.MultiModalReasoning);
+    }
     _getCurrentModels() {
-        const currentModels = {};
+        // We'll keep them separate to avoid overwriting
+        const currentAiModels = {};
+        const currentReasoningModels = {};
+        // Loop the attached models
         this.nodeToEditInfo.AiModels?.forEach((model) => {
-            if (model.configuration && 'modelSize' in model.configuration) {
-                currentModels[model.configuration.modelSize] = model;
+            const config = model.configuration;
+            if (!config?.type || !config?.modelSize)
+                return;
+            const size = config.modelSize;
+            // If it's reasoning
+            if (this.isReasoningModel(config.type)) {
+                currentReasoningModels[size] = model;
+            }
+            // else it's multiModal (or text, etc.)
+            else {
+                currentAiModels[size] = model;
             }
         });
-        return currentModels;
+        // Assign them directly
+        this.currentModels = currentAiModels;
+        this.currentReasoningModels = currentReasoningModels;
     }
     disableScrim(event) {
         event.stopPropagation();
@@ -127,6 +147,7 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
         .requestedAiModelSizes="${this.nodeToEditInfo.Class.configuration
             .requestedAiModelSizes}"
         .currentModels="${this.currentModels}"
+        .currentReasoningModels="${this.currentReasoningModels}"
         @ai-models-changed="${this._handleAiModelsChanged}"
       ></ps-ai-model-selector>
     `;
@@ -156,16 +177,28 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
             }
         });
         let aiModelUpdates = [];
+        // 2) Grab the chosen model’s actual `type` from your activeAiModels list:
         if (this.nodeToEditInfo.Class.configuration.requestedAiModelSizes) {
             aiModelUpdates = [
-                ...Object.entries(this.selectedAiModels).map(([size, modelId]) => ({
-                    size: size,
-                    modelId: modelId,
-                })),
-                ...Object.entries(this.selectedReasoningModels).map(([size, modelId]) => ({
-                    size: size,
-                    modelId: modelId,
-                }))
+                // For multiModal picks:
+                ...Object.entries(this.selectedAiModels).map(([size, modelId]) => {
+                    const chosenModel = this.activeAiModels.find(m => m.id === modelId);
+                    debugger;
+                    return {
+                        size: size,
+                        modelId: modelId ? Number(modelId) : null,
+                        type: chosenModel?.configuration?.type ?? null
+                    };
+                }),
+                // For reasoning picks:
+                ...Object.entries(this.selectedReasoningModels).map(([size, modelId]) => {
+                    const chosenModel = this.activeAiModels.find(m => m.id === modelId);
+                    return {
+                        size: size,
+                        modelId: modelId ? Number(modelId) : null,
+                        type: chosenModel?.configuration?.type ?? null
+                    };
+                })
             ];
         }
         this.dispatchEvent(new CustomEvent('save', {
@@ -228,6 +261,9 @@ __decorate([
 __decorate([
     state()
 ], PsEditNodeDialog.prototype, "currentModels", void 0);
+__decorate([
+    state()
+], PsEditNodeDialog.prototype, "currentReasoningModels", void 0);
 PsEditNodeDialog = __decorate([
     customElement('ps-edit-node-dialog')
 ], PsEditNodeDialog);

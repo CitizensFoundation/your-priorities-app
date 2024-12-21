@@ -10,7 +10,9 @@ export declare class PsAiModelSelector extends YpBaseElement {
     currentModels: {
         [key in PsAiModelSize]?: PsAiModelAttributes | null;
     };
-    private currentReasoningModels;
+    currentReasoningModels: {
+        [key in PsAiModelSize]?: PsAiModelAttributes | null;
+    };
     private selectedAiModelIds;
     private selectedReasoningModelIds;
     private filteredAiModels;
@@ -19,7 +21,6 @@ export declare class PsAiModelSelector extends YpBaseElement {
     filterAiModels(): void;
     filterReasoningModels(): void;
     private isReasoningModel;
-    filterCurrentReasoningModels(): void;
     initializeSelectedModels(): void;
     initializeSelectedReasoningModels(): void;
     render(): import("lit-html").TemplateResult<1>;

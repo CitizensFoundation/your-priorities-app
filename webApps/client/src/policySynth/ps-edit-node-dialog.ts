@@ -9,9 +9,10 @@ import '@material/web/select/select-option.js';
 import '../yp-survey/yp-structured-question-edit.js';
 import './ps-ai-model-selector.js';
 
-import { PsAiModelSize } from '@policysynth/agents/aiModelTypes.js';
+import { PsAiModelSize, PsAiModelType } from '@policysynth/agents/aiModelTypes.js';
 import { PsServerApi } from './PsServerApi.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
+import { t } from 'i18next';
 
 @customElement('ps-edit-node-dialog')
 export class PsEditNodeDialog extends YpBaseElement {
@@ -27,6 +28,10 @@ export class PsEditNodeDialog extends YpBaseElement {
   @state() private selectedReasoningModels: { [key in PsAiModelSize]?: number | null } = {};
 
   @state() private currentModels: {
+    [key in PsAiModelSize]?: PsAiModelAttributes;
+  } = {};
+
+  @state() private currentReasoningModels: {
     [key in PsAiModelSize]?: PsAiModelAttributes;
   } = {};
 
@@ -55,18 +60,41 @@ export class PsEditNodeDialog extends YpBaseElement {
 
   initializeCurrentModels() {
     if (this.nodeToEditInfo && this.nodeToEditInfo.AiModels) {
-      this.currentModels = this._getCurrentModels();
+      this._getCurrentModels();
     }
   }
 
+  isReasoningModel(modelType: PsAiModelType): boolean {
+    return (
+      modelType === PsAiModelType.TextReasoning ||
+      modelType === PsAiModelType.MultiModalReasoning
+    );
+  }
+
   _getCurrentModels() {
-    const currentModels: { [key in PsAiModelSize]?: PsAiModelAttributes } = {};
+    // We'll keep them separate to avoid overwriting
+    const currentAiModels: { [key in PsAiModelSize]?: PsAiModelAttributes } = {};
+    const currentReasoningModels: { [key in PsAiModelSize]?: PsAiModelAttributes } = {};
+
+    // Loop the attached models
     this.nodeToEditInfo.AiModels?.forEach((model: PsAiModelAttributes) => {
-      if (model.configuration && 'modelSize' in model.configuration) {
-        currentModels[model.configuration.modelSize as PsAiModelSize] = model;
+      const config = model.configuration;
+      if (!config?.type || !config?.modelSize) return;
+      const size = config.modelSize as PsAiModelSize;
+
+      // If it's reasoning
+      if (this.isReasoningModel(config.type)) {
+        currentReasoningModels[size] = model;
+      }
+      // else it's multiModal (or text, etc.)
+      else {
+        currentAiModels[size] = model;
       }
     });
-    return currentModels;
+
+    // Assign them directly
+    this.currentModels = currentAiModels;
+    this.currentReasoningModels = currentReasoningModels;
   }
 
   disableScrim(event: CustomEvent) {
@@ -147,6 +175,7 @@ export class PsEditNodeDialog extends YpBaseElement {
         .requestedAiModelSizes="${this.nodeToEditInfo.Class.configuration
           .requestedAiModelSizes}"
         .currentModels="${this.currentModels}"
+        .currentReasoningModels="${this.currentReasoningModels}"
         @ai-models-changed="${this._handleAiModelsChanged}"
       ></ps-ai-model-selector>
     `;
@@ -186,18 +215,36 @@ export class PsEditNodeDialog extends YpBaseElement {
       }
     );
 
-    let aiModelUpdates: { size: PsAiModelSize; modelId: number | null }[] = [];
+    interface AiModelUpdate {
+      size: PsAiModelSize;
+      modelId: number | null;
+      type: PsAiModelType | null;  // or just string if you prefer
+    }
 
+    let aiModelUpdates: AiModelUpdate[] = [];
+
+    // 2) Grab the chosen model’s actual `type` from your activeAiModels list:
     if (this.nodeToEditInfo.Class.configuration.requestedAiModelSizes) {
       aiModelUpdates = [
-        ...Object.entries(this.selectedAiModels).map(([size, modelId]) => ({
-          size: size as PsAiModelSize,
-          modelId: modelId as number | null,
-        })),
-        ...Object.entries(this.selectedReasoningModels).map(([size, modelId]) => ({
-          size: size as PsAiModelSize,
-          modelId: modelId as number | null,
-        }))
+        // For multiModal picks:
+        ...Object.entries(this.selectedAiModels).map(([size, modelId]) => {
+          const chosenModel = this.activeAiModels.find(m => m.id === modelId);
+          debugger;
+          return {
+            size: size as PsAiModelSize,
+            modelId: modelId ? Number(modelId) : null,
+            type: chosenModel?.configuration?.type ?? null
+          };
+        }),
+        // For reasoning picks:
+        ...Object.entries(this.selectedReasoningModels).map(([size, modelId]) => {
+          const chosenModel = this.activeAiModels.find(m => m.id === modelId);
+          return {
+            size: size as PsAiModelSize,
+            modelId: modelId ? Number(modelId) : null,
+            type: chosenModel?.configuration?.type ?? null
+          };
+        })
       ];
     }
 

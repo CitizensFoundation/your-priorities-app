@@ -39,7 +39,6 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
             this.filterReasoningModels();
         }
         if (changedProperties.has("currentModels")) {
-            this.filterCurrentReasoningModels();
             this.initializeSelectedModels();
             this.initializeSelectedReasoningModels();
         }
@@ -86,17 +85,6 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
         return (modelType === PsAiModelType.TextReasoning ||
             modelType === PsAiModelType.MultiModalReasoning);
     }
-    filterCurrentReasoningModels() {
-        this.currentReasoningModels = {};
-        Object.entries(this.currentModels).forEach(([size, model]) => {
-            if (model &&
-                model.configuration &&
-                "type" in model.configuration &&
-                this.isReasoningModel(model.configuration.type)) {
-                this.currentReasoningModels[size] = model;
-            }
-        });
-    }
     initializeSelectedModels() {
         Object.entries(this.currentModels).forEach(([size, model]) => {
             if (this.selectedAiModelIds[size] === undefined) {
@@ -122,14 +110,19 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
       <div
         class="layout vertical"
         ?hidden="${!this.requestedAiModelSizes ||
-            this.requestedAiModelSizes.length == 0}"
+            this.requestedAiModelSizes.length === 0}"
       >
+        <!-- Multi-modal Models Section -->
         <div class="modelType">${this.t("multiModalModels")}</div>
         <div class="ai-model-selectors">
           ${this.requestedAiModelSizes.map((size) => html `
-              <div class="model-section">${this.renderAiModelSelect(size)}</div>
+              <div class="model-section">
+                ${this.renderAiModelSelect(size)}
+              </div>
             `)}
         </div>
+
+        <!-- Reasoning Models Section -->
         <div class="modelType">${this.t("reasoningModels")}</div>
         <div class="ai-model-selectors">
           ${this.requestedAiModelSizes.map((size) => html `
@@ -329,7 +322,7 @@ __decorate([
     property({ type: Object })
 ], PsAiModelSelector.prototype, "currentModels", void 0);
 __decorate([
-    state()
+    property({ type: Object })
 ], PsAiModelSelector.prototype, "currentReasoningModels", void 0);
 __decorate([
     state()

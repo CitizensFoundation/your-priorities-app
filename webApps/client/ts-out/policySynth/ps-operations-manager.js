@@ -136,16 +136,26 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             if (nodeType === "agent" && aiModelUpdates) {
                 const currentAiModels = await this.api.getAgentAiModels(this.groupId, nodeId);
                 for (const update of aiModelUpdates) {
-                    const currentModel = currentAiModels.find((m) => m.configuration.modelSize === update.size);
-                    if (currentModel && update.modelId === null) {
+                    const currentModel = currentAiModels.find((m) => m.configuration.modelSize === update.size &&
+                        m.configuration.type === update.type);
+                    debugger;
+                    // 1) If a current model exists but user set modelId to null → remove
+                    if (currentModel && update.modelId == null) {
                         await this.api.removeAgentAiModel(this.groupId, nodeId, currentModel.id);
                     }
-                    else if (update.modelId !== null &&
-                        currentModel?.id !== update.modelId) {
-                        if (currentModel) {
+                    // 2) If the user wants to add/replace a model:
+                    //    - Either there's a current one with a different ID, so remove + add
+                    //    - Or there's no current one at all => just add
+                    else if (update.modelId !== null) {
+                        if (currentModel && currentModel.id !== update.modelId) {
                             await this.api.removeAgentAiModel(this.groupId, nodeId, currentModel.id);
+                            await this.api.addAgentAiModel(this.groupId, nodeId, update.modelId, update.size);
                         }
-                        await this.api.addAgentAiModel(this.groupId, nodeId, update.modelId, update.size);
+                        else if (!currentModel) {
+                            // This is the missing case:
+                            // No currentModel of that (type, size) => just add the new one
+                            await this.api.addAgentAiModel(this.groupId, nodeId, update.modelId, update.size);
+                        }
                     }
                 }
             }
@@ -321,12 +331,8 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           class="agentHeaderImage"
         />
         <div class="layout vertical agentHeaderText">
-          <div class="workflowName">
-            ${this.t('workflow')}
-          </div>
-          <div class="">
-          ${this.group.name}
-        </div>
+          <div class="workflowName">${this.t("workflow")}</div>
+          <div class="">${this.group.name}</div>
         </div>
       </div>
     `;
@@ -435,15 +441,12 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         return [
             super.styles,
             css `
-
-
         .agentHeaderImage {
           max-width: 72px;
           align-self: self-start;
           border-radius: 4px;
           margin-top: 8px;
         }
-
 
         .workflowName {
           font-size: 14px;

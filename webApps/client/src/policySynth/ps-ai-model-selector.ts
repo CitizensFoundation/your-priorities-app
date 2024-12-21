@@ -19,7 +19,7 @@ export class PsAiModelSelector extends YpBaseElement {
     [key in PsAiModelSize]?: PsAiModelAttributes | null;
   } = {};
 
-  @state() private currentReasoningModels: {
+  @property({ type: Object }) currentReasoningModels: {
     [key in PsAiModelSize]?: PsAiModelAttributes | null;
   } = {};
 
@@ -56,7 +56,6 @@ export class PsAiModelSelector extends YpBaseElement {
       this.filterReasoningModels();
     }
     if (changedProperties.has("currentModels")) {
-      this.filterCurrentReasoningModels();
       this.initializeSelectedModels();
       this.initializeSelectedReasoningModels();
     }
@@ -119,20 +118,6 @@ export class PsAiModelSelector extends YpBaseElement {
     );
   }
 
-  filterCurrentReasoningModels() {
-    this.currentReasoningModels = {};
-    Object.entries(this.currentModels).forEach(([size, model]) => {
-      if (
-        model &&
-        model.configuration &&
-        "type" in model.configuration &&
-        this.isReasoningModel(model.configuration.type)
-      ) {
-        this.currentReasoningModels[size as PsAiModelSize] = model;
-      }
-    });
-  }
-
   initializeSelectedModels() {
     Object.entries(this.currentModels).forEach(([size, model]) => {
       if (this.selectedAiModelIds[size as PsAiModelSize] === undefined) {
@@ -160,16 +145,21 @@ export class PsAiModelSelector extends YpBaseElement {
       <div
         class="layout vertical"
         ?hidden="${!this.requestedAiModelSizes ||
-        this.requestedAiModelSizes.length == 0}"
+        this.requestedAiModelSizes.length === 0}"
       >
+        <!-- Multi-modal Models Section -->
         <div class="modelType">${this.t("multiModalModels")}</div>
         <div class="ai-model-selectors">
           ${this.requestedAiModelSizes.map(
             (size) => html`
-              <div class="model-section">${this.renderAiModelSelect(size)}</div>
+              <div class="model-section">
+                ${this.renderAiModelSelect(size)}
+              </div>
             `
           )}
         </div>
+
+        <!-- Reasoning Models Section -->
         <div class="modelType">${this.t("reasoningModels")}</div>
         <div class="ai-model-selectors">
           ${this.requestedAiModelSizes.map(
