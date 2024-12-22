@@ -362,6 +362,9 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
 
       this.requestUpdate();
       this.showEditNodeDialog = false;
+
+      //TODO: Only get the node that was updated not everything
+      await this.getAgent();
     } catch (error) {
       console.error("Failed to update node configuration:", error);
       // You might want to show an error message to the user here

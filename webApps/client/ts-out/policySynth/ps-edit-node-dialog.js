@@ -40,8 +40,12 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
         }
     }
     updated(changedProperties) {
-        if (changedProperties.has('nodeToEditInfo')) {
-            this.initializeCurrentModels();
+        super.updated(changedProperties);
+        if (changedProperties.has('open')) {
+            const wasOpen = changedProperties.get('open');
+            if (!wasOpen && this.open) {
+                this.initializeCurrentModels();
+            }
         }
     }
     initializeCurrentModels() {
@@ -160,6 +164,7 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
     }
     _handleClose() {
         this.dispatchEvent(new CustomEvent('close'));
+        this.nodeToEditInfo = undefined;
     }
     _handleAiModelsChanged(e) {
         this.selectedAiModels = e.detail.selectedAiModelIds;

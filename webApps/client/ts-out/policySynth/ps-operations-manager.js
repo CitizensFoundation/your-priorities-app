@@ -230,6 +230,8 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             }
             this.requestUpdate();
             this.showEditNodeDialog = false;
+            //TODO: Only get the node that was updated not everything
+            await this.getAgent();
         }
         catch (error) {
             console.error("Failed to update node configuration:", error);

@@ -51,10 +51,12 @@ export class PsEditNodeDialog extends YpBaseElement {
   }
 
   override updated(changedProperties: Map<string, any>) {
-    if (
-      changedProperties.has('nodeToEditInfo')
-    ) {
-      this.initializeCurrentModels();
+    super.updated(changedProperties);
+    if (changedProperties.has('open')) {
+      const wasOpen = changedProperties.get('open');
+      if (!wasOpen && this.open) {
+        this.initializeCurrentModels();
+      }
     }
   }
 
@@ -192,6 +194,7 @@ export class PsEditNodeDialog extends YpBaseElement {
 
   _handleClose() {
     this.dispatchEvent(new CustomEvent('close'));
+    this.nodeToEditInfo = undefined;
   }
 
   _handleAiModelsChanged(e: CustomEvent) {
