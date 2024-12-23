@@ -172,6 +172,9 @@ NotificationDeliveryWorker.prototype.process = function (notificationJson, callb
                     else if (notification.AcActivities[0].community_id) {
                         inviteFromName = notification.AcActivities[0].Community.name;
                     }
+                    if (process.env.DEFAULT_HOSTNAME) {
+                        community.hostname = process.env.DEFAULT_HOSTNAME;
+                    }
                     queue.add('send-one-email', {
                         subject: { translateToken: 'notification.email.user_invite', contentName: inviteFromName },
                         template: 'user_invite',
