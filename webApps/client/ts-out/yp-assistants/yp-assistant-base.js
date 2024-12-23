@@ -320,7 +320,9 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     async handleDownloadReport() {
         try {
             this.isDownloading = true;
-            const response = await fetch(`/api/assistants/${this.domainId}/${this.currentAgentId}/getDocxReport`);
+            const response = await fetch(`/api/assistants/${this.domainId}/${this.currentAgentId}/getDocxReport`, {
+                mode: "cors",
+            });
             if (!response.ok) {
                 // handle error
                 throw new Error("Download failed");
@@ -707,6 +709,15 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding-left: 48px;
           padding-right: 48px;
           padding-top: 20px;
+        }
+
+        .markdownInnerContainer img {
+          display: block;
+          max-width: 100%;
+          height: auto;
+          aspect-ratio: 16/9;
+          object-fit: cover;
+          margin: 0 auto 24px auto;
         }
 
         @keyframes pulse {
