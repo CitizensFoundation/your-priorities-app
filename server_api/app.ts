@@ -163,10 +163,10 @@ export class YourPrioritiesApi {
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
-    this.addInviteAsAnonMiddleWare();
-    this.setupStaticFileServing();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
+    this.addInviteAsAnonMiddleWare();
+    this.setupStaticFileServing();
     this.checkAuthForSsoInit();
     this.initializeRoutes();
     this.initializeEsControllers();
@@ -182,10 +182,10 @@ export class YourPrioritiesApi {
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
-    this.addInviteAsAnonMiddleWare();
-    this.setupStaticFileServing();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
+    this.addInviteAsAnonMiddleWare();
+    this.setupStaticFileServing();
     this.checkAuthForSsoInit();
     this.initializeRoutes();
     this.initializeEsControllers();
