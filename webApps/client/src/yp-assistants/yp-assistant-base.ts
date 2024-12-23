@@ -38,6 +38,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: Boolean })
   welcomeScreenOpen = true;
 
+  @property({ type: String })
+  currentAgentId: string | undefined;
+
   //TODO: Read from agentbundle db object
   @property({ type: String })
   welcomeTextHtml = `I am your assistant for Amplifier and I can talk, just <span class="green">click the button</span>`;
@@ -202,11 +205,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async openMarkdownReport(event: CustomEvent) {
+
     if (!event.detail) {
       return;
     }
     this.currentMarkdownReport = event.detail.markdownReport;
-
+    this.currentAgentId = event.detail.agentId;
     if (this.currentMarkdownReport) {
       this.markdownReportOpen = true;
       window.scrollTo(0, 0);
@@ -415,6 +419,30 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.scrollDown();
   }
 
+  wrapText(text: string, font: any, fontSize: number, maxWidth: number) {
+    const words = text.split(/\s+/);
+    const lines: string[] = [];
+    let currentLine: string[] = [];
+
+    for (const word of words) {
+      const linePlusWord = [...currentLine, word].join(" ");
+      const lineWidth = font.widthOfTextAtSize(linePlusWord, fontSize);
+      if (lineWidth < maxWidth) {
+        currentLine.push(word);
+      } else {
+        lines.push(currentLine.join(" "));
+        currentLine = [word];
+      }
+    }
+
+    // push the last line if it exists
+    if (currentLine.length > 0) {
+      lines.push(currentLine.join(" "));
+    }
+
+    return lines;
+  }
+
   async startInTextMode() {
     this.welcomeScreenOpen = false;
     await this.updateComplete;
@@ -437,10 +465,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.scrollDown();
   }
 
-  async downloadPdf() {
-    console.log("downloadPdf");
-  }
-
   renderMarkdownReport() {
     return html`<div class="markdownContainer layout vertical">
       <div class="markdownInnerContainer">
@@ -451,12 +475,17 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             ><md-icon>close</md-icon></md-filled-tonal-icon-button
           >
           <div class="flex"></div>
-          <md-filled-button
-            ?has-static-theme="${this.hasStaticTheme}"
-            class="downloadPdfButton"
-            @click=${this.downloadPdf}
-            >${this.t("downloadPdf")}</md-filled-button
+          <a
+            href="/api/assistants/${this.domainId}/${this
+              .currentAgentId}/getDocxReport"
+            download
           >
+            <md-filled-button
+              ?has-static-theme="${this.hasStaticTheme}"
+              class="downloadPdfButton"
+              >${this.t("downloadDocx")}</md-filled-button
+            >
+          </a>
         </div>
         ${resolveMarkdown(this.currentMarkdownReport!, {
           includeImages: true,
@@ -828,6 +857,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         .markdownContainer {
           padding-top: 48px;
         }
+
 
         md-filled-button[has-static-theme] {
           --md-filled-button-container-color: var(
@@ -1333,7 +1363,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       >
         <div
           class="sendChatIcon"
-          @click="${this.sendChatMessage}"
+          @click="${() => this.sendChatMessage()}"
           slot="trailing-icon"
           id="sendButton"
           ?input-is-focused="${this.inputIsFocused}"

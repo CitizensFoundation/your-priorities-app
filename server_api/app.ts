@@ -163,11 +163,11 @@ export class YourPrioritiesApi {
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
+    this.addInviteAsAnonMiddleWare();
     this.setupStaticFileServing();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
     this.checkAuthForSsoInit();
-    this.addInviteAsAnonMiddleWare();
     this.initializeRoutes();
     this.initializeEsControllers();
   }
@@ -182,11 +182,11 @@ export class YourPrioritiesApi {
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
+    this.addInviteAsAnonMiddleWare();
     this.setupStaticFileServing();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
     this.checkAuthForSsoInit();
-    this.addInviteAsAnonMiddleWare();
     this.initializeRoutes();
     this.initializeEsControllers();
   }
@@ -306,7 +306,7 @@ export class YourPrioritiesApi {
                   notifications_settings: (models as any).AcNotification
                     .anonymousNotificationSettings,
                   status: "active",
-                  //TODO: Having this block security for the cloned groups, find a better solution
+                  //TODO: Having this blocks security for the cloned groups, find a better solution
                   //profile_data: { isAnonymousUser: true },
                 });
               }
@@ -335,10 +335,17 @@ export class YourPrioritiesApi {
               invite.joined_at = new Date();
               await invite.save();
 
+              console.log("Invite joined at", invite.joined_at);
+
               await new Promise<void>((resolve, reject) => {
                 req.logIn(user, (error) => (error ? reject(error) : resolve()));
               });
 
+              console.log("User logged in for anon invite");
+
+              return next();
+            } else {
+              console.error("Invite not found");
               return next();
             }
           } catch (err) {

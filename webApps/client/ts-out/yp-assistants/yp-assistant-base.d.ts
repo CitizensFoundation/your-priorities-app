@@ -11,6 +11,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     useMainWindowScroll: boolean;
     directAgentName: string | null;
     welcomeScreenOpen: boolean;
+    currentAgentId: string | undefined;
     welcomeTextHtml: string;
     private mediaRecorder;
     private wavStreamPlayer;
@@ -55,9 +56,9 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     renderVoiceTalkingHead(): import("lit-html").TemplateResult<1>;
     get chatLogWithDeduplicatedWidgets(): YpAssistantMessage[];
     startInVoiceMode(): Promise<void>;
+    wrapText(text: string, font: any, fontSize: number, maxWidth: number): string[];
     startInTextMode(): Promise<void>;
     closeMarkdownReport(): Promise<void>;
-    downloadPdf(): Promise<void>;
     renderMarkdownReport(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;

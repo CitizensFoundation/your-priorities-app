@@ -1013,7 +1013,7 @@ router.post("/:groupId/sendEmailInvitesForAnons", auth.can("edit group"), async 
                 community_id: group.community_id,
                 from_user_id: req.user.id,
             });
-            const invite_link = `/group/${group.id}?anonInvite=1&token=${token}`;
+            const invite_link = `/group/${group.id}?anonInvite=1&token=${token}&forAgentBundle=1`;
             const createActivityPromise = new Promise((resolve, reject) => {
                 models.AcActivity.inviteCreated({
                     email: email,

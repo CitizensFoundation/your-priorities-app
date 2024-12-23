@@ -1,4 +1,6 @@
 import express from "express";
+import { marked } from "marked";
+import HTMLtoDOCX from "html-to-docx";
 import auth from "../../authorization.cjs";
 import { YpAgentAssistant } from "../assistants/agentAssistant.js";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
@@ -11,6 +13,7 @@ import { YpSubscriptionUser } from "../models/subscriptionUser.js";
 import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
+import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
 const models = {
     YpAgentProduct,
     YpAgentProductBundle,
@@ -42,6 +45,35 @@ export class AssistantController {
             catch (error) {
                 console.error("Error initializing models:", error);
                 process.exit(1);
+            }
+        };
+        this.getDocxReport = async (req, res) => {
+            try {
+                const { agentId } = req.params;
+                let lastStatusMessage = await this.getLastStatusMessageFromDB(parseInt(agentId));
+                if (!lastStatusMessage) {
+                    return res.status(404).send("No status message found.");
+                }
+                const regex = /<markdownReport>([\s\S]*?)<\/markdownReport>/i;
+                const match = lastStatusMessage.match(regex);
+                console.debug(`match: ${JSON.stringify(match, null, 2)}`);
+                if (!match || match.length < 2) {
+                    console.error("No <markdownReport>...</markdownReport> content found.");
+                    return res
+                        .status(400)
+                        .send("No <markdownReport>...</markdownReport> content found.");
+                }
+                const markdownContent = match[1];
+                const htmlContent = await marked(markdownContent);
+                const docxBuffer = await HTMLtoDOCX(htmlContent);
+                console.debug(`docxBuffer: ${docxBuffer.length}`);
+                res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                res.setHeader("Content-disposition", 'attachment; filename="converted.docx"');
+                return res.send(docxBuffer);
+            }
+            catch (error) {
+                console.error("Error converting Markdown to DOCX:", error);
+                return res.status(500).send("Server error");
             }
         };
         this.advanceOrStopCurrentWorkflowStep = async (req, res) => {
@@ -271,6 +303,7 @@ export class AssistantController {
             }
         };
         this.wsClients = wsClients;
+        this.agentQueueManager = new AgentQueueManager();
         this.initializeRoutes();
         this.initializeModels();
     }
@@ -286,6 +319,11 @@ export class AssistantController {
         this.router.post("/:groupId/:agentId/startNextWorkflowStep", this.startNextWorkflowStep.bind(this));
         this.router.post("/:groupId/:agentId/stopCurrentWorkflowStep", this.stopCurrentWorkflowStep.bind(this));
         this.router.put("/:groupId/:agentId/:runId/advanceOrStopWorkflow", this.advanceOrStopCurrentWorkflowStep.bind(this));
+        this.router.get("/:groupId/:agentId/getDocxReport", auth.can("view domain"), this.getDocxReport.bind(this));
+    }
+    async getLastStatusMessageFromDB(agentId) {
+        const status = await this.agentQueueManager.getAgentStatus(agentId);
+        return status ? status.messages[status.messages.length - 1] : null;
     }
     async startVoiceSession(req, res) {
         try {

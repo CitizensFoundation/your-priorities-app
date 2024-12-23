@@ -267,6 +267,9 @@ export class SubscriptionManager {
             if (step.agentClassUuid && agentUuidMap.has(step.agentClassUuid)) {
                 newStep.agentId = agentUuidMap.get(step.agentClassUuid);
             }
+            else if (step.agentClassUuid) {
+                console.error("agentClassUuid not found in agentUuidMap", step.agentClassUuid);
+            }
             if (newStep.type === "engagmentFromInputConnector" && newStep.agentId) {
                 newStep.groupId = agentInputConnectorGroupsIds.get(newStep.agentId);
             }

@@ -532,6 +532,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     openMarkdownReport() {
         this.fire("yp-open-markdown-report", {
             markdownReport: this.latestMessageMarkdown,
+            agentId: this.agentId,
         });
     }
     renderCompleted() {

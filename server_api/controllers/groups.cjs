@@ -1596,7 +1596,7 @@ router.post(
           from_user_id: req.user.id,
         });
 
-        const invite_link = `/group/${group.id}?anonInvite=1&token=${token}`;
+        const invite_link = `/group/${group.id}?anonInvite=1&token=${token}&forAgentBundle=1`;
 
         const createActivityPromise = new Promise((resolve, reject) => {
           models.AcActivity.inviteCreated(
