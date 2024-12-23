@@ -15,6 +15,8 @@ import { cache } from "lit/directives/cache.js";
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
 import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 
+import "@material/web/progress/circular-progress.js";
+
 @customElement("yp-assistant-base")
 export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: Boolean })
@@ -89,6 +91,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     "I'm your friendly chat assistant";
 
   override chatbotItemComponentName = literal`yp-assistant-item-base`;
+
+  @state()
+  private isDownloading = false;
 
   @query("#waveformCanvas")
   private waveformCanvas!: HTMLCanvasElement;
@@ -205,7 +210,6 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   }
 
   async openMarkdownReport(event: CustomEvent) {
-
     if (!event.detail) {
       return;
     }
@@ -465,6 +469,33 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.scrollDown();
   }
 
+  private async handleDownloadReport() {
+    try {
+      this.isDownloading = true;
+      const response = await fetch(
+        `/api/assistants/${this.domainId}/${this.currentAgentId}/getDocxReport`
+      );
+      if (!response.ok) {
+        // handle error
+        throw new Error("Download failed");
+      }
+
+      const blob = await response.blob();
+
+      // Create a temporary <a> tag and trigger a download
+      const tempUrl = window.URL.createObjectURL(blob);
+      const tempAnchor = document.createElement("a");
+      tempAnchor.href = tempUrl;
+      tempAnchor.download = "report.docx";
+      tempAnchor.click();
+      window.URL.revokeObjectURL(tempUrl);
+    } catch (err) {
+      console.error("Download error:", err);
+    } finally {
+      this.isDownloading = false;
+    }
+  }
+
   renderMarkdownReport() {
     return html`<div class="markdownContainer layout vertical">
       <div class="markdownInnerContainer">
@@ -475,17 +506,17 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             ><md-icon>close</md-icon></md-filled-tonal-icon-button
           >
           <div class="flex"></div>
-          <a
-            href="/api/assistants/${this.domainId}/${this
-              .currentAgentId}/getDocxReport"
-            download
+          <md-circular-progress
+            ?indeterminate=${true}
+            ?hidden=${!this.isDownloading}
+          ></md-circular-progress>
+          <md-filled-button
+            ?has-static-theme="${this.hasStaticTheme}"
+            class="downloadPdfButton"
+            @click=${this.handleDownloadReport}
           >
-            <md-filled-button
-              ?has-static-theme="${this.hasStaticTheme}"
-              class="downloadPdfButton"
-              >${this.t("downloadDocx")}</md-filled-button
-            >
-          </a>
+            ${this.t("downloadDocx")}
+          </md-filled-button>
         </div>
         ${resolveMarkdown(this.currentMarkdownReport!, {
           includeImages: true,
@@ -858,6 +889,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           padding-top: 48px;
         }
 
+        md-circular-progress {
+          --md-circular-progress-size: 40px;
+          margin-right: 8px;
+        }
 
         md-filled-button[has-static-theme] {
           --md-filled-button-container-color: var(

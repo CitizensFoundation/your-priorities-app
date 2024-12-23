@@ -17,6 +17,7 @@ import { WavRenderer } from "./wave-renderer.js";
 import "./yp-assistant-welcome.js";
 import { cache } from "lit/directives/cache.js";
 import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
+import "@material/web/progress/circular-progress.js";
 let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbotBase {
     constructor() {
         super();
@@ -38,6 +39,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.textInputLabel = "Message the assistant";
         this.defaultInfoMessage = "I'm your friendly chat assistant";
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
+        this.isDownloading = false;
         this.canvasCtx = null;
         this.renderLoopActive = false;
         this.haveLoggedIn = false;
@@ -315,6 +317,30 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         await this.updateComplete;
         this.scrollDown();
     }
+    async handleDownloadReport() {
+        try {
+            this.isDownloading = true;
+            const response = await fetch(`/api/assistants/${this.domainId}/${this.currentAgentId}/getDocxReport`);
+            if (!response.ok) {
+                // handle error
+                throw new Error("Download failed");
+            }
+            const blob = await response.blob();
+            // Create a temporary <a> tag and trigger a download
+            const tempUrl = window.URL.createObjectURL(blob);
+            const tempAnchor = document.createElement("a");
+            tempAnchor.href = tempUrl;
+            tempAnchor.download = "report.docx";
+            tempAnchor.click();
+            window.URL.revokeObjectURL(tempUrl);
+        }
+        catch (err) {
+            console.error("Download error:", err);
+        }
+        finally {
+            this.isDownloading = false;
+        }
+    }
     renderMarkdownReport() {
         return html `<div class="markdownContainer layout vertical">
       <div class="markdownInnerContainer">
@@ -325,17 +351,17 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             ><md-icon>close</md-icon></md-filled-tonal-icon-button
           >
           <div class="flex"></div>
-          <a
-            href="/api/assistants/${this.domainId}/${this
-            .currentAgentId}/getDocxReport"
-            download
+          <md-circular-progress
+            ?indeterminate=${true}
+            ?hidden=${!this.isDownloading}
+          ></md-circular-progress>
+          <md-filled-button
+            ?has-static-theme="${this.hasStaticTheme}"
+            class="downloadPdfButton"
+            @click=${this.handleDownloadReport}
           >
-            <md-filled-button
-              ?has-static-theme="${this.hasStaticTheme}"
-              class="downloadPdfButton"
-              >${this.t("downloadDocx")}</md-filled-button
-            >
-          </a>
+            ${this.t("downloadDocx")}
+          </md-filled-button>
         </div>
         ${resolveMarkdown(this.currentMarkdownReport, {
             includeImages: true,
@@ -654,6 +680,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           padding-top: 48px;
         }
 
+        md-circular-progress {
+          --md-circular-progress-size: 40px;
+          margin-right: 8px;
+        }
 
         md-filled-button[has-static-theme] {
           --md-filled-button-container-color: var(
@@ -1341,6 +1371,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAssistantBase.prototype, "defaultInfoMessage", void 0);
+__decorate([
+    state()
+], YpAssistantBase.prototype, "isDownloading", void 0);
 __decorate([
     query("#waveformCanvas")
 ], YpAssistantBase.prototype, "waveformCanvas", void 0);

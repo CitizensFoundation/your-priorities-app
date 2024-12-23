@@ -3,6 +3,7 @@ import { YpChatbotBase } from "../yp-chatbots/yp-chatbot-base.js";
 import "./yp-assistant-item-base.js";
 import { YpAssistantServerApi } from "./AssistantServerApi.js";
 import "./yp-assistant-welcome.js";
+import "@material/web/progress/circular-progress.js";
 export declare abstract class YpAssistantBase extends YpChatbotBase {
     voiceEnabled: boolean;
     domainId: number;
@@ -28,6 +29,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     textInputLabel: string;
     defaultInfoMessage: string | undefined;
     chatbotItemComponentName: import("lit-html/static.js").StaticValue;
+    private isDownloading;
     private waveformCanvas;
     private canvasCtx;
     private renderLoopActive;
@@ -59,6 +61,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     wrapText(text: string, font: any, fontSize: number, maxWidth: number): string[];
     startInTextMode(): Promise<void>;
     closeMarkdownReport(): Promise<void>;
+    private handleDownloadReport;
     renderMarkdownReport(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     toggleRecording(): void;
