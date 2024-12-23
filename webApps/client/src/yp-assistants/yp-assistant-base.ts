@@ -493,7 +493,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       tempAnchor.click();
       window.URL.revokeObjectURL(tempUrl);
     } catch (err) {
-      console.error("Download error:", err);
+      console.error("Download error details:", {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined
+      });
     } finally {
       this.isDownloading = false;
     }

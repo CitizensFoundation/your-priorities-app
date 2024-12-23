@@ -337,7 +337,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             window.URL.revokeObjectURL(tempUrl);
         }
         catch (err) {
-            console.error("Download error:", err);
+            console.error("Download error details:", {
+                error: err,
+                message: err instanceof Error ? err.message : 'Unknown error',
+                stack: err instanceof Error ? err.stack : undefined
+            });
         }
         finally {
             this.isDownloading = false;
