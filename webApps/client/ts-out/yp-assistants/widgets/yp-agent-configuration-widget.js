@@ -112,7 +112,7 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
         for (const question of questions) {
             const found = answers.find((a) => a.uniqueId === question.uniqueId);
             if (!found || !found.value) {
-                this.sendError("You must complete all required configuration questions before submitting.");
+                this.sendError("Please complete all required questions");
                 this.haveSubmittedConfigurationPastSecond = false;
                 return;
             }
