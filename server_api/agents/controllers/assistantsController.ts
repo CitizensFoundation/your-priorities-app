@@ -99,6 +99,8 @@ export class AssistantController {
       this.clearChatLog.bind(this)
     );
 
+    //TODO: Add auth for below
+
     this.router.put(
       "/:domainId/updateAssistantMemoryLoginStatus",
       this.updateAssistantMemoryLoginStatus.bind(this)

@@ -116,6 +116,9 @@ export class YpLogin extends YpBaseElement {
   @property({ type: Boolean })
   fullWithLoginButton = false;
 
+  @property({ type: Boolean })
+  alwaysShowCreateUser = false;
+
   @property({ type: Object })
   registrationQuestionsGroup: YpGroupData | undefined;
 
@@ -1605,7 +1608,7 @@ export class YpLogin extends YpBaseElement {
   }
 
   setupCreateOptions() {
-    if (window.appUser.loginForAcceptInviteParams) {
+    if (window.appUser.loginForAcceptInviteParams || this.alwaysShowCreateUser) {
       this.createEnabled = true;
     } else if (
       this.domain &&

@@ -59,6 +59,7 @@ export class YpLoginWidget extends YpBaseElementWithLogin {
             id="userLogin"
             class="loginSurface"
             fullWithLoginButton
+            alwaysShowCreateUser
             assistantMode
           ></yp-login>
         </div>

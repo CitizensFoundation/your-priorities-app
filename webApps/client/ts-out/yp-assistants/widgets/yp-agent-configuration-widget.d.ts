@@ -17,6 +17,7 @@ export declare class YpAgentConfigurationWidget extends YpBaseElement {
     disconnectedCallback(): void;
     static get styles(): any[];
     submitConfiguration(): Promise<void>;
+    sendError(message: string): void;
     get parsedRequiredQuestions(): YpStructuredQuestionData[];
     get parsedRequiredQuestionsAnswered(): YpStructuredAnswer[];
     private renderAgentHeader;

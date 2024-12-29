@@ -83,10 +83,11 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
         else {
             this.haveSubmittedConfigurationPastSecond = true;
         }
+        // Parse the required questions
+        const questions = this.parsedRequiredQuestions; // from get parsedRequiredQuestions()
+        // Gather answers from user inputs
         const answers = [];
-        // Get answers from required questions
-        if (this.requiredQuestions) {
-            const questions = JSON.parse(this.requiredQuestions);
+        if (questions.length > 0) {
             for (const question of questions) {
                 const questionElement = this.shadowRoot.querySelector(`#structuredQuestion_${question.uniqueId || `noId_${questions.indexOf(question)}`}`);
                 if (questionElement) {
@@ -94,14 +95,43 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
                     if (answer) {
                         answers.push({
                             uniqueId: question.uniqueId,
-                            value: answer.value,
+                            value: (answer.value || "").trim(),
                         });
                     }
                 }
             }
         }
-        await this.serverApi.submitAgentConfiguration(this.domainId, this.agentProductId.toString(), this.subscriptionId, answers);
+        // 1) Enforce a “fully answered” check
+        //    i.e. you must have as many answers as there are required questions.
+        if (questions.length > 0 && answers.length < questions.length) {
+            this.sendError("You must complete all required configuration questions before submitting.");
+            this.haveSubmittedConfigurationPastSecond = false;
+            return;
+        }
+        // 2) Enforce each answer is non-empty
+        for (const question of questions) {
+            const found = answers.find((a) => a.uniqueId === question.uniqueId);
+            if (!found || !found.value) {
+                this.sendError("You must complete all required configuration questions before submitting.");
+                this.haveSubmittedConfigurationPastSecond = false;
+                return;
+            }
+        }
+        try {
+            await this.serverApi.submitAgentConfiguration(this.domainId, this.agentProductId.toString(), this.subscriptionId, answers);
+        }
+        catch (error) {
+            this.sendError("Error submitting agent configuration");
+            return;
+        }
         this.fireGlobal("agent-configuration-submitted");
+    }
+    sendError(message) {
+        window.appDialogs.getDialogAsync("masterToast", (toast) => {
+            toast.labelText = message;
+            toast.open = true;
+            debugger;
+        });
     }
     get parsedRequiredQuestions() {
         try {
@@ -129,7 +159,6 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
         return html `<div class="agent-header layout horizontal">
       <div class="agent-header-title">${this.t("agentConfiguration")}</div>
       <div class="flex"></div>
-
     </div>`;
     }
     render() {
@@ -151,7 +180,10 @@ let YpAgentConfigurationWidget = class YpAgentConfigurationWidget extends YpBase
           </div>
         </div>
         <div class="layout horizontal">
-          <md-filled-button ?has-static-theme="${this.hasStaticTheme}" @click="${this.submitConfiguration}">
+          <md-filled-button
+            ?has-static-theme="${this.hasStaticTheme}"
+            @click="${this.submitConfiguration}"
+          >
             ${this.t("Submit")}
           </md-filled-button>
         </div>

@@ -134,13 +134,29 @@ export class SubscriptionManager {
       throw new Error("User not found");
     }
 
+    const hasCommunityUser = await newCommunity.hasCommunityUsers(userInstance);
+    if (!hasCommunityUser) {
+      await newCommunity.addCommunityUsers(userInstance);
+      console.log("Added current user as community user", userInstance.id);
+    } else {
+      console.log("Community already has the user as user", userInstance.id);
+    }
+
     for (const group of groups) {
-      const hasAdmin = await group.hasGroupAdmins(userInstance);
-      if (!hasAdmin) {
+      const hasGroupAdmin = await group.hasGroupAdmins(userInstance);
+      if (!hasGroupAdmin) {
         await group.addGroupAdmins(userInstance);
         console.log("Added current user as group admin", userInstance.id);
       } else {
         console.log("Group already has the user as admin", userInstance.id);
+      }
+
+      const hasGroupUser = await group.hasGroupUsers(userInstance);
+      if (!hasGroupUser) {
+        await group.addGroupUsers(userInstance);
+        console.log("Added current user as group user", userInstance.id);
+      } else {
+        console.log("Group already has the user as user", userInstance.id);
       }
     }
 

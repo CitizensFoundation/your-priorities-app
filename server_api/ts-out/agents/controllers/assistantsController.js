@@ -312,6 +312,7 @@ export class AssistantController {
         this.router.post("/:domainId/voice", auth.can("view domain"), this.startVoiceSession.bind(this));
         this.router.get("/:domainId/memory", auth.can("view domain"), this.getMemory.bind(this));
         this.router.delete("/:domainId/chatlog", auth.can("view domain"), this.clearChatLog.bind(this));
+        //TODO: Add auth for below
         this.router.put("/:domainId/updateAssistantMemoryLoginStatus", this.updateAssistantMemoryLoginStatus.bind(this));
         this.router.put("/:domainId/submitAgentConfiguration", this.submitAgentConfiguration.bind(this));
         this.router.put("/:groupId/:agentId/startWorkflowAgent", this.startWorkflowAgent.bind(this));

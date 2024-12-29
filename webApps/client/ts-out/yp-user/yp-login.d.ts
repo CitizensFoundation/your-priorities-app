@@ -43,6 +43,7 @@ export declare class YpLogin extends YpBaseElement {
     oneTimeLoginName: string | undefined;
     hasOneTimeLoginWithName: boolean;
     fullWithLoginButton: boolean;
+    alwaysShowCreateUser: boolean;
     registrationQuestionsGroup: YpGroupData | undefined;
     onLoginFunction: Function | undefined;
     isSending: boolean;

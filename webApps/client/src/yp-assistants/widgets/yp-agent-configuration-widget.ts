@@ -4,6 +4,7 @@ import { css, html } from "lit";
 
 import "@material/web/iconbutton/filled-icon-button.js";
 import { YpAssistantServerApi } from "../AssistantServerApi.js";
+import { YpSnackbar } from "../../yp-app/yp-snackbar.js";
 
 @customElement("yp-agent-configuration-widget")
 export class YpAgentConfigurationWidget extends YpBaseElement {
@@ -113,7 +114,10 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
     console.log("submitConfiguration");
 
     if (this.haveSubmittedConfigurationPastSecond) {
-      console.error("Already submitted configuration past second", new Error().stack);
+      console.error(
+        "Already submitted configuration past second",
+        new Error().stack
+      );
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
       this.haveSubmittedConfigurationPastSecond = false;
@@ -122,38 +126,73 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
       this.haveSubmittedConfigurationPastSecond = true;
     }
 
-    const answers: YpStructuredAnswer[] = [];
+    // Parse the required questions
+    const questions = this.parsedRequiredQuestions; // from get parsedRequiredQuestions()
 
-    // Get answers from required questions
-    if (this.requiredQuestions) {
-      const questions = JSON.parse(this.requiredQuestions);
+    // Gather answers from user inputs
+    const answers: YpStructuredAnswer[] = [];
+    if (questions.length > 0) {
       for (const question of questions) {
         const questionElement = this.shadowRoot!.querySelector(
           `#structuredQuestion_${
             question.uniqueId || `noId_${questions.indexOf(question)}`
           }`
         ) as any;
-
         if (questionElement) {
           const answer = questionElement.getAnswer();
           if (answer) {
             answers.push({
-              uniqueId: question.uniqueId,
-              value: answer.value,
+              uniqueId: question.uniqueId!,
+              value: (answer.value || "").trim(),
             });
           }
         }
       }
     }
 
-    await this.serverApi.submitAgentConfiguration(
-      this.domainId,
-      this.agentProductId.toString(),
-      this.subscriptionId,
-      answers
-    );
+    // 1) Enforce a “fully answered” check
+    //    i.e. you must have as many answers as there are required questions.
+    if (questions.length > 0 && answers.length < questions.length) {
+      this.sendError(
+        "You must complete all required configuration questions before submitting."
+      );
+      this.haveSubmittedConfigurationPastSecond = false;
+      return;
+    }
+
+    // 2) Enforce each answer is non-empty
+    for (const question of questions) {
+      const found = answers.find((a) => a.uniqueId === question.uniqueId);
+      if (!found || !found.value) {
+        this.sendError(
+           "Please complete all required questions"
+        );
+        this.haveSubmittedConfigurationPastSecond = false;
+        return;
+      }
+    }
+
+    try {
+      await this.serverApi.submitAgentConfiguration(
+        this.domainId,
+        this.agentProductId.toString(),
+        this.subscriptionId,
+        answers
+      );
+    } catch (error) {
+      this.sendError("Error submitting agent configuration");
+      return;
+    }
 
     this.fireGlobal("agent-configuration-submitted");
+  }
+
+  sendError(message: string) {
+    window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
+      toast.labelText = message;
+      toast.open = true;
+      debugger;
+    });
   }
 
   get parsedRequiredQuestions(): YpStructuredQuestionData[] {
@@ -182,7 +221,6 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
     return html`<div class="agent-header layout horizontal">
       <div class="agent-header-title">${this.t("agentConfiguration")}</div>
       <div class="flex"></div>
-
     </div>`;
   }
 
@@ -209,7 +247,10 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
           </div>
         </div>
         <div class="layout horizontal">
-          <md-filled-button ?has-static-theme="${this.hasStaticTheme}" @click="${this.submitConfiguration}">
+          <md-filled-button
+            ?has-static-theme="${this.hasStaticTheme}"
+            @click="${this.submitConfiguration}"
+          >
             ${this.t("Submit")}
           </md-filled-button>
         </div>

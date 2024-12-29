@@ -25,6 +25,7 @@ export enum CommonModes {
 }
 
 export abstract class YpBaseAssistant extends YpBaseChatBot {
+  protected voiceEnabled: boolean;
   wsClientId: string;
   wsClientSocket: WebSocket;
   wsClients: Map<string, WebSocket>;
@@ -56,6 +57,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     memoryId: string
   ) {
     super(wsClientId, wsClients, memoryId);
+    this.voiceEnabled = false;
     this.domainId = domainId;
     if (!domainId) {
       throw new Error("Domain ID is required");
@@ -172,6 +174,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     console.log(`updateAiModelSession: ${message}`);
   }
 
+  async maybeSendTextResponse(message: string) {
+    if (!this.voiceEnabled) {
+      this.sendToClient("assistant", message, "message");
+      await this.addAssistantMessage(message);
+      console.debug(`Sent text message to client: ${message}`);
+    }
+  }
+
   async processClientSystemMessage(
     clientEvent: YpAssistantClientSystemMessage
   ) {
@@ -187,6 +197,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       this.emit(
         "update-ai-model-session",
         "User is logged in, lets move to the next step"
+      );
+
+      await this.maybeSendTextResponse(
+        "Logged in, ready to move on to the next step."
       );
     } else if (clientEvent.message === "agent_configuration_submitted") {
       console.log(`agent_configuration_submitted emitting`);
@@ -225,6 +239,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           "update-ai-model-session",
           "The agent configuration was submitted successfully and the agent is ready to create its first agent run"
         );
+
+        await this.maybeSendTextResponse(
+          "The agent configuration was submitted successfully and the agent is ready to create its first agent run."
+        );
+
       } catch (error) {
         console.error(`Error finding subscription: ${error}`);
         this.emit(
@@ -331,6 +350,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     await this.saveMemory();
   }
+
 
   /**
    * Convert tool result to message format

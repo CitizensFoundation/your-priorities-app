@@ -55,6 +55,8 @@ interface GroupClass extends DbData {
   configuration: YpGroupConfiguration;
   hasGroupAdmins(user: UserClass): Promise<boolean>;
   addGroupAdmins(user: UserClass): Promise<void>;
+  hasGroupUsers(user: UserClass): Promise<boolean>;
+  addGroupUsers(user: UserClass): Promise<void>;
 }
 
 interface UserClass extends DbData {

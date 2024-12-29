@@ -452,6 +452,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     await this.updateComplete;
     window.appGlobals.activity(`Assistant - start text mode`);
 
+    this.sendChatMessage(
+      "Show me the agents"
+    );
+
     // wait 10 ms
     await new Promise((resolve) => setTimeout(resolve, 10));
     this.scrollDown();

@@ -41,6 +41,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.disableFacebookLoginForGroup = false;
         this.hasOneTimeLoginWithName = false;
         this.fullWithLoginButton = false;
+        this.alwaysShowCreateUser = false;
         this.isSending = false;
         this.reloadPageOnDialogClose = true;
     }
@@ -1388,7 +1389,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         window.appUser.logout();
     }
     setupCreateOptions() {
-        if (window.appUser.loginForAcceptInviteParams) {
+        if (window.appUser.loginForAcceptInviteParams || this.alwaysShowCreateUser) {
             this.createEnabled = true;
         }
         else if (this.domain &&
@@ -1686,6 +1687,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "fullWithLoginButton", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpLogin.prototype, "alwaysShowCreateUser", void 0);
 __decorate([
     property({ type: Object })
 ], YpLogin.prototype, "registrationQuestionsGroup", void 0);

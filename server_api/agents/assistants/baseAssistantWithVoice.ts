@@ -12,7 +12,6 @@ interface VoiceToolResult extends ToolExecutionResult {
 }
 
 export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
-  protected voiceEnabled: boolean;
   protected voiceBot: YpBaseChatBotWithVoice | undefined;
 
   constructor(
