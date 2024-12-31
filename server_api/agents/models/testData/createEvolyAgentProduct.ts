@@ -100,13 +100,72 @@ async function createAgentProductsAndPlans() {
       ],
     };
 
+    const fundingAgentWorkflow: YpWorkflowConfiguration = {
+      currentStepIndex: 0,
+      steps: [
+        {
+          name: "Funding Agent Wide Search",
+          shortName: "Wide Search",
+          description:
+            "Wide search for investors and funding opportunities.",
+          shortDescription: "Wide search for investors and funding opportunities.",
+          agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
+          type: "agentOps",
+          stepBackgroundColor: "#ffdc2f",
+          stepTextColor: "#211e1c"
+        },
+        {
+          name: "Funding Agent Human Prioritization",
+          shortName: "Human Prioritization",
+          description: "Human prioritization of the wide search results.",
+          shortDescription: "Human prioritization of the wide search results.",
+          agentClassUuid: "a1b2c3d4-e5f6-c7c8-a9c0-c1225354f516",
+          type: "engagmentFromOutputConnector",
+          stepBackgroundColor: "#e74c3c",
+          stepTextColor: "#ffffff",
+        },
+        {
+          name: "Funding Agent Detailed Search",
+          shortName: "Detailed Search",
+          description:
+            "Detailed search for investors and funding opportunities.",
+          shortDescription: "Detailed search for investors and funding opportunities.",
+          agentClassUuid: "b36ffca6-7363-44be-bd55-40661210cf24",
+          type: "agentOps",
+          stepBackgroundColor: "#1e90ff",
+          stepTextColor: "#ffffff",
+        },
+        {
+          name: "Funding Agent Detailed Search Human Prioritization",
+          shortName: "Detailed Search Human Prioritization",
+          description: "Human prioritization of the detailed search results.",
+          shortDescription: "Human prioritization of the detailed search results.",
+          agentClassUuid: "b36ffca6-7363-44be-bd55-40661210cf24",
+          type: "engagmentFromOutputConnector",
+          stepBackgroundColor: "#2ecc71",
+          stepTextColor: "#ffffff",
+        },
+        {
+          name: "Funding Agent Report",
+          shortName: "Funding Agent Report",
+          description:
+            "Report on investors and funding opportunities.",
+          shortDescription: "Report on investors and funding opportunities.",
+          agentClassUuid: "1bbf8f86-0ffc-4356-aaa1-9cea04b78ec4",
+          type: "agentOps",
+          stepBackgroundColor: "#d486da",
+          stepTextColor: "#ffffff",
+        },
+      ],
+    };
+
     const agentProductsData = [
       {
         name: "Competitor Agent Free Trial",
         description: "Analyzes competitor strategies and market positions.",
         configuration: {
           workflow: competitionAgentWorkflow,
-          templateWorkflowCommunityId: 11,
+          templateWorkflowCommunityId: 63,
         } as YpAgentProductConfiguration,
         status: {
           currentStatus: "active",
@@ -198,7 +257,7 @@ async function createAgentProductsAndPlans() {
         groupId: 11,
         configuration: {
           workflow: competitionAgentWorkflow,
-          templateWorkflowCommunityId: 11,
+          templateWorkflowCommunityId: 63,
         } as YpAgentProductConfiguration,
         status: {
           currentStatus: "active",
@@ -343,8 +402,8 @@ async function createAgentProductsAndPlans() {
           "Identifies and analyzes funding opportunities and investment strategies.",
         groupId: 33814,
         configuration: {
-          workflow: {},
-          templateWorkflowCommunityId: 15,
+          workflow: fundingAgentWorkflow,
+          templateWorkflowCommunityId: 10175,
         } as YpAgentProductConfiguration,
         status: {},
         subscriptionPlan: {
