@@ -218,6 +218,10 @@ export const YpPostBaseWithAnswers = <T extends Constructor<YpBaseElement>>(
         this.post.public_data.structuredAnswersJson.forEach(answer => {
           if (answer && answer.value) {
             const question = questionHash[answer.uniqueId];
+            if (!question || question.hiddenToUser === true) {
+              return;
+            }
+
             if (question) {
               if (showDescriptionBeforeIdHash[answer.uniqueId]) {
                 outText +=

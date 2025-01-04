@@ -7,6 +7,7 @@ import "./yp-group-header.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
+import "./yp-xls-download.js";
 export declare const GroupTabTypes: Record<string, number>;
 export declare class YpGroup extends YpCollection {
     collection: YpGroupData | undefined;
@@ -49,12 +50,13 @@ export declare class YpGroup extends YpCollection {
     refresh(fromMainApp?: boolean): Promise<void>;
     _setupGroupSaml(group: YpGroupData): void;
     scrollToCollectionItemSubClass(): void;
-    renderTabs(): typeof nothing | TemplateResult<1>;
+    renderTabs(): TemplateResult<1> | typeof nothing;
+    renderXlsDownload(): TemplateResult<1>;
     renderPostList(statusFilter: string): TemplateResult;
     renderCurrentGroupTabPage(): TemplateResult | undefined;
     renderAllOurIdeas(): TemplateResult<1>;
     renderStaticHtml(): TemplateResult<1>;
-    renderHeader(): typeof nothing | TemplateResult<1>;
+    renderHeader(): TemplateResult<1> | typeof nothing;
     get cleanedGroupType(): number;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderAgentsOps(): TemplateResult<1>;

@@ -210,12 +210,12 @@ export class SubscriptionTools extends BaseAssistantTools {
           maxRunsPerCycle="${result.plan.configuration.max_runs_per_cycle}"
         ></yp-agent-chip-for-purchase></div>`;
             }
-            this.assistant.emit("update-ai-model-session", "Successfully subscribed to agent plan, now offer to start and show the configuration tool/widget");
+            this.assistant.emit("update-ai-model-session", "Successfully subscribed to agent plan, now offer to show the configuration input tool/widget to configure the agent");
             return {
                 success: true,
                 html,
                 data: {
-                    message: "Successfully subscribed to agent plan, now the user can configure the agent",
+                    message: "Successfully subscribed to agent plan, now offer to show the configuration input tool/widget to configure the agent",
                     subscription: result.subscription,
                     subscriptionPlan: result.plan,
                 },

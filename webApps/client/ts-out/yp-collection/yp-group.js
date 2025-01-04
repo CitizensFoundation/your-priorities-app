@@ -19,6 +19,7 @@ import "../yp-post/yp-post-card-add.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpGroupType } from "./ypGroupType.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import "./yp-xls-download.js";
 export const GroupTabTypes = {
     Open: 0,
     InProgress: 1,
@@ -722,6 +723,12 @@ let YpGroup = class YpGroup extends YpCollection {
             return nothing;
         }
     }
+    renderXlsDownload() {
+        return html `<yp-xls-download
+      .collectionId="${this.collectionId}"
+      .collectionType="${this.collectionType}"
+    ></yp-xls-download>`;
+    }
     renderPostList(statusFilter) {
         return this.collection
             ? html `
@@ -734,8 +741,10 @@ let YpGroup = class YpGroup extends YpCollection {
                     ? `(${this.tabCounters["open"]})`
                     : ""}</span
                   >
-                </div>`
+                </div>
+              `
                 : nothing}
+          <div class="xlsDownloadContainer">${this.renderXlsDownload()}</div>
           <div class="layout vertical center-center">
             <yp-posts-list
               id="${statusFilter}PostList"
@@ -853,6 +862,11 @@ let YpGroup = class YpGroup extends YpCollection {
             super.styles,
             //TODO: Fix this hack below
             css `
+        .xlsDownloadContainer {
+          padding-left: 32px;
+          padding-top: 8px;
+        }
+
         yp-posts-list {
           width: calc(100% - 66px);
         }

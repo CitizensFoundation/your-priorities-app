@@ -134,39 +134,40 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             const nodeId = this.nodeToEditInfo.id;
             await this.api.updateNodeConfiguration(this.groupId, nodeType, nodeId, updatedConfig);
             // Handle AI model updates for agents
-            if (nodeType === "agent" && aiModelUpdates) {
+            if (nodeType === "agent" && aiModelUpdates && aiModelUpdates.length > 0) {
                 const currentAiModels = await this.api.getAgentAiModels(this.groupId, nodeId);
                 const existingAttachments = currentAiModels.map((m) => ({
                     size: m.configuration.modelSize,
                     type: m.configuration.type,
                     id: m.id,
                 }));
-                // 2) Build an array of the *desired* attachments from aiModelUpdates
-                //    We skip any that have modelId === null (meaning the user wants none)
-                const desiredAttachments = aiModelUpdates
-                    .filter((u) => u.modelId !== null)
-                    .map((u) => ({
-                    size: u.size,
-                    type: u.type,
-                    id: Number(u.modelId),
-                }));
-                // 3) Figure out which attachments to REMOVE
-                //    - Those that exist now, but are not found in the new array
-                const toRemove = existingAttachments.filter((oldItem) => !desiredAttachments.some((newItem) => newItem.size === oldItem.size &&
-                    newItem.type === oldItem.type &&
-                    newItem.id === oldItem.id));
-                // 4) Figure out which attachments to ADD
-                //    - Those that are desired, but are not in the old array
-                const toAdd = desiredAttachments.filter((newItem) => !existingAttachments.some((oldItem) => newItem.size === oldItem.size &&
-                    newItem.type === oldItem.type &&
-                    newItem.id === oldItem.id));
-                // 5) Remove the old attachments that are no longer needed
-                for (const item of toRemove) {
-                    await this.api.removeAgentAiModel(this.groupId, nodeId, item.id);
-                }
-                // 6) Add the new attachments that are missing
-                for (const item of toAdd) {
-                    await this.api.addAgentAiModel(this.groupId, nodeId, item.id, item.size);
+                // Only process updates if aiModelUpdates contains actual changes
+                if (aiModelUpdates.some((update) => update.modelId !== undefined)) {
+                    // Build array of desired attachments (unchanged)
+                    const desiredAttachments = aiModelUpdates
+                        .filter((u) => u.modelId !== null)
+                        .map((u) => ({
+                        size: u.size,
+                        type: u.type,
+                        id: Number(u.modelId),
+                    }));
+                    // Rest of the comparison and update logic...
+                    const toRemove = existingAttachments.filter((oldItem) => !desiredAttachments.some((newItem) => newItem.size === oldItem.size &&
+                        newItem.type === oldItem.type &&
+                        newItem.id === oldItem.id));
+                    // 4) Figure out which attachments to ADD
+                    //    - Those that are desired, but are not in the old array
+                    const toAdd = desiredAttachments.filter((newItem) => !existingAttachments.some((oldItem) => newItem.size === oldItem.size &&
+                        newItem.type === oldItem.type &&
+                        newItem.id === oldItem.id));
+                    // 5) Remove the old attachments that are no longer needed
+                    for (const item of toRemove) {
+                        await this.api.removeAgentAiModel(this.groupId, nodeId, item.id);
+                    }
+                    // 6) Add the new attachments that are missing
+                    for (const item of toAdd) {
+                        await this.api.addAgentAiModel(this.groupId, nodeId, item.id, item.size);
+                    }
                 }
             }
             // Update the local state

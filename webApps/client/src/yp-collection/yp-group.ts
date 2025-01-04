@@ -24,8 +24,8 @@ import { cache } from "lit/directives/cache.js";
 import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpGroupType } from "./ypGroupType.js";
-import G from "glob";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import "./yp-xls-download.js";
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -931,6 +931,13 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  renderXlsDownload() {
+    return html`<yp-xls-download
+      .collectionId="${this.collectionId as number}"
+      .collectionType="${this.collectionType}"
+    ></yp-xls-download>`;
+  }
+
   renderPostList(statusFilter: string): TemplateResult {
     return this.collection
       ? html`
@@ -943,8 +950,10 @@ export class YpGroup extends YpCollection {
                       ? `(${this.tabCounters["open"]})`
                       : ""}</span
                   >
-                </div>`
+                </div>
+              `
             : nothing}
+          <div class="xlsDownloadContainer">${this.renderXlsDownload()}</div>
           <div class="layout vertical center-center">
             <yp-posts-list
               id="${statusFilter}PostList"
@@ -1078,6 +1087,11 @@ export class YpGroup extends YpCollection {
       super.styles,
       //TODO: Fix this hack below
       css`
+        .xlsDownloadContainer {
+          padding-left: 32px;
+          padding-top: 8px;
+        }
+
         yp-posts-list {
           width: calc(100% - 66px);
         }

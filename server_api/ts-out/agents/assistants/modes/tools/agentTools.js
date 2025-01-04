@@ -386,7 +386,7 @@ export class AgentTools extends BaseAssistantTools {
                 success: true,
                 clientEvents: [clientEvent],
                 data: {
-                    message: "Submitted configuration for the current agent successfully",
+                    message: "Submitted configuration for the current agent successfully now offer the user to start the agent workflow run",
                 },
             };
         }

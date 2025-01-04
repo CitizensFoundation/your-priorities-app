@@ -20,15 +20,15 @@ export declare class PlausibleFilters extends PlausibleBaseElementWithState {
     renderDropdownFilter(filter: string[]): import("lit-html").TemplateResult<1>;
     filterDropdownOption(option: string): import("lit-html").TemplateResult<1>;
     renderDropdownContentOriginal(): import("lit-html").TemplateResult<1> | import("lit-html").TemplateResult<1>[];
-    renderDropdownContent(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderDropdownContent(): import("lit-html").TemplateResult<1> | typeof nothing;
     handleKeyup(e: KeyboardEvent): void;
     handleResize(): void;
     rewrapFilters(): void;
     renderListFilter(filter: string[]): import("lit-html").TemplateResult<1>;
-    renderDropdownButton(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderDropdownButton(): import("lit-html").TemplateResult<1> | typeof nothing;
     toggleMenu(): void;
     renderDropDown(): import("lit-html").TemplateResult<1>;
-    renderFilterList(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderFilterList(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=pl-filters.d.ts.map

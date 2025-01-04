@@ -9,7 +9,7 @@ export declare class YpPointCommentEdit extends YpBaseElementWithLogin {
     point: YpPointData | undefined;
     image: YpImageData | undefined;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     get newPointComment(): string;
     connectedCallback(): void;
