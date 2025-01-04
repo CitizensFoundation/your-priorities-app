@@ -315,7 +315,7 @@ export class AgentTools extends BaseAssistantTools {
     get showConfigurationWidget() {
         return {
             name: "show_configuration_widget_if_needed_or_user_asks_to_show_it",
-            description: "Show the configuration widget for the current agent, this is needed before running the agent workflow",
+            description: "Show the configuration widget for the current agent. The user needs to fill out the configuration before running the agent workflow to make sure to offer it to the user.",
             type: "function",
             parameters: {
                 type: "object",
