@@ -276,7 +276,7 @@ export class YourPrioritiesApi {
   addInviteAsAnonMiddleWare(): void {
     this.app.use(
       async (req: YpRequest, res: express.Response, next: NextFunction) => {
-        if (!req.user && req.query.anonInvite && req.query.token) {
+        if (req.query.anonInvite && req.query.token) {
           const token = req.query.token;
           try {
             //TODO: Fix this "as any" in all places
@@ -296,9 +296,16 @@ export class YourPrioritiesApi {
 
             if (invite) {
               const anonEmail = req.sessionID + "_v3anonymous@citizens.is";
-              let user = await (models as any).User.findOne({
-                where: { email: anonEmail },
-              });
+              let user;
+
+              if (req.user) {
+                user = req.user;
+              } else {
+                user = await (models as any).User.findOne({
+                  where: { email: anonEmail },
+                });
+              }
+
               if (!user) {
                 user = await (models as any).User.create({
                   email: anonEmail,

@@ -9,12 +9,25 @@ import { YpAgentChip } from "./yp-agent-chip.js";
 import { css, html } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
+    constructor() {
+        super(...arguments);
+        this.type = "coming_soon";
+    }
     static get styles() {
         return [
             super.styles,
             css `
         .purchase-info {
           text-align: right;
+        }
+
+        .coming-soon-info {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--yp-sys-color-agent-blue);
+          text-transform: uppercase;
+          text-align: right;
+          margin-bottom: 8px;
         }
 
         .free-trial {
@@ -121,7 +134,8 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
             <div class="flex"></div>
             <div class="layout vertical self-end">
               <div class="free-trial"><div ?hidden="${this.price > 0}">${this.t("freeTrial")}</div></div>
-              <div class="purchase-info">
+              <div class="coming-soon-info"><div ?hidden="${this.type != "coming_soon"}">${this.t("comingSoon")}</div></div>
+              <div class="purchase-info" ?hidden="${this.type != "paid"}">
                 <div
                   class="${this.currency == "USD"
             ? "price"
@@ -142,6 +156,9 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
 __decorate([
     property({ type: Number })
 ], YpAgentChipForPurchase.prototype, "price", void 0);
+__decorate([
+    property({ type: String })
+], YpAgentChipForPurchase.prototype, "type", void 0);
 __decorate([
     property({ type: String })
 ], YpAgentChipForPurchase.prototype, "currency", void 0);

@@ -30,6 +30,7 @@ export class SubscriptionTools extends BaseAssistantTools {
             for (const subscription of status.availableSubscriptions) {
                 agentChips += `<div class="agent-chips"><yp-agent-chip-for-purchase
           isSubscribed="${true}"
+          type="${subscription.Plan?.configuration.type}"
           agentProductId="${subscription.Plan?.AgentProduct?.id}"
           subscriptionPlanId="${subscription.Plan?.id}"
           agentName="${subscription.Plan?.AgentProduct?.name}"
@@ -87,10 +88,37 @@ export class SubscriptionTools extends BaseAssistantTools {
                 console.log(`list_all_agents_available_for_purchase: ${JSON.stringify(status, null, 2)}`);
             }
             let agentChips = "";
-            const sortedPlans = [...status.availablePlans].sort((a, b) => b.price - a.price);
+            function planTypePriority(type) {
+                switch (type) {
+                    case "coming_soon":
+                        return 0;
+                    case "paid":
+                        return 1;
+                    case "free_trial":
+                        return 2;
+                    default:
+                        return 999;
+                }
+            }
+            // 2) Custom sort function
+            const sortedPlans = [...status.availablePlans].sort((a, b) => {
+                // Compare by type priority first
+                const typeComparison = planTypePriority(a.type) - planTypePriority(b.type);
+                if (typeComparison !== 0) {
+                    // If types differ, that decides the order
+                    return typeComparison;
+                }
+                // If both are the same type and it's "paid", sort by price descending
+                if (a.type === "paid" && b.type === "paid") {
+                    return b.price - a.price;
+                }
+                // Otherwise keep them in the same order if they're not "paid"
+                return 0;
+            });
             for (const agent of sortedPlans) {
                 agentChips += `<yp-agent-chip-for-purchase
           subscriptionPlanId="${agent.subscriptionPlanId}"
+          type="${agent.type}"
           agentName="${agent.name}"
           agentDescription="${agent.description}"
           agentImageUrl="${agent.imageUrl}"

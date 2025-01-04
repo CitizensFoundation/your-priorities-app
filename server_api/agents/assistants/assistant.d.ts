@@ -51,6 +51,7 @@ interface AssistantAgentBundle {
 interface AssistantAgentPlan {
   subscriptionPlanId: number;
   name: string;
+  type: YpSubscriptionPlanType;
   description: string;
   imageUrl: string;
   price: number;

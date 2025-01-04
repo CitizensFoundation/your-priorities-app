@@ -58,6 +58,7 @@ export class SubscriptionModels {
       return {
         availablePlans: availablePlans.map((plan) => ({
           subscriptionPlanId: plan.id,
+          type: plan.configuration?.type || "coming_soon",
           name: plan.AgentProduct?.configuration?.displayName || "No name available",
           description: plan.AgentProduct?.description || "No description available",
           imageUrl: plan.configuration?.imageUrl || "",

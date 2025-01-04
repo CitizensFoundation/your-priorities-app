@@ -9,6 +9,9 @@ export class YpAgentChipForPurchase extends YpAgentChip {
   price!: number;
 
   @property({ type: String })
+  type: string = "coming_soon";
+
+  @property({ type: String })
   currency!: string;
 
   @property({ type: Number })
@@ -23,6 +26,15 @@ export class YpAgentChipForPurchase extends YpAgentChip {
       css`
         .purchase-info {
           text-align: right;
+        }
+
+        .coming-soon-info {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--yp-sys-color-agent-blue);
+          text-transform: uppercase;
+          text-align: right;
+          margin-bottom: 8px;
         }
 
         .free-trial {
@@ -131,7 +143,8 @@ export class YpAgentChipForPurchase extends YpAgentChip {
             <div class="flex"></div>
             <div class="layout vertical self-end">
               <div class="free-trial"><div ?hidden="${this.price > 0}">${this.t("freeTrial")}</div></div>
-              <div class="purchase-info">
+              <div class="coming-soon-info"><div ?hidden="${this.type != "coming_soon"}">${this.t("comingSoon")}</div></div>
+              <div class="purchase-info" ?hidden="${this.type != "paid"}">
                 <div
                   class="${this.currency == "USD"
                     ? "price"

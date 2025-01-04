@@ -69,7 +69,8 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
           ${link ? `<p><a href="${link}">${link}</a></p>` : ""}
         </div>
       `;
-            for (let u = 0; u < Math.min(admins.length, 50); u++) {
+            const MAX_ADMIN_EMAILS = 25;
+            for (let u = 0; u < Math.min(admins.length, MAX_ADMIN_EMAILS); u++) {
                 queue.add("send-one-email", {
                     subject: subject,
                     template: "general_user_notification",
@@ -267,7 +268,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                                 console.error(`NotificationAgentQueueManager: Agent run ID ${agentRunId} not found.`);
                             }
                             if (agent) {
-                                // Send websocket notification
+                                // Send notification
                                 await this.sendNotification(agent, agentRun, type, wsClientId, agentRun.status, returnvalue, agentRunId, updatedWorkflow);
                             }
                             else {

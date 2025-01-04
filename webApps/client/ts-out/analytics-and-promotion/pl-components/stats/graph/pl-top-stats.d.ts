@@ -10,7 +10,7 @@ export declare class PlausibleTopStats extends PlausibleBaseElement {
     metric: string;
     topStatData: PlausibleTopStatsData | undefined;
     static get styles(): import("lit").CSSResult[];
-    renderComparison(name: string, comparison: number): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderComparison(name: string, comparison: number): typeof nothing | import("lit-html").TemplateResult<1>;
     topStatNumberShort(stat: PlausibleStatData): string | number;
     topStatTooltip(stat: PlausibleStatData): string | null;
     titleFor(stat: PlausibleStatData): string;

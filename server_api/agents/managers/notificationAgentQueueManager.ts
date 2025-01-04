@@ -108,7 +108,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         </div>
       `;
 
-      for (let u = 0; u < Math.min(admins.length, 50); u++) {
+      const MAX_ADMIN_EMAILS = 25;
+
+      for (let u = 0; u < Math.min(admins.length, MAX_ADMIN_EMAILS); u++) {
         queue.add(
           "send-one-email",
           {
@@ -408,7 +410,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
                 );
               }
               if (agent) {
-                // Send websocket notification
+                // Send notification
                 await this.sendNotification(
                   agent,
                   agentRun,

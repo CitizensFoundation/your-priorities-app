@@ -1,6 +1,7 @@
 import { YpAgentChip } from "./yp-agent-chip.js";
 export declare class YpAgentChipForPurchase extends YpAgentChip {
     price: number;
+    type: string;
     currency: string;
     maxRunsPerCycle: number;
     isSubscribed: string | undefined;
