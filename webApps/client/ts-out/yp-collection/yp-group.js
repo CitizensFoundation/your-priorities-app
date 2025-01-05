@@ -744,7 +744,12 @@ let YpGroup = class YpGroup extends YpCollection {
                 </div>
               `
                 : nothing}
-          <div class="xlsDownloadContainer">${this.renderXlsDownload()}</div>
+          <div
+            class="xlsDownloadContainer"
+            ?hidden="${!YpAccessHelpers.checkGroupAccess(this.collection)}"
+          >
+            ${this.renderXlsDownload()}
+          </div>
           <div class="layout vertical center-center">
             <yp-posts-list
               id="${statusFilter}PostList"

@@ -953,7 +953,14 @@ export class YpGroup extends YpCollection {
                 </div>
               `
             : nothing}
-          <div class="xlsDownloadContainer">${this.renderXlsDownload()}</div>
+          <div
+            class="xlsDownloadContainer"
+            ?hidden="${!YpAccessHelpers.checkGroupAccess(
+              this.collection as YpGroupData
+            )}"
+          >
+            ${this.renderXlsDownload()}
+          </div>
           <div class="layout vertical center-center">
             <yp-posts-list
               id="${statusFilter}PostList"

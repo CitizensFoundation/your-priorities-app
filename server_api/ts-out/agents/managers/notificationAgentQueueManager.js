@@ -40,7 +40,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         }
         const currentWorkflowStep = updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex];
         // Send email notification
-        const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.name} ready`;
+        const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.shortName} ready`;
         const content = `Next workflow step is ready: ${currentWorkflowStep?.description}`;
         const bundleId = agentRun.Subscription?.Plan?.AgentProduct?.AgentBundles?.[0]?.id || 1;
         await this.sendNotificationEmail(agent, subject, content, bundleId);
@@ -66,7 +66,6 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         <div>
           <h1>${subject}</h1>
           <p>${content}</p>
-          ${link ? `<p><a href="${link}">${link}</a></p>` : ""}
         </div>
       `;
             const MAX_ADMIN_EMAILS = 25;

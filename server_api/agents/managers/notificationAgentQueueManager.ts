@@ -67,7 +67,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex];
 
     // Send email notification
-    const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.name} ready`;
+    const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.shortName} ready`;
     const content = `Next workflow step is ready: ${currentWorkflowStep?.description}`;
 
     const bundleId =
@@ -104,7 +104,6 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         <div>
           <h1>${subject}</h1>
           <p>${content}</p>
-          ${link ? `<p><a href="${link}">${link}</a></p>` : ""}
         </div>
       `;
 

@@ -179,6 +179,43 @@ export const YpPostBaseWithAnswers = <T extends Constructor<YpBaseElement>>(
       return `${textType}-${this.post!.id}-${this.language}`;
     }
 
+    _jsonToHtml(data: unknown): string {
+      // If given data is JSON in string form, parse it
+      let parsedData: unknown;
+      if (typeof data === 'string') {
+        try {
+          parsedData = JSON.parse(data);
+        } catch (err) {
+          // If parsing fails, treat it as a raw string
+          return `<div>${data}</div>`;
+        }
+      } else {
+        parsedData = data;
+      }
+
+      // Handle arrays
+      if (Array.isArray(parsedData)) {
+        let itemsHtml = '';
+        for (const item of parsedData) {
+          itemsHtml += `<li>${this._jsonToHtml(item)}</li>`;
+        }
+        return `<ul>${itemsHtml}</ul>`;
+      }
+
+      // Handle objects
+      if (parsedData !== null && typeof parsedData === 'object') {
+        let entriesHtml = '';
+        for (const [key, value] of Object.entries(parsedData)) {
+          entriesHtml += `<div style="padding: 4px;margin-top: 8px;"><b>${key}</b></div>`;
+          entriesHtml += `<div style="padding: 4px">${this._jsonToHtml(value)}</div>`;
+        }
+        return `<div>${entriesHtml}</div>`;
+      }
+
+      // Primitives (string, number, boolean, null, undefined, etc.)
+      return `<span>${String(parsedData)}</span>`;
+    }
+
     get structuredAnswersFormatted() {
       if (
         this.post &&
@@ -230,7 +267,14 @@ export const YpPostBaseWithAnswers = <T extends Constructor<YpBaseElement>>(
               outText += '<b>' + question.text + '</b>\n';
 
               if (answer.value) {
-                outText += answer.value + '\n\n';
+                if (question.type === 'textAreaJson') {
+                  // Special handling for JSON
+                  const jsonHtml = this._jsonToHtml(answer.value);
+                  outText += jsonHtml + '\n\n';
+                } else {
+                  // Default behavior
+                  outText += answer.value + '\n\n';
+                }
               } else {
                 outText += '\n\n';
               }
