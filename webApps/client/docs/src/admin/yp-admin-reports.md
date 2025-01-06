@@ -1,59 +1,60 @@
 # YpAdminReports
 
-YpAdminReports is a custom web component that extends YpAdminPage. It is used for generating and downloading various types of reports in an admin panel, such as fraud audit reports, DOCX, XLS, and user XLS reports. It handles the report generation process, including starting the report creation, polling for progress, and providing a download link once the report is ready.
+The `YpAdminReports` class is a web component that extends `YpAdminPage` and is used for generating and managing reports within an admin interface. It supports different types of reports such as fraud audit reports, DOCX, and XLS formats, and handles the report generation process including progress tracking and downloading.
 
 ## Properties
 
-| Name                    | Type                                      | Description                                                                 |
-|-------------------------|-------------------------------------------|-----------------------------------------------------------------------------|
-| action                  | String                                    | The API endpoint to start report creation.                                  |
-| type                    | "fraudAuditReport" \| "docx" \| "xls" \| "usersxls" \| undefined | The type of report to be generated.                                         |
-| progress                | Number \| undefined                       | The progress of the report generation as a percentage.                      |
-| selectedTab             | Number                                    | The index of the currently selected tab.                                    |
-| error                   | String \| undefined                       | An error message that can be displayed to the user.                         |
-| jobId                   | Number \| undefined                       | The job ID of the report generation process.                                |
-| reportUrl               | String \| undefined                       | The URL where the generated report can be downloaded from.                  |
-| reportGenerationUrl     | String \| undefined                       | The API endpoint to check the report generation progress or to get fraud audits. |
-| downloadDisabled        | Boolean                                   | A flag indicating whether the download button should be disabled.           |
-| toastText               | String \| undefined                       | Text to be displayed in a toast notification.                               |
-| autoTranslateActive     | Boolean                                   | A flag indicating whether automatic translation is active.                  |
-| selectedFraudAuditId    | Number \| undefined                       | The ID of the selected fraud audit.                                         |
-| fraudAuditSelectionActive | Boolean                                   | A flag indicating whether the fraud audit selection is active.              |
-| fraudAuditsAvailable    | YpFraudAuditData[] \| undefined           | An array of available fraud audits for selection.                           |
-| waitingOnFraudAudits    | Boolean                                   | A flag indicating whether the component is waiting for fraud audits to load.|
-| reportCreationProgressUrl | String \| undefined                       | The API endpoint to poll for report creation progress.                      |
+| Name                      | Type                                                                 | Description                                                                 |
+|---------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| `action`                  | `string`                                                             | The API endpoint for report actions.                                        |
+| `type`                    | `"fraudAuditReport" \| "docx" \| "xls" \| "usersxls" \| undefined`   | The type of report to generate.                                             |
+| `progress`                | `number \| undefined`                                                | The progress of the report generation process.                              |
+| `selectedTab`             | `number`                                                             | The index of the currently selected tab.                                    |
+| `error`                   | `string \| undefined`                                                | Error message if any error occurs during report generation.                 |
+| `jobId`                   | `number \| undefined`                                                | The job ID for the report generation process.                               |
+| `reportUrl`               | `string \| undefined`                                                | The URL to download the generated report.                                   |
+| `reportGenerationUrl`     | `string \| undefined`                                                | The URL to initiate report generation.                                      |
+| `downloadDisabled`        | `boolean`                                                            | Indicates if the download button is disabled.                               |
+| `allOurIdeasQuestionId`   | `number \| undefined`                                                | The question ID for "All Our Ideas" configuration.                          |
+| `toastText`               | `string \| undefined`                                                | Text to display in a toast notification.                                    |
+| `autoTranslateActive`     | `boolean`                                                            | Indicates if auto-translation is active.                                    |
+| `selectedFraudAuditId`    | `number \| undefined`                                                | The ID of the selected fraud audit.                                         |
+| `fraudAuditSelectionActive` | `boolean`                                                          | Indicates if fraud audit selection is active.                               |
+| `fraudAuditsAvailable`    | `YpFraudAuditData[] \| undefined`                                    | List of available fraud audits.                                             |
+| `waitingOnFraudAudits`    | `boolean`                                                            | Indicates if the component is waiting for fraud audits to be fetched.       |
+| `reportCreationProgressUrl` | `string \| undefined`                                              | The URL to check the progress of report creation.                           |
 
 ## Methods
 
-| Name                        | Parameters | Return Type | Description                                                                 |
-|-----------------------------|------------|-------------|-----------------------------------------------------------------------------|
-| fraudItemSelection          | event: CustomEvent | void        | Handles the selection of a fraud audit item.                                |
-| startReportCreation         |            | void        | Initiates the report creation process.                                      |
-| startReportCreationResponse | data: YpReportData | void        | Handles the response after starting report creation.                        |
-| pollLaterForProgress        |            | void        | Schedules a poll for report creation progress.                              |
-| reportCreationProgress      |            | void        | Polls for the current progress of report creation.                          |
-| formatAuditReportDates      | data: YpFraudAuditData[] | YpFraudAuditData[] | Formats the dates of fraud audit reports.                                   |
-| fraudAuditsAjaxResponse     | event: CustomEvent | void        | Handles the AJAX response for fraud audits.                                 |
-| reportCreationProgressResponse | response: YpReportData | void        | Handles the response for report creation progress.                          |
-| startGeneration             |            | void        | Starts the report generation process based on the selected type.            |
-| startReportCreationAjax     | url: String | void        | Starts the report creation process via AJAX.                                |
-| getFraudAuditsAjax          | url: String | void        | Fetches available fraud audits via AJAX.                                    |
-| _tabChanged                 |            | void        | Handles the change of the selected tab.                                     |
-
-## Events (if any)
-
-- **None specified**
+| Name                             | Parameters                                                                 | Return Type | Description                                                                 |
+|----------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| `refresh`                        | -                                                                          | `void`      | Resets the component state and refreshes the report data.                   |
+| `connectedCallback`              | -                                                                          | `void`      | Lifecycle method called when the component is added to the document.        |
+| `disconnectedCallback`           | -                                                                          | `void`      | Lifecycle method called when the component is removed from the document.    |
+| `fraudItemSelection`             | `event: CustomEvent`                                                       | `void`      | Handles the selection of a fraud audit item.                                |
+| `startReportCreation`            | -                                                                          | `void`      | Initiates the report creation process.                                      |
+| `startReportCreationResponse`    | `data: YpReportData`                                                       | `void`      | Handles the response from the report creation initiation.                   |
+| `pollLaterForProgress`           | -                                                                          | `void`      | Schedules a check for report creation progress.                             |
+| `reportCreationProgress`         | -                                                                          | `void`      | Fetches the current progress of report creation.                            |
+| `formatAuditReportDates`         | `data: YpFraudAuditData[]`                                                 | `YpFraudAuditData[]` | Formats the dates in the fraud audit data.                                  |
+| `fraudAuditsAjaxResponse`        | `event: CustomEvent`                                                       | `void`      | Handles the response from fetching fraud audits.                            |
+| `reportCreationProgressResponse` | `response: YpReportData`                                                   | `void`      | Handles the response from checking report creation progress.                |
+| `updated`                        | `changedProperties: Map<string \| number \| symbol, unknown>`              | `void`      | Lifecycle method called when properties are updated.                        |
+| `startGeneration`                | -                                                                          | `void`      | Starts the report generation process based on the selected type.            |
+| `startReportCreationAjax`        | `url: string`                                                              | `void`      | Initiates report creation via an AJAX request.                              |
+| `getFraudAuditsAjax`             | `url: string`                                                              | `void`      | Fetches available fraud audits via an AJAX request.                         |
+| `firstUpdated`                   | `_changedProperties: PropertyValueMap<any> \| Map<PropertyKey, unknown>`   | `void`      | Lifecycle method called after the first update of the component.            |
+| `_tabChanged`                    | -                                                                          | `void`      | Handles changes to the selected tab and updates report generation settings. |
+| `renderStart`                    | -                                                                          | `TemplateResult` | Renders the start button and progress bar for report generation.            |
+| `renderDownload`                 | -                                                                          | `TemplateResult` | Renders the download button and related information.                        |
+| `render`                         | -                                                                          | `TemplateResult` | Renders the component's template.                                           |
 
 ## Examples
 
 ```typescript
 // Example usage of the YpAdminReports component
-<yp-admin-reports
-  action="/api/communities"
-  type="fraudAuditReport"
-  selectedTab={0}
-  autoTranslateActive={true}
-></yp-admin-reports>
-```
+import './yp-admin-reports.js';
 
-Please note that the above example is a simplified usage scenario. In a real-world application, you would need to handle events, property changes, and integrate with the rest of your application logic.
+const reportsElement = document.createElement('yp-admin-reports');
+document.body.appendChild(reportsElement);
+```

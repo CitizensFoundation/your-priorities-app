@@ -1,48 +1,45 @@
 # YpOffline
 
-This class extends `YpCodeBase` and provides functionality to handle online and offline events, store content when offline, and send it later when online.
+The `YpOffline` class extends `YpCodeBase` and provides functionality to handle offline and online events, manage content to be sent later when the user is offline, and send it when the user is back online.
 
 ## Properties
 
-| Name                   | Type   | Description                                      |
-|------------------------|--------|--------------------------------------------------|
-| sendLaterStoragePrefix | string | Prefix for the keys used in local storage.       |
+| Name                    | Type   | Description                                      |
+|-------------------------|--------|--------------------------------------------------|
+| sendLaterStoragePrefix  | string | Prefix used for keys in localStorage for storing content to be sent later. |
 
 ## Methods
 
-| Name                               | Parameters                            | Return Type | Description                                                                 |
-|------------------------------------|---------------------------------------|-------------|-----------------------------------------------------------------------------|
-| _onlineEvent                       |                                       | void        | Shows a toast message when the user comes online and checks for content to send. |
-| _offlineEvent                      |                                       | void        | Shows a toast message when the user goes offline.                            |
-| _urlWithQuery                      | url: string, params: any              | string      | Constructs a URL with query parameters.                                     |
-| _getItemsFromLocalStorage          |                                       | YpLocaleStorageItemToSendLater[] | Retrieves items from local storage that are meant to be sent later.         |
-| _sendItems                         | items: YpLocaleStorageItemToSendLater[] | void        | Sends the items that were stored for later sending.                         |
-| _checkContentToSend                |                                       | void        | Checks if there is any content to send and handles it based on the user's online status and login state. |
-| checkContentToSendForLoggedInUser  |                                       | void        | Checks and sends content if the user is logged in and online.               |
-| sendWhenOnlineNext                 | contentToSendLater: YpContentToSendLater | void        | Stores content to send later when the user is online.                       |
-| constructor                        |                                       | void        | Adds event listeners for online and offline events and checks for content to send. |
-
-## Events
-
-- **online**: Emitted when the user comes online.
-- **offline**: Emitted when the user goes offline.
+| Name                          | Parameters                                      | Return Type | Description                                                                 |
+|-------------------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| _onlineEvent                  | -                                               | void        | Handles the online event, shows a toast message, and checks for content to send. |
+| _offlineEvent                 | -                                               | void        | Handles the offline event and shows a toast message.                        |
+| _urlWithQuery                 | url: string, params: any                        | string      | Constructs a URL with query parameters from the given object.               |
+| _getItemsFromLocalStorage     | -                                               | YpLocaleStorageItemToSendLater[] | Retrieves items from localStorage that are marked to be sent later.         |
+| _sendItems                    | items: YpLocaleStorageItemToSendLater[]         | void        | Sends the stored items to their respective URLs and removes them from localStorage upon success. |
+| _checkContentToSend           | -                                               | void        | Checks if there is content to send and attempts to send it if conditions are met. |
+| checkContentToSendForLoggedInUser | -                                           | void        | Public method to check and send content for a logged-in user.               |
+| sendWhenOnlineNext            | contentToSendLater: YpContentToSendLater        | void        | Stores content to be sent later when the user is online.                    |
+| constructor                   | -                                               | -           | Initializes the class, sets up event listeners for online/offline events, and checks for content to send. |
 
 ## Examples
 
 ```typescript
-// Example usage of YpOffline class
-const offlineHandler = new YpOffline();
+// Example usage of the YpOffline class
+const ypOffline = new YpOffline();
 
-// To store content to send later when the user is online
-const contentToSendLater = {
-  url: 'https://api.example.com/data',
+// To store content to be sent later
+ypOffline.sendWhenOnlineNext({
+  url: 'https://example.com/api/data',
   method: 'POST',
   body: { key: 'value' }
-};
-offlineHandler.sendWhenOnlineNext(contentToSendLater);
+});
 
 // To manually check and send content for a logged-in user
-offlineHandler.checkContentToSendForLoggedInUser();
+ypOffline.checkContentToSendForLoggedInUser();
 ```
 
-Note: The `YpLocaleStorageItemToSendLater` and `YpContentToSendLater` types are not defined in the provided code snippet. They should be defined elsewhere in the codebase for the above documentation to be accurate.
+## Events
+
+- **online**: Triggered when the browser goes online, prompting the class to attempt sending stored content.
+- **offline**: Triggered when the browser goes offline, notifying the user of the offline status.

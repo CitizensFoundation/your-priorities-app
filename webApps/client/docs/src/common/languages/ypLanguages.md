@@ -1,34 +1,51 @@
 # YpLanguages
 
-A class that provides static methods and properties to handle language data, including ISO codes, English names, native names, and additional language information not covered by Google Translate.
+The `YpLanguages` class provides a comprehensive list of languages, combining data from ISO6391, additional languages, and Google Translate supported languages. It offers methods to retrieve language names in English and native formats based on language codes.
 
 ## Properties
 
-| Name                          | Type                 | Description                                           |
-|-------------------------------|----------------------|-------------------------------------------------------|
-| allLanguages                  | YpLanguageData[]     | Static property that returns an array of all language data including ISO6391 languages, additional languages, and Google Translate languages. |
-| isoCodesNotInGoogleTranslate  | string[]             | Static property that returns an array of ISO codes for languages that are not supported by Google Translate. |
-| additionalLanguages           | YpLanguageData[]     | Static array of additional language data not included in Google Translate. |
-| googleTranslateLanguages      | YpLanguageData[]     | Static array of language data supported by Google Translate. |
+| Name                      | Type               | Description                                                                 |
+|---------------------------|--------------------|-----------------------------------------------------------------------------|
+| additionalLanguages       | YpLanguageData[]   | A static array of additional languages not covered by ISO6391 or Google Translate. |
+| googleTranslateLanguages  | YpLanguageData[]   | A static array of languages supported by Google Translate.                  |
 
 ## Methods
 
-| Name            | Parameters        | Return Type | Description                                                                 |
-|-----------------|-------------------|-------------|-----------------------------------------------------------------------------|
-| getEnglishName  | code: string      | string \| undefined | Static method that returns the English name of a language given its ISO code. |
-| getNativeName   | code: string      | string \| undefined | Static method that returns the native name of a language given its ISO code. |
+| Name                          | Parameters          | Return Type         | Description                                                                 |
+|-------------------------------|---------------------|---------------------|-----------------------------------------------------------------------------|
+| allLanguages                  | None                | YpLanguageData[]    | Returns a combined list of all languages from ISO6391, additional, and Google Translate languages. |
+| isoCodesNotInGoogleTranslate  | None                | string[]            | Returns a list of ISO language codes that are not supported by Google Translate. |
+| getEnglishName                | code: string        | string              | Returns the English name of the language for the given code. If not found, returns the code itself. |
+| getNativeName                 | code: string        | string \| undefined | Returns the native name of the language for the given code. If not found, returns undefined. |
 
 ## Examples
 
 ```typescript
-// Example usage to get all languages
+// Example usage of the YpLanguages class
+
+// Get all languages
 const languages = YpLanguages.allLanguages;
+console.log(languages);
 
-// Example usage to get English name of a language by its ISO code
-const englishName = YpLanguages.getEnglishName('en');
+// Get English name for a language code
+const englishName = YpLanguages.getEnglishName('es');
+console.log(englishName); // Output: "Spanish"
 
-// Example usage to get native name of a language by its ISO code
-const nativeName = YpLanguages.getNativeName('ja');
+// Get native name for a language code
+const nativeName = YpLanguages.getNativeName('es');
+console.log(nativeName); // Output: "Español"
+
+// Get ISO codes not supported by Google Translate
+const isoCodesNotInGoogle = YpLanguages.isoCodesNotInGoogleTranslate;
+console.log(isoCodesNotInGoogle);
 ```
 
-Please note that the `YpLanguageData` type is assumed to be defined elsewhere in the codebase, typically representing an object with properties for `englishName`, `nativeName`, and `code`.
+## Types
+
+```typescript
+interface YpLanguageData {
+  englishName: string;
+  nativeName: string;
+  code: string;
+}
+```

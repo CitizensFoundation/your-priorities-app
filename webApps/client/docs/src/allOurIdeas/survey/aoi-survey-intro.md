@@ -1,45 +1,45 @@
 # AoiSurveyIntro
 
-A custom element that provides an introduction to a survey, including a welcome message, admin buttons for analytics and settings, and a start button for voting. It is part of a larger application and interacts with global application state and services.
+The `AoiSurveyIntro` class is a custom web component that extends `YpBaseElement`. It is designed to display an introduction to a survey, including group information, a welcome message, and options for administrators to access analytics and admin settings.
 
 ## Properties
 
-| Name       | Type              | Description                                           |
-|------------|-------------------|-------------------------------------------------------|
-| earl       | AoiEarlData       | Data related to the EARL (survey) being introduced.   |
-| group      | YpGroupData       | Data about the group associated with the survey.      |
-| question   | AoiQuestionData   | Data about the current question in the survey.        |
-| isAdmin    | boolean           | Indicates whether the current user is an admin.       |
+| Name      | Type             | Description                                                                 |
+|-----------|------------------|-----------------------------------------------------------------------------|
+| earl      | AoiEarlData      | The data object containing configuration and state information for the survey. |
+| group     | YpGroupData      | The data object representing the group associated with the survey.          |
+| question  | AoiQuestionData  | The data object representing the current question in the survey.            |
+| isAdmin   | boolean          | Indicates whether the current user has administrative privileges.           |
 
 ## Methods
 
-| Name                   | Parameters | Return Type | Description                                                                 |
-|------------------------|------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback      |            | void        | Lifecycle method that runs when the element is added to the document's DOM. |
-| disconnectedCallback   |            | void        | Lifecycle method that runs when the element is removed from the DOM.        |
-| firstUpdated           |            | void        | Lifecycle method that runs after the element's first render.                |
-| _openAnalyticsAndPromption |      | void        | Redirects to the analytics page for the group.                              |
-| _openAdmin             |            | void        | Redirects to the admin page for the group.                                  |
-| renderAdminButtons     |            | TemplateResult | Renders admin buttons for analytics and settings if the user is an admin. |
-| setupFooterObserver    |            | void        | Sets up observers for the footer elements to track their visibility.        |
-| clickStart             |            | void        | Handles the click event on the start voting button.                         |
-| clickResults           |            | void        | Handles the click event on the open results button.                         |
+| Name                        | Parameters | Return Type | Description                                                                 |
+|-----------------------------|------------|-------------|-----------------------------------------------------------------------------|
+| connectedCallback           | None       | Promise<void> | Lifecycle method called when the element is added to the document. Initializes admin status and logs activity. |
+| disconnectedCallback        | None       | void        | Lifecycle method called when the element is removed from the document. Cleans up observers and logs activity. |
+| firstUpdated                | None       | void        | Lifecycle method called after the element's DOM has been updated for the first time. Sets up footer observers. |
+| _openAnalyticsAndPromotions | None       | void        | Redirects the user to the analytics page for the current group.             |
+| _openAdmin                  | None       | void        | Redirects the user to the admin page for the current group.                 |
+| renderAdminButtons          | None       | TemplateResult | Renders the admin buttons for accessing analytics and admin settings.       |
+| setupFooterObserver         | None       | void        | Sets up intersection observers for the footer elements to track visibility. |
+| formattedDescription        | None       | string      | Returns the formatted welcome message with line breaks converted to `<br>`. |
+| clickStart                  | None       | void        | Fires a "startVoting" event and logs the activity.                          |
+| clickResults                | None       | void        | Fires an "openResults" event.                                               |
 
 ## Events
 
-- **startVoting**: Emitted when the start voting button is clicked.
-- **openResults**: Emitted when the open results button is clicked.
+- **startVoting**: Emitted when the "Start Voting" button is clicked.
+- **openResults**: Emitted when the "Open Results" button is clicked.
 
 ## Examples
 
 ```typescript
-// Example usage of the AoiSurveyIntro custom element
-<aoi-survey-intro
-  .earl=${earlData}
-  .group=${groupData}
-  .question=${questionData}
-  .isAdmin=${true}
-></aoi-survey-intro>
-```
+// Example usage of the aoi-survey-intro component
+import './path/to/aoi-survey-intro.js';
 
-Note: The types `AoiEarlData`, `YpGroupData`, and `AoiQuestionData` are assumed to be defined elsewhere in the application and are not detailed in this documentation. The `TemplateResult` type refers to the result of rendering a Lit template.
+const surveyIntro = document.createElement('aoi-survey-intro');
+surveyIntro.earl = { /* AoiEarlData object */ };
+surveyIntro.group = { /* YpGroupData object */ };
+surveyIntro.question = { /* AoiQuestionData object */ };
+document.body.appendChild(surveyIntro);
+```

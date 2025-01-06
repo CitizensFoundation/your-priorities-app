@@ -1,58 +1,54 @@
 # AoiLlmExplainDialog
 
-A custom element that provides a dialog interface for explaining answers within a chatbot context. It extends `YpChatbotBase` and uses Material Web Components.
+The `AoiLlmExplainDialog` class is a custom web component that extends `YpChatbotBase`. It provides a dialog interface for explaining answers using a language model.
 
 ## Properties
 
-| Name                | Type                  | Description                                           |
-|---------------------|-----------------------|-------------------------------------------------------|
-| earl                | AoiEarlData           | The EARL data associated with the dialog.             |
-| groupId             | number                | The group ID for the conversation.                    |
-| question            | AoiQuestionData       | The question data to be explained.                    |
-| questionText        | string                | The text of the question to be explained.             |
-| leftAnswerText      | string                | The text of the left answer option.                   |
-| rightAnswerText     | string                | The text of the right answer option.                  |
-| leftAnswer          | AoiAnswerToVoteOnData | The data for the left answer to vote on.              |
-| rightAnswer         | AoiAnswerToVoteOnData | The data for the right answer to vote on.             |
-| currentError        | string \| undefined   | The current error message, if any.                    |
-| showCloseButton     | boolean               | Indicates if the close button should be shown.        |
-| defaultInfoMessage  | string \| undefined   | The default informational message, if any.            |
-| serverApi           | AoiServerApi          | The server API instance for communication.            |
-| haveSentFirstQuestion | boolean             | Flag indicating if the first question has been sent.  |
+| Name               | Type                          | Description                                                                 |
+|--------------------|-------------------------------|-----------------------------------------------------------------------------|
+| earl               | AoiEarlData                   | Data related to the earl object.                                            |
+| groupId            | number                        | Identifier for the group.                                                   |
+| question           | AoiQuestionData               | Data related to the question being asked.                                   |
+| questionText       | string                        | The text of the question being asked.                                       |
+| leftAnswerText     | string                        | The text of the left answer option.                                         |
+| rightAnswerText    | string                        | The text of the right answer option.                                        |
+| leftAnswer         | AoiAnswerToVoteOnData         | Data related to the left answer option.                                     |
+| rightAnswer        | AoiAnswerToVoteOnData         | Data related to the right answer option.                                    |
+| currentError       | string \| undefined           | Current error message, if any.                                              |
+| showCloseButton    | boolean                       | Determines if the close button should be shown. Defaults to `true`.         |
+| defaultInfoMessage | string \| undefined           | Default informational message.                                              |
+| serverApi          | AoiServerApi                  | Instance of the server API used for communication.                          |
+| haveSentFirstQuestion | boolean                    | Indicates if the first question has been sent. Defaults to `false`.         |
 
 ## Methods
 
-| Name                 | Parameters | Return Type | Description                                      |
-|----------------------|------------|-------------|--------------------------------------------------|
-| setupServerApi       | -          | void        | Sets up the server API instance.                 |
-| connectedCallback    | -          | Promise<void> | Lifecycle method for when the element is connected to the DOM. |
-| disconnectedCallback | -          | void        | Lifecycle method for when the element is disconnected from the DOM. |
-| sendFirstQuestion    | -          | Promise<void> | Sends the first question to the chatbot.        |
-| sendChatMessage      | -          | Promise<void> | Sends a chat message through the chatbot.       |
-| open                 | -          | void        | Opens the dialog.                                |
-| cancel               | -          | void        | Cancels the dialog and closes it.               |
-| textAreaKeyDown      | e: KeyboardEvent | boolean | Handles key down events in the text area.      |
+| Name                  | Parameters | Return Type | Description                                                                 |
+|-----------------------|------------|-------------|-----------------------------------------------------------------------------|
+| setupServerApi        | None       | void        | Initializes the server API instance.                                        |
+| connectedCallback     | None       | Promise<void> | Lifecycle method called when the element is added to the document.          |
+| disconnectedCallback  | None       | void        | Lifecycle method called when the element is removed from the document.      |
+| sendFirstQuestion     | None       | Promise<void> | Sends the first question to the server API.                                 |
+| sendChatMessage       | None       | Promise<void> | Sends a chat message to the server API.                                     |
+| open                  | None       | void        | Opens the dialog.                                                           |
+| cancel                | None       | void        | Closes the dialog and fires a "closed" event.                               |
+| textAreaKeyDown       | e: KeyboardEvent | boolean | Handles keydown events in the text area to prevent default behavior on Enter key. |
+| render                | None       | TemplateResult | Renders the dialog component.                                               |
 
 ## Events
 
-- **yp-ws-opened**: Emitted when the WebSocket connection is opened.
-- **chatbot-close**: Emitted when the chatbot is closed.
+- **closed**: Emitted when the dialog is closed.
 
 ## Examples
 
 ```typescript
-// Example usage of the AoiLlmExplainDialog
+// Example usage of the AoiLlmExplainDialog component
 const dialog = document.createElement('aoi-llm-explain-dialog');
 dialog.earl = someEarlData;
 dialog.groupId = 123;
 dialog.question = someQuestionData;
 dialog.questionText = "What is the capital of France?";
 dialog.leftAnswerText = "Paris";
-dialog.rightAnswerText = "Berlin";
-dialog.leftAnswer = someLeftAnswerData;
-dialog.rightAnswer = someRightAnswerData;
+dialog.rightAnswerText = "Lyon";
 document.body.appendChild(dialog);
 dialog.open();
 ```
-
-Note: The `AoiEarlData`, `AoiQuestionData`, `AoiAnswerToVoteOnData`, and `AoiServerApi` types are assumed to be defined elsewhere in the codebase and are not detailed in this documentation.

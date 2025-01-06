@@ -1,61 +1,58 @@
 # YpGenerateAiImage
 
-A custom web component that provides a user interface for generating AI images, including a dialog with input fields for image style and description, and buttons to submit or cancel the operation.
+The `YpGenerateAiImage` class is a custom web component that extends `YpBaseElement`. It provides functionality to generate AI images based on user input and handles the process of submitting requests, polling for results, and managing UI interactions.
 
 ## Properties
 
-| Name            | Type                      | Description                                                                 |
-|-----------------|---------------------------|-----------------------------------------------------------------------------|
-| submitting      | Boolean                   | Indicates if the image generation is in progress.                           |
-| currentError    | String \| undefined       | Holds the error message if an error occurs during image generation.         |
-| name            | String                    | The name associated with the image to be generated.                         |
-| description     | String                    | The description associated with the image to be generated.                  |
-| collectionId    | Number                    | The ID of the collection to which the generated image will belong.          |
-| collectionType  | String                    | The type of the collection to which the generated image will belong.        |
-| imageType       | YpAiGenerateImageTypes    | The type of image to be generated (e.g., "logo").                           |
-| jobId           | Number \| undefined       | The job ID associated with the image generation process.                    |
-| styleText       | HTMLInputElement          | A reference to the input element for the image style text.                   |
-| timeout         | Number \| undefined       | A reference to the timeout for polling the image generation status.         |
+| Name                        | Type                              | Description                                                                 |
+|-----------------------------|-----------------------------------|-----------------------------------------------------------------------------|
+| `submitting`                | `boolean`                         | Indicates if the image generation process is currently submitting.          |
+| `currentError`              | `string \| undefined`             | Stores the current error message, if any.                                   |
+| `name`                      | `string \| undefined`             | The name associated with the image generation request.                      |
+| `description`               | `string \| undefined`             | The description associated with the image generation request.               |
+| `disableBackgroundGeneration` | `boolean`                       | Determines if background generation is disabled.                            |
+| `collectionId`              | `number`                          | The ID of the collection for which the image is being generated.            |
+| `collectionType`            | `string`                          | The type of the collection for which the image is being generated.          |
+| `imageType`                 | `YpAiGenerateImageTypes`          | The type of image to generate, default is "logo".                           |
+| `jobId`                     | `number \| undefined`             | The job ID associated with the image generation request.                    |
+| `styleText`                 | `HTMLInputElement`                | A reference to the input element for the image style text.                  |
+| `timeout`                   | `number \| undefined`             | Stores the timeout ID for polling operations.                               |
+| `dialog`                    | `MdDialog`                        | A reference to the dialog element used in the component.                    |
 
 ## Methods
 
-| Name               | Parameters                | Return Type | Description                                                                 |
-|--------------------|---------------------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback  | None                      | void        | Lifecycle method called when the component is added to the DOM.             |
-| disconnectedCallback | None                      | void        | Lifecycle method called when the component is removed from the DOM.         |
-| finalPrompt        | None                      | String      | Composes the final prompt string for the AI image generation.               |
-| pollForImage       | None                      | Promise<void> | Starts polling the server for the status of the image generation.          |
-| submit             | None                      | Promise<void> | Submits the request to generate an AI image and starts polling.            |
-| scrollUp           | None                      | void        | Scrolls the dialog content to the top.                                      |
-| open               | name?: String, description?: String | void | Opens the dialog with optional name and description.                      |
-| cancel             | None                      | void        | Cancels the image generation process and closes the dialog.                 |
-| textAreaKeyDown    | e: KeyboardEvent          | Boolean \| undefined | Handles key down events in the text area to prevent form submission on Enter. |
+| Name               | Parameters                                                                 | Return Type | Description                                                                 |
+|--------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| `resetGenerator`   | None                                                                       | `void`      | Resets the generator state, clearing errors and input values.               |
+| `connectedCallback`| None                                                                       | `Promise<void>` | Lifecycle method called when the component is added to the document.        |
+| `disconnectedCallback` | None                                                                   | `void`      | Lifecycle method called when the component is removed from the document.    |
+| `finalPrompt`      | None                                                                       | `string`    | Constructs the final prompt string for image generation.                    |
+| `pollForImage`     | None                                                                       | `Promise<void>` | Initiates polling for the generated image and handles the response.         |
+| `submit`           | None                                                                       | `Promise<void>` | Submits the image generation request and starts polling for the result.     |
+| `scrollUp`         | None                                                                       | `void`      | Scrolls the dialog content to the top.                                      |
+| `open`             | `name: string \| undefined`, `description: string \| undefined`            | `void`      | Opens the dialog with optional name and description.                        |
+| `cancel`           | None                                                                       | `void`      | Cancels the image generation process and closes the dialog.                 |
+| `moveToBackground` | None                                                                       | `void`      | Moves the image generation process to the background and closes the dialog. |
+| `textAreaKeyDown`  | `e: KeyboardEvent`                                                         | `boolean \| undefined` | Handles keydown events in the text area to prevent new lines on Enter key.  |
+| `renderContent`    | None                                                                       | `TemplateResult` | Renders the content of the dialog.                                          |
+| `renderFooter`     | None                                                                       | `TemplateResult` | Renders the footer of the dialog.                                           |
+| `render`           | None                                                                       | `TemplateResult` | Renders the entire component.                                               |
 
-## Events (if any)
+## Events
 
-- **got-image**: Emitted when an image is successfully generated with the image ID and URL.
+- **got-image**: Emitted when the image generation is successfully completed with the image ID and URL.
 - **image-generation-error**: Emitted when an error occurs during image generation with the error details.
+- **yp-generate-ai-image-background**: Emitted when the image generation is moved to the background with relevant details.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpGenerateAiImage web component
-const ypGenerateAiImage = document.createElement('yp-generate-ai-image');
-ypGenerateAiImage.name = 'Example Image';
-ypGenerateAiImage.description = 'An example description for AI image generation.';
-ypGenerateAiImage.collectionId = 123;
-ypGenerateAiImage.collectionType = 'exampleCollectionType';
-ypGenerateAiImage.imageType = 'logo';
-document.body.appendChild(ypGenerateAiImage);
+// Example usage of the YpGenerateAiImage component
+const aiImageGenerator = document.createElement('yp-generate-ai-image');
+document.body.appendChild(aiImageGenerator);
 
-// To open the dialog
-ypGenerateAiImage.open();
-
-// To submit the image generation request
-ypGenerateAiImage.submit();
-
-// To cancel the image generation process
-ypGenerateAiImage.cancel();
+aiImageGenerator.open('Sample Name', 'Sample Description');
+aiImageGenerator.addEventListener('got-image', (event) => {
+  console.log('Image generated:', event.detail);
+});
 ```
-
-Note: The `YpAiGenerateImageTypes` and `YpGenerateAiImageResponse` types are not defined in the provided code snippet and should be documented separately if they are part of the public API.

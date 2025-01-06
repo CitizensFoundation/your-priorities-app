@@ -1,41 +1,33 @@
 # AcNotificationToast
 
-`AcNotificationToast` is a custom web component that extends the `Snackbar` component from `@material/mwc-snackbar`. It is designed to display notifications with optional user information, an icon, and customizable text size.
+A custom notification toast component that extends `YpSnackbar` to display user notifications with optional user information and icons.
 
 ## Properties
 
-| Name             | Type                  | Description                                      |
-|------------------|-----------------------|--------------------------------------------------|
-| notificationText | String                | The text to be displayed in the notification.    |
-| user             | YpUserData \| undefined | Optional user data to display in the notification. |
-| icon             | String \| undefined   | Optional icon to display in the notification.    |
-| largerFont       | Boolean               | Whether to use a larger font size for the text.  |
+| Name       | Type                     | Description                                                                 |
+|------------|--------------------------|-----------------------------------------------------------------------------|
+| user       | YpUserData \| undefined  | The user data to display in the notification, if applicable.                |
+| icon       | string \| undefined      | The icon to display in the notification, if applicable.                     |
+| largerFont | boolean                  | Determines if the notification text should be displayed in a larger font.   |
 
 ## Methods
 
-| Name       | Parameters                                                                                   | Return Type | Description                                                                                   |
-|------------|----------------------------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| openDialog | user: YpUserData \| undefined, notificationText: String, systemNotification: Boolean, icon: String \| undefined, timeoutMs: Number \| undefined, largerFont: Boolean \| undefined | void        | Opens the notification dialog with the provided parameters, displaying the notification toast. |
-
-## Events
-
-- **keydown**: Emitted when a keydown event occurs on the component.
-- **click**: Emitted when the action or dismiss slots are clicked.
+| Name        | Parameters                                                                                                      | Return Type | Description                                                                                           |
+|-------------|-----------------------------------------------------------------------------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------|
+| openDialog  | user: YpUserData \| undefined, notificationText: string, systemNotification: boolean, icon: string \| undefined, timeoutMs: number \| undefined, largerFont: boolean \| undefined | void        | Opens the notification dialog with the specified parameters, setting user data, icon, and other options. |
 
 ## Examples
 
 ```typescript
-// Example usage of AcNotificationToast
-const notificationToast = document.createElement('ac-notification-toast');
+// Example usage of the AcNotificationToast component
+const notificationToast = document.createElement('ac-notification-toast') as AcNotificationToast;
 notificationToast.openDialog(
-  userData, // YpUserData or undefined
-  'Notification text here',
-  false, // systemNotification
-  'info', // icon (optional)
-  5000, // timeoutMs (optional)
-  true // largerFont (optional)
+  { name: 'John Doe', organization: 'Example Corp' }, // user data
+  'This is a notification message.',                  // notification text
+  false,                                              // system notification flag
+  'info',                                             // icon
+  3000,                                               // timeout in milliseconds
+  true                                                // larger font
 );
 document.body.appendChild(notificationToast);
 ```
-
-Please note that the `YpUserData` type is not defined in the provided code snippet and should be defined elsewhere in your codebase.

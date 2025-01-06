@@ -1,50 +1,48 @@
 # YpCodeBase
 
-The `YpCodeBase` class provides a set of utility methods for handling media queries, global events, firing custom events, and internationalization within a web application.
+The `YpCodeBase` class provides utility methods for handling media queries, event management, and internationalization within a web application. It interacts with global objects and facilitates communication through custom events.
 
 ## Properties
 
-| Name       | Type                  | Description                                      |
-|------------|-----------------------|--------------------------------------------------|
-| language   | string \| undefined   | The current language set for the application.    |
-| wide       | boolean               | A boolean indicating if the media query matches. |
+| Name     | Type    | Description                                                                 |
+|----------|---------|-----------------------------------------------------------------------------|
+| language | string \| undefined | The current language setting of the application. Defaults to 'en' if not set. |
+| wide     | boolean | Indicates whether the viewport width is at least 900px.                      |
 
 ## Methods
 
-| Name                    | Parameters                                                                 | Return Type | Description                                                                                   |
-|-------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| constructor             |                                                                            | void        | Initializes the class, sets up media query watcher, and language event listener.              |
-| installMediaQueryWatcher| mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void | void        | Installs a media query watcher that triggers a callback when the media query state changes.   |
-| _languageEvent          | event: CustomEvent                                                         | void        | Handles the language change event and updates the language property.                          |
-| fire                    | eventName: string, data: object \| string \| boolean \| number \| null, target: LitElement \| Document | void        | Fires a custom event with the given name and data on the specified target.                    |
-| fireGlobal              | eventName: string, data: object \| string \| boolean \| number \| null     | void        | Fires a custom event with the given name and data on the global document object.              |
-| addListener             | name: string, callback: Function, target: LitElement \| Document           | void        | Adds an event listener for the specified event name and callback on the target.               |
-| addGlobalListener       | name: string, callback: Function                                           | void        | Adds a global event listener for the specified event name and callback on the document.       |
-| showToast               | text: string, timeout: number                                              | void        | Displays a toast message with the specified text and timeout duration.                        |
-| removeListener          | name: string, callback: Function, target: LitElement \| Document           | void        | Removes an event listener for the specified event name and callback from the target.          |
-| removeGlobalListener    | name: string, callback: Function                                           | void        | Removes a global event listener for the specified event name and callback from the document.  |
-| t                       | ...args: Array<string>                                                     | string      | Translates a given key using the internationalization translation function if available.      |
-
-## Events (if any)
-
-- **yp-language-loaded**: Triggered when the language is loaded or changed. It updates the language property and the global locale.
+| Name                     | Parameters                                                                 | Return Type | Description                                                                                   |
+|--------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
+| installMediaQueryWatcher | mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void | void        | Sets up a media query listener and invokes the callback when the query matches or changes.     |
+| _languageEvent           | event: CustomEvent                                                         | void        | Handles the 'yp-language-loaded' event to update the language property and global locale.     |
+| fire                     | eventName: string, data: object \| string \| boolean \| number \| null, target: LitElement \| Document | void        | Dispatches a custom event with the specified name and data on the given target.               |
+| fireGlobal               | eventName: string, data: object \| string \| boolean \| number \| null    | void        | Dispatches a custom event globally on the document.                                           |
+| addListener              | name: string, callback: Function, target: LitElement \| Document          | void        | Adds an event listener for the specified event name on the given target.                      |
+| addGlobalListener        | name: string, callback: Function                                          | void        | Adds a global event listener for the specified event name on the document.                    |
+| showToast                | text: string, timeout: number = 4000                                      | void        | Displays a toast message using the global dialog system with a specified timeout.             |
+| removeListener           | name: string, callback: Function, target: LitElement \| Document          | void        | Removes an event listener for the specified event name from the given target.                 |
+| removeGlobalListener     | name: string, callback: Function                                          | void        | Removes a global event listener for the specified event name from the document.               |
+| t                        | ...args: Array<string>                                                    | string      | Translates a given key using the global i18n translation system, returning an empty string if unavailable. |
 
 ## Examples
 
 ```typescript
-// Example usage of installing a media query watcher
+// Example usage of the YpCodeBase class
+
 const codeBase = new YpCodeBase();
-codeBase.installMediaQueryWatcher('(min-width: 900px)', (matches) => {
-  console.log(`Media query matches: ${matches}`);
+
+// Listen for a custom event
+codeBase.addGlobalListener('custom-event', (event) => {
+  console.log('Custom event received:', event.detail);
 });
 
-// Example usage of firing a global event
-codeBase.fireGlobal('custom-event', { message: 'Hello World!' });
+// Fire a custom event
+codeBase.fireGlobal('custom-event', { message: 'Hello, world!' });
 
-// Example usage of showing a toast
+// Show a toast message
 codeBase.showToast('This is a toast message', 3000);
 
-// Example usage of translating a key
-const translatedText = codeBase.t('hello_key');
+// Translate a key
+const translatedText = codeBase.t('welcome_message');
 console.log(translatedText);
 ```

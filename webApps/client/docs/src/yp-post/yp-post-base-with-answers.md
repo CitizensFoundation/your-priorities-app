@@ -1,39 +1,40 @@
 # YpPostBaseWithAnswers
 
-The `YpPostBaseWithAnswers` is a mixin function that extends a given base class with properties and methods related to handling translations of questions and answers for posts. It is designed to work with classes derived from `YpBaseElement`.
+A mixin class that extends a base element to provide functionality for handling translated questions and answers in a post. It includes properties and methods to manage auto-translation and formatting of structured answers.
 
 ## Properties
 
 | Name                | Type                      | Description                                                                 |
 |---------------------|---------------------------|-----------------------------------------------------------------------------|
-| translatedQuestions | `string[]` \| `undefined` | An array of translated questions or undefined if not available.             |
-| translatedAnswers   | `string[]` \| `undefined` | An array of translated answers or undefined if not available.               |
-| autoTranslate       | `boolean`                 | A flag indicating whether automatic translation is enabled.                  |
-| post                | `YpPostData` \| `undefined` | An object containing the post data or undefined if not available.           |
+| translatedQuestions | `string[] \| undefined`   | An array of translated questions, if available.                             |
+| translatedAnswers   | `string[] \| undefined`   | An array of translated answers, if available.                               |
+| autoTranslate       | `boolean`                 | A flag indicating whether auto-translation is enabled.                      |
+| post                | `YpPostData \| undefined` | The post data containing questions and answers.                             |
+| structuredAnswersFormatted | `string`           | A formatted string representation of the structured answers.                |
 
 ## Methods
 
-| Name                         | Parameters                  | Return Type | Description                                                                                   |
-|------------------------------|-----------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| connectedCallback            | -                           | `void`      | Lifecycle method that runs when the element is added to the DOM.                              |
-| disconnectedCallback         | -                           | `void`      | Lifecycle method that runs when the element is removed from the DOM.                          |
-| _autoTranslateEvent          | `event: CustomEvent`        | `void`      | Handles the auto-translate event and triggers translation if needed.                          |
-| _languageEvent               | `event: CustomEvent`        | `void`      | Overrides the base class language event handler to handle language changes.                   |
-| _getSurveyTranslationsIfNeeded | -                           | `Promise<void>` | Checks if translations are needed and fetches them if necessary.                              |
-| getIndexTranslationKey       | `textType: string`          | `string`    | Generates a key for indexing translations based on the text type, post ID, and current language. |
-| structuredAnswersFormatted   | -                           | `string`    | A formatted string representation of the structured answers.                                   |
-
-## Events
-
-- **yp-auto-translate**: Emitted when there is a need to handle automatic translation.
+| Name                        | Parameters                  | Return Type | Description                                                                 |
+|-----------------------------|-----------------------------|-------------|-----------------------------------------------------------------------------|
+| connectedCallback           |                             | `void`      | Lifecycle method called when the element is added to the document.          |
+| disconnectedCallback        |                             | `void`      | Lifecycle method called when the element is removed from the document.      |
+| _autoTranslateEvent         | `event: CustomEvent`        | `void`      | Handles the auto-translate event to update translation settings.            |
+| _languageEvent              | `event: CustomEvent`        | `void`      | Handles language change events to update translations if needed.            |
+| _getSurveyTranslationsIfNeeded |                             | `Promise<void>` | Fetches and updates translations for questions and answers if necessary.    |
+| getIndexTranslationKey      | `textType: string`          | `string`    | Generates a key for caching translations based on text type and post data.  |
+| _jsonToHtml                 | `data: unknown`             | `string`    | Converts JSON data to an HTML string representation.                        |
 
 ## Examples
 
 ```typescript
-// Example usage of the mixin
-class MyCustomElement extends YpPostBaseWithAnswers(LitElement) {
-  // Custom element code that can now utilize the properties and methods provided by YpPostBaseWithAnswers
+import { YpPostBaseWithAnswers } from './path-to-mixin';
+import { YpBaseElement } from '../common/yp-base-element.js';
+
+class MyCustomElement extends YpPostBaseWithAnswers(YpBaseElement) {
+  // Custom element logic here
 }
+
+customElements.define('my-custom-element', MyCustomElement);
 ```
 
-Please note that the actual implementation of `YpPostData`, `YpBaseElement`, `YpStructuredQuestionData`, and other referenced types or interfaces are not provided in the given code snippet. These should be defined elsewhere in your codebase.
+This documentation provides an overview of the `YpPostBaseWithAnswers` mixin, detailing its properties, methods, and usage example. The mixin is designed to be used with a base element class, extending its functionality to handle translated questions and answers in a structured format.

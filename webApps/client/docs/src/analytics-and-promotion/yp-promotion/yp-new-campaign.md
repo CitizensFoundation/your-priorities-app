@@ -1,62 +1,52 @@
 # YpNewCampaign
 
-`YpNewCampaign` is a custom web component that extends `YpBaseElementWithLogin` to provide a user interface for creating new advertising campaigns. It allows users to specify campaign details such as the name, description, target audience, and mediums for the promotion. It also includes a preview feature and the ability to upload an image for the campaign.
+The `YpNewCampaign` class is a web component that extends `YpBaseElementWithLogin`. It provides functionality for creating and managing new marketing campaigns, including setting campaign details, selecting advertising mediums, and previewing the campaign.
 
 ## Properties
 
-| Name               | Type                        | Description                                                                 |
-|--------------------|-----------------------------|-----------------------------------------------------------------------------|
-| collectionType     | String                      | The type of collection associated with the campaign.                        |
-| collectionId       | Number \| String            | The identifier for the collection associated with the campaign.             |
-| collection         | YpCollectionData \| undefined | The collection data object associated with the campaign.                    |
-| campaign           | YpCampaignData \| undefined  | The campaign data object.                                                   |
-| previewEnabled     | Boolean                     | Indicates whether the preview feature is enabled.                           |
-| uploadedImageUrl   | String \| undefined         | The URL of the uploaded image for the campaign.                             |
-| targetAudience     | String \| undefined         | The target audience for the campaign.                                       |
-| campaignName       | String \| undefined         | The name of the campaign.                                                   |
-| promotionText      | String \| undefined         | The promotional text for the campaign.                                      |
+| Name              | Type                          | Description                                                                 |
+|-------------------|-------------------------------|-----------------------------------------------------------------------------|
+| collectionType    | `string`                      | The type of collection associated with the campaign.                        |
+| collectionId      | `number \| string`            | The ID of the collection associated with the campaign.                      |
+| collection        | `YpCollectionData \| undefined` | The collection data associated with the campaign.                           |
+| campaign          | `YpCampaignData \| undefined` | The campaign data.                                                          |
+| previewEnabled    | `boolean`                     | Indicates whether the campaign preview is enabled.                          |
+| uploadedImageUrl  | `string \| undefined`         | The URL of the uploaded image for the campaign.                             |
+| targetAudience    | `string \| undefined`         | The target audience for the campaign.                                       |
+| campaignName      | `string \| undefined`         | The name of the campaign.                                                   |
+| promotionText     | `string \| undefined`         | The promotional text for the campaign.                                      |
 
 ## Methods
 
-| Name              | Parameters | Return Type | Description                                                                 |
-|-------------------|------------|-------------|-----------------------------------------------------------------------------|
-| open              |            | void        | Opens the campaign creation dialog.                                         |
-| getMediums        |            | string[]    | Retrieves the list of selected advertising mediums.                         |
-| inputsChanged     |            | Promise<void> | Handles changes in input fields and updates the preview and button states. |
-| save              |            | void        | Saves the campaign data and closes the dialog.                              |
-| discard           |            | void        | Discards the campaign creation process and closes the dialog.              |
-| close             |            | void        | Closes the campaign creation dialog.                                        |
-| cancel            |            | void        | Handles the cancel action, possibly showing a confirmation dialog.         |
-| renderAdMediums   |            | TemplateResult | Renders the advertising mediums selection interface.                       |
-| renderTextInputs  |            | TemplateResult | Renders the text input fields for campaign name and description.           |
-| imageUploadCompleted | event: CustomEvent | void | Handles the completion of an image upload.                                 |
-| collectionImageUrl |            | string      | Getter for the collection image URL, using the uploaded image if available. |
-| renderPreview     |            | TemplateResult | Renders a preview of the campaign.                                         |
-| renderConfirmationDialog |     | TemplateResult | Renders a confirmation dialog for discarding changes.                      |
-
-## Events
-
-- **save**: Emitted when the save button is clicked with the campaign data payload.
-- **discard**: Emitted when the discard action is confirmed.
+| Name                | Parameters | Return Type | Description                                                                 |
+|---------------------|------------|-------------|-----------------------------------------------------------------------------|
+| open                | None       | `void`      | Opens the new campaign dialog.                                              |
+| getMediums          | None       | `string[]`  | Retrieves the list of selected advertising mediums.                         |
+| inputsChanged       | None       | `Promise<void>` | Handles changes to input fields and updates the campaign state accordingly. |
+| save                | None       | `void`      | Saves the campaign and emits a "save" event with campaign details.          |
+| discard             | None       | `void`      | Discards the current campaign changes and closes the dialog.                |
+| close               | None       | `void`      | Closes the new campaign dialog.                                             |
+| cancel              | None       | `void`      | Cancels the campaign creation process, showing a confirmation dialog if needed. |
+| renderAdMediums     | None       | `TemplateResult` | Renders the list of advertising mediums as checkboxes.                      |
+| renderTextInputs    | None       | `TemplateResult` | Renders the text input fields for campaign name and description.            |
+| imageUploadCompleted | `event: CustomEvent` | `void` | Handles the completion of an image upload and updates the image URL.        |
+| collectionImageUrl  | None       | `string`    | Retrieves the URL of the collection image, using the uploaded image if available. |
+| renderPreview       | None       | `TemplateResult` | Renders the campaign preview section.                                       |
+| renderConfirmationDialog | None  | `TemplateResult` | Renders the confirmation dialog for discarding changes.                     |
+| render              | None       | `TemplateResult` | Renders the entire component, including dialogs and input fields.           |
 
 ## Examples
 
 ```typescript
 // Example usage of the YpNewCampaign component
-const newCampaignElement = document.createElement('yp-new-campaign');
-newCampaignElement.collectionType = 'group';
-newCampaignElement.collectionId = 123;
-// Append newCampaignElement to the DOM where it should be displayed
-document.body.appendChild(newCampaignElement);
+import './path/to/yp-new-campaign.js';
 
-// To open the campaign creation dialog
-newCampaignElement.open();
+const campaignElement = document.createElement('yp-new-campaign');
+document.body.appendChild(campaignElement);
 
-// Listen for the save event to handle the campaign data
-newCampaignElement.addEventListener('save', (event) => {
-  const campaignData = event.detail;
-  console.log('Campaign saved:', campaignData);
+campaignElement.addEventListener('save', (event) => {
+  console.log('Campaign saved:', event.detail);
 });
-```
 
-Note: The actual implementation of `YpCollectionData`, `YpCampaignData`, `YpBaseElementWithLogin`, `YpCollectionHelpers`, and `YpFormattingHelpers` is not provided in this documentation. This documentation assumes these are existing classes or interfaces with their own properties and methods.
+campaignElement.open();
+```

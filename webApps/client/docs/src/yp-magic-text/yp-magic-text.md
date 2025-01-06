@@ -1,71 +1,68 @@
 # YpMagicText
 
-`YpMagicText` is a custom web component that extends `YpBaseElement` to display text content with various features such as auto-translation, truncation, emoji support, and linkification. It can be used in dialogues and supports structured questions.
+The `YpMagicText` class is a custom web component that extends `YpBaseElement`. It is designed to handle and display text content with various features such as translation, truncation, and linkification.
 
 ## Properties
 
-| Name                        | Type      | Description                                                                 |
-|-----------------------------|-----------|-----------------------------------------------------------------------------|
-| content                     | `string` \| `undefined` | The text content to be displayed.                                           |
-| truncatedContent            | `string` \| `undefined` | The truncated version of the content if it exceeds the specified length.    |
-| contentId                   | `number` \| `undefined` | An identifier for the content, used in translation requests.                |
-| extraId                     | `number` \| `undefined` | An additional identifier used in translation requests.                      |
-| additionalId                | `number` \| `undefined` | Another additional identifier used in translation requests.                 |
-| textType                    | `string` \| `undefined` | The type of text content, used in translation requests.                     |
-| contentLanguage             | `string` \| `undefined` | The language of the content.                                                |
-| processedContent            | `string` \| `undefined` | The content after processing, such as translation or formatting.            |
-| finalContent                | `string` \| `undefined` | The final version of the content to be displayed.                           |
-| autoTranslate               | `boolean` | Whether the content should be auto-translated. Defaults to `false`.         |
-| truncate                    | `number` \| `undefined` | The maximum length of content before truncation.                            |
-| moreText                    | `string` \| `undefined` | Text for the "more" button when content is truncated.                       |
-| closeDialogText             | `string` \| `undefined` | Text for closing the dialogue that displays the content.                    |
-| textOnly                    | `boolean` | Whether to display only text without any formatting. Defaults to `false`.   |
-| isDialog                    | `boolean` | Whether the component is used within a dialogue. Defaults to `false`.       |
-| disableTranslation          | `boolean` | Whether to disable the translation feature. Defaults to `false`.            |
-| simpleFormat                | `boolean` | Whether to use simple formatting for the content. Defaults to `false`.      |
-| skipSanitize                | `boolean` | Whether to skip sanitization of the content. Defaults to `false`.           |
-| removeUrls                  | `boolean` | Whether to remove URLs from the content. Defaults to `false`.               |
-| isFetchingTranslation       | `boolean` | Whether the component is currently fetching a translation. Defaults to `false`. |
-| structuredQuestionsConfig   | `string` \| `undefined` | Configuration for structured questions in the content.                      |
-| linkifyCutoff               | `number`  | The maximum length of displayed URLs after linkification. Defaults to `25`. |
-| widetext                    | `boolean` | Whether to use wide text formatting. Reflects to attribute. Defaults to `false`. |
+| Name                      | Type      | Description                                                                 |
+|---------------------------|-----------|-----------------------------------------------------------------------------|
+| content                   | string \| undefined | The main text content to be displayed.                                      |
+| truncatedContent          | string \| undefined | The truncated version of the content.                                       |
+| postfixText               | string    | Text to append to the content. Default is an empty string.                  |
+| contentId                 | number \| undefined | Identifier for the content.                                                 |
+| extraId                   | number \| undefined | Additional identifier for the content.                                      |
+| additionalId              | number \| undefined | Another additional identifier for the content.                              |
+| unsafeHtml                | boolean   | If true, allows HTML content to be rendered unsafely. Default is false.     |
+| textType                  | string \| undefined | Type of the text content, used for translation purposes.                    |
+| contentLanguage           | string \| undefined | Language of the content.                                                    |
+| processedContent          | string \| undefined | The processed version of the content after translation and other operations.|
+| finalContent              | string \| undefined | The final content to be displayed.                                          |
+| autoTranslate             | boolean   | If true, automatically translates the content. Default is false.            |
+| truncate                  | number \| undefined | Maximum length for truncating the content.                                  |
+| moreText                  | string \| undefined | Text to display for expanding truncated content.                            |
+| closeDialogText           | string \| undefined | Text for closing dialog actions.                                            |
+| textOnly                  | boolean   | If true, only text content is displayed without HTML. Default is false.     |
+| isDialog                  | boolean   | If true, the component is used within a dialog. Default is false.           |
+| disableTranslation        | boolean   | If true, disables translation of the content. Default is false.             |
+| simpleFormat              | boolean   | If true, applies simple formatting to the content. Default is false.        |
+| skipSanitize              | boolean   | If true, skips sanitization of the content. Default is false.               |
+| removeUrls                | boolean   | If true, removes URLs from the content. Default is false.                   |
+| isFetchingTranslation     | boolean   | Indicates if the component is currently fetching a translation.             |
+| structuredQuestionsConfig | string \| undefined | Configuration for structured questions within the content.                  |
+| linkifyCutoff             | number    | Maximum length for linkified URLs. Default is 25.                           |
+| widetext                  | boolean   | Reflects if the text is considered wide. Default is false.                  |
 
 ## Methods
 
-| Name                | Parameters | Return Type | Description                                                                 |
-|---------------------|------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback   | -          | `void`      | Lifecycle method called when the component is added to the DOM.             |
-| disconnectedCallback| -          | `void`      | Lifecycle method called when the component is removed from the DOM.         |
-| render              | -          | `TemplateResult` | Renders the HTML template for the component.                                |
-| _openFullScreen     | -          | `void`      | Opens the full-screen dialogue to display the content.                      |
-| subClassProcessing  | -          | `void`      | Placeholder for additional processing in subclasses.                        |
-| _autoTranslateEvent | event: `CustomEvent` | `void` | Handles the auto-translate event.                                          |
-| _languageEvent      | event: `CustomEvent` | `void` | Handles the language change event.                                         |
-| _startTranslationAndFinalize | - | `Promise<void>` | Starts the translation process and finalizes the content.                   |
-| _update             | -          | `void`      | Updates the component state based on property changes.                      |
-| _setupStructuredQuestions | -  | `void`      | Sets up the display of structured questions if configured.                  |
-| _finalize           | -          | `void`      | Finalizes the content processing and updates the display.                   |
-| _linksAndEmojis     | -          | `void`      | Processes links and emojis in the content.                                  |
-
-## Events (if any)
-
-- **yp-auto-translate**: Emitted when the auto-translate feature is toggled.
-- **new-translation**: Emitted when a new translation is available.
+| Name                        | Parameters                                                                 | Return Type | Description                                                                 |
+|-----------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| connectedCallback           | None                                                                       | void        | Called when the element is added to the document. Sets up event listeners.  |
+| disconnectedCallback        | None                                                                       | void        | Called when the element is removed from the document. Cleans up listeners.  |
+| render                      | None                                                                       | TemplateResult | Renders the HTML template for the component.                                |
+| showMoreText                | None                                                                       | boolean     | Determines if the "more text" button should be shown.                       |
+| _openFullScreen             | None                                                                       | void        | Opens the content in a full-screen dialog.                                  |
+| subClassProcessing          | None                                                                       | void        | Placeholder for additional processing in subclasses.                        |
+| translatedContent           | None                                                                       | string      | Returns the translated content or the original content if not translated.   |
+| updated                     | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Called when properties change. Updates the content accordingly.             |
+| _autoTranslateEvent         | event: CustomEvent                                                         | void        | Handles auto-translate events.                                              |
+| _languageEvent              | event: CustomEvent                                                         | void        | Handles language change events.                                             |
+| indexKey                    | None                                                                       | string      | Generates a unique key for caching translations.                            |
+| _startTranslationAndFinalize| None                                                                       | Promise<void> | Starts the translation process and finalizes the content.                   |
+| _update                     | None                                                                       | void        | Updates the processed content based on current properties.                  |
+| _setupStructuredQuestions   | None                                                                       | void        | Sets up structured questions within the content.                            |
+| _finalize                   | None                                                                       | void        | Finalizes the content processing, applying all transformations.             |
+| _linksAndEmojis             | None                                                                       | void        | Processes links and emojis in the content.                                  |
+| truncateText                | input: string, length: number, killwords?: string, end?: number            | string      | Truncates the input text to a specified length.                             |
+| trim                        | input: string                                                              | string      | Trims whitespace from the input string.                                     |
 
 ## Examples
 
 ```typescript
 // Example usage of the YpMagicText component
-<yp-magic-text
-  content="This is a sample text."
-  contentId={123}
-  textType="postContent"
-  contentLanguage="en"
-  autoTranslate={true}
-  truncate={100}
-  moreText="Read more"
-  closeDialogText="Close"
-></yp-magic-text>
-```
+import './yp-magic-text.js';
 
-Please note that the above example is a hypothetical usage within an HTML template and assumes the existence of a `yp-magic-text` element definition.
+const magicTextElement = document.createElement('yp-magic-text');
+magicTextElement.content = "This is a sample content that might be translated or truncated.";
+magicTextElement.autoTranslate = true;
+document.body.appendChild(magicTextElement);
+```

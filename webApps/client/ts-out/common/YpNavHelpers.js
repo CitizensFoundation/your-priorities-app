@@ -1,5 +1,20 @@
 export class YpNavHelpers {
+    /**
+     * Appends ?forAgentBundle=... if present in originalQueryParameters.
+     */
+    static withForAgentBundle(path) {
+        if (window.appGlobals?.originalQueryParameters?.forAgentBundle) {
+            const forAgentBundleValue = encodeURIComponent(window.appGlobals.originalQueryParameters.forAgentBundle);
+            // Decide if we add ? or & based on whether path already has a query string
+            path += (path.indexOf('?') === -1)
+                ? `?forAgentBundle=${forAgentBundleValue}`
+                : `&forAgentBundle=${forAgentBundleValue}`;
+        }
+        return path;
+    }
     static redirectTo(path) {
+        // Safely add forAgentBundle if needed
+        path = this.withForAgentBundle(path);
         history.pushState({}, '', path);
         window.dispatchEvent(new CustomEvent('location-changed'));
         document.dispatchEvent(new CustomEvent('yp-pause-media-playback', { bubbles: true, detail: {} }));
@@ -27,9 +42,11 @@ export class YpNavHelpers {
                 id: postId,
                 modelType: 'post',
             });
-            if (skipKeepOpen !== true)
+            if (skipKeepOpen !== true) {
                 window.app.setKeepOpenForPostsOn(window.location.pathname);
+            }
             setTimeout(() => {
+                // Safely add forAgentBundle if needed, then redirect
                 this.redirectTo(postUrl);
             });
         }

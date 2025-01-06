@@ -1,59 +1,56 @@
 # YpPostLocation
 
-The `YpPostLocation` class is a custom element that extends `YpBaseElement` to provide a user interface for displaying and interacting with a map. It allows users to search for locations, display markers, and customize the map view. It is designed to be used within a web application that supports LitElement and Google Maps.
+`YpPostLocation` is a custom web component that extends `YpBaseElement`. It integrates with Google Maps to display and manage location data for posts.
 
 ## Properties
 
-| Name                     | Type                        | Description                                                                 |
-|--------------------------|-----------------------------|-----------------------------------------------------------------------------|
-| map                      | YpLitGoogleMapElement       | The map element used in the component.                                      |
-| group                    | YpGroupData                 | The group data associated with the map.                                     |
-| post                     | YpPostData                  | The post data associated with the map.                                      |
-| defaultLatitude          | Number                      | The default latitude to center the map on.                                  |
-| defaultLongitude         | Number                      | The default longitude to center the map on.                                 |
-| mapSearchString          | String                      | The search string used to query the map.                                    |
-| mapSearchResultAddress   | String                      | The address result from the map search.                                     |
-| location                 | YpLocationData              | The location data for the current marker on the map.                        |
-| encodedLocation          | String                      | A string representation of the location data, typically JSON-encoded.       |
-| marker                   | HTMLElement                 | The marker element displayed on the map.                                    |
-| active                   | Boolean                     | Indicates whether the map is currently active.                              |
-| narrowPad                | Boolean                     | Indicates whether the map should use a narrow padding style.                |
+| Name                  | Type                          | Description                                                                 |
+|-----------------------|-------------------------------|-----------------------------------------------------------------------------|
+| map                   | YpLitGoogleMapElement \| undefined | The Google Map element used for displaying the map.                         |
+| group                 | YpGroupData \| undefined      | The group data associated with the location.                                |
+| post                  | YpPostData \| undefined       | The post data associated with the location.                                 |
+| defaultLatitude       | number                        | The default latitude for the map.                                           |
+| defaultLongitude      | number                        | The default longitude for the map.                                          |
+| mapSearchString       | string                        | The search string used for map queries.                                     |
+| mapSearchResultAddress| string                        | The address result from a map search.                                       |
+| location              | YpLocationData \| undefined   | The current location data.                                                  |
+| encodedLocation       | string \| undefined           | The JSON string representation of the current location.                     |
+| marker                | HTMLElement \| undefined      | The marker element on the map.                                              |
+| active                | boolean                       | Indicates if the component is active.                                       |
+| narrowPad             | boolean                       | Indicates if the component is in narrow pad mode.                           |
 
 ## Methods
 
-| Name             | Parameters                | Return Type | Description                                                                 |
-|------------------|---------------------------|-------------|-----------------------------------------------------------------------------|
-| updated          | changedProperties: Map    | void        | Lifecycle method called when properties have changed.                       |
-| render           | -                         | TemplateResult | Returns the template for the component.                                    |
-| _mapZoomChanged  | event: CustomEvent        | void        | Handles changes to the map zoom level.                                      |
-| mapZoom          | -                         | Number      | Getter for the current map zoom level.                                      |
-| _submitOnEnter   | event: KeyboardEvent      | void        | Submits the map search when the Enter key is pressed.                       |
-| _searchMap       | -                         | void        | Initiates a search on the map based on the search string.                    |
-| connectedCallback| -                         | void        | Lifecycle method called when the element is added to the document's DOM.    |
-| _zoomChanged     | event: CustomEvent        | void        | Handles changes to the map zoom level.                                      |
-| _mapTypeChanged  | event: CustomEvent        | void        | Handles changes to the map type.                                            |
-| _locationChanged | -                         | void        | Called when the location property changes.                                  |
-| _setLocation     | event: CustomEvent        | void        | Sets the location based on a map event.                                     |
-| _groupChanged    | -                         | void        | Called when the group property changes.                                     |
-| _postChanged     | -                         | void        | Called when the post property changes.                                      |
-
-## Events (if any)
-
-- **map-zoom-changed**: Emitted when the zoom level of the map changes.
-- **map-type-changed**: Emitted when the type of the map changes.
-- **zoom-changed**: Emitted when the zoom level of the map changes.
+| Name               | Parameters                                      | Return Type | Description                                                                 |
+|--------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| updated            | changedProperties: Map<string \| number \| symbol, unknown> | void        | Lifecycle method called when properties change. Handles changes to `group`, `location`, and `post`. |
+| render             |                                                 | TemplateResult | Renders the component's HTML template.                                      |
+| _mapZoomChanged    | event: CustomEvent                              | void        | Updates the map zoom level when the map zoom changes.                       |
+| mapZoom            |                                                 | number      | Gets the current map zoom level.                                            |
+| _submitOnEnter     | event: KeyboardEvent                            | void        | Submits the map search when the Enter key is pressed.                       |
+| _searchMap         |                                                 | void        | Performs a map search using the Google Places API.                         |
+| connectedCallback  |                                                 | void        | Lifecycle method called when the component is added to the document. Initializes geolocation if available. |
+| _zoomChanged       | event: CustomEvent                              | void        | Updates the location's zoom level and encodes the location as a JSON string.|
+| _mapTypeChanged    | event: CustomEvent                              | void        | Updates the location's map type and encodes the location as a JSON string.  |
+| _locationChanged   |                                                 | void        | Handles changes to the location property, updating the map and markers.     |
+| _setLocation       | event: CustomEvent                              | void        | Sets the location based on a map click event.                               |
+| _groupChanged      |                                                 | void        | Updates default latitude and longitude based on group configuration.        |
+| _postChanged       |                                                 | void        | Resets the location when the post changes.                                  |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostLocation element
-<yp-post-location
-  .group="${this.group}"
-  .post="${this.post}"
-  .location="${this.location}"
-  .active="${this.active}"
-  .narrowPad="${this.narrowPad}"
-></yp-post-location>
-```
+// Example usage of the YpPostLocation component
+import './yp-post-location.js';
 
-Please note that the above example assumes that `this.group`, `this.post`, `this.location`, `this.active`, and `this.narrowPad` are properties defined in the context where the `YpPostLocation` element is used.
+const postLocationElement = document.createElement('yp-post-location');
+document.body.appendChild(postLocationElement);
+
+postLocationElement.group = {
+  // Group data
+};
+
+postLocationElement.post = {
+  // Post data
+};
+```

@@ -1,46 +1,35 @@
 # YpApiActionDialog
 
-`YpApiActionDialog` is a custom web component that extends `YpBaseElement` to create a dialog for confirming actions, such as deletions. It uses Material Design components and provides a way to display a confirmation text, a cancel button, and a confirm button with customizable text. It also supports a final delete warning mechanism.
+A custom dialog component for confirming API actions, extending the `YpBaseElement`.
 
 ## Properties
 
-| Name                | Type                  | Description                                                                 |
-|---------------------|-----------------------|-----------------------------------------------------------------------------|
-| action              | string \| undefined   | The API action to be confirmed.                                              |
-| method              | string \| undefined   | The HTTP method to be used for the API action.                              |
-| confirmationText    | string \| undefined   | The text to be displayed in the dialog as the confirmation message.         |
-| confirmButtonText   | string \| undefined   | The text to be displayed on the confirm button.                             |
-| onFinishedFunction  | Function \| undefined | A callback function to be called after the action is confirmed.             |
-| finalDeleteWarning  | boolean               | A flag indicating whether a final delete warning should be displayed or not.|
+| Name                | Type       | Description                                                                 |
+|---------------------|------------|-----------------------------------------------------------------------------|
+| action              | string \| undefined | The API action to be confirmed.                                             |
+| method              | string \| undefined | The HTTP method to be used for the API action. Defaults to "DELETE".        |
+| confirmationText    | string \| undefined | The text displayed in the dialog to confirm the action.                     |
+| confirmButtonText   | string \| undefined | The text for the confirmation button. Defaults to "delete" if not provided. |
+| onFinishedFunction  | Function \| undefined | A callback function to be executed after the API action is completed.       |
+| finalDeleteWarning  | boolean    | Indicates if a final delete warning should be shown. Defaults to `false`.     |
 
 ## Methods
 
-| Name       | Parameters                                    | Return Type | Description                                                                                   |
-|------------|-----------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| setup      | action: string, confirmationText: string, onFinishedFunction: Function \| undefined, confirmButtonText: string \| undefined, method: string \| undefined | void        | Sets up the dialog with the specified parameters.                                             |
-| open       | options: { finalDeleteWarning: boolean } \| undefined | Promise<void> | Opens the dialog with an optional parameter to display a final delete warning.                |
-| _delete    | -                                             | Promise<void> | Handles the deletion action, calls the API, and invokes the onFinishedFunction if provided.   |
-| _onClose   | -                                             | void        | Emits a "close" event when the dialog is closed.                                              |
-
-## Events
-
-- **close**: Emitted when the dialog is closed.
-- **api-action-finished**: Emitted after the API action is finished.
+| Name              | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| setup             | action: string, confirmationText: string, onFinishedFunction: Function \| undefined = undefined, confirmButtonText: string \| undefined = undefined, method: string \| undefined = undefined | void        | Configures the dialog with the specified action, confirmation text, and optional parameters. |
+| open              | options: { finalDeleteWarning: boolean } \| undefined = undefined          | Promise<void> | Opens the dialog, optionally showing a final delete warning.                |
+| _delete           | None                                                                       | Promise<void> | Executes the delete action, confirming with the user if necessary.          |
+| _onClose          | None                                                                       | void        | Fires a "close" event when the dialog is closed.                            |
 
 ## Examples
 
 ```typescript
-// Example usage of YpApiActionDialog
-const dialog = document.createElement('yp-api-action-dialog');
-dialog.setup(
-  'deleteItem',
-  'Are you sure you want to delete this item?',
-  (response) => { console.log('Item deleted:', response); },
-  'Delete',
-  'DELETE'
-);
+// Example usage of the YpApiActionDialog component
+const dialog = document.createElement('yp-api-action-dialog') as YpApiActionDialog;
+dialog.setup('deleteItem', 'Are you sure you want to delete this item?', (response) => {
+  console.log('Action finished:', response);
+});
 document.body.appendChild(dialog);
-dialog.open();
+dialog.open({ finalDeleteWarning: true });
 ```
-
-Please note that the `_delete` and `_onClose` methods are prefixed with an underscore, indicating that they are intended to be private methods and should not be called directly from outside the class. However, they are included in the documentation as they are part of the class definition.

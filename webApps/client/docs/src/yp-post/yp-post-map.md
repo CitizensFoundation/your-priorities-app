@@ -1,54 +1,45 @@
 # YpPostMap
 
-The `YpPostMap` class is a custom element that extends `YpBaseElement` to display a map with markers representing posts. It uses `lit-google-map` to render the map and `yp-post-card` to display information about each post when a marker is clicked.
+`YpPostMap` is a custom web component that extends `YpBaseElement` to display a map with markers representing posts. It integrates with Google Maps and provides functionality to handle post data and interactions with map markers.
 
 ## Properties
 
-| Name          | Type                     | Description                                           |
-|---------------|--------------------------|-------------------------------------------------------|
-| posts         | Array<YpPostData>        | An array of post data to be displayed on the map.     |
-| groupId       | number                   | The ID of the group whose posts are to be displayed.  |
-| communityId   | number                   | The ID of the community whose posts are to be shown.  |
-| noPosts       | boolean                  | Indicates if there are no posts to display.           |
-| selectedPost  | YpPostData               | The post data that is currently selected.             |
-| collectionId  | number                   | The ID of the collection to which the posts belong.   |
-| collectionType| string                   | The type of collection, e.g., 'community' or 'group'. |
-| skipFitToMarkersNext | boolean           | Whether to skip fitting the map to markers next time. |
+| Name           | Type                      | Description                                                                 |
+|----------------|---------------------------|-----------------------------------------------------------------------------|
+| posts          | Array<YpPostData> \| undefined | An array of post data to be displayed as markers on the map.                |
+| groupId        | number \| undefined       | The ID of the group whose posts are to be displayed.                        |
+| communityId    | number \| undefined       | The ID of the community whose posts are to be displayed.                    |
+| noPosts        | boolean                   | Indicates whether there are no posts to display on the map.                 |
+| selectedPost   | YpPostData \| undefined   | The currently selected post, typically when a marker is clicked.            |
+| collectionId   | number                    | The ID of the collection (either group or community) to be displayed.       |
+| collectionType | string                    | The type of collection, either 'community' or 'group'.                      |
 
 ## Methods
 
-| Name            | Parameters                  | Return Type | Description                                      |
-|-----------------|-----------------------------|-------------|--------------------------------------------------|
-| updated         | changedProperties: Map<string \| number \| symbol, unknown> | void        | Lifecycle method called when properties change.  |
-| renderInfoCard  | post: YpPostData            | TemplateResult \| typeof nothing | Renders the information card for a given post. |
-| render          |                             | TemplateResult | Renders the map or a message if there are no posts. |
-| resetMapHeight  |                             | void        | Resets the height of the map container.         |
-| connectedCallback |                         | void        | Lifecycle method called when element is added to the DOM. |
-| disconnectedCallback |                      | void        | Lifecycle method called when element is removed from the DOM. |
-| _groupChanged   |                             | Promise<void> | Called when the `groupId` property changes.    |
-| _communityChanged |                         | Promise<void> | Called when the `communityId` property changes. |
-| _refreshAjax    |                             | void        | Refreshes the AJAX call to fetch posts.         |
-| _response       | response: Array<YpPostData> | void        | Handles the response from the AJAX call.       |
-| markerClick     | post: YpPostData            | void        | Handles the click event on a map marker.       |
-
-## Events (if any)
-
-- **yp-refresh-group-posts**: Emitted when the group posts need to be refreshed.
+| Name                | Parameters                                      | Return Type | Description                                                                 |
+|---------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| updated             | changedProperties: Map<string \| number \| symbol, unknown> | void        | Called when the element's properties change. Handles changes to `groupId` and `communityId`. |
+| renderInfoCard      | post: YpPostData                                | TemplateResult \| typeof nothing | Renders an information card for a given post.                               |
+| render              |                                                 | TemplateResult | Renders the component's template, including the map and markers.            |
+| resetMapHeight      |                                                 | void        | Adjusts the map's height based on the window size and other conditions.     |
+| connectedCallback   |                                                 | void        | Lifecycle method called when the element is added to the document. Sets up initial state and event listeners. |
+| disconnectedCallback|                                                 | void        | Lifecycle method called when the element is removed from the document. Cleans up event listeners. |
+| _groupChanged       |                                                 | Promise<void> | Fetches and updates post data when the `groupId` changes.                   |
+| _communityChanged   |                                                 | Promise<void> | Fetches and updates post data when the `communityId` changes.               |
+| _refreshAjax        |                                                 | void        | Refreshes the post data based on the current `groupId` or `communityId`.    |
+| _response           | response: Array<YpPostData>                     | void        | Handles the response from the server, updating the posts and map display.   |
+| markerClick         | post: YpPostData                                | void        | Handles the click event on a map marker, updating the selected post.        |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostMap custom element
-<yp-post-map
-  .posts="${this.posts}"
-  .groupId="${this.groupId}"
-  .communityId="${this.communityId}"
-  .noPosts="${this.noPosts}"
-  .selectedPost="${this.selectedPost}"
-  .collectionId="${this.collectionId}"
-  .collectionType="${this.collectionType}"
-  .skipFitToMarkersNext="${this.skipFitToMarkersNext}">
-</yp-post-map>
+// Example usage of the YpPostMap component
+import './yp-post-map.js';
+
+const postMap = document.createElement('yp-post-map');
+postMap.collectionId = 123;
+postMap.collectionType = 'community';
+document.body.appendChild(postMap);
 ```
 
-Note: The actual usage of the custom element would depend on the context in which it is used, including the data passed to its properties.
+This component is designed to work with a Google Maps API key and requires the `lit-google-map` and `yp-post-card` components to be available in the project. It listens for global events to refresh post data and adjusts the map view accordingly.

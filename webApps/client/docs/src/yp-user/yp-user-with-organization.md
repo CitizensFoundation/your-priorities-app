@@ -1,60 +1,54 @@
 # YpUserWithOrganization
 
-A custom element that displays a user with their associated organization information, including the user's image, name, and organization name and logo.
+A web component that displays user information along with their organization details, including an optional image.
 
 ## Properties
 
-| Name          | Type                | Description                                       |
-|---------------|---------------------|---------------------------------------------------|
-| user          | YpUserData          | The user data to display.                         |
-| titleDate     | Date \| undefined   | The date to use in the user title.                |
-| hideImage     | boolean             | Whether to hide the user and organization images. |
-| inverted      | boolean             | Whether to invert the styles for the name and organization name. |
+| Name          | Type      | Description                                                                 |
+|---------------|-----------|-----------------------------------------------------------------------------|
+| user          | YpUserData | The user data object containing user information.                           |
+| titleDate     | Date \| undefined | The date used to generate a title for the user.                          |
+| hideImage     | boolean   | Determines whether the user image should be hidden.                         |
+| mediumImage   | boolean   | Determines whether the user image should be displayed in medium size.       |
+| inverted      | boolean   | Determines whether the text should be displayed in an inverted style.       |
 
 ## Methods
 
-| Name              | Parameters | Return Type | Description |
-|-------------------|------------|-------------|-------------|
-| userTitle         |            | string      | Computes a title for the user based on their name and the title date. |
-| organizationName  |            | string \| null | Retrieves the name of the user's organization if available. |
-| organizationImageUrl |        | string \| undefined | Retrieves the URL of the organization's logo image if available. |
-
-## Events
-
-- No custom events are emitted by this component.
+| Name                  | Parameters | Return Type | Description                                                                 |
+|-----------------------|------------|-------------|-----------------------------------------------------------------------------|
+| userTitle             | None       | string      | Computes the title for the user based on the user's name and titleDate.     |
+| organizationName      | None       | string \| null | Retrieves the name of the organization associated with the user.             |
+| organizationImageUrl  | None       | string \| undefined | Retrieves the URL of the organization's image associated with the user.       |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpUserWithOrganization component
-import { YpUserWithOrganization } from './yp-user-with-organization.js';
+// Example usage of the yp-user-with-organization component
+import './yp-user-with-organization.js';
 
-// Assuming you have a user object with the necessary structure
-const user: YpUserData = {
-  name: 'Jane Doe',
+const userElement = document.createElement('yp-user-with-organization');
+userElement.user = {
+  name: 'John Doe',
   OrganizationUsers: [
     {
-      name: 'Organization Name',
+      name: 'Acme Corp',
       OrgLogoImgs: [
         {
-          formats: [
-            // Image formats here
-          ]
+          formats: {
+            thumbnail: { url: 'https://example.com/logo-thumbnail.png' },
+            medium: { url: 'https://example.com/logo-medium.png' }
+          }
         }
       ]
     }
   ]
 };
+userElement.titleDate = new Date();
+userElement.hideImage = false;
+userElement.mediumImage = true;
+userElement.inverted = false;
 
-// Create an instance of the component
-const userWithOrgElement = document.createElement('yp-user-with-organization') as YpUserWithOrganization;
-userWithOrgElement.user = user;
-userWithOrgElement.titleDate = new Date();
-userWithOrgElement.hideImage = false;
-userWithOrgElement.inverted = false;
-
-// Append the component to the DOM
-document.body.appendChild(userWithOrgElement);
+document.body.appendChild(userElement);
 ```
 
-Please note that the `YpUserData` type and the structure of the user object should be defined elsewhere in your codebase to match the expected format used by the `YpUserWithOrganization` component.
+This component extends `YpBaseElement` and uses `yp-user-image` to display user images. It also utilizes `YpMediaHelpers` to fetch image URLs. The component is styled using CSS and supports responsive design for different screen sizes.

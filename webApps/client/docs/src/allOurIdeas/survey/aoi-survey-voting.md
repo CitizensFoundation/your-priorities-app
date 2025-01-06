@@ -1,68 +1,56 @@
 # AoiSurveyVoting
 
-A custom element that handles the voting process for a survey, allowing users to vote on different answers, skip voting, or add their own answer. It also provides an explanation dialog for the voting process.
+The `AoiSurveyVoting` class is a custom web component that extends `YpBaseElement`. It is designed to handle survey voting functionality, allowing users to vote on different answers to a question. The component manages the voting process, animations, and UI updates.
 
 ## Properties
 
-| Name                     | Type                                  | Description                                                                 |
-|--------------------------|---------------------------------------|-----------------------------------------------------------------------------|
-| groupId                  | number                                | The ID of the group associated with the survey.                              |
-| earl                     | AoiEarlData                           | Data related to the EARL (Explainable AI Recommendation Logic) system.      |
-| question                 | AoiQuestionData                       | The current question data for which the voting is taking place.             |
-| firstPrompt              | AoiPromptData                         | The first prompt data for the question.                                     |
-| promptId                 | number                                | The ID of the current prompt.                                               |
-| group                    | YpGroupData                           | Data about the group associated with the survey.                            |
-| voteCount                | number                                | The count of votes made by the user.                                        |
-| spinnersActive           | boolean                               | Indicates whether the spinner animations are active.                        |
-| leftAnswer               | AoiAnswerToVoteOnData \| undefined    | The data for the answer option on the left side.                            |
-| rightAnswer              | AoiAnswerToVoteOnData \| undefined    | The data for the answer option on the right side.                           |
-| appearanceLookup         | string                                | A lookup string used for tracking the appearance of prompts.                |
-| breakForVertical         | boolean                               | A flag to break the layout for vertical orientation.                        |
-| llmExplainOpen           | boolean                               | Indicates whether the LLM explain dialog is open.                           |
-| level                    | number                                | The current level of the voting process.                                    |
-| currentLevelTargetVotes  | number \| undefined                   | The target number of votes for the current level.                           |
-| timer                    | number \| undefined                   | A timer used for tracking the time viewed for a prompt.                     |
+| Name                      | Type                                | Description                                                                 |
+|---------------------------|-------------------------------------|-----------------------------------------------------------------------------|
+| `groupId`                 | `number`                            | The ID of the group associated with the survey.                             |
+| `earl`                    | `AoiEarlData`                       | The data object containing configuration and other details for the survey.  |
+| `question`                | `AoiQuestionData`                   | The data object representing the current question being voted on.           |
+| `firstPrompt`             | `AoiPromptData`                     | The data object for the first prompt in the survey.                         |
+| `promptId`                | `number`                            | The ID of the current prompt.                                               |
+| `group`                   | `YpGroupData`                       | The data object representing the group details.                             |
+| `voteCount`               | `number`                            | The current count of votes.                                                 |
+| `spinnersActive`          | `boolean`                           | Indicates if the spinners are active during loading.                        |
+| `leftAnswer`              | `AoiAnswerToVoteOnData \| undefined`| The data object for the left answer option.                                 |
+| `rightAnswer`             | `AoiAnswerToVoteOnData \| undefined`| The data object for the right answer option.                                |
+| `appearanceLookup`        | `string`                            | A string used for appearance lookup.                                        |
+| `breakForVertical`        | `boolean`                           | Determines if the layout should break for vertical alignment.               |
+| `breakButtonsForVertical` | `boolean`                           | Determines if the button layout should break for vertical alignment.        |
+| `llmExplainOpen`          | `boolean`                           | Indicates if the LLM explain dialog is open.                                |
+| `level`                   | `number`                            | The current level of voting progress.                                       |
+| `currentLevelTargetVotes` | `number \| undefined`               | The target number of votes for the current level.                           |
+| `timer`                   | `number \| undefined`               | A timer used to track the time spent on voting.                             |
 
 ## Methods
 
-| Name             | Parameters                        | Return Type | Description                                                                 |
-|------------------|-----------------------------------|-------------|-----------------------------------------------------------------------------|
-| resetTimer       | none                              | void        | Resets the timer to the current time.                                       |
-| animateButtons   | direction: "left" \| "right" \| "skip" | Promise<void> | Animates the voting buttons based on the direction of the vote.             |
-| resetAnimation   | event: any                        | void        | Resets the animation on the voting buttons.                                 |
-| voteForAnswer    | direction: "left" \| "right" \| "skip" | Promise<void> | Handles the voting process for an answer based on the direction.            |
-| removeAndInsertFromLeft | none                        | void        | Removes and inserts the voting buttons from the left side.                  |
-| openNewIdeaDialog | none                             | void        | Opens the dialog for adding a new idea.                                     |
-| openLlmExplainDialog | none                          | Promise<void> | Opens the dialog that explains the voting process.                          |
-
-## Events
-
-- **needs-new-earl**: Emitted when a new EARL data is needed.
-- **display-snackbar**: Emitted to display a snackbar with a message.
-- **update-appearance-lookup**: Emitted to update the appearance lookup data.
-- **set-ids**: Emitted to set the IDs for the question and prompt.
+| Name                    | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| `connectedCallback`     | -                                                                          | `Promise<void>` | Lifecycle method called when the component is added to the DOM. Initializes listeners and timers. |
+| `disconnectedCallback`  | -                                                                          | `void`      | Lifecycle method called when the component is removed from the DOM. Cleans up listeners. |
+| `resetTimer`            | -                                                                          | `void`      | Resets the timer used for tracking time spent on voting.                    |
+| `animateButtons`        | `direction: "left" \| "right" \| "skip"`                                   | `Promise<void>` | Animates the buttons based on the voting direction.                         |
+| `resetAnimation`        | `event: any`                                                               | `void`      | Resets the animation classes on the buttons.                                |
+| `voteForAnswer`         | `direction: "left" \| "right" \| "skip"`                                   | `Promise<void>` | Handles the voting logic and updates the UI based on the selected direction. |
+| `setLabelOnMdButton`    | -                                                                          | `Promise<void>` | Sets the label on custom buttons to ensure proper styling.                  |
+| `firstUpdated`          | `_changedProperties: PropertyValueMap<any> \| Map<PropertyKey, unknown>`   | `void`      | Lifecycle method called after the first update. Sets up button labels.      |
+| `removeAndInsertFromLeft`| -                                                                         | `void`      | Animates the buttons to slide in from the left.                             |
+| `openNewIdeaDialog`     | -                                                                          | `void`      | Opens the dialog for adding a new idea.                                     |
+| `openLlmExplainDialog`  | -                                                                          | `Promise<void>` | Opens the LLM explain dialog.                                               |
+| `renderProgressBar`     | -                                                                          | `TemplateResult \| typeof nothing` | Renders the progress bar based on the current voting progress.              |
+| `render`                | -                                                                          | `TemplateResult \| typeof nothing` | Renders the component's template.                                           |
 
 ## Examples
 
 ```typescript
-// Example usage of the AoiSurveyVoting element
-<aoi-survey-voting
-  .groupId=${123}
-  .earl=${earlData}
-  .question=${questionData}
-  .firstPrompt=${firstPromptData}
-  .promptId=${456}
-  .group=${groupData}
-  .voteCount=${10}
-  .spinnersActive=${false}
-  .leftAnswer=${leftAnswerData}
-  .rightAnswer=${rightAnswerData}
-  .appearanceLookup=${"appearanceString"}
-  .breakForVertical=${false}
-  .llmExplainOpen=${false}
-  .level=${1}
-  .currentLevelTargetVotes=${30}
-></aoi-survey-voting>
-```
+// Example usage of the AoiSurveyVoting component
+import './aoi-survey-voting.js';
 
-Please note that the actual usage would involve dynamically binding the properties with the corresponding data and handling the events emitted by the element.
+const surveyVoting = document.createElement('aoi-survey-voting');
+surveyVoting.groupId = 1;
+surveyVoting.earl = { /* AoiEarlData object */ };
+surveyVoting.question = { /* AoiQuestionData object */ };
+document.body.appendChild(surveyVoting);
+```

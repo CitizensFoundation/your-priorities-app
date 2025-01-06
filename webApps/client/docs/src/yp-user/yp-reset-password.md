@@ -1,47 +1,40 @@
 # YpResetPassword
 
-The `YpResetPassword` class is a web component that provides a user interface for resetting a user's password. It extends from `YpBaseElement` and includes a dialog with a form for entering a new password, handling the reset password process.
+The `YpResetPassword` class is a web component that provides a user interface for resetting a password. It extends the `YpBaseElement` and utilizes Material Design components for dialog, text field, and buttons.
 
 ## Properties
 
-| Name                | Type   | Description                                       |
-|---------------------|--------|---------------------------------------------------|
-| password            | String | The password entered by the user.                 |
-| token               | String | The token used to identify the password reset.    |
-| passwordErrorMessage| String | The error message to display for password errors. |
+| Name                | Type   | Description                                      |
+|---------------------|--------|--------------------------------------------------|
+| password            | string | The new password entered by the user.            |
+| token               | string | The token used to validate the password reset.   |
+| passwordErrorMessage| string | Error message related to the password input.     |
 
 ## Methods
 
-| Name            | Parameters             | Return Type | Description                                                      |
-|-----------------|------------------------|-------------|------------------------------------------------------------------|
-| onEnter         | event: KeyboardEvent   | void        | Handles the Enter key press to trigger the password reset.       |
-| _validateAndSend|                        | Promise<void> | Validates the password and sends the reset password request.    |
-| _cancel         |                        | void        | Emits a cancel event and closes the dialog.                      |
-| _loginCompleted | user: YpUserData      | void        | Sets the logged-in user and emits a logged-in event.             |
-| open            | token: string          | void        | Opens the dialog and sets the token if provided.                 |
-| close           |                        | void        | Closes the dialog.                                               |
+| Name               | Parameters          | Return Type | Description                                                                 |
+|--------------------|---------------------|-------------|-----------------------------------------------------------------------------|
+| render             | None                | TemplateResult | Renders the HTML template for the component.                                |
+| onEnter            | event: KeyboardEvent| void        | Handles the Enter key press event to trigger password validation and sending. |
+| _validateAndSend   | None                | Promise<void>| Validates the password and sends it to the server for resetting.            |
+| _cancel            | None                | void        | Cancels the password reset process and redirects to the home page.          |
+| _loginCompleted    | user: YpUserData    | void        | Completes the login process after a successful password reset.              |
+| open               | token: string       | Promise<void>| Opens the dialog for password reset with the provided token.                |
+| close              | None                | void        | Closes the password reset dialog.                                           |
 
 ## Events
 
-- **yp-error**: Emitted when there is an error during the password reset process.
+- **yp-error**: Emitted when there is an error during the password reset process, such as an invalid or used token.
 - **cancel**: Emitted when the password reset process is canceled.
-- **logged-in**: Emitted when the user has successfully logged in after resetting the password.
+- **logged-in**: Emitted when the user is successfully logged in after resetting the password.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpResetPassword web component
-const resetPasswordComponent = document.createElement('yp-reset-password');
-resetPasswordComponent.open('reset-token-string');
-document.body.appendChild(resetPasswordComponent);
+// Example usage of the yp-reset-password component
+const resetPasswordElement = document.createElement('yp-reset-password');
+document.body.appendChild(resetPasswordElement);
 
-// Listen for the logged-in event
-resetPasswordComponent.addEventListener('logged-in', () => {
-  console.log('User has logged in after password reset.');
-});
-
-// Listen for the cancel event
-resetPasswordComponent.addEventListener('cancel', () => {
-  console.log('Password reset process has been canceled.');
-});
+// Open the reset password dialog with a token
+resetPasswordElement.open('your-reset-token-here');
 ```

@@ -1,55 +1,50 @@
 # YpPointActions
 
-A custom element that provides actions related to a point, such as voting if a point is helpful or not, and sharing the point.
+The `YpPointActions` class is a custom web component that extends `YpBaseElement`. It provides interactive actions for points, such as upvoting, downvoting, and sharing. This component is designed to handle user interactions and update the point's quality based on user feedback.
 
 ## Properties
 
-| Name               | Type                     | Description                                                                 |
-|--------------------|--------------------------|-----------------------------------------------------------------------------|
-| point              | YpPointData \| undefined | The point data associated with the actions.                                 |
-| hideNotHelpful     | boolean                  | If true, hides the not helpful action.                                      |
-| isUpVoted          | boolean                  | Indicates whether the point has been upvoted by the user.                   |
-| allDisabled        | boolean                  | If true, all actions are disabled.                                          |
-| hideSharing        | boolean                  | If true, hides the sharing action.                                          |
-| configuration      | YpGroupConfiguration \| undefined | Configuration for the group, may affect visibility of sharing.         |
-| pointQualityValue  | number \| undefined      | The current quality value of the point.                                     |
-| pointUrl           | string \| undefined      | The URL to the point, used for sharing.                                     |
+| Name               | Type                          | Description                                                                 |
+|--------------------|-------------------------------|-----------------------------------------------------------------------------|
+| point              | YpPointData \| undefined      | The data object representing the point.                                     |
+| hideNotHelpful     | boolean                       | Determines if the "Not Helpful" action should be hidden.                    |
+| isUpVoted          | boolean                       | Indicates if the point has been upvoted by the user.                        |
+| isDownVoted        | boolean                       | Indicates if the point has been downvoted by the user.                      |
+| allDisabled        | boolean                       | Disables all actions if set to true.                                        |
+| hideSharing        | boolean                       | Determines if the sharing option should be hidden.                          |
+| configuration      | YpGroupConfiguration \| undefined | Configuration object for the group settings.                                |
+| pointQualityValue  | number \| undefined           | The current quality value of the point.                                     |
+| pointUrl           | string \| undefined           | The URL associated with the point for sharing purposes.                     |
 
 ## Methods
 
-| Name                            | Parameters        | Return Type | Description                                                                 |
-|---------------------------------|-------------------|-------------|-----------------------------------------------------------------------------|
-| masterHideSharing               | -                 | boolean     | Determines if sharing should be hidden based on `hideSharing` and configuration. |
-| _sharedContent                  | event: CustomEvent| void        | Handles the shared content event by logging the activity.                    |
-| _shareTap                       | event: CustomEvent| void        | Handles the share tap event by opening the share dialog and logging the activity. |
-| _onPointChanged                 | -                 | void        | Called when the point property changes. Updates qualities accordingly.       |
-| _updateQualitiesFromSignal      | -                 | void        | Updates the qualities of the point from a signal.                            |
-| _updateQualities                | -                 | void        | Updates the qualities of the point based on the user's point qualities.      |
-| _qualityChanged                 | -                 | void        | Called when the quality of the point changes.                                |
-| _resetClasses                   | -                 | void        | Resets the classes for the upvote and downvote actions based on the point quality value. |
-| _setPointQuality                | value: number \| undefined | void | Sets the point quality value and resets classes accordingly.               |
-| generatePointQuality            | value: number     | Promise<void> | Generates a point quality based on the given value.                         |
-| _pointQualityResponse           | pointQualityResponse: YpPointQualityResponse | void | Handles the response after setting point quality.                          |
-| generatePointQualityFromLogin   | value: number     | void        | Generates point quality from login if there's no existing quality for the point. |
-| pointHelpful                    | -                 | void        | Marks the point as helpful, disables all actions, and logs the activity.    |
-| pointNotHelpful                 | -                 | void        | Marks the point as not helpful, disables all actions, and logs the activity. |
-
-## Events (if any)
-
-- **yp-got-endorsements-and-qualities**: Emitted when endorsements and qualities are received, triggering an update in point qualities.
+| Name                             | Parameters                      | Return Type | Description                                                                 |
+|----------------------------------|---------------------------------|-------------|-----------------------------------------------------------------------------|
+| connectedCallback                |                                 | void        | Lifecycle method called when the element is added to the document.          |
+| disconnectedCallback             |                                 | void        | Lifecycle method called when the element is removed from the document.      |
+| firstUpdated                     | _changedProperties: PropertyValues | void        | Called after the element's DOM has been updated the first time.             |
+| masterHideSharing                |                                 | boolean     | Returns true if sharing is hidden either by property or configuration.      |
+| _sharedContent                   | event: CustomEvent              | void        | Handles the content sharing event.                                          |
+| _shareTap                        | event: CustomEvent              | void        | Handles the tap event for sharing.                                          |
+| _onPointChanged                  |                                 | void        | Updates qualities when the point changes.                                   |
+| _updateQualitiesFromSignal       |                                 | void        | Updates qualities based on external signals.                                |
+| _updateQualities                 |                                 | void        | Updates the upvote and downvote states based on the current user and point. |
+| _qualityChanged                  |                                 | void        | Placeholder for handling quality changes.                                   |
+| _resetClasses                    |                                 | void        | Resets CSS classes based on the current point quality value.                |
+| _setPointQuality                 | value: number \| undefined      | void        | Sets the point quality value and updates the UI accordingly.                |
+| generatePointQuality             | value: number                   | Promise<void> | Generates or deletes a point quality based on the current state.            |
+| _pointQualityResponse            | pointQualityResponse: YpPointQualityResponse | void | Handles the response from setting a point quality.                          |
+| generatePointQualityFromLogin    | value: number                   | void        | Generates point quality after user login if not already set.                |
+| pointHelpful                     |                                 | void        | Handles the action for marking a point as helpful.                          |
+| pointNotHelpful                  |                                 | void        | Handles the action for marking a point as not helpful.                      |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPointActions web component
-<yp-point-actions
-  .point="${this.pointData}"
-  .hideNotHelpful="${false}"
-  .isUpVoted="${true}"
-  .allDisabled="${false}"
-  .hideSharing="${false}"
-  .configuration="${this.groupConfiguration}"
-  .pointQualityValue="${1}"
-  .pointUrl="${'https://example.com/point/123'}">
-</yp-point-actions>
+// Example usage of the YpPointActions component
+import './yp-point-actions.js';
+
+const pointActions = document.createElement('yp-point-actions');
+pointActions.point = { id: 1, counter_quality_up: 10, counter_quality_down: 2 };
+document.body.appendChild(pointActions);
 ```

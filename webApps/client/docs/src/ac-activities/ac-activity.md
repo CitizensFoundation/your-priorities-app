@@ -1,49 +1,52 @@
 # AcActivity
 
-Represents an activity component that displays different types of activities such as posts, points, news stories, and status updates. It is a web component that extends `YpBaseElementWithLogin` and uses various properties to control its behavior and display.
+The `AcActivity` class is a web component that extends `YpBaseElementWithLogin`. It is designed to display and manage different types of activities within a community or group context. The component supports rendering various activity types such as posts, points, and status updates.
 
 ## Properties
 
-| Name          | Type                | Description                                       |
-|---------------|---------------------|---------------------------------------------------|
-| activity      | AcActivityData      | The activity data to be displayed.                |
-| domainId      | number              | The ID of the domain associated with the activity.|
-| communityId   | number              | The ID of the community associated with the activity.|
-| groupId       | number              | The ID of the group associated with the activity. |
-| postId        | number              | The ID of the post associated with the activity.  |
-| postGroupId   | number              | The ID of the post group associated with the activity.|
-| userId        | number              | The ID of the user associated with the activity.  |
+| Name        | Type                      | Description                                                                 |
+|-------------|---------------------------|-----------------------------------------------------------------------------|
+| activity    | AcActivityData \| undefined | The activity data object containing details about the activity to be displayed. |
+| domainId    | number \| undefined       | The ID of the domain associated with the activity.                          |
+| communityId | number \| undefined       | The ID of the community associated with the activity.                       |
+| groupId     | number \| undefined       | The ID of the group associated with the activity.                           |
+| postId      | number \| undefined       | The ID of the post associated with the activity.                            |
+| postGroupId | number \| undefined       | The ID of the post group associated with the activity.                      |
+| userId      | number \| undefined       | The ID of the user associated with the activity.                            |
 
 ## Methods
 
-| Name              | Parameters        | Return Type | Description                                             |
-|-------------------|-------------------|-------------|---------------------------------------------------------|
-| renderActivity    | none              | TemplateResult | Renders the appropriate activity component based on the activity type. |
-| render            | none              | TemplateResult | Renders the entire activity component.                   |
-| fromTime          | timeValue: string | string      | Converts an ISO time string to a relative time string.   |
-| fromLongTime      | timeValue: string | string      | Converts an ISO time string to a full locale date string.|
-| hasActivityAccess | none              | boolean     | Determines if the current user has access to the activity.|
-| _deleteActivity   | none              | void        | Emits an event to delete the activity.                   |
-| _isNotActivityType| activity: AcActivityData, type: string | boolean | Checks if the activity is not of the specified type. |
-| _isActivityType   | activity: AcActivityData, type: string | boolean | Checks if the activity is of the specified type.     |
+| Name              | Parameters                  | Return Type | Description                                                                 |
+|-------------------|-----------------------------|-------------|-----------------------------------------------------------------------------|
+| renderActivity    | None                        | TemplateResult | Renders the appropriate activity component based on the activity type.      |
+| render            | None                        | TemplateResult | Renders the main activity content including user information and activity details. |
+| fromTime          | timeValue: string           | string      | Converts an ISO time string to a relative time string.                      |
+| fromLongTime      | timeValue: string           | string      | Converts an ISO time string to a full locale date-time string.              |
+| hasActivityAccess | None                        | boolean     | Checks if the current user has access to the activity based on domain, community, group, or post. |
+| _deleteActivity   | None                        | void        | Fires an event to delete the current activity.                              |
+| _isNotActivityType| activity: AcActivityData, type: string | boolean | Checks if the activity type does not match the specified type.              |
+| _isActivityType   | activity: AcActivityData, type: string | boolean | Checks if the activity type matches the specified type.                     |
 
 ## Events
 
-- **yp-delete-activity**: Emitted when the delete activity button is clicked.
+- **yp-delete-activity**: Emitted when an activity is deleted, providing the activity ID as event detail.
 
 ## Examples
 
 ```typescript
-// Example usage of the AcActivity component
-<ac-activity
-  .activity="${this.someActivityData}"
-  .domainId="${this.someDomainId}"
-  .communityId="${this.someCommunityId}"
-  .groupId="${this.someGroupId}"
-  .postId="${this.somePostId}"
-  .postGroupId="${this.somePostGroupId}"
-  .userId="${this.someUserId}">
-</ac-activity>
-```
+// Example usage of the ac-activity component
+import './ac-activity.js';
 
-Note: `AcActivityData` is a type that should be defined elsewhere in the codebase, containing the structure of the activity data expected by this component.
+const activityElement = document.createElement('ac-activity');
+activityElement.activity = {
+  id: 1,
+  type: 'activity.post.new',
+  created_at: '2023-10-01T12:00:00Z',
+  User: { /* user data */ },
+  Domain: { /* domain data */ },
+  Community: { /* community data */ },
+  Group: { /* group data */ },
+  Post: { /* post data */ }
+};
+document.body.appendChild(activityElement);
+```

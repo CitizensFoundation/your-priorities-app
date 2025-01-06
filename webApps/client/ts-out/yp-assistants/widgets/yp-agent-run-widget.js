@@ -127,9 +127,17 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
                 }
                 this.requestUpdate();
             }
+            else {
+                if (this.agentState === "running" && !this.statusInterval) {
+                    this.startStatusUpdates();
+                }
+            }
         }
         catch (error) {
             console.error("Failed to get agent status:", error);
+            if (this.agentState === "running" && !this.statusInterval) {
+                this.startStatusUpdates();
+            }
         }
     }
     static get styles() {

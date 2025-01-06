@@ -1,28 +1,42 @@
 # AcActivityPointNewsStory
 
-`AcActivityPointNewsStory` is a custom web component that extends `AcActivityWithGroupBase`. It is designed to display a news story post within an activity feed, including the post's name and associated point news story. It supports navigation to the post when the post name is clicked.
+The `AcActivityPointNewsStory` is a custom web component that extends `AcActivityWithGroupBase`. It is designed to display a news story point with optional group headers and post names.
 
 ## Properties
 
-| Name         | Type   | Description                                       |
-|--------------|--------|---------------------------------------------------|
-| hidePostName | boolean | Determines whether the post name should be hidden, based on the presence of a `postId`. |
+| Name          | Type   | Description                                                                 |
+|---------------|--------|-----------------------------------------------------------------------------|
+| activity      | any    | The activity data containing Post and Point information.                    |
+| hasGroupHeader| boolean| Determines if the group header should be displayed.                         |
+| groupTitle    | string | The title of the group, displayed if `hasGroupHeader` is true.              |
+| postId        | any    | The ID of the post, used to determine if the post name should be hidden.    |
 
 ## Methods
 
-| Name       | Parameters | Return Type | Description |
-|------------|------------|-------------|-------------|
-| _goToPost  |            | void        | Navigates to the post associated with the activity when the post name is clicked. |
-
-## Events
-
-- **click**: Emitted when the post name (`yp-magic-text`) is clicked, triggering the `_goToPost` method.
+| Name       | Parameters | Return Type | Description                                                                 |
+|------------|------------|-------------|-----------------------------------------------------------------------------|
+| _goToPost  | none       | void        | Navigates to the post using `YpNavHelpers.goToPost` with the post's ID.     |
 
 ## Examples
 
 ```typescript
-// Example usage of AcActivityPointNewsStory
-<ac-activity-point-news-story></ac-activity-point-news-story>
+// Example usage of the AcActivityPointNewsStory component
+import './ac-activity-point-news-story.js';
+
+const activityElement = document.createElement('ac-activity-point-news-story');
+activityElement.activity = {
+  Post: {
+    id: '123',
+    name: 'Example Post',
+    language: 'en'
+  },
+  Point: {
+    // Point data here
+  }
+};
+activityElement.hasGroupHeader = true;
+activityElement.groupTitle = 'Group Title Example';
+document.body.appendChild(activityElement);
 ```
 
-Note: The actual usage would typically involve binding the `activity` property with relevant data to display the news story post.
+This component uses the `yp-magic-text` and `yp-point-news-story` components to render the post name and news story point, respectively. The styles are defined to provide a consistent layout and appearance. The `_goToPost` method is used to handle navigation when the post name is clicked.

@@ -1,5 +1,24 @@
 export class YpNavHelpers {
+  /**
+   * Appends ?forAgentBundle=... if present in originalQueryParameters.
+   */
+  static withForAgentBundle(path: string): string {
+    if (window.appGlobals?.originalQueryParameters?.forAgentBundle) {
+      const forAgentBundleValue = encodeURIComponent(
+        window.appGlobals.originalQueryParameters.forAgentBundle
+      );
+      // Decide if we add ? or & based on whether path already has a query string
+      path += (path.indexOf('?') === -1)
+        ? `?forAgentBundle=${forAgentBundleValue}`
+        : `&forAgentBundle=${forAgentBundleValue}`;
+    }
+    return path;
+  }
+
   static redirectTo(path: string) {
+    // Safely add forAgentBundle if needed
+    path = this.withForAgentBundle(path);
+
     history.pushState({}, '', path);
     window.dispatchEvent(new CustomEvent('location-changed'));
 
@@ -15,14 +34,12 @@ export class YpNavHelpers {
     cachedPostItem: YpPostData | undefined = undefined,
     skipKeepOpen = false
   ) {
-
     if (postId === undefined) {
       console.error("Can't find post id for goToPost");
       return;
     }
 
     let postUrl = '/post/' + postId;
-
     if (pointId !== undefined) {
       postUrl += '/' + pointId;
     }
@@ -32,7 +49,6 @@ export class YpNavHelpers {
     if (cachedActivityItem) {
       window.appGlobals.cache.cachedActivityItem = cachedActivityItem;
     }
-
     if (
       cachedPostItem &&
       cachedPostItem.Group &&
@@ -46,9 +62,11 @@ export class YpNavHelpers {
         id: postId,
         modelType: 'post',
       });
-      if (skipKeepOpen !== true)
+      if (skipKeepOpen !== true) {
         window.app.setKeepOpenForPostsOn(window.location.pathname);
+      }
       setTimeout(() => {
+        // Safely add forAgentBundle if needed, then redirect
         this.redirectTo(postUrl);
       });
     }

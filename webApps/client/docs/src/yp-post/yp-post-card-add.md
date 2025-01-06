@@ -1,35 +1,49 @@
 # YpPostCardAdd
 
-The `YpPostCardAdd` class is a web component that provides a user interface element for adding new posts. It extends from `YpBaseElement` and includes a button-like card that users can interact with to create a new post. The card can be disabled to prevent new posts from being created.
+`YpPostCardAdd` is a custom web component that extends `YpBaseElement`. It provides a user interface for adding new posts, with customizable text and styles. The component can be configured to disable new post creation and display alternative text when closed.
 
 ## Properties
 
-| Name            | Type                | Description                                                                 |
-|-----------------|---------------------|-----------------------------------------------------------------------------|
-| disableNewPosts | Boolean             | Indicates whether the creation of new posts is disabled.                    |
-| group           | YpGroupData\|undefined | An object containing group data, which may affect the display of the card. |
-| index           | number\|undefined     | An optional index value that may be used for tracking or identification.    |
+| Name            | Type                  | Description                                                                 |
+|-----------------|-----------------------|-----------------------------------------------------------------------------|
+| disableNewPosts | Boolean               | Determines if new posts can be added. Defaults to `false`.                  |
+| group           | YpGroupData \| undefined | The group data object containing configuration and language settings.       |
+| index           | number \| undefined   | The index of the post card within a list or collection.                     |
 
 ## Methods
 
-| Name       | Parameters           | Return Type | Description                                                                                   |
-|------------|----------------------|-------------|-----------------------------------------------------------------------------------------------|
-| _keyDown   | event: KeyboardEvent | void        | Handles keydown events, specifically to create a new post when the Enter key is pressed.      |
-| _newPost   | -                    | void        | Emits a 'new-post' event to signal the creation of a new post, unless new posts are disabled. |
+| Name                          | Parameters          | Return Type | Description                                                                 |
+|-------------------------------|---------------------|-------------|-----------------------------------------------------------------------------|
+| connectedCallback             | None                | void        | Lifecycle method called when the element is added to the document.          |
+| render                        | None                | TemplateResult | Renders the component's template.                                           |
+| _renderHiddenMagicTexts       | None                | TemplateResult | Renders hidden magic text components for translation purposes.              |
+| _handleAddNewTextTranslation  | e: CustomEvent      | void        | Handles translation updates for the "add new" text.                         |
+| _handleClosedTextTranslation  | e: CustomEvent      | void        | Handles translation updates for the "closed" text.                          |
+| _keyDown                      | event: KeyboardEvent| void        | Handles keyboard events for triggering new post creation.                   |
+| _newPost                      | None                | void        | Fires a 'new-post' event if new posts are not disabled.                     |
+| _getAddNewText                | None                | string      | Retrieves the text for the "add new" button, considering translations.      |
+| _getClosedText                | None                | string      | Retrieves the text for the "closed" state, considering translations.        |
 
 ## Events
 
-- **new-post**: Emitted when the user interacts with the component to create a new post, provided that the `disableNewPosts` property is not set to `true`.
+- **new-post**: Emitted when a new post is initiated by the user, provided that new posts are not disabled.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostCardAdd web component
-<yp-post-card-add
-  .disableNewPosts="${this.disableNewPosts}"
-  .group="${this.group}"
-  .index="${this.index}"
-></yp-post-card-add>
-```
+// Example usage of the YpPostCardAdd component
+import './yp-post-card-add.js';
 
-When using this component in a web page, you can listen for the `new-post` event to handle the creation of a new post. The `disableNewPosts` property can be used to control whether the user is allowed to create new posts. The `group` property provides context that may change how the component is displayed or behaves. The `index` property can be used for additional identification or ordering if needed.
+const postCardAdd = document.createElement('yp-post-card-add');
+postCardAdd.group = {
+  id: 'group1',
+  configuration: {
+    alternativeTextForNewIdeaButton: 'Add your idea',
+    alternativeTextForNewIdeaButtonClosed: 'Closed for new ideas',
+    hideNewPost: false
+  },
+  language: 'en'
+};
+postCardAdd.disableNewPosts = false;
+document.body.appendChild(postCardAdd);
+```

@@ -1,36 +1,33 @@
 # YpFormattingHelpers
 
-A utility class providing static methods for formatting numbers, manipulating classes on HTML elements, truncating strings, and trimming whitespace from strings.
-
-## Properties
-
-This class does not have any properties.
+A utility class providing static methods for formatting numbers, manipulating HTML element classes, and string operations such as truncation and trimming.
 
 ## Methods
 
-| Name          | Parameters                                      | Return Type | Description                                                                 |
-|---------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| number        | value: number \| undefined                      | string      | Formats a number with a fixed number of decimal places and thousand separators. |
-| removeClass   | element: HTMLElement \| undefined \| null, classToRemove: string | void        | Removes a specified class from an element's class list if the element exists. |
-| truncate      | input: string, length: number, killwords: string \| undefined = undefined, end: string \| undefined = undefined | string      | Truncates a string to a specified length, optionally adding an ending string. |
-| trim          | input: string                                   | string      | Trims whitespace from both ends of a string.                                 |
+| Name         | Parameters                                                                 | Return Type | Description                                                                 |
+|--------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| number       | value: number \| undefined, digitSeperator: string = ","                    | string      | Formats a number with a specified digit separator. Returns "0" if undefined.|
+| removeClass  | element: HTMLElement \| undefined \| null, classToRemove: string            | void        | Removes a specified class from an HTML element's class list.                |
+| truncate     | input: string, length: number, killwords: string\|undefined = undefined, end: string\|undefined = undefined | string      | Truncates a string to a specified length, optionally killing words and appending an end string. |
+| trim         | input: string                                                               | string      | Trims whitespace from the beginning and end of a string.                    |
 
 ## Examples
 
 ```typescript
-// Example usage of formatting a number
-const formattedNumber = YpFormattingHelpers.number(1234567);
-console.log(formattedNumber); // Outputs: "1.234.567"
+// Example usage of the YpFormattingHelpers class
 
-// Example usage of removing a class from an element
-const element = document.getElementById('myElement');
-YpFormattingHelpers.removeClass(element, 'myClass');
+// Formatting a number with a comma as a digit separator
+console.log(YpFormattingHelpers.number(1234567)); // Output: "1,234,567"
 
-// Example usage of truncating a string
-const truncatedString = YpFormattingHelpers.truncate('This is a long string that needs to be shortened.', 10);
-console.log(truncatedString); // Outputs: "This is a..."
+// Removing a class from an HTML element
+const element = document.createElement('div');
+element.className = 'foo bar baz';
+YpFormattingHelpers.removeClass(element, 'bar');
+console.log(element.className); // Output: "foo baz"
 
-// Example usage of trimming a string
-const trimmedString = YpFormattingHelpers.trim('   extra whitespace   ');
-console.log(trimmedString); // Outputs: "extra whitespace"
+// Truncating a string to a specified length
+console.log(YpFormattingHelpers.truncate("This is a long string that needs to be truncated", 10)); // Output: "This is a..."
+
+// Trimming whitespace from a string
+console.log(YpFormattingHelpers.trim("   Hello World!   ")); // Output: "Hello World!"
 ```

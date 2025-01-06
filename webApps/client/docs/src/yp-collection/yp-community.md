@@ -1,60 +1,37 @@
 # YpCommunity
 
-YpCommunity is a custom web component that extends YpCollection, specifically tailored for community-related functionalities. It manages community data, access, and navigation, and interacts with various helpers and global application states.
+The `YpCommunity` class extends the `YpCollection` class and represents a community within the application. It provides methods to manage and interact with community-specific data, such as themes, access permissions, and navigation.
 
 ## Properties
 
-| Name             | Type                | Description                                                                 |
-|------------------|---------------------|-----------------------------------------------------------------------------|
-| collection       | YpCommunityData     | Holds the community data.                                                   |
-| collectionItems  | Array<YpGroupData>  | Stores the groups associated with the community.                            |
-| selectedTab      | CollectionTabTypes  | Indicates the currently selected tab in the collection.                     |
-| locationHidden   | boolean             | Determines whether the location is hidden based on group configurations.    |
+| Name               | Type                      | Description                                                                 |
+|--------------------|---------------------------|-----------------------------------------------------------------------------|
+| collectionItems    | Array<YpGroupData>        | List of groups within the community.                                        |
+| headerImageUrl     | string                    | URL of the community header image.                                          |
+| locationHidden     | boolean                   | Indicates if the location is hidden for all groups in the community.        |
 
 ## Methods
 
-| Name                        | Parameters | Return Type | Description                                                                                   |
-|-----------------------------|------------|-------------|-----------------------------------------------------------------------------------------------|
-| constructor                 |            |             | Initializes the component with specific parameters for community.                             |
-| refresh                     |            | void        | Refreshes the community data and applies various configurations and checks.                   |
-| _setupCommunitySaml         | community: YpCommunityData | void | Configures SAML related settings for the community. |
-| scrollToGroupItem           |            | void        | Scrolls to a specific group item based on the selected tab and cached activity or group item. |
-| _setupCommunityBackPath     | community: YpCommunityData | void | Sets up the back path and header details for the community.                                  |
-| scrollToCollectionItemSubClass |            | void        | Scrolls to a collection item in a subclass context.                                           |
-| _openHelpPageIfNeededOnce   |            | void        | Opens the help page for the community if it hasn't been opened in the session.                |
-| _hideMapIfNotUsedByGroups   |            | void        | Hides the map if the location is not used by any groups in the community.                     |
-
-## Events
-
-- **yp-change-header**: Emitted to change the header details based on the community's configuration.
+| Name                           | Parameters                          | Return Type | Description                                                                 |
+|--------------------------------|-------------------------------------|-------------|-----------------------------------------------------------------------------|
+| constructor                    |                                     | void        | Initializes a new instance of the `YpCommunity` class.                      |
+| setupTheme                     |                                     | void        | Configures the theme for the community based on its configuration.          |
+| refresh                        |                                     | void        | Refreshes the community data and updates the UI accordingly.                |
+| _setupCommunitySaml            | community: YpCommunityData          | void        | Configures SAML settings for the community based on its configuration.      |
+| scrollToGroupItem              |                                     | void        | Scrolls to a specific group item based on the selected tab.                 |
+| _setupCommunityBackPath        | community: YpCommunityData          | void        | Sets up the back navigation path for the community.                         |
+| scrollToCollectionItemSubClass |                                     | void        | Scrolls to a specific collection item within the subclass.                  |
+| getCollection                  |                                     | Promise<void> | Retrieves the community collection data and sets the current domain.       |
+| _openHelpPageIfNeededOnce      |                                     | void        | Opens the help page for the community if it hasn't been opened before.      |
+| _hideMapIfNotUsedByGroups      |                                     | void        | Hides the map if it is not used by any groups in the community.             |
 
 ## Examples
 
 ```typescript
 // Example usage of the YpCommunity component
-const ypCommunity = document.createElement('yp-community');
-document.body.appendChild(ypCommunity);
+const communityElement = document.createElement('yp-community');
+document.body.appendChild(communityElement);
 
 // Refresh the community data
-ypCommunity.refresh();
-
-// Scroll to a specific group item
-ypCommunity.scrollToGroupItem();
-
-// Setup SAML configurations for the community
-ypCommunity._setupCommunitySaml(communityData);
-
-// Setup back path and header for the community
-ypCommunity._setupCommunityBackPath(communityData);
-
-// Scroll to a collection item in a subclass context
-ypCommunity.scrollToCollectionItemSubClass();
-
-// Open the help page for the community if needed
-ypCommunity._openHelpPageIfNeededOnce();
-
-// Hide the map if not used by any groups in the community
-ypCommunity._hideMapIfNotUsedByGroups();
+communityElement.refresh();
 ```
-
-Please note that some methods and properties are intended for internal use and are prefixed with an underscore.

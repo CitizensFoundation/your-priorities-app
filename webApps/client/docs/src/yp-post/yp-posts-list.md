@@ -1,76 +1,74 @@
 # YpPostsList
 
-A custom element that renders a list of posts with various filters and search functionality. It is part of a larger application and interacts with a server API to fetch and display posts.
+The `YpPostsList` class is a custom web component that extends `YpBaseElement`. It is designed to display a list of posts with various filtering and searching capabilities. The component uses the Lit library for rendering and managing state.
 
 ## Properties
 
-| Name                 | Type                          | Description                                                                 |
-|----------------------|-------------------------------|-----------------------------------------------------------------------------|
-| searchingFor         | string \| undefined           | The current search term used to filter posts.                               |
-| subTitle             | string \| undefined           | A subtitle for the posts list.                                              |
-| filter               | string                        | The current filter applied to the posts list (e.g., "newest").              |
-| statusFilter         | string                        | The current status filter applied to the posts list (e.g., "open").         |
-| posts                | Array<YpPostData> \| undefined| The array of posts to be displayed.                                         |
-| userId               | number \| undefined           | The ID of the user whose posts are being displayed.                         |
-| group                | YpGroupData                   | The group data associated with the posts.                                   |
-| categoryId           | number \| undefined           | The ID of the category used to filter posts.                                |
-| postsCount           | number \| undefined           | The total number of posts available.                                        |
-| selectedCategoryName | string \| undefined           | The name of the selected category.                                          |
-| selectedGroupTab     | number \| undefined           | The index of the selected group tab.                                        |
-| noPosts              | boolean                       | Indicates whether there are no posts to display.                            |
-| showSearchIcon       | boolean                       | Determines whether the search icon should be shown.                         |
-| grid                 | boolean                       | Determines whether the posts should be displayed in a grid layout.          |
-| randomSeed           | number \| undefined           | A random seed used for random sorting of posts.                             |
-| moreToLoad           | boolean                       | Indicates whether there are more posts to load.                             |
-| moreFromScrollTriggerActive | boolean               | Indicates whether the trigger to load more posts from scrolling is active.  |
-| resetListSize        | Function \| undefined         | A function to reset the size of the list.                                   |
-| skipIronListWidth    | boolean                       | Indicates whether the width of the iron list should be skipped.             |
+| Name                  | Type                          | Description                                                                 |
+|-----------------------|-------------------------------|-----------------------------------------------------------------------------|
+| `searchingFor`        | `string \| undefined`         | The current search query string.                                            |
+| `subTitle`            | `string \| undefined`         | Subtitle for the posts filter.                                              |
+| `filter`              | `string`                      | The current filter applied to the posts, default is "newest".               |
+| `statusFilter`        | `string`                      | The status filter applied to the posts, default is "open".                  |
+| `hideCategories`      | `boolean`                     | Whether to hide categories in the filter.                                   |
+| `posts`               | `Array<YpPostData> \| undefined` | The list of posts to display.                                               |
+| `userId`              | `number \| undefined`         | The ID of the user whose posts are being displayed.                         |
+| `group`               | `YpGroupData`                 | The group data associated with the posts.                                   |
+| `categoryId`          | `number \| undefined`         | The ID of the selected category.                                            |
+| `postsCount`          | `number \| undefined`         | The total number of posts available.                                        |
+| `selectedCategoryName`| `string \| undefined`         | The name of the selected category.                                          |
+| `selectedGroupTab`    | `number \| undefined`         | The index of the selected group tab.                                        |
+| `noPosts`             | `boolean`                     | Whether there are no posts to display.                                      |
+| `showSearchIcon`      | `boolean`                     | Whether to show the search icon.                                            |
+| `grid`                | `boolean`                     | Whether to display posts in a grid layout. Reflects to attribute.           |
+| `randomSeed`          | `number \| undefined`         | A random seed used for random sorting of posts.                             |
 
 ## Methods
 
-| Name                  | Parameters                   | Return Type | Description                                                                 |
-|-----------------------|------------------------------|-------------|-----------------------------------------------------------------------------|
-| renderPostItem        | post: YpPostData, index?: number \| undefined | TemplateResult | Renders a single post item.                                                 |
-| desktopListFormat     | None                         | boolean     | Determines if the desktop list format should be used.                       |
-| wideNotListFormat     | None                         | boolean     | Determines if the wide format that is not a list should be used.            |
-| _isLastItem           | index: number                | boolean     | Checks if the given index corresponds to the last item in the posts list.   |
-| _keypress             | event: KeyboardEvent         | void        | Handles keypress events on post items.                                      |
-| _categoryChanged      | event: CustomEvent           | void        | Handles changes to the selected category.                                   |
-| _filterChanged        | event: CustomEvent           | void        | Handles changes to the selected filter.                                     |
-| _clearSearch          | None                         | void        | Clears the current search term.                                             |
-| scrollEvent           | event: { last: number }      | void        | Handles scroll events for loading more data.                                |
-| _selectedItemChanged  | event: CustomEvent           | void        | Handles selection changes of post items.                                    |
-| _refreshPost          | event: CustomEvent           | Promise<void> | Refreshes a post in the list.                                              |
-| _getPostLink          | post: YpPostData             | string \| undefined | Gets the link for a post.                                                  |
-| scrollOffset          | None                         | number \| null | Gets the scroll offset for the list.                                       |
-| _tapOnFilter          | None                         | void        | Handles tap events on the filter.                                           |
-| _search               | None                         | void        | Initiates a search with the current search term.                            |
-| buildPostsUrlPath     | None                         | string      | Builds the URL path for fetching posts based on current filters.            |
-| scrollToPost          | post: YpPostData             | Promise<void> | Scrolls to a specific post in the list.                                    |
-| refreshGroupFromFilter| None                         | void        | Refreshes the group data based on the current filter.                       |
-| _loadMoreData         | None                         | Promise<void> | Loads more posts data from the server.                                     |
-| _checkForMultipleLanguages | posts: Array<YpPostData> | void        | Checks if there are multiple languages in the posts and prompts for translation if necessary. |
-| _processCategories    | None                         | void        | Processes the categories for the current group.                             |
+| Name                        | Parameters                                                                 | Return Type     | Description                                                                 |
+|-----------------------------|----------------------------------------------------------------------------|-----------------|-----------------------------------------------------------------------------|
+| `render`                    | None                                                                       | `TemplateResult`| Renders the component's template.                                           |
+| `renderPostItem`            | `post: YpPostData, index?: number`                                         | `TemplateResult`| Renders a single post item.                                                 |
+| `desktopListFormat`         | None                                                                       | `boolean`       | Checks if the desktop list format should be used.                           |
+| `wideNotListFormat`         | None                                                                       | `boolean`       | Checks if the wide not list format should be used.                          |
+| `_isLastItem`               | `index: number`                                                            | `boolean`       | Determines if the given index is the last item in the list.                 |
+| `_keypress`                 | `event: KeyboardEvent`                                                     | `void`          | Handles keypress events for selecting items.                                |
+| `_categoryChanged`          | `event: CustomEvent`                                                       | `void`          | Handles category change events.                                             |
+| `_filterChanged`            | `event: CustomEvent`                                                       | `void`          | Handles filter change events.                                               |
+| `firstUpdated`              | `changedProperties: Map<string | number | symbol, unknown>`               | `void`          | Lifecycle method called after the component's first update.                 |
+| `_clearSearch`              | None                                                                       | `void`          | Clears the current search query.                                            |
+| `scrollEvent`               | `event: { last: number }`                                                  | `void`          | Handles scroll events to load more data.                                    |
+| `scrollToPostForGroupId`    | `event: CustomEvent`                                                       | `void`          | Scrolls to a specific post for a given group ID.                            |
+| `connectedCallback`         | None                                                                       | `Promise<void>` | Lifecycle method called when the component is added to the document.        |
+| `disconnectedCallback`      | None                                                                       | `void`          | Lifecycle method called when the component is removed from the document.    |
+| `_selectedItemChanged`      | `event: CustomEvent`                                                       | `void`          | Handles item selection changes.                                             |
+| `_refreshPost`              | `event: CustomEvent`                                                       | `Promise<void>` | Refreshes a specific post.                                                  |
+| `_getPostLink`              | `post: YpPostData`                                                         | `string \| undefined` | Gets the link for a specific post.                                          |
+| `scrollOffset`              | None                                                                       | `number \| null` | Gets the scroll offset for the post list.                                   |
+| `_tapOnFilter`              | None                                                                       | `void`          | Handles tap events on the filter.                                           |
+| `_search`                   | None                                                                       | `void`          | Initiates a search with the current query.                                  |
+| `buildPostsUrlPath`         | None                                                                       | `string`        | Builds the URL path for fetching posts.                                     |
+| `scrollToPost`              | `post: YpPostData`                                                         | `Promise<void>` | Scrolls to a specific post in the list.                                     |
+| `updated`                   | `changedProperties: Map<string | number | symbol, unknown>`               | `void`          | Lifecycle method called after the component's update.                       |
+| `refreshGroupFromFilter`    | None                                                                       | `void`          | Refreshes the group data based on the current filter.                       |
+| `_loadMoreData`             | None                                                                       | `Promise<void>` | Loads more post data from the server.                                       |
+| `_checkForMultipleLanguages`| `posts: Array<YpPostData>`                                                 | `void`          | Checks for multiple languages in the posts.                                 |
+| `_processCategories`        | None                                                                       | `void`          | Processes the categories for the current group.                             |
 
-## Events (if any)
+## Events
 
 - **yp-filter-category-change**: Emitted when the category filter changes.
-- **yp-filter-changed**: Emitted when the filter changes.
-- **refresh**: Emitted when a post needs to be refreshed.
-- **yp-post-count**: Emitted with the post count information.
-- **yp-refresh-activities-scroll-threshold**: Emitted to refresh the scroll threshold for activities.
+- **yp-filter-changed**: Emitted when the post filter changes.
+- **yp-scroll-to-post-for-group-id**: Emitted to scroll to a specific post for a group ID.
+- **refresh**: Emitted to refresh a post.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostsList element
-<yp-posts-list
-  .group="${this.groupData}"
-  .posts="${this.postsData}"
-  .filter="${'newest'}"
-  .statusFilter="${'open'}"
-  .grid="${true}"
-></yp-posts-list>
-```
+// Example usage of the YpPostsList component
+import './yp-posts-list.js';
 
-Note: The above example assumes that `this.groupData` and `this.postsData` are already defined and contain the necessary data to populate the `YpPostsList` element.
+const postsList = document.createElement('yp-posts-list');
+postsList.group = { id: 1, configuration: { hidePostFilterAndSearch: false } };
+document.body.appendChild(postsList);
+```

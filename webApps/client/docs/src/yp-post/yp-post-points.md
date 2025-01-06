@@ -1,143 +1,153 @@
 # YpPostPoints
 
-This class represents a component that allows users to post points for or against a particular topic. It is part of a larger application and interacts with various other components and services.
+The `YpPostPoints` class is a web component that extends `YpBaseElementWithLogin`. It is used to manage and display points related to a post, allowing users to add, view, and interact with points for or against a post. It supports features like video and audio uploads, emoji selection, and point interleaving for display.
 
 ## Properties
 
-| Name                      | Type                         | Description                                                                 |
-|---------------------------|------------------------------|-----------------------------------------------------------------------------|
-| fetchActive               | Boolean                      | Indicates if data fetching is active.                                       |
-| isAdmin                   | Boolean                      | Indicates if the current user is an admin.                                  |
-| disableDebate             | Boolean                      | Indicates if the debate feature is disabled.                                |
-| points                    | Array<YpPointData>           | An array of points related to the post.                                     |
-| downPoints                | Array<YpPointData>           | An array of points against the post.                                        |
-| upPoints                  | Array<YpPointData>           | An array of points for the post.                                            |
-| newPointTextCombined      | String                       | Combined text of a new point.                                               |
-| post                      | YpPostData                   | The post data.                                                              |
-| labelMobileUpOrDown       | String                       | Label for mobile up or down points.                                         |
-| labelUp                   | String                       | Label for up points.                                                        |
-| labelDown                 | String                       | Label for down points.                                                      |
-| pointUpOrDownSelected     | String                       | Selected point type for mobile view.                                        |
-| latestPointCreatedAt      | Date                         | The creation date of the latest point.                                      |
-| scrollToId                | Number                       | ID of the point to scroll to.                                               |
-| addPointDisabled          | Boolean                      | Indicates if adding a point is disabled.                                    |
-| uploadedVideoUpId         | Number                       | ID of the uploaded video for up points.                                     |
-| uploadedVideoDownId       | Number                       | ID of the uploaded video for down points.                                   |
-| uploadedVideoMobileId     | Number                       | ID of the uploaded video for mobile points.                                 |
-| currentVideoId            | Number                       | ID of the current video.                                                    |
-| hideUpVideo               | Boolean                      | Indicates if the up video should be hidden.                                 |
-| hideDownVideo             | Boolean                      | Indicates if the down video should be hidden.                               |
-| hideMobileVideo           | Boolean                      | Indicates if the mobile video should be hidden.                             |
-| uploadedAudioUpId         | Number                       | ID of the uploaded audio for up points.                                     |
-| uploadedAudioDownId       | Number                       | ID of the uploaded audio for down points.                                   |
-| uploadedAudioMobileId     | Number                       | ID of the uploaded audio for mobile points.                                 |
-| currentAudioId            | Number                       | ID of the current audio.                                                    |
-| hideUpAudio               | Boolean                      | Indicates if the up audio should be hidden.                                 |
-| hideDownAudio             | Boolean                      | Indicates if the down audio should be hidden.                               |
-| hideMobileAudio           | Boolean                      | Indicates if the mobile audio should be hidden.                             |
-| hideUpText                | Boolean                      | Indicates if the up text should be hidden.                                  |
-| hideDownText              | Boolean                      | Indicates if the down text should be hidden.                                |
-| hideMobileText            | Boolean                      | Indicates if the mobile text should be hidden.                              |
-| selectedPointForMobile    | Boolean                      | Indicates if the selected point for mobile is for or against.               |
-| isAndroid                 | Boolean                      | Indicates if the user is on an Android device.                              |
-| hasCurrentUpVideo         | String                       | Indicates if there is a current up video.                                   |
-| hasCurrentDownVideo       | String                       | Indicates if there is a current down video.                                 |
-| hasCurrentMobileVideo     | String                       | Indicates if there is a current mobile video.                               |
-| hasCurrentUpAudio         | String                       | Indicates if there is a current up audio.                                   |
-| hasCurrentDownAudio       | String                       | Indicates if there is a current down audio.                                 |
-| hasCurrentMobileAudio     | String                       | Indicates if there is a current mobile audio.                               |
-| storedPoints              | Array<YpPointData>           | An array of stored points.                                                  |
-| loadedPointIds            | Record<number, boolean>      | A record of loaded point IDs.                                               |
-| loadMoreInProgress        | Boolean                      | Indicates if loading more points is in progress.                            |
-| totalCount                | Number                       | The total count of points.                                                  |
-| storedUpPointsCount       | Number                       | The count of stored up points.                                              |
-| storedDownPointsCount     | Number                       | The count of stored down points.                                            |
-| noMorePoints              | Boolean                      | Indicates if there are no more points to load.                              |
+| Name                     | Type                          | Description                                                                 |
+|--------------------------|-------------------------------|-----------------------------------------------------------------------------|
+| fetchActive              | boolean                       | Indicates if data fetching is active.                                       |
+| isAdmin                  | boolean                       | Indicates if the current user is an admin.                                  |
+| disableDebate            | boolean                       | Indicates if debate is disabled.                                            |
+| points                   | Array<YpPointData> \| undefined | Array of points related to the post.                                        |
+| downPoints               | Array<YpPointData> \| undefined | Array of points against the post.                                           |
+| upPoints                 | Array<YpPointData> \| undefined | Array of points for the post.                                               |
+| newPointTextCombined     | string \| undefined           | Combined text for a new point.                                              |
+| post                     | YpPostData                    | The post data associated with the points.                                   |
+| labelMobileUpOrDown      | string \| undefined           | Label for mobile up or down selection.                                      |
+| labelUp                  | string \| undefined           | Label for points for the post.                                              |
+| labelDown                | string \| undefined           | Label for points against the post.                                          |
+| pointUpOrDownSelected    | string                        | Indicates the selected point type ("pointFor" or "pointAgainst").           |
+| latestPointCreatedAt     | Date \| undefined             | The creation date of the latest point.                                      |
+| scrollToId               | number \| undefined           | ID of the point to scroll into view.                                        |
+| addPointDisabled         | boolean                       | Indicates if adding a point is disabled.                                    |
+| uploadedVideoUpId        | number \| undefined           | ID of the uploaded video for points for the post.                           |
+| uploadedVideoDownId      | number \| undefined           | ID of the uploaded video for points against the post.                       |
+| uploadedVideoMobileId    | number \| undefined           | ID of the uploaded video for mobile points.                                 |
+| currentVideoId           | number \| undefined           | ID of the current video being processed.                                    |
+| hideUpVideo              | boolean                       | Indicates if the video upload for points for the post is hidden.            |
+| hideDownVideo            | boolean                       | Indicates if the video upload for points against the post is hidden.        |
+| hideMobileVideo          | boolean                       | Indicates if the video upload for mobile points is hidden.                  |
+| uploadedAudioUpId        | number \| undefined           | ID of the uploaded audio for points for the post.                           |
+| uploadedAudioDownId      | number \| undefined           | ID of the uploaded audio for points against the post.                       |
+| uploadedAudioMobileId    | number \| undefined           | ID of the uploaded audio for mobile points.                                 |
+| currentAudioId           | number \| undefined           | ID of the current audio being processed.                                    |
+| hideUpAudio              | boolean                       | Indicates if the audio upload for points for the post is hidden.            |
+| hideDownAudio            | boolean                       | Indicates if the audio upload for points against the post is hidden.        |
+| hideMobileAudio          | boolean                       | Indicates if the audio upload for mobile points is hidden.                  |
+| hideUpText               | boolean                       | Indicates if the text input for points for the post is hidden.              |
+| hideDownText             | boolean                       | Indicates if the text input for points against the post is hidden.          |
+| hideMobileText           | boolean                       | Indicates if the text input for mobile points is hidden.                    |
+| selectedPointForMobile   | boolean                       | Indicates if the selected point is for mobile.                              |
+| isAndroid                | boolean                       | Indicates if the current device is Android.                                 |
+| hasCurrentUpVideo        | string \| undefined           | Indicates if there is a current video for points for the post.              |
+| hasCurrentDownVideo      | string \| undefined           | Indicates if there is a current video for points against the post.          |
+| hasCurrentMobileVideo    | string \| undefined           | Indicates if there is a current video for mobile points.                    |
+| hasCurrentUpAudio        | string \| undefined           | Indicates if there is a current audio for points for the post.              |
+| hasCurrentDownAudio      | string \| undefined           | Indicates if there is a current audio for points against the post.          |
+| hasCurrentMobileAudio    | string \| undefined           | Indicates if there is a current audio for mobile points.                    |
+| storedPoints             | Array<YpPointData> \| undefined | Array of stored points.                                                     |
+| loadedPointIds           | Record<number, boolean>       | Record of loaded point IDs.                                                 |
+| loadMoreInProgress       | boolean                       | Indicates if loading more points is in progress.                            |
+| totalCount               | number \| undefined           | Total count of points.                                                      |
+| storedUpPointsCount      | number                        | Count of stored points for the post.                                        |
+| storedDownPointsCount    | number                        | Count of stored points against the post.                                    |
+| noMorePoints             | boolean                       | Indicates if there are no more points to load.                              |
 
 ## Methods
 
-| Name                      | Parameters                   | Return Type | Description                                                                 |
-|---------------------------|------------------------------|-------------|-----------------------------------------------------------------------------|
-| renderAudioUpload         | type, hideAudio, ...         | TemplateResult | Renders the audio upload section.                                           |
-| renderVideoUpload         | type, hideVideo, ...         | TemplateResult | Renders the video upload section.                                           |
-| renderMobilePointSelection|                              | TemplateResult | Renders the mobile point selection.                                         |
-| renderPointItem           | point, index                 | TemplateResult | Renders a point item.                                                       |
-| renderPointHeader         | header, alternativeHeader, ... | TemplateResult | Renders the point header.                                                   |
-| renderPointList           | type, header, ...            | TemplateResult | Renders the list of points.                                                 |
-| scrollEvent               | event                        | void        | Handles the scroll event.                                                   |
-| renderTranslationPlaceholders |                          | TemplateResult | Renders placeholders for translations.                                      |
-| _chooseUpOrDownRadio      |                              | void        | Chooses the up or down radio button.                                        |
-| wideReady                 |                              | boolean     | Indicates if the wide view is ready.                                        |
-| smallReady                |                              | boolean     | Indicates if the small view is ready.                                       |
-| pointMaxLength            |                              | number      | Returns the maximum length of a point.                                      |
-| _openLogin                |                              | void        | Opens the login dialog.                                                     |
-| _videoUpUploaded          | event                        | void        | Handles the video up uploaded event.                                        |
-| _videoDownUploaded        | event                        | void        | Handles the video down uploaded event.                                      |
-| _videoMobileUploaded      | event                        | void        | Handles the video mobile uploaded event.                                    |
-| _audioUpUploaded          | event                        | void        | Handles the audio up uploaded event.                                        |
-| _audioDownUploaded        | event                        | void        | Handles the audio down uploaded event.                                      |
-| _audioMobileUploaded      | event                        | void        | Handles the audio mobile uploaded event.                                    |
-| mobileScrollOffset        |                              | number      | Returns the mobile scroll offset.                                           |
-| listResizeScrollThreshold |                              | number      | Returns the list resize scroll threshold.                                   |
-| listPaddingTop            |                              | number      | Returns the list padding top value.                                         |
-| connectedCallback         |                              | void        | Lifecycle method called when the component is connected to the DOM.         |
-| disconnectedCallback      |                              | void        | Lifecycle method called when the component is disconnected from the DOM.    |
-| _listResize               |                              | void        | Handles the list resize event.                                              |
-| _loadNewPointsIfNeeded    | event                        | void        | Loads new points if needed.                                                 |
-| _loadMorePoints           |                              | void        | Loads more points.                                                          |
-| _interleaveMorePoints     | points                       | Array       | Interleaves more points into the existing list.                             |
-| _getMorePoints            |                              | Promise<void> | Gets more points from the server.                                           |
-| _clearScrollTrigger       |                              | void        | Clears the scroll trigger.                                                  |
-| _getNewPoints             |                              | Promise<void> | Gets new points from the server.                                            |
-| _pointDeleted             |                              | void        | Handles the point deleted event.                                            |
-| _pointsChanged            |                              | void        | Handles changes to the points property.                                     |
-| _updateEmojiBindings      |                              | void        | Updates emoji bindings.                                                     |
-| _pointUpOrDownSelectedChanged |                        | void        | Handles changes to the point up or down selected property.                  |
-| _clearVideo               |                              | void        | Clears the video data.                                                      |
-| _clearAudio               |                              | void        | Clears the audio data.                                                      |
-| _isAdminChanged           |                              | void        | Handles changes to the isAdmin property.                                    |
-| _getPoints                |                              | Promise<void> | Gets points from the server.                                                |
-| _postChanged              |                              | void        | Handles changes to the post property.                                       |
-| removeElementsByClass     | rootElement, className       | void        | Removes elements by class name.                                             |
-| _updatePointLabels        |                              | void        | Updates point labels.                                                       |
-| _processStoredPoints      |                              | void        | Processes stored points.                                                    |
-| _updatePointInLists       | event                        | void        | Updates points in the lists.                                                |
-| _checkForMultipleLanguages|                              | void        | Checks for multiple languages in points.                                    |
-| interleaveArrays          | arrayA, arrayB               | Array       | Interleaves two arrays.                                                     |
-| _scrollPointIntoView      |                              | void        | Scrolls a point into view.                                                  |
-| _preProcessPoints         | points                       | Array       | Pre-processes points.                                                       |
-| _updateCounterInfo        |                              | void        | Updates counter information.                                                |
-| _insertNewPoint           | point                        | Promise<void> | Inserts a new point into the list.                                          |
-| _addMorePoint             | point                        | boolean     | Adds a more point to the list.                                              |
-| _completeNewPointResponse | point                        | void        | Completes the new point response.                                           |
-| addPointUp                |                              | void        | Adds an up point.                                                           |
-| addPointDown              |                              | void        | Adds a down point.                                                          |
-| addMobilePointUpOrDown    |                              | void        | Adds a mobile point up or down.                                             |
-| addPoint                  | content, value, videoId, audioId | Promise<void> | Adds a point.                                                               |
-| focusUpPoint              |                              | void        | Focuses the up point input.                                                 |
-| focusDownPoint            |                              | void        | Focuses the down point input.                                               |
-| focusMobilePoint          |                              | void        | Focuses the mobile point input.                                             |
-| focusOutlinedTextField    | event                        | void        | Focuses an outlined text field.                                             |
-| blurOutlinedTextField     | event                        | void        | Blurs an outlined text field.                                               |
-| _hasCurrentUpVideo        |                              | void        | Handles the current up video property.                                      |
-| _hasCurrentDownVideo      |                              | void        | Handles the current down video property.                                    |
-| _hasCurrentUpAudio        |                              | void        | Handles the current up audio property.                                      |
-| _hasCurrentDownAudio      |                              | void        | Handles the current down audio property.                                    |
-| _hasCurrentMobileVideo    |                              | void        | Handles the current mobile video property.                                  |
-| _hasCurrentMobileAudio    |                              | void        | Handles the current mobile audio property.                                  |
-| ifLengthUpIsRight         |                              | boolean     | Checks if the length of the up point is right.                              |
-| ifLengthDownIsRight       |                              | boolean     | Checks if the length of the down point is right.                            |
-| ifLengthMobileIsRight     |                              | boolean     | Checks if the length of the mobile point is right.                          |
-| ifLengthIsRight           | type, textValue, hasVideoId, hasAudioId | boolean | Checks if the length of a point is right.                                   |
-
-## Events
-
-- **eventName**: Description of when and why the event is emitted.
+| Name                          | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| textValueUp                   | None                                                                       | string      | Gets the text value for points for the post.                                |
+| _clearTextValueUp             | None                                                                       | void        | Clears the text value for points for the post.                              |
+| textValueDown                 | None                                                                       | string      | Gets the text value for points against the post.                            |
+| _clearTextValueDown           | None                                                                       | void        | Clears the text value for points against the post.                          |
+| textValueMobileUpOrDown       | None                                                                       | string      | Gets the text value for mobile points.                                      |
+| _clearTextValueMobileUpOrDown | None                                                                       | void        | Clears the text value for mobile points.                                    |
+| updated                       | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties are updated.                        |
+| styles                        | None                                                                       | CSSResult[] | Returns the styles for the component.                                       |
+| renderAudioUpload             | type: string, hideAudio: boolean, hasCurrentAudio: string \| undefined, uploadAudioPointHeader: string | TemplateResult | Renders the audio upload section.                                           |
+| renderVideoUpload             | type: string, hideVideo: boolean, hasCurrentVideo: string \| undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number \| undefined | TemplateResult | Renders the video upload section.                                           |
+| renderMobilePointSelection    | None                                                                       | TemplateResult | Renders the mobile point selection section.                                 |
+| renderPointItem               | point: YpPointData, index: number                                          | TemplateResult | Renders a point item.                                                       |
+| renderHeaderIcon              | headerTextType: string                                                     | TemplateResult | Renders the header icon based on the header text type.                      |
+| renderPointHeader             | header: string, alternativeHeader: string \| undefined, headerTextType: string, pointsLength: number | TemplateResult | Renders the point header.                                                   |
+| renderPointList               | type: string, header: string, alternativeHeader: string \| undefined, headerTextType: string, label: string \| undefined, hideVideo: boolean, hideText: boolean, hasCurrentVideo: string \| undefined, videoUploadedFunc: Function, uploadVideoHeader: string, uploadedVideoId: number \| undefined, pointFocusFunction: Function, hideAudio: boolean, hasCurrentAudio: string \| undefined, uploadAudioPointHeader: string, ifLengthIsRight: boolean, addPointFunc: Function, points: Array<YpPointData> \| undefined, mobile: boolean | TemplateResult | Renders the point list.                                                     |
+| scrollEvent                   | event: any                                                                 | void        | Handles the scroll event.                                                   |
+| renderTranslationPlaceholders | None                                                                       | TemplateResult | Renders translation placeholders.                                           |
+| renderPointInfo               | None                                                                       | TemplateResult | Renders point information.                                                  |
+| render                        | None                                                                       | TemplateResult | Renders the component.                                                      |
+| _chooseUpOrDownRadio          | None                                                                       | void        | Handles the selection of up or down radio button.                           |
+| wideReady                     | None                                                                       | boolean     | Checks if the component is ready for wide display.                          |
+| smallReady                    | None                                                                       | boolean     | Checks if the component is ready for small display.                         |
+| pointMaxLength                | None                                                                       | number      | Gets the maximum length for a point.                                        |
+| _openLogin                    | None                                                                       | void        | Opens the login dialog.                                                     |
+| _videoUpUploaded              | event: CustomEvent                                                         | void        | Handles the event when a video for points for the post is uploaded.         |
+| _videoDownUploaded            | event: CustomEvent                                                         | void        | Handles the event when a video for points against the post is uploaded.     |
+| _videoMobileUploaded          | event: CustomEvent                                                         | void        | Handles the event when a video for mobile points is uploaded.               |
+| _audioUpUploaded              | event: CustomEvent                                                         | void        | Handles the event when an audio for points for the post is uploaded.        |
+| _audioDownUploaded            | event: CustomEvent                                                         | void        | Handles the event when an audio for points against the post is uploaded.    |
+| _audioMobileUploaded          | event: CustomEvent                                                         | void        | Handles the event when an audio for mobile points is uploaded.              |
+| mobileScrollOffset            | None                                                                       | number      | Gets the scroll offset for mobile.                                          |
+| listResizeScrollThreshold     | None                                                                       | number      | Gets the scroll threshold for list resize.                                  |
+| listPaddingTop                | None                                                                       | number      | Gets the padding top for the list.                                          |
+| connectedCallback             | None                                                                       | void        | Lifecycle method called when the component is connected to the DOM.         |
+| disconnectedCallback          | None                                                                       | void        | Lifecycle method called when the component is disconnected from the DOM.    |
+| _listResize                   | None                                                                       | void        | Handles the list resize event.                                              |
+| _loadNewPointsIfNeeded        | event: CustomEvent                                                         | void        | Loads new points if needed.                                                 |
+| _loadMorePoints               | None                                                                       | void        | Loads more points.                                                          |
+| _interleaveMorePoints         | points: Array<YpPointData>                                                 | Array<YpPointData> | Interleaves more points.                                                    |
+| _getMorePoints                | None                                                                       | Promise<void> | Gets more points.                                                           |
+| _clearScrollTrigger           | None                                                                       | void        | Clears the scroll trigger.                                                  |
+| _getNewPoints                 | None                                                                       | Promise<void> | Gets new points.                                                            |
+| _pointDeleted                 | None                                                                       | void        | Handles the point deleted event.                                            |
+| _pointsChanged                | None                                                                       | void        | Handles the points changed event.                                           |
+| _updateEmojiBindings          | None                                                                       | void        | Updates emoji bindings.                                                     |
+| _pointUpOrDownSelectedChanged | None                                                                       | void        | Handles the change in point up or down selection.                           |
+| _clearVideo                   | None                                                                       | void        | Clears video data.                                                          |
+| _clearAudio                   | None                                                                       | void        | Clears audio data.                                                          |
+| _isAdminChanged               | None                                                                       | void        | Handles the change in admin status.                                         |
+| _getPoints                    | None                                                                       | Promise<void> | Gets points.                                                                |
+| _postChanged                  | None                                                                       | void        | Handles the post changed event.                                             |
+| removeElementsByClass         | rootElement: HTMLElement, className: string                                | void        | Removes elements by class name.                                             |
+| _updatePointLabels            | None                                                                       | void        | Updates point labels.                                                       |
+| _processStoredPoints          | None                                                                       | void        | Processes stored points.                                                    |
+| _updatePointInLists           | event: CustomEvent                                                         | void        | Updates a point in the lists.                                               |
+| _checkForMultipleLanguages    | None                                                                       | void        | Checks for multiple languages in points.                                    |
+| interleaveArrays              | arrayA: Array<YpPointData>, arrayB: Array<YpPointData>                      | Array<YpPointData> | Interleaves two arrays of points.                                           |
+| _scrollPointIntoView          | None                                                                       | void        | Scrolls a point into view.                                                  |
+| _preProcessPoints             | points: Array<YpPointData>                                                 | Array<YpPointData> | Pre-processes points.                                                       |
+| _updateCounterInfo            | None                                                                       | void        | Updates counter information.                                                |
+| _insertNewPoint               | point: YpPointData                                                         | Promise<void> | Inserts a new point.                                                        |
+| _addMorePoint                 | point: YpPointData                                                         | boolean     | Adds more points.                                                           |
+| _completeNewPointResponse     | point: YpPointData                                                         | void        | Completes the response for a new point.                                     |
+| addPointUp                    | None                                                                       | void        | Adds a point for the post.                                                  |
+| addPointDown                  | None                                                                       | void        | Adds a point against the post.                                              |
+| addMobilePointUpOrDown        | None                                                                       | void        | Adds a mobile point for or against the post.                                |
+| addPoint                      | content: string, value: number, videoId: number \| undefined, audioId: number \| undefined | Promise<void> | Adds a point.                                                               |
+| focusUpPoint                  | None                                                                       | void        | Focuses on the point for the post.                                          |
+| focusDownPoint                | None                                                                       | void        | Focuses on the point against the post.                                      |
+| focusMobilePoint              | None                                                                       | void        | Focuses on the mobile point.                                                |
+| focusOutlinedTextField        | event: CustomEvent                                                         | void        | Focuses on the outlined text field.                                         |
+| blurOutlinedTextField         | event: CustomEvent                                                         | void        | Blurs the outlined text field.                                              |
+| _hasCurrentUpVideo            | None                                                                       | void        | Checks if there is a current video for points for the post.                 |
+| _hasCurrentDownVideo          | None                                                                       | void        | Checks if there is a current video for points against the post.             |
+| _hasCurrentUpAudio            | None                                                                       | void        | Checks if there is a current audio for points for the post.                 |
+| _hasCurrentDownAudio          | None                                                                       | void        | Checks if there is a current audio for points against the post.             |
+| _hasCurrentMobileVideo        | None                                                                       | void        | Checks if there is a current video for mobile points.                       |
+| _hasCurrentMobileAudio        | None                                                                       | void        | Checks if there is a current audio for mobile points.                       |
+| ifLengthUpIsRight             | None                                                                       | boolean     | Checks if the length of the text for points for the post is right.          |
+| ifLengthDownIsRight           | None                                                                       | boolean     | Checks if the length of the text for points against the post is right.      |
+| ifLengthMobileIsRight         | None                                                                       | boolean     | Checks if the length of the text for mobile points is right.                |
+| ifLengthIsRight               | type: string, textValue: string \| undefined, hasVideoId: number \| undefined, hasAudioId: number \| undefined | boolean     | Checks if the length of the text is right based on the type and media IDs.  |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostPoints component
-```
+// Example usage of the YpPostPoints web component
+import './path/to/yp-post-points.js';
 
-Note: The provided example is incomplete and should be replaced with a specific example of how to use the `YpPostPoints` component within the context of the application.
+const postPointsElement = document.createElement('yp-post-points');
+postPointsElement.post = somePostData;
+document.body.appendChild(postPointsElement);
+```

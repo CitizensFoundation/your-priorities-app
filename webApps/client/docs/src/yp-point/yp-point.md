@@ -1,122 +1,117 @@
 # YpPoint
 
-The `YpPoint` class is a LitElement web component that represents a point in a discussion or debate. It is part of a larger application and interacts with various other components and services to display and manage points made by users.
+The `YpPoint` class is a custom web component that extends `YpBaseElement`. It represents a point in a discussion or post, with various properties and methods to manage its state, rendering, and interactions.
 
 ## Properties
 
-| Name                               | Type                      | Description                                                                 |
-|------------------------------------|---------------------------|-----------------------------------------------------------------------------|
-| point                              | YpPointData               | The data for the point being displayed.                                     |
-| post                               | YpPostData                | The data for the post that the point is associated with.                    |
-| group                              | YpGroupData               | The data for the group that the point is associated with.                   |
-| user                               | YpUserData \| undefined   | The data for the user who created the point.                                |
-| linkPoint                          | boolean                   | Indicates if the point should be a link to a detailed view.                 |
-| openTranscript                     | boolean                   | Indicates if the transcript should be open or collapsed.                    |
-| hideUser                           | boolean                   | Indicates if the user information should be hidden.                         |
-| hideActions                        | boolean                   | Indicates if the action buttons should be hidden.                           |
-| isEditing                          | boolean                   | Indicates if the point is currently being edited.                           |
-| isAdminCommentEditing              | boolean                   | Indicates if the admin comment is currently being edited.                   |
-| hasAdminComments                   | boolean                   | Indicates if there are admin comments on the point.                         |
-| maxNumberOfPointsBeforeEditFrozen  | number                    | The maximum number of points before editing is frozen.                      |
-| editText                           | string \| undefined       | The text being edited.                                                      |
-| editAdminCommentText               | string \| undefined       | The admin comment text being edited.                                        |
-| videoActive                        | boolean                   | Indicates if a video is associated with the point.                          |
-| pointVideoPath                     | string \| undefined       | The path to the video associated with the point.                            |
-| pointImageVideoPath                | string \| undefined       | The path to the video poster image.                                         |
-| pointVideoId                       | number \| undefined       | The ID of the video associated with the point.                              |
-| audioActive                        | boolean                   | Indicates if an audio is associated with the point.                         |
-| pointAudioPath                     | string \| undefined       | The path to the audio associated with the point.                            |
-| pointAudioId                       | number \| undefined       | The ID of the audio associated with the point.                              |
-| checkingTranscript                 | boolean                   | Indicates if the transcript is being checked.                               |
-| portraitVideo                      | boolean                   | Indicates if the video is in portrait mode.                                 |
-| checkTranscriptError               | boolean                   | Indicates if there was an error checking the transcript.                    |
-| playStartedAt                      | Date \| undefined         | The date and time when playback started.                                    |
-| videoPlayListener                  | Function \| undefined     | The listener function for video play events.                                |
-| videoPauseListener                 | Function \| undefined     | The listener function for video pause events.                               |
-| videoEndedListener                 | Function \| undefined     | The listener function for video ended events.                               |
-| audioPlayListener                  | Function \| undefined     | The listener function for audio play events.                                |
-| audioPauseListener                 | Function \| undefined     | The listener function for audio pause events.                               |
-| audioEndedListener                 | Function \| undefined     | The listener function for audio ended events.                               |
+| Name                                | Type                              | Description                                                                 |
+|-------------------------------------|-----------------------------------|-----------------------------------------------------------------------------|
+| `point`                             | `YpPointData`                     | The data object representing the point.                                     |
+| `post`                              | `YpPostData`                      | The data object representing the post associated with the point.            |
+| `group`                             | `YpGroupData`                     | The data object representing the group associated with the point.           |
+| `user`                              | `YpUserData \| undefined`         | The user data associated with the point.                                    |
+| `linkPoint`                         | `boolean`                         | Indicates if the point should be linked.                                    |
+| `openTranscript`                    | `boolean`                         | Indicates if the transcript should be open.                                 |
+| `hideUser`                          | `boolean`                         | Indicates if the user information should be hidden.                         |
+| `hideActions`                       | `boolean`                         | Indicates if the action buttons should be hidden.                           |
+| `isEditing`                         | `boolean`                         | Indicates if the point is in editing mode.                                  |
+| `isUpVoted`                         | `boolean`                         | Indicates if the point is upvoted.                                          |
+| `isDownVoted`                       | `boolean`                         | Indicates if the point is downvoted.                                        |
+| `isAdminCommentEditing`             | `boolean`                         | Indicates if the admin comment is in editing mode.                          |
+| `hasAdminComments`                  | `boolean`                         | Indicates if there are admin comments.                                      |
+| `maxNumberOfPointsBeforeEditFrozen` | `number`                          | The maximum number of points before editing is frozen.                      |
+| `editText`                          | `string \| undefined`             | The text being edited for the point.                                        |
+| `editAdminCommentText`              | `string \| undefined`             | The text being edited for the admin comment.                                |
+| `videoActive`                       | `boolean`                         | Indicates if a video is active for the point.                               |
+| `pointVideoPath`                    | `string \| undefined`             | The path to the point's video.                                              |
+| `pointImageVideoPath`               | `string \| undefined`             | The path to the point's video image.                                        |
+| `pointVideoId`                      | `number \| undefined`             | The ID of the point's video.                                                |
+| `audioActive`                       | `boolean`                         | Indicates if audio is active for the point.                                 |
+| `pointAudioPath`                    | `string \| undefined`             | The path to the point's audio.                                              |
+| `pointAudioId`                      | `number \| undefined`             | The ID of the point's audio.                                                |
+| `checkingTranscript`                | `boolean`                         | Indicates if the transcript is being checked.                               |
+| `portraitVideo`                     | `boolean`                         | Indicates if the video is in portrait mode.                                 |
+| `checkTranscriptError`              | `boolean`                         | Indicates if there was an error checking the transcript.                    |
+| `playStartedAt`                     | `Date \| undefined`               | The date and time when playback started.                                    |
+| `videoPlayListener`                 | `Function \| undefined`           | The listener function for video play events.                                |
+| `videoPauseListener`                | `Function \| undefined`           | The listener function for video pause events.                               |
+| `videoEndedListener`                | `Function \| undefined`           | The listener function for video ended events.                               |
+| `audioPlayListener`                 | `Function \| undefined`           | The listener function for audio play events.                                |
+| `audioPauseListener`                | `Function \| undefined`           | The listener function for audio pause events.                               |
+| `audioEndedListener`                | `Function \| undefined`           | The listener function for audio ended events.                               |
 
 ## Methods
 
-| Name                    | Parameters | Return Type | Description                                                                 |
-|-------------------------|------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback       |            | void        | Lifecycle method called when the component is added to the DOM.             |
-| disconnectedCallback    |            | void        | Lifecycle method called when the component is removed from the DOM.         |
-| updated                 | Map        | void        | Lifecycle method called when the component's properties have changed.       |
-| renderAdminComments     |            | TemplateResult | Renders the admin comments section.                                      |
-| renderUserHeader        |            | TemplateResult | Renders the user header section.                                          |
-| renderTextPoint         |            | TemplateResult | Renders the text content of the point.                                    |
-| renderVideoOrAudio      |            | TemplateResult | Renders the video or audio content associated with the point.             |
-| renderEditPoint         |            | TemplateResult | Renders the edit interface for the point.                                 |
-| renderEditMenu          |            | TemplateResult | Renders the edit menu for the point.                                      |
-| render                  |            | TemplateResult | Renders the component.                                                    |
-| _setOpen                |            | void        | Opens the transcript section.                                              |
-| _setClosed              |            | void        | Closes the transcript section.                                             |
-| _isEditingChanged       |            | void        | Called when the `isEditing` property changes.                              |
-| _isAdminCommentEditingChanged |     | void        | Called when the `isAdminCommentEditing` property changes.                  |
-| _shareTap               | CustomEvent| void        | Handles the share tap event.                                               |
-| _linkIfNeeded           |            | void        | Navigates to the detailed view if `linkPoint` is true.                     |
-| _updateEmojiBindings    |            | void        | Updates the emoji bindings for the edit interfaces.                        |
-| _cancelEdit             |            | void        | Cancels the editing of the point.                                          |
-| _saveEdit               |            | Promise<void> | Saves the edited point content.                                           |
-| _cancelAdminCommentEdit |            | void        | Cancels the editing of the admin comment.                                  |
-| _saveAdminCommentEdit   |            | Promise<void> | Saves the edited admin comment.                                           |
-| _deletePoint            |            | void        | Initiates the deletion of the point.                                       |
-| _reallyDeletePoint      |            | Promise<void> | Confirms and performs the deletion of the point.                          |
-| _reportPoint            |            | void        | Initiates the reporting of the point.                                      |
-| _onReport               |            | void        | Handles the report confirmation.                                           |
-| _editPoint              |            | void        | Initiates the editing of the point.                                        |
-| _editAdminComment       |            | void        | Initiates the editing of the admin comment.                                |
-| firstUpdated            | Map        | void        | Lifecycle method called after the component's first render.                |
-| _pauseMediaPlayback     |            | void        | Pauses media playback.                                                     |
-| _pointChanged           |            | void        | Called when the `point` property changes.                                  |
-| _checkTranscriptStatus  |            | Promise<void> | Checks the status of the transcript.                                      |
-| _resetMedia             |            | void        | Resets the media properties.                                               |
-| loginName               |            | string \| undefined | Returns the login name of the user who created the point.                |
-| isUpVote                |            | boolean     | Indicates if the point is an upvote.                                       |
-| isDownVote              |            | boolean     | Indicates if the point is a downvote.                                      |
+| Name                          | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| `connectedCallback`           | None                                                                       | `void`      | Lifecycle method called when the element is added to the document.          |
+| `disconnectedCallback`        | None                                                                       | `void`      | Lifecycle method called when the element is removed from the document.      |
+| `_updateQualitiesFromSignal`  | None                                                                       | `void`      | Updates the qualities of the point from a signal.                           |
+| `_updateQualities`            | None                                                                       | `void`      | Updates the upvote and downvote status of the point.                        |
+| `updated`                     | `changedProperties: Map<string \| number \| symbol, unknown>`              | `void`      | Lifecycle method called when properties are updated.                        |
+| `renderAdminComments`         | None                                                                       | `TemplateResult` | Renders the admin comments section.                                         |
+| `renderUserHeader`            | None                                                                       | `TemplateResult \| nothing` | Renders the user header section.                                             |
+| `renderTextPoint`             | None                                                                       | `TemplateResult` | Renders the text content of the point.                                      |
+| `renderVideoOrAudio`          | None                                                                       | `TemplateResult` | Renders the video or audio content of the point.                            |
+| `renderEditPoint`             | None                                                                       | `TemplateResult` | Renders the edit point section.                                             |
+| `renderEditMenu`              | None                                                                       | `TemplateResult` | Renders the edit menu section.                                              |
+| `render`                      | None                                                                       | `TemplateResult` | Renders the entire component.                                               |
+| `_setOpen`                    | None                                                                       | `void`      | Sets the transcript to open.                                                |
+| `_setClosed`                  | None                                                                       | `void`      | Sets the transcript to closed.                                              |
+| `isEditingSomething`          | None                                                                       | `boolean`   | Returns true if the point or admin comment is being edited.                 |
+| `showAdminComments`           | None                                                                       | `boolean`   | Returns true if admin comments should be shown.                             |
+| `hasAdminCommentAccess`       | None                                                                       | `boolean`   | Returns true if the user has access to edit admin comments.                 |
+| `videoOrAudioActive`          | None                                                                       | `boolean`   | Returns true if either video or audio is active.                            |
+| `_isEditingChanged`           | None                                                                       | `void`      | Handles changes to the editing state.                                       |
+| `_isAdminCommentEditingChanged` | None                                                                     | `void`      | Handles changes to the admin comment editing state.                         |
+| `_shareTap`                   | `event: CustomEvent`                                                       | `void`      | Handles the share button tap event.                                         |
+| `pointUrl`                    | None                                                                       | `string`    | Returns the URL of the point.                                               |
+| `_linkIfNeeded`               | None                                                                       | `void`      | Navigates to the post if the point is linked.                               |
+| `_updateEmojiBindings`        | None                                                                       | `void`      | Updates the emoji bindings for the point or admin comment editor.           |
+| `_cancelEdit`                 | None                                                                       | `void`      | Cancels the point editing.                                                  |
+| `_saveEdit`                   | None                                                                       | `Promise<void>` | Saves the edited point content.                                             |
+| `_cancelAdminCommentEdit`     | None                                                                       | `void`      | Cancels the admin comment editing.                                          |
+| `_saveAdminCommentEdit`       | None                                                                       | `Promise<void>` | Saves the edited admin comment content.                                     |
+| `_deletePoint`                | None                                                                       | `void`      | Initiates the point deletion process.                                       |
+| `_reallyDeletePoint`          | None                                                                       | `Promise<void>` | Deletes the point.                                                          |
+| `_reportPoint`                | None                                                                       | `void`      | Reports the point.                                                          |
+| `_onReport`                   | None                                                                       | `void`      | Handles the report confirmation.                                            |
+| `_editPoint`                  | None                                                                       | `void`      | Initiates the point editing process.                                        |
+| `_editAdminComment`           | None                                                                       | `void`      | Initiates the admin comment editing process.                                |
+| `hasPointAccess`              | None                                                                       | `boolean`   | Returns true if the user has access to the point.                           |
+| `canEditPoint`                | None                                                                       | `boolean`   | Returns true if the point can be edited.                                    |
+| `firstUpdated`                | `changedProperties: Map<string \| number \| symbol, unknown>`              | `void`      | Lifecycle method called after the first update.                             |
+| `_pauseMediaPlayback`         | None                                                                       | `void`      | Pauses media playback.                                                      |
+| `_pointChanged`               | None                                                                       | `void`      | Handles changes to the point property.                                      |
+| `_checkTranscriptStatus`      | None                                                                       | `Promise<void>` | Checks the status of the transcript.                                        |
+| `_resetMedia`                 | None                                                                       | `void`      | Resets the media properties.                                                |
+| `loginName`                   | None                                                                       | `string \| undefined` | Returns the login name of the user associated with the point.               |
+| `isUpVote`                    | None                                                                       | `boolean`   | Returns true if the point is upvoted.                                       |
+| `isDownVote`                  | None                                                                       | `boolean`   | Returns true if the point is downvoted.                                     |
 
-## Events (if any)
+## Events
 
-- **yp-got-admin-rights**: Emitted when the user gets admin rights.
-- **yp-logged-in**: Emitted when the user logs in.
+- **yp-got-admin-rights**: Emitted when admin rights are obtained.
+- **yp-logged-in**: Emitted when a user logs in.
 - **yp-pause-media-playback**: Emitted to pause media playback.
+- **yp-got-endorsements-and-qualities**: Emitted when endorsements and qualities are updated.
+- **yp-list-resize**: Emitted to request a list resize.
 - **yp-point-deleted**: Emitted when a point is deleted.
-- **yp-list-resize**: Emitted when the list needs to be resized.
-- **yp-update-point-in-list**: Emitted when a point in the list needs to be updated.
+- **yp-update-point-in-list**: Emitted to update a point in the list.
 
 ## Examples
 
 ```typescript
 // Example usage of the YpPoint component
-<yp-point
-  .point="${this.pointData}"
-  .post="${this.postData}"
-  .group="${this.groupData}"
-  .user="${this.userData}"
-  linkPoint="${true}"
-  openTranscript="${true}"
-  hideUser="${false}"
-  hideActions="${false}"
-  isEditing="${false}"
-  isAdminCommentEditing="${false}"
-  hasAdminComments="${true}"
-  maxNumberOfPointsBeforeEditFrozen="${5}"
-  editText="${'Some edited text'}"
-  editAdminCommentText="${'Some edited admin comment'}"
-  videoActive="${true}"
-  pointVideoPath="${'path/to/video.mp4'}"
-  pointImageVideoPath="${'path/to/video-poster.jpg'}"
-  pointVideoId="${123}"
-  audioActive="${true}"
-  pointAudioPath="${'path/to/audio.mp3'}"
-  pointAudioId="${456}"
-  checkingTranscript="${false}"
-  portraitVideo="${false}"
-  checkTranscriptError="${false}"
-></yp-point>
-```
+import { html } from "lit";
+import "./yp-point.js";
 
-Note: The above example is a hypothetical usage within an HTML template. Actual usage may vary depending on the context within the application.
+const template = html`
+  <yp-point
+    .point="${pointData}"
+    .post="${postData}"
+    .group="${groupData}"
+    .user="${userData}"
+  ></yp-point>
+`;
+```

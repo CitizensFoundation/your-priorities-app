@@ -1,209 +1,161 @@
 # YpPostEdit
 
-A web component for editing posts, with support for structured questions and media uploads.
+The `YpPostEdit` class is a web component that extends `YpEditBase` and provides functionality for editing or creating posts. It includes various properties and methods to handle form submission, media uploads, structured questions, and more.
 
 ## Properties
 
-| Name                          | Type    | Description                                                                 |
-|-------------------------------|---------|-----------------------------------------------------------------------------|
-| action                        | String  | The API endpoint for submitting the form.                                   |
-| newPost                       | Boolean | Indicates if the form is for creating a new post.                           |
-| selectedCategoryArrayId       | Number  | The index of the selected category in the categories array.                 |
-| initialStructuredAnswersJson  | Array   | Initial structured answers in JSON format.                                  |
-| structuredQuestions           | Array   | Array of structured questions data.                                         |
-| post                          | Object  | The post data being edited.                                                 |
-| group                         | Object  | The group data associated with the post.                                    |
-| saveSurveyAnswers             | Boolean | Whether to save survey answers locally.                                     |
-| skipIfSavedSurveyAnswers      | Boolean | Whether to skip saving survey answers if already saved.                     |
-| locationHidden                | Boolean | Whether the location input is hidden.                                       |
-| location                      | Object  | The location data associated with the post.                                 |
-| encodedLocation               | String  | The encoded location data in string format.                                 |
-| selectedCategoryId            | Number  | The ID of the selected category.                                            |
-| uploadedVideoId               | Number  | The ID of the uploaded video.                                               |
-| uploadedAudioId               | Number  | The ID of the uploaded audio.                                               |
-| currentVideoId                | Number  | The ID of the current video associated with the post.                       |
-| currentAudioId                | Number  | The ID of the current audio associated with the post.                       |
-| selected                      | Number  | The index of the currently selected tab.                                    |
-| mapActive                     | Boolean | Whether the map is currently active.                                        |
-| hasOnlyOneTab                 | Boolean | Whether there is only one tab available.                                    |
-| postDescriptionLimit          | Number  | The character limit for the post description.                               |
-| sructuredAnswersString        | String  | The structured answers in string format.                                    |
-| structuredAnswersJson         | String  | The structured answers in JSON format.                                      |
-| structuredAnswersString       | String  | The structured answers in string format.                                    |
-| translatedQuestions           | Array   | Array of translated structured questions data.                              |
-| autoTranslate                 | Boolean | Whether to automatically translate content.                                 |
-| uploadedDocumentUrl           | String  | The URL of the uploaded document.                                           |
-| uploadedDocumentFilename      | String  | The filename of the uploaded document.                                      |
-| selectedCoverMediaType        | String  | The type of media selected for the post cover.                              |
-| uploadedHeaderImageId         | Number  | The ID of the uploaded header image.                                        |
-| customTitleQuestionText       | String  | Custom text for the title question.                                         |
-| emailValidationPattern        | String  | The regex pattern for email validation.                                     |
-| liveQuestionIds               | Array   | Array of live question IDs.                                                 |
-| uniqueIdsToElementIndexes     | Record  | Mapping of unique IDs to element indexes.                                   |
-| liveUniqueIds                 | Array   | Array of live unique IDs.                                                   |
+| Name                          | Type                                      | Description                                                                 |
+|-------------------------------|-------------------------------------------|-----------------------------------------------------------------------------|
+| action                        | string                                    | The form action URL for submitting the post.                                |
+| newPost                       | boolean                                   | Indicates if the post is new.                                               |
+| selectedCategoryArrayId       | number \| undefined                       | The selected category array index.                                          |
+| initialStructuredAnswersJson  | Array<YpStructuredAnswer> \| undefined    | Initial structured answers in JSON format.                                  |
+| structuredQuestions           | Array<YpStructuredQuestionData> \| undefined | Structured questions data.                                                  |
+| post                          | YpPostData \| undefined                   | The post data being edited or created.                                      |
+| group                         | YpGroupData \| undefined                  | The group data associated with the post.                                    |
+| saveSurveyAnswers             | boolean                                   | Indicates if survey answers should be saved.                                |
+| disableDialog                 | boolean                                   | Indicates if the dialog should be disabled.                                 |
+| skipIfSavedSurveyAnswers      | boolean                                   | Indicates if the form should skip if survey answers are saved.              |
+| locationHidden                | boolean                                   | Indicates if the location input is hidden.                                  |
+| location                      | YpLocationData \| undefined               | The location data for the post.                                             |
+| encodedLocation               | string \| undefined                       | The encoded location string.                                                |
+| selectedCategoryId            | number \| undefined                       | The selected category ID.                                                   |
+| uploadedVideoId               | number \| undefined                       | The ID of the uploaded video.                                               |
+| uploadedAudioId               | number \| undefined                       | The ID of the uploaded audio.                                               |
+| response                      | object \| undefined                       | The response object from form submission.                                   |
+| errorText                     | string \| undefined                       | The error text to display in the dialog.                                    |
+| currentVideoId                | number \| undefined                       | The current video ID.                                                       |
+| currentAudioId                | number \| undefined                       | The current audio ID.                                                       |
+| selected                      | number                                    | The index of the selected tab.                                              |
+| mapActive                     | boolean                                   | Indicates if the map is active.                                             |
+| hasOnlyOneTab                 | boolean                                   | Indicates if there is only one tab.                                         |
+| postDescriptionLimit          | number \| undefined                       | The character limit for the post description.                               |
+| sructuredAnswersString        | string \| undefined                       | The structured answers as a string.                                         |
+| structuredAnswersJson         | string                                    | The structured answers in JSON format.                                      |
+| structuredAnswersString       | string                                    | The structured answers as a string.                                         |
+| translatedQuestions           | Array<YpStructuredQuestionData> \| undefined | Translated structured questions data.                                       |
+| autoTranslate                 | boolean                                   | Indicates if auto-translation is enabled.                                   |
+| submitDisabled                | boolean                                   | Indicates if the submit button is disabled.                                 |
+| uploadedDocumentUrl           | string \| undefined                       | The URL of the uploaded document.                                           |
+| uploadedVideoUrl              | string \| undefined                       | The URL of the uploaded video.                                              |
+| uploadedDocumentFilename      | string \| undefined                       | The filename of the uploaded document.                                      |
+| selectedCoverMediaType        | string                                    | The selected cover media type.                                              |
+| uploadedHeaderImageId         | number \| undefined                       | The ID of the uploaded header image.                                        |
+| customTitleQuestionText       | string \| undefined                       | Custom title question text.                                                 |
+| formElement                   | YpForm \| undefined                       | The form element reference.                                                 |
+| emailValidationPattern        | string                                    | The regex pattern for email validation.                                     |
+| liveQuestionIds               | Array<number>                             | Array of live question IDs.                                                 |
+| uniqueIdsToElementIndexes     | Record<string, number>                    | Mapping of unique IDs to element indexes.                                   |
+| liveUniqueIds                 | Array<string>                             | Array of live unique IDs.                                                   |
 
 ## Methods
 
-| Name                        | Parameters | Return Type | Description                                      |
-|-----------------------------|------------|-------------|--------------------------------------------------|
-| customValidation            |            | Boolean     | Custom validation logic for the form.            |
-| _getTranslationsIfNeeded    |            | Promise     | Fetches translations for structured questions.   |
-| _groupChanged               |            |             | Handles changes to the group property.           |
-| _generateLogo               | event      |             | Generates a logo based on the name and description. |
-| _setSelectedTab             | event      |             | Sets the selected tab based on user interaction. |
-| renderTabs                  |            | TemplateResult | Renders the tabs for the form.                  |
-| renderMoreContactInfo       |            | TemplateResult | Renders additional contact information fields. |
-| titleQuestionText           |            | String      | Gets the text for the title question.            |
-| renderDescriptionTab        |            | TemplateResult | Renders the description tab content.           |
-| renderPointTab              |            | TemplateResult | Renders the point tab content.                 |
-| renderLocationTab           |            | TemplateResult | Renders the location tab content.              |
-| renderCoverMediaSelection   |            | TemplateResult | Renders the cover media selection options.     |
-| renderMediaTab              |            | TemplateResult | Renders the media tab content.                 |
-| _setSelectedCoverMediaType  | event      |             | Sets the selected cover media type.              |
-| _pointPageHidden            |            | Boolean     | Determines if the point page should be hidden.   |
-| _mediaPageHidden            |            | Boolean     | Determines if the media page should be hidden.   |
-| renderCurrentTabPage        |            | TemplateResult | Renders the content of the current tab page.   |
-| renderHiddenInputs          |            | TemplateResult | Renders hidden inputs for the form.            |
-| _gotAiImage                 | event      |             | Handles the event when an AI-generated image is received. |
-| _alternativeTextForNewIdeaSaveButtonTranslation | | | Updates the save button text with a translation. |
-| _updatePostTitle            |            |             | Updates the post title with a translation.       |
-| connectedCallback           |            |             | Lifecycle callback for when the component is connected to the DOM. |
-| disconnectedCallback        |            |             | Lifecycle callback for when the component is disconnected from the DOM. |
-| hasLongSaveText             |            | Boolean     | Checks if the save text is longer than 9 characters. |
-| _autoTranslateEvent         | event      |             | Handles the auto-translate event.                |
-| _isLastRating               | index      | Boolean     | Checks if the current question is the last rating question. |
-| _isFirstRating              | index      | Boolean     | Checks if the current question is the first rating question. |
-| _openToId                   | event      |             | Scrolls to a specific question ID.               |
-| _goToNextIndex              | event      |             | Scrolls to the next question index.              |
-| _skipToId                   | event      |             | Skips to a specific question ID.                 |
-| _skipToWithHideId           | event      |             | Skips to a specific question ID with hidden items. |
-| _selectedCategory           | event      |             | Handles the selection of a category.             |
-| _selectedCategoryChanged    |            |             | Handles changes to the selected category.        |
-| _postChanged                |            |             | Handles changes to the post property.            |
-| _updateInitialCategory      | group      |             | Updates the initial category based on the group. |
-| _imageUploaded              | event      |             | Handles the event when an image is uploaded.     |
-| _redirectAfterVideo         | post       | Promise     | Redirects after a video is uploaded.             |
-| _redirectAfterAudio         | post       | Promise     | Redirects after an audio is uploaded.            |
-| _finishRedirect             | post       |             | Finalizes the redirect after a post is created or updated. |
-| clear                       |            |             | Clears the form fields.                          |
-| setup                       | post, newItem, refreshFunction, group, params | Promise | Sets up the component for editing or creating a post. |
-| _setupGroup                 | group      |             | Sets up the group-related properties.            |
-| _videoUploaded              | event      |             | Handles the event when a video is uploaded.      |
-| _audioUploaded              | event      |             | Handles the event when an audio is uploaded.      |
-| _documentUploaded           | event      |             | Handles the event when a document is uploaded.    |
-| customFormResponse          |            |             | Custom response logic for the form submission.    |
-| _updateEmojiBindings        |            |             | Updates emoji selector bindings.                  |
-| _locationHiddenChanged      |            |             | Handles changes to the locationHidden property.   |
-| _formInvalid                |            |             | Handles invalid form submission.                  |
-| _locationChanged            |            |             | Handles changes to the location property.         |
-| _uploadedHeaderImageIdChanged |          |             | Handles changes to the uploadedHeaderImageId property. |
-| _getStructuredQuestionsString |          | Array      | Gets structured questions as a string.            |
-| _setupStructuredQuestions   |            |             | Sets up structured questions.                     |
-| _selectedChanged            |            |             | Handles changes to the selected tab index.        |
-| _selectedCategory           | event      |             | Handles category selection.                       |
-| _selectedCategoryChanged    |            |             | Handles changes to the selected category.         |
-| showCategories              |            | Boolean     | Determines if categories should be shown.         |
-| getPositionInArrayFromId    | collection, id | Number  | Gets the position of an item in an array by ID.   |
-| _postChanged                |            |             | Handles changes to the post property.             |
-| _updateInitialCategory      | group      |             | Updates the initial category based on the group.  |
-| _imageUploaded              | event      |             | Handles the event when an image is uploaded.      |
-| _redirectAfterVideo         | post       | Promise     | Redirects after a video is uploaded.              |
-| _redirectAfterAudio         | post       | Promise     | Redirects after an audio is uploaded.             |
-| _finishRedirect             | post       |             | Finalizes the redirect after a post is created or updated. |
-| clear                       |            |             | Clears the form fields.                           |
-| setup                       | post, newItem, refreshFunction, group, params | Promise | Sets up the component for editing or creating a post. |
-| _setupGroup                 | group      |             | Sets up the group-related properties.             |
-| _videoUploaded              | event      |             | Handles the event when a video is uploaded.       |
-| _audioUploaded              | event      |             | Handles the event when an audio is uploaded.      |
-| _documentUploaded           | event      |             | Handles the event when a document is uploaded.    |
-| customFormResponse          |            |             | Custom response logic for the form submission.    |
-| _updateEmojiBindings        |            |             | Updates emoji selector bindings.                  |
-| _locationHiddenChanged      |            |             | Handles changes to the locationHidden property.   |
-| _formInvalid                |            |             | Handles invalid form submission.                  |
-| _locationChanged            |            |             | Handles changes to the location property.         |
-| _uploadedHeaderImageIdChanged |          |             | Handles changes to the uploadedHeaderImageId property. |
-| _getStructuredQuestionsString |          | Array      | Gets structured questions as a string.            |
-| _setupStructuredQuestions   |            |             | Sets up structured questions.                     |
-| _selectedChanged            |            |             | Handles changes to the selected tab index.        |
-| _selectedCategory           | event      |             | Handles category selection.                       |
-| _selectedCategoryChanged    |            |             | Handles changes to the selected category.         |
-| showCategories              |            | Boolean     | Determines if categories should be shown.         |
-| getPositionInArrayFromId    | collection, id | Number  | Gets the position of an item in an array by ID.   |
-| _postChanged                |            |             | Handles changes to the post property.             |
-| _updateInitialCategory      | group      |             | Updates the initial category based on the group.  |
-| _imageUploaded              | event      |             | Handles the event when an image is uploaded.      |
-| _redirectAfterVideo         | post       | Promise     | Redirects after a video is uploaded.              |
-| _redirectAfterAudio         | post       | Promise     | Redirects after an audio is uploaded.             |
-| _finishRedirect             | post       |             | Finalizes the redirect after a post is created or updated. |
-| clear                       |            |             | Clears the form fields.                           |
-| setup                       | post, newItem, refreshFunction, group, params | Promise | Sets up the component for editing or creating a post. |
-| _setupGroup                 | group      |             | Sets up the group-related properties.             |
-| _videoUploaded              | event      |             | Handles the event when a video is uploaded.       |
-| _audioUploaded              | event      |             | Handles the event when an audio is uploaded.      |
-| _documentUploaded           | event      |             | Handles the event when a document is uploaded.    |
-| customFormResponse          |            |             | Custom response logic for the form submission.    |
-| _updateEmojiBindings        |            |             | Updates emoji selector bindings.                  |
-| _locationHiddenChanged      |            |             | Handles changes to the locationHidden property.   |
-| _formInvalid                |            |             | Handles invalid form submission.                  |
-| _locationChanged            |            |             | Handles changes to the location property.         |
-| _uploadedHeaderImageIdChanged |          |             | Handles changes to the uploadedHeaderImageId property. |
-| _getStructuredQuestionsString |          | Array      | Gets structured questions as a string.            |
-| _setupStructuredQuestions   |            |             | Sets up structured questions.                     |
-| _selectedChanged            |            |             | Handles changes to the selected tab index.        |
-| _selectedCategory           | event      |             | Handles category selection.                       |
-| _selectedCategoryChanged    |            |             | Handles changes to the selected category.         |
-| showCategories              |            | Boolean     | Determines if categories should be shown.         |
-| getPositionInArrayFromId    | collection, id | Number  | Gets the position of an item in an array by ID.   |
-| _postChanged                |            |             | Handles changes to the post property.             |
-| _updateInitialCategory      | group      |             | Updates the initial category based on the group.  |
-| _imageUploaded              | event      |             | Handles the event when an image is uploaded.      |
-| _redirectAfterVideo         | post       | Promise     | Redirects after a video is uploaded.              |
-| _redirectAfterAudio         | post       | Promise     | Redirects after an audio is uploaded.             |
-| _finishRedirect             | post       |             | Finalizes the redirect after a post is created or updated. |
-| clear                       |            |             | Clears the form fields.                           |
-| setup                       | post, newItem, refreshFunction, group, params | Promise | Sets up the component for editing or creating a post. |
-| _setupGroup                 | group      |             | Sets up the group-related properties.             |
-| _videoUploaded              | event      |             | Handles the event when a video is uploaded.       |
-| _audioUploaded              | event      |             | Handles the event when an audio is uploaded.      |
-| _documentUploaded           | event      |             | Handles the event when a document is uploaded.    |
-| customFormResponse          |            |             | Custom response logic for the form submission.    |
-| _updateEmojiBindings        |            |             | Updates emoji selector bindings.                  |
-| _locationHiddenChanged      |            |             | Handles changes to the locationHidden property.   |
-| _formInvalid                |            |             | Handles invalid form submission.                  |
-| _locationChanged            |            |             | Handles changes to the location property.         |
-| _uploadedHeaderImageIdChanged |          |             | Handles changes to the uploadedHeaderImageId property. |
-| _getStructuredQuestionsString |          | Array      | Gets structured questions as a string.            |
-| _setupStructuredQuestions   |            |             | Sets up structured questions.                     |
-| _selectedChanged            |            |             | Handles changes to the selected tab index.        |
-| _selectedCategory           | event      |             | Handles category selection.                       |
-| _selectedCategoryChanged    |            |             | Handles changes to the selected category.         |
-| showCategories              |            | Boolean     | Determines if categories should be shown.         |
-| getPositionInArrayFromId    | collection, id | Number  | Gets the position of an item in an array by ID.   |
-| _postChanged                |            |             | Handles changes to the post property.             |
-| _updateInitialCategory      | group      |             | Updates the initial category based on the group.  |
-| _imageUploaded              | event      |             | Handles the event when an image is uploaded.      |
-| _redirectAfterVideo         | post       | Promise     | Redirects after a video is uploaded.              |
-| _redirectAfterAudio         | post       | Promise     | Redirects after an audio is uploaded.             |
-| _finishRedirect             | post       |             | Finalizes the redirect after a post is created or updated. |
-| clear                       |            |             | Clears the form fields.                           |
-| setup                       | post, newItem, refreshFunction, group, params | Promise | Sets up the component for editing or creating a post. |
-| _setupGroup                 | group      |             | Sets up the group-related properties.             |
-| _videoUploaded              | event      |             | Handles the event when a video is uploaded.       |
-| _audioUploaded              | event      |             | Handles the event when an audio is uploaded.      |
-| _documentUploaded           | event      |             | Handles the event when a document is uploaded.    |
-| customFormResponse          |            |             | Custom response logic for the form submission.    |
-| _updateEmojiBindings        |            |             | Updates emoji selector bindings.                  |
-| _locationHiddenChanged      |            |             | Handles changes to the locationHidden property.   |
-| _formInvalid                |            |             | Handles invalid form submission.                  |
-| _locationChanged            |            |             | Handles changes to the location property.         |
-| _uploadedHeaderImageIdChanged |          |             | Handles changes to the uploadedHeaderImageId property. |
-| _getStructuredQuestionsString |          | Array      | Gets structured questions as a string.            |
-| _setupStructuredQuestions   |            |             | Sets up structured questions.                     |
-| _selectedChanged            |            |             | Handles changes to the selected tab index.        |
-| _selectedCategory           | event      |             | Handles category selection.                       |
-| _selectedCategoryChanged    |            |             | Handles changes to the selected category.         |
-| showCategories              |            | Boolean     | Determines if categories should be shown.         |
-| getPositionInArrayFromId    | collection, id | Number  | Gets the position of an item in an array by ID.   |
-| _postChanged                |            |             | Handles changes to the post property.             |
-| _updateInitialCategory      | group      |             | Updates the initial category based on the group.  |
-| _imageUploaded
+| Name                                 | Parameters                                                                 | Return Type | Description                                                                 |
+|--------------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| updated                              | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Called when the component is updated.                                       |
+| _getQuestionLengthWithSubOptions     | questions: string \| any[]                                                 | number      | Calculates the length of questions with sub-options.                        |
+| customValidation                     | none                                                                       | boolean     | Performs custom validation on the form.                                     |
+| _getTranslationsIfNeeded             | none                                                                       | Promise<void> | Fetches translations if needed.                                             |
+| _groupChanged                        | none                                                                       | void        | Handles changes to the group property.                                      |
+| _generateLogo                        | event: CustomEvent                                                         | void        | Generates a logo using AI.                                                  |
+| _setSelectedTab                      | event: CustomEvent                                                         | void        | Sets the selected tab index.                                                |
+| renderMoreContactInfo                | none                                                                       | TemplateResult | Renders additional contact information fields.                              |
+| titleQuestionText                    | none                                                                       | string      | Gets the title question text.                                               |
+| renderCoverMediaContent              | none                                                                       | TemplateResult | Renders the cover media content.                                            |
+| renderDescriptionInputs              | none                                                                       | TemplateResult | Renders the description input fields.                                       |
+| renderPointTab                       | none                                                                       | TemplateResult | Renders the point tab content.                                              |
+| renderLocationTab                    | none                                                                       | TemplateResult | Renders the location tab content.                                           |
+| renderCoverMediaSelection            | none                                                                       | TemplateResult | Renders the cover media selection options.                                  |
+| renderMediaTab                       | none                                                                       | TemplateResult | Renders the media tab content.                                              |
+| _setSelectedCoverMediaType           | event: CustomEvent                                                         | void        | Sets the selected cover media type.                                         |
+| _pointPageHidden                     | none                                                                       | boolean     | Determines if the point page is hidden.                                     |
+| _mediaPageHidden                     | none                                                                       | boolean     | Determines if the media page is hidden.                                     |
+| renderMediaAndLocation               | none                                                                       | TemplateResult | Renders the media and location content.                                     |
+| renderHiddenInputs                   | none                                                                       | TemplateResult | Renders hidden input fields.                                                |
+| renderClose                          | none                                                                       | TemplateResult | Renders the close button.                                                   |
+| submit                               | validate: boolean                                                          | Promise<void> | Submits the form.                                                            |
+| renderSaveButton                     | none                                                                       | TemplateResult | Renders the save button.                                                    |
+| renderHeader                         | none                                                                       | TemplateResult | Renders the header content.                                                 |
+| render                               | none                                                                       | TemplateResult | Renders the component.                                                      |
+| _gotAiImage                          | event: CustomEvent                                                         | void        | Handles the event when an AI image is generated.                            |
+| _alternativeTextForNewIdeaSaveButtonTranslation | none                                                                       | void        | Handles translation for the save button text.                               |
+| _updatePostTitle                     | none                                                                       | void        | Updates the post title.                                                     |
+| connectedCallback                    | none                                                                       | void        | Called when the component is connected to the DOM.                          |
+| disconnectedCallback                 | none                                                                       | void        | Called when the component is disconnected from the DOM.                     |
+| _formSubmitted                       | none                                                                       | void        | Handles form submission.                                                    |
+| _formError                           | event: CustomEvent                                                         | void        | Handles form errors.                                                        |
+| _showErrorDialog                     | errorText: string                                                          | void        | Shows an error dialog.                                                      |
+| _clearErrorText                      | none                                                                       | void        | Clears the error text.                                                      |
+| hasLongSaveText                      | none                                                                       | boolean     | Determines if the save text is long.                                        |
+| _autoTranslateEvent                  | event: CustomEvent                                                         | void        | Handles auto-translate events.                                              |
+| _isLastRating                        | index: number                                                              | boolean     | Determines if the question is the last rating question.                     |
+| _isFirstRating                       | index: number                                                              | boolean     | Determines if the question is the first rating question.                    |
+| _openToId                            | event: CustomEvent                                                         | void        | Opens to a specific ID.                                                     |
+| _goToNextIndex                       | event: CustomEvent                                                         | void        | Goes to the next index.                                                     |
+| _skipToId                            | event: CustomEvent, showItems: boolean                                     | void        | Skips to a specific ID.                                                     |
+| _skipToWithHideId                    | event: CustomEvent, showItems: boolean                                     | void        | Skips to a specific ID with hiding.                                         |
+| firstUpdated                         | none                                                                       | void        | Called after the first update.                                              |
+| replacedName                         | none                                                                       | string \| null | Gets the replaced name.                                                     |
+| pointMaxLength                       | none                                                                       | number      | Gets the maximum length for the point.                                      |
+| _floatIfValueOrIE                    | value: boolean                                                             | boolean     | Determines if the value should be floated or if the browser is IE.          |
+| newPointShown                        | none                                                                       | boolean     | Determines if the new point is shown.                                       |
+| _submitWithStructuredQuestionsJson   | none                                                                       | void        | Submits the form with structured questions in JSON format.                  |
+| _submitWithStructuredQuestionsString | none                                                                       | void        | Submits the form with structured questions as a string.                     |
+| customSubmit                         | none                                                                       | void        | Custom submit handler.                                                      |
+| _resizeScrollerIfNeeded              | none                                                                       | void        | Resizes the scroller if needed.                                             |
+| _getStructuredQuestionsString        | none                                                                       | Array<YpStructuredQuestionData> | Gets the structured questions as a string.                                   |
+| _setupStructuredQuestions            | none                                                                       | void        | Sets up the structured questions.                                           |
+| showVideoCover                       | none                                                                       | boolean     | Determines if the video cover is shown.                                     |
+| showAudioCover                       | none                                                                       | boolean     | Determines if the audio cover is shown.                                     |
+| _videoUploaded                       | event: CustomEvent                                                         | void        | Handles video upload events.                                                |
+| _audioUploaded                       | event: CustomEvent                                                         | void        | Handles audio upload events.                                                |
+| _documentUploaded                    | event: CustomEvent                                                         | void        | Handles document upload events.                                             |
+| customFormResponse                   | none                                                                       | void        | Custom form response handler.                                               |
+| _updateEmojiBindings                 | none                                                                       | void        | Updates emoji bindings.                                                     |
+| _locationHiddenChanged               | none                                                                       | void        | Handles changes to the location hidden property.                            |
+| _formInvalid                         | none                                                                       | void        | Handles form invalid events.                                                |
+| _locationChanged                     | none                                                                       | void        | Handles changes to the location property.                                   |
+| _uploadedHeaderImageIdChanged        | none                                                                       | void        | Handles changes to the uploaded header image ID.                            |
+| _getTabLength                        | none                                                                       | number      | Gets the length of the tabs.                                                |
+| _nextTab                             | none                                                                       | void        | Goes to the next tab.                                                       |
+| _selectedChanged                     | none                                                                       | void        | Handles changes to the selected tab.                                        |
+| _selectedCategory                    | event: CustomEvent                                                         | void        | Handles category selection events.                                          |
+| _selectedCategoryChanged             | none                                                                       | void        | Handles changes to the selected category.                                   |
+| showCategories                       | none                                                                       | boolean     | Determines if categories are shown.                                         |
+| getPositionInArrayFromId             | collection: Array<YpCategoryData>, id: number                              | number \| undefined | Gets the position in the array from the ID.                                  |
+| _postChanged                         | none                                                                       | void        | Handles changes to the post property.                                       |
+| _updateInitialCategory               | group: YpGroupData                                                         | void        | Updates the initial category.                                               |
+| _imageUploaded                       | event: CustomEvent                                                         | void        | Handles image upload events.                                                |
+| _redirectAfterVideo                  | post: YpPostData                                                           | Promise<void> | Redirects after a video is uploaded.                                        |
+| _redirectAfterAudio                  | post: YpPostData                                                           | Promise<void> | Redirects after an audio is uploaded.                                       |
+| surveyAnswerLocalstorageKey          | none                                                                       | string      | Gets the local storage key for survey answers.                              |
+| saveSurveyAnswersToLocalStorage      | none                                                                       | void        | Saves survey answers to local storage.                                      |
+| checkSurveyAnswers                   | none                                                                       | Promise<void> | Checks for saved survey answers.                                            |
+| customRedirect                       | post: YpPostData                                                           | void        | Custom redirect handler.                                                    |
+| _finishRedirect                      | post: YpPostData                                                           | void        | Finishes the redirect process.                                              |
+| clear                                | none                                                                       | void        | Clears the form data.                                                       |
+| setup                                | post: YpPostData \| undefined, newItem: boolean, refreshFunction: Function \| undefined, group: YpGroupData, params: any \| undefined | Promise<void> | Sets up the component with the given parameters.                            |
+| _setupGroup                          | group: YpGroupData \| undefined                                            | void        | Sets up the group data.                                                     |
+| mediaHidden                          | none                                                                       | boolean     | Determines if the media input is hidden.                                    |
+| setupAfterOpen                       | params: YpEditFormParams                                                   | void        | Sets up the component after opening.                                        |
+| _alternativeTextForNewIdeaButtonHeaderTranslation | none                                                                       | void        | Handles translation for the new idea button header text.                    |
+| setupTranslation                     | none                                                                       | void        | Sets up translations for the component.                                     |
+
+## Events
+
+- **yp-form-invalid**: Emitted when the form is invalid.
+- **yp-form-submit**: Emitted when the form is submitted.
+- **yp-form-response**: Emitted when the form receives a response.
+- **yp-form-error**: Emitted when there is an error with the form.
+- **yp-open-to-unique-id**: Emitted to open to a specific unique ID.
+- **yp-skip-to-unique-id**: Emitted to skip to a specific unique ID.
+- **yp-goto-next-index**: Emitted to go to the next index.
+- **yp-auto-translate**: Emitted for auto-translate events.
+- **yp-language-loaded**: Emitted when the language is loaded.
+
+## Examples
+
+```typescript
+// Example usage of the YpPostEdit component
+<yp-post-edit></yp-post-edit>
+```

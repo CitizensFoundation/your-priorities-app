@@ -1,55 +1,54 @@
 # YpPointNewsStoryEdit
 
-This class represents a custom element for editing news stories related to a point. It allows users to add or edit the content of a news story, post it, and manage embedded media.
+The `YpPointNewsStoryEdit` class is a custom web component that extends `YpBaseElementWithLogin`. It provides functionality for editing and posting news stories related to a specific point, with support for URL previews and embedded media.
 
 ## Properties
 
-| Name              | Type            | Description                                                                 |
-|-------------------|-----------------|-----------------------------------------------------------------------------|
-| loadingUrlPreview | Boolean         | Indicates if the URL preview is loading.                                    |
-| loadingPostStory  | Boolean         | Indicates if the post story action is loading.                              |
-| point             | YpPointData     | The point data associated with the news story.                              |
-| postId            | Number          | The ID of the post associated with the news story.                          |
-| postGroupId       | Number          | The ID of the group where the post is located.                              |
-| groupId           | Number          | The ID of the group associated with the news story.                         |
-| communityId       | Number          | The ID of the community associated with the news story.                     |
-| domainId          | Number          | The ID of the domain associated with the news story.                        |
+| Name             | Type                  | Description                                                                 |
+|------------------|-----------------------|-----------------------------------------------------------------------------|
+| loadingUrlPreview| Boolean               | Indicates if the URL preview is currently loading.                          |
+| loadingPostStory | Boolean               | Indicates if the post story action is currently loading.                    |
+| label            | string \| undefined   | The label for the text field, defaults to a translation key if not provided.|
+| addLabel         | string \| undefined   | The label for the add button, defaults to a translation key if not provided.|
+| point            | YpPointData \| undefined | The data object representing the point being edited.                        |
+| postId           | number \| undefined   | The ID of the post associated with the story.                               |
+| postGroupId      | number \| undefined   | The ID of the post group associated with the story.                         |
+| groupId          | number \| undefined   | The ID of the group associated with the story.                              |
+| communityId      | number \| undefined   | The ID of the community associated with the story.                          |
+| domainId         | number \| undefined   | The ID of the domain associated with the story.                             |
 
 ## Methods
 
-| Name                | Parameters | Return Type | Description                                                                                   |
-|---------------------|------------|-------------|-----------------------------------------------------------------------------------------------|
-| _clearButtonStat    |            | void        | Clears the disabled state of the story submit button.                                         |
-| connectedCallback   |            | void        | Lifecycle callback that is called when the element is inserted into the DOM.                  |
-| firstUpdated        | props: Map | void        | Lifecycle callback that is called after the element's first render.                           |
-| newPointContent     |            | String      | Gets the current content of the point news story from the text field.                         |
-| disconnectedCallback|            | void        | Lifecycle callback that is called when the element is removed from the DOM.                   |
-| _reset              |            | void        | Resets the element to its default state.                                                      |
-| _sendStory          |            | Promise     | Sends the news story to the server.                                                           |
-| _clearButtonState   |            | void        | Clears the disabled state of the story submit button.                                         |
-| _keyDown            | event: KeyboardEvent | void | Handles keydown events to check for URLs when space or enter is pressed. |
-| _clearEmbed         |            | void        | Clears the embedded media data.                                                               |
-| _checkForUrl        |            | Promise     | Checks the content for URLs and fetches preview data for the first URL found.                 |
-
-## Events (if any)
-
-- **refresh**: Emitted after successfully posting a news story to refresh the view.
-- **yp-error**: Emitted when an error occurs, such as when the news story content is too short.
+| Name               | Parameters                          | Return Type | Description                                                                 |
+|--------------------|-------------------------------------|-------------|-----------------------------------------------------------------------------|
+| render             | None                                | TemplateResult | Renders the component's HTML template.                                      |
+| _clearButtonStat   | None                                | void        | Enables the story submit button.                                            |
+| connectedCallback  | None                                | void        | Lifecycle method called when the element is added to the document.          |
+| firstUpdated       | props: Map<string \| number \| symbol, unknown> | void | Lifecycle method called after the first update of the component.            |
+| newPointContent    | None                                | string      | Gets the current content of the point news story text field.                |
+| disconnectedCallback | None                              | void        | Lifecycle method called when the element is removed from the document.      |
+| _reset             | None                                | void        | Resets the component's state and clears the input fields.                   |
+| _sendStory         | None                                | Promise<void> | Sends the news story to the server and handles the response.                |
+| _clearButtonState  | None                                | void        | Resets the state of the story submit button.                                |
+| _keyDown           | event: KeyboardEvent                | void        | Handles keydown events in the text field, checking for URLs.                |
+| _clearEmbed        | None                                | void        | Clears the embedded media data from the point.                              |
+| _checkForUrl       | None                                | Promise<void> | Checks the text field content for URLs and fetches preview data if found.   |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPointNewsStoryEdit custom element
-<yp-point-news-story-edit
-  .loadingUrlPreview="${this.loadingUrlPreview}"
-  .loadingPostStory="${this.loadingPostStory}"
-  .point="${this.point}"
-  .postId="${this.postId}"
-  .postGroupId="${this.postGroupId}"
-  .groupId="${this.groupId}"
-  .communityId="${this.communityId}"
-  .domainId="${this.domainId}"
-></yp-point-news-story-edit>
-```
+// Example usage of the YpPointNewsStoryEdit component
+import './yp-point-news-story-edit.js';
 
-Note: The above example assumes that the properties are set accordingly in the context where the custom element is used.
+const storyEditElement = document.createElement('yp-point-news-story-edit');
+document.body.appendChild(storyEditElement);
+
+storyEditElement.point = {
+  content: "Check out this amazing story!",
+  embed_data: undefined
+};
+
+storyEditElement.addEventListener('refresh', () => {
+  console.log('Story refreshed');
+});
+```

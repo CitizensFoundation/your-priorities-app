@@ -1,46 +1,34 @@
 # YpEmojiDialog
 
-The `YpEmojiDialog` class is a custom web component that extends `YpBaseElement` to provide an emoji picker dialog. It uses the `picmo` library to create a popup emoji picker and the `@picmo/renderer-twemoji` for rendering emojis. The dialog can be attached to an input element to allow users to insert emojis into the text.
+`YpEmojiDialog` is a custom web component that provides an emoji picker dialog. It allows users to select emojis and insert them into a specified input field.
 
 ## Properties
 
-| Name        | Type                        | Description                                      |
-|-------------|-----------------------------|--------------------------------------------------|
-| inputTarget | HTMLInputElement \| undefined | The input element target where emojis are inserted. |
-| picker      | PopupPickerController \| undefined | The controller for the popup emoji picker.       |
-| trigger     | HTMLElement \| undefined    | The element that triggers the opening of the emoji picker. |
+| Name        | Type                          | Description                                      |
+|-------------|-------------------------------|--------------------------------------------------|
+| inputTarget | HTMLInputElement \| undefined | The input element where the selected emoji will be inserted. |
 
 ## Methods
 
-| Name                   | Parameters                  | Return Type | Description                                      |
-|------------------------|-----------------------------|-------------|--------------------------------------------------|
-| connectedCallback      | -                           | void        | Lifecycle method called when the component is added to the DOM. |
-| disconnectedCallback   | -                           | void        | Lifecycle method called when the component is removed from the DOM. |
-| createPicker           | -                           | void        | Initializes and opens the emoji picker popup.    |
-| removePicker           | -                           | void        | Removes the emoji picker and cleans up resources. |
-| pickEmoji              | selection: EmojiSelection   | void        | Handles the selection of an emoji and inserts it into the input target. |
-| open                   | trigger: HTMLElement, inputTarget: HTMLInputElement | void | Opens the emoji picker with the specified trigger and input target. |
-| i18nStrings            | -                           | Object      | Returns an object containing internationalization strings for the emoji picker. |
-
-## Events (if any)
-
-- **emoji:select**: Emitted when an emoji is selected from the picker.
+| Name         | Parameters                                      | Return Type | Description                                                                 |
+|--------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| closeDialog  | None                                            | void        | Closes the emoji dialog and emits a "dialog-closed" event.                  |
+| open         | trigger: HTMLElement, inputTarget: HTMLInputElement | void        | Opens the emoji dialog and sets the target input element for emoji insertion. |
+| emojiClick   | e: CustomEvent                                  | void        | Handles the emoji selection event, inserts the emoji into the input target, and closes the dialog. |
 
 ## Examples
 
 ```typescript
 // Example usage of the YpEmojiDialog component
-const emojiDialog = document.createElement('yp-emoji-dialog');
-const inputElement = document.querySelector('input');
-const triggerElement = document.querySelector('button');
+const emojiDialog = document.createElement('yp-emoji-dialog') as YpEmojiDialog;
+document.body.appendChild(emojiDialog);
 
-// Open the emoji picker dialog
-emojiDialog.open(triggerElement, inputElement);
+const inputElement = document.querySelector('input#emojiInput') as HTMLInputElement;
+const triggerElement = document.querySelector('button#openEmojiDialog') as HTMLElement;
 
-// Listen for emoji selection
-emojiDialog.addEventListener('emoji:select', (event) => {
-  console.log('Emoji selected:', event.detail);
+triggerElement.addEventListener('click', () => {
+  emojiDialog.open(triggerElement, inputElement);
 });
 ```
 
-Note: The `insertTextAtCursor` function is commented out and marked as TODO, indicating that the functionality to insert text at the cursor's current position is not yet implemented. The `pickEmoji` method currently appends the selected emoji to the end of the input's value.
+This example demonstrates how to create an instance of `YpEmojiDialog`, append it to the document, and open the dialog when a button is clicked, targeting a specific input element for emoji insertion.

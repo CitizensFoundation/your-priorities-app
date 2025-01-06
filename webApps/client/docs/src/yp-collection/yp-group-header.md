@@ -1,36 +1,34 @@
 # YpGroupHeader
 
-`YpGroupHeader` is a custom web component that extends `YpCollectionHeader`. It is designed to display a header for a group, including a special footer that can contain a link to a review URL if provided in the group's configuration.
+The `YpGroupHeader` class is a custom web component that extends the `YpCollectionHeader` class. It is used to render a header for a group collection, providing additional styling and functionality specific to group collections.
 
 ## Properties
 
-| Name        | Type             | Description                                                                 |
-|-------------|------------------|-----------------------------------------------------------------------------|
-| collection  | YpGroupData \| undefined | The group data object that contains configuration and other properties for the group header. This property overrides the `collection` property from the `YpCollectionHeader` class. |
+| Name       | Type                | Description                                                                 |
+|------------|---------------------|-----------------------------------------------------------------------------|
+| collection | YpGroupData \| undefined | The collection data associated with the group header. Overrides the base class property. |
 
 ## Methods
 
-| Name            | Parameters | Return Type | Description                                                                                   |
-|-----------------|------------|-------------|-----------------------------------------------------------------------------------------------|
-| renderFooter    |            | TemplateResult \| typeof nothing | Overrides the `renderFooter` method from `YpCollectionHeader` to render the group-specific footer, which may include a button linking to a review URL. |
-
-## Events
-
-- No custom events are defined in `YpGroupHeader`.
+| Name            | Parameters | Return Type | Description                                                                 |
+|-----------------|------------|-------------|-----------------------------------------------------------------------------|
+| groupTypeName   | None       | string      | Returns the translated name for the group type, defaulting to "ideas".      |
+| isGroupFolder   | None       | boolean     | Determines if the group is a folder based on its configuration or property. |
+| render          | None       | TemplateResult | Renders the HTML template for the group header component.                   |
 
 ## Examples
 
 ```typescript
-// Example usage of YpGroupHeader
-import { YpGroupData } from 'path-to-yp-group-data-definition';
+// Example usage of the yp-group-header web component
+import './yp-group-header.js';
 
-const groupData: YpGroupData = {
-  // ... group data properties including configuration with urlToReview
+const groupHeader = document.createElement('yp-group-header');
+groupHeader.collection = {
+  configuration: { groupType: YpGroupType.Folder },
+  is_group_folder: true,
+  // other properties...
 };
-
-html`
-  <yp-group-header .collection="${groupData}"></yp-group-header>
-`;
+document.body.appendChild(groupHeader);
 ```
 
-Note: The example assumes that `YpGroupData` is defined elsewhere and that you have the necessary imports and context to use the `html` template tag from `lit`.
+This component uses the Lit library for rendering and styling, and it leverages decorators for property management. It provides a responsive design with specific styles for different screen sizes. The component checks if the group is a folder and adjusts its display accordingly.

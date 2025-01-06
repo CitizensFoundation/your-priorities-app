@@ -1,58 +1,81 @@
 # YpPostHeader
 
-This class represents a custom web component that displays the header of a post, including information such as the post's title, description, cover media, and actions that can be performed on the post. It extends `YpPostBaseWithAnswers` which in turn extends `YpBaseElementWithLogin`.
+The `YpPostHeader` class is a custom web component that extends `YpPostBaseWithAnswers` and `YpBaseElementWithLogin`. It is designed to render the header of a post, including actions, media, and user information.
 
 ## Properties
 
-| Name             | Type                | Description                                                                 |
-|------------------|---------------------|-----------------------------------------------------------------------------|
-| isAudioCover     | Boolean             | Indicates if the cover media is audio.                                      |
-| hideActions      | Boolean             | Determines whether to hide the action buttons.                              |
-| transcriptActive | Boolean             | Indicates if the transcript for the post is active.                         |
-| post             | YpPostData          | The post data object containing all the information about the post.         |
+| Name                   | Type                | Description                                                                 |
+|------------------------|---------------------|-----------------------------------------------------------------------------|
+| isAudioCover           | boolean             | Indicates if the post cover is an audio type.                               |
+| hideActions            | boolean             | Determines if the actions should be hidden.                                 |
+| transcriptActive       | boolean             | Indicates if the transcript is active.                                      |
+| onlyRenderTopActionBar | boolean             | If true, only the top action bar is rendered.                               |
+| hideTopActionBar       | boolean             | If true, hides the top action bar.                                          |
+| hasNoLeftRightButtons  | boolean             | If true, no left or right buttons are shown.                                |
+| post                   | YpPostData          | The post data to be displayed.                                              |
+| postPositionCounter    | string              | A counter indicating the position of the post.                              |
 
 ## Methods
 
-| Name                      | Parameters | Return Type | Description                                                                 |
-|---------------------------|------------|-------------|-----------------------------------------------------------------------------|
-| renderPostInformation     | -          | TemplateResult | Renders the post's information such as the description.                     |
-| renderMenu                | -          | TemplateResult | Renders the menu for the post with options like edit, delete, etc.          |
-| renderActions             | -          | TemplateResult | Renders the action buttons for the post.                                    |
-| render                    | -          | TemplateResult | The main render method that outputs the HTML structure of the component.    |
-| _openPostMenu             | -          | void        | Opens the post menu.                                                        |
-| _sharedContent            | event: CustomEvent | void | Handles the shared content event.                                           |
-| _shareTap                 | event: CustomEvent | void | Handles the share tap event.                                                |
-| hasPostAccess             | -          | boolean     | Checks if the user has access to the post.                                  |
-| updated                   | changedProperties: Map<string \| number \| symbol, unknown> | void | Lifecycle method called when properties change.                             |
-| _postChanged              | -          | void        | Called when the post property changes.                                      |
-| updateDescriptionIfEmpty  | description: string | void | Updates the post description if it is empty.                                |
-| _refresh                  | -          | void        | Refreshes the component.                                                    |
-| _openMovePost             | -          | void        | Opens the dialog to move the post.                                          |
-| _openPostStatusChangeNoEmails | -    | void        | Opens the dialog to change the post status without sending emails.          |
-| _openPostStatusChange     | -          | void        | Opens the dialog to change the post status.                                 |
-| _openEdit                 | -          | void        | Opens the edit dialog for the post.                                         |
-| _openReport               | -          | void        | Opens the report dialog for the post.                                       |
-| _openDelete               | -          | void        | Opens the delete dialog for the post.                                       |
-| _openDeleteContent        | -          | void        | Opens the dialog to delete the content of the post.                         |
-| _openAnonymizeContent     | -          | void        | Opens the dialog to anonymize the content of the post.                      |
-| _onReport                 | -          | void        | Callback for when a report is made.                                         |
-| _onDeleted                | -          | void        | Callback for when the post is deleted.                                      |
-
-## Events (if any)
-
-- **yp-refresh-group**: Emitted when the group needs to be refreshed after a post is deleted.
-- **sharedContent**: Emitted when content is shared.
+| Name                          | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| renderPostInformation         | None                                                                       | TemplateResult | Renders the post information section.                                       |
+| renderMenu                    | None                                                                       | TemplateResult | Renders the menu for post actions.                                          |
+| renderActions                 | None                                                                       | TemplateResult | Renders the actions related to the post.                                    |
+| renderName                    | None                                                                       | TemplateResult | Renders the name of the post.                                               |
+| renderUser                    | None                                                                       | TemplateResult | Renders the user information.                                               |
+| renderCoverMedia              | None                                                                       | TemplateResult | Renders the cover media of the post.                                        |
+| renderClose                   | None                                                                       | TemplateResult | Renders the close button.                                                   |
+| renderTopActionButtons        | None                                                                       | TemplateResult | Renders the top action buttons.                                             |
+| render                        | None                                                                       | TemplateResult | Renders the entire component.                                               |
+| _openPostMenu                 | None                                                                       | void        | Opens the post menu.                                                        |
+| _sharedContent                | event: CustomEvent                                                         | void        | Handles the shared content event.                                           |
+| _shareTap                     | event: CustomEvent                                                         | void        | Handles the share tap event.                                                |
+| hasPostAccess                 | None                                                                       | boolean     | Checks if the user has access to the post.                                  |
+| updated                       | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties are updated.                        |
+| _postChanged                  | None                                                                       | void        | Handles changes to the post property.                                       |
+| updateDescriptionIfEmpty      | description: string                                                        | void        | Updates the post description if it is empty.                                |
+| _refresh                      | None                                                                       | void        | Refreshes the component.                                                    |
+| _openMovePost                 | None                                                                       | void        | Opens the move post dialog.                                                 |
+| _openPostStatusChangeNoEmails | None                                                                       | void        | Opens the post status change dialog without sending emails.                 |
+| _openPostStatusChange         | None                                                                       | void        | Opens the post status change dialog.                                        |
+| _openEdit                     | None                                                                       | void        | Opens the edit post page.                                                   |
+| _openReport                   | None                                                                       | void        | Opens the report post dialog.                                               |
+| _openDelete                   | None                                                                       | void        | Opens the delete post dialog.                                               |
+| _openDeleteContent            | None                                                                       | void        | Opens the delete post content dialog.                                       |
+| _openAnonymizeContent         | None                                                                       | void        | Opens the anonymize post content dialog.                                    |
+| _onReport                     | None                                                                       | void        | Handles the report action.                                                  |
+| _onDeleted                    | None                                                                       | void        | Handles the post deletion action.                                           |
 
 ## Examples
 
 ```typescript
-// Example usage of YpPostHeader
-<yp-post-header
-  .post="${this.postData}"
-  .isAudioCover="${this.isAudio}"
-  .hideActions="${false}"
-  .transcriptActive="${this.hasTranscript}"
-></yp-post-header>
-```
+// Example usage of the YpPostHeader component
+import './yp-post-header.js';
 
-Please note that the above example assumes that `this.postData`, `this.isAudio`, and `this.hasTranscript` are properties defined in the context where this component is used, and they hold the relevant data for the post, whether it's an audio post, and whether a transcript is available, respectively.
+const postHeader = document.createElement('yp-post-header');
+postHeader.post = {
+  id: 1,
+  name: 'Sample Post',
+  description: 'This is a sample post description.',
+  language: 'en',
+  Group: {
+    configuration: {
+      showWhoPostedPosts: true,
+      customRatings: false,
+      descriptionSimpleFormat: false,
+      descriptionTruncateAmount: 100,
+    },
+  },
+  User: {
+    name: 'John Doe',
+  },
+  public_data: {
+    transcript: {
+      text: 'Sample transcript text.',
+    },
+  },
+};
+
+document.body.appendChild(postHeader);
+```

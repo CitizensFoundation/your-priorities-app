@@ -1,44 +1,48 @@
 # YpMediaHelpers
 
-This class provides static helper methods for handling media elements such as videos and audios within a web application. It includes methods for checking play times, setting up images, attaching and detaching media event listeners, pausing media playback, and retrieving media URLs.
+The `YpMediaHelpers` class provides a set of static utility methods for handling media elements such as video and audio within a web application. It includes methods for checking playback times, attaching and detaching event listeners, and retrieving media URLs.
 
 ## Methods
 
-| Name                        | Parameters                                      | Return Type | Description                                                                 |
-|-----------------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| _checkVideoLongPlayTimeAndReset | playbackElement: YpElementWithPlayback, videoPlayer: HTMLElement | void        | Checks if a video has been played for a long time and resets the play time. |
-| _checkAudioLongPlayTimeAndReset | playbackElement: YpElementWithPlayback, audioPlayer: HTMLElement | void        | Checks if an audio has been played for a long time and resets the play time.|
-| getImageFormatUrl           | images: Array<YpImageData> \| undefined, formatId: number = 0 | string      | Returns the URL of the image in the specified format.                       |
-| setupTopHeaderImage         | element: YpBaseElement, images: Array<YpImageData> \| null | void        | Sets up the top header image for an element.                                |
-| attachMediaListeners        | targetElement: YpElementWithPlayback             | void        | Attaches media event listeners to the target element.                       |
-| detachMediaListeners        | targetElement: YpElementWithPlayback             | void        | Detaches media event listeners from the target element.                     |
-| pauseMediaPlayback          | targetElement: YpElementWithPlayback             | void        | Pauses media playback for the target element.                               |
-| getVideoURL                 | videos: Array<YpVideoData> \| undefined          | string \| null | Returns the URL of the video.                                               |
-| isPortraitVideo             | videos: Array<YpVideoData> \| undefined          | boolean     | Determines if the video is in portrait mode.                                |
-| getAudioURL                 | audios: Array<YpAudioData> \| undefined          | string \| null | Returns the URL of the audio.                                               |
-| getVideoPosterURL           | videos: Array<YpVideoData> \| undefined, images: Array<YpImageData> \| undefined, selectedImageIndex: number = 0 | string \| null | Returns the URL of the video poster image.                                  |
+| Name                                | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| _checkVideoLongPlayTimeAndReset     | playbackElement: YpElementWithPlayback, videoPlayer: HTMLElement            | void        | Checks if a video has been played for a long time and resets the playback state. |
+| _checkAudioLongPlayTimeAndReset     | playbackElement: YpElementWithPlayback, audioPlayer: HTMLElement            | void        | Checks if an audio has been played for a long time and resets the playback state. |
+| getImageFormatUrl                   | images: Array<YpImageData> \| undefined, formatId: number = 0               | string      | Retrieves the URL of an image in a specified format.                        |
+| setupTopHeaderImage (Deprecated)    | element: YpBaseElement, images: Array<YpImageData> \| null                  | void        | Sets up the top header image for an element.                                |
+| attachMediaListeners                | targetElement: YpElementWithPlayback                                        | void        | Attaches media event listeners to a target element.                        |
+| detachMediaListeners                | targetElement: YpElementWithPlayback                                        | void        | Detaches media event listeners from a target element.                      |
+| pauseMediaPlayback                  | targetElement: YpElementWithPlayback                                        | void        | Pauses media playback for video and audio elements within a target element.|
+| getVideoURL                         | videos: Array<YpVideoData> \| undefined                                     | string \| null | Retrieves the URL of a video from the provided video data.                 |
+| isPortraitVideo                     | videos: Array<YpVideoData> \| undefined                                     | boolean     | Determines if a video is in portrait aspect ratio.                         |
+| getAudioURL                         | audios: Array<YpAudioData> \| undefined                                     | string \| null | Retrieves the URL of an audio from the provided audio data.                |
+| getVideoPosterURL                   | videos: Array<YpVideoData> \| undefined, images: Array<YpImageData> \| undefined, selectedImageIndex: number = 0 | string \| null | Retrieves the URL of a video poster image.                                 |
 
 ## Examples
 
 ```typescript
-// Example usage of attaching media listeners to a target element
+// Example usage of the YpMediaHelpers class
+
+// Attaching media listeners to a target element
 YpMediaHelpers.attachMediaListeners(targetElement);
 
-// Example usage of detaching media listeners from a target element
+// Detaching media listeners from a target element
 YpMediaHelpers.detachMediaListeners(targetElement);
 
-// Example usage of pausing media playback for a target element
+// Pausing media playback
 YpMediaHelpers.pauseMediaPlayback(targetElement);
 
-// Example usage of getting a video URL from an array of YpVideoData
-const videoUrl = YpMediaHelpers.getVideoURL(videosArray);
+// Getting a video URL
+const videoUrl = YpMediaHelpers.getVideoURL(videos);
 
-// Example usage of checking if a video is in portrait mode
-const isPortrait = YpMediaHelpers.isPortraitVideo(videosArray);
+// Checking if a video is portrait
+const isPortrait = YpMediaHelpers.isPortraitVideo(videos);
 
-// Example usage of getting an audio URL from an array of YpAudioData
-const audioUrl = YpMediaHelpers.getAudioURL(audiosArray);
+// Getting an audio URL
+const audioUrl = YpMediaHelpers.getAudioURL(audios);
 
-// Example usage of getting a video poster URL
-const posterUrl = YpMediaHelpers.getVideoPosterURL(videosArray, imagesArray);
+// Getting a video poster URL
+const posterUrl = YpMediaHelpers.getVideoPosterURL(videos, images);
 ```
+
+Note: The `setupTopHeaderImage` method is marked as deprecated and should be used with caution.

@@ -1,29 +1,37 @@
 # YpEmojiSelector
 
-The `YpEmojiSelector` class is a web component that extends `YpBaseElement` to provide an emoji picker functionality. It is designed to be used in conjunction with an input element, allowing users to select and insert emojis into the input field.
+The `YpEmojiSelector` is a web component that provides an emoji selection interface. It extends the `YpBaseElement` and allows users to open an emoji dialog to select emojis and insert them into a specified input target.
 
 ## Properties
 
-| Name        | Type                     | Description                                      |
-|-------------|--------------------------|--------------------------------------------------|
-| inputTarget | HTMLInputElement\|undefined | The input element that the emoji selector targets. |
+| Name        | Type                        | Description                                                                 |
+|-------------|-----------------------------|-----------------------------------------------------------------------------|
+| inputTarget | HTMLInputElement \| undefined | The input element where the selected emoji will be inserted.                |
+| open        | boolean                     | A boolean indicating whether the emoji dialog is open or closed. Defaults to `false`. |
 
 ## Methods
 
-| Name         | Parameters | Return Type | Description                                      |
-|--------------|------------|-------------|--------------------------------------------------|
-| render       |            | TemplateResult | Generates the template for the emoji selector button. |
-| togglePicker |            | void        | Toggles the visibility of the emoji picker dialog. |
-
-## Events
-
-- **None**: This class does not emit any custom events.
+| Name         | Parameters | Return Type | Description                                                                 |
+|--------------|------------|-------------|-----------------------------------------------------------------------------|
+| togglePicker | None       | Promise<void> | Toggles the emoji picker dialog. Opens the dialog and sets the `open` property to `true`. |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpEmojiSelector web component
-<yp-emoji-selector></yp-emoji-selector>
+// Example usage of the YpEmojiSelector component
+import { html, LitElement } from 'lit';
+import './yp-emoji-selector.js';
+
+class MyComponent extends LitElement {
+  render() {
+    return html`
+      <input id="myInput" type="text" />
+      <yp-emoji-selector .inputTarget="${this.shadowRoot?.getElementById('myInput')}"></yp-emoji-selector>
+    `;
+  }
+}
+
+customElements.define('my-component', MyComponent);
 ```
 
-Note: The `YpEmojiSelector` class uses a method `window.appDialogs.getDialogAsync` which is not defined in the provided code snippet. It is assumed to be part of the application's global scope for dialog management.
+In this example, the `YpEmojiSelector` is used alongside an input element. When the emoji button is clicked, the emoji dialog opens, allowing the user to select an emoji to be inserted into the input field.

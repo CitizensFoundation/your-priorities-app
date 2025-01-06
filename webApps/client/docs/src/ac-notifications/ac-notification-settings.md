@@ -1,32 +1,41 @@
 # AcNotificationSettings
 
-`AcNotificationSettings` is a custom web component that extends `YpBaseElement` to manage and display notification settings for a user. It uses `ac-notification-selection` components to render individual notification settings.
+The `AcNotificationSettings` class is a custom web component that extends `YpBaseElement`. It is used to manage and display notification settings for various types of notifications.
 
 ## Properties
 
-| Name                 | Type                           | Description                                      |
-|----------------------|--------------------------------|--------------------------------------------------|
-| notificationsSettings| AcNotificationSettingsData     | Holds the notification settings for the user.    |
+| Name                  | Type                        | Description                                      |
+|-----------------------|-----------------------------|--------------------------------------------------|
+| notificationsSettings | AcNotificationSettingsData  | The data object containing notification settings.|
 
 ## Methods
 
-| Name                | Parameters | Return Type | Description                                      |
-|---------------------|------------|-------------|--------------------------------------------------|
-| render              |            | TemplateResult | Generates a template for the component.         |
-| connectedCallback   |            | void        | Lifecycle method called when the component is added to the DOM. It sets up event listeners. |
-| disconnectedCallback|            | void        | Lifecycle method called when the component is removed from the DOM. It removes event listeners. |
-| _settingsChanged    |            | void        | Handles changes to the notification settings and emits an event. |
+| Name                  | Parameters | Return Type | Description                                                                 |
+|-----------------------|------------|-------------|-----------------------------------------------------------------------------|
+| render                | None       | TemplateResult | Renders the notification settings using the `ac-notification-selection` component. |
+| connectedCallback     | None       | void        | Lifecycle method called when the element is added to the document. Adds an event listener for notification changes. |
+| disconnectedCallback  | None       | void        | Lifecycle method called when the element is removed from the document. Removes the event listener for notification changes. |
+| _settingsChanged      | None       | void        | Internal method that fires a custom event when notification settings change. |
 
 ## Events
 
-- **yp-notification-changed**: Emitted when a notification setting is changed.
-- **yp-notifications-changed**: Emitted when the notification settings have been updated.
+- **yp-notifications-changed**: Emitted when the notification settings are changed.
 
 ## Examples
 
 ```typescript
-// Example usage of the AcNotificationSettings web component
-<ac-notification-settings .notificationsSettings=${yourSettingsObject}></ac-notification-settings>
-```
+// Example usage of the AcNotificationSettings component
+import './ac-notification-settings.js';
 
-Please note that `AcNotificationSettingsData` type was referenced but not defined in the provided code. You should define this type in your TypeScript codebase to match the structure of the `notificationsSettings` property.
+const notificationSettingsElement = document.createElement('ac-notification-settings');
+notificationSettingsElement.notificationsSettings = {
+  my_posts: true,
+  my_posts_endorsements: false,
+  my_points: true,
+  my_points_endorsements: false,
+  all_community: true,
+  all_group: false
+};
+
+document.body.appendChild(notificationSettingsElement);
+```

@@ -1,62 +1,58 @@
 # AoiServerApi
 
-AoiServerApi is an extension of the YpServerApi class that provides methods to interact with the All Our Ideas API.
+The `AoiServerApi` class extends the `YpServerApi` and provides methods to interact with the All Our Ideas server API. It includes functionalities for fetching data, submitting ideas, voting, and more.
 
 ## Properties
 
-| Name         | Type   | Description                           |
-|--------------|--------|---------------------------------------|
-| baseUrlPath  | string | The base URL path for the API calls.  |
+| Name        | Type   | Description                        |
+|-------------|--------|------------------------------------|
+| baseUrlPath | string | The base URL path for API requests |
 
 ## Methods
 
-| Name                    | Parameters                                                                                   | Return Type            | Description                                                                                   |
-|-------------------------|----------------------------------------------------------------------------------------------|------------------------|-----------------------------------------------------------------------------------------------|
-| constructor             | urlPath: string = "/api/allOurIdeas"                                                         | none                   | Initializes a new instance of AoiServerApi with an optional URL path.                         |
-| getEarlData             | groupId: number                                                                              | AoiEarlResponse        | Retrieves EARL data for a specified group ID.                                                 |
-| getPrompt               | groupId: number, questionId: number                                                          | Promise<AoiPromptData> | Asynchronously retrieves a prompt for a specified group and question ID.                      |
-| getSurveyResults        | groupId: number                                                                              | Promise<AoiChoiceData[]> | Asynchronously retrieves survey results for a specified group ID.                             |
-| getSurveyAnalysis       | groupId: number, wsClientId: string, analysisIndex: number, analysisTypeIndex: number, languageName: string | AoiAnalysisResponse    | Retrieves survey analysis data for a specified group ID and analysis parameters.             |
-| submitIdea              | groupId: number, questionId: number, newIdea: string                                        | AoiAddIdeaResponse     | Submits a new idea to a specified group and question ID.                                      |
-| postVote                | groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" \| "right" \| "skip" | AoiVoteResponse        | Posts a vote for a specified group, question, and prompt ID, with additional parameters.      |
-| postVoteSkip            | groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData | AoiVoteResponse        | Posts a vote skip for a specified group, question, and prompt ID, with additional parameters. |
-| getResults              | groupId: number, questionId: number                                                          | Promise<AoiChoiceData[]> | Asynchronously retrieves results for a specified group and question ID.                       |
-| llmAnswerConverstation  | groupId: number, wsClientId: string, chatLog: PsSimpleChatLog[]                              | Promise<void>          | Asynchronously sends a conversation log to the server for processing.                         |
+| Name                      | Parameters                                                                                          | Return Type                        | Description                                                                 |
+|---------------------------|-----------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------------------------|
+| constructor               | urlPath: string = "/api/allOurIdeas"                                                                | void                               | Initializes a new instance of the `AoiServerApi` class with a base URL path.|
+| getEarlData               | groupId: number                                                                                     | AoiEarlResponse                    | Fetches EARL data for a specific group.                                     |
+| getPrompt                 | groupId: number, questionId: number                                                                 | Promise<AoiPromptData>             | Retrieves the prompt for a specific question in a group.                    |
+| getSurveyResults          | groupId: number                                                                                     | Promise<AoiChoiceData[]>           | Fetches survey results for a specific group.                                |
+| getSurveyAnalysis         | groupId: number, wsClientId: string, analysisIndex: number, analysisTypeIndex: number, languageName: string | AoiAnalysisResponse                | Retrieves survey analysis data.                                             |
+| checkLogin                |                                                                                                     | Promise<boolean>                   | Checks if the user is logged in, and attempts anonymous registration if not.|
+| submitIdea                | groupId: number, questionId: number, newIdea: string                                                | Promise<AoiAddIdeaResponse \| null>| Submits a new idea for a specific question in a group.                      |
+| postVote                  | groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" \| "right" \| "skip" | Promise<AoiVoteResponse \| null>   | Posts a vote for a specific prompt in a question.                           |
+| postVoteSkip              | groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData        | Promise<AoiVoteResponse \| null>   | Posts a vote skip for a specific prompt in a question.                      |
+| getResults                | groupId: number, questionId: number, showAll: boolean = false                                       | Promise<AoiChoiceData[]>           | Retrieves results for a specific question, optionally showing all results.  |
+| llmAnswerConverstation    | groupId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string               | Promise<void>                      | Sends a conversation log for LLM answer explanation.                        |
 
 ## Examples
 
 ```typescript
-// Example usage of AoiServerApi to get survey results
+// Example usage of the AoiServerApi class
 const api = new AoiServerApi();
-const groupId = 123; // example group ID
-api.getSurveyResults(groupId).then((results) => {
-  console.log(results);
+
+// Fetch EARL data
+const earlData = api.getEarlData(123);
+
+// Get a prompt for a question
+api.getPrompt(123, 456).then(prompt => {
+  console.log(prompt);
+});
+
+// Submit a new idea
+api.submitIdea(123, 456, "New Idea").then(response => {
+  if (response) {
+    console.log("Idea submitted successfully");
+  } else {
+    console.log("Failed to submit idea");
+  }
+});
+
+// Post a vote
+api.postVote(123, 456, 789, "en", { choiceId: 1 }, "left").then(response => {
+  if (response) {
+    console.log("Vote submitted successfully");
+  } else {
+    console.log("Failed to submit vote");
+  }
 });
 ```
-
-```typescript
-// Example usage of AoiServerApi to submit a new idea
-const api = new AoiServerApi();
-const groupId = 123; // example group ID
-const questionId = 456; // example question ID
-const newIdea = "A new idea for the survey";
-api.submitIdea(groupId, questionId, newIdea).then((response) => {
-  console.log(response);
-});
-```
-
-```typescript
-// Example usage of AoiServerApi to post a vote
-const api = new AoiServerApi();
-const groupId = 123; // example group ID
-const questionId = 456; // example question ID
-const promptId = 789; // example prompt ID
-const locale = "en-US"; // example locale
-const body = { /* ... */ }; // example vote data
-const direction = "left"; // example direction
-api.postVote(groupId, questionId, promptId, locale, body, direction).then((response) => {
-  console.log(response);
-});
-```
-
-Please note that the actual implementation of the `AoiServerApi` class may require additional types such as `AoiEarlResponse`, `AoiPromptData`, `AoiChoiceData`, `AoiAnalysisResponse`, `AoiAddIdeaResponse`, `AoiVoteData`, `AoiVoteSkipData`, and `PsSimpleChatLog` to be defined elsewhere in your codebase.

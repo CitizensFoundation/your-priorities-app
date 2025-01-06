@@ -1,36 +1,43 @@
 # YpUserImage
 
-The `YpUserImage` class is a web component that extends `YpBaseElement` to display user images. It supports various sizes and can source images from a user's profile or Facebook account.
+`YpUserImage` is a custom web component that extends `YpBaseElement` to display a user's profile image with various size and styling options.
 
 ## Properties
 
-| Name            | Type                  | Description                                                                 |
-|-----------------|-----------------------|-----------------------------------------------------------------------------|
-| veryLarge       | Boolean               | If true, displays the image in a very large size.                           |
-| large           | Boolean               | If true, displays the image in a large size.                                |
-| titleFromUser   | string \| undefined   | Optional title from the user, used as alt text and tooltip for the image.   |
-| user            | YpUserData            | The user data object containing information about the user.                 |
-| noDefault       | Boolean               | If true, does not display a default image when no profile image is present. |
-| noProfileImage  | Boolean               | Indicates whether a profile image is present or not.                        |
+| Name            | Type      | Description                                                                 |
+|-----------------|-----------|-----------------------------------------------------------------------------|
+| veryLarge       | Boolean   | Determines if the image should be displayed in a very large size.           |
+| large           | Boolean   | Determines if the image should be displayed in a large size.                |
+| medium          | Boolean   | Determines if the image should be displayed in a medium size.               |
+| titleFromUser   | String    | Optional title to be used for the image, defaults to the user's name if not provided. |
+| user            | YpUserData| The user data object containing information about the user.                 |
+| noDefault       | Boolean   | If true, no default image will be used when no profile image is available.  |
+| noProfileImage  | Boolean   | Indicates if there is no profile image available for the user.              |
+| useImageBorder  | Boolean   | If true, a border will be applied to the image.                             |
 
 ## Methods
 
-| Name            | Parameters | Return Type | Description                                                                                   |
-|-----------------|------------|-------------|-----------------------------------------------------------------------------------------------|
-| userTitle       |            | string      | Returns the title for the user, which is either `titleFromUser` or the user's name.          |
-| profileImageUrl |            | string \| null | Returns the URL of the user's profile image or null if no image is available.                |
-| computeClass    |            | string      | Computes the CSS class for the image based on the `large` and `veryLarge` property values.   |
-| computeFacebookSrc |        | string \| undefined | Returns the Facebook profile image URL or undefined if not available.                        |
+| Name              | Parameters | Return Type | Description                                                                 |
+|-------------------|------------|-------------|-----------------------------------------------------------------------------|
+| userTitle         | None       | String      | Computes and returns the title for the image based on user data or provided title. |
+| profileImageUrl   | None       | String \| null | Computes and returns the URL of the user's profile image, or null if not available. |
+| computeClass      | None       | String      | Computes and returns the CSS class for the image based on size properties.  |
+| computeFacebookSrc| None       | String \| undefined | Computes and returns the Facebook profile image URL if available.          |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpUserImage web component
-<yp-user-image
-  .user="${yourUserData}"
-  .titleFromUser="${'User Title'}"
-  large
-></yp-user-image>
+// Example usage of the yp-user-image component
+import './path/to/yp-user-image.js';
+
+const userImageElement = document.createElement('yp-user-image');
+userImageElement.user = {
+  name: 'John Doe',
+  facebook_id: '123456789',
+  UserProfileImages: [{ /* image data */ }]
+};
+userImageElement.large = true;
+document.body.appendChild(userImageElement);
 ```
 
-Replace `yourUserData` with an instance of `YpUserData` containing the user's information.
+This component uses the `yp-image` element to render the image and applies different styles based on the properties set. It also handles cases where a Facebook ID is available to fetch the profile picture from Facebook.

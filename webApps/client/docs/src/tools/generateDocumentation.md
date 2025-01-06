@@ -1,14 +1,41 @@
-The provided TypeScript code is a script designed to generate API documentation for TypeScript files in a project. It uses the OpenAI API to generate the documentation based on the content of the TypeScript files. The script performs the following steps:
+# DocumentationGenerator
 
-1. It checks for the existence of the `docs` and `checksum` directories and creates them if they don't exist.
-2. It builds a directory tree of the Markdown files in the `docs/src` directory, excluding certain files and directories.
-3. It generates a `README.md` file in the `docs` directory with links to the documentation of each TypeScript file.
-4. It finds all TypeScript files in the project, excluding test files, declaration files, and certain directories.
-5. It generates a checksum for each TypeScript file to determine if the file has changed since the last documentation generation.
-6. If a file has changed, it uses the OpenAI API to generate new documentation for that file and saves it in the corresponding location in the `docs` directory.
-7. It updates the checksum file with the new checksum for each file that has changed.
-8. It regenerates the `README.md` file to reflect any new or updated documentation.
+This class is responsible for generating API documentation in Markdown format for TypeScript files within a project. It reads TypeScript files, generates documentation using OpenAI's API, and saves the documentation in a specified directory.
 
-The script is intended to be run as a Node.js application and relies on the `fs`, `path`, and `crypto` modules from the Node.js standard library, as well as the `openai` module for interacting with the OpenAI API.
+## Properties
 
-Please note that the script is not a complete TypeScript file and cannot be documented as is. It is a script that generates documentation for other TypeScript files. If you have a specific TypeScript file for which you need API documentation, please provide the content of that file, and I can generate the documentation for you.
+| Name        | Type   | Description                                                                 |
+|-------------|--------|-----------------------------------------------------------------------------|
+| openaiClient | OpenAI | An instance of the OpenAI client used to generate documentation.            |
+| rootDir     | string | The root directory of the project.                                          |
+| docsDir     | string | The directory where the generated documentation will be saved.              |
+| checksumDir | string | The directory where checksums of the TypeScript files are stored.           |
+
+## Methods
+
+| Name                      | Parameters                          | Return Type | Description                                                                 |
+|---------------------------|-------------------------------------|-------------|-----------------------------------------------------------------------------|
+| buildDirectoryTree        | dir: string, basePath?: string, isSrc?: boolean | any[]       | Builds a tree structure representing the directory and its contents.        |
+| generateMarkdownFromTree  | tree: any[], depth?: number         | string      | Generates a Markdown representation of the directory tree.                  |
+| generateDocsReadme        |                                     | void        | Generates a README.md file with the directory structure of the documentation.|
+| findTSFiles               | dir: string, fileList?: string[]    | string[]    | Recursively finds all TypeScript files in a directory, excluding certain files.|
+| generateChecksum          | content: string                     | string      | Generates a SHA-256 checksum for the given content.                         |
+| generateDocumentation     | fileList: string[], systemPrompt: string | Promise<void> | Generates documentation for each TypeScript file in the list.               |
+| main                      |                                     | Promise<void> | The main function that orchestrates the documentation generation process.   |
+
+## Examples
+
+```typescript
+// Example usage of the DocumentationGenerator class
+
+async function main(): Promise<void> {
+  const tsFiles = findTSFiles(rootDir);
+  generateDocsReadme();
+  await generateDocumentation(tsFiles, systemPromptWebApp);
+  generateDocsReadme();
+}
+
+main().then(() => console.log('Documentation generation complete.'));
+```
+
+This script automates the process of generating API documentation for a TypeScript project. It uses OpenAI's API to create detailed documentation for each TypeScript file, ensuring that the documentation is up-to-date with the latest changes in the codebase.

@@ -1,52 +1,58 @@
 # YpAppNavDrawer
 
-`YpAppNavDrawer` is a custom element that provides a navigation drawer for an application. It extends `YpBaseElement` and includes properties for user data, admin rights, memberships, and UI state such as whether the drawer is open or a spinner is shown. It also provides methods for navigation and UI updates.
+The `YpAppNavDrawer` is a custom web component that extends `YpBaseElement`. It provides a navigation drawer for an application, allowing users to navigate between different communities and groups. The drawer can be opened or closed, and it displays a list of communities and groups the user is part of or administers.
 
 ## Properties
 
-| Name                | Type                | Description                                                                 |
-|---------------------|---------------------|-----------------------------------------------------------------------------|
-| homeLink            | YpHomeLinkData      | Data for the home link, including type and ID.                              |
-| user                | YpUserData          | Data for the current user.                                                  |
-| opened              | Boolean             | Indicates if the navigation drawer is open.                                 |
-| spinner             | Boolean             | Indicates if a spinner should be shown (loading state).                     |
-| route               | String              | The current route of the application.                                       |
-| myAdminGroups       | YpGroupData[]       | Array of groups where the user has admin rights.                            |
-| myAdminCommunities  | YpCommunityData[]   | Array of communities where the user has admin rights.                       |
-| myGroups            | YpGroupData[]       | Array of groups the user is a member of.                                    |
-| myCommunities       | YpCommunityData[]   | Array of communities the user is a member of.                               |
-| myDomains           | YpDomainData[]      | Array of domains the user is a member of.                                   |
-| adminRights         | YpAdminRights       | Admin rights of the user, including community and group admin rights.       |
-| memberships         | YpMemberships       | Memberships of the user, including groups, communities, and domains.        |
+| Name            | Type                     | Description                                                                 |
+|-----------------|--------------------------|-----------------------------------------------------------------------------|
+| homeLink        | YpHomeLinkData \| undefined | The home link data object, which includes the type and id for redirection.  |
+| user            | YpUserData \| undefined  | The user data object representing the current user.                         |
+| opened          | boolean                  | Indicates whether the navigation drawer is open.                            |
+| spinner         | boolean                  | Indicates whether a loading spinner should be displayed.                    |
+| route           | string \| undefined      | The current route string.                                                   |
+| myGroups        | YpGroupData[] \| undefined | An array of group data objects the user is part of or administers.          |
+| myCommunities   | YpCommunityData[] \| undefined | An array of community data objects the user is part of or administers.      |
+| myDomains       | YpDomainData[] \| undefined | An array of domain data objects the user is part of.                        |
+| adminRights     | YpAdminRights \| undefined | The admin rights data object for the user.                                  |
+| memberships     | YpMemberships \| undefined | The memberships data object for the user.                                   |
+| communitiesCount| number                   | The count of communities the user is part of or administers.                |
+| groupsCount     | number                   | The count of groups the user is part of or administers.                     |
 
 ## Methods
 
-| Name            | Parameters                        | Return Type | Description                                                                 |
-|-----------------|-----------------------------------|-------------|-----------------------------------------------------------------------------|
-| updated         | changedProperties: Map            | void        | Lifecycle method called when properties change.                             |
-| connectedCallback | none                            | void        | Lifecycle method called when the element is added to the document's DOM.    |
-| _openChanged    | none                              | Promise<void> | Called when the `opened` property changes. Fetches admin rights and memberships. |
-| _selectedLocale | none                              | String      | Returns the selected language locale.                                       |
-| _goBack         | none                              | void        | Navigates back to the home link.                                            |
-| _goToGroup      | event: CustomEvent                | void        | Navigates to a specific group based on the event's target data-args.        |
-| _goToCommunity  | event: CustomEvent                | void        | Navigates to a specific community based on the event's target data-args.    |
-| _goToDomain     | event: CustomEvent                | void        | Navigates to a specific domain based on the event's target data-args.       |
-| _userChanged    | none                              | void        | Called when the `user` property changes. Resets the UI.                     |
-| _reset          | none                              | void        | Resets the UI based on memberships and admin rights.                        |
-
-## Events (if any)
-
-- **yp-toggle-nav-drawer**: Emitted when the navigation drawer needs to be toggled.
+| Name              | Parameters                                      | Return Type | Description                                                                 |
+|-------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| updated           | changedProperties: Map<string \| number \| symbol, unknown> | void        | Called when the element's properties change. Handles user and opened changes. |
+| connectedCallback | none                                            | void        | Called when the element is added to the document. Adds a global event listener. |
+| disconnectedCallback | none                                         | void        | Called when the element is removed from the document. Removes the global event listener. |
+| _closeAllDrawers  | none                                            | void        | Closes the navigation drawer.                                               |
+| getGroupTypeName  | group: YpGroupData                              | string      | Returns the display name for a group's type based on its configuration.     |
+| _openChanged      | none                                            | Promise<void> | Handles changes when the drawer is opened, fetching admin rights and memberships. |
+| _selectedLocale   | none                                            | string      | Returns the currently selected language.                                    |
+| _goBack           | none                                            | void        | Navigates back to the home link and closes the drawer.                      |
+| _goToGroup        | event: CustomEvent                              | void        | Navigates to a specific group based on the event's data-args attribute.     |
+| _goToCommunity    | event: CustomEvent                              | void        | Navigates to a specific community based on the event's data-args attribute. |
+| _goToDomain       | event: CustomEvent                              | void        | Navigates to a specific domain based on the event's data-args attribute.    |
+| _userChanged      | none                                            | void        | Resets the component when the user data changes.                            |
+| _deduplicateById  | array: any[]                                    | any[]       | Deduplicates an array of objects by their id property.                      |
+| _reset            | none                                            | void        | Resets the component's state, updating groups and communities lists.        |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpAppNavDrawer
-const navDrawer = document.createElement('yp-app-nav-drawer');
-navDrawer.homeLink = { type: 'dashboard', id: '1', name: 'Home' };
-navDrawer.user = { id: '123', name: 'John Doe' };
-navDrawer.opened = true;
-document.body.appendChild(navDrawer);
-```
+// Example usage of the YpAppNavDrawer component
+import './path/to/yp-app-nav-drawer.js';
 
-Please note that the actual rendering and event handling logic is encapsulated within the `render` method and private methods, which are not detailed in this documentation. The example provided is a basic illustration of how to create and use the `YpAppNavDrawer` element.
+const navDrawer = document.createElement('yp-app-nav-drawer');
+document.body.appendChild(navDrawer);
+
+// Open the navigation drawer
+navDrawer.opened = true;
+
+// Set user data
+navDrawer.user = { /* user data */ };
+
+// Set home link
+navDrawer.homeLink = { type: 'home', id: '123', name: 'Home' };
+```

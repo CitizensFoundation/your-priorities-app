@@ -61,7 +61,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         }));
         const link = `https://app.${group.Community?.Domain?.domain_name}/agent_bundle/${bundleId}?needsLogin=true`;
         if (group && group.GroupAdmins && group.GroupAdmins.length > 0) {
-            const admins = group.GroupAdmins.filter((admin) => admin.email);
+            let admins = group.GroupAdmins.filter((admin) => admin.email);
             const emailContent = `
         <div>
           <h1>${subject}</h1>
@@ -69,6 +69,10 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         </div>
       `;
             const MAX_ADMIN_EMAILS = 25;
+            // Deduplicate admins using Set
+            admins = Array.from(new Set(admins.map(admin => admin.email)))
+                .map(email => admins.find(admin => admin.email === email))
+                .filter((admin) => admin !== undefined);
             for (let u = 0; u < Math.min(admins.length, MAX_ADMIN_EMAILS); u++) {
                 queue.add("send-one-email", {
                     subject: subject,

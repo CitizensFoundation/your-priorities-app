@@ -1,46 +1,43 @@
 # AoiStreamingAnalysis
 
-A custom element that handles the streaming analysis of survey data, displaying choices and analysis content. It extends `YpStreamingLlmBase` and integrates with a server API to fetch and stream analysis data.
+The `AoiStreamingAnalysis` class is a custom web component that extends `YpStreamingLlmBase`. It is designed to handle streaming analysis of survey data, interact with a server API, and render choices and analysis results.
 
 ## Properties
 
-| Name             | Type                        | Description                                                                 |
-|------------------|-----------------------------|-----------------------------------------------------------------------------|
-| earl             | AoiEarlData                 | Data related to the EARL (Early Analysis of Response Logic).                |
-| groupId          | number                      | The ID of the group associated with the analysis.                           |
-| group            | YpGroupData                 | Data about the group associated with the analysis.                          |
-| analysisIndex    | number                      | The index of the current analysis.                                          |
-| analysisTypeIndex| number                      | The index of the type of analysis being performed.                          |
-| analysis         | string                      | The analysis content as a string of markdown-formatted text.                |
-| selectedChoices  | AoiChoiceData[]             | An array of choices selected for the analysis.                              |
-| serverApi        | AoiServerApi                | An instance of `AoiServerApi` for server interactions.                      |
+| Name              | Type                | Description                                                                 |
+|-------------------|---------------------|-----------------------------------------------------------------------------|
+| earl              | AoiEarlData         | The data related to the EARL (Entity-Attribute-Relation-Label) analysis.    |
+| groupId           | number              | The ID of the group associated with the analysis.                           |
+| group             | YpGroupData         | The data related to the group being analyzed.                               |
+| analysisIndex     | number              | The index of the analysis being performed.                                  |
+| analysisTypeIndex | number              | The index of the type of analysis being performed.                          |
+| analysis          | string              | The current analysis text being generated or displayed.                     |
+| selectedChoices   | AoiChoiceData[]     | An array of selected choices from the analysis.                             |
+| serverApi         | AoiServerApi        | An instance of the server API used to fetch survey analysis data.           |
 
 ## Methods
 
-| Name               | Parameters                  | Return Type | Description                                                                 |
-|--------------------|-----------------------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback  |                             | void        | Lifecycle method that runs when the element is added to the document's DOM. |
-| disconnectedCallback|                            | void        | Lifecycle method that runs when the element is removed from the document's DOM. |
-| streamAnalysis     |                             | Promise<void>| Initiates the streaming of analysis data from the server.                   |
-| renderChoice       | index: number, result: AoiChoiceData | TemplateResult | Renders a single choice from the analysis data.                            |
-| addChatBotElement  | wsMessage: PsAiChatWsMessage| Promise<void>| Handles the addition of chatbot elements based on websocket messages.      |
+| Name              | Parameters                          | Return Type | Description                                                                 |
+|-------------------|-------------------------------------|-------------|-----------------------------------------------------------------------------|
+| connectedCallback | None                                | Promise<void> | Lifecycle method called when the element is added to the document.          |
+| disconnectedCallback | None                             | void        | Lifecycle method called when the element is removed from the document.      |
+| streamAnalysis    | None                                | Promise<void> | Fetches and processes survey analysis data from the server API.             |
+| renderChoice      | index: number, result: AoiChoiceData | TemplateResult | Renders a choice result as a HTML template.                                 |
+| addChatBotElement | wsMessage: YpAssistantMessage       | Promise<void> | Processes WebSocket messages and updates the analysis text accordingly.     |
 
 ## Events
 
-- **yp-ws-opened**: Emitted when the websocket connection is opened and triggers the streaming analysis.
+- **yp-ws-opened**: Triggered when the WebSocket connection is opened, initiating the streaming analysis process.
 
 ## Examples
 
 ```typescript
-// Example usage of the AoiStreamingAnalysis element
-<aoi-streaming-analysis
-  .earl="${earlData}"
-  .groupId="${groupId}"
-  .group="${groupData}"
-  .analysisIndex="${analysisIndex}"
-  .analysisTypeIndex="${analysisTypeIndex}"
-  .selectedChoices="${selectedChoices}"
-></aoi-streaming-analysis>
-```
+// Example usage of the aoi-streaming-analysis component
+import './path/to/aoi-streaming-analysis.js';
 
-Please note that the actual data structures such as `AoiEarlData`, `YpGroupData`, `AoiChoiceData`, and `PsAiChatWsMessage` are not detailed here and should be defined elsewhere in your codebase.
+const analysisElement = document.createElement('aoi-streaming-analysis');
+analysisElement.groupId = 123;
+analysisElement.analysisIndex = 0;
+analysisElement.analysisTypeIndex = 1;
+document.body.appendChild(analysisElement);
+```

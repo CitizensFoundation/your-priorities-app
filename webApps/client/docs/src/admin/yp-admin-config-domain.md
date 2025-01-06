@@ -1,39 +1,36 @@
 # YpAdminConfigDomain
 
-YpAdminConfigDomain is a custom element that extends YpAdminConfigBase, providing administrative configuration functionalities for a domain within a web application. It allows administrators to manage domain settings such as logo images, default locale, theme, community creation permissions, and API keys for third-party authentication services.
+The `YpAdminConfigDomain` class is a custom web component that extends `YpAdminConfigBase`. It is used to manage the configuration of a domain within an admin interface, providing functionalities such as rendering headers, handling form responses, and setting up configuration tabs.
 
 ## Properties
 
-| Name                      | Type                | Description                                                                 |
-|---------------------------|---------------------|-----------------------------------------------------------------------------|
-| appHomeScreenIconImageId  | number \| undefined | The ID of the image used for the app's home screen icon.                    |
+| Name                        | Type   | Description                                                                 |
+|-----------------------------|--------|-----------------------------------------------------------------------------|
+| appHomeScreenIconImageId    | number | The ID of the image used as the app home screen icon.                       |
 
 ## Methods
 
-| Name                             | Parameters                                      | Return Type | Description                                                                                   |
-|----------------------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| renderHeader                     | -                                               | nothing     | Renders the header section of the domain configuration page.                                  |
-| renderHiddenInputs               | -                                               | nothing     | Renders hidden input elements for the domain configuration form.                              |
-| _clear                           | -                                               | void        | Clears the configuration form and resets properties to their default state.                   |
-| updated                          | changedProperties: Map<string \| number \| symbol, unknown> | void        | Updates the element's properties and state when a property changes.                           |
-| _setupTranslations               | -                                               | void        | Sets up the translations for the domain configuration page based on the current collection ID.|
-| _formResponse                    | event: CustomEvent                              | Promise<void> | Handles the form response event after submitting the domain configuration form.               |
-| _finishRedirect                  | domain: YpDomainData                            | void        | Redirects the user after successfully updating the domain configuration.                      |
-| setupConfigTabs                  | -                                               | Array<YpConfigTabData> | Sets up the configuration tabs for the domain configuration page.                             |
-| _appHomeScreenIconImageUploaded  | event: CustomEvent                              | void        | Handles the event when an app home screen icon image is successfully uploaded.                |
-
-## Events (if any)
-
-- **changed**: Emitted when a configuration change occurs.
-- **config-updated**: Emitted when the theme configuration is updated.
-- **yp-theme-configuration-changed**: Emitted when the theme configuration changes.
-- **success**: Emitted when a file upload is successful.
+| Name                          | Parameters                                                                 | Return Type | Description                                                                 |
+|-------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| constructor                   | -                                                                          | void        | Initializes the component and sets the default action URL.                  |
+| static get styles             | -                                                                          | CSSResult[] | Returns the styles for the component.                                       |
+| renderHeader                  | -                                                                          | TemplateResult | Renders the header section of the component.                                |
+| renderHiddenInputs            | -                                                                          | TemplateResult | Renders hidden input fields for configuration data.                         |
+| _clear                        | -                                                                          | void        | Clears the component's state, resetting properties to their default values. |
+| updated                       | changedProperties: Map<string | number | symbol, unknown>                  | void        | Handles updates to the component's properties.                              |
+| _collectionIdChanged          | -                                                                          | void        | Handles changes to the collection ID, updating the action URL accordingly.  |
+| _setupTranslations            | -                                                                          | void        | Sets up translation strings based on the current URL and collection ID.     |
+| _formResponse                 | event: CustomEvent                                                         | Promise<void> | Handles form responses, performing actions based on the response data.      |
+| _finishRedirect               | domain: YpDomainData                                                       | void        | Redirects to the domain page after a successful form submission.            |
+| setupConfigTabs               | -                                                                          | Array<YpConfigTabData> | Sets up configuration tabs for the component.                               |
+| _appHomeScreenIconImageUploaded | event: CustomEvent                                                       | void        | Handles the event when an app home screen icon image is uploaded.           |
 
 ## Examples
 
 ```typescript
-// Example usage of YpAdminConfigDomain in an HTML template
-<yp-admin-config-domain></yp-admin-config-domain>
-```
+// Example usage of the YpAdminConfigDomain component
+import './yp-admin-config-domain.js';
 
-Please note that this documentation is a high-level overview and does not include all properties, methods, events, or internal logic details. For a complete understanding, refer to the source code of the `YpAdminConfigDomain` class.
+const adminConfigDomain = document.createElement('yp-admin-config-domain');
+document.body.appendChild(adminConfigDomain);
+```

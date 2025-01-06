@@ -1,88 +1,86 @@
 # YpEditDialog
 
-This class represents a custom element that provides a dialog interface for editing content. It extends `YpBaseElement` and integrates with various Material Design components to create a responsive and interactive user interface.
+The `YpEditDialog` class is a custom web component that extends `YpBaseElement`. It provides a dialog interface for editing forms with various properties and methods to handle form submission, validation, and user interactions.
 
 ## Properties
 
-| Name                      | Type                          | Description                                                                 |
-|---------------------------|-------------------------------|-----------------------------------------------------------------------------|
-| action                    | string \| undefined           | The action URL for the form submission.                                     |
-| tablet                    | boolean                       | Indicates if the device is a tablet.                                        |
-| baseAction                | string \| undefined           | The base action URL for form submission, before adding specific parameters. |
-| cancelText                | string \| undefined           | The text for the cancel button.                                             |
-| buttonText                | string \| undefined           | The text for the button.                                                    |
-| method                    | string                        | The HTTP method for form submission (e.g., "POST").                         |
-| customValidationFunction  | Function \| undefined         | A custom validation function for the form.                                  |
-| errorText                 | string \| undefined           | The text to display when there is an error.                                 |
-| snackbarText              | string \| undefined           | The text to display in a snackbar notification.                             |
-| snackbarTextCombined      | string \| undefined           | Combined text for the snackbar notification.                                |
-| saveText                  | string \| undefined           | The text for the save button.                                               |
-| response                  | object \| undefined           | The response object from the form submission.                               |
-| params                    | YpEditFormParams \| undefined | Additional parameters for the form submission.                              |
-| doubleWidth               | boolean                       | Indicates if the dialog should be double width.                             |
-| icon                      | string \| undefined           | The icon to display in the dialog.                                          |
-| opened                    | boolean                       | Indicates if the dialog is currently open.                                  |
-| useNextTabAction          | boolean                       | Indicates if the next tab action should be used.                            |
-| nextActionText            | string \| undefined           | The text for the next action button.                                        |
-| uploadingState            | boolean                       | Indicates if a file upload is in progress.                                  |
-| confirmationText          | string \| undefined           | The text for the confirmation dialog.                                       |
-| heading                   | string                        | The heading text for the dialog.                                            |
-| name                      | string \| undefined           | The name of the dialog.                                                     |
-| customSubmit              | boolean                       | Indicates if a custom submit action should be used.                         |
+| Name                      | Type                      | Description                                                                 |
+|---------------------------|---------------------------|-----------------------------------------------------------------------------|
+| `action`                  | `string \| undefined`     | The action URL for form submission.                                         |
+| `tablet`                  | `boolean`                 | Indicates if the device is a tablet.                                        |
+| `baseAction`              | `string \| undefined`     | The base action URL used for constructing the final action URL.             |
+| `cancelText`              | `string \| undefined`     | Text for the cancel button.                                                 |
+| `buttonText`              | `string \| undefined`     | Text for the button.                                                        |
+| `method`                  | `string`                  | HTTP method for form submission, default is "POST".                         |
+| `customValidationFunction`| `Function \| undefined`   | Custom function for form validation.                                        |
+| `errorText`               | `string \| undefined`     | Text to display in case of an error.                                        |
+| `snackbarText`            | `string \| undefined`     | Text for the snackbar notification.                                         |
+| `snackbarTextCombined`    | `string \| undefined`     | Combined text for the snackbar notification.                                |
+| `saveText`                | `string \| undefined`     | Text for the save button.                                                   |
+| `response`                | `object \| undefined`     | The response object from form submission.                                   |
+| `params`                  | `YpEditFormParams \| undefined` | Parameters for the form.                                               |
+| `doubleWidth`             | `boolean`                 | Indicates if the dialog should be double width.                             |
+| `icon`                    | `string \| undefined`     | Icon to display in the dialog.                                              |
+| `opened`                  | `boolean`                 | Indicates if the dialog is open.                                            |
+| `useNextTabAction`        | `boolean`                 | Indicates if the next tab action should be used.                            |
+| `nextActionText`          | `string \| undefined`     | Text for the next action button.                                            |
+| `uploadingState`          | `boolean`                 | Indicates if a file upload is in progress.                                  |
+| `disableDialog`           | `boolean`                 | Indicates if the dialog is disabled.                                        |
+| `confirmationText`        | `string \| undefined`     | Text for confirmation before submission.                                    |
+| `heading`                 | `string`                  | The heading text for the dialog.                                            |
+| `name`                    | `string \| undefined`     | The name of the dialog.                                                     |
+| `customSubmit`            | `boolean`                 | Indicates if a custom submit action is used.                                |
+| `hideAllActions`          | `boolean`                 | Indicates if all actions should be hidden.                                  |
 
 ## Methods
 
-| Name                    | Parameters | Return Type | Description                                                                 |
-|-------------------------|------------|-------------|-----------------------------------------------------------------------------|
-| renderMobileView        | -          | TemplateResult | Renders the mobile view of the dialog.                                      |
-| renderDesktopView       | -          | TemplateResult | Renders the desktop view of the dialog.                                     |
-| render                  | -          | TemplateResult | Renders the dialog.                                                         |
-| scrollResize            | -          | void        | Handles resizing of the scrollable area.                                    |
-| updated                 | changedProperties: Map<string \| number \| symbol, unknown> | void | Lifecycle method called after the element’s properties have changed.       |
-| _fileUploadStarting     | -          | void        | Sets the uploading state to true.                                           |
-| _fileUploadComplete     | -          | void        | Sets the uploading state to false.                                          |
-| _nextTab                | -          | void        | Emits an event to navigate to the next tab.                                 |
-| computeClass            | -          | string      | Computes the class for the dialog based on its state.                       |
-| connectedCallback       | -          | void        | Lifecycle method called when the element is added to the document’s DOM.    |
-| disconnectedCallback    | -          | void        | Lifecycle method called when the element is removed from the document’s DOM.|
-| open                    | -          | void        | Opens the dialog.                                                           |
-| close                   | -          | void        | Closes the dialog.                                                          |
-| _formSubmitted          | -          | void        | Handles the form submission event.                                          |
-| _formResponse           | event: CustomEvent | void | Handles the form response event.                                            |
-| _formError              | event: CustomEvent | void | Handles the form error event.                                               |
-| _formInvalid            | -          | void        | Handles the form invalid event.                                              |
-| _submit                 | -          | void        | Submits the form or opens a confirmation dialog if needed.                  |
-| _setSubmitDisabledStatus| status: boolean | void | Sets the disabled status of the submit buttons.                             |
-| _reallySubmit           | validate: boolean = true | Promise<void> | Submits the form after validation.                                         |
-| submitForce             | -          | void        | Forces the form submission.                                                  |
-| getForm                 | -          | YpForm \| null | Returns the form element.                                                   |
-| stopSpinner             | -          | void        | Stops the spinner animation.                                                |
-| validate                | -          | void        | Validates the form.                                                         |
-| _showErrorDialog        | errorText: string | void | Shows the error dialog with the provided text.                              |
-| _clearErrorText         | -          | void        | Clears the error text and closes the error dialog.                          |
+| Name                  | Parameters                          | Return Type | Description                                                                 |
+|-----------------------|-------------------------------------|-------------|-----------------------------------------------------------------------------|
+| `renderMobileView`    | `()`                                | `TemplateResult` | Renders the mobile view of the dialog.                                      |
+| `renderDesktopView`   | `()`                                | `TemplateResult` | Renders the desktop view of the dialog.                                     |
+| `render`              | `()`                                | `TemplateResult` | Renders the dialog based on the current state.                              |
+| `narrow`              | `()`                                | `boolean`   | Determines if the dialog should be in narrow mode.                          |
+| `scrollResize`        | `()`                                | `void`      | Handles scroll resize events.                                               |
+| `updated`             | `changedProperties: Map<string \| number \| symbol, unknown>` | `void` | Lifecycle method called when properties are updated.                        |
+| `_fileUploadStarting` | `()`                                | `void`      | Handles the start of a file upload.                                         |
+| `_fileUploadComplete` | `()`                                | `void`      | Handles the completion of a file upload.                                    |
+| `_nextTab`            | `()`                                | `void`      | Fires the "next-tab-action" event.                                          |
+| `computeClass`        | `()`                                | `string`    | Computes the CSS class for the dialog based on its state.                   |
+| `connectedCallback`   | `()`                                | `void`      | Lifecycle method called when the element is added to the document.          |
+| `disconnectedCallback`| `()`                                | `void`      | Lifecycle method called when the element is removed from the document.      |
+| `open`                | `()`                                | `void`      | Opens the dialog.                                                           |
+| `close`               | `()`                                | `void`      | Closes the dialog.                                                          |
+| `_formSubmitted`      | `()`                                | `void`      | Handles form submission events.                                             |
+| `_formResponse`       | `event: CustomEvent`                | `void`      | Handles form response events.                                               |
+| `_formError`          | `event: CustomEvent`                | `void`      | Handles form error events.                                                  |
+| `_formInvalid`        | `()`                                | `void`      | Handles form invalid events.                                                |
+| `submit`              | `()`                                | `void`      | Submits the form.                                                           |
+| `_setSubmitDisabledStatus` | `status: boolean`              | `void`      | Sets the disabled status of the submit buttons.                             |
+| `hasLongSaveText`     | `()`                                | `boolean`   | Checks if the save text is long.                                            |
+| `hasLongTitle`        | `()`                                | `boolean`   | Checks if the title is long.                                                |
+| `_reallySubmit`       | `validate: boolean = true`          | `Promise<void>` | Submits the form with optional validation.                                  |
+| `submitForce`         | `()`                                | `void`      | Forces the form to submit.                                                  |
+| `getForm`             | `()`                                | `YpForm`    | Returns the form element.                                                   |
+| `stopSpinner`         | `()`                                | `void`      | Stops the spinner.                                                          |
+| `validate`            | `()`                                | `void`      | Validates the form.                                                         |
+| `_showErrorDialog`    | `errorText: string`                 | `void`      | Shows an error dialog with the specified text.                              |
+| `_clearErrorText`     | `()`                                | `void`      | Clears the error text and closes the error dialog.                          |
 
-## Events (if any)
+## Events
 
-- **yp-dialog-closed**: Emitted when the dialog is closed.
-- **yp-form-submit**: Emitted when the form is submitted.
-- **yp-form-response**: Emitted when a response is received after form submission.
-- **yp-form-error**: Emitted when there is an error during form submission.
+- **next-tab-action**: Emitted when the next tab action is triggered.
+- **yp-open-toast**: Emitted to open a toast notification with a message.
 - **yp-form-invalid**: Emitted when the form is invalid.
-- **file-upload-starting**: Emitted when a file upload is starting.
-- **file-upload-complete**: Emitted when a file upload is complete.
-- **yp-custom-form-submit**: Emitted when a custom form submission is triggered.
-- **yp-open-toast**: Emitted to open a toast notification with the provided text.
-- **next-tab-action**: Emitted to navigate to the next tab.
+- **yp-custom-form-submit**: Emitted for custom form submission handling.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpEditDialog
-const editDialog = document.createElement('yp-edit-dialog');
-editDialog.action = '/api/save';
-editDialog.heading = 'Edit Profile';
-editDialog.opened = true;
-document.body.appendChild(editDialog);
+// Example usage of the YpEditDialog component
+const dialog = document.createElement('yp-edit-dialog');
+dialog.heading = 'Edit Item';
+dialog.action = '/submit-form';
+dialog.saveText = 'Save Changes';
+document.body.appendChild(dialog);
+dialog.open();
 ```
-
-Note: The actual usage of the `YpEditDialog` would involve more setup, including providing the form content via slots, setting up event listeners, and handling the form submission and response.
