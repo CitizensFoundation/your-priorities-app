@@ -57,6 +57,7 @@ interface GroupClass extends DbData {
   addGroupAdmins(user: UserClass): Promise<void>;
   hasGroupUsers(user: UserClass): Promise<boolean>;
   addGroupUsers(user: UserClass): Promise<void>;
+  changed(field: string, value: any): void;
 }
 
 interface UserClass extends DbData {

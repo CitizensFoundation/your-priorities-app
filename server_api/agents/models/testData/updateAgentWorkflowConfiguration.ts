@@ -41,11 +41,11 @@ async function setupAgentProductsConfiguration() {
         stepTextColor: "#ffffff",
       },
       {
-        name: "Competitor Analysis Detailed Search People Review",
-        shortName: "Key competitors details",
-        description: "Review of key competitors details",
+        name: "Competitor Analysis Comment on Key Competitors",
+        shortName: "Competitors comments",
+        description: "Comment on key competitors before creating report",
         shortDescription:
-          "People review of key competitors",
+          "Comment on key competitors before report",
         agentClassUuid: "c6e99ac4-e5f6-c7c1-a1c0-c1ab53c4ff16",
         type: "engagmentFromOutputConnector",
         stepBackgroundColor: "#2ecc71",

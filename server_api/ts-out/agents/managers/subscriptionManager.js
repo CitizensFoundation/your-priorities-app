@@ -253,6 +253,8 @@ export class SubscriptionManager {
         }
         // Update the workflow group configuration
         workflowGroup.configuration.agents.topLevelAgentId = clonedTopLevelAgent.id;
+        console.log(`Set top level agent id to ${clonedTopLevelAgent.id} for workflow group ${workflowGroup.id}`);
+        workflowGroup.changed('configuration', true);
         await workflowGroup.save();
         if (agentProduct.configuration.structuredAnswersOverride) {
             for (const override of agentProduct.configuration

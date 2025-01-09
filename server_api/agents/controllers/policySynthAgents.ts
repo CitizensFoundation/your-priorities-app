@@ -106,7 +106,7 @@ export class PolicySynthAgentsController {
     const anthropicSonnet = await findLatestActiveModel("Anthropic Sonnet 3.5");
     const openAiGpt4 = await findLatestActiveModel("GPT-4o");
     const openAiGpt4Mini = await findLatestActiveModel("GPT-4o Mini");
-    const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro");
+    const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro 2");
     const openAio1Preview = await findLatestActiveModel("o1 Preview");
     const openAio1Mini = await findLatestActiveModel("o1 Mini");
     const openAio11712 = await findLatestActiveModel("o1 24");
@@ -163,6 +163,7 @@ export class PolicySynthAgentsController {
     }
 
     group.set("private_access_configuration", groupAccessConfig);
+    group.changed("private_access_configuration", true);
 
     await group.save();
   };
@@ -380,6 +381,38 @@ export class PolicySynthAgentsController {
       });
     } else {
       console.log("Test o1 1712 models already exist");
+    }
+
+    const geminiProModel = await PsAiModel.findOne({
+      where: {
+        name: "Gemini 1.5 Pro 2",
+      },
+    });
+
+    if (!geminiProModel) {
+      const geminiProConfig: PsAiModelConfiguration = {
+        type: PsAiModelType.Text,
+        modelSize: PsAiModelSize.Medium,
+        provider: "google",
+        prices: {
+          costInTokensPerMillion: 1.25,
+          costOutTokensPerMillion: 5.0,
+          currency: "USD",
+        },
+        maxTokensOut: 8192,
+        defaultTemperature: 0.0,
+        model: "gemini-1.5-pro-002",
+        active: true,
+      };
+
+      const geminiPro = await PsAiModel.create({
+        name: "Gemini 1.5 Pro 2",
+        organization_id: 1,
+        user_id: userId,
+        configuration: geminiProConfig,
+      });
+    } else {
+      console.log("Gemini 1.5 Pro 2 models already exist");
     }
   }
 

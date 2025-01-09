@@ -5,6 +5,7 @@ import { PsServerApi } from "../../policySynth/PsServerApi.js";
 import { YpNavHelpers } from "../../common/YpNavHelpers.js";
 import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
 import { YpSnackbar } from "../../yp-app/yp-snackbar.js";
+import '@material/web/iconbutton/filled-tonal-icon-button.js';
 
 // Assuming we have an API client
 
@@ -242,6 +243,15 @@ export class YpAgentRunWidget extends YpBaseElement {
         :host {
         }
 
+        md-filled-tonal-icon-button {
+          margin-top: -4px;
+          margin-right: -4px;
+        }
+
+        .step-icon-button {
+          color: #F00;
+        }
+
         .viewReportButton {
           margin-top: 24px;
         }
@@ -474,15 +484,26 @@ export class YpAgentRunWidget extends YpBaseElement {
     return "step-disabled";
   }
 
+  openGroup(groupId: number) {
+    window.open(`/group/${groupId}?forAgentBundle=true`, "_blank");
+  }
+
   private renderStep(step: YpWorkflowStep, index: number, isSelected: boolean) {
     const stepClass = this.getStepClass(index);
-
-    const isActive =
+    const isActive = (
       isSelected &&
-      (this.runStatus === "running" ||
+      (
+        this.runStatus === "running" ||
         this.runStatus === "stopped" ||
         this.runStatus === "waiting_on_user" ||
-        this.runStatus === "completed");
+        this.runStatus === "completed"
+      )
+    );
+
+    // “Completed” means the currentStepIndex is already beyond this step:
+    const isCompleted = index < this.parsedWorkflow.currentStepIndex
+      && this.runStatus !== "ready"
+      && this.runStatus !== "cancelled";
 
     return html`
       <div class="workflow-step layout vertical">
@@ -491,16 +512,28 @@ export class YpAgentRunWidget extends YpBaseElement {
             class="step-number"
             ?isNotActive=${!isActive}
             style="
-            background-color: ${step.stepBackgroundColor};
-            color: ${step.stepTextColor}"
+              background-color: ${step.stepBackgroundColor};
+              color: ${step.stepTextColor};
+            "
           >
             ${index + 1}
           </div>
           <div class="flex"></div>
           <div>
-            ${step.type === "engagmentFromOutputConnector"
-              ? this.renderIcon("users")
-              : this.renderIcon("sparkles")}
+            ${step.type === "engagmentFromOutputConnector" && isCompleted
+                ? html`
+                    <md-filled-tonal-icon-button
+                      @click=${() => this.openGroup(step.groupId!)}
+                    >
+                      <span class="step-icon-button">${this.renderIcon("users")}</span>
+                    </md-filled-tonal-icon-button>
+                  `
+                : this.renderIcon(
+                    step.type === "engagmentFromOutputConnector"
+                      ? "users"
+                      : "sparkles"
+                  )
+            }
           </div>
         </div>
 
@@ -512,6 +545,7 @@ export class YpAgentRunWidget extends YpBaseElement {
       </div>
     `;
   }
+
 
   private renderIcon(type: "users" | "sparkles") {
     return type === "users"

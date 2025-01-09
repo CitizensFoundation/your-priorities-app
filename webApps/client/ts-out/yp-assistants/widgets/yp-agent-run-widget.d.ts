@@ -1,5 +1,6 @@
 import { TemplateResult } from "lit";
 import { YpBaseElement } from "../../common/yp-base-element.js";
+import '@material/web/iconbutton/filled-tonal-icon-button.js';
 export declare class YpAgentRunWidget extends YpBaseElement {
     agentProductId: number;
     runId: number;
@@ -36,6 +37,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     private updateAgentStatus;
     static get styles(): any[];
     private getStepClass;
+    openGroup(groupId: number): void;
     private renderStep;
     private renderIcon;
     private renderAgentHeader;

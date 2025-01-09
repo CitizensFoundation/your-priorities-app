@@ -8,6 +8,7 @@ import { html, css, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { PsServerApi } from "../../policySynth/PsServerApi.js";
+import '@material/web/iconbutton/filled-tonal-icon-button.js';
 // Assuming we have an API client
 let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
     constructor() {
@@ -145,6 +146,15 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             super.styles,
             css `
         :host {
+        }
+
+        md-filled-tonal-icon-button {
+          margin-top: -4px;
+          margin-right: -4px;
+        }
+
+        .step-icon-button {
+          color: #F00;
         }
 
         .viewReportButton {
@@ -377,13 +387,20 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
         return "step-disabled";
     }
+    openGroup(groupId) {
+        window.open(`/group/${groupId}?forAgentBundle=true`, "_blank");
+    }
     renderStep(step, index, isSelected) {
         const stepClass = this.getStepClass(index);
-        const isActive = isSelected &&
+        const isActive = (isSelected &&
             (this.runStatus === "running" ||
                 this.runStatus === "stopped" ||
                 this.runStatus === "waiting_on_user" ||
-                this.runStatus === "completed");
+                this.runStatus === "completed"));
+        // “Completed” means the currentStepIndex is already beyond this step:
+        const isCompleted = index < this.parsedWorkflow.currentStepIndex
+            && this.runStatus !== "ready"
+            && this.runStatus !== "cancelled";
         return html `
       <div class="workflow-step layout vertical">
         <div class="layout horizontal">
@@ -391,16 +408,25 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
             class="step-number"
             ?isNotActive=${!isActive}
             style="
-            background-color: ${step.stepBackgroundColor};
-            color: ${step.stepTextColor}"
+              background-color: ${step.stepBackgroundColor};
+              color: ${step.stepTextColor};
+            "
           >
             ${index + 1}
           </div>
           <div class="flex"></div>
           <div>
-            ${step.type === "engagmentFromOutputConnector"
-            ? this.renderIcon("users")
-            : this.renderIcon("sparkles")}
+            ${step.type === "engagmentFromOutputConnector" && isCompleted
+            ? html `
+                    <md-filled-tonal-icon-button
+                      @click=${() => this.openGroup(step.groupId)}
+                    >
+                      <span class="step-icon-button">${this.renderIcon("users")}</span>
+                    </md-filled-tonal-icon-button>
+                  `
+            : this.renderIcon(step.type === "engagmentFromOutputConnector"
+                ? "users"
+                : "sparkles")}
           </div>
         </div>
 
