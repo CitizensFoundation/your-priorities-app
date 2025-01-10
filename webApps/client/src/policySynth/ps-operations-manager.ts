@@ -504,8 +504,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
 
   tabChanged() {
     this.activeTabIndex = (this.$$("#tabBar") as MdTabs).activeTabIndex;
-    if (this.activeTabIndex === 2) {
-      // Assuming the costs tab is the third tab (index 2)
+    if (this.activeTabIndex === 1) {
       this.getDetailedAgentCosts();
     }
   }

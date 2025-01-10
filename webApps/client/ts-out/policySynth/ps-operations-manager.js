@@ -330,8 +330,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
     }
     tabChanged() {
         this.activeTabIndex = this.$$("#tabBar").activeTabIndex;
-        if (this.activeTabIndex === 2) {
-            // Assuming the costs tab is the third tab (index 2)
+        if (this.activeTabIndex === 1) {
             this.getDetailedAgentCosts();
         }
     }
