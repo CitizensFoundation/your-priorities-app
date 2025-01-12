@@ -282,7 +282,10 @@ const getTranslatedTextForPost = (post, callback) => {
                         parallelCallback(error);
                     }
                     else if (translations) {
-                        postStructuredAnswers = translations.join(". ");
+                        const safeTranslations = translations.map((val) => {
+                            return typeof val === "string" ? val : String(val);
+                        });
+                        postStructuredAnswers = safeTranslations.join(". ");
                         parallelCallback();
                     }
                     else {

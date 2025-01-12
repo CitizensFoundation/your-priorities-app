@@ -20,7 +20,8 @@ export class AgentInviteManager {
     link: string,
     agentRunId: number,
     groupId: number,
-    user: UserClass
+    senderUser: UserClass,
+    inviteeEmail: string
   ): Promise<void> {
     try {
       const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
@@ -52,7 +53,7 @@ export class AgentInviteManager {
 
       const emailContent = EmailTemplateRenderer.renderEmail(
         "",
-        user.name,
+        senderUser.name,
         agentRun.Subscription?.Plan?.AgentProduct?.name || "",
         agentRun.workflow,
         link,
@@ -67,7 +68,7 @@ export class AgentInviteManager {
         {
           subject: subject,
           template: "general_user_notification",
-          user: user,
+          user: { id: null, email: inviteeEmail, name: inviteeEmail },
           domain: group.Community?.Domain,
           group: group,
           object: {},

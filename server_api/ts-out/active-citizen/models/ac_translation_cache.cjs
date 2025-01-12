@@ -215,9 +215,10 @@ module.exports = (sequelize, DataTypes) => {
                 const textStrings = [];
                 let combinedText = "";
                 for (const answer of post.public_data.structuredAnswersJson) {
-                    if (answer.value) {
-                        textStrings.push(answer.value);
-                        combinedText += answer.value;
+                    if (answer.value !== undefined && answer.value !== null) {
+                        const safeValue = typeof answer.value === "string" ? answer.value : String(answer.value);
+                        textStrings.push(safeValue);
+                        combinedText += safeValue;
                     }
                     else {
                         textStrings.push("");

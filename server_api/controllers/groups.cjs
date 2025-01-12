@@ -1602,7 +1602,7 @@ router.post(
 
         const invite_link = `https://app.${req.ypDomain.domain_name}/group/${group.id}?anonInvite=1&token=${token}&forAgentBundle=1`;
 
-        await AgentInviteManager.sendInviteEmail(invite_link, req.body.agentRunId, group.id, req.user);
+        await AgentInviteManager.sendInviteEmail(invite_link, req.body.agentRunId, group.id, req.user, email);
 
         log.info("Invite Created", {
           email,

@@ -12,7 +12,7 @@ export class AgentInviteManager {
     /**
      * Send a notification email to group admins about the current workflow step or completion.
      */
-    static async sendInviteEmail(link, agentRunId, groupId, user) {
+    static async sendInviteEmail(link, agentRunId, groupId, senderUser, inviteeEmail) {
         try {
             const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
             if (!agentRun) {
@@ -32,11 +32,11 @@ export class AgentInviteManager {
                     },
                 ],
             }));
-            const emailContent = EmailTemplateRenderer.renderEmail("", user.name, agentRun.Subscription?.Plan?.AgentProduct?.name || "", agentRun.workflow, link, "https://evoly.ai/is/amplifier/img/amplifier-logo.png", "https://evoly.ai/is/amplifier/img/evoly-bw-logo.png", "https://evoly.ai/", "© 2024 Evoly ehf, Vegmuli 8, 108, Reykjavik, Iceland");
+            const emailContent = EmailTemplateRenderer.renderEmail("", senderUser.name, agentRun.Subscription?.Plan?.AgentProduct?.name || "", agentRun.workflow, link, "https://evoly.ai/is/amplifier/img/amplifier-logo.png", "https://evoly.ai/is/amplifier/img/evoly-bw-logo.png", "https://evoly.ai/", "© 2024 Evoly ehf, Vegmuli 8, 108, Reykjavik, Iceland");
             queue.add("send-one-email", {
                 subject: subject,
                 template: "general_user_notification",
-                user: user,
+                user: { id: null, email: inviteeEmail, name: inviteeEmail },
                 domain: group.Community?.Domain,
                 group: group,
                 object: {},
