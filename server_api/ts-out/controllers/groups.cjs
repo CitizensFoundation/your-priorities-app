@@ -1014,7 +1014,7 @@ router.post("/:groupId/sendEmailInvitesForAnons", auth.can("edit group"), async 
                 community_id: group.community_id,
                 from_user_id: req.user.id,
             });
-            const invite_link = `/group/${group.id}?anonInvite=1&token=${token}&forAgentBundle=1`;
+            const invite_link = `https://app.${req.ypDomain.domain_name}/group/${group.id}?anonInvite=1&token=${token}&forAgentBundle=1`;
             await AgentInviteManager.sendInviteEmail(invite_link, req.body.agentRunId, group.id, req.user);
             log.info("Invite Created", {
                 email,
