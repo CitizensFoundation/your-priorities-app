@@ -30,13 +30,19 @@ export class YpAssistantServerApi extends YpServerApi {
     );
   }
 
-  public sendEmailInvitesForAnons(groupId: number, agentId: string, emails: string): Promise<void> {
+  public sendEmailInvitesForAnons(
+    groupId: number,
+    agentId: string,
+    agentRunId: number,
+    emails: string
+  ): Promise<void> {
     return this.fetchWrapper(
       `/api/groups/${groupId}/sendEmailInvitesForAnons`,
       {
         method: "POST",
         body: JSON.stringify({
           agentId,
+          agentRunId,
           emails,
         }),
       }

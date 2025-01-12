@@ -410,6 +410,7 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
           `}
       <md-filled-tonal-icon-button
         type="button"
+        ?hidden="${this.post.Group.configuration?.hideSharing}"
         class="topActionButton"
         @click="${this._shareTap}"
         title="${this.t("openShare")}"

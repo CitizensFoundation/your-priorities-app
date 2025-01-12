@@ -11,6 +11,7 @@ import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
 import queue from "../../active-citizen/workers/queue.cjs";
+import { EmailTemplateRenderer } from "./emailTemplateRenderer.js";
 const dbModels: Models = models;
 const Group = dbModels.Group as GroupClass;
 const User = dbModels.User as UserClass;
@@ -63,25 +64,31 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       );
     }
 
-    const currentWorkflowStep =
-      updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex];
-
-    // Send email notification
-    const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${currentWorkflowStep?.shortName} ready`;
-    const content = `Next workflow step is ready: ${currentWorkflowStep?.description}`;
-
-    const bundleId =
-      agentRun.Subscription?.Plan?.AgentProduct?.AgentBundles?.[0]?.id || 1;
-
-    await this.sendNotificationEmail(agent, subject, content, bundleId);
+    if (updatedWorkflow) {
+      await this.sendNotificationEmail(agent, agentRun, updatedWorkflow);
+    } else {
+      console.error("NotificationAgentQueueManager: No updated workflow found");
+    }
   }
 
   async sendNotificationEmail(
     agent: PsAgent,
-    subject: string,
-    content: string,
-    bundleId: number
+    agentRun: YpAgentProductRun,
+    updatedWorkflow: YpWorkflowConfiguration
   ) {
+    // Send email notification
+    const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${
+      updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex]?.shortName
+    } ready`;
+
+    const bundleId =
+      agentRun.Subscription?.Plan?.AgentProduct?.AgentBundles?.[0]?.id || 1;
+
+    const currentWorkflowStep =
+      updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex];
+
+    const userId = agentRun.Subscription?.user_id;
+
     const group = (await Group.findOne({
       where: { id: agent.group_id },
       include: [
@@ -95,24 +102,30 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         },
       ],
     })) as YpGroupData;
+
     const link = `https://app.${group.Community?.Domain?.domain_name}/agent_bundle/${bundleId}?needsLogin=true`;
 
     if (group && group.GroupAdmins && group.GroupAdmins.length > 0) {
       let admins = group.GroupAdmins.filter((admin) => admin.email);
 
-      const emailContent = `
-        <div>
-          <h1>${subject}</h1>
-          <p>${content}</p>
-        </div>
-      `;
+      const emailContent = EmailTemplateRenderer.renderEmail(
+        "",
+        "",
+        agentRun.Subscription?.Plan?.AgentProduct?.name || "",
+        updatedWorkflow,
+        link,
+        "https://evoly.ai/is/amplifier/img/amplifier-logo.png",
+        "https://evoly.ai/is/amplifier/img/evoly-bw-logo.png",
+        "https://evoly.ai/",
+        "© 2024 Evoly ehf, Vegmuli 8, 108, Reykjavik, Iceland"
+      );
 
       const MAX_ADMIN_EMAILS = 25;
 
       // Deduplicate admins using Set
-      admins = Array.from(new Set(admins.map(admin => admin.email)))
-        .map(email => admins.find(admin => admin.email === email))
-        .filter((admin): admin is typeof admins[0] => admin !== undefined);
+      admins = Array.from(new Set(admins.map((admin) => admin.email)))
+        .map((email) => admins.find((admin) => admin.email === email))
+        .filter((admin): admin is (typeof admins)[0] => admin !== undefined);
 
       for (let u = 0; u < Math.min(admins.length, MAX_ADMIN_EMAILS); u++) {
         queue.add(
@@ -127,6 +140,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             header: "",
             content: emailContent,
             link: link,
+            skipHeaderAndFooter: true,
           },
           { priority: "high" }
         );
@@ -202,6 +216,13 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       // Get the agent run record
       const agentRun = await YpAgentProductRun.findByPk(agentRunId, {
         attributes: ["id", "workflow", "status"],
+        include: [
+          {
+            model: YpSubscription,
+            as: "Subscription",
+            attributes: ["id", "user_id"],
+          },
+        ],
       });
 
       if (!agentRun || !agentRun.workflow) {
@@ -278,7 +299,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     }
   }
 
-  async getAgentRun(agentRunId: number): Promise<YpAgentProductRun | null> {
+  static async getAgentRun(agentRunId: number): Promise<YpAgentProductRun | null> {
     return await YpAgentProductRun.findOne({
       where: { id: agentRunId },
       attributes: ["id", "status", "workflow"],
@@ -286,7 +307,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         {
           model: YpSubscription,
           as: "Subscription",
-          attributes: ["id"],
+          attributes: ["id", "user_id"],
           include: [
             {
               model: YpSubscriptionPlan,
@@ -376,14 +397,17 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
             } = job.data;
             console.log("NotificationAgentQueueManager: Job data", job.data);
 
-            console.log("NotificationAgentQueueManager: currentWorkflowStepIndex", currentWorkflowStepIndex);
+            console.log(
+              "NotificationAgentQueueManager: currentWorkflowStepIndex",
+              currentWorkflowStepIndex
+            );
 
             // Load the agent database record
             const agent = await PsAgent.findByPk(agentId, {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
-            const agentRun = await this.getAgentRun(agentRunId);
+            const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
 
             if (!agentRun) {
               console.error(
@@ -482,7 +506,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
-            const agentRun = await this.getAgentRun(agentRunId);
+            const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
 
             if (agent && agentRun) {
               // Send notification email
@@ -607,7 +631,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       return undefined;
     }
 
-    const agentRun = await this.getAgentRun(agentRunId);
+    const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
 
     if (!agentRun) {
       console.error(
@@ -658,7 +682,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       );
     }
 
-    const agentRun = await this.getAgentRun(agentRunId);
+    const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
 
     if (!agentRun) {
       console.error(

@@ -48,7 +48,14 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         }
     }
     updateWorkflow(updatedWorkflow) {
-        this.workflow = btoa(JSON.stringify(updatedWorkflow.workflow));
+        // remove emailInstructions from all steps
+        const workflowCopy = JSON.parse(JSON.stringify(updatedWorkflow.workflow));
+        if (workflowCopy.steps) {
+            workflowCopy.steps.forEach((step) => {
+                step.emailInstructions = "";
+            });
+        }
+        this.workflow = btoa(JSON.stringify(workflowCopy));
         this.runStatus = updatedWorkflow.status;
         this.parseWorkflow();
         this.requestUpdate();
@@ -555,6 +562,7 @@ let YpAgentRunWidget = class YpAgentRunWidget extends YpBaseElement {
         this.fireGlobal("yp-send-email-invites-for-anons", {
             groupId: this.groupId,
             agentId: this.agentId,
+            agentRunId: this.runId,
             emails: this.emailsInput.value,
         });
         this.emailsInput.value = "";

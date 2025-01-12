@@ -107,6 +107,7 @@ export class PolicySynthAgentsController {
     const openAiGpt4 = await findLatestActiveModel("GPT-4o");
     const openAiGpt4Mini = await findLatestActiveModel("GPT-4o Mini");
     const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro 2");
+    const geminiPro15Flash = await findLatestActiveModel("Gemini 1.5 Flash 2");
     const openAio1Preview = await findLatestActiveModel("o1 Preview");
     const openAio1Mini = await findLatestActiveModel("o1 Mini");
     const openAio11712 = await findLatestActiveModel("o1 24");
@@ -151,6 +152,13 @@ export class PolicySynthAgentsController {
     if (geminiPro && process.env.GEMINI_API_KEY) {
       groupAccessConfig.push( {
         aiModelId: geminiPro!.id,
+        apiKey: process.env.GEMINI_API_KEY,
+      })
+    }
+
+    if (geminiPro15Flash && process.env.GEMINI_API_KEY) {
+      groupAccessConfig.push( {
+        aiModelId: geminiPro15Flash!.id,
         apiKey: process.env.GEMINI_API_KEY,
       })
     }
@@ -413,6 +421,36 @@ export class PolicySynthAgentsController {
       });
     } else {
       console.log("Gemini 1.5 Pro 2 models already exist");
+    }
+
+    const geminiPro15FlashModel = await PsAiModel.findOne({
+      where: {
+        name: "Gemini 1.5 Flash 2",
+      },
+    });
+
+    if (!geminiPro15FlashModel) {
+      const geminiPro15FlashConfig: PsAiModelConfiguration = {
+        type: PsAiModelType.Text,
+        modelSize: PsAiModelSize.Small,
+        provider: "google",
+        prices: {
+          costInTokensPerMillion: 0.075,
+          costOutTokensPerMillion: 0.3,
+          currency: "USD",
+        },
+        maxTokensOut: 8192,
+        defaultTemperature: 0.0,
+        model: "gemini-1.5-flash-002",
+        active: true,
+      };
+
+      const geminiPro15Flash = await PsAiModel.create({
+        name: "Gemini 1.5 Flash 2",
+        organization_id: 1,
+        user_id: userId,
+        configuration: geminiPro15FlashConfig,
+      });
     }
   }
 

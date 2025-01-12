@@ -125,7 +125,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             return;
         }
         try {
-            await this.serverApi.sendEmailInvitesForAnons(event.detail.groupId, event.detail.agentId, event.detail.emails);
+            await this.serverApi.sendEmailInvitesForAnons(event.detail.groupId, event.detail.agentId, event.detail.agentRunId, event.detail.emails);
             window.appDialogs.getDialogAsync("masterToast", (toast) => {
                 toast.labelText = this.t("haveSentInvites");
                 toast.open = true;

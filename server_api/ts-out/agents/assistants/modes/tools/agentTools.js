@@ -403,7 +403,13 @@ export class AgentTools extends BaseAssistantTools {
     }
     async renderAgentRunWidget(agent, run) {
         const subscription = await this.assistant.getCurrentSubscription();
-        const workflowBase64 = btoa(JSON.stringify(run.workflow));
+        const workflowCopy = JSON.parse(JSON.stringify(run.workflow));
+        if (workflowCopy.steps) {
+            workflowCopy.steps.forEach((step) => {
+                step.emailInstructions = "";
+            });
+        }
+        const workflowBase64 = btoa(JSON.stringify(workflowCopy));
         return `<yp-agent-run-widget
         agentProductId="${agent.id}"
         runId="${run.id}"

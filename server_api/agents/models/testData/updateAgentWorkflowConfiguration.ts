@@ -27,6 +27,8 @@ async function setupAgentProductsConfiguration() {
         type: "engagmentFromOutputConnector",
         stepBackgroundColor: "#e74c3c",
         stepTextColor: "#ffffff",
+        emailCallForAction: "Start Vetting Competitors",
+        emailInstructions: "Use up 👍 and down 👎 thumbs to vet competitors. You can choose as many as you want but <b>only top 10 will go forward</b>, to the next round!"
       },
       {
         name: "Competitor Analysis Detailed Search",
@@ -50,6 +52,8 @@ async function setupAgentProductsConfiguration() {
         type: "engagmentFromOutputConnector",
         stepBackgroundColor: "#2ecc71",
         stepTextColor: "#ffffff",
+        emailCallForAction: "Comment On Key Competitors",
+        emailInstructions: "View the details for key competitors and add your insights before the final report is created."
       },
       {
         name: "Competitors Report",
@@ -62,6 +66,8 @@ async function setupAgentProductsConfiguration() {
         type: "agentOps",
         stepBackgroundColor: "#d486da",
         stepTextColor: "#ffffff",
+        emailCallForAction: "View the Competitor Report",
+        emailInstructions: "View the final report on the state of the market based on the competitors analysis."
       },
     ],
   };
@@ -111,6 +117,8 @@ async function setupAgentProductsConfiguration() {
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#e74c3c",
           stepTextColor: "#ffffff",
+          emailCallForAction: "Vet Investors",
+          emailInstructions: "Use up 👍 and down 👎 thumbs to vet investors. You can choose as many as you want but <b>only top 10 will go forward</b>, to the next round!"
         },
         {
           name: "Funding Agent Detailed Search",
@@ -132,6 +140,8 @@ async function setupAgentProductsConfiguration() {
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#2ecc71",
           stepTextColor: "#ffffff",
+          emailCallForAction: "Comment On Key Investors",
+          emailInstructions: "View the details for key investors and add your insights before the final report is created."
         },
         {
           name: "Funding Agent Report",
@@ -143,6 +153,8 @@ async function setupAgentProductsConfiguration() {
           type: "agentOps",
           stepBackgroundColor: "#d486da",
           stepTextColor: "#ffffff",
+          emailCallForAction: "View the Funding Report",
+          emailInstructions: "View the final report on investors and funding opportunities."
         },
       ],
     };

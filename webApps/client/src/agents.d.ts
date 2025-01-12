@@ -261,6 +261,8 @@ interface YpWorkflowStep {
   stepBackgroundColor?: string;
   stepTextColor?: string;
   queueJobId?: string;
+  emailCallForAction?: string;
+  emailInstructions?: string;
 }
 
 interface YpWorkflowConfiguration {

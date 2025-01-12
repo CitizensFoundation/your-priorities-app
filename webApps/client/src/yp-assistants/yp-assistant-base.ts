@@ -181,6 +181,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       await this.serverApi.sendEmailInvitesForAnons(
         event.detail.groupId,
         event.detail.agentId,
+        event.detail.agentRunId,
         event.detail.emails
       );
       window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {

@@ -107,8 +107,17 @@ const importPost = (post, done) => {
         for (let i = 0; i < answers.length; i += 1) {
             if (answers[i]) {
                 if (answers[i].value) {
-                    description += " ";
-                    description += answers[i].value.trim();
+                    try {
+                        description += " ";
+                        description += answers[i].value.trim();
+                    }
+                    catch (error) {
+                        description += answers[i].value;
+                        console.warn(`Error trimming answer to description: ${answers[i].value}`);
+                    }
+                }
+                else {
+                    console.error(`No value for answer in adding to description: ${answers[i]}`);
                 }
             }
         }

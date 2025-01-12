@@ -13,6 +13,10 @@ export const YpAppStyles = css`
     margin: 0;
   }
 
+  .userIcon {
+    --md-icon-button-icon-size: 40px;
+  }
+
   main {
     flex-grow: 1;
   }

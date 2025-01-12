@@ -1585,6 +1585,10 @@ router.post(
         });
       }
 
+      const { AgentInviteManager } = await import(
+        "../agents/managers/emailInvitesManager.js"
+      );
+
       for (const email of validEmails) {
         const token = crypto.randomBytes(20).toString("hex");
 
@@ -1598,32 +1602,7 @@ router.post(
 
         const invite_link = `/group/${group.id}?anonInvite=1&token=${token}&forAgentBundle=1`;
 
-        const createActivityPromise = new Promise((resolve, reject) => {
-          models.AcActivity.inviteCreated(
-            {
-              email: email,
-              user_id: null,
-              sender_user_id: req.user.id,
-              sender_name: req.user.name,
-              group_id: group.id,
-              community_id: group.community_id,
-              domain_id: req.ypDomain.id,
-              invite_id: invite.id,
-              invite_link: invite_link,
-              invite_type: models.Invite.INVITE_TO_COMMUNITY_AND_GROUP_AS_ANON,
-              token: token,
-            },
-            function (error) {
-              if (error) {
-                reject(error);
-              } else {
-                resolve();
-              }
-            }
-          );
-        });
-
-        await createActivityPromise;
+        await AgentInviteManager.sendInviteEmail(invite_link, req.body.agentRunId, group.id, req.user);
 
         log.info("Invite Created", {
           email,

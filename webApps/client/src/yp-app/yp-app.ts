@@ -735,7 +735,7 @@ export class YpApp extends YpBaseElement {
               </md-badge>
             </div>
             <md-icon-button
-              class="userImageNotificationContainer layout horizontal"
+              class="userIcon"
               @click="${this._openUserDrawer}"
               slot="actionItems"
             >
