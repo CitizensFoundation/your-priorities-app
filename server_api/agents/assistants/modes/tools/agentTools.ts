@@ -29,7 +29,8 @@ export class AgentTools extends BaseAssistantTools {
     try {
       const { agent, run } =
         await this.agentModels.getCurrentAgentAndWorkflow();
-      const workflowJson = JSON.stringify(agent.configuration.workflow);
+
+      const workflowJson = JSON.stringify(this.getSimpleWorkflow(agent.configuration.workflow));
       const base64Workflow = btoa(workflowJson);
 
       const html = `<yp-agent-workflow-widget
@@ -540,17 +541,23 @@ export class AgentTools extends BaseAssistantTools {
     }
   }
 
-  private async renderAgentRunWidget(
-    agent: YpAgentProductAttributes,
-    run: YpAgentProductRunAttributes
-  ) {
-    const subscription = await this.assistant.getCurrentSubscription();
-    const workflowCopy = JSON.parse(JSON.stringify(run.workflow)) as YpWorkflowConfiguration;
+  getSimpleWorkflow(workflow: YpWorkflowConfiguration) {
+    const workflowCopy = JSON.parse(JSON.stringify(workflow)) as YpWorkflowConfiguration;
     if (workflowCopy.steps) {
       workflowCopy.steps.forEach((step: YpWorkflowStep) => {
         step.emailInstructions = "";
       });
     }
+    return workflowCopy;
+  }
+
+  private async renderAgentRunWidget(
+    agent: YpAgentProductAttributes,
+    run: YpAgentProductRunAttributes
+  ) {
+    const subscription = await this.assistant.getCurrentSubscription();
+    const workflowCopy = this.getSimpleWorkflow(run.workflow) as YpWorkflowConfiguration;
+
     const workflowBase64 = btoa(JSON.stringify(workflowCopy));
     return `<yp-agent-run-widget
         agentProductId="${agent.id}"
