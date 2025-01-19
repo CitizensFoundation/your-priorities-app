@@ -49,6 +49,7 @@ let YpApiActionDialog = class YpApiActionDialog extends YpBaseElement {
     }
     _onClose() {
         this.fire("close");
+        this.fireGlobal("yp-dialog-closed");
     }
     setup(action, confirmationText, onFinishedFunction = undefined, confirmButtonText = undefined, method = undefined) {
         this.action = action;
@@ -73,6 +74,7 @@ let YpApiActionDialog = class YpApiActionDialog extends YpBaseElement {
         }
         await this.updateComplete;
         this.$$("#confirmationDialog").show();
+        this.fireGlobal("yp-dialog-opened");
     }
     async _delete() {
         if (!this.finalDeleteWarning && this.action && this.method) {

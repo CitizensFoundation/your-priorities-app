@@ -36,6 +36,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.currentMode = "";
         this.markdownReportOpen = false;
         this.isExpanded = false;
+        this.dialogOpen = false;
         this.textInputLabel = "Message the assistant";
         this.defaultInfoMessage = "I'm your friendly chat assistant";
         this.chatbotItemComponentName = literal `yp-assistant-item-base`;
@@ -110,6 +111,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.addListener("yp-start-next-workflow-step", this.startNextWorkflowStep);
         this.addListener("yp-stop-current-workflow-step", this.stopCurrentWorkflowStep);
         this.addGlobalListener("yp-send-email-invites-for-anons", this.sendEmailInvitesForAnons.bind(this));
+        this.addGlobalListener("yp-dialog-opened", this.handleDialogOpen.bind(this));
+        this.addGlobalListener("yp-dialog-closed", this.handleDialogClose.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -119,6 +122,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.removeGlobalListener("agent-configuration-submitted", this.agentConfigurationSubmitted.bind(this));
         this.removeGlobalListener("yp-open-markdown-report", this.openMarkdownReport.bind(this));
         this.removeGlobalListener("yp-send-email-invites-for-anons", this.sendEmailInvitesForAnons.bind(this));
+        this.removeGlobalListener("yp-dialog-opened", this.handleDialogOpen.bind(this));
+        this.removeGlobalListener("yp-dialog-closed", this.handleDialogClose.bind(this));
     }
     async sendEmailInvitesForAnons(event) {
         if (!event.detail) {
@@ -399,7 +404,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         }
         return html `${cache(html `
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
-        <div class="voice-input-container">
+        <div class="voice-input-container" ?dialog-open="${this.dialogOpen}">
           <div class="voice-input">${this.renderVoiceInput()}</div>
         </div>
         <div class="hybrid-chat-messages" id="chat-messages">
@@ -851,10 +856,14 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           top: 0;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 10;
+          z-index: 2;
           width: 768px;
           height: 124px;
           background: var(--md-sys-color-surface-container-lowest);
+        }
+
+        .voice-input-container[dialog-open] {
+          z-index: 1;
         }
 
         .voice-input {
@@ -879,7 +888,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           bottom: 0;
           left: 0;
           width: 100vw;
-          z-index: 10;
+          z-index: 1;
           height: 56px;
           background: var(--md-sys-color-surface-container-lowest);
         }
@@ -889,11 +898,11 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           bottom: 0;
           left: 0;
           right: 0;
-          z-index: 11;
+          z-index: 1;
           left: 50%;
           height: 56px;
           transform: translateX(-50%);
-          z-index: 10;
+          z-index: 1;
           width: 768px;
           padding: 0;
           margin-bottom: 24px;
@@ -1125,12 +1134,12 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           width: 125px;
           height: 39px;
           margin-right: 64px;
-          z-index: 25;
+          z-index: 1;
         }
 
         .logoContainer {
           padding: 16px;
-          z-index: 15;
+          z-index: 1;
           position: fixed;
           top: -15px;
           left: -230px;
@@ -1321,6 +1330,19 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
       </div>
     `;
     }
+    handleDialogOpen() {
+        // Clear any existing timeout
+        if (this.dialogClosingTimeout) {
+            clearTimeout(this.dialogClosingTimeout);
+        }
+        this.dialogOpen = true;
+    }
+    handleDialogClose() {
+        // Set timeout to delay the dialog state change
+        this.dialogClosingTimeout = setTimeout(() => {
+            this.dialogOpen = false;
+        }, 500);
+    }
 };
 __decorate([
     property({ type: Boolean })
@@ -1382,6 +1404,9 @@ __decorate([
 __decorate([
     state()
 ], YpAssistantBase.prototype, "isExpanded", void 0);
+__decorate([
+    state()
+], YpAssistantBase.prototype, "dialogOpen", void 0);
 __decorate([
     query("#voiceButton")
 ], YpAssistantBase.prototype, "voiceButton", void 0);

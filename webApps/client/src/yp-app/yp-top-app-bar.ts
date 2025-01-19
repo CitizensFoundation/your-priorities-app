@@ -181,7 +181,7 @@ export class YpTopAppBar extends YpBaseElement {
           left: 0;
           right: 0;
           transition: top 0.3s;
-          z-index: 2000;
+          z-index: 1;
           max-width: 100vw;
         }
 

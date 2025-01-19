@@ -47,7 +47,7 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
         }
 
         .topBar[for-agent-bundle] {
-          z-index: 100;
+          z-index: 1;
           background: var(--md-sys-color-surface-container-lowest);
           padding-bottom: 12px;
         }
@@ -63,7 +63,7 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
 
         @media (max-width: 820px) {
           .topBar {
-            z-index: 100;
+            z-index: 1;
             background: var(--md-sys-color-surface-container-lowest);
           }
         }
@@ -75,12 +75,12 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
         .agentBundleLogo {
           width: 125px;
           height: 39px;
-          z-index: 25;
+          z-index: 1;
         }
 
         .logoContainer {
           padding: 16px;
-          z-index: 15;
+          z-index: 1;
         }
 
         md-filled-button[has-static-theme] {

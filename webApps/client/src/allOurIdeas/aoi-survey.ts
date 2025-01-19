@@ -389,7 +389,7 @@ export class AoiSurvey extends YpBaseElement {
           bottom: 0;
           left: 0;
           width: 100%;
-          z-index: 7;
+          z-index: 1;
         }
 
         [hidden] {

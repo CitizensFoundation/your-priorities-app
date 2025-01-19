@@ -142,9 +142,10 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     _netWorkError(event) {
         const detail = event.detail;
-        let errorText = this.t("generalError")
-            ? this.t("generalError")
-            : "Can't connect to server, try again later";
+        let errorText = this.t("generalError");
+        if (errorText == "generalError") {
+            errorText = "Can't connect to server, try again later";
+        }
         let statusCode = -1;
         if (detail.response && detail.response.status === 404)
             errorText = this.t("errorNotFound");

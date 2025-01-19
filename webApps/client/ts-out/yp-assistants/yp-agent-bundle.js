@@ -129,12 +129,12 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
           width: 125px;
           height: 39px;
           margin-right: 64px;
-          z-index: 25;
+          z-index: 1;
         }
 
         .logoContainer {
           padding: 16px;
-          z-index: 15;
+          z-index: 1;
         }
       `,
         ];

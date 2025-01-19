@@ -64,6 +64,7 @@ export class YpApiActionDialog extends YpBaseElement {
 
   _onClose() {
     this.fire("close");
+    this.fireGlobal("yp-dialog-closed");
   }
 
   setup(
@@ -96,6 +97,7 @@ export class YpApiActionDialog extends YpBaseElement {
     await this.updateComplete;
 
     (this.$$("#confirmationDialog") as Dialog).show();
+    this.fireGlobal("yp-dialog-opened");
   }
 
   async _delete() {

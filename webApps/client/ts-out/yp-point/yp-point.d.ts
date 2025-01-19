@@ -50,7 +50,7 @@ export declare class YpPoint extends YpBaseElement {
     get masterHideSharing(): boolean | undefined;
     static get styles(): any[];
     renderAdminComments(): void;
-    renderUserHeader(): typeof nothing | TemplateResult<1>;
+    renderUserHeader(): TemplateResult<1> | typeof nothing;
     renderTextPoint(): TemplateResult<1>;
     renderVideoOrAudio(): TemplateResult<1>;
     renderEditPoint(): TemplateResult<1>;

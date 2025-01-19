@@ -80,6 +80,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @state()
   isExpanded = false;
 
+  @state()
+  dialogOpen = false;
+
   @query("#voiceButton")
   voiceButton!: HTMLElement;
 
@@ -108,6 +111,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   serverApi!: YpAssistantServerApi;
 
   clientMemoryUuid: string;
+
+  private dialogClosingTimeout: NodeJS.Timeout | undefined;
 
   constructor() {
     super();
@@ -150,6 +155,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "yp-send-email-invites-for-anons",
       this.sendEmailInvitesForAnons.bind(this)
     );
+    this.addGlobalListener("yp-dialog-opened", this.handleDialogOpen.bind(this));
+    this.addGlobalListener("yp-dialog-closed", this.handleDialogClose.bind(this));
   }
 
   override disconnectedCallback() {
@@ -170,6 +177,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       "yp-send-email-invites-for-anons",
       this.sendEmailInvitesForAnons.bind(this)
     );
+    this.removeGlobalListener("yp-dialog-opened", this.handleDialogOpen.bind(this));
+    this.removeGlobalListener("yp-dialog-closed", this.handleDialogClose.bind(this));
   }
 
   async sendEmailInvitesForAnons(event: CustomEvent) {
@@ -563,7 +572,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
     return html`${cache(html`
       <div class="chat-window" id="chat-window" ?expanded="${this.isExpanded}">
-        <div class="voice-input-container">
+        <div class="voice-input-container" ?dialog-open="${this.dialogOpen}">
           <div class="voice-input">${this.renderVoiceInput()}</div>
         </div>
         <div class="hybrid-chat-messages" id="chat-messages">
@@ -1066,10 +1075,14 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           top: 0;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 10;
+          z-index: 2;
           width: 768px;
           height: 124px;
           background: var(--md-sys-color-surface-container-lowest);
+        }
+
+        .voice-input-container[dialog-open] {
+          z-index: 1;
         }
 
         .voice-input {
@@ -1094,7 +1107,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           bottom: 0;
           left: 0;
           width: 100vw;
-          z-index: 10;
+          z-index: 1;
           height: 56px;
           background: var(--md-sys-color-surface-container-lowest);
         }
@@ -1104,11 +1117,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           bottom: 0;
           left: 0;
           right: 0;
-          z-index: 11;
+          z-index: 1;
           left: 50%;
           height: 56px;
           transform: translateX(-50%);
-          z-index: 10;
+          z-index: 1;
           width: 768px;
           padding: 0;
           margin-bottom: 24px;
@@ -1340,12 +1353,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           width: 125px;
           height: 39px;
           margin-right: 64px;
-          z-index: 25;
+          z-index: 1;
         }
 
         .logoContainer {
           padding: 16px;
-          z-index: 15;
+          z-index: 1;
           position: fixed;
           top: -15px;
           left: -230px;
@@ -1545,6 +1558,21 @@ export abstract class YpAssistantBase extends YpChatbotBase {
         <div hidden class="currentMode">${this.t(this.currentMode)}</div>
       </div>
     `;
+  }
+
+  private handleDialogOpen() {
+    // Clear any existing timeout
+    if (this.dialogClosingTimeout) {
+      clearTimeout(this.dialogClosingTimeout);
+    }
+    this.dialogOpen = true;
+  }
+
+  private handleDialogClose() {
+    // Set timeout to delay the dialog state change
+    this.dialogClosingTimeout = setTimeout(() => {
+      this.dialogOpen = false;
+    }, 500);
   }
 }
 

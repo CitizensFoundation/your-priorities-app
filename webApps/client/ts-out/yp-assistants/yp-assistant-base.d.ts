@@ -25,6 +25,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     markdownReportOpen: boolean;
     currentMarkdownReport: string | undefined;
     isExpanded: boolean;
+    dialogOpen: boolean;
     voiceButton: HTMLElement;
     textInputLabel: string;
     defaultInfoMessage: string | undefined;
@@ -37,6 +38,7 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     aiSpeakingTimeout: NodeJS.Timeout | undefined;
     serverApi: YpAssistantServerApi;
     clientMemoryUuid: string;
+    private dialogClosingTimeout;
     constructor();
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
@@ -93,6 +95,8 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     renderResetChatButton(): import("lit-html").TemplateResult<1>;
     renderAssistantName(): import("lit-html").TemplateResult<1>;
     renderVoiceInput(): import("lit-html").TemplateResult<1>;
+    private handleDialogOpen;
+    private handleDialogClose;
 }
 declare global {
     interface HTMLElementTagNameMap {

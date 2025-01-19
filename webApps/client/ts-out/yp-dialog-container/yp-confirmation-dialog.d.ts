@@ -8,6 +8,7 @@ export declare class YpConfirmationDialog extends YpBaseElement {
     haveIssuedFinalWarning: boolean;
     hideCancel: boolean;
     static get styles(): import("lit").CSSResult[];
+    _close(): void;
     render(): import("lit-html").TemplateResult<1>;
     _reset(): void;
     open(confirmationText: string, onConfirmedFunction: Function | undefined, useModal?: boolean, useFinalWarning?: boolean, hideCancel?: boolean): Promise<void>;

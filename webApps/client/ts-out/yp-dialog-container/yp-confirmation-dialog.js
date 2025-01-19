@@ -25,11 +25,15 @@ let YpConfirmationDialog = class YpConfirmationDialog extends YpBaseElement {
       `,
         ];
     }
+    _close() {
+        this.fireGlobal("yp-dialog-closed");
+    }
     render() {
         return html `
       <md-dialog
         id="confirmationDialog"
         ?is-safari="${this.isSafari}"
+        @close="${this._close}"
         @cancel="${this.scrimDisableAction}"
       >
         <div slot="content">${this.confirmationText}</div>
@@ -81,6 +85,8 @@ let YpConfirmationDialog = class YpConfirmationDialog extends YpBaseElement {
         else {
             this.hideCancel = false;
         }
+        debugger;
+        this.fireGlobal("yp-dialog-opened");
     }
     _confirm() {
         if (this.useFinalWarning && !this.haveIssuedFinalWarning) {
