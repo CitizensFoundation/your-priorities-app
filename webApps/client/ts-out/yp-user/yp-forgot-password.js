@@ -47,11 +47,15 @@ let YpForgotPassword = class YpForgotPassword extends YpBaseElement {
       `,
         ];
     }
+    closed() {
+        this.fireGlobal("yp-dialog-closed");
+    }
     render() {
         return html `
       <md-dialog
         id="dialog"
         ?is-safari="${this.isSafari}"
+        @closed="${this.closed}"
         @cancel="${this.scrimDisableAction}"
         class="layout vertical center-center"
       >
@@ -146,6 +150,7 @@ let YpForgotPassword = class YpForgotPassword extends YpBaseElement {
         if (detail && detail.email) {
             this.email = detail.email;
         }
+        this.fireGlobal("yp-dialog-opened");
         this.$$("#dialog").show();
     }
     close() {

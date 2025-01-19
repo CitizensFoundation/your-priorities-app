@@ -8,6 +8,7 @@ export declare class YpForgotPassword extends YpBaseElement {
     emailHasBeenSent: boolean;
     isSending: boolean;
     static get styles(): any[];
+    closed(): void;
     render(): import("lit-html").TemplateResult<1>;
     _onEnter(event: KeyboardEvent): void;
     _validateAndSend(): Promise<boolean>;

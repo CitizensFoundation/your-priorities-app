@@ -612,7 +612,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
               `
             )}
         </div>
-        <div class="chat-input-container">
+        <div class="chat-input-container" ?dialog-open="${this.dialogOpen}">
           <div class="chat-input">${this.renderChatAssistantInput()}</div>
         </div>
       </div>
@@ -1110,6 +1110,10 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           z-index: 1;
           height: 56px;
           background: var(--md-sys-color-surface-container-lowest);
+        }
+
+        .chat-input-container[dialog-open] {
+          z-index: 0;
         }
 
         .chat-input {

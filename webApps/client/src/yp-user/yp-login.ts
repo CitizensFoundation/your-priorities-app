@@ -148,7 +148,9 @@ export class YpLogin extends YpBaseElement {
         }
 
         .userCreateInfo {
-          color: var(--md-sys-color-tertiary);
+          font-size: 15px;
+          margin-right: 4px;
+          margin-top: 4px;
         }
 
         .languageSelector {
@@ -191,6 +193,8 @@ export class YpLogin extends YpBaseElement {
 
         .createUserButton {
           margin-left: 4px;
+          margin-top: 4px;
+          --md-text-button-label-text-color: var(--md-sys-color-tertiary);
         }
 
         .resetPasswordButton {
@@ -950,6 +954,10 @@ export class YpLogin extends YpBaseElement {
     </div>`;
   }
 
+  closeCreateUserDialog() {
+    this.fireGlobal("yp-dialog-closed");
+  }
+
   renderCreateUserDialog() {
     return html`
       <md-dialog
@@ -957,6 +965,7 @@ export class YpLogin extends YpBaseElement {
         @cancel="${this.scrimDisableAction}"
         ?is-safari="${this.isSafari}"
         transition="grow-left"
+        @closed="${this.closeCreateUserDialog}"
         .fullscreen=${!this.wide}
       >
         <div slot="headline" class="layout horizontal center-center">
@@ -1063,6 +1072,7 @@ export class YpLogin extends YpBaseElement {
     if (this.$$("#loginDialog")) {
       (this.$$("#loginDialog") as Dialog).close();
     }
+    this.fireGlobal("yp-dialog-opened");
   }
 
   cancelRegistration() {

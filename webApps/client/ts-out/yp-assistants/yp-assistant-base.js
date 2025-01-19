@@ -439,7 +439,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
                 ></yp-assistant-item-base>
               `)}
         </div>
-        <div class="chat-input-container">
+        <div class="chat-input-container" ?dialog-open="${this.dialogOpen}">
           <div class="chat-input">${this.renderChatAssistantInput()}</div>
         </div>
       </div>
@@ -891,6 +891,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
           z-index: 1;
           height: 56px;
           background: var(--md-sys-color-surface-container-lowest);
+        }
+
+        .chat-input-container[dialog-open] {
+          z-index: 0;
         }
 
         .chat-input {

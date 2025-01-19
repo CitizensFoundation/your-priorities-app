@@ -63,6 +63,7 @@ export declare class YpLogin extends YpBaseElement {
     renderForgotPasswordButton(): import("lit-html").TemplateResult<1>;
     renderLoginDialog(): import("lit-html").TemplateResult<1>;
     renderCreateUserSurface(): import("lit-html").TemplateResult<1>;
+    closeCreateUserDialog(): void;
     renderCreateUserDialog(): import("lit-html").TemplateResult<1>;
     renderButtons(): import("lit-html").TemplateResult<1>;
     closeAndReset(): void;
