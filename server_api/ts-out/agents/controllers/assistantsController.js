@@ -111,6 +111,31 @@ export class AssistantController {
                 res.sendStatus(500);
             }
         };
+        this.getAgentConfigurationAnswers = async (req, res) => {
+            try {
+                const subscriptionId = parseInt(req.params.subscriptionId);
+                // Make sure the user can only fetch their own subscription
+                const subscription = await YpSubscription.findOne({
+                    where: {
+                        id: subscriptionId,
+                        user_id: req.user.id
+                    },
+                });
+                if (!subscription) {
+                    return res.status(404).json({ error: "Subscription not found" });
+                }
+                // Extract the requiredQuestionsAnswered from subscription.configuration
+                const answers = subscription.configuration?.requiredQuestionsAnswered || [];
+                return res.status(200).json({
+                    success: true,
+                    data: answers,
+                });
+            }
+            catch (error) {
+                console.error("Error retrieving subscription agent configuration:", error);
+                return res.status(500).json({ error: error.message });
+            }
+        };
         this.getUpdatedWorkflow = async (req, res) => {
             const { runId } = req.params;
             const userId = req.user?.id;
@@ -153,13 +178,15 @@ export class AssistantController {
         };
         this.submitAgentConfiguration = async (req, res) => {
             console.log(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
-            const { agentProductId, subscriptionId, requiredQuestionsAnswers } = req.body;
+            const { requiredQuestionsAnswers } = req.body;
+            const subscriptionId = parseInt(req.params.subscriptionId);
             try {
                 const memoryId = this.getMemoryUserId(req);
                 // Get subscription
                 const subscription = await YpSubscription.findOne({
                     where: {
                         id: subscriptionId,
+                        user_id: req.user?.id, //TODO: Move to move this access check to the group level
                     },
                 });
                 if (!subscription) {
@@ -314,7 +341,8 @@ export class AssistantController {
         this.router.delete("/:domainId/chatlog", auth.can("view domain"), this.clearChatLog.bind(this));
         //TODO: Add auth for below
         this.router.put("/:domainId/updateAssistantMemoryLoginStatus", this.updateAssistantMemoryLoginStatus.bind(this));
-        this.router.put("/:domainId/submitAgentConfiguration", this.submitAgentConfiguration.bind(this));
+        this.router.put("/:domainId/:subscriptionId/submitAgentConfiguration", this.submitAgentConfiguration.bind(this));
+        this.router.get("/:domainId/:subscriptionId/getConfigurationAnswers", this.getAgentConfigurationAnswers.bind(this));
         this.router.put("/:groupId/:agentId/startWorkflowAgent", this.startWorkflowAgent.bind(this));
         this.router.get("/:groupId/:runId/updatedWorkflow", this.getUpdatedWorkflow.bind(this));
         this.router.post("/:groupId/:agentId/startNextWorkflowStep", this.startNextWorkflowStep.bind(this));

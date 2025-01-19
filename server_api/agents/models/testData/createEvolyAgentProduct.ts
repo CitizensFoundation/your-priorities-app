@@ -237,7 +237,7 @@ async function createAgentProductsAndPlans() {
             requiredStructuredQuestions: [
               {
                 uniqueId: "businessDescription",
-                type: "textArea",
+                type: "textAreaLong",
                 description: "Detailed description of the business, this is critical for the agent to understand the business and provide accurate results.",
                 value: "",
                 maxLength: 7500,

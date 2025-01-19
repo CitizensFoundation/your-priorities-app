@@ -9,6 +9,31 @@ export class AgentSubscriptionController {
     constructor(wsClients) {
         this.path = "/api/subscriptions";
         this.router = express.Router();
+        this.getAgentConfigurationAnswers = async (req, res) => {
+            try {
+                const subscriptionId = parseInt(req.params.subscriptionId);
+                // Make sure the user can only fetch their own subscription
+                const subscription = await YpSubscription.findOne({
+                    where: {
+                        id: subscriptionId,
+                        user_id: req.user.id
+                    },
+                });
+                if (!subscription) {
+                    return res.status(404).json({ error: "Subscription not found" });
+                }
+                // Extract the requiredQuestionsAnswered from subscription.configuration
+                const answers = subscription.configuration?.requiredQuestionsAnswered || [];
+                return res.status(200).json({
+                    success: true,
+                    data: answers,
+                });
+            }
+            catch (error) {
+                console.error("Error retrieving subscription agent configuration:", error);
+                return res.status(500).json({ error: error.message });
+            }
+        };
         this.updateAgentConfiguration = async (req, res) => {
             try {
                 const subscriptionId = parseInt(req.params.subscriptionId);
@@ -207,7 +232,8 @@ export class AgentSubscriptionController {
         this.router.get("/", auth.can("view subscriptions"), this.getSubscriptions);
         this.router.delete("/:subscriptionId", this.cancelSubscription);
         this.router.put("/:subscriptionId", this.updateSubscription);
-        this.router.put("/:subscriptionId/update-agent-configuration", this.updateAgentConfiguration);
+        this.router.put("/:subscriptionId/updateAgentConfiguration", this.updateAgentConfiguration);
+        this.router.get("/:subscriptionId/getConfigurationAnswers", this.getAgentConfigurationAnswers);
         // Add new payment-related routes
         this.router.post("/stripe-create-payment-intent", this.createPaymentIntent);
         this.router.post("/stripe-webhook", express.raw({ type: "application/json" }), this.handleWebhook);
@@ -215,7 +241,8 @@ export class AgentSubscriptionController {
     initializeRoutesSecure() {
         this.router.get("/plans", auth.can("view subscriptions"), this.getPlans);
         this.router.post("/", auth.can("create subscriptions"), this.createSubscriptions);
-        this.router.put("/:subscriptionId/update-agent-configuration", auth.can("edit subscriptions"), this.updateAgentConfiguration);
+        this.router.put("/:subscriptionId/updateAgentConfiguration", auth.can("edit subscriptions"), this.updateAgentConfiguration);
+        this.router.get("/:subscriptionId/getConfigurationAnswers", auth.can("view subscriptions"), this.getAgentConfigurationAnswers);
         this.router.post("/:subscriptionId/start", auth.can("edit subscriptions"), this.startAgentRun);
         this.router.post("/:subscriptionId/stop", auth.can("edit subscriptions"), this.stopAgentRun);
         // Additional routes

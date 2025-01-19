@@ -107,8 +107,13 @@ export class AssistantController {
     );
 
     this.router.put(
-      "/:domainId/submitAgentConfiguration",
+      "/:domainId/:subscriptionId/submitAgentConfiguration",
       this.submitAgentConfiguration.bind(this)
+    );
+
+    this.router.get(
+      "/:domainId/:subscriptionId/getConfigurationAnswers",
+      this.getAgentConfigurationAnswers.bind(this)
     );
 
     this.router.put(
@@ -253,6 +258,36 @@ export class AssistantController {
     }
   };
 
+  public getAgentConfigurationAnswers = async (req: YpRequest, res: express.Response) => {
+    try {
+      const subscriptionId = parseInt(req.params.subscriptionId);
+
+      // Make sure the user can only fetch their own subscription
+      const subscription = await YpSubscription.findOne({
+        where: {
+          id: subscriptionId,
+          user_id: req.user.id
+        },
+      });
+
+      if (!subscription) {
+        return res.status(404).json({ error: "Subscription not found" });
+      }
+
+      // Extract the requiredQuestionsAnswered from subscription.configuration
+      const answers = subscription.configuration?.requiredQuestionsAnswered || [];
+
+      return res.status(200).json({
+        success: true,
+        data: answers,
+      });
+    } catch (error: any) {
+      console.error("Error retrieving subscription agent configuration:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  };
+
+
   private getUpdatedWorkflow = async (
     req: YpRequest,
     res: express.Response
@@ -314,8 +349,10 @@ export class AssistantController {
       `submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`
     );
 
-    const { agentProductId, subscriptionId, requiredQuestionsAnswers } =
+    const { requiredQuestionsAnswers } =
       req.body;
+
+    const subscriptionId = parseInt(req.params.subscriptionId);
 
     try {
       const memoryId = this.getMemoryUserId(req);
@@ -324,6 +361,7 @@ export class AssistantController {
       const subscription = await YpSubscription.findOne({
         where: {
           id: subscriptionId,
+          user_id: req.user?.id, //TODO: Move to move this access check to the group level
         },
       });
 

@@ -1,3 +1,4 @@
+import e from "express";
 import { YpAgentAssistant } from "../../agentAssistant.js";
 import { BaseAssistantTools } from "./baseTools.js";
 import { AgentModels } from "./models/agents.js";
@@ -30,7 +31,9 @@ export class AgentTools extends BaseAssistantTools {
       const { agent, run } =
         await this.agentModels.getCurrentAgentAndWorkflow();
 
-      const workflowJson = JSON.stringify(this.getSimpleWorkflow(agent.configuration.workflow));
+      const workflowJson = JSON.stringify(
+        this.getSimpleWorkflow(agent.configuration.workflow)
+      );
       const base64Workflow = btoa(workflowJson);
 
       const html = `<yp-agent-workflow-widget
@@ -42,10 +45,26 @@ export class AgentTools extends BaseAssistantTools {
         workflowStatus="${run?.status || "not_started"}"
       ></yp-agent-workflow-widget>`;
 
+      let message;
+      if (!this.assistant.isSubscribedToCurrentAgentProduct) {
+        if (this.assistant.isLoggedIn) {
+          message =
+            "Inform the user that the next step is to subscribe to the agent plan to start the workflow. Offer the user to explain the workflow to them first.";
+        } else {
+          message =
+            "Inform the user that the next step is to login, then subscribe to the agent plan to start the workflow. You can also offer the user to explain the workflow to them first.";
+        }
+      } else {
+        message =
+          "Inform the user that the next step is to start the workflow. You can also ffer the user to explain the workflow to them first.";
+      }
+
+      this.assistant.emit("update-ai-model-session", message);
+
       return {
         success: true,
         html,
-        data: { agent, run, workflowJson },
+        data: { message, agent, run, workflowJson },
       };
     } catch (error) {
       const errorMessage =
@@ -88,10 +107,7 @@ export class AgentTools extends BaseAssistantTools {
         };
       }
 
-      const html = await this.renderAgentRunWidget(
-        agent,
-        agentRun
-      );
+      const html = await this.renderAgentRunWidget(agent, agentRun);
 
       //TODO: Create a unique identifer so we can make sure to only have one widget showing at the same time on the client but also in the
       // chatLog history that we only have the latest html and json so not to confuse the model
@@ -249,7 +265,6 @@ export class AgentTools extends BaseAssistantTools {
     }
     const agentRun = await this.assistant.getCurrentAgentRun();
 
-
     if (!agentRun) {
       return {
         success: false,
@@ -257,13 +272,13 @@ export class AgentTools extends BaseAssistantTools {
       };
     }
 
-
     try {
       const structuredAnswersOverrides: YpStructuredAnswer[] = [];
 
       const subscription = await this.assistant.getCurrentSubscription();
 
-      const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+      const subscriptionPlan =
+        await this.assistant.getCurrentSubscriptionPlan();
 
       if (!subscriptionPlan) {
         throw new Error("No subscription plan found");
@@ -432,7 +447,8 @@ export class AgentTools extends BaseAssistantTools {
     return {
       name: "show_configuration_widget_if_needed_or_user_asks_to_show_it",
       description:
-        "Show the configuration widget for the current agent. The user needs to fill out the configuration before running the agent workflow to make sure to offer it to the user.",
+        "Show the configuration widget for the current agent. The user needs to fill out the configuration before running the agent workflow to make sure to offer it to the user. \
+        The user can not provide you with the confiruation verbally or through chat, the user must provide the configuration through the configuration widget.",
       type: "function",
       parameters: {
         type: "object",
@@ -502,7 +518,7 @@ export class AgentTools extends BaseAssistantTools {
     return {
       name: "submit_configuration",
       description:
-        "Submit the configuration for the current agent by clicking the submit button for the user",
+        "Submit the configuration for the current agent by clicking the submit button for the user. The only way for the user to provide the configuration is through the configuration widget.",
       type: "function",
       parameters: {
         type: "object",
@@ -525,7 +541,8 @@ export class AgentTools extends BaseAssistantTools {
         success: true,
         clientEvents: [clientEvent],
         data: {
-          message: "Submitted configuration for the current agent successfully now offer the user to start the agent workflow run",
+          message:
+            "Submitted configuration for the current agent successfully now offer the user to start the agent workflow run",
         },
       };
     } catch (error) {
@@ -542,7 +559,9 @@ export class AgentTools extends BaseAssistantTools {
   }
 
   getSimpleWorkflow(workflow: YpWorkflowConfiguration) {
-    const workflowCopy = JSON.parse(JSON.stringify(workflow)) as YpWorkflowConfiguration;
+    const workflowCopy = JSON.parse(
+      JSON.stringify(workflow)
+    ) as YpWorkflowConfiguration;
     if (workflowCopy.steps) {
       workflowCopy.steps.forEach((step: YpWorkflowStep) => {
         step.emailInstructions = "";
@@ -556,7 +575,9 @@ export class AgentTools extends BaseAssistantTools {
     run: YpAgentProductRunAttributes
   ) {
     const subscription = await this.assistant.getCurrentSubscription();
-    const workflowCopy = this.getSimpleWorkflow(run.workflow) as YpWorkflowConfiguration;
+    const workflowCopy = this.getSimpleWorkflow(
+      run.workflow
+    ) as YpWorkflowConfiguration;
 
     const workflowBase64 = btoa(JSON.stringify(workflowCopy));
     return `<yp-agent-run-widget

@@ -30,10 +30,26 @@ export class AgentTools extends BaseAssistantTools {
         workflow="${base64Workflow}"
         workflowStatus="${run?.status || "not_started"}"
       ></yp-agent-workflow-widget>`;
+            let message;
+            if (!this.assistant.isSubscribedToCurrentAgentProduct) {
+                if (this.assistant.isLoggedIn) {
+                    message =
+                        "Inform the user that the next step is to subscribe to the agent plan to start the workflow. Offer the user to explain the workflow to them first.";
+                }
+                else {
+                    message =
+                        "Inform the user that the next step is to login, then subscribe to the agent plan to start the workflow. You can also offer the user to explain the workflow to them first.";
+                }
+            }
+            else {
+                message =
+                    "Inform the user that the next step is to start the workflow. You can also ffer the user to explain the workflow to them first.";
+            }
+            this.assistant.emit("update-ai-model-session", message);
             return {
                 success: true,
                 html,
-                data: { agent, run, workflowJson },
+                data: { message, agent, run, workflowJson },
             };
         }
         catch (error) {
@@ -315,7 +331,8 @@ export class AgentTools extends BaseAssistantTools {
     get showConfigurationWidget() {
         return {
             name: "show_configuration_widget_if_needed_or_user_asks_to_show_it",
-            description: "Show the configuration widget for the current agent. The user needs to fill out the configuration before running the agent workflow to make sure to offer it to the user.",
+            description: "Show the configuration widget for the current agent. The user needs to fill out the configuration before running the agent workflow to make sure to offer it to the user. \
+        The user can not provide you with the confiruation verbally or through chat, the user must provide the configuration through the configuration widget.",
             type: "function",
             parameters: {
                 type: "object",
@@ -367,7 +384,7 @@ export class AgentTools extends BaseAssistantTools {
     get submitConfiguration() {
         return {
             name: "submit_configuration",
-            description: "Submit the configuration for the current agent by clicking the submit button for the user",
+            description: "Submit the configuration for the current agent by clicking the submit button for the user. The only way for the user to provide the configuration is through the configuration widget.",
             type: "function",
             parameters: {
                 type: "object",

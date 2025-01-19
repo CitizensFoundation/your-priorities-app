@@ -106,7 +106,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                     model: this.voiceConfig.model,
                     voice: this.voiceConfig.voice,
                 };
-                this.initializeVoiceSession("Say hi and welcome the user, offer to explain and if the user wants an explaination show the workflow UI widget with 'show_agent_workflow_overview_widget' function you have access to call");
+                this.initializeVoiceSession("Say hi and welcome the user, offer to explain and show the user a workflow overview with the 'show_agent_workflow_overview_widget' function/tool you have access to call");
             });
             ws.on("close", () => {
                 console.log("Agent voice connection to OpenAI closed");

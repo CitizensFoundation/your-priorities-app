@@ -68,7 +68,6 @@ export class DirectConversationMode extends BaseAssistantMode {
                 //tools.push(this.agentTools.showAgentRunWidget);
               }
             }
-            tools.push(this.agentTools.showConfigurationWidget);
           } else {
             // User has not configured the current agent
             console.log(

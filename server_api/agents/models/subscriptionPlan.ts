@@ -7,7 +7,7 @@ import { YpAgentProduct } from './agentProduct.js';
 export class YpSubscriptionPlan extends Model {
   declare id: number;
   declare uuid: string;
-  declare agent_product_id: number; // Add this line
+  declare agent_product_id: number;
   declare name: string;
   declare description?: string;
   declare configuration: YpSubscriptionPlanConfiguration;

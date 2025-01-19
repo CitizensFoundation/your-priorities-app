@@ -170,7 +170,7 @@ async function setupAgentProductsConfiguration() {
     fundingSubscriptionPlan.set("configuration.requiredStructuredQuestions", [
       {
         uniqueId: "businessDescription",
-        type: "textArea",
+        type: "textAreaLong",
         description: "Detailed description of the business, this is critical for the agent to understand the business and provide accurate results.",
         value: "",
         maxLength: 7500,
@@ -216,6 +216,29 @@ async function setupAgentProductsConfiguration() {
       if (planId==2) {
         subscriptionPlan.set("configuration.type", "paid" as YpSubscriptionPlanType);
       }
+      subscriptionPlan.changed("configuration", true);
+      await subscriptionPlan.save();
+    } else {
+      console.log(`SubscriptionPlan ${planId} not found`);
+    }
+  }
+
+  for (let planId = 1; planId <= 2; planId++) {
+    const subscriptionPlan = await YpSubscriptionPlan.findByPk(planId);
+    if (subscriptionPlan) {
+      subscriptionPlan.set("configuration.requiredStructuredQuestions", [
+        {
+          uniqueId: "businessDescription",
+          type: "textAreaLong",
+          description: "Detailed description of the business, this is critical for the agent to understand the business and provide accurate results.",
+          value: "",
+          maxLength: 7500,
+          required: true,
+          rows: 5,
+          charCounter: true,
+          text: "Business Description",
+        }
+      ]);
       subscriptionPlan.changed("configuration", true);
       await subscriptionPlan.save();
     } else {
