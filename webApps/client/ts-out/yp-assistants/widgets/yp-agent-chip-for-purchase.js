@@ -134,7 +134,7 @@ let YpAgentChipForPurchase = class YpAgentChipForPurchase extends YpAgentChip {
             <div class="flex"></div>
             <div class="layout vertical self-end">
               <div class="free-trial"><div ?hidden="${this.price > 0}">${this.t("freeTrial")}</div></div>
-              <div class="coming-soon-info"><div ?hidden="${this.type != "coming_soon"}">${this.t("comingSoon")}</div></div>
+              <div class="coming-soon-info"><div ?hidden="${this.type != "coming_soon" || this.isSubscribed}">${this.t("comingSoon")}</div></div>
               <div class="purchase-info" ?hidden="${this.type != "paid"}">
                 <div
                   class="${this.currency == "USD"
