@@ -130,7 +130,10 @@ export class SubscriptionTools extends BaseAssistantTools {
             const html = `<div class="agent-chips">${agentChips}</div>`;
             return {
                 success: true,
-                data: status,
+                data: {
+                    messageToAssistant: "You have shown the user the available agents for purchase with a UI widget, now the user needs to choose which one to connect to then subscribe to",
+                    status,
+                },
                 html,
                 metadata: {
                     timestamp: new Date().toISOString(),
