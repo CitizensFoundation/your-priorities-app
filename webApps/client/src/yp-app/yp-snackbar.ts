@@ -58,7 +58,8 @@ export class YpSnackbar extends YpBaseElement {
         }
 
         .message {
-          margin-right: var(--snackbar-padding);
+          text-align: center;
+          width: 100%;
         }
 
         .action {

@@ -110,6 +110,35 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
     ];
   }
 
+  override async firstUpdated() {
+    await this.getAgentConfiguration();
+  }
+
+  async getAgentConfiguration() {
+    try {
+      const response = await this.serverApi.getConfigurationAnswers(
+        this.domainId,
+        this.subscriptionId
+      );
+
+      if (response.success && response.data) {
+        this.requiredQuestionsAnswered = JSON.stringify(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching previously saved answers:", error);
+      //TODO: Fire user error
+    }
+  }
+
+  getPrefillValue(question: YpStructuredQuestionData) {
+    const prefilledValue =
+    this.parsedRequiredQuestionsAnswered.find(
+      (answer) => answer.uniqueId === question.uniqueId
+    )?.value || "";
+
+    return prefilledValue;
+  }
+
   async submitConfiguration() {
     console.log("submitConfiguration");
 
@@ -175,7 +204,6 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
     try {
       await this.serverApi.submitAgentConfiguration(
         this.domainId,
-        this.agentProductId.toString(),
         this.subscriptionId,
         answers
       );
@@ -237,9 +265,7 @@ export class YpAgentConfigurationWidget extends YpBaseElement {
                   id="structuredQuestion_${question.uniqueId ||
                   `noId_${index}`}"
                   .question="${question}"
-                  .value="${this.parsedRequiredQuestionsAnswered.find(
-                    (answer) => answer.uniqueId === question.uniqueId
-                  )?.value}"
+                  .value="${this.getPrefillValue(question)}"
                 >
                 </yp-structured-question-edit>
               `

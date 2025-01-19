@@ -195,6 +195,7 @@ interface YpStructuredQuestionData {
   segmentName?: string;
   originalText?: string;
   subTitle?: string;
+  maxRows?: number;
 }
 
 interface YpErrorData {

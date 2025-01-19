@@ -229,6 +229,11 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       message: "agent_configuration_submitted",
     };
     this.ws.send(JSON.stringify(clientSystemMessage));
+
+    /*window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
+      toast.labelText = this.t("agentConfigurationSubmitted");
+      toast.open = true;
+    });*/
   }
 
   async agentRunChanged() {

@@ -164,6 +164,10 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             message: "agent_configuration_submitted",
         };
         this.ws.send(JSON.stringify(clientSystemMessage));
+        /*window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
+          toast.labelText = this.t("agentConfigurationSubmitted");
+          toast.open = true;
+        });*/
     }
     async agentRunChanged() {
         const clientSystemMessage = {

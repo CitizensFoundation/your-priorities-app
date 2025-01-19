@@ -175,7 +175,9 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         .longQuestion {
           font-size: 18px;
           padding-bottom: 0;
-          margin-bottom: 0;
+          margin-bottom: 0px;
+          font-weight: 500;
+          font-family: var(--md-ref-typeface-brand);
         }
 
         .longQuestion[use-small-font] {
@@ -371,7 +373,6 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         class="question general longQuestion"
         ?is-from-new-post="${this.isFromNewPost}"
         ?has-focus="${this.longFocus}"
-        ?is-from-new-post="${this.isFromNewPost}"
         ?has-content="${this.question.value}"
         ?use-small-font="${this.useSmallFont}"
         id="structuredQuestionIntro_${this.index}"

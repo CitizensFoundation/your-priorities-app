@@ -210,21 +210,27 @@ export class YpAssistantServerApi extends YpServerApi {
 
   public submitAgentConfiguration(
     domainId: number,
-    agentProductId: string,
     subscriptionId: string,
     requiredQuestionsAnswers: YpStructuredAnswer[]
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/submitAgentConfiguration`,
+      this.baseUrlPath + `/${domainId}/${subscriptionId}/submitAgentConfiguration`,
       {
         method: "PUT",
         body: JSON.stringify({
-          agentProductId,
-          subscriptionId,
           requiredQuestionsAnswers,
           clientMemoryUuid: this.clientMemoryUuid,
         }),
       }
+    );
+  }
+
+  public getConfigurationAnswers(
+    domainId: number,
+    subscriptionId: string
+  ): Promise<{ success: boolean; data: YpStructuredAnswer[] }> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${domainId}/${subscriptionId}/getConfigurationAnswers`
     );
   }
 }

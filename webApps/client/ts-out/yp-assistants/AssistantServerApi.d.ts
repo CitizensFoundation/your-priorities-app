@@ -22,7 +22,11 @@ export declare class YpAssistantServerApi extends YpServerApi {
     private saveChatToLocalStorage;
     loadChatsFromLocalStorage(): SavedChat[];
     clearServerMemory(serverMemoryId: string): Promise<void>;
-    submitAgentConfiguration(domainId: number, agentProductId: string, subscriptionId: string, requiredQuestionsAnswers: YpStructuredAnswer[]): Promise<void>;
+    submitAgentConfiguration(domainId: number, subscriptionId: string, requiredQuestionsAnswers: YpStructuredAnswer[]): Promise<void>;
+    getConfigurationAnswers(domainId: number, subscriptionId: string): Promise<{
+        success: boolean;
+        data: YpStructuredAnswer[];
+    }>;
 }
 export {};
 //# sourceMappingURL=AssistantServerApi.d.ts.map

@@ -121,16 +121,17 @@ export class YpAssistantServerApi extends YpServerApi {
             method: "DELETE",
         }, false);
     }
-    submitAgentConfiguration(domainId, agentProductId, subscriptionId, requiredQuestionsAnswers) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/submitAgentConfiguration`, {
+    submitAgentConfiguration(domainId, subscriptionId, requiredQuestionsAnswers) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/${subscriptionId}/submitAgentConfiguration`, {
             method: "PUT",
             body: JSON.stringify({
-                agentProductId,
-                subscriptionId,
                 requiredQuestionsAnswers,
                 clientMemoryUuid: this.clientMemoryUuid,
             }),
         });
+    }
+    getConfigurationAnswers(domainId, subscriptionId) {
+        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/${subscriptionId}/getConfigurationAnswers`);
     }
 }
 //# sourceMappingURL=AssistantServerApi.js.map
