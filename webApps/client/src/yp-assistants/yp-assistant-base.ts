@@ -1533,7 +1533,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     return html`<md-text-button
       class="resetChatButton"
       @click="${this.clearHistory}"
-      >${this.t("resetChat")}</md-text-button
+      >${this.t("resetWorkflow")}</md-text-button
     >`;
   }
 

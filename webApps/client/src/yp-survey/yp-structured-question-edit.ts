@@ -181,6 +181,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           width: 100%;
           align-self: start;
           margin-left: 12px;
+          margin-top: 8px;
+          margin-bottom: 8px;
         }
 
         md-radio {
@@ -240,6 +242,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         md-checkbox {
+          margin-top: 8px;
+          margin-bottom: 8px;
         }
 
         .general[less-bottom-margin] {

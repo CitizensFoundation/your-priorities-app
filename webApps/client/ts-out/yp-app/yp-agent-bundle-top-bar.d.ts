@@ -18,7 +18,7 @@ export declare class YpAgentBundleTopBar extends YpBaseElementWithLogin {
     disconnectedCallback(): void;
     private _onDomainChanged;
     _login(): void;
-    renderUser(): TemplateResult<1> | typeof nothing;
+    renderUser(): typeof nothing | TemplateResult<1>;
     render(): TemplateResult;
 }
 //# sourceMappingURL=yp-agent-bundle-top-bar.d.ts.map

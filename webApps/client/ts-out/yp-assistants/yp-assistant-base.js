@@ -1306,7 +1306,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         return html `<md-text-button
       class="resetChatButton"
       @click="${this.clearHistory}"
-      >${this.t("resetChat")}</md-text-button
+      >${this.t("resetWorkflow")}</md-text-button
     >`;
     }
     renderAssistantName() {

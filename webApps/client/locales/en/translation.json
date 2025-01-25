@@ -1,4 +1,5 @@
 {
+  "resetWorkflow": "Reset workflow",
   "agentConfigurationSubmitted": "Agent configuration submitted",
   "comingSoon": "Coming soon",
   "generatingXls": "Generating XLS",

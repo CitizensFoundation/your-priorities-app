@@ -109,20 +109,20 @@ async function setupAgentProductsConfiguration() {
           stepTextColor: "#211e1c"
         },
         {
-          name: "Funding Agent People Prioritization",
-          shortName: "Vetting investors",
-          description: "People prioritization of the wide search results.",
-          shortDescription: "People prioritization of the wide search results.",
+          name: "Funding Agent Select Top 20 Investors",
+          shortName: "Select top 20 investors",
+          description: "Select top 20 investors from the wide search results.",
+          shortDescription: "Select top 20 investors from the wide search results.",
           agentClassUuid: "956e7f74-6fc6-4e01-81b4-098c193e6450",
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#e74c3c",
           stepTextColor: "#ffffff",
           emailCallForAction: "Vet Investors",
-          emailInstructions: "Use up 👍 and down 👎 thumbs to vet investors. You can choose as many as you want but <b>only top 10 will go forward</b>, to the next round!"
+          emailInstructions: "Use up 👍 and down 👎 thumbs to vet investors. You can choose as many as you want but <b>only top 20 will go forward</b>, to the next round!"
         },
         {
           name: "Funding Agent Detailed Search",
-          shortName: "Detailed Search",
+          shortName: "Detailed search",
           description:
             "Detailed search for investors and funding opportunities.",
           shortDescription: "Detailed search for investors and funding opportunities.",
@@ -132,10 +132,10 @@ async function setupAgentProductsConfiguration() {
           stepTextColor: "#ffffff",
         },
         {
-          name: "Funding Agent Detailed Search People Prioritization",
-          shortName: "Key investors",
-          description: "People prioritization of the detailed search results.",
-          shortDescription: "People prioritization of the detailed search results.",
+          name: "Comment on Key Investors",
+          shortName: "Comment on investors",
+          description: "Comment on investors before creating report",
+          shortDescription: "Comment on investors before creating report",
           agentClassUuid: "b36ffca6-7363-44be-bd55-40661210cf24",
           type: "engagmentFromOutputConnector",
           stepBackgroundColor: "#2ecc71",

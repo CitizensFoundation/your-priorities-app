@@ -17,7 +17,7 @@ export declare class YpPostHeader extends YpPostHeader_base {
     postPositionCounter: string;
     static get styles(): any[];
     renderPostInformation(): TemplateResult<1>;
-    renderMenu(): TemplateResult<1> | typeof nothing;
+    renderMenu(): typeof nothing | TemplateResult<1>;
     renderActions(): TemplateResult<1>;
     renderName(): TemplateResult<1>;
     renderUser(): TemplateResult<1>;
