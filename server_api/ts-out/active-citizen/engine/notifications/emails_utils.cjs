@@ -419,6 +419,9 @@ var sendOneEmail = function (emailLocals, callback) {
                     else {
                         locale = "en";
                     }
+                    if (locale && typeof locale === 'string') {
+                        locale = locale.toLowerCase();
+                    }
                     i18n.changeLanguage(locale, function (err, t) {
                         seriesCallback(err);
                     });

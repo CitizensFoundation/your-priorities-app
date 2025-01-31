@@ -25,9 +25,9 @@ export declare class YpTopAppBar extends YpBaseElement {
         name: string;
         url: string;
     }[];
-    renderBreadcrumbsDropdown(): typeof nothing | TemplateResult<1>;
+    renderBreadcrumbsDropdown(): TemplateResult<1> | typeof nothing;
     redirectTo(url: string): void;
-    renderMyDomainsDropdown(): typeof nothing | TemplateResult<1>;
+    renderMyDomainsDropdown(): TemplateResult<1> | typeof nothing;
     private _toggleMenu;
     private _onMenuClosed;
     static get styles(): any[];
