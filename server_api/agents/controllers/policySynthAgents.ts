@@ -96,10 +96,10 @@ export class PolicySynthAgentsController {
         where: {
           name,
           configuration: {
-            active: true
-          }
+            active: true,
+          },
         },
-        order: [['created_at', 'DESC']],
+        order: [["created_at", "DESC"]],
       });
     };
 
@@ -115,59 +115,59 @@ export class PolicySynthAgentsController {
     const groupAccessConfig = [];
 
     if (anthropicSonnet && process.env.ANTHROPIC_CLAUDE_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: anthropicSonnet!.id,
         apiKey: process.env.ANTHROPIC_CLAUDE_API_KEY,
-      })
+      });
     }
 
     if (openAiGpt4 && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: openAiGpt4!.id,
         apiKey: process.env.OPENAI_API_KEY,
-      })
+      });
     }
 
     if (openAiGpt4Mini && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: openAiGpt4Mini!.id,
         apiKey: process.env.OPENAI_API_KEY,
-      })
+      });
     }
 
     if (openAio1Preview && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: openAio1Preview!.id,
         apiKey: process.env.OPENAI_API_KEY,
-      })
+      });
     }
 
     if (openAio1Mini && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: openAio1Mini!.id,
         apiKey: process.env.OPENAI_API_KEY,
-      })
+      });
     }
 
     if (geminiPro && process.env.GEMINI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: geminiPro!.id,
         apiKey: process.env.GEMINI_API_KEY,
-      })
+      });
     }
 
     if (geminiPro15Flash && process.env.GEMINI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: geminiPro15Flash!.id,
         apiKey: process.env.GEMINI_API_KEY,
-      })
+      });
     }
 
     if (openAio11712 && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push( {
+      groupAccessConfig.push({
         aiModelId: openAio11712!.id,
         apiKey: process.env.OPENAI_API_KEY,
-      })
+      });
     }
 
     group.set("private_access_configuration", groupAccessConfig);
@@ -331,7 +331,6 @@ export class PolicySynthAgentsController {
         name: "o1 Preview",
       },
     });
-
 
     if (!testOPreviewModel) {
       const openAio1PreviewConfig: PsAiModelConfiguration = {
@@ -555,7 +554,9 @@ export class PolicySynthAgentsController {
       const { groupId, agentId } = req.params;
       const memory = req.body;
 
-      console.log(`Attempting to replace memory for agent ${agentId} in group ${groupId}`);
+      console.log(
+        `Attempting to replace memory for agent ${agentId} in group ${groupId}`
+      );
 
       if (!memory || Object.keys(memory).length === 0) {
         console.log(`Received empty memory for agent ${agentId}`);
@@ -566,14 +567,21 @@ export class PolicySynthAgentsController {
         JSON.parse(JSON.stringify(memory));
       } catch (jsonError) {
         console.log(`Received invalid JSON for agent ${agentId}`);
-        return res.status(400).json({ error: "Invalid JSON format for memory" });
+        return res
+          .status(400)
+          .json({ error: "Invalid JSON format for memory" });
       }
 
-      const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
+      const memoryKey = await this.agentManager.getSubAgentMemoryKey(
+        groupId,
+        parseInt(agentId)
+      );
 
       if (!memoryKey) {
         console.log(`Memory key not found for agent ${agentId}`);
-        return res.status(404).json({ error: "Memory key not found for the specified agent" });
+        return res
+          .status(404)
+          .json({ error: "Memory key not found for the specified agent" });
       }
 
       console.log(`Memory key found: ${memoryKey}`);
@@ -610,9 +618,13 @@ export class PolicySynthAgentsController {
         parseInt(groupId),
         parseInt(agentId),
         parseInt(connectorId),
-        type as 'input' | 'output'
+        type as "input" | "output"
       );
-      res.status(200).json({ message: `Existing ${connectorId} connector added successfully` });
+      res
+        .status(200)
+        .json({
+          message: `Existing ${connectorId} connector added successfully`,
+        });
     } catch (error) {
       console.error(`Error adding existing ${connectorId} connector:`, error);
       if (error instanceof Error) {
@@ -627,14 +639,21 @@ export class PolicySynthAgentsController {
     try {
       const { groupId, agentId } = req.params;
 
-      console.log(`Attempting to get memory for agent ${agentId} in group ${groupId}`);
+      console.log(
+        `Attempting to get memory for agent ${agentId} in group ${groupId}`
+      );
 
       // Get the memory key for the specified agent
-      const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
+      const memoryKey = await this.agentManager.getSubAgentMemoryKey(
+        groupId,
+        parseInt(agentId)
+      );
 
       if (!memoryKey) {
         console.log(`Memory key not found for agent ${agentId}`);
-        return res.status(404).json({ error: "Memory key not found for the specified agent" });
+        return res
+          .status(404)
+          .json({ error: "Memory key not found for the specified agent" });
       }
 
       console.log(`Memory key found: ${memoryKey}`);
@@ -960,7 +979,9 @@ export class PolicySynthAgentsController {
   getAgentCostsDetail = async (req: express.Request, res: express.Response) => {
     try {
       const agentId = parseInt(req.params.id);
-      const costRows = await this.agentCostManager.getDetailedAgentCosts(agentId);
+      const costRows = await this.agentCostManager.getDetailedAgentCosts(
+        agentId
+      );
       res.json(costRows);
     } catch (error) {
       console.error("Error calculating agent costs detail:", error);

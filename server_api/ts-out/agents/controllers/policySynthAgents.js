@@ -69,12 +69,16 @@ export class PolicySynthAgentsController {
                 }
                 catch (jsonError) {
                     console.log(`Received invalid JSON for agent ${agentId}`);
-                    return res.status(400).json({ error: "Invalid JSON format for memory" });
+                    return res
+                        .status(400)
+                        .json({ error: "Invalid JSON format for memory" });
                 }
                 const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
                 if (!memoryKey) {
                     console.log(`Memory key not found for agent ${agentId}`);
-                    return res.status(404).json({ error: "Memory key not found for the specified agent" });
+                    return res
+                        .status(404)
+                        .json({ error: "Memory key not found for the specified agent" });
                 }
                 console.log(`Memory key found: ${memoryKey}`);
                 await req.redisClient.set(memoryKey, JSON.stringify(memory));
@@ -101,7 +105,11 @@ export class PolicySynthAgentsController {
             }
             try {
                 await this.agentConnectorManager.addExistingConnector(parseInt(groupId), parseInt(agentId), parseInt(connectorId), type);
-                res.status(200).json({ message: `Existing ${connectorId} connector added successfully` });
+                res
+                    .status(200)
+                    .json({
+                    message: `Existing ${connectorId} connector added successfully`,
+                });
             }
             catch (error) {
                 console.error(`Error adding existing ${connectorId} connector:`, error);
@@ -121,7 +129,9 @@ export class PolicySynthAgentsController {
                 const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
                 if (!memoryKey) {
                     console.log(`Memory key not found for agent ${agentId}`);
-                    return res.status(404).json({ error: "Memory key not found for the specified agent" });
+                    return res
+                        .status(404)
+                        .json({ error: "Memory key not found for the specified agent" });
                 }
                 console.log(`Memory key found: ${memoryKey}`);
                 // Use the Redis client to get the memory contents
@@ -679,10 +689,10 @@ PolicySynthAgentsController.setupApiKeysForGroup = async (group) => {
             where: {
                 name,
                 configuration: {
-                    active: true
-                }
+                    active: true,
+                },
             },
-            order: [['created_at', 'DESC']],
+            order: [["created_at", "DESC"]],
         });
     };
     const anthropicSonnet = await findLatestActiveModel("Anthropic Sonnet 3.5");
