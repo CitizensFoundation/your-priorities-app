@@ -10,13 +10,14 @@ import { PsAgentAuditLog } from "@policysynth/agents/dbModels/agentAuditLog.js";
 import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js";
 import { PsAgentConnectorClass } from "@policysynth/agents/dbModels/agentConnectorClass.js";
 import { PsAgentRegistry } from "@policysynth/agents/dbModels/agentRegistry.js";
-import { PsAiModelSize, PsAiModelType } from "@policysynth/agents/aiModelTypes.js";
+import {
+  PsAiModelSize,
+  PsAiModelType,
+} from "@policysynth/agents/aiModelTypes.js";
 import models from "../../models/index.cjs";
 
-// Group and User are available from our models
 const dbModels: any = models;
-const Group = dbModels.Group;
-const User = dbModels.User;
+const Group = dbModels.Group; // for reference elsewhere if needed
 
 // List of models that need to be initialized/associated
 const psModels: { [key: string]: any } = {
@@ -34,7 +35,7 @@ const psModels: { [key: string]: any } = {
 
 export class NewAiModelSetup {
   /**
-   * Initialize all models (i.e. call their associate methods if they exist)
+   * Initializes all models by calling their associate methods (if present).
    */
   static async initializeModels(): Promise<void> {
     try {
@@ -54,17 +55,14 @@ export class NewAiModelSetup {
   }
 
   /**
-   * Seed the test AI models and an initial Agent Class if they do not already exist.
+   * Seeds the test AI models (and a top-level agent class) if they do not exist.
    * @param userId the user id to associate with the new models
    */
-  static async seedTestAiModels(userId: number): Promise<void> {
-    const testModel = await PsAiModel.findOne({
-      where: {
-        name: "Anthropic Sonnet 3.5",
-      },
+  static async seedAnthropicModels(userId: number): Promise<void> {
+    const anthropicSonnet = await PsAiModel.findOne({
+      where: { name: "Anthropic Sonnet 3.5" },
     });
-
-    if (!testModel) {
+    if (!anthropicSonnet) {
       const anthropicSonnetConfig = {
         type: PsAiModelType.Text,
         modelSize: PsAiModelSize.Medium,
@@ -80,30 +78,63 @@ export class NewAiModelSetup {
         active: true,
       };
 
-      const anthropicSonnet = await PsAiModel.create({
+      const createdModel = await PsAiModel.create({
         name: "Anthropic Sonnet 3.5",
         organization_id: 1,
         user_id: userId,
         configuration: anthropicSonnetConfig,
       });
+      console.log("Created Anthropic model:", createdModel);
+    } else {
+      console.log("Anthropic model already exists: Anthropic Sonnet 3.5");
+    }
+  }
 
-      console.log("Created test AI model:", anthropicSonnet);
+  /**
+   * Seeds OpenAI models.
+   * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
+   * o1 Preview, o1 24, and o3 mini.
+   */
+  static async seedOpenAiModels(userId: number): Promise<void> {
+    // GPT-4o
+    const openAiGpt4 = await PsAiModel.findOne({
+      where: { name: "GPT-4o" },
+    });
+    const openAiGpt4oConfig = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Medium,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 2.5,
+        costOutTokensPerMillion: 10,
+        currency: "USD",
+      },
+      maxTokensOut: 16384,
+      defaultTemperature: 0.7,
+      model: "gpt-4o",
+      active: true,
+    };
 
-      const openAiGpt4oConfig = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Medium,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 5,
-          costOutTokensPerMillion: 15,
-          currency: "USD",
-        },
-        maxTokensOut: 4096,
-        defaultTemperature: 0.7,
-        model: "gpt-4o",
-        active: true,
-      };
+    if (!openAiGpt4) {
+      await PsAiModel.create({
+        name: "GPT-4o",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt4oConfig,
+      });
+      console.log("Created OpenAI model: GPT-4o");
+    } else {
+      console.log("OpenAI model already exists: GPT-4o updating");
+      openAiGpt4.set("configuration", openAiGpt4oConfig);
+      openAiGpt4.changed("configuration", true);
+      await openAiGpt4.save();
+    }
 
+    // GPT-4o Mini
+    const openAiGpt4Mini = await PsAiModel.findOne({
+      where: { name: "GPT-4o Mini" },
+    });
+    if (!openAiGpt4Mini) {
       const openAiGpt4oMiniConfig = {
         type: PsAiModelType.Text,
         modelSize: PsAiModelSize.Small,
@@ -113,68 +144,28 @@ export class NewAiModelSetup {
           costOutTokensPerMillion: 0.6,
           currency: "USD",
         },
-        maxTokensOut: 16000,
+        maxTokensOut: 16384,
         defaultTemperature: 0.0,
         model: "gpt-4o-mini",
         active: true,
       };
 
-      const openAiGpt4 = await PsAiModel.create({
-        name: "GPT-4o",
-        organization_id: 1,
-        user_id: userId,
-        configuration: openAiGpt4oConfig,
-      });
-
-      console.log("Created test AI model:", openAiGpt4);
-
-      const openAiGpt4Mini = await PsAiModel.create({
+      await PsAiModel.create({
         name: "GPT-4o Mini",
         organization_id: 1,
         user_id: userId,
         configuration: openAiGpt4oMiniConfig,
       });
-
-      console.log("Created test AI model:", openAiGpt4Mini);
-
-      const topLevelAgentClassConfig = {
-        category: PsAgentClassCategories.PolicySynthTopLevel,
-        subCategory: "group",
-        hasPublicAccess: true,
-        description: "A top-level agent that coordinates other agents",
-        queueName: "noqueue",
-        imageUrl:
-          "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/topLevelAgent.png",
-        iconName: "coordinator",
-        capabilities: [
-          "process coordination",
-          "task management",
-          "result aggregation",
-        ],
-        questions: [],
-        requestedAiModelSizes: ["large", "medium", "small"] as PsAiModelSize[],
-        supportedConnectors: [],
-      };
-
-      await PsAgentClass.create({
-        class_base_id: "c375c1fb-58ca-4372-a567-0e02b2c3d479",
-        name: "Operations",
-        version: 1,
-        available: true,
-        configuration: topLevelAgentClassConfig,
-        user_id: userId,
-      });
+      console.log("Created OpenAI model: GPT-4o Mini");
     } else {
-      console.log("Test AI models already exist");
+      console.log("OpenAI model already exists: GPT-4o Mini");
     }
 
-    const testOMiniModel = await PsAiModel.findOne({
-      where: {
-        name: "o1 Mini",
-      },
+    // o1 Mini
+    const openAio1Mini = await PsAiModel.findOne({
+      where: { name: "o1 Mini" },
     });
-
-    if (!testOMiniModel) {
+    if (!openAio1Mini) {
       const openAio1MiniConfig = {
         type: PsAiModelType.TextReasoning,
         modelSize: PsAiModelSize.Small,
@@ -196,17 +187,16 @@ export class NewAiModelSetup {
         user_id: userId,
         configuration: openAio1MiniConfig,
       });
+      console.log("Created OpenAI model: o1 Mini");
     } else {
-      console.log("Test O models already exist");
+      console.log("OpenAI model already exists: o1 Mini");
     }
 
-    const testOPreviewModel = await PsAiModel.findOne({
-      where: {
-        name: "o1 Preview",
-      },
+    // o1 Preview
+    const openAio1Preview = await PsAiModel.findOne({
+      where: { name: "o1 Preview" },
     });
-
-    if (!testOPreviewModel) {
+    if (!openAio1Preview) {
       const openAio1PreviewConfig = {
         type: PsAiModelType.TextReasoning,
         modelSize: PsAiModelSize.Medium,
@@ -228,49 +218,87 @@ export class NewAiModelSetup {
         user_id: userId,
         configuration: openAio1PreviewConfig,
       });
+      console.log("Created OpenAI model: o1 Preview");
     } else {
-      console.log("Test O preview models already exist");
+      console.log("OpenAI model already exists: o1 Preview");
     }
 
-    const testO1712Model = await PsAiModel.findOne({
-      where: {
-        name: "o1 24",
-      },
+    // o1 24
+    const openAio11712 = await PsAiModel.findOne({
+      where: { name: "o1 24" },
     });
+    const openAio11712Config = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Medium,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 15.0,
+        costOutTokensPerMillion: 60.0,
+        currency: "USD",
+      },
+      maxTokensOut: 100000,
+      defaultTemperature: 0.0,
+      model: "o1",
+      active: true,
+    };
 
-    if (!testO1712Model) {
-      const openAio11712Config = {
-        type: PsAiModelType.TextReasoning,
-        modelSize: PsAiModelSize.Medium,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 15.0,
-          costOutTokensPerMillion: 60.0,
-          currency: "USD",
-        },
-        maxTokensOut: 100000,
-        defaultTemperature: 0.0,
-        model: "o1-2024-12-17",
-        active: true,
-      };
-
+    if (!openAio11712) {
       await PsAiModel.create({
         name: "o1 24",
         organization_id: 1,
         user_id: userId,
         configuration: openAio11712Config,
       });
+      console.log("Created OpenAI model: o1 24");
     } else {
-      console.log("Test o1 1712 models already exist");
+      console.log("OpenAI model already exists: o1 24 updating");
+      openAio11712.set("configuration", openAio11712Config);
+      openAio11712.changed("configuration", true);
+      await openAio11712.save();
     }
 
-    const geminiProModel = await PsAiModel.findOne({
-      where: {
-        name: "Gemini 1.5 Pro 2",
-      },
+    // o3 mini
+    const openAio3Mini = await PsAiModel.findOne({
+      where: { name: "o3 mini" },
     });
+    if (!openAio3Mini) {
+      const openAio3MiniConfig = {
+        type: PsAiModelType.TextReasoning,
+        modelSize: PsAiModelSize.Small,
+        provider: "openai",
+        prices: {
+          costInTokensPerMillion: 1.1,
+          costOutTokensPerMillion: 4.4,
+          currency: "USD",
+        },
+        maxTokensOut: 100000,
+        defaultTemperature: 0.0,
+        model: "o3-mini",
+        active: true,
+      };
 
-    if (!geminiProModel) {
+      await PsAiModel.create({
+        name: "o3 mini",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAio3MiniConfig,
+      });
+      console.log("Created OpenAI model: o3 mini");
+    } else {
+      console.log("OpenAI model already exists: o3 mini");
+    }
+  }
+
+  /**
+   * Seeds Google models.
+   * Currently, this creates Gemini 1.5 Pro 2 and Gemini 1.5 Flash 2.
+   */
+  static async seedGoogleModels(userId: number): Promise<void> {
+    // Gemini 1.5 Pro 2
+    const geminiPro = await PsAiModel.findOne({
+      where: { name: "Gemini 1.5 Pro 2" },
+    });
+    if (!geminiPro) {
       const geminiProConfig = {
         type: PsAiModelType.Text,
         modelSize: PsAiModelSize.Medium,
@@ -292,17 +320,16 @@ export class NewAiModelSetup {
         user_id: userId,
         configuration: geminiProConfig,
       });
+      console.log("Created Google model: Gemini 1.5 Pro 2");
     } else {
-      console.log("Gemini 1.5 Pro 2 models already exist");
+      console.log("Google model already exists: Gemini 1.5 Pro 2");
     }
 
-    const geminiPro15FlashModel = await PsAiModel.findOne({
-      where: {
-        name: "Gemini 1.5 Flash 2",
-      },
+    // Gemini 1.5 Flash 2
+    const geminiPro15Flash = await PsAiModel.findOne({
+      where: { name: "Gemini 1.5 Flash 2" },
     });
-
-    if (!geminiPro15FlashModel) {
+    if (!geminiPro15Flash) {
       const geminiPro15FlashConfig = {
         type: PsAiModelType.Text,
         modelSize: PsAiModelSize.Small,
@@ -324,18 +351,138 @@ export class NewAiModelSetup {
         user_id: userId,
         configuration: geminiPro15FlashConfig,
       });
+      console.log("Created Google model: Gemini 1.5 Flash 2");
+    } else {
+      console.log("Google model already exists: Gemini 1.5 Flash 2");
     }
   }
 
   /**
-   * A helper to delay model seeding slightly. This method uses a timeout to seed
-   * the test AI models.
-   * @param userId the user id to pass to seedTestAiModels
+   * Master seeding function which calls the provider-specific functions
+   * and also seeds a top-level agent class.
+   */
+  static async seedAiModels(userId: number): Promise<void> {
+    try {
+      await NewAiModelSetup.seedAnthropicModels(userId);
+      await NewAiModelSetup.seedOpenAiModels(userId);
+      await NewAiModelSetup.seedGoogleModels(userId);
+
+      // Optionally, seed the top-level agent class if it does not exist.
+      const topLevelAgentClass = await PsAgentClass.findOne({
+        where: { name: "Operations" },
+      });
+      if (!topLevelAgentClass) {
+        const topLevelAgentClassConfig = {
+          category: PsAgentClassCategories.PolicySynthTopLevel,
+          subCategory: "group",
+          hasPublicAccess: true,
+          description: "A top-level agent that coordinates other agents",
+          queueName: "noqueue",
+          imageUrl:
+            "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/topLevelAgent.png",
+          iconName: "coordinator",
+          capabilities: [
+            "process coordination",
+            "task management",
+            "result aggregation",
+          ],
+          questions: [],
+          requestedAiModelSizes: [
+            PsAiModelSize.Large,
+            PsAiModelSize.Medium,
+            PsAiModelSize.Small,
+          ],
+          supportedConnectors: [],
+        };
+
+        await PsAgentClass.create({
+          class_base_id: "c375c1fb-58ca-4372-a567-0e02b2c3d479",
+          name: "Operations",
+          version: 1,
+          available: true,
+          configuration: topLevelAgentClassConfig,
+          user_id: userId,
+        });
+        console.log("Created top-level agent class: Operations");
+      } else {
+        console.log("Top-level agent class: Operations already exists");
+      }
+    } catch (error) {
+      console.error("Error seeding AI models:", error);
+      process.exit(1);
+    }
+  }
+
+  /**
+   * Helper to delay model seeding slightly.
    */
   static setupAiModels(userId: number): void {
     setTimeout(async () => {
-      console.log("Seeding test AI models");
-      await NewAiModelSetup.seedTestAiModels(userId);
+      console.log("Seeding AI models");
+      await NewAiModelSetup.seedAiModels(userId);
     }, 100);
   }
+
+  /**
+   * Sets up the API keys for a given group based on the latest active AI models.
+   * @param group The group instance on which to set the API keys
+   */
+  static async setupApiKeysForGroup(group: any): Promise<void> {
+    // Helper to find the latest active model by name
+    const findLatestActiveModel = async (name: string) => {
+      return await PsAiModel.findOne({
+        where: {
+          name,
+          configuration: { active: true },
+        },
+        order: [["created_at", "DESC"]],
+      });
+    };
+
+    // Cache the API keys from environment variables
+    const apiKeys: {
+      ANTHROPIC_CLAUDE_API_KEY?: string;
+      OPENAI_API_KEY?: string;
+      GEMINI_API_KEY?: string;
+    } = {
+      ANTHROPIC_CLAUDE_API_KEY: process.env.ANTHROPIC_CLAUDE_API_KEY,
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+      GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    };
+
+    // Define a mapping between model names and their required API key
+    // Explicitly type envKey as a key of apiKeys
+    const modelsMapping: { name: string; envKey: keyof typeof apiKeys }[] = [
+      { name: "Anthropic Sonnet 3.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
+      { name: "o1 Preview", envKey: "OPENAI_API_KEY" },
+      { name: "o1 Mini", envKey: "OPENAI_API_KEY" },
+      { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
+      { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
+      { name: "o1 24", envKey: "OPENAI_API_KEY" },
+      { name: "o3 mini", envKey: "OPENAI_API_KEY" },
+    ];
+
+    const groupAccessConfig: { aiModelId: number; apiKey: string }[] = [];
+
+    for (const { name, envKey } of modelsMapping) {
+      const apiKey = apiKeys[envKey];
+      if (!apiKey) continue; // Skip if the API key is not provided
+
+      const model = await findLatestActiveModel(name);
+      if (model) {
+        groupAccessConfig.push({
+          aiModelId: model.id,
+          apiKey,
+        });
+      }
+    }
+
+    group.set("private_access_configuration", groupAccessConfig);
+    group.changed("private_access_configuration", true);
+    await group.save();
+  }
+
+
 }

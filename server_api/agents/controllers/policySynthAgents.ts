@@ -21,25 +21,12 @@ import { PsAgentRegistry } from "@policysynth/agents/dbModels/agentRegistry.js";
 import { PsExternalApiUsage } from "@policysynth/agents/dbModels/externalApiUsage.js";
 import { PsExternalApi } from "@policysynth/agents/dbModels/externalApis.js";
 import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
-import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
 import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
+import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
 
-const dbModels: Models = models;
-const Group = dbModels.Group as GroupClass;
-const User = dbModels.User as UserClass;
-
-const psModels: Models = {
-  PsAgentClass,
-  PsExternalApiUsage,
-  PsModelUsage,
-  PsAgentConnector,
-  PsAgent,
-  PsAgentAuditLog,
-  PsAgentConnectorClass,
-  PsAgentRegistry,
-  PsAiModel,
-  PsExternalApi,
-};
+const dbModels: any = models;
+const Group = dbModels.Group;
+const User = dbModels.User;
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -53,11 +40,11 @@ export class PolicySynthAgentsController {
   public path = "/api/agents";
   public router = express.Router();
   public wsClients: Map<string, WebSocket>;
-  private agentQueueManager!: AgentQueueManager;
-  private agentCostManager!: AgentCostManager;
-  private agentManager!: AgentManager;
-  private agentConnectorManager!: AgentConnectorManager;
-  private agentRegistryManager!: AgentRegistryManager;
+  private agentQueueManager: AgentQueueManager;
+  private agentCostManager: AgentCostManager;
+  private agentManager: AgentManager;
+  private agentConnectorManager: AgentConnectorManager;
+  private agentRegistryManager: AgentRegistryManager;
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
@@ -68,389 +55,19 @@ export class PolicySynthAgentsController {
     this.agentRegistryManager = new AgentRegistryManager();
 
     this.initializeRoutes();
-    this.initializeModels();
-    this.setupAiModels();
+
+    // Call our separated model setup methods.
+    NewAiModelSetup.initializeModels();
+    // Using a hardcoded userId (1) for seeding test AI models.
+    NewAiModelSetup.setupAiModels(1);
   }
 
-  initializeModels = async () => {
-    try {
-      console.log(`All Models Loaded Init`);
-
-      // Call associate method to set up associations
-      for (const modelName of Object.keys(psModels)) {
-        if (psModels[modelName].associate) {
-          await psModels[modelName].associate(psSequelize.models);
-        }
-      }
-
-      console.log("All models initialized successfully.");
-    } catch (error) {
-      console.error("Error initializing models:", error);
-      process.exit(1);
-    }
-  };
-
-  static setupApiKeysForGroup = async (group: typeof Group) => {
-    const findLatestActiveModel = async (name: string) => {
-      return await PsAiModel.findOne({
-        where: {
-          name,
-          configuration: {
-            active: true,
-          },
-        },
-        order: [["created_at", "DESC"]],
-      });
-    };
-
-    const anthropicSonnet = await findLatestActiveModel("Anthropic Sonnet 3.5");
-    const openAiGpt4 = await findLatestActiveModel("GPT-4o");
-    const openAiGpt4Mini = await findLatestActiveModel("GPT-4o Mini");
-    const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro 2");
-    const geminiPro15Flash = await findLatestActiveModel("Gemini 1.5 Flash 2");
-    const openAio1Preview = await findLatestActiveModel("o1 Preview");
-    const openAio1Mini = await findLatestActiveModel("o1 Mini");
-    const openAio11712 = await findLatestActiveModel("o1 24");
-
-    const groupAccessConfig = [];
-
-    if (anthropicSonnet && process.env.ANTHROPIC_CLAUDE_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: anthropicSonnet!.id,
-        apiKey: process.env.ANTHROPIC_CLAUDE_API_KEY,
-      });
-    }
-
-    if (openAiGpt4 && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: openAiGpt4!.id,
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-    }
-
-    if (openAiGpt4Mini && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: openAiGpt4Mini!.id,
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-    }
-
-    if (openAio1Preview && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: openAio1Preview!.id,
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-    }
-
-    if (openAio1Mini && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: openAio1Mini!.id,
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-    }
-
-    if (geminiPro && process.env.GEMINI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: geminiPro!.id,
-        apiKey: process.env.GEMINI_API_KEY,
-      });
-    }
-
-    if (geminiPro15Flash && process.env.GEMINI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: geminiPro15Flash!.id,
-        apiKey: process.env.GEMINI_API_KEY,
-      });
-    }
-
-    if (openAio11712 && process.env.OPENAI_API_KEY) {
-      groupAccessConfig.push({
-        aiModelId: openAio11712!.id,
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-    }
-
-    group.set("private_access_configuration", groupAccessConfig);
-    group.changed("private_access_configuration", true);
-
-    await group.save();
-  };
-
-  async setupAiModels() {
-    setTimeout(async () => {
-      console.log("Seeding test AI models");
-      await this.seedTestAiModels(1);
-    }, 100);
-  }
-
-  async seedTestAiModels(userId: number) {
-    const testModel = await PsAiModel.findOne({
-      where: {
-        name: "Anthropic Sonnet 3.5",
-      },
-    });
-
-    if (!testModel) {
-      const anthropicSonnetConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Medium,
-        provider: "anthropic",
-        prices: {
-          costInTokensPerMillion: 3,
-          costOutTokensPerMillion: 15,
-          currency: "USD",
-        },
-        maxTokensOut: 8000,
-        defaultTemperature: 0.7,
-        model: "claude-3-5-sonnet-20240620",
-        active: true,
-      };
-
-      const anthropicSonnet = await PsAiModel.create({
-        name: "Anthropic Sonnet 3.5",
-        organization_id: 1,
-        user_id: userId,
-        configuration: anthropicSonnetConfig,
-      });
-
-      console.log("Created test AI model:", anthropicSonnet);
-
-      const openAiGpt4oConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Medium,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 5,
-          costOutTokensPerMillion: 15,
-          currency: "USD",
-        },
-        maxTokensOut: 4096,
-        defaultTemperature: 0.7,
-        model: "gpt-4o",
-        active: true,
-      };
-
-      const openAiGpt4oMiniConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Small,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 0.15,
-          costOutTokensPerMillion: 0.6,
-          currency: "USD",
-        },
-        maxTokensOut: 16000,
-        defaultTemperature: 0.0,
-        model: "gpt-4o-mini",
-        active: true,
-      };
-
-      const openAiGpt4 = await PsAiModel.create({
-        name: "GPT-4o",
-        organization_id: 1,
-        user_id: userId,
-        configuration: openAiGpt4oConfig,
-      });
-
-      console.log("Created test AI model:", openAiGpt4);
-
-      const openAiGpt4Mini = await PsAiModel.create({
-        name: "GPT-4o Mini",
-        organization_id: 1,
-        user_id: userId,
-        configuration: openAiGpt4oMiniConfig,
-      });
-
-      console.log("Created test AI model:", openAiGpt4Mini);
-
-      const topLevelAgentClassConfig: PsAgentClassAttributesConfiguration = {
-        category: PsAgentClassCategories.PolicySynthTopLevel,
-        subCategory: "group",
-        hasPublicAccess: true,
-        description: "A top-level agent that coordinates other agents",
-        queueName: "noqueue",
-        imageUrl:
-          "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/topLevelAgent.png",
-        iconName: "coordinator",
-        capabilities: [
-          "process coordination",
-          "task management",
-          "result aggregation",
-        ],
-        questions: [],
-        requestedAiModelSizes: ["large", "medium", "small"] as PsAiModelSize[],
-        supportedConnectors: [],
-      };
-
-      await PsAgentClass.create({
-        class_base_id: "c375c1fb-58ca-4372-a567-0e02b2c3d479",
-        name: "Operations",
-        version: 1,
-        available: true,
-        configuration: topLevelAgentClassConfig,
-        user_id: userId,
-      });
-    } else {
-      console.log("Test AI models already exist");
-    }
-
-    const testOMiniModel = await PsAiModel.findOne({
-      where: {
-        name: "o1 Mini",
-      },
-    });
-
-    if (!testOMiniModel) {
-      const openAio1MiniConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.TextReasoning,
-        modelSize: PsAiModelSize.Small,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 3.0,
-          costOutTokensPerMillion: 12.0,
-          currency: "USD",
-        },
-        maxTokensOut: 32000,
-        defaultTemperature: 0.0,
-        model: "o1-mini",
-        active: true,
-      };
-
-      const openAio1Mini = await PsAiModel.create({
-        name: "o1 Mini",
-        organization_id: 1,
-        user_id: userId,
-        configuration: openAio1MiniConfig,
-      });
-    } else {
-      console.log("Test O models already exist");
-    }
-
-    const testOPreviewModel = await PsAiModel.findOne({
-      where: {
-        name: "o1 Preview",
-      },
-    });
-
-    if (!testOPreviewModel) {
-      const openAio1PreviewConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.TextReasoning,
-        modelSize: PsAiModelSize.Medium,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 15.0,
-          costOutTokensPerMillion: 60.0,
-          currency: "USD",
-        },
-        maxTokensOut: 32000,
-        defaultTemperature: 0.0,
-        model: "o1-preview",
-        active: true,
-      };
-
-      const openAio1Preview = await PsAiModel.create({
-        name: "o1 Preview",
-        organization_id: 1,
-        user_id: userId,
-        configuration: openAio1PreviewConfig,
-      });
-    } else {
-      console.log("Test O preview models already exist");
-    }
-
-    const testO1712Model = await PsAiModel.findOne({
-      where: {
-        name: "o1 24",
-      },
-    });
-
-    if (!testO1712Model) {
-      const openAio11712Config: PsAiModelConfiguration = {
-        type: PsAiModelType.TextReasoning,
-        modelSize: PsAiModelSize.Medium,
-        provider: "openai",
-        prices: {
-          costInTokensPerMillion: 15.0,
-          costOutTokensPerMillion: 60.0,
-          currency: "USD",
-        },
-        maxTokensOut: 100000,
-        defaultTemperature: 0.0,
-        model: "o1-2024-12-17",
-        active: true,
-      };
-
-      const openAio11712 = await PsAiModel.create({
-        name: "o1 24",
-        organization_id: 1,
-        user_id: userId,
-        configuration: openAio11712Config,
-      });
-    } else {
-      console.log("Test o1 1712 models already exist");
-    }
-
-    const geminiProModel = await PsAiModel.findOne({
-      where: {
-        name: "Gemini 1.5 Pro 2",
-      },
-    });
-
-    if (!geminiProModel) {
-      const geminiProConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Medium,
-        provider: "google",
-        prices: {
-          costInTokensPerMillion: 1.25,
-          costOutTokensPerMillion: 5.0,
-          currency: "USD",
-        },
-        maxTokensOut: 8192,
-        defaultTemperature: 0.0,
-        model: "gemini-1.5-pro-002",
-        active: true,
-      };
-
-      const geminiPro = await PsAiModel.create({
-        name: "Gemini 1.5 Pro 2",
-        organization_id: 1,
-        user_id: userId,
-        configuration: geminiProConfig,
-      });
-    } else {
-      console.log("Gemini 1.5 Pro 2 models already exist");
-    }
-
-    const geminiPro15FlashModel = await PsAiModel.findOne({
-      where: {
-        name: "Gemini 1.5 Flash 2",
-      },
-    });
-
-    if (!geminiPro15FlashModel) {
-      const geminiPro15FlashConfig: PsAiModelConfiguration = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Small,
-        provider: "google",
-        prices: {
-          costInTokensPerMillion: 0.075,
-          costOutTokensPerMillion: 0.3,
-          currency: "USD",
-        },
-        maxTokensOut: 8192,
-        defaultTemperature: 0.0,
-        model: "gemini-1.5-flash-002",
-        active: true,
-      };
-
-      const geminiPro15Flash = await PsAiModel.create({
-        name: "Gemini 1.5 Flash 2",
-        organization_id: 1,
-        user_id: userId,
-        configuration: geminiPro15FlashConfig,
-      });
-    }
+  /**
+   * A proxy for setting up API keys for a group.
+   * @param group The group instance to configure
+   */
+  public static async setupApiKeysForGroup(group: any): Promise<void> {
+    return NewAiModelSetup.setupApiKeysForGroup(group);
   }
 
   public initializeRoutes() {
@@ -512,7 +129,6 @@ export class PolicySynthAgentsController {
       auth.can("edit group"),
       this.updateNodeConfiguration
     );
-
     this.router.get(
       "/:groupId/:id/ai-models",
       auth.can("view group"),
@@ -523,25 +139,21 @@ export class PolicySynthAgentsController {
       auth.can("edit group"),
       this.removeAgentAiModel
     );
-
     this.router.post(
       "/:groupId/:agentId/ai-models",
       auth.can("edit group"),
       this.addAgentAiModel
     );
-
     this.router.get(
       "/:groupId/:agentId/memory",
       auth.can("view group"),
       this.getAgentMemory
     );
-
     this.router.put(
       "/:groupId/:agentId/memory",
       auth.can("edit group"),
       this.replaceAgentMemory
     );
-
     this.router.post(
       "/:groupId/:agentId/:type(input|output)Connectors/existing",
       auth.can("edit group"),
@@ -620,11 +232,9 @@ export class PolicySynthAgentsController {
         parseInt(connectorId),
         type as "input" | "output"
       );
-      res
-        .status(200)
-        .json({
-          message: `Existing ${connectorId} connector added successfully`,
-        });
+      res.status(200).json({
+        message: `Existing ${connectorId} connector added successfully`,
+      });
     } catch (error) {
       console.error(`Error adding existing ${connectorId} connector:`, error);
       if (error instanceof Error) {
@@ -638,12 +248,10 @@ export class PolicySynthAgentsController {
   getAgentMemory = async (req: YpRequest, res: express.Response) => {
     try {
       const { groupId, agentId } = req.params;
-
       console.log(
         `Attempting to get memory for agent ${agentId} in group ${groupId}`
       );
 
-      // Get the memory key for the specified agent
       const memoryKey = await this.agentManager.getSubAgentMemoryKey(
         groupId,
         parseInt(agentId)
@@ -658,7 +266,6 @@ export class PolicySynthAgentsController {
 
       console.log(`Memory key found: ${memoryKey}`);
 
-      // Use the Redis client to get the memory contents
       const memoryContents = await req.redisClient.get(memoryKey);
 
       if (!memoryContents) {
@@ -668,7 +275,6 @@ export class PolicySynthAgentsController {
 
       console.log(`Memory contents retrieved successfully`);
 
-      // Parse the memory contents (assuming it's stored as JSON)
       const parsedMemoryContents = JSON.parse(memoryContents);
 
       res.json(parsedMemoryContents);
