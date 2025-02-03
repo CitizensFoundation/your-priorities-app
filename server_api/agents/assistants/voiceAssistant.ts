@@ -155,7 +155,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     await this.sendCancelResponse();
 
-    const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
+    const subscriptionPlan =
+      await this.parentAssistant.getCurrentSubscriptionPlan();
 
     if (!subscriptionPlan) {
       throw new Error("No subscription plan found");
@@ -183,7 +184,6 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         "OpenAI-Beta": "realtime=v1",
       },
     };
-
 
     try {
       const ws = new WebSocket(
@@ -439,9 +439,21 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
 
     if (result.html) {
-      console.log("--------------------------------============================>  handleResponseDone result.html with token: ", result.uniqueToken);
-      this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
-      this.parentAssistant.addAssistantHtmlMessage(result.html, result.uniqueToken);
+      console.log(
+        "--------------------------------============================>  handleResponseDone result.html with token: ",
+        result.uniqueToken
+      );
+      this.sendToClient(
+        "assistant",
+        result.html,
+        "html",
+        result.uniqueToken,
+        true
+      );
+      this.parentAssistant.addAssistantHtmlMessage(
+        result.html,
+        result.uniqueToken
+      );
     }
 
     if (result.clientEvents) {
@@ -690,11 +702,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     let voiceName = this.voiceConfig.voice;
 
-    const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
+    const subscriptionPlan =
+      await this.parentAssistant.getCurrentSubscriptionPlan();
 
     if (
       this.parentAssistant.memory.currentMode ===
-
         "agent_direct_connection_mode" &&
       subscriptionPlan?.AgentProduct!.configuration.avatar?.voiceName
     ) {

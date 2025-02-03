@@ -57,9 +57,9 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     if (this.DEBUG) {
       console.log(
         `Sending memory changed to client: ${JSON.stringify(
-        this.simplifiedMemory,
-        null,
-        2
+          this.simplifiedMemory,
+          null,
+          2
         )}`
       );
     }
@@ -74,15 +74,14 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     return this.memory.currentUser !== undefined;
   }
 
-
   get isSubscribedToCurrentAgentProduct(): boolean {
     if (this.DEBUG) {
       console.log(
         `-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(
-        this.memory.currentAgentStatus,
-        null,
-        2
-      )}`
+          this.memory.currentAgentStatus,
+          null,
+          2
+        )}`
       );
     }
     return this.memory.currentAgentStatus?.subscriptionId != undefined;
@@ -115,16 +114,18 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     return this.memory.haveShownLoginWidget ?? false;
   }
 
-  async getCurrentAgentWorkflow(): Promise<YpWorkflowConfiguration | undefined> {
+  async getCurrentAgentWorkflow(): Promise<
+    YpWorkflowConfiguration | undefined
+  > {
     const agentRun = await this.getCurrentAgentRun();
     return agentRun?.workflow;
   }
 
-  async getCurrentAgentWorkflowCurrentStep(): Promise<YpWorkflowStep | undefined> {
+  async getCurrentAgentWorkflowCurrentStep(): Promise<
+    YpWorkflowStep | undefined
+  > {
     const agentRun = await this.getCurrentAgentRun();
-    return agentRun?.workflow?.steps[
-      agentRun?.workflow?.currentStepIndex ?? 0
-    ];
+    return agentRun?.workflow?.steps[agentRun?.workflow?.currentStepIndex ?? 0];
   }
 
   async isCurrentAgentWaitingOnUserInput(): Promise<boolean> {
