@@ -107,6 +107,7 @@ export class PsEditNodeDialog extends YpBaseElement {
   override render() {
     return html`
       <md-dialog
+        style="max-height: 90vh;"
         ?open="${this.open}"
         @closed="${this._handleClose}"
         @cancel="${this.disableScrim}"
