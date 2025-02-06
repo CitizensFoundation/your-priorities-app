@@ -1,31 +1,33 @@
 # YpAppStyles
 
-This module defines the CSS styles for the YpApp web component, which is part of the Citizens Foundation's application. The styles are implemented using the `lit` library's `css` function, providing a structured and maintainable way to apply styles to the component.
+This module exports a set of CSS styles for a web component, designed to provide a consistent and responsive layout for the application. The styles are defined using the `lit` library's `css` function.
 
 ## Properties
 
-| Name                          | Type   | Description                                                                 |
-|-------------------------------|--------|-----------------------------------------------------------------------------|
-| `:host`                       | CSS    | Styles applied to the host element, setting the minimum height and layout.  |
-| `main`                        | CSS    | Styles for the main content area, allowing it to grow and fill available space. |
-| `.activeBadge`                | CSS    | Styles for the active badge, including color variables for different states. |
-| `yp-user-info`                | CSS    | Styles for the user info component, adding a top margin.                    |
-| `yp-language-selector`        | CSS    | Styles for the language selector component, adding margin around it.        |
-| `.userImageNotificationContainer` | CSS | Styles for the container holding user image notifications, with side margins. |
-| `yp-user-image`               | CSS    | Styles for the user image, setting its dimensions.                          |
-| `#leftDrawer`                 | CSS    | Styles for the left drawer, adjusting its left margin.                      |
-| `.loadingAppSpinnerPage`      | CSS    | Styles for the loading spinner page, centering content and setting full-screen dimensions. |
-| `#userDrawer`                 | CSS    | Styles for the user drawer, fixing its position and setting dimensions.     |
-| `#dialog`                     | CSS    | Styles for the dialog, using color variables for customization.             |
-| `.errorText`                  | CSS    | Styles for error text, including padding and font size.                     |
-| `#errorCloseButton`           | CSS    | Styles for the error close button, using color variables for customization. |
-| `yp-admin-app`                | CSS    | Styles for the admin app, setting initial hidden state and transition effects. |
-| `yp-promotion-app`            | CSS    | Styles for the promotion app, similar to admin app with transition effects. |
-| `.mainPage`                   | CSS    | Styles for the main page, adjusting top margin based on attributes.         |
-| `#helpIconButton`             | CSS    | Styles for the help icon button, adding right margin.                       |
-| `#navIconButton`              | CSS    | Styles for the navigation icon button, adjusting right margin based on attributes. |
-| `.closeButton`                | CSS    | Styles for the close button, controlling visibility and opacity transitions. |
-| `yp-top-app-bar`              | CSS    | Styles for the top app bar, centering it and setting maximum width.         |
+| Name                             | Type   | Description                                                                 |
+|----------------------------------|--------|-----------------------------------------------------------------------------|
+| `:host`                          | CSS    | Styles applied to the host element, setting minimum height and flex layout. |
+| `.userIcon`                      | CSS    | Styles for user icon size.                                                  |
+| `main`                           | CSS    | Styles for the main content area to grow and fill available space.          |
+| `.topActionItem`                 | CSS    | Margin styles for top action items.                                         |
+| `.activeBadge`                   | CSS    | Styles for active badge elements.                                           |
+| `yp-user-info`                   | CSS    | Margin styles for user info component.                                      |
+| `yp-language-selector`           | CSS    | Margin styles for language selector component.                              |
+| `.userImageNotificationContainer`| CSS    | Margin styles for user image notification container.                        |
+| `yp-user-image`                  | CSS    | Dimensions for user image component.                                        |
+| `#leftDrawer`                    | CSS    | Margin styles for left drawer.                                              |
+| `.loadingAppSpinnerPage`         | CSS    | Styles for loading spinner page, including positioning and visibility.      |
+| `#userDrawer`                    | CSS    | Styles for user drawer, including fixed positioning and dimensions.         |
+| `#dialog`                        | CSS    | Color styles for dialog components.                                         |
+| `.errorText`                     | CSS    | Padding and font styles for error text.                                     |
+| `#errorCloseButton`              | CSS    | Color styles for error close button.                                        |
+| `yp-admin-app`                   | CSS    | Positioning and transition styles for admin app component.                  |
+| `yp-promotion-app`               | CSS    | Positioning and transition styles for promotion app component.              |
+| `.mainPage`                      | CSS    | Margin styles for main page, with conditional styling for agent bundle.     |
+| `#helpIconButton`                | CSS    | Margin styles for help icon button.                                         |
+| `#navIconButton`                 | CSS    | Margin styles for navigation icon button, conditional on organization state.|
+| `.closeButton`                   | CSS    | Visibility and transition styles for close button.                          |
+| `yp-top-app-bar`                 | CSS    | Max-width and margin styles for top app bar, with responsive adjustments.   |
 
 ## Methods
 
@@ -38,7 +40,7 @@ This module does not emit any events.
 ## Examples
 
 ```typescript
-// Import the styles into a LitElement component
+// Importing and using the YpAppStyles in a LitElement component
 import { LitElement, html } from 'lit';
 import { YpAppStyles } from './YpAppStyles.js';
 

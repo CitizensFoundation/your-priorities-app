@@ -1,22 +1,23 @@
 # YpNavHelpers
 
-A utility class providing navigation helper methods for web applications.
+Utility class for handling navigation and URL manipulation within the application.
 
 ## Methods
 
-| Name         | Parameters                                                                 | Return Type | Description                                                                 |
-|--------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| redirectTo   | path: string                                                               | void        | Redirects to the given path and emits a 'location-changed' event.           |
-| goToPost     | postId: number, pointId: number \| undefined, cachedActivityItem: AcActivityData \| undefined, cachedPostItem: YpPostData \| undefined, skipKeepOpen: boolean | void        | Navigates to a post by its ID, with optional parameters for additional navigation behavior. |
+| Name            | Parameters                                                                                          | Return Type | Description                                                                 |
+|-----------------|-----------------------------------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| withForAgentBundle | path: string                                                                                     | string      | Appends `?forAgentBundle=...` to the path if present in `originalQueryParameters`. |
+| redirectTo      | path: string                                                                                        | void        | Redirects to the specified path, appending `forAgentBundle` if necessary, and dispatches relevant events. |
+| goToPost        | postId: number, pointId?: number, cachedActivityItem?: AcActivityData, cachedPostItem?: YpPostData, skipKeepOpen?: boolean | void        | Navigates to a specific post, optionally caching activity and post data, and handling open state. |
 
 ## Examples
 
 ```typescript
-// Example usage of redirectTo method
-YpNavHelpers.redirectTo('/home');
+// Example usage of the YpNavHelpers class
 
-// Example usage of goToPost method
-YpNavHelpers.goToPost(123, undefined, someActivityData, somePostData, false);
+// Redirect to a path with forAgentBundle if applicable
+YpNavHelpers.redirectTo('/some/path');
+
+// Navigate to a post with specific IDs and optional caching
+YpNavHelpers.goToPost(123, 456, someActivityData, somePostData, false);
 ```
-
-**Note:** The `AcActivityData` and `YpPostData` types are not defined in the provided code snippet. They should be defined elsewhere in the application codebase.

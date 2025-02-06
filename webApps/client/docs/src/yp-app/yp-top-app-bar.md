@@ -10,7 +10,7 @@ The `YpTopAppBar` is a custom web component that extends `YpBaseElement` and pro
 | `hideTitle`                 | `boolean`                                 | Determines if the title should be hidden.                                   |
 | `restrictWidth`             | `boolean`                                 | Restricts the width of the app bar.                                         |
 | `disableArrowBasedNavigation` | `boolean`                               | Disables navigation using arrow keys.                                       |
-| `breadcrumbs`               | `Array<{ name: string; url: string }>`    | List of breadcrumb items with name and URL.                                 |
+| `breadcrumbs`               | `Array<{ name: string; url: string }>`    | Array of breadcrumb objects with name and URL.                              |
 | `fixed`                     | `boolean`                                 | Fixes the app bar position on the screen.                                   |
 | `useLowestContainerColor`   | `boolean`                                 | Uses the lowest container color for the app bar background.                 |
 | `backUrl`                   | `string | undefined`                      | URL to navigate back to.                                                    |
@@ -19,22 +19,25 @@ The `YpTopAppBar` is a custom web component that extends `YpBaseElement` and pro
 
 ## Methods
 
-| Name                      | Parameters                | Return Type | Description                                                                 |
-|---------------------------|---------------------------|-------------|-----------------------------------------------------------------------------|
-| `computedBreadcrumbs`     |                           | `Array<{ name: string; url: string }>` | Computes the breadcrumbs including the current domain.                      |
-| `renderBreadcrumbsDropdown` |                         | `TemplateResult` | Renders the breadcrumbs dropdown menu.                                      |
-| `redirectTo`              | `url: string`             | `void`      | Redirects to the specified URL and closes the menu.                         |
-| `renderMyDomainsDropdown` |                           | `TemplateResult` | Renders the domains dropdown menu.                                          |
-| `_toggleMenu`             | `e: Event`                | `void`      | Toggles the menu open/close state.                                          |
-| `_onMenuClosed`           |                           | `void`      | Handles the menu closed event.                                              |
-| `handleScroll`            |                           | `void`      | Handles the scroll event to hide/show the app bar based on scroll position. |
-| `render`                  |                           | `TemplateResult` | Renders the app bar with navigation and action slots.                       |
+| Name                      | Parameters                  | Return Type | Description                                                                 |
+|---------------------------|-----------------------------|-------------|-----------------------------------------------------------------------------|
+| `computedBreadcrumbs`     |                             | `Array<{ name: string; url: string }>` | Computes the breadcrumbs including the current domain.                      |
+| `renderBreadcrumbsDropdown` |                             | `TemplateResult` | Renders the breadcrumbs dropdown menu.                                      |
+| `redirectTo`              | `url: string`               | `void`      | Redirects to the specified URL and closes the menu.                         |
+| `renderMyDomainsDropdown` |                             | `TemplateResult` | Renders the domains dropdown menu.                                          |
+| `_toggleMenu`             | `e: Event`                  | `void`      | Toggles the menu open/close state.                                          |
+| `_onMenuClosed`           |                             | `void`      | Handles the menu closed event.                                              |
+| `handleScroll`            |                             | `void`      | Handles the scroll event to hide/show the app bar.                          |
+| `updated`                 | `changedProperties: PropertyValues` | `void`      | Lifecycle method called when properties are updated.                        |
+| `connectedCallback`       |                             | `void`      | Lifecycle method called when the element is added to the document.          |
+| `disconnectedCallback`    |                             | `void`      | Lifecycle method called when the element is removed from the document.      |
+| `_onDomainChanged`        | `event: CustomEvent`        | `void`      | Handles the domain changed event.                                           |
+| `_onMyDomainsLoaded`      | `event: CustomEvent`        | `void`      | Handles the my domains loaded event.                                        |
+| `render`                  |                             | `TemplateResult` | Renders the component's template.                                           |
 
 ## Events
 
-- **yp-close-all-drawers**: Emitted when the app bar requests to close all drawers.
-- **yp-domain-changed**: Listens for domain change events to update the current domain.
-- **yp-my-domains-loaded**: Listens for domain load events to update the list of domains.
+- **yp-close-all-drawers**: Emitted when the component requests to close all drawers.
 
 ## Examples
 
@@ -43,10 +46,10 @@ The `YpTopAppBar` is a custom web component that extends `YpBaseElement` and pro
 import './yp-top-app-bar.js';
 
 const appBar = document.createElement('yp-top-app-bar');
-appBar.titleString = "Dashboard";
+appBar.titleString = 'My Application';
 appBar.breadcrumbs = [
-  { name: "Home", url: "/" },
-  { name: "Dashboard", url: "/dashboard" }
+  { name: 'Home', url: '/' },
+  { name: 'Dashboard', url: '/dashboard' }
 ];
 document.body.appendChild(appBar);
 ```

@@ -17,13 +17,13 @@ The `PsOperationsManager` class is a custom web component that extends `PsBaseWi
 | `showAddAgentDialog`          | `boolean`                                                            | Indicates if the add agent dialog is visible.                               |
 | `showAddConnectorDialog`      | `boolean`                                                            | Indicates if the add connector dialog is visible.                           |
 | `selectedAgentIdForConnector` | `number \| null`                                                     | The ID of the selected agent for adding a connector.                        |
-| `selectedInputOutputType`     | `string \| null`                                                     | The selected input/output type for the connector.                           |
-| `agentElement`                | `PsOperationsView`                                                   | The `PsOperationsView` element.                                             |
+| `selectedInputOutputType`     | `string \| null`                                                     | The type of input/output selected for the connector.                        |
+| `agentElement`                | `PsOperationsView`                                                   | Reference to the `ps-operations-view` element.                              |
 | `groupId`                     | `number`                                                             | The ID of the group.                                                        |
 | `group`                       | `YpGroupData`                                                        | The group data.                                                             |
-| `detailedCosts`               | `PsDetailedAgentCostResults[]`                                       | The detailed costs associated with the agent.                               |
-| `activeAiModels`              | `PsAiModelAttributes[]`                                              | The active AI models.                                                       |
-| `api`                         | `PsServerApi`                                                        | The server API instance for fetching data.                                  |
+| `detailedCosts`               | `PsDetailedAgentCostResults[]`                                       | Detailed cost results for the agent.                                        |
+| `activeAiModels`              | `PsAiModelAttributes[]`                                              | Active AI models associated with the agent.                                 |
+| `api`                         | `PsServerApi`                                                        | Instance of the server API for fetching data.                               |
 
 ## Methods
 
@@ -35,15 +35,15 @@ The `PsOperationsManager` class is a custom web component that extends `PsBaseWi
 | `connectedCallback`         | -                                                                          | `Promise<void>` | Lifecycle method called when the component is added to the DOM.             |
 | `disconnectedCallback`      | -                                                                          | `Promise<void>` | Lifecycle method called when the component is removed from the DOM.         |
 | `addExistingConnector`      | `event: CustomEvent`                                                       | `Promise<void>` | Adds an existing connector to the agent.                                    |
-| `fetchAgentCosts`           | -                                                                          | `Promise<void>` | Fetches the total costs associated with the current agent.                  |
-| `fetchActiveAiModels`       | -                                                                          | `Promise<void>` | Fetches the active AI models.                                               |
-| `handleEditDialogSave`      | `event: CustomEvent`                                                       | `Promise<void>` | Handles saving the edited node configuration.                               |
+| `fetchAgentCosts`           | -                                                                          | `Promise<void>` | Fetches the total costs for the current agent.                              |
+| `fetchActiveAiModels`       | -                                                                          | `Promise<void>` | Fetches and sets the active AI models for the group.                        |
+| `handleEditDialogSave`      | `event: CustomEvent`                                                       | `Promise<void>` | Handles saving the configuration from the edit dialog.                      |
 | `openEditNodeDialog`        | `event: CustomEvent`                                                       | `void`      | Opens the edit node dialog.                                                 |
 | `openAddConnectorDialog`    | `event: CustomEvent`                                                       | `void`      | Opens the add connector dialog.                                             |
 | `openAddAgentDialog`        | `event: CustomEvent`                                                       | `void`      | Opens the add agent dialog.                                                 |
 | `randomizeTheme`            | -                                                                          | `void`      | Randomizes the theme color.                                                 |
 | `renderTotalCosts`          | -                                                                          | `TemplateResult` | Renders the total costs.                                                    |
-| `getDetailedAgentCosts`     | -                                                                          | `Promise<void>` | Fetches detailed costs for the agent.                                       |
+| `getDetailedAgentCosts`     | -                                                                          | `Promise<void>` | Fetches detailed costs for the current agent.                               |
 | `renderDetailedCostsTab`    | -                                                                          | `TemplateResult` | Renders the detailed costs tab.                                             |
 | `tabChanged`                | -                                                                          | `void`      | Handles tab change events.                                                  |
 | `renderHeader`              | -                                                                          | `TemplateResult` | Renders the header of the component.                                        |
@@ -63,5 +63,5 @@ The `PsOperationsManager` class is a custom web component that extends `PsBaseWi
 
 ```typescript
 // Example usage of the ps-operations-manager component
-<ps-operations-manager></ps-operations-manager>
+<ps-operations-manager groupId="123" group="{...}" minimizeWorkflow></ps-operations-manager>
 ```

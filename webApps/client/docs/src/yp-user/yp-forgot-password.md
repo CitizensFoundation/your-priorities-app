@@ -1,44 +1,48 @@
 # YpForgotPassword
 
-`YpForgotPassword` is a custom web component that provides a user interface for users to request a password reset if they have forgotten their password. It is part of a larger application and interacts with server APIs to send the password reset request.
+The `YpForgotPassword` class is a custom web component that provides a dialog interface for users to initiate a password reset process. It extends the `YpBaseElement` class and utilizes Material Design components for the dialog, text field, and buttons.
 
 ## Properties
 
-| Name             | Type                  | Description                                           |
-|------------------|-----------------------|-------------------------------------------------------|
-| emailErrorMessage| string \| undefined   | An optional message to display when there is an email error. |
-| email            | string                | The email address entered by the user.                |
-| emailHasBeenSent | boolean               | A flag indicating whether the password reset email has been sent. |
-| isSending        | boolean               | A flag indicating whether the password reset request is currently being sent. |
+| Name              | Type      | Description                                                                 |
+|-------------------|-----------|-----------------------------------------------------------------------------|
+| emailErrorMessage | string \| undefined | Error message related to the email input, if any.                                |
+| email             | string    | The email address entered by the user.                                       |
+| emailHasBeenSent  | boolean   | Indicates whether the password reset email has been sent.                    |
+| isSending         | boolean   | Indicates whether the password reset request is currently being processed.   |
 
 ## Methods
 
-| Name                | Parameters           | Return Type | Description                                                                 |
-|---------------------|----------------------|-------------|-----------------------------------------------------------------------------|
-| _onEnter            | event: KeyboardEvent | void        | Handles the enter key press event to trigger the password reset request.    |
-| _validateAndSend    | -                    | Promise<boolean> | Validates the email and sends the password reset request if valid. |
-| connectedCallback   | -                    | void        | Lifecycle method called when the component is added to the DOM.             |
-| disconnectedCallback| -                    | void        | Lifecycle method called when the component is removed from the DOM.          |
-| _forgotPasswordError| event: CustomEvent   | void        | Handles the forgot password error event.                                    |
-| open                | detail: { email: string } | void   | Opens the dialog and pre-fills the email if provided.                       |
-| close               | -                    | void        | Closes the dialog.                                                          |
+| Name               | Parameters                | Return Type | Description                                                                 |
+|--------------------|---------------------------|-------------|-----------------------------------------------------------------------------|
+| closed             | None                      | void        | Fires a global event indicating the dialog has been closed.                 |
+| render             | None                      | TemplateResult | Renders the HTML template for the component.                                |
+| _onEnter           | event: KeyboardEvent      | void        | Handles the Enter key press event to trigger the password reset process.    |
+| _validateAndSend   | None                      | Promise<boolean> | Validates the email input and sends the password reset request if valid.    |
+| connectedCallback  | None                      | void        | Lifecycle method called when the element is added to the document.          |
+| disconnectedCallback | None                    | void        | Lifecycle method called when the element is removed from the document.      |
+| _forgotPasswordError | event: CustomEvent      | void        | Handles network error events related to the forgot password process.        |
+| open               | detail: { email: string } | void        | Opens the dialog and optionally pre-fills the email field.                  |
+| close              | None                      | void        | Closes the dialog.                                                          |
 
 ## Events
 
-- **yp-error**: Emitted when there is an error in the form, such as when the email is not valid.
+- **yp-dialog-closed**: Emitted when the dialog is closed.
+- **yp-error**: Emitted when there is an error, such as incomplete form submission.
+- **yp-dialog-opened**: Emitted when the dialog is opened.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpForgotPassword component
-const forgotPasswordComponent = document.createElement('yp-forgotPassword');
-document.body.appendChild(forgotPasswordComponent);
+// Example usage of the yp-forgot-password component
+const forgotPasswordDialog = document.createElement('yp-forgot-password');
+document.body.appendChild(forgotPasswordDialog);
 
-// To open the dialog with a pre-filled email
-forgotPasswordComponent.open({ email: 'user@example.com' });
+// Open the dialog with a pre-filled email
+forgotPasswordDialog.open({ email: 'user@example.com' });
 
-// To close the dialog
-forgotPasswordComponent.close();
+// Listen for dialog closed event
+forgotPasswordDialog.addEventListener('yp-dialog-closed', () => {
+  console.log('Dialog was closed');
+});
 ```
-
-Note: The actual usage may vary depending on the surrounding application infrastructure and how the component is integrated into the application.

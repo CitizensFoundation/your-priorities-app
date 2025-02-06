@@ -4,16 +4,16 @@ The `YpPostHeader` class is a custom web component that extends `YpPostBaseWithA
 
 ## Properties
 
-| Name                   | Type                | Description                                                                 |
-|------------------------|---------------------|-----------------------------------------------------------------------------|
-| isAudioCover           | boolean             | Indicates if the post cover is an audio type.                               |
-| hideActions            | boolean             | Determines if the actions should be hidden.                                 |
-| transcriptActive       | boolean             | Indicates if the transcript is active.                                      |
-| onlyRenderTopActionBar | boolean             | If true, only the top action bar is rendered.                               |
-| hideTopActionBar       | boolean             | If true, hides the top action bar.                                          |
-| hasNoLeftRightButtons  | boolean             | If true, no left or right buttons are shown.                                |
-| post                   | YpPostData          | The post data to be displayed.                                              |
-| postPositionCounter    | string              | A counter indicating the position of the post.                              |
+| Name                   | Type                  | Description                                                                 |
+|------------------------|-----------------------|-----------------------------------------------------------------------------|
+| isAudioCover           | boolean               | Indicates if the post cover is an audio type.                               |
+| hideActions            | boolean               | Determines if the actions should be hidden.                                 |
+| transcriptActive       | boolean               | Indicates if the transcript is active.                                      |
+| onlyRenderTopActionBar | boolean               | Determines if only the top action bar should be rendered.                   |
+| hideTopActionBar       | boolean               | Determines if the top action bar should be hidden.                          |
+| hasNoLeftRightButtons  | boolean               | Indicates if there are no left or right buttons.                            |
+| post                   | YpPostData            | The post data object.                                                       |
+| postPositionCounter    | string                | The position counter for the post.                                          |
 
 ## Methods
 
@@ -63,7 +63,6 @@ postHeader.post = {
     configuration: {
       showWhoPostedPosts: true,
       customRatings: false,
-      descriptionSimpleFormat: false,
       descriptionTruncateAmount: 100,
     },
   },
@@ -75,6 +74,7 @@ postHeader.post = {
       text: 'Sample transcript text.',
     },
   },
+  cover_media_type: 'image',
 };
 
 document.body.appendChild(postHeader);

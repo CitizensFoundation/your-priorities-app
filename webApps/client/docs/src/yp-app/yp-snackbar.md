@@ -7,19 +7,19 @@ A custom snackbar component that displays brief messages at the bottom of the sc
 | Name       | Type    | Description                                                                 |
 |------------|---------|-----------------------------------------------------------------------------|
 | open       | Boolean | Indicates whether the snackbar is open and visible.                         |
-| labelText  | String  | The text message to be displayed in the snackbar.                           |
-| timeoutMs  | Number  | The duration in milliseconds for which the snackbar remains visible. Default is 5000 ms. |
+| labelText  | String  | The text message to be displayed inside the snackbar.                       |
+| timeoutMs  | Number  | The duration in milliseconds for which the snackbar is visible before closing automatically. Default is 5000 ms. |
 
 ## Methods
 
 | Name          | Parameters | Return Type | Description                                                                 |
 |---------------|------------|-------------|-----------------------------------------------------------------------------|
-| showSnackbar  | None       | void        | Displays the snackbar and automatically closes it after `timeoutMs` duration. |
-| closeSnackbar | None       | void        | Closes the snackbar immediately and dispatches a "closed" event.             |
+| showSnackbar  | None       | void        | Displays the snackbar and sets a timeout to automatically close it after the specified duration. |
+| closeSnackbar | None       | void        | Closes the snackbar immediately and dispatches a "closed" event.            |
 
 ## Events
 
-- **closed**: Emitted when the snackbar is closed either automatically after the timeout or manually.
+- **closed**: Emitted when the snackbar is closed, either automatically after the timeout or manually.
 
 ## Examples
 
