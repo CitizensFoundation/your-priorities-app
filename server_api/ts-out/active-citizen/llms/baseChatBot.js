@@ -1,19 +1,13 @@
 import { OpenAI } from "openai";
 import { v4 as uuidv4 } from "uuid";
 import ioredis from "ioredis";
-let tlsConfig = {
-    rejectUnauthorized: false,
-};
-if (!process.env.REDIS_URL || process.env.REDIS_URL.indexOf("localhost") > -1) {
-    tlsConfig = undefined;
-}
 const DEBUG = false;
-//@ts-ignore
-const redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
+const url = process.env.REDIS_MEMORY_URL ||
     process.env.REDIS_URL ||
-    "redis://localhost:6379", {
-    tls: tlsConfig,
-});
+    "redis://localhost:6379";
+const tlsOptions = url.startsWith("rediss://")
+    ? { rejectUnauthorized: false }
+    : undefined;
 export class YpBaseChatBot {
     get redisKey() {
         return `${YpBaseChatBot.redisMemoryKeyPrefix}-${this.memoryId}`;
@@ -21,6 +15,12 @@ export class YpBaseChatBot {
     static loadMemoryFromRedis(memoryId) {
         return new Promise(async (resolve, reject) => {
             try {
+                //@ts-ignore
+                const redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
+                    process.env.REDIS_URL ||
+                    "redis://localhost:6379", {
+                    tls: tlsOptions,
+                });
                 const memoryString = await redis.get(`${YpBaseChatBot.redisMemoryKeyPrefix}-${memoryId}`);
                 if (memoryString) {
                     const memory = JSON.parse(memoryString);
@@ -42,7 +42,7 @@ export class YpBaseChatBot {
     loadMemory() {
         return new Promise(async (resolve, reject) => {
             try {
-                const memoryString = await redis.get(this.redisKey);
+                const memoryString = await this.redis.get(this.redisKey);
                 if (memoryString) {
                     const memory = JSON.parse(memoryString);
                     resolve(memory);
@@ -62,6 +62,12 @@ export class YpBaseChatBot {
         this.maxTokens = 16000;
         this.llmModel = "gpt-4o";
         this.persistMemory = false;
+        //@ts-ignore
+        this.redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
+            process.env.REDIS_URL ||
+            "redis://localhost:6379", {
+            tls: tlsOptions,
+        });
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
         this.openaiClient = new OpenAI({
@@ -102,7 +108,7 @@ export class YpBaseChatBot {
     async saveMemory() {
         if (this.memory) {
             try {
-                await redis.set(this.redisKey, JSON.stringify(this.memory));
+                await this.redis.set(this.redisKey, JSON.stringify(this.memory));
                 console.log(`Saved memory to redis: ${this.redisKey}`);
             }
             catch (error) {

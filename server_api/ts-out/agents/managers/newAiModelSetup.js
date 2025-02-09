@@ -339,6 +339,36 @@ export class NewAiModelSetup {
         else {
             console.log("Google model already exists: Gemini 1.5 Flash 2");
         }
+        // Gemini 2.0 Flash
+        const gemini20Flash = await PsAiModel.findOne({
+            where: { name: "Gemini 2.0 Flash" },
+        });
+        if (!gemini20Flash) {
+            const gemini20FlashConfig = {
+                type: PsAiModelType.Text,
+                modelSize: PsAiModelSize.Medium,
+                provider: "google",
+                prices: {
+                    costInTokensPerMillion: 0.1,
+                    costOutTokensPerMillion: 0.4,
+                    currency: "USD",
+                },
+                maxTokensOut: 8192,
+                defaultTemperature: 0.0,
+                model: "gemini-2.0-flash",
+                active: true,
+            };
+            await PsAiModel.create({
+                name: "Gemini 2.0 Flash",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini20FlashConfig,
+            });
+            console.log("Created Google model: Gemini 2.0 Flash");
+        }
+        else {
+            console.log("Google model already exists: Gemini 2.0 Flash");
+        }
     }
     /**
      * Master seeding function which calls the provider-specific functions
@@ -434,6 +464,7 @@ export class NewAiModelSetup {
             { name: "o1 Mini", envKey: "OPENAI_API_KEY" },
             { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
             { name: "o1 24", envKey: "OPENAI_API_KEY" },
             { name: "o3 mini", envKey: "OPENAI_API_KEY" },
         ];
