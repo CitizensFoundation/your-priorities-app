@@ -574,7 +574,7 @@ router.get('/*', function botController(req, res, next) {
     ], error => {
       if (error) {
         log.error("Id for nonSpa is not a number", { error });
-        res.sendStatus(404);
+        res.sendStatus(200);
       } else {
         if (req.ypCommunity && req.ypCommunity.id != null) {
           sendCommunity(req.ypCommunity.id, req, res)

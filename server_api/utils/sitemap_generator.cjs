@@ -81,6 +81,10 @@ var generateSitemap = async function (req, res) {
               })
                 .then(function (communities) {
                   _.forEach(communities, function (community) {
+                    if (!community) {
+                      console.error("No community found in sitemap generation");
+                      return;
+                    }
                     const path = "/community/" + community.id;
                     if (
                       community.hostname &&
@@ -148,6 +152,10 @@ var generateSitemap = async function (req, res) {
             })
               .then(function (groups) {
                 _.forEach(groups, function (group) {
+                  if (!group) {
+                    console.error("No group found in sitemap generation");
+                    return;
+                  }
                   const path = "/group/" + group.id;
                   if (
                     group.Community.hostname &&
@@ -237,6 +245,10 @@ var generateSitemap = async function (req, res) {
               })
                 .then(function (posts) {
                   _.forEach(posts, function (post) {
+                    if (!post) {
+                      console.error("No post found in sitemap generation");
+                      return;
+                    }
                     links.push({ url: "/post/" + post.id });
                   });
                   seriesCallback();
