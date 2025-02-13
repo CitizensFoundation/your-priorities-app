@@ -13,6 +13,10 @@ export const YpAppStyles = css`
     margin: 0;
   }
 
+  [hidden] {
+    display: none !important;
+  }
+
   .userIcon {
     --md-icon-button-icon-size: 40px;
   }
@@ -27,7 +31,6 @@ export const YpAppStyles = css`
   }
 
   .activeBadge {
-
   }
 
   yp-user-info {

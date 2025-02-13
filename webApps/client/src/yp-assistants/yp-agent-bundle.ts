@@ -190,13 +190,13 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
         ? html`
             <img
               class="agentBundleLogo"
-              src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/amplifierLogo.png"
+              src="https://evoly.ai/is/img/evoly-logo.png"
             />
           `
         : html`
             <img
               class="agentBundleLogo"
-              src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/amplifierLogo.png"
+              src="https://evoly.ai/is/img/evoly-logo.png"
             />
           `}
     </div> `;

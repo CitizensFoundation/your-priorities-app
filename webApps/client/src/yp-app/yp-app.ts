@@ -749,7 +749,8 @@ export class YpApp extends YpBaseElement {
         : html`
             <md-text-button
               slot="actionItems"
-              ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn}"
+              ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn ||
+              this.isOnAgentBundleLoginPageAndNotLoggedIn}"
               class="topActionItem userImageNotificationContainer"
               @click="${this._login}"
               title="${this.t("user.login")}"
@@ -1702,6 +1703,15 @@ export class YpApp extends YpBaseElement {
       window.appGlobals.domain &&
       window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn &&
       this.page === "domain" &&
+      !this.user
+    );
+  }
+
+  get isOnAgentBundleLoginPageAndNotLoggedIn() {
+    return (
+      window.appGlobals.domain &&
+      window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn &&
+      this.page === "agent_bundle" &&
       !this.user
     );
   }

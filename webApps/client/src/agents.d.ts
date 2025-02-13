@@ -215,6 +215,32 @@ type YpAssistantAgentSubscriptionState = "subscribed" | "unsubscribed";
 
 type YpAssistantAgentConfigurationState = "configured" | "not_configured";
 
+interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
+  redisKey: string;
+  currentMode: YpAssistantMode;
+  currentUser?: YpUserData;
+  haveShownLoginWidget?: boolean;
+  haveShownConfigurationWidget?: boolean;
+  currentAgentStatus?: {
+    subscriptionPlanId: number;
+    activeAgentRunId?: number;
+    subscriptionId: number | null;
+    subscriptionState: YpAssistantAgentSubscriptionState;
+    configurationState: YpAssistantAgentConfigurationState;
+  };
+
+  allChatLogs?: PsSimpleChatLog[];
+
+  loginState?: YpAssistantLoginState;
+
+  modeData?: AssistantModeData;
+  modeHistory?: Array<{
+    mode: YpAssistantMode;
+    timestamp: number;
+    reason?: string;
+  }>;
+}
+
 interface YpWorkflowStep {
   name: string;
   shortName: string;
