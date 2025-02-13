@@ -45,7 +45,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   //TODO: Read from agentbundle db object
   @property({ type: String })
-  welcomeTextHtml = `I am your assistant for Amplifier and I can talk, just <span class="green">click the button</span>`;
+  welcomeTextHtml = `I am your assistant for Evoly and I can talk, just <span class="green">click the button</span>`;
 
   @state()
   private mediaRecorder: WavRecorder | null = null;

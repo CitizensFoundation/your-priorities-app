@@ -60,7 +60,7 @@ async function setupAgentProductsConfiguration() {
       },
       {
         name: "Competitor analysis report",
-        shortName: "Competitor Analysis Report",
+        shortName: "Competitor Report",
         shortDescription:
           "Report on the state of your key competitors and recommendations.",
         description:
