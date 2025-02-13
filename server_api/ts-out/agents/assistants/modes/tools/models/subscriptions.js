@@ -3,6 +3,7 @@ import { YpSubscriptionPlan } from "../../../../models/subscriptionPlan.js";
 import { YpAgentProduct } from "../../../../models/agentProduct.js";
 import { YpAgentProductBundle } from "../../../../models/agentProductBundle.js";
 import { YpAgentProductRun } from "../../../../models/agentProductRun.js";
+import { Op } from "sequelize";
 export class SubscriptionModels {
     constructor(assistant) {
         this.assistant = assistant;
@@ -18,7 +19,10 @@ export class SubscriptionModels {
             // Get all available subscription plans with their associated agent products
             const availablePlans = await YpSubscriptionPlan.findAll({
                 where: {
-                //  status: 'active', // Only get active plans
+                    id: {
+                        [Op.in]: [1, 6],
+                    },
+                    //  status: 'active', // Only get active plans
                 },
                 attributes: ['id', 'configuration', 'name', 'description'],
                 include: [

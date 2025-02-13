@@ -19,7 +19,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         };
         // Default voice configuration
         this.voiceConfig = {
-            model: "gpt-4o-realtime-preview-2024-12-17",
+            model: process.env.OPENAI_VOICE_MODEL_NAME || "gpt-4o-realtime-preview-2024-12-17",
             voice: "echo",
             modalities: ["text", "audio"],
         };

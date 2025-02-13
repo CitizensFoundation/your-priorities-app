@@ -21,7 +21,7 @@ export class YpBaseAssistant extends YpBaseChatBot {
         this.availableTools = new Map();
         this.toolCallTimeout = 30000; // 30 seconds
         this.maxModeTransitions = 10;
-        this.modelName = "gpt-4o";
+        this.modelName = process.env.OPENAI_STREAMING_MODEL_NAME || "gpt-4o-2024-11-20";
         this.defaultSystemPrompt = `<coreImportantSystemInstructions>
 You are a helpful, witty, and friendly AI. Act like a human, but remember that you aren't a human and that you can't do human things in the real world.
 Your voice and personality should be warm and engaging, with a lively and playful tone. Talk quickly.

@@ -199,6 +199,7 @@ export declare class YpApp extends YpBaseElement {
     _openNotificationDrawer(): Promise<void>;
     _closeNotificationDrawer(): Promise<void>;
     get isOnDomainLoginPageAndNotLoggedIn(): boolean | undefined;
+    get isOnAgentBundleLoginPageAndNotLoggedIn(): boolean | undefined;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;
     updateBreadcrumbs(newBreadcrumb: {

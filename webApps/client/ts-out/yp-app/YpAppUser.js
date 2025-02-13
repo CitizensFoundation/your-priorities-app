@@ -613,9 +613,10 @@ export class YpAppUser extends YpCodeBase {
         this.hasIssuedLogout = true;
         (await this.serverApi.logout());
         this.removeUserSession();
+        const isInAgentBundlePage = window.location.pathname.includes("/agent-bundle/");
         const moveUserToHomePageLocation = true;
         if (moveUserToHomePageLocation) {
-            window.location.href = "/";
+            window.location.reload();
         }
         else {
             this.toastLogoutTextCombined =

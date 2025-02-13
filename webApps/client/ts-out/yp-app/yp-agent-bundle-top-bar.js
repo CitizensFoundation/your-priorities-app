@@ -53,8 +53,8 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
         }
 
         .agentBundleLogo {
-          width: 125px;
-          height: 39px;
+          height: 30px;
+          padding-top: 10px;
           z-index: 1;
         }
 
@@ -95,13 +95,13 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
             ? html `
             <img
               class="agentBundleLogo"
-              src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/amplifierLogo.png"
+              src="https://evoly.ai/is/img/evoly-logo.png"
             />
           `
             : html `
             <img
               class="agentBundleLogo"
-              src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/amplifierLogo.png"
+              src="https://evoly.ai/is/img/evoly-logo.png"
             />
           `}
     </div> `;
@@ -163,6 +163,7 @@ let YpAgentBundleTopBar = class YpAgentBundleTopBar extends YpBaseElementWithLog
           <md-filled-button
             ?has-static-theme="${this.hasStaticTheme}"
             slot="actionItems"
+            hidden
             class="loginOrUserButton"
             @click="${this._login}"
             title="${this.t("user.login")}"
