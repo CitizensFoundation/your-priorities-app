@@ -47,7 +47,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
   redis: ioredis.Redis;
 
-  modelName = "gpt-4o";
+  modelName = process.env.OPENAI_STREAMING_MODEL_NAME || "gpt-4o-2024-11-20";
 
   constructor(
     wsClientId: string,

@@ -1,9 +1,9 @@
 // commonTools.ts
 
-import { YpAgentAssistant } from '../../agentAssistant.js';
-import { AgentModels } from './models/agents.js';
-import { SubscriptionModels } from './models/subscriptions.js';
-import { BaseAssistantTools } from './baseTools.js';
+import { YpAgentAssistant } from "../../agentAssistant.js";
+import { AgentModels } from "./models/agents.js";
+import { SubscriptionModels } from "./models/subscriptions.js";
+import { BaseAssistantTools } from "./baseTools.js";
 
 export class NavigationTools extends BaseAssistantTools {
   protected agentModels: AgentModels;
@@ -17,17 +17,17 @@ export class NavigationTools extends BaseAssistantTools {
 
   public async goBackToMainAssistant(): Promise<ToolExecutionResult> {
     await this.assistant.handleModeSwitch(
-      'agent_selection_mode',
-      'User requested to return to the main assistant',
+      "agent_selection_mode",
+      "User requested to return to the main assistant",
       {}
     );
     return {
       success: true,
-      data: { message: 'Returned to main assistant' },
+      data: { message: "Returned to main assistant" },
     };
   }
 
-  get connectDirectlyToAgent(){
+  get connectDirectlyToAgent() {
     return {
       name: "connect_directly_to_one_of_the_agents",
       description:
@@ -42,17 +42,14 @@ export class NavigationTools extends BaseAssistantTools {
           "subscriptionPlanId",
         ] as const satisfies readonly (keyof YpAgentSelectProperties)[],
       },
-      handler:
-        this.connectToOneOfTheAgentsHandler.bind(this),
+      handler: this.connectToOneOfTheAgentsHandler.bind(this),
     };
   }
 
   public async connectToOneOfTheAgentsHandler(
     params: YpAgentSelectParams
   ): Promise<ToolExecutionResult> {
-    params = this.assistant.getCleanedParams(
-      params
-    ) as YpAgentSelectParams;
+    params = this.assistant.getCleanedParams(params) as YpAgentSelectParams;
     console.log(
       `handler: connect_to_one_of_the_agents: ${JSON.stringify(
         params,
@@ -61,17 +58,40 @@ export class NavigationTools extends BaseAssistantTools {
       )}`
     );
     try {
-      const { plan, subscription } = await this.subscriptionModels.loadAgentProductPlanAndSubscription(
-        params.subscriptionPlanId
-      );
+      let { plan, subscription } =
+        await this.subscriptionModels.loadAgentProductPlanAndSubscription(
+          params.subscriptionPlanId
+        );
 
       if (!plan?.AgentProduct) {
-        throw new Error(`Agent product with id ${params.subscriptionPlanId} not found`);
+        throw new Error(
+          `Agent product with id ${params.subscriptionPlanId} not found`
+        );
       }
 
-      console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`)
+      //TODO: Does not work as the user is not logged in. Lets figure it out.
+      /*if (plan.configuration.amount == 0) {
+        const result = await this.subscriptionModels.subscribeToAgentPlan(
+          plan.AgentProduct!.id,
+          plan.id
+        );
 
-      await this.updateCurrentAgentProductPlan(plan, subscription, { sendEvent: false});
+        if (!result.success || !result.subscription || !result.plan) {
+          return {
+            success: false,
+            error: result.error || "Failed to subscribe to agent plan",
+          };
+        } else {
+          plan = result.plan;
+          subscription = result.subscription;
+        }
+      }*/
+
+      console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
+
+      await this.updateCurrentAgentProductPlan(plan, subscription, {
+        sendEvent: false,
+      });
 
       await this.assistant.handleModeSwitch(
         "agent_direct_connection_mode",
@@ -103,9 +123,7 @@ export class NavigationTools extends BaseAssistantTools {
       };
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to select agent";
+        error instanceof Error ? error.message : "Failed to select agent";
       console.error(`Failed to select agent: ${errorMessage}`);
       return {
         success: false,
