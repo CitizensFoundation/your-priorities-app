@@ -16,11 +16,50 @@ const disableFlux = false;
 export class CollectionImageGenerator {
     async resizeImage(imagePath, width, height) {
         const resizedImageFilePath = path.join("/tmp", `${uuidv4()}.png`);
-        await sharp(imagePath)
-            .resize({ width, height })
-            .toFile(resizedImageFilePath);
-        fs.unlinkSync(imagePath);
-        return resizedImageFilePath;
+        try {
+            // 1) Initialize Sharp instance
+            const image = sharp(imagePath).rotate(); // rotate fixes orientation from EXIF
+            // 2) Read metadata to validate format
+            const metadata = await image.metadata();
+            const validFormats = [
+                "jpeg",
+                "png",
+                "webp",
+                "gif",
+                "tiff",
+                "avif",
+                "svg"
+            ];
+            if (!metadata.format || !validFormats.includes(metadata.format)) {
+                throw new Error(`Unsupported format: ${metadata.format} (expected one of ${validFormats.join(", ")})`);
+            }
+            // 3) Resize + convert
+            await image
+                .resize({
+                width,
+                height,
+                fit: "inside",
+                withoutEnlargement: true, // ensures you won't upscale smaller images
+            })
+                .toFormat("png", {
+                quality: 90,
+                progressive: true,
+            })
+                .toFile(resizedImageFilePath);
+            // 4) Remove the original file after successful resize
+            fs.unlinkSync(imagePath);
+            return resizedImageFilePath;
+        }
+        catch (err) {
+            // Cleanup if something goes wrong
+            console.error("Error resizing image:", err);
+            // Optionally remove partial or empty output file if it exists
+            if (fs.existsSync(resizedImageFilePath)) {
+                fs.unlinkSync(resizedImageFilePath);
+            }
+            // Rethrow or handle error further
+            throw err;
+        }
     }
     async downloadImage(imageUrl, imageFilePath) {
         const response = await axios({

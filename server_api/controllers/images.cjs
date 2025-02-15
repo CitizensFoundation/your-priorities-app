@@ -264,37 +264,82 @@ router.post(
 router.post("/", isAuthenticated, async function (req, res) {
   try {
     const s3 = new aws.S3();
-    //TODO: Look into making animated gifs work through sharp
-    const isGif =
-      req.file && req.file.originalname.toLowerCase().indexOf(".gif");
+
+    // 1) Check if the file name ends with ".gif"
+    const isGifFilename = (filename) => {
+      const lowerCaseFilename = filename.toLowerCase();
+      console.log("filename===========>", filename);
+      console.log("lowerCaseFilename===========>", lowerCaseFilename);
+      return lowerCaseFilename.endsWith(".gif");
+    };
+
+
+    // 2) Create the storage with a Key callback that uses 'isGifFilename'
     const storage = s3Storage({
       Key: (req, file, cb) => {
         crypto.pseudoRandomBytes(16, (err, raw) => {
-          cb(
-            err,
-            err ? undefined : `${raw.toString("hex")}.${isGif ? "gif" : "png"}`
-          );
+          if (err) return cb(err);
+          const rawHex = raw.toString("hex");
+          console.log("file.originalname", file.originalname);
+          const isGif = isGifFilename(file.originalname);
+          console.log("gif===========>", isGif);
+          file.outputFormat = isGif ? "gif" : "png";
+          cb(null, `${rawHex}.${isGif ? "gif" : "png"}`);
         });
       },
       s3,
       Bucket: process.env.S3_BUCKET,
       multiple: true,
       resize: models.Image.getSharpVersions(req.query.itemType),
-      toFormat: isGif ? "gif" : "png",
+      toFormat: "png",
     });
 
-    const upload = multer({ storage });
+    // 3) Allowed MIME types that Sharp commonly supports
+    //    (Adjust or expand as needed)
+    const allowedMimeTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/gif",
+      "image/webp",
+      "image/tiff",
+      "image/svg+xml"
+    ];
 
+    // 4) A fileFilter to reject non-image or invalid Sharp formats
+    const fileFilter = (req, file, cb) => {
+      console.log("file------------>", file);
+      // Check that it's an image and specifically in our allowed list
+      if (!allowedMimeTypes.includes(file.mimetype.toLowerCase())) {
+        return cb(
+          new Error(
+            `Unsupported file type: ${file.mimetype}. Allowed: ${allowedMimeTypes.join(", ")}`
+          )
+        );
+      }
+      cb(null, true);
+    };
+
+    // 5) Construct multer with:
+    //    - the custom S3-based storage
+    //    - our fileFilter for validation
+    //    - a file size limit of 50MB (you can adjust as needed)
+    const upload = multer({
+      storage,
+      fileFilter,
+      limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
+    });
+
+    // 6) Use upload.single, handle the success/error callback carefully
     upload.single("file")(req, res, async function (error) {
       if (error) {
-        sendError(
-          res,
-          req.file ? req.file.originalname : "unknown filename",
-          "create",
-          res.user,
-          error
-        );
-      } else {
+        // Multer will throw if file is too large or invalid
+        console.error("File upload error:", error);
+        return res.status(400).json({ error: error.message });
+      }
+
+      // Continue if there's a valid image file
+      try {
         const formats = JSON.stringify(
           models.Image.createFormatsFromSharpFile(req.file)
         );
@@ -313,13 +358,22 @@ router.post("/", isAuthenticated, async function (req, res) {
           context: "create",
           userId: req.user ? req.user.id : -1,
         });
-        res.send(image);
+        return res.send(image);
+      } catch (err) {
+        console.error("Error saving image record:", err);
+        return res.status(500).json({ error: "Failed to save image record" });
       }
     });
-  } catch (error) {
-    sendError(res, req.file.originalname, "create", res.user, error);
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    // If req.file exists, use its data; otherwise fallback
+    const fileName = req.file ? req.file.originalname : "unknown filename";
+    return res.status(500).json({
+      error: `Unhandled error while processing '${fileName}'`,
+    });
   }
 });
+
 
 // Post User Images
 router.get("/:postId/user_images", auth.can("view post"), function (req, res) {

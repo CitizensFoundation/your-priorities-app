@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.89",
+  "version": "9.0.90",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -94,7 +94,7 @@
     "sanitize-filename": "^1.6.3",
     "sequelize": "^6.36.0",
     "sequelize-cli": "^6.2.0",
-    "sharp": "^0.33.2",
+    "sharp": "^0.33.5",
     "sitemap": "^7.1.2",
     "socket.io": "^4.0.0",
     "stripe": "^17.3.0",
