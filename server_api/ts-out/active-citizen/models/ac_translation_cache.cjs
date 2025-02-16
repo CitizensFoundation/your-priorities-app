@@ -432,6 +432,7 @@ module.exports = (sequelize, DataTypes) => {
                         let languageInfo = {};
                         for (let i = 0; i < textsToTranslate.length; i += chunkSize) {
                             const chunk = textsToTranslate.slice(i, i + chunkSize);
+                            console.log("Calling Google Translate...");
                             const [translatedChunk, info] = await translateAPI.translate(chunk, targetLanguage);
                             translatedStrings.push(...translatedChunk);
                             if (i === 0) {
@@ -474,6 +475,7 @@ module.exports = (sequelize, DataTypes) => {
                 callback("No translation API");
                 return;
             }
+            console.log("Calling Google Translate...");
             translateAPI
                 .translate(contentToTranslate, targetLanguage)
                 .then((results) => {

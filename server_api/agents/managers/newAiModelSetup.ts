@@ -47,6 +47,10 @@ export class NewAiModelSetup {
         }
       }
 
+      if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
+        await psSequelize.sync();
+      }
+
       console.log("All models initialized successfully.");
     } catch (error) {
       console.error("Error initializing models:", error);

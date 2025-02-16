@@ -321,7 +321,7 @@ export class SubscriptionManager {
                 return { freeSubscription: true };
             }
             const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-                apiVersion: "2024-09-30.acacia",
+                apiVersion: "2025-01-27.acacia",
             });
             // Create a PaymentIntent with Stripe
             const paymentIntent = await stripe.paymentIntents.create({
@@ -359,7 +359,7 @@ export class SubscriptionManager {
     async handleSuccessfulPayment(paymentIntentId) {
         try {
             const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-                apiVersion: "2024-09-30.acacia",
+                apiVersion: "2025-01-27.acacia",
             });
             const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
             if (paymentIntent.status !== "succeeded") {

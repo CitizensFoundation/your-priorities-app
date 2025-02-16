@@ -50,28 +50,30 @@ if (process.env.NODE_ENV === "production") {
     });
   }
 } else {
-  const configPath = path.join(
-    process.cwd(),
-    "ts-out",
-    "config",
-    "config.json"
-  );
-  const config = require(configPath)[env];
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    _.merge(config, {
-      dialect: "postgres",
-      minifyAliases: true,
-      dialectOptions: {
-        ssl: false,
-        rejectUnauthorized: false,
-      },
-      logging: false,
-      operatorsAliases: operatorsAliases,
-    })
-  );
+  let config;
+  try {
+    sequelize = new Sequelize(
+      process.env.YP_DEV_DATABASE_NAME,
+      process.env.YP_DEV_DATABASE_USERNAME,
+      process.env.YP_DEV_DATABASE_PASSWORD,
+      {
+        dialect: "postgres",
+        protocol: "postgres",
+        host: process.env.YP_DEV_DATABASE_HOST,
+        port: process.env.YP_DEV_DATABASE_PORT,
+        minifyAliases: true,
+        dialectOptions: {
+          ssl: false,
+          rejectUnauthorized: false,
+        },
+        logging: false,
+        operatorsAliases: operatorsAliases,
+      }
+    );
+  } catch (error) {
+    console.error("Error reading or parsing config file:", error);
+    process.exit(1);
+  }
 }
 
 const db = {};

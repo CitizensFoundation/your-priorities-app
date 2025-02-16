@@ -1,4 +1,4 @@
-import { OpenAI } from "openai";
+import { AzureOpenAI, OpenAI } from "openai";
 import axios from "axios";
 import AWS from "aws-sdk";
 import fs from "fs";
@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from "uuid";
 import models from "../../models/index.cjs";
 import sharp from "sharp";
 import Replicate from "replicate";
-import { OpenAIClient, AzureKeyCredential, } from "@azure/openai";
 const dbModels = models;
 const Image = dbModels.Image;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
@@ -39,7 +38,7 @@ export class CollectionImageGenerator {
                 width,
                 height,
                 fit: "inside",
-                withoutEnlargement: true, // ensures you won't upscale smaller images
+                withoutEnlargement: true,
             })
                 .toFormat("png", {
                 quality: 90,
@@ -51,13 +50,10 @@ export class CollectionImageGenerator {
             return resizedImageFilePath;
         }
         catch (err) {
-            // Cleanup if something goes wrong
             console.error("Error resizing image:", err);
-            // Optionally remove partial or empty output file if it exists
             if (fs.existsSync(resizedImageFilePath)) {
                 fs.unlinkSync(resizedImageFilePath);
             }
-            // Rethrow or handle error further
             throw err;
         }
     }
@@ -70,12 +66,11 @@ export class CollectionImageGenerator {
         const writer = fs.createWriteStream(imageFilePath);
         response.data.pipe(writer);
         return new Promise((resolve, reject) => {
-            writer.on("finish", resolve);
+            writer.on("finish", () => resolve());
             writer.on("error", reject);
         });
     }
     async deleteS3Url(imageUrl) {
-        // Parse the S3 bucket and key from the URL
         const { bucket, key } = this.parseImageUrl(imageUrl);
         if (!bucket || !key) {
             throw new Error("Could not parse bucket or key from URL");
@@ -84,9 +79,9 @@ export class CollectionImageGenerator {
         const params = {
             Bucket: bucket,
             Key: key,
-            ACL: "private", // Changing the ACL to private
+            ACL: "private",
         };
-        console.log(`=========================____________________>>>>>>>>>>>>>>>>> Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
+        console.log(`Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
         return new Promise((resolve, reject) => {
             s3.putObjectAcl(params, (err, data) => {
                 if (err) {
@@ -94,14 +89,12 @@ export class CollectionImageGenerator {
                     reject(err);
                 }
                 else {
-                    console.log(`============= Deleted image from S3: ${imageUrl}`, data);
+                    console.log(`Deleted image from S3: ${imageUrl}`, data);
                     if (process.env.CLOUDFLARE_API_KEY &&
                         process.env.CLOUDFLARE_ZONE_ID) {
                         console.log("Purging Cloudflare cache for image:", imageUrl);
                         axios
-                            .post(`https://api.cloudflare.com/client/v4/zones/${process.env.CLOUDFLARE_ZONE_ID}/purge_cache`, {
-                            files: [imageUrl],
-                        }, {
+                            .post(`https://api.cloudflare.com/client/v4/zones/${process.env.CLOUDFLARE_ZONE_ID}/purge_cache`, { files: [imageUrl] }, {
                             headers: {
                                 Authorization: `Bearer ${process.env.CLOUDFLARE_API_KEY}`,
                                 "Content-Type": "application/json",
@@ -118,11 +111,9 @@ export class CollectionImageGenerator {
                                 console.error("Headers:", error.response.headers);
                             }
                             else if (error.request) {
-                                // The request was made but no response was received
                                 console.error("No response received:", error.request);
                             }
                             else {
-                                // Something happened in setting up the request that triggered an Error
                                 console.error("Error setting up request:", error.message);
                             }
                             resolve(data);
@@ -139,14 +130,12 @@ export class CollectionImageGenerator {
         let bucket, key;
         if (process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN &&
             imageUrl.includes(process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN)) {
-            // Parse URL for Cloudflare proxied images
-            const path = new URL(imageUrl).pathname;
-            const [, ...pathParts] = path.split("/");
+            const urlPath = new URL(imageUrl).pathname;
+            const [, ...pathParts] = urlPath.split("/");
             bucket = process.env.S3_BUCKET;
             key = pathParts.join("/");
         }
         else {
-            // Parse URL for direct S3 images
             const match = imageUrl.match(/https:\/\/(.+?)\.s3\.amazonaws\.com\/(.+)/);
             if (match) {
                 bucket = match[1];
@@ -168,7 +157,7 @@ export class CollectionImageGenerator {
             Bucket: bucket,
             Key: key,
             Body: fileContent,
-            ACL: "public-read", // Makes sure the uploaded files are publicly accessible
+            ACL: "public-read",
             ContentType: "image/png",
             ContentDisposition: "inline",
         };
@@ -177,8 +166,7 @@ export class CollectionImageGenerator {
                 if (err) {
                     reject(err);
                 }
-                fs.unlinkSync(filePath); // Deleting file from local storage
-                //console.log(`Upload response: ${JSON.stringify(data)}`);
+                fs.unlinkSync(filePath);
                 resolve(data);
             });
         });
@@ -233,7 +221,12 @@ export class CollectionImageGenerator {
         const azureOpenAiApiKey = process.env["AZURE_OPENAI_API_KEY"];
         let client;
         if (azureOpenAiApiKey && azureOpenaAiBase) {
-            client = new OpenAIClient(azureOpenaAiBase, new AzureKeyCredential(azureOpenAiApiKey));
+            client = new AzureOpenAI({
+                apiKey: azureOpenAiApiKey,
+                endpoint: azureOpenaAiBase,
+                deployment: process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME,
+                apiVersion: "2024-10-21",
+            });
         }
         else {
             client = new OpenAI({
@@ -241,7 +234,7 @@ export class CollectionImageGenerator {
             });
         }
         let retryCount = 0;
-        let retrying = true; // Initialize as true
+        let retrying = true;
         let result;
         let imageOptions;
         if (type === "logo") {
@@ -268,19 +261,24 @@ export class CollectionImageGenerator {
         while (retrying && retryCount < maxRetryCount) {
             try {
                 if (azureOpenAiApiKey && azureOpenaAiBase) {
-                    result = await client.getImages(process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME, prompt, imageOptions);
+                    result = await client.images.generate({
+                        prompt,
+                        n: imageOptions.n,
+                        size: imageOptions.size,
+                        quality: imageOptions.quality,
+                    });
                 }
                 else {
                     result = await client.images.generate({
                         model: "dall-e-3",
                         prompt,
                         n: imageOptions.n,
-                        quality: imageOptions.quality,
                         size: imageOptions.size,
+                        quality: imageOptions.quality,
                     });
                 }
                 if (result) {
-                    retrying = false; // Only change retrying to false if there is a result.
+                    retrying = false;
                 }
                 else {
                     console.debug(`Result: NONE`);
@@ -333,8 +331,7 @@ export class CollectionImageGenerator {
                         newImageUrl = `https://${process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN}/${s3ImagePath}`;
                     }
                     else {
-                        newImageUrl = `https://${process.env
-                            .S3_BUCKET}.s3.amazonaws.com/${s3ImagePath}`;
+                        newImageUrl = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${s3ImagePath}`;
                     }
                     const formats = JSON.stringify([newImageUrl]);
                     const image = await Image.build({
