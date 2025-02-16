@@ -706,10 +706,6 @@ export class YourPrioritiesApi {
 
         const useNewVersion = req.useNewVersion;
 
-        console.log(
-          `------XY-----------------------> Using new version: ${useNewVersion}`
-        );
-
         // Set the paths depending on the version
         req.adminAppPath = useNewVersion
           ? path.join(baseDir, "client/dist")
@@ -723,7 +719,7 @@ export class YourPrioritiesApi {
           ? req.adminAppPath!
           : req.clientAppPath!;
 
-        console.log("Static path", staticPath);
+        //console.log("Static path", staticPath);
         // Check if the request is for index.html
         if (req.path === "/" || req.path === "/index.html") {
           index(req, res, next); // Use your dynamic handler
