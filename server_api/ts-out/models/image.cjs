@@ -291,7 +291,7 @@ module.exports = (sequelize, DataTypes) => {
             if (removed) {
                 image.deleted = true;
                 await image.save();
-                import("../active-citizen/llms/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
+                import("../active-citizen/llms/imageGeneration/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
                     try {
                         const mediaManager = new CollectionImageGenerator();
                         await mediaManager.deleteMediaFormatsUrls(image.formats ? JSON.parse(image.formats) : []);

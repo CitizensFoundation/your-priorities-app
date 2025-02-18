@@ -52,7 +52,6 @@ var generateManifest = function (req, res) {
         "orientation": "any"
     };
     var shortName, name;
-    var domainId = req.ypDomain.id;
     async.series([
         function (seriesCallback) {
             if (req.ypCommunity && req.ypCommunity.configuration &&

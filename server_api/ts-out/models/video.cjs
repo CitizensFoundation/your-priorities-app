@@ -821,7 +821,7 @@ module.exports = (sequelize, DataTypes) => {
                 if (removed) {
                     video.deleted = true;
                     await video.save();
-                    import("../active-citizen/llms/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
+                    import("../active-citizen/llms/imageGeneration/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
                         try {
                             const mediaManager = new CollectionImageGenerator();
                             let formats = video.formats;

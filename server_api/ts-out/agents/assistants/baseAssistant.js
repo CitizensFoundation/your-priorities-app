@@ -53,20 +53,52 @@ Never engage in off topic conversations, always politely steer the conversation 
         }
         this.redis = redis;
         this.wsClientId = wsClientId;
-        this.wsClientSocket = wsClients.get(this.wsClientId);
         this.wsClients = wsClients;
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
         this.eventEmitter = new EventEmitter();
-        this.setupClientSystemMessageListener();
         this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
+        const clientSocket = wsClients.get(this.wsClientId);
+        if (!clientSocket) {
+            console.warn(`WebSocket not found for clientId: ${this.wsClientId}. Attempting reconnection...`);
+            // Attempt reconnection with 5 retries and 2000ms delay between attempts
+            this.attemptReconnection(this.wsClientId, 5, 2000);
+            return;
+        }
+        this.wsClientSocket = clientSocket;
+        this.setupClientSystemMessageListener();
+    }
+    attemptReconnection(clientId, retries = 5, delay = 2000) {
+        if (retries <= 0) {
+            console.error(`Reconnection attempts exhausted for clientId ${clientId}.`);
+            return;
+        }
+        setTimeout(() => {
+            const clientSocket = this.wsClients.get(clientId);
+            if (clientSocket) {
+                console.log(`Reconnection successful for clientId ${clientId}`);
+                this.wsClientSocket = clientSocket;
+                try {
+                    this.setupClientSystemMessageListener();
+                }
+                catch (err) {
+                    console.error("Error setting up client system message listener after reconnection:", err);
+                }
+            }
+            else {
+                console.warn(`Reconnection attempt for clientId ${clientId} failed. Retries left: ${retries - 1}`);
+                // Recursively attempt to reconnect
+                this.attemptReconnection(clientId, retries - 1, delay);
+            }
+        }, delay);
     }
     removeClientSystemMessageListener() {
         this.wsClientSocket.removeAllListeners("message");
     }
     setupClientSystemMessageListener() {
         console.log("setupClientSystemMessageListener called for wsClientId:", this.wsClientId);
+        this.removeClientSystemMessageListener();
         this.wsClientSocket.on("message", async (data) => {
             try {
                 const message = JSON.parse(data.toString());

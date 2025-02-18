@@ -12,12 +12,18 @@ const wildCardDomainNames = [
     "betrireykjavik.is",
     "betraisland.is",
     "yrpri.org",
+    "evoly.ai",
     "tarsalgo.net",
     "ypus.org",
     "idea-synergy.com",
     "localhost:4242",
 ];
 var generateSitemap = async function (req, res) {
+    if (!req.ypDomain) {
+        log.error("No domain found in sitemap generation");
+        res.status(500);
+        return;
+    }
     const domainId = req.ypDomain.id;
     const domainName = req.ypDomain.domain_name;
     let community = req.ypCommunity && req.ypCommunity.id ? req.ypCommunity : null;
