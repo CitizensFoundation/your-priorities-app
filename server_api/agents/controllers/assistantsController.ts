@@ -534,13 +534,15 @@ export class AssistantController {
       let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
 
       if (oldVoiceAssistant) {
-        oldVoiceAssistant.removeClientSystemMessageListener();
+        oldVoiceAssistant.destroy();
+        this.voiceAssistantInstances.delete("voiceAssistant");
       }
 
       let oldChatAssistant = this.chatAssistantInstances.get("mainAssistant");
 
       if (oldChatAssistant) {
-        oldChatAssistant.removeClientSystemMessageListener();
+        oldChatAssistant.destroy();
+        this.chatAssistantInstances.delete("mainAssistant");
       }
 
       const assistant = new YpAgentAssistant(
@@ -577,13 +579,15 @@ export class AssistantController {
       const oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
 
       if (oldVoiceAssistant) {
-        oldVoiceAssistant.removeClientSystemMessageListener();
+        oldVoiceAssistant.destroy();
+        this.voiceAssistantInstances.delete("voiceAssistant");
       }
 
       const oldAssistant = this.chatAssistantInstances.get("mainAssistant");
 
       if (oldAssistant) {
-        oldAssistant.removeClientSystemMessageListener();
+        oldAssistant.destroy();
+        this.chatAssistantInstances.delete("mainAssistant");
       }
 
       const assistant = new YpAgentAssistant(

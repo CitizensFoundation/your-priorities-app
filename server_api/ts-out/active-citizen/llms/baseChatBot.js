@@ -12,6 +12,9 @@ export class YpBaseChatBot {
     get redisKey() {
         return `${YpBaseChatBot.redisMemoryKeyPrefix}-${this.memoryId}`;
     }
+    destroy() {
+        this.wsClientSocket = undefined;
+    }
     static loadMemoryFromRedis(memoryId) {
         return new Promise(async (resolve, reject) => {
             try {

@@ -361,11 +361,13 @@ export class AssistantController {
             console.log(`Starting chat session for client: ${wsClientId}`);
             let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
             if (oldVoiceAssistant) {
-                oldVoiceAssistant.removeClientSystemMessageListener();
+                oldVoiceAssistant.destroy();
+                this.voiceAssistantInstances.delete("voiceAssistant");
             }
             let oldChatAssistant = this.chatAssistantInstances.get("mainAssistant");
             if (oldChatAssistant) {
-                oldChatAssistant.removeClientSystemMessageListener();
+                oldChatAssistant.destroy();
+                this.chatAssistantInstances.delete("mainAssistant");
             }
             const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, parseInt(req.params.domainId), memoryId);
             this.voiceAssistantInstances.set("voiceAssistant", assistant);
@@ -387,11 +389,13 @@ export class AssistantController {
             console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
             const oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
             if (oldVoiceAssistant) {
-                oldVoiceAssistant.removeClientSystemMessageListener();
+                oldVoiceAssistant.destroy();
+                this.voiceAssistantInstances.delete("voiceAssistant");
             }
             const oldAssistant = this.chatAssistantInstances.get("mainAssistant");
             if (oldAssistant) {
-                oldAssistant.removeClientSystemMessageListener();
+                oldAssistant.destroy();
+                this.chatAssistantInstances.delete("mainAssistant");
             }
             const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, parseInt(req.params.domainId), memoryId);
             this.chatAssistantInstances.set("mainAssistant", assistant);

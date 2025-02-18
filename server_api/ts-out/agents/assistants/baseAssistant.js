@@ -57,29 +57,39 @@ Never engage in off topic conversations, always politely steer the conversation 
         });
         this.eventEmitter = new EventEmitter();
         this.setupClientSystemMessageListener();
+        this.clientSystemMessageListener = this.handleClientSystemMessage.bind(this);
         this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
+    destroy() {
+        // remove the WebSocket “message” listener
+        this.removeClientSystemMessageListener();
+        // remove all other event listeners on the assistant’s own EventEmitter
+        this.eventEmitter.removeAllListeners();
+        // clear references
+        this.wsClientSocket = undefined;
+    }
     removeClientSystemMessageListener() {
-        this.wsClientSocket.removeAllListeners("message");
+        this.wsClientSocket.removeListener("message", this.clientSystemMessageListener);
+    }
+    handleClientSystemMessage(data) {
+        try {
+            const message = JSON.parse(data.toString());
+            switch (message.type) {
+                case "client_system_message":
+                    console.log("WebSockets: Processing client_system_message:", message);
+                    this.processClientSystemMessage(message);
+                    break;
+                default:
+                //console.log('Unhandled message type:', message.type);
+            }
+        }
+        catch (error) {
+            console.error("Error processing message:", error);
+        }
     }
     setupClientSystemMessageListener() {
         console.log("WebSockets: setupClientSystemMessageListener called for wsClientId:", this.wsClientId);
-        this.wsClientSocket.on("message", async (data) => {
-            try {
-                const message = JSON.parse(data.toString());
-                switch (message.type) {
-                    case "client_system_message":
-                        console.log("WebSockets: Processing client_system_message:", message);
-                        this.processClientSystemMessage(message);
-                        break;
-                    default:
-                    //console.log('Unhandled message type:', message.type);
-                }
-            }
-            catch (error) {
-                console.error("Error processing message:", error);
-            }
-        });
+        this.wsClientSocket.on("message", this.handleClientSystemMessage.bind(this));
         const listenerCountAfter = this.wsClientSocket.listenerCount("message");
         console.log('Number of "message" listeners after adding:', listenerCountAfter);
     }

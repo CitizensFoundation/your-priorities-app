@@ -8,6 +8,25 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
         }
         this.voiceEnabled = voiceEnabled;
     }
+    destroy() {
+        // 2) Remove the WebSocket listener we set up in createVoiceBot()
+        const ws = this.wsClients.get(this.wsClientId);
+        if (ws && this.mainBotWsHandler) {
+            ws.removeListener("message", this.mainBotWsHandler);
+            this.mainBotWsHandler = undefined;
+        }
+        // 3) Remove the forward event handler on the voiceBot socket
+        if (this.voiceBot?.wsClientSocket && this.forwardEventHandler) {
+            this.voiceBot.wsClientSocket.removeListener("message", this.forwardEventHandler);
+            this.forwardEventHandler = undefined;
+        }
+        if (this.voiceBot) {
+            this.voiceBot.destroy();
+            this.voiceBot = undefined;
+        }
+        // 4) Finally call super.destroy()
+        super.destroy();
+    }
     async initialize() {
         await this.initializeModes();
         if (this.voiceEnabled) {
@@ -25,7 +44,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
         });
         const ws = this.wsClients.get(this.wsClientId);
         if (ws) {
-            ws.on("message", async (data) => {
+            this.mainBotWsHandler = async (data) => {
                 try {
                     const message = JSON.parse(data.toString());
                     switch (message.type) {
@@ -42,19 +61,26 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
                 catch (error) {
                     console.error("Error processing message:", error);
                 }
-            });
+            };
+            ws.on("message", this.mainBotWsHandler);
         }
         else {
             console.error("No WebSocket found for client: ", this.wsClientId);
         }
     }
     destroyVoiceBot() {
-        this.voiceBot?.destroyAssistantVoiceConnection();
-        this.voiceBot = undefined;
+        if (this.voiceBot?.wsClientSocket && this.forwardEventHandler) {
+            this.voiceBot.wsClientSocket.removeListener("message", this.forwardEventHandler);
+            this.forwardEventHandler = undefined;
+        }
+        if (this.voiceBot) {
+            this.voiceBot.destroy();
+            this.voiceBot = undefined;
+        }
     }
     setupVoiceEventForwarder() {
         // Forward all voice bot events to client
-        this.voiceBot?.wsClientSocket?.on("message", (data) => {
+        this.forwardEventHandler = (data) => {
             try {
                 const event = JSON.parse(data.toString());
                 // Forward all voice-related events to client
@@ -78,7 +104,8 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
             catch (error) {
                 console.error("Error forwarding voice event:", error);
             }
-        });
+        };
+        this.voiceBot?.wsClientSocket?.on("message", this.forwardEventHandler);
     }
     async setVoiceMode(enabled) {
         this.voiceEnabled = enabled;

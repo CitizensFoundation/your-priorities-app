@@ -39,6 +39,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   assistantVoiceConnection?: RealtimeVoiceConnection;
   directAgentVoiceConnection?: RealtimeVoiceConnection;
 
+  private voiceMainMessageHandler?: (data: Buffer) => void;
+  private voiceDirectMessageHandler?: (data: Buffer) => void;
+
   protected voiceConfig: VoiceConnectionConfig;
   protected voiceState: VoiceState;
 
@@ -75,7 +78,9 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
     // Default voice configuration
     this.voiceConfig = {
-      model: process.env.OPENAI_VOICE_MODEL_NAME || "gpt-4o-realtime-preview-2024-12-17",
+      model:
+        process.env.OPENAI_VOICE_MODEL_NAME ||
+        "gpt-4o-realtime-preview-2024-12-17",
       voice: "echo",
       modalities: ["text", "audio"],
     };
@@ -261,7 +266,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     ws: WebSocket,
     disableWhenAgentIsSpeaking: boolean
   ): void {
-    ws.on("message", async (data) => {
+    // Instead of an inline callback, keep a reference
+    const handler = async (data: Buffer) => {
       try {
         const event = JSON.parse(data.toString());
 
@@ -347,7 +353,38 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       } catch (error) {
         console.error("Error handling voice message:", error);
       }
-    });
+    };
+
+    // Attach it
+    ws.on("message", handler);
+
+    // Store the reference so we can remove it in destroy()
+    if (disableWhenAgentIsSpeaking) {
+      this.voiceMainMessageHandler = handler;
+    } else {
+      this.voiceDirectMessageHandler = handler;
+    }
+  }
+
+  public destroy(): void {
+    // 1) Remove voice message handlers from assistantVoiceConnection
+    if (this.assistantVoiceConnection?.ws && this.voiceMainMessageHandler) {
+      this.assistantVoiceConnection.ws.removeListener("message", this.voiceMainMessageHandler);
+      this.voiceMainMessageHandler = undefined;
+    }
+
+    // 2) Remove voice message handlers from directAgentVoiceConnection
+    if (this.directAgentVoiceConnection?.ws && this.voiceDirectMessageHandler) {
+      this.directAgentVoiceConnection.ws.removeListener("message", this.voiceDirectMessageHandler);
+      this.voiceDirectMessageHandler = undefined;
+    }
+
+    // 3) Close any open connections
+    this.destroyAssistantVoiceConnection();
+    this.destroyDirectAgentVoiceConnection();
+
+    // 4) Call super destroy so it can remove *its* WebSocket listeners, etc.
+    super.destroy();
   }
 
   async handleResponseDone(event: any): Promise<void> {

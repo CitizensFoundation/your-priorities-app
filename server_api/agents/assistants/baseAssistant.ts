@@ -42,6 +42,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   protected toolCallTimeout = 30000; // 30 seconds
   protected maxModeTransitions = 10;
 
+  private clientSystemMessageListener: (data: Buffer) => void;
+
   redis: ioredis.Redis;
 
   modelName = process.env.OPENAI_STREAMING_MODEL_NAME || "gpt-4o-2024-11-20";
@@ -69,22 +71,29 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.setupClientSystemMessageListener();
 
+    this.clientSystemMessageListener = this.handleClientSystemMessage.bind(this);
+
     this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
   }
 
-  removeClientSystemMessageListener() {
-    this.wsClientSocket.removeAllListeners("message");
+  public destroy() {
+    // remove the WebSocket “message” listener
+    this.removeClientSystemMessageListener();
+
+    // remove all other event listeners on the assistant’s own EventEmitter
+    this.eventEmitter.removeAllListeners();
+
+    // clear references
+    this.wsClientSocket = undefined as unknown as WebSocket;
   }
 
-  setupClientSystemMessageListener() {
-    console.log(
-      "WebSockets: setupClientSystemMessageListener called for wsClientId:",
-      this.wsClientId
-    );
+  removeClientSystemMessageListener() {
+    this.wsClientSocket.removeListener("message", this.clientSystemMessageListener);
+  }
 
-    this.wsClientSocket.on("message", async (data: Buffer) => {
-      try {
-        const message = JSON.parse(data.toString());
+  handleClientSystemMessage(data: Buffer) {
+    try {
+      const message = JSON.parse(data.toString());
 
         switch (message.type) {
           case "client_system_message":
@@ -98,9 +107,17 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           //console.log('Unhandled message type:', message.type);
         }
       } catch (error) {
-        console.error("Error processing message:", error);
-      }
-    });
+      console.error("Error processing message:", error);
+    }
+  }
+
+  setupClientSystemMessageListener() {
+    console.log(
+      "WebSockets: setupClientSystemMessageListener called for wsClientId:",
+      this.wsClientId
+    );
+
+    this.wsClientSocket.on("message", this.handleClientSystemMessage.bind(this));
 
     const listenerCountAfter = this.wsClientSocket.listenerCount("message");
     console.log(
