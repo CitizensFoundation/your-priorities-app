@@ -920,8 +920,8 @@ export class YourPrioritiesApi {
     }
     async listen() {
         const server = await this.setupHttpsServer();
-        const webSockets = new WebSocketsManager(this.wsClients, this.redisClient, server);
-        await webSockets.listen();
+        this.webSocketsManager = new WebSocketsManager(this.wsClients, this.redisClient, server);
+        await this.webSocketsManager.listen();
     }
     setupHttpsServer() {
         let server;

@@ -26,10 +26,7 @@ export enum CommonModes {
 
 export abstract class YpBaseAssistant extends YpBaseChatBot {
   protected voiceEnabled: boolean;
-  wsClientId: string;
-  wsClientSocket: WebSocket;
-  wsClients: Map<string, WebSocket>;
-  //TODO: Use Policy Synth models that track cost
+
   openaiClient: OpenAI;
   memory!: YpBaseAssistantMemoryData;
   private eventEmitter: EventEmitter;
@@ -63,9 +60,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       throw new Error("Domain ID is required");
     }
     this.redis = redis;
-    this.wsClientId = wsClientId;
-    this.wsClientSocket = wsClients.get(this.wsClientId)!;
-    this.wsClients = wsClients;
+
     this.openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -83,7 +78,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
   setupClientSystemMessageListener() {
     console.log(
-      "setupClientSystemMessageListener called for wsClientId:",
+      "WebSockets: setupClientSystemMessageListener called for wsClientId:",
       this.wsClientId
     );
 
@@ -93,7 +88,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         switch (message.type) {
           case "client_system_message":
-            console.log("Processing client_system_message:", message);
+            console.log(
+              "WebSockets: Processing client_system_message:",
+              message
+            );
             this.processClientSystemMessage(message);
             break;
           default:
@@ -666,8 +664,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     ];
   }
 
-  defaultSystemPrompt =
-`<coreImportantSystemInstructions>
+  defaultSystemPrompt = `<coreImportantSystemInstructions>
 You are a helpful, witty, and friendly AI. Act like a human, but remember that you aren't a human and that you can't do human things in the real world.
 Your voice and personality should be warm and engaging, with a lively and playful tone. Talk quickly.
 If interacting in a non-English language, start by using the standard accent or dialect familiar to the user.
@@ -896,10 +893,17 @@ Never engage in off topic conversations, always politely steer the conversation 
   ): ChatCompletionMessageParam[] {
     return chatLog
       .filter((message) => message.sender !== "system")
-      .map((message) => ({
-        role: message.sender,
-        content: message.message,
-      })) as ChatCompletionMessageParam[];
+      .map((message) => {
+        if (message.message!=null) {
+          return { role: message.sender, content: message.message };
+        } else {
+          console.debug(
+            "Message content is null, message: " + JSON.stringify(message)
+          );
+          return null;
+        }
+      })
+      .filter((message) => message !== null) as ChatCompletionMessageParam[];
   }
 
   /**

@@ -70,12 +70,14 @@ export class YpBaseChatBot {
         });
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
+        this.wsClients = wsClients;
+        console.log(`WebSockets: BaseChatBot constructor for ${this.wsClientId}`);
+        if (!this.wsClientSocket) {
+            console.error(`WebSockets: WS Client ${this.wsClientId} not found in streamWebSocketResponses`);
+        }
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-        if (!this.wsClientSocket) {
-            console.error(`WS Client ${this.wsClientId} not found in streamWebSocketResponses`);
-        }
         this.memoryId = memoryId;
         this.setupMemory(memoryId);
     }
@@ -163,7 +165,7 @@ export class YpBaseChatBot {
     }
     sendToClient(sender, message, type = "stream", uniqueToken = undefined, hiddenContextMessage = false) {
         try {
-            if (DEBUG) {
+            if (process.env.WS_DEBUG) {
                 console.log(`sendToClient: ${JSON.stringify({ sender, type, message, hiddenContextMessage }, null, 2)}`);
             }
             this.wsClientSocket.send(JSON.stringify({

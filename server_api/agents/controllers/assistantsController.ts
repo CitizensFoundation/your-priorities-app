@@ -531,11 +531,19 @@ export class AssistantController {
       const memoryId = this.getMemoryUserId(req);
       console.log(`Starting chat session for client: ${wsClientId}`);
 
-      let assistant = this.voiceAssistantInstances.get(wsClientId);
-      if (assistant) {
-        assistant.removeClientSystemMessageListener();
+      let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
+
+      if (oldVoiceAssistant) {
+        oldVoiceAssistant.removeClientSystemMessageListener();
       }
-      assistant = new YpAgentAssistant(
+
+      let oldChatAssistant = this.chatAssistantInstances.get("mainAssistant");
+
+      if (oldChatAssistant) {
+        oldChatAssistant.removeClientSystemMessageListener();
+      }
+
+      const assistant = new YpAgentAssistant(
         wsClientId,
         this.wsClients,
         req.redisClient,
@@ -543,7 +551,8 @@ export class AssistantController {
         parseInt(req.params.domainId),
         memoryId
       );
-      this.voiceAssistantInstances.set(wsClientId, assistant);
+
+      this.voiceAssistantInstances.set("voiceAssistant", assistant);
 
       await assistant.initialize();
 
@@ -552,7 +561,7 @@ export class AssistantController {
         wsClientId,
       });
     } catch (error) {
-      console.error("Error starting chat session:", error);
+      console.error("Error starting voice session:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -565,18 +574,28 @@ export class AssistantController {
         `Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`
       );
 
-      let assistant = this.chatAssistantInstances.get(wsClientId);
-      if (!assistant) {
-        assistant = new YpAgentAssistant(
-          wsClientId,
-          this.wsClients,
-          req.redisClient,
-          false,
-          parseInt(req.params.domainId),
-          memoryId
-        );
-        this.chatAssistantInstances.set(wsClientId, assistant);
+      const oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
+
+      if (oldVoiceAssistant) {
+        oldVoiceAssistant.removeClientSystemMessageListener();
       }
+
+      const oldAssistant = this.chatAssistantInstances.get("mainAssistant");
+
+      if (oldAssistant) {
+        oldAssistant.removeClientSystemMessageListener();
+      }
+
+      const assistant = new YpAgentAssistant(
+        wsClientId,
+        this.wsClients,
+        req.redisClient,
+        false,
+        parseInt(req.params.domainId),
+        memoryId
+      );
+
+      this.chatAssistantInstances.set("mainAssistant", assistant);
 
       assistant.conversation(chatLog);
 

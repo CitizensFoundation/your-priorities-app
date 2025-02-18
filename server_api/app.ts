@@ -150,6 +150,7 @@ export class YourPrioritiesApi {
   public ws!: WebSocketServer;
   public redisClient!: RedisClientType;
   public wsClients: Map<string, WebSocket>;
+  public webSocketsManager!: WebSocketsManager;
 
   constructor(port: number | undefined = undefined) {
     this.app = express();
@@ -1163,12 +1164,12 @@ export class YourPrioritiesApi {
 
   async listen() {
     const server = await this.setupHttpsServer();
-    const webSockets = new WebSocketsManager(
+    this.webSocketsManager = new WebSocketsManager(
       this.wsClients,
       this.redisClient,
       server
     );
-    await webSockets.listen();
+    await this.webSocketsManager.listen();
   }
 
   setupHttpsServer() {
