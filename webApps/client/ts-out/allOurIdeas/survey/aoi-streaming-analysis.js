@@ -13,10 +13,10 @@ import "@material/web/button/text-button.js";
 import "@material/web/progress/circular-progress.js";
 import "@material/web/textfield/filled-text-field.js";
 import { AoiServerApi } from "./AoiServerApi.js";
-import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
 import { YpLanguages } from "../../common/languages/ypLanguages.js";
-let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase {
+import { YpStreamingLlmScrolling } from "../../yp-chatbots/yp-streaming-llm-scrolling.js";
+let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmScrolling {
     constructor() {
         super();
         this.analysis = "";

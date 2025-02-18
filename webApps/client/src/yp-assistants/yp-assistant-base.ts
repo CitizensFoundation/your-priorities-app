@@ -237,7 +237,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       sender: "system",
       message: "agent_configuration_submitted",
     };
-    this.ws.send(JSON.stringify(clientSystemMessage));
+    this.sendClientMessage(JSON.stringify(clientSystemMessage));
 
     /*window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
       toast.labelText = this.t("agentConfigurationSubmitted");
@@ -251,7 +251,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       sender: "system",
       message: "agent_run_changed",
     };
-    this.ws.send(JSON.stringify(clientSystemMessage));
+    this.sendClientMessage(JSON.stringify(clientSystemMessage));
   }
 
   async userLoggedIn(event: CustomEvent) {
@@ -271,7 +271,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
       sender: "system",
       message: "user_logged_in",
     };
-    this.ws.send(JSON.stringify(clientSystemMessage));
+    this.sendClientMessage(JSON.stringify(clientSystemMessage));
   }
 
   override firstUpdated(

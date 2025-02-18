@@ -15,15 +15,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   wsEndpoint!: string;
 
   @property({ type: String })
-  scrollElementSelector = "#chat-messages";
-
-  @property({ type: Boolean })
-  useMainWindowScroll = false;
-
-  @property({ type: Boolean })
-  userScrolled = false;
-
-  @property({ type: String })
   currentFollowUpQuestions: string = "";
 
   @property({ type: Boolean })
@@ -38,18 +29,30 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   @property({ type: String })
   serverMemoryId: string | undefined;
 
+  // Keeping an instance property for interface compatibility.
+  // (This value will be used from the first subscriber when creating the connection.)
   @property({ type: Number })
   defaultDevWsPort = 4242;
 
-  ws!: WebSocket;
-
+  // An instance flag so that an element can opt out of receiving socket events.
   disableWebsockets = false;
-  wsManuallyClosed = false;
 
-  reconnectDelay = 1000;
-  reconnectionAttempts = 1;
+  // ----------------- Static Shared WebSocket & State -------------------
+  private static ws: WebSocket | null = null;
+  private static subscribers: Set<YpStreamingLlmBase> = new Set();
 
-  reconnectTimer: number | undefined;
+  private static reconnectDelay: number = 1000;
+  private static reconnectionAttempts: number = 1;
+  private static reconnectTimer: number | undefined;
+  private static wsManuallyClosed: boolean = false;
+
+  protected get ws(): WebSocket | null {
+    // This returns the static WebSocket from the class constructor
+    return (this.constructor as typeof YpStreamingLlmBase).ws;
+  }
+  protected set ws(value: WebSocket | null) {
+    (this.constructor as typeof YpStreamingLlmBase).ws = value;
+  }
 
   constructor() {
     super();
@@ -58,71 +61,123 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   override connectedCallback() {
     super.connectedCallback();
     if (!this.disableWebsockets) {
-      this.initWebSockets();
+      // Add this instance to the list of subscribers
+      YpStreamingLlmBase.subscribers.add(this);
+      // If no shared connection exists or if it’s closed, create a new one.
+      if (
+        !YpStreamingLlmBase.ws ||
+        YpStreamingLlmBase.ws.readyState === WebSocket.CLOSED
+      ) {
+        YpStreamingLlmBase.initWebSocketsStatic(this);
+      }
     }
   }
 
-  private initWebSockets() {
-    let storedClientId = localStorage.getItem("ypWsClientId") || "";
+  /**
+   * Initializes the shared WebSocket connection.
+   * Uses the defaultDevWsPort from the provided instance (or first subscriber) for the URL.
+   */
+  private static initWebSocketsStatic(instance?: YpStreamingLlmBase) {
+    let defaultPort = 4242;
+    if (instance) {
+      defaultPort = instance.defaultDevWsPort;
+    } else if (YpStreamingLlmBase.subscribers.size > 0) {
+      const firstSub = YpStreamingLlmBase.subscribers.values().next().value;
+      if (firstSub) {
+        defaultPort = firstSub.defaultDevWsPort;
+      }
+    }
 
+    const storedClientId = localStorage.getItem("ypWsClientId") || "";
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const port = protocol === "wss:" ? 443 : this.defaultDevWsPort;
+    // Use port 443 for wss, or the defaultPort for ws.
+    const port = protocol === "wss:" ? 443 : defaultPort;
     const endpoint = `${protocol}//${window.location.hostname}${
       port ? ":" + port : ""
-    }/${!storedClientId ? "" : "?clientId=" + storedClientId}`;
+    }/${storedClientId ? "?clientId=" + storedClientId : ""}`;
 
-    this.ws = new WebSocket(endpoint);
+    // Reset the manually closed flag (if we’re reconnecting)
+    YpStreamingLlmBase.wsManuallyClosed = false;
+    YpStreamingLlmBase.ws = new WebSocket(endpoint);
     console.log("Attempting to connect to", endpoint);
 
-    this.ws.onopen = () => {
+    YpStreamingLlmBase.ws.onopen = () => {
       console.log("WebSocket open");
+      // Reset reconnect parameters on a successful connection.
+      YpStreamingLlmBase.reconnectDelay = 1000;
+      YpStreamingLlmBase.reconnectionAttempts = 1;
     };
 
-    this.ws.onmessage = (event) => {
+    YpStreamingLlmBase.ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      // If the server reaffirms/overrides our clientId, store it
+      // Update the clientId if the server provides one, and notify all subscribers.
       if (data.clientId) {
         console.log("Received clientId from server:", data.clientId);
         localStorage.setItem("ypWsClientId", data.clientId);
-        storedClientId = data.clientId;
+        YpStreamingLlmBase.subscribers.forEach((sub) => {
+          sub.wsClientId = data.clientId;
+        });
       }
 
-      this.wsClientId = storedClientId;
-
-      this.onMessage(event);
+      // Dispatch the event to every subscriber’s onMessage method.
+      YpStreamingLlmBase.subscribers.forEach((sub) => {
+        sub.onMessage(event);
+      });
     };
 
-    this.ws.onclose = (ev) => {
+    YpStreamingLlmBase.ws.onclose = (ev) => {
       console.warn("WebSocket closed:", ev.reason);
-      this.scheduleReconnect();
+      YpStreamingLlmBase.scheduleReconnect();
     };
 
-    this.ws.onerror = (err) => {
+    YpStreamingLlmBase.ws.onerror = (err) => {
       console.error("WebSocket error:", err);
-      // Still close or schedule reconnect
-      this.scheduleReconnect();
+      YpStreamingLlmBase.scheduleReconnect();
     };
   }
 
-  private scheduleReconnect() {
-    if (this.reconnectTimer) window.clearTimeout(this.reconnectTimer);
-    this.reconnectTimer = window.setTimeout(() => {
+  private static scheduleReconnect() {
+    // Do not attempt to reconnect if the socket was manually closed.
+    if (YpStreamingLlmBase.wsManuallyClosed) return;
+
+    if (YpStreamingLlmBase.reconnectTimer) {
+      window.clearTimeout(YpStreamingLlmBase.reconnectTimer);
+    }
+    YpStreamingLlmBase.reconnectTimer = window.setTimeout(() => {
       console.log("Reconnecting...");
-      this.initWebSockets();
-      // Possibly apply exponential backoff if you like:
-      this.reconnectDelay = Math.min(
-        this.reconnectDelay * this.reconnectionAttempts,
+      YpStreamingLlmBase.initWebSocketsStatic();
+      YpStreamingLlmBase.reconnectDelay = Math.min(
+        YpStreamingLlmBase.reconnectDelay *
+          YpStreamingLlmBase.reconnectionAttempts,
         30000
       );
-      this.reconnectionAttempts++;
-    }, this.reconnectDelay);
+      YpStreamingLlmBase.reconnectionAttempts++;
+    }, YpStreamingLlmBase.reconnectDelay);
+  }
+
+  public sendClientMessage(payload: string) {
+    console.info("Sending client message");
+    if (
+      YpStreamingLlmBase.ws &&
+      YpStreamingLlmBase.ws.readyState === WebSocket.OPEN
+    ) {
+      YpStreamingLlmBase.ws.send(payload);
+    } else {
+      console.error("WebSocket not open; cannot send message");
+      if (YpStreamingLlmBase.ws?.readyState !== WebSocket.CONNECTING) {
+        YpStreamingLlmBase.scheduleReconnect();
+      }
+    }
   }
 
   public sendMessage(action: string, payload: any) {
     console.info("Sending message");
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(
+    if (
+      YpStreamingLlmBase.ws &&
+      YpStreamingLlmBase.ws.readyState === WebSocket.OPEN
+    ) {
+      YpStreamingLlmBase.ws.send(
         JSON.stringify({
           clientId: this.wsClientId,
           action,
@@ -131,6 +186,9 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       );
     } else {
       console.error("WebSocket not open; cannot send message");
+      if (YpStreamingLlmBase.ws?.readyState !== WebSocket.CONNECTING) {
+        YpStreamingLlmBase.scheduleReconnect();
+      }
     }
   }
 
@@ -141,130 +199,45 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       "Disconnected callback called, clearing heartbeat intervals and reconnect timer"
     );
 
-    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    if (YpStreamingLlmBase.reconnectTimer) {
+      clearTimeout(YpStreamingLlmBase.reconnectTimer);
+    }
 
-    if (this.ws) {
-      this.wsManuallyClosed = true;
-      this.ws.close();
+    // Remove this instance from the subscribers.
+    YpStreamingLlmBase.subscribers.delete(this);
+
+    // If no instances remain, close the shared connection.
+    if (YpStreamingLlmBase.subscribers.size === 0 && YpStreamingLlmBase.ws) {
+      YpStreamingLlmBase.wsManuallyClosed = true;
+      YpStreamingLlmBase.ws.close();
     }
   }
 
   async onMessage(event: MessageEvent) {
     const data = JSON.parse(event.data);
 
-    // Then handle your normal "assistant"/"user" messages
+    // Process messages as before
     switch (data.sender) {
       case "assistant":
-        this.addChatBotElement(data);
+        await this.addChatBotElement(data);
         break;
       case "user":
         this.addChatUserElement(data);
         break;
     }
 
-    // If it's not any of these streaming or heartbeat messages, scroll
     if (
       data.type !== "stream_followup" &&
       data.type !== "voice_input" &&
       data.type !== "updated_workflow" &&
-      data.type !== "heartbeat_ack" && // you already handled that
+      data.type !== "heartbeat_ack" && // already handled
       data.type !== "hiddenContextMessage"
     ) {
       this.scrollDown();
     }
   }
 
-  scrollDown() {
-    if (this.disableAutoScroll) {
-      return;
-    }
-
-    if (
-      !this.userScrolled &&
-      (this.$$(this.scrollElementSelector) || this.useMainWindowScroll)
-    ) {
-      this.programmaticScroll = true;
-      let element;
-      if (this.useMainWindowScroll) {
-        element = window.document.documentElement;
-      } else if (this.$$(this.scrollElementSelector)) {
-        element = this.$$(this.scrollElementSelector)!;
-      }
-
-      if (
-        element?.tagName === "INPUT" ||
-        element?.tagName === "TEXTAREA" ||
-        element?.tagName === "MD-OUTLINED-TEXT-FIELD"
-      ) {
-        // Move the cursor to the end of the text
-        (element as HTMLInputElement).selectionStart = (
-          element as HTMLInputElement
-        ).selectionEnd = (element as HTMLInputElement).value.length;
-        element.scrollTop = element.scrollHeight - 100;
-      } else {
-        // For non-text field elements, use scrollTop and scrollHeight to scroll
-        element!.scrollTop = element!.scrollHeight;
-      }
-
-      setTimeout(() => {
-        this.programmaticScroll = false;
-      }, 100);
-    } else {
-      console.error("User scrolled, not scrolling down");
-    }
-  }
-
-  handleScroll() {
-    if (this.disableAutoScroll) {
-      return;
-    }
-
-    if (
-      this.programmaticScroll ||
-      (!this.$$(this.scrollElementSelector) && !this.useMainWindowScroll)
-    ) {
-      return;
-    }
-
-    let currentScrollTop = 0;
-    if (this.$$(this.scrollElementSelector)) {
-      currentScrollTop = this.$$(this.scrollElementSelector)!.scrollTop;
-    } else if (this.useMainWindowScroll) {
-      currentScrollTop = window.scrollY;
-    }
-
-    if (this.scrollStart === 0) {
-      // Initial scroll
-      this.scrollStart = currentScrollTop;
-    }
-
-    const threshold = 10;
-
-    let atBottom;
-
-    if (this.useMainWindowScroll) {
-      atBottom =
-        this.$$(this.scrollElementSelector)!.scrollHeight -
-          currentScrollTop -
-          this.$$(this.scrollElementSelector)!.clientHeight <=
-        threshold;
-    } else if (this.$$(this.scrollElementSelector)) {
-      atBottom =
-        document.documentElement.scrollHeight -
-          currentScrollTop -
-          window.innerHeight <=
-        threshold;
-    }
-
-    if (atBottom) {
-      this.userScrolled = false;
-      this.scrollStart = 0; // Reset scroll start
-    } else if (Math.abs(this.scrollStart - currentScrollTop) > threshold) {
-      this.userScrolled = true;
-      // Optionally reset scrollStart here if you want to continuously check for threshold scroll
-      // this.scrollStart = currentScrollTop;
-    }
-  }
+  abstract scrollDown(): void;
 
   addUserChatBotMessage(userMessage: string) {
     this.addChatBotElement({
@@ -291,9 +264,9 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   get simplifiedChatLog() {
     let chatLog = this.chatLog.filter(
       (chatMessage) =>
-        chatMessage.type != "thinking" &&
-        chatMessage.type != "noStreaming" &&
-        chatMessage.sender != "system"
+        chatMessage.type !== "thinking" &&
+        chatMessage.type !== "noStreaming" &&
+        chatMessage.sender !== "system"
     );
     return chatLog.map((chatMessage) => {
       return {
@@ -307,9 +280,13 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
   reset() {
     this.chatLog = [];
-    if (this.ws) {
-      this.ws.close();
-      this.initWebSockets();
+    if (YpStreamingLlmBase.ws) {
+      YpStreamingLlmBase.ws.close();
+      // Clear the static socket so it can be re-established.
+      YpStreamingLlmBase.ws = null;
+      if (YpStreamingLlmBase.subscribers.size > 0) {
+        YpStreamingLlmBase.initWebSocketsStatic();
+      }
     }
     this.serverMemoryId = undefined;
     this.requestUpdate();

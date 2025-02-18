@@ -1,5 +1,4 @@
 import { nothing } from "lit";
-import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 import { AoiAdminServerApi } from "./AoiAdminServerApi.js";
 import "@material/web/list/list.js";
@@ -12,7 +11,8 @@ import "@material/web/chips/chip-set.js";
 import "@material/web/textfield/filled-text-field.js";
 import { AoiGenerateAiLogos } from "./aoiGenerateAiLogos.js";
 import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
-export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
+import { YpStreamingLlmScrolling } from "../../yp-chatbots/yp-streaming-llm-scrolling.js";
+export declare class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
     groupId: number;
     communityId: number | undefined;
     openForAnswers: boolean;

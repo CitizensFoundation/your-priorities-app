@@ -4,30 +4,34 @@ export declare abstract class YpStreamingLlmBase extends YpBaseElement {
     wsClientId: string;
     webSocketsErrorCount: number;
     wsEndpoint: string;
-    scrollElementSelector: string;
-    useMainWindowScroll: boolean;
-    userScrolled: boolean;
     currentFollowUpQuestions: string;
     programmaticScroll: boolean;
     disableAutoScroll: boolean;
     scrollStart: number;
     serverMemoryId: string | undefined;
     defaultDevWsPort: number;
-    ws: WebSocket;
     disableWebsockets: boolean;
-    wsManuallyClosed: boolean;
-    reconnectDelay: number;
-    reconnectionAttempts: number;
-    reconnectTimer: number | undefined;
+    private static ws;
+    private static subscribers;
+    private static reconnectDelay;
+    private static reconnectionAttempts;
+    private static reconnectTimer;
+    private static wsManuallyClosed;
+    protected get ws(): WebSocket | null;
+    protected set ws(value: WebSocket | null);
     constructor();
     connectedCallback(): void;
-    private initWebSockets;
-    private scheduleReconnect;
+    /**
+     * Initializes the shared WebSocket connection.
+     * Uses the defaultDevWsPort from the provided instance (or first subscriber) for the URL.
+     */
+    private static initWebSocketsStatic;
+    private static scheduleReconnect;
+    sendClientMessage(payload: string): void;
     sendMessage(action: string, payload: any): void;
     disconnectedCallback(): void;
     onMessage(event: MessageEvent): Promise<void>;
-    scrollDown(): void;
-    handleScroll(): void;
+    abstract scrollDown(): void;
     addUserChatBotMessage(userMessage: string): void;
     addThinkingChatBotMessage(): void;
     abstract addChatBotElement(wsMessage: YpAssistantMessage): Promise<void>;

@@ -17,6 +17,7 @@ import { image } from "d3";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { YpStreamingLlmScrolling } from "../../yp-chatbots/yp-streaming-llm-scrolling.js";
 
 interface IconGenerationResult {
   imageUrl?: string;
@@ -24,7 +25,7 @@ interface IconGenerationResult {
 }
 
 @customElement("aoi-earl-ideas-editor")
-export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
+export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
   @property({ type: Number })
   groupId!: number;
 

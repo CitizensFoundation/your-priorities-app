@@ -6,7 +6,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { YpStreamingLlmBase } from "../../yp-chatbots/yp-streaming-llm-base.js";
 import { AoiAdminServerApi } from "./AoiAdminServerApi.js";
 import "@material/web/list/list.js";
 import "@material/web/list/list-item.js";
@@ -18,7 +17,8 @@ import "@material/web/chips/chip-set.js";
 import "@material/web/textfield/filled-text-field.js";
 import { AoiGenerateAiLogos } from "./aoiGenerateAiLogos.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
+import { YpStreamingLlmScrolling } from "../../yp-chatbots/yp-streaming-llm-scrolling.js";
+let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
     constructor() {
         super();
         this.openForAnswers = false;

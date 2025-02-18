@@ -13,6 +13,10 @@ export class YpAssistant extends YpAssistantBase {
 
     if (message.length === 0) return;
 
+    if (this.voiceEnabled) {
+      this.toggleVoiceMode();
+    }
+
     //this.ws.send(message);
     this.chatInputField!.value = "";
     this.sendButton!.disabled = false;

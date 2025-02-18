@@ -23,9 +23,10 @@ import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
 
 import './yp-chatbot-item-base.js';
 import { literal, html as staticHtml } from 'lit/static-html.js';
+import { YpStreamingLlmScrolling } from './yp-streaming-llm-scrolling.js';
 
 @customElement('yp-chatbot-base')
-export abstract class YpChatbotBase extends YpStreamingLlmBase {
+export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
   @property({ type: String })
   infoMessage: string | undefined;
 
@@ -34,6 +35,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
 
   @property({ type: Boolean })
   inputIsFocused = false;
+
 
   @property({ type: Boolean })
   onlyUseTextField = false;

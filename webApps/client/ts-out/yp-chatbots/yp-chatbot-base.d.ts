@@ -12,9 +12,9 @@ import '../common/yp-image.js';
 import { YpAiChatbotItemBase } from './yp-chatbot-item-base.js';
 import { MdFilledTonalButton } from '@material/web/button/filled-tonal-button.js';
 import { MdOutlinedTextField } from '@material/web/textfield/outlined-text-field.js';
-import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
 import './yp-chatbot-item-base.js';
-export declare abstract class YpChatbotBase extends YpStreamingLlmBase {
+import { YpStreamingLlmScrolling } from './yp-streaming-llm-scrolling.js';
+export declare abstract class YpChatbotBase extends YpStreamingLlmScrolling {
     infoMessage: string | undefined;
     defaultInfoMessage: string | undefined;
     inputIsFocused: boolean;

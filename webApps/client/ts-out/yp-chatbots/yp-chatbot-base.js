@@ -16,10 +16,10 @@ import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/icon/icon.js';
 import '@material/web/iconbutton/outlined-icon-button.js';
 import '../common/yp-image.js';
-import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
 import './yp-chatbot-item-base.js';
 import { literal } from 'lit/static-html.js';
-let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
+import { YpStreamingLlmScrolling } from './yp-streaming-llm-scrolling.js';
+let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmScrolling {
     constructor() {
         super();
         this.defaultInfoMessage = "I'm your friendly chat assistant";
