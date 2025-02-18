@@ -14,7 +14,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   @property({ type: String })
   wsEndpoint!: string;
 
-
   @property({ type: String })
   scrollElementSelector = "#chat-messages";
 
@@ -47,15 +46,10 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   disableWebsockets = false;
   wsManuallyClosed = false;
 
-  heartbeatInterval: number | undefined;
-  heartbeatTimeout: number | undefined;
-  heartbeatAcked = false;
-  reconnectDelay = 2000;
+  reconnectDelay = 1000;
+  reconnectionAttempts = 1;
 
-  private isConnecting = false;
   reconnectTimer: number | undefined;
-
-  heartBeatRate = 50000;
 
   constructor() {
     super();
@@ -68,136 +62,60 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     }
   }
 
-  initWebSockets() {
-    // Prevent multiple connections:
-    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
-      console.info("WebSocket is already connected or connecting, skipping new connection.");
-      return;
-    }
-    if (this.isConnecting) {
-      console.info("WebSocket connection is already in progress.");
-      return;
-    }
-    this.isConnecting = true;
+  private initWebSockets() {
+    let storedClientId = localStorage.getItem("ypWsClientId") || "";
 
-    // Clear heartbeat intervals/timeouts if any
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
-      this.heartbeatInterval = undefined;
-    }
-    if (this.heartbeatTimeout) {
-      clearTimeout(this.heartbeatTimeout);
-      this.heartbeatTimeout = undefined;
-    }
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const port = protocol === "wss:" ? 443 : this.defaultDevWsPort;
+    const endpoint = `${protocol}//${window.location.hostname}${
+      port ? ":" + port : ""
+    }/${!storedClientId ? "" : "?clientId=" + storedClientId}`;
 
-    let endpoint: string;
-    if (
-      window.location.hostname === "localhost" ||
-      window.location.hostname.startsWith("192.168")
-    ) {
-      endpoint = `ws://${window.location.hostname}:${this.defaultDevWsPort}`;
-    } else {
-      endpoint = `wss://${window.location.hostname}:443`;
-    }
+    this.ws = new WebSocket(endpoint);
+    console.log("Attempting to connect to", endpoint);
 
-    try {
-      this.ws = new WebSocket(endpoint);
-      console.info("WebSocket: Attempting connection to", endpoint);
+    this.ws.onopen = () => {
+      console.log("WebSocket open");
+    };
 
-      // Setup temporary message handler for handshake
-      this.ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.clientId) {
-          this.wsClientId = data.clientId;
-          console.info(`Received clientId: ${this.wsClientId}`);
-          this.fire("yp-ws-opened", { clientId: this.wsClientId });
-          // Switch to main message handler and start heartbeat
-          this.ws!.onmessage = this.onMessage.bind(this);
-          this.startHeartbeat();
-          this.isConnecting = false;
-        } else if (data.type === "heartbeat_ack") {
-          this.heartbeatAcked = true;
-          console.debug("Heartbeat ack received");
-        } else {
-          // Fallback for other messages before handshake completes
-          this.onMessage(event);
-        }
-      };
+    this.ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
 
-      this.ws.onopen = () => {
-        console.info("WebSocket connection opened");
-        // Immediately send a heartbeat to kick things off
-        this.sendHeartbeat();
-      };
-
-      this.ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        this.scheduleReconnect();
-        this.fire("yp-ws-error", { error });
-      };
-
-      this.ws.onclose = (event) => {
-        console.warn("WebSocket closed:", event);
-        this.scheduleReconnect();
-        this.fire("yp-ws-closed");
-      };
-    } catch (error) {
-      console.error("Error initializing WebSocket:", error);
-      this.scheduleReconnect();
-      this.fire("yp-ws-error", { error });
-      this.isConnecting = false;
-    }
-  }
-
-  startHeartbeat() {
-    // Clear any previous intervals/timeouts
-    console.info("Starting heartbeat");
-    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
-    if (this.heartbeatTimeout) clearTimeout(this.heartbeatTimeout);
-
-    this.heartbeatInterval = window.setInterval(() => {
-      this.heartbeatAcked = false;
-      this.sendHeartbeat();
-
-      if (this.heartbeatTimeout) {
-        clearTimeout(this.heartbeatTimeout);
+      // If the server reaffirms/overrides our clientId, store it
+      if (data.clientId) {
+        console.log("Received clientId from server:", data.clientId);
+        localStorage.setItem("ypWsClientId", data.clientId);
+        storedClientId = data.clientId;
       }
-      this.heartbeatTimeout = window.setTimeout(() => {
-        if (!this.heartbeatAcked) {
-          console.error("Heartbeat ack not received, reconnecting...");
-          this.ws && this.ws.close(); // onclose will trigger reconnect
-        }
-      }, this.heartBeatRate * 0.8);
-    }, this.heartBeatRate);
+
+      this.wsClientId = storedClientId;
+
+      this.onMessage(event);
+    };
+
+    this.ws.onclose = (ev) => {
+      console.warn("WebSocket closed:", ev.reason);
+      this.scheduleReconnect();
+    };
+
+    this.ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
+      // Still close or schedule reconnect
+      this.scheduleReconnect();
+    };
   }
 
-  sendHeartbeat() {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      console.info("Sending heartbeat");
-      this.ws.send(JSON.stringify({ type: "heartbeat" }));
-    } else {
-      console.error("Cannot send heartbeat, socket not open");
-    }
-  }
-
-  scheduleReconnect() {
-    console.info("Scheduling reconnect");
-    if (this.wsManuallyClosed) return;
-
-    console.info("Clearing heartbeat intervals and reconnect timer");
-    // Clear heartbeat intervals and any previous reconnect timer
-    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
-    if (this.heartbeatTimeout) clearTimeout(this.heartbeatTimeout);
-    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
-
-    this.heartbeatInterval = undefined;
-    this.heartbeatTimeout = undefined;
-
+  private scheduleReconnect() {
+    if (this.reconnectTimer) window.clearTimeout(this.reconnectTimer);
     this.reconnectTimer = window.setTimeout(() => {
-      console.info("Reconnecting WebSocket...");
+      console.log("Reconnecting...");
       this.initWebSockets();
-      // Increase delay for subsequent attempts (optional max cap can be added)
-      this.reconnectDelay *= 1.5;
+      // Possibly apply exponential backoff if you like:
+      this.reconnectDelay = Math.min(
+        this.reconnectDelay * this.reconnectionAttempts,
+        30000
+      );
+      this.reconnectionAttempts++;
     }, this.reconnectDelay);
   }
 
@@ -219,33 +137,20 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
 
-    console.info("Disconnected callback called, clearing heartbeat intervals and reconnect timer");
+    console.info(
+      "Disconnected callback called, clearing heartbeat intervals and reconnect timer"
+    );
 
-    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
-    if (this.heartbeatTimeout) clearTimeout(this.heartbeatTimeout);
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
 
     if (this.ws) {
       this.wsManuallyClosed = true;
       this.ws.close();
     }
-    // Reset our connection flag
-    this.isConnecting = false;
   }
 
   async onMessage(event: MessageEvent) {
     const data = JSON.parse(event.data);
-    // Add a small check for heartbeat_ack:
-    if (data.type === "heartbeat_ack") {
-      this.heartbeatAcked = true;
-      console.info("Heartbeat ack received");
-      // Possibly return here or break,
-      // but if heartbeat_ack can coincide with other message data, handle that
-      return;
-    }
-
-    // If there's also a chance we get a "clientId" again,
-    // you could handle that as well. But probably not needed.
 
     // Then handle your normal "assistant"/"user" messages
     switch (data.sender) {
@@ -318,9 +223,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       this.programmaticScroll ||
       (!this.$$(this.scrollElementSelector) && !this.useMainWindowScroll)
     ) {
-      console.error(
-        `handleScroll: programmaticScroll: ${this.programmaticScroll} or scrollElementSelector: ${this.scrollElementSelector} not found`
-      );
       return;
     }
 
@@ -402,8 +304,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       };
     }) as PsSimpleChatLog[];
   }
-
-
 
   reset() {
     this.chatLog = [];

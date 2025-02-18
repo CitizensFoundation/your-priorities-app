@@ -56,9 +56,6 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         if (this.chatMessagesElement) {
             window.removeEventListener('scroll', this.handleScroll.bind(this));
         }
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
-        }
     }
     addToChatLogWithMessage(data, message = undefined, changeButtonDisabledState = undefined, changeButtonLabelTo = undefined, refinedCausesSuggestions = undefined, rawMessage = undefined) {
         this.infoMessage = message;

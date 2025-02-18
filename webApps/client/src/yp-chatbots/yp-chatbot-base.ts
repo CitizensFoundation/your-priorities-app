@@ -123,10 +123,6 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         this.handleScroll.bind(this)
       );
     }
-
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
-    }
   }
 
   addToChatLogWithMessage(
