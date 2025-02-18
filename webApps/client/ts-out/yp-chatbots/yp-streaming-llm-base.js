@@ -105,7 +105,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
             console.log("Reconnecting...");
             YpStreamingLlmBase.initWebSocketsStatic();
             YpStreamingLlmBase.reconnectDelay = Math.min(YpStreamingLlmBase.reconnectDelay *
-                YpStreamingLlmBase.reconnectionAttempts, 30000);
+                YpStreamingLlmBase.reconnectionAttempts, 5000);
             YpStreamingLlmBase.reconnectionAttempts++;
         }, YpStreamingLlmBase.reconnectDelay);
     }

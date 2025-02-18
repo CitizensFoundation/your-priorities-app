@@ -150,7 +150,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       YpStreamingLlmBase.reconnectDelay = Math.min(
         YpStreamingLlmBase.reconnectDelay *
           YpStreamingLlmBase.reconnectionAttempts,
-        30000
+        5000
       );
       YpStreamingLlmBase.reconnectionAttempts++;
     }, YpStreamingLlmBase.reconnectDelay);
