@@ -11,23 +11,28 @@ export class AgentSubscriptionController {
         this.router = express.Router();
         this.getAgentConfigurationAnswers = async (req, res) => {
             try {
-                const subscriptionId = parseInt(req.params.subscriptionId);
-                // Make sure the user can only fetch their own subscription
-                const subscription = await YpSubscription.findOne({
-                    where: {
-                        id: subscriptionId,
-                        user_id: req.user.id
-                    },
-                });
-                if (!subscription) {
-                    return res.status(404).json({ error: "Subscription not found" });
+                if (req.user) {
+                    const subscriptionId = parseInt(req.params.subscriptionId);
+                    // Make sure the user can only fetch their own subscription
+                    const subscription = await YpSubscription.findOne({
+                        where: {
+                            id: subscriptionId,
+                            user_id: req.user?.id
+                        },
+                    });
+                    if (!subscription) {
+                        return res.status(404).json({ error: "Subscription not found" });
+                    }
+                    // Extract the requiredQuestionsAnswered from subscription.configuration
+                    const answers = subscription.configuration?.requiredQuestionsAnswered || [];
+                    return res.status(200).json({
+                        success: true,
+                        data: answers,
+                    });
                 }
-                // Extract the requiredQuestionsAnswered from subscription.configuration
-                const answers = subscription.configuration?.requiredQuestionsAnswered || [];
-                return res.status(200).json({
-                    success: true,
-                    data: answers,
-                });
+                else {
+                    return res.status(401).json({ error: "Unauthorized" });
+                }
             }
             catch (error) {
                 console.error("Error retrieving subscription agent configuration:", error);

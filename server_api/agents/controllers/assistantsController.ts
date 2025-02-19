@@ -260,6 +260,11 @@ export class AssistantController {
 
   public getAgentConfigurationAnswers = async (req: YpRequest, res: express.Response) => {
     try {
+
+      if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
       const subscriptionId = parseInt(req.params.subscriptionId);
 
       // Make sure the user can only fetch their own subscription
@@ -294,6 +299,11 @@ export class AssistantController {
   ) => {
     const { runId } = req.params;
     const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
     try {
       const agentRun = await YpAgentProductRun.findOne({
         where: {

@@ -113,6 +113,9 @@ export class AssistantController {
         };
         this.getAgentConfigurationAnswers = async (req, res) => {
             try {
+                if (!req.user) {
+                    return res.status(401).json({ error: "Unauthorized" });
+                }
                 const subscriptionId = parseInt(req.params.subscriptionId);
                 // Make sure the user can only fetch their own subscription
                 const subscription = await YpSubscription.findOne({
@@ -139,6 +142,9 @@ export class AssistantController {
         this.getUpdatedWorkflow = async (req, res) => {
             const { runId } = req.params;
             const userId = req.user?.id;
+            if (!userId) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
             try {
                 const agentRun = await YpAgentProductRun.findOne({
                     where: {

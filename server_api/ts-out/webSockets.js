@@ -97,7 +97,9 @@ export class WebSocketsManager {
                     // Otherwise, we handle it locally or pass it on
                     // Typically you'd have local server logic here,
                     // or forward it to some local "chatbot" logic, etc.
-                    console.log(`WebSockets: Local server ${this.serverId} handling message from clientId ${clientId}`);
+                    /*console.log(
+                      `WebSockets: Local server ${this.serverId} handling message from clientId ${clientId}`
+                    );*/
                 }
             });
             // 8) Clean up on close/error
@@ -301,16 +303,18 @@ export class WebSocketsManager {
     startPingCheck() {
         console.log("WebSockets: Starting ping check");
         this.pingInterval = setInterval(() => {
-            console.log("WebSockets: Pinging clients");
-            this.ws.clients.forEach((socket) => {
-                const wsAny = socket;
-                if (wsAny.isAlive === false) {
-                    console.log("WebSockets: Terminating unresponsive client");
-                    return socket.terminate();
-                }
-                wsAny.isAlive = false;
-                socket.ping();
-            });
+            if (this.ws.clients.size > 0) {
+                console.log(`WebSockets: Pinging clients ${this.ws.clients.size}`);
+                this.ws.clients.forEach((socket) => {
+                    const wsAny = socket;
+                    if (wsAny.isAlive === false) {
+                        console.log("WebSockets: Terminating unresponsive client");
+                        return socket.terminate();
+                    }
+                    wsAny.isAlive = false;
+                    socket.ping();
+                });
+            }
         }, 30000);
         // If the server closes the entire WebSocketServer
         this.ws.on("close", () => {
