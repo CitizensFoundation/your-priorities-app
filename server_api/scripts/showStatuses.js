@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 
 
 models.Post.findAll().then(function(posts) {

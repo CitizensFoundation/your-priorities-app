@@ -1,7 +1,6 @@
 const models = require('../../models/index.cjs');
 const copyCommunityOnlyGroups = require('../../utils/copy_utils').copyCommunityOnlyGroups;
 const async = require('async');
-const ip = require('ip');
 const {recountCommunity} = require("../../utils/recount_utils.cjs");
 
 //const communityId = 1906; //process.argv[2];

@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var allActivities = {};
 models.AcActivity.findAll({ attributes: [[models.Sequelize.literal("DISTINCT 'type'"), 'type'], 'type'] }).then(function (activityTypes) {
     console.log(activityTypes.length);

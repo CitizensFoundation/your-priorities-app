@@ -5,7 +5,7 @@ var log = require('../../utils/logger.cjs');
 var _ = require('lodash');
 var moment = require('moment');
 var i18n = require('../../utils/i18n.cjs');
-var Backend = require('i18next-node-fs-backend');
+var Backend = require('i18next-fs-backend');
 var sendOneEmail = require('./emails_utils.cjs').sendOneEmail;
 var sendPostNew = function (delayedNotification, callback) {
     console.log("sendPostNew");

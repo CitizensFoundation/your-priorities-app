@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 emails = [];
 async.eachSeries(emails, (email, eachOfCallback) => {
     models.User.findOne({

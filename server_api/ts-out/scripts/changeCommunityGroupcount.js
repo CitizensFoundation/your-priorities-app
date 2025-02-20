@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 const communityId = process.argv[2];
 const groupCount = process.argv[3];

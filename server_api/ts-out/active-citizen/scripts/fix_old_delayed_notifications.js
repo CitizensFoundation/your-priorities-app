@@ -4,7 +4,7 @@ var log = require('../utils/logger.cjs');
 var _ = require('lodash');
 var moment = require('moment');
 var i18n = require('../utils/i18n.cjs');
-var Backend = require('i18next-node-fs-backend');
+var Backend = require('i18next-fs-backend');
 var latestNotification;
 models.User.findAll({
     attributes: ['id']

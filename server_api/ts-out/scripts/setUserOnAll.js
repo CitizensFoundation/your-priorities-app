@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var userEmail = process.argv[2];
 var user;
 console.log("Adding " + userEmail + " to all public communities and groups + domains");

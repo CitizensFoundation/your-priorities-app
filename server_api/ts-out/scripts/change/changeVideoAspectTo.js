@@ -1,6 +1,5 @@
 var models = require('../../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 var videoId = 1671; //process.argv[2];
 var aspect = "portrait"; //process.argv[3];

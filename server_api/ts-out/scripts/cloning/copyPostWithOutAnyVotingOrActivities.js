@@ -1,7 +1,6 @@
 const models = require('../../models/index.cjs');
 const copyPost = require('../../utils/copy_utils').copyPost;
 const async = require('async');
-const ip = require('ip');
 //const communityId = 1906; //process.argv[2];
 //var domainId = 3; // process.argv[3];
 const postId = process.argv[2];

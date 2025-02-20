@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 
 var userEmail = process.argv[2];
 var domainId = process.argv[3];

@@ -1,6 +1,6 @@
 "use strict";
 var i18n = require('i18next');
-var Backend = require('i18next-node-fs-backend');
+var Backend = require('i18next-fs-backend');
 i18n
     .use(Backend)
     .init({

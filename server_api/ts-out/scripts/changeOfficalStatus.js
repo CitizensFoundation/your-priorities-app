@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 const postId = process.argv[2];
 const officialStatus = process.argv[3];

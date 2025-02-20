@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var femalePostCount = 0;
 var malePostCount = 0;
 var unknownPostCount = 0;

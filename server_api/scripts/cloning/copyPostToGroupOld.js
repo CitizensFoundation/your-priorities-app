@@ -1,6 +1,5 @@
 var models = require('../../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 var csvParser = require('csv-parse');
 var fs = require('fs');

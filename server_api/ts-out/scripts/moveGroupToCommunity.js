@@ -1,6 +1,5 @@
 const models = require('../models/index.cjs');
 const async = require('async');
-const ip = require('ip');
 const groupId = process.argv[2];
 const communityId = process.argv[3];
 models.Group.findOne({

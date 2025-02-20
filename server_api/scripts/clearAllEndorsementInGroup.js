@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 
 var groupId = process.argv[2];

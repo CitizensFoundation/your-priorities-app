@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 var fs = require('fs');
 const Reader = require('@maxmind/geoip2-node').Reader;

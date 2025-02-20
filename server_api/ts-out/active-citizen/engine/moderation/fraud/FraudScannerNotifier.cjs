@@ -7,7 +7,7 @@ const FraudGetEndorsements = require("./FraudGetEndorsements");
 const FraudGetPointQualities = require("./FraudGetPointQualities");
 const FraudGetRatings = require("./FraudGetRatings");
 const queue = require("../../../workers/queue.cjs");
-const Backend = require("i18next-node-fs-backend");
+const Backend = require("i18next-fs-backend");
 const path = require("path");
 var localesPath = path.resolve(__dirname, '../../../locales');
 class FraudScannerNotifier {

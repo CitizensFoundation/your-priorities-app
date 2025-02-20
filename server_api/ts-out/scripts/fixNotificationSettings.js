@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 console.log("Fixing Notifications Settings");
 var loopyloop = true;
 var numberOfRows = 25000;

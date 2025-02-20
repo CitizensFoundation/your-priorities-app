@@ -1,6 +1,5 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 const communityId = process.argv[2];
 const newUserId = process.argv[3];
 let postsCount = 0;

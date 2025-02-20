@@ -1,6 +1,5 @@
 const models = require('../models/index.cjs');
 const async = require('async');
-const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const { Translate }= require('@google-cloud/translate').v2;

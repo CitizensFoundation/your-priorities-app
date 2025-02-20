@@ -1,6 +1,5 @@
 var models = require('../../models/index.cjs');
 var { forEach } = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 const async = require("async");
 models.Group.findOne({

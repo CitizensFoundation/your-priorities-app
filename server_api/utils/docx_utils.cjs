@@ -1,7 +1,6 @@
 const log = require('./logger.cjs');
 var models = require('../models/index.cjs');
 var async = require('async');
-var ip = require('ip');
 var _ = require('lodash');
 const moment = require('moment');
 

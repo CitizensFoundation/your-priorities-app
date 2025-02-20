@@ -1,6 +1,5 @@
 const models = require('../models/index.cjs');
 const async = require('async');
-const ip = require('ip');
 const groupId = process.argv[2];
 const processPointDependancies = (point, done) => {
     async.series([
