@@ -3,7 +3,7 @@ import session from "express-session";
 import path from "path";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-import connectRedis from "connect-redis";
+import { RedisStore } from "connect-redis";
 import useragent from "express-useragent";
 import requestIp from "request-ip";
 import compression from "compression";
@@ -506,7 +506,7 @@ export class YourPrioritiesApi {
         this.app.use(compression());
         this.app.set("views", __dirname + "/views");
         this.app.set("view engine", "pug");
-        const store = new connectRedis({ client: this.redisClient, ttl: 86400 });
+        const store = new RedisStore({ client: this.redisClient, ttl: 86400 });
         const sessionConfig = {
             store: store,
             name: "yrpri.sid",
