@@ -91,7 +91,7 @@ type YpChatBotMemoryStageTypes = PsMemoryStageTypes | "chatbot-conversation";
 
 interface PsChatBotMemoryData extends PsBaseMemoryData {
   stages: Record<any, any>;
-  chatLog?: PsSimpleChatLog[];
+  chatLog?: YpSimpleChatLog[];
   problemStatement?: PsProblemStatement;
   currentStage: YpChatBotMemoryStageTypes;
   groupId?: number;

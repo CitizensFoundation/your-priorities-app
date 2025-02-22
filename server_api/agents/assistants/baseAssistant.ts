@@ -468,7 +468,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
             message: resultMessage,
             type: "hiddenContextMessage",
             uniqueToken: result.uniqueToken,
-          } as PsSimpleChatLog);
+          } as YpSimpleChatLog);
           await this.saveMemoryIfNeeded();
         } else {
           console.error(
@@ -797,7 +797,7 @@ Never engage in off topic conversations, always politely steer the conversation 
   /**
    * Main conversation handler with updated function handling
    */
-  async conversation(chatLog: PsSimpleChatLog[]) {
+  async conversation(chatLog: YpSimpleChatLog[]) {
     await this.loadMemoryAsync();
 
     await this.initializeModes();
@@ -906,7 +906,7 @@ Never engage in off topic conversations, always politely steer the conversation 
    * Convert chat log to OpenAI message format
    */
   protected convertToOpenAIMessages(
-    chatLog: PsSimpleChatLog[]
+    chatLog: YpSimpleChatLog[]
   ): ChatCompletionMessageParam[] {
     return chatLog
       .filter((message) => message.sender !== "system")

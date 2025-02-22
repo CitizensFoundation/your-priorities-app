@@ -236,7 +236,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         sender: "user",
         message:
           "Thank you for the information, I would now like to speak to the main assistant about selecting agents or managing subscriptions",
-      } as PsSimpleChatLog);
+      } as YpSimpleChatLog);
       await this.parentAssistant.saveMemory();
     }
   }
@@ -637,7 +637,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     this.parentAssistant.memory.chatLog!.push({
       sender: "assistant",
       message: event.content,
-    } as PsSimpleChatLog);
+    } as YpSimpleChatLog);
 
     // Send to client
     this.sendToClient("assistant", event.content);

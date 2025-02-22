@@ -202,7 +202,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
     }
   }
 
-  async conversation(chatLog: PsSimpleChatLog[]) {
+  async conversation(chatLog: YpSimpleChatLog[]) {
     if (this.voiceEnabled) {
       console.log("voiceEnabled: Updating voice config");
       await this.voiceBot?.updateVoiceConfig({

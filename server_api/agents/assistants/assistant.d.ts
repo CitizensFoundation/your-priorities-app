@@ -142,7 +142,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
     configurationState: YpAssistantAgentConfigurationState;
   };
 
-  allChatLogs?: PsSimpleChatLog[];
+  allChatLogs?: YpSimpleChatLog[];
 
   loginState?: YpAssistantLoginState;
 
