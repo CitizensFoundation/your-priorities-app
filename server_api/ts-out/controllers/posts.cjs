@@ -35,7 +35,7 @@ var changePostCounter = function (req, postId, column, upDown, next) {
 };
 //TODO: Refactor this as not to repeate it in controlelrs
 const addAgentFabricUserToSessionIfNeeded = async (req) => {
-    let userId = (req.user && req.user.id) ? req.user.id : null;
+    let userId = req.user && req.user.id ? req.user.id : null;
     if (!userId &&
         req.query.agentFabricUserId &&
         process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
@@ -664,7 +664,7 @@ router.get("/:id/newPoints", auth.can("view post"), function (req, res) {
                             model: models.Image,
                             as: "UserProfileImages",
                             required: false,
-                            through: { attributes: [] }
+                            through: { attributes: [] },
                         },
                     ],
                 },
@@ -842,7 +842,7 @@ const sendPostPoints = (req, res, redisKey) => {
                                 as: "UserProfileImages",
                                 attributes: ["id", "formats"],
                                 required: false,
-                                through: { attributes: [] }
+                                through: { attributes: [] },
                             },
                         ],
                     },
@@ -1144,10 +1144,18 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
                                     if (!error && post) {
                                         post.setDataValue("newEndorsement", endorsement);
                                         log.info("process-moderation post toxicity in post controller");
-                                        queue.add("process-moderation", {
-                                            type: "estimate-post-toxicity",
-                                            postId: post.id,
-                                        }, "high");
+                                        const skipModerationForAgentFabric = !req.query.skipModerationForAgentFabric &&
+                                            process.env
+                                                .PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+                                            req.headers["x-api-key"] ===
+                                                process.env
+                                                    .PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY;
+                                        if (!skipModerationForAgentFabric) {
+                                            queue.add("process-moderation", {
+                                                type: "estimate-post-toxicity",
+                                                postId: post.id,
+                                            }, "high");
+                                        }
                                         queue.add("process-moderation", {
                                             type: "post-review-and-annotate-images",
                                             postId: post.id,
@@ -1849,9 +1857,7 @@ router.delete("/:id/endorse", auth.can("vote on post"), function (req, res) {
                         endorsement.save().then(function () {
                             if (oldEndorsementValue > 0) {
                                 changePostCounter(req, req.params.id, "counter_endorsements_up", -1, function () {
-                                    res
-                                        .status(200)
-                                        .send({
+                                    res.status(200).send({
                                         endorsement: endorsement,
                                         oldEndorsementValue: oldEndorsementValue,
                                     });
@@ -1859,9 +1865,7 @@ router.delete("/:id/endorse", auth.can("vote on post"), function (req, res) {
                             }
                             else if (oldEndorsementValue < 0) {
                                 changePostCounter(req, req.params.id, "counter_endorsements_down", -1, function () {
-                                    res
-                                        .status(200)
-                                        .send({
+                                    res.status(200).send({
                                         endorsement: endorsement,
                                         oldEndorsementValue: oldEndorsementValue,
                                     });

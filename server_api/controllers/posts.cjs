@@ -36,19 +36,21 @@ var changePostCounter = function (req, postId, column, upDown, next) {
 
 //TODO: Refactor this as not to repeate it in controlelrs
 const addAgentFabricUserToSessionIfNeeded = async (req) => {
-  let userId = (req.user && req.user.id) ? req.user.id : null;
+  let userId = req.user && req.user.id ? req.user.id : null;
   if (
     !userId &&
     req.query.agentFabricUserId &&
     process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
     req.headers["x-api-key"] === process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY
   ) {
-    log.info(`Creating group with temp agents fabric group api key ${req.query.agentFabricUserId}`);
+    log.info(
+      `Creating group with temp agents fabric group api key ${req.query.agentFabricUserId}`
+    );
     userId = req.query.agentFabricUserId;
     try {
       const loadedUser = await models.User.findByPk(userId);
       req.user = loadedUser;
-    } catch(error) {
+    } catch (error) {
       log.error(`Could not find user with id ${userId}`, {
         context: "create",
         userId: userId,
@@ -59,7 +61,7 @@ const addAgentFabricUserToSessionIfNeeded = async (req) => {
   } else {
     log.info("Creating group with user id: " + userId);
   }
-}
+};
 
 var decrementOldCountersIfNeeded = function (
   req,
@@ -774,7 +776,7 @@ router.get("/:id/newPoints", auth.can("view post"), function (req, res) {
               model: models.Image,
               as: "UserProfileImages",
               required: false,
-              through: { attributes: [] }
+              through: { attributes: [] },
             },
           ],
         },
@@ -962,7 +964,7 @@ const sendPostPoints = (req, res, redisKey) => {
                   as: "UserProfileImages",
                   attributes: ["id", "formats"],
                   required: false,
-                  through: { attributes: [] }
+                  through: { attributes: [] },
                 },
               ],
             },
@@ -1272,7 +1274,7 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
   if (!req.user || !req.user.id) {
     try {
       await addAgentFabricUserToSessionIfNeeded(req);
-    } catch(error) {
+    } catch (error) {
       log.error("Could not add agent fabric user to session", {
         context: "create",
         userId: req.user.id,
@@ -1366,14 +1368,25 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
                                 log.info(
                                   "process-moderation post toxicity in post controller"
                                 );
-                                queue.add(
-                                  "process-moderation",
-                                  {
-                                    type: "estimate-post-toxicity",
-                                    postId: post.id,
-                                  },
-                                  "high"
-                                );
+                                const skipModerationForAgentFabric =
+                                  !req.query.skipModerationForAgentFabric &&
+                                  process.env
+                                    .PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+                                  req.headers["x-api-key"] ===
+                                    process.env
+                                      .PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY;
+
+                                if (!skipModerationForAgentFabric) {
+                                  queue.add(
+                                    "process-moderation",
+                                    {
+                                      type: "estimate-post-toxicity",
+                                      postId: post.id,
+                                    },
+                                    "high"
+                                  );
+                                }
+
                                 queue.add(
                                   "process-moderation",
                                   {
@@ -2052,222 +2065,226 @@ router.delete(
   }
 );
 
-router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) {
-  if (!req.user) {
-    try {
-      await addAgentFabricUserToSessionIfNeeded(req);
-    } catch(error) {
-      log.error("Could not add agent fabric user to session", {
-        context: "create",
-        userId: req.user.id,
-        error: error,
-      });
-      res.sendStatus(500);
-      return;
+router.post(
+  "/:id/endorse",
+  auth.can("vote on post"),
+  async function (req, res) {
+    if (!req.user) {
+      try {
+        await addAgentFabricUserToSessionIfNeeded(req);
+      } catch (error) {
+        log.error("Could not add agent fabric user to session", {
+          context: "create",
+          userId: req.user.id,
+          error: error,
+        });
+        res.sendStatus(500);
+        return;
+      }
     }
-  }
 
-  var post;
-  models.Post.findOne({
-    where: {
-      id: req.params.id,
-    },
-    include: [
-      {
-        model: models.Group,
-        attributes: ["id", "configuration"],
+    var post;
+    models.Post.findOne({
+      where: {
+        id: req.params.id,
       },
-    ],
-  })
-    .then((corePost) => {
-      if (corePost) {
-        if (
-          corePost.Group.configuration &&
-          corePost.Group.configuration.canVote === true
-        ) {
-          models.Endorsement.findOne({
-            where: {
-              post_id: req.params.id,
-              user_id: req.user.id,
-            },
-            include: [
-              {
-                model: models.Post,
-                attributes: ["id", "group_id"],
+      include: [
+        {
+          model: models.Group,
+          attributes: ["id", "configuration"],
+        },
+      ],
+    })
+      .then((corePost) => {
+        if (corePost) {
+          if (
+            corePost.Group.configuration &&
+            corePost.Group.configuration.canVote === true
+          ) {
+            models.Endorsement.findOne({
+              where: {
+                post_id: req.params.id,
+                user_id: req.user.id,
               },
-            ],
-          })
-            .then(function (endorsement) {
-              var oldEndorsementValue;
-              if (endorsement) {
-                post = endorsement.Post;
-                if (endorsement.value > 0) oldEndorsementValue = 1;
-                else if (endorsement.value < 0) oldEndorsementValue = -1;
-                endorsement.value = req.body.value;
-                endorsement.status = "active";
-                endorsement.set("data", {
-                  browserId: req.body.endorsementBaseId,
-                  browserFingerprint: req.body.endorsementValCode,
-                  browserFingerprintConfidence: req.body.endorsementConf,
-                });
-              } else {
-                endorsement = models.Endorsement.build({
-                  post_id: req.params.id,
-                  value: req.body.value,
-                  user_id: req.user.id,
-                  data: {
+              include: [
+                {
+                  model: models.Post,
+                  attributes: ["id", "group_id"],
+                },
+              ],
+            })
+              .then(function (endorsement) {
+                var oldEndorsementValue;
+                if (endorsement) {
+                  post = endorsement.Post;
+                  if (endorsement.value > 0) oldEndorsementValue = 1;
+                  else if (endorsement.value < 0) oldEndorsementValue = -1;
+                  endorsement.value = req.body.value;
+                  endorsement.status = "active";
+                  endorsement.set("data", {
                     browserId: req.body.endorsementBaseId,
                     browserFingerprint: req.body.endorsementValCode,
                     browserFingerprintConfidence: req.body.endorsementConf,
-                  },
-                  status: "active",
-                  user_agent: req.useragent.source,
-                  ip_address: req.clientIp,
-                });
-              }
-              endorsement.save().then(function () {
-                log.info("Endorsements Created", {
-                  endorsementId: endorsement ? endorsement.id : -1,
-                  userId: req.user ? req.user.id : -1,
-                });
-                async.series(
-                  [
-                    function (seriesCallback) {
-                      if (post) {
-                        endorsement.dataValues.Post = post;
-                        seriesCallback();
-                      } else {
-                        models.Post.findOne({
-                          where: { id: endorsement.post_id },
-                          attributes: ["id", "group_id"],
-                        }).then(function (results) {
-                          if (results) {
-                            post = results;
-                            endorsement.dataValues.Post = post;
-                            seriesCallback();
-                          } else {
-                            seriesCallback("Can't find post");
+                  });
+                } else {
+                  endorsement = models.Endorsement.build({
+                    post_id: req.params.id,
+                    value: req.body.value,
+                    user_id: req.user.id,
+                    data: {
+                      browserId: req.body.endorsementBaseId,
+                      browserFingerprint: req.body.endorsementValCode,
+                      browserFingerprintConfidence: req.body.endorsementConf,
+                    },
+                    status: "active",
+                    user_agent: req.useragent.source,
+                    ip_address: req.clientIp,
+                  });
+                }
+                endorsement.save().then(function () {
+                  log.info("Endorsements Created", {
+                    endorsementId: endorsement ? endorsement.id : -1,
+                    userId: req.user ? req.user.id : -1,
+                  });
+                  async.series(
+                    [
+                      function (seriesCallback) {
+                        if (post) {
+                          endorsement.dataValues.Post = post;
+                          seriesCallback();
+                        } else {
+                          models.Post.findOne({
+                            where: { id: endorsement.post_id },
+                            attributes: ["id", "group_id"],
+                          }).then(function (results) {
+                            if (results) {
+                              post = results;
+                              endorsement.dataValues.Post = post;
+                              seriesCallback();
+                            } else {
+                              seriesCallback("Can't find post");
+                            }
+                          });
+                        }
+                      },
+                      function (seriesCallback) {
+                        models.AcActivity.createActivity(
+                          {
+                            type:
+                              endorsement.value > 0
+                                ? "activity.post.endorsement.new"
+                                : "activity.post.opposition.new",
+                            userId: endorsement.user_id,
+                            domainId: req.ypDomain.id,
+                            endorsementId: endorsement.id,
+                            //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                            groupId: post.group_id,
+                            postId: post.id,
+                            access: models.AcActivity.ACCESS_PRIVATE,
+                          },
+                          function (error) {
+                            seriesCallback(error);
                           }
+                        );
+                      },
+                    ],
+                    function (error) {
+                      if (error) {
+                        log.error("Endorsements Error", {
+                          context: "create",
+                          endorsement: toJson(endorsement),
+                          user: toJson(req.user),
+                          err: error,
+                          errorStatus: 500,
                         });
-                      }
-                    },
-                    function (seriesCallback) {
-                      models.AcActivity.createActivity(
-                        {
-                          type:
-                            endorsement.value > 0
-                              ? "activity.post.endorsement.new"
-                              : "activity.post.opposition.new",
-                          userId: endorsement.user_id,
-                          domainId: req.ypDomain.id,
-                          endorsementId: endorsement.id,
-                          //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-                          groupId: post.group_id,
-                          postId: post.id,
-                          access: models.AcActivity.ACCESS_PRIVATE,
-                        },
-                        function (error) {
-                          seriesCallback(error);
-                        }
-                      );
-                    },
-                  ],
-                  function (error) {
-                    if (error) {
-                      log.error("Endorsements Error", {
-                        context: "create",
-                        endorsement: toJson(endorsement),
-                        user: toJson(req.user),
-                        err: error,
-                        errorStatus: 500,
-                      });
-                      res.sendStatus(500);
-                    } else {
-                      decrementOldCountersIfNeeded(
-                        req,
-                        oldEndorsementValue,
-                        req.params.id,
-                        endorsement,
-                        function () {
-                          if (endorsement.value > 0) {
-                            changePostCounter(
-                              req,
-                              req.params.id,
-                              "counter_endorsements_up",
-                              1,
-                              function () {
-                                res.send({
-                                  endorsement: endorsement,
-                                  oldEndorsementValue: oldEndorsementValue,
-                                });
-                              }
-                            );
-                          } else if (endorsement.value < 0) {
-                            changePostCounter(
-                              req,
-                              req.params.id,
-                              "counter_endorsements_down",
-                              1,
-                              function () {
-                                res.send({
-                                  endorsement: endorsement,
-                                  oldEndorsementValue: oldEndorsementValue,
-                                });
-                              }
-                            );
-                          } else {
-                            log.error("Endorsements Error State", {
-                              context: "create",
-                              endorsement: toJson(endorsement),
-                              user: toJson(req.user),
-                              err: error,
-                              errorStatus: 500,
-                            });
-                            res.sendStatus(500);
+                        res.sendStatus(500);
+                      } else {
+                        decrementOldCountersIfNeeded(
+                          req,
+                          oldEndorsementValue,
+                          req.params.id,
+                          endorsement,
+                          function () {
+                            if (endorsement.value > 0) {
+                              changePostCounter(
+                                req,
+                                req.params.id,
+                                "counter_endorsements_up",
+                                1,
+                                function () {
+                                  res.send({
+                                    endorsement: endorsement,
+                                    oldEndorsementValue: oldEndorsementValue,
+                                  });
+                                }
+                              );
+                            } else if (endorsement.value < 0) {
+                              changePostCounter(
+                                req,
+                                req.params.id,
+                                "counter_endorsements_down",
+                                1,
+                                function () {
+                                  res.send({
+                                    endorsement: endorsement,
+                                    oldEndorsementValue: oldEndorsementValue,
+                                  });
+                                }
+                              );
+                            } else {
+                              log.error("Endorsements Error State", {
+                                context: "create",
+                                endorsement: toJson(endorsement),
+                                user: toJson(req.user),
+                                err: error,
+                                errorStatus: 500,
+                              });
+                              res.sendStatus(500);
+                            }
                           }
-                        }
-                      );
+                        );
+                      }
                     }
-                  }
-                );
+                  );
+                });
+              })
+              .catch(function (error) {
+                log.error("Endorsements Error", {
+                  context: "create",
+                  post: req.params.id,
+                  user: toJson(req.user),
+                  err: error,
+                  errorStatus: 500,
+                });
+                res.sendStatus(500);
               });
-            })
-            .catch(function (error) {
-              log.error("Endorsements Error", {
-                context: "create",
-                post: req.params.id,
-                user: toJson(req.user),
-                err: error,
-                errorStatus: 500,
-              });
-              res.sendStatus(500);
+          } else {
+            log.error("Trying to vote but cant", {
+              context: "endorse",
+              post: req.params.id,
             });
+            res.sendStatus(401);
+          }
         } else {
-          log.error("Trying to vote but cant", {
+          log.error("Post not found", {
             context: "endorse",
             post: req.params.id,
           });
-          res.sendStatus(401);
+          res.sendStatus(404);
         }
-      } else {
-        log.error("Post not found", {
+      })
+      .catch((error) => {
+        log.error("Endorsements Error", {
           context: "endorse",
           post: req.params.id,
+          user: toJson(req.user),
+          err: error,
+          errorStatus: 500,
         });
-        res.sendStatus(404);
-      }
-    })
-    .catch((error) => {
-      log.error("Endorsements Error", {
-        context: "endorse",
-        post: req.params.id,
-        user: toJson(req.user),
-        err: error,
-        errorStatus: 500,
+        res.sendStatus(500);
       });
-      res.sendStatus(500);
-    });
-});
+  }
+);
 
 router.delete("/:id/endorse", auth.can("vote on post"), function (req, res) {
   models.Post.findOne({
@@ -2311,12 +2328,10 @@ router.delete("/:id/endorse", auth.can("vote on post"), function (req, res) {
                       "counter_endorsements_up",
                       -1,
                       function () {
-                        res
-                          .status(200)
-                          .send({
-                            endorsement: endorsement,
-                            oldEndorsementValue: oldEndorsementValue,
-                          });
+                        res.status(200).send({
+                          endorsement: endorsement,
+                          oldEndorsementValue: oldEndorsementValue,
+                        });
                       }
                     );
                   } else if (oldEndorsementValue < 0) {
@@ -2326,12 +2341,10 @@ router.delete("/:id/endorse", auth.can("vote on post"), function (req, res) {
                       "counter_endorsements_down",
                       -1,
                       function () {
-                        res
-                          .status(200)
-                          .send({
-                            endorsement: endorsement,
-                            oldEndorsementValue: oldEndorsementValue,
-                          });
+                        res.status(200).send({
+                          endorsement: endorsement,
+                          oldEndorsementValue: oldEndorsementValue,
+                        });
                       }
                     );
                   } else {
