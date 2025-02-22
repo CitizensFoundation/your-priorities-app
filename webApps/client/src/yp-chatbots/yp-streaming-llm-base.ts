@@ -277,7 +277,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
           ? chatMessage.rawMessage
           : chatMessage.message,
       };
-    }) as PsSimpleChatLog[];
+    }) as YpSimpleChatLog[];
   }
 
   reset() {

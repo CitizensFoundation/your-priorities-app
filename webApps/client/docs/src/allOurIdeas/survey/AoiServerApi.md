@@ -22,7 +22,7 @@ The `AoiServerApi` class extends the `YpServerApi` and provides methods to inter
 | postVote                  | groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" \| "right" \| "skip" | Promise<AoiVoteResponse \| null>   | Posts a vote for a specific prompt in a question.                           |
 | postVoteSkip              | groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData        | Promise<AoiVoteResponse \| null>   | Posts a vote skip for a specific prompt in a question.                      |
 | getResults                | groupId: number, questionId: number, showAll: boolean = false                                       | Promise<AoiChoiceData[]>           | Retrieves results for a specific question, optionally showing all results.  |
-| llmAnswerConverstation    | groupId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string               | Promise<void>                      | Sends a conversation log for LLM answer explanation.                        |
+| llmAnswerConverstation    | groupId: number, wsClientId: string, chatLog: YpSimpleChatLog[], languageName: string               | Promise<void>                      | Sends a conversation log for LLM answer explanation.                        |
 
 ## Examples
 

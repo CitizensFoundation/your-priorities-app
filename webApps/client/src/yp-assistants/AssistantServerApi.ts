@@ -67,7 +67,7 @@ export class YpAssistantServerApi extends YpServerApi {
   public async sendChatMessage(
     domainId: number,
     wsClientId: string,
-    chatLog: PsSimpleChatLog[],
+    chatLog: YpSimpleChatLog[],
     languageName: string,
     currentMode: string | undefined = undefined,
     serverMemoryId?: string
@@ -181,7 +181,7 @@ export class YpAssistantServerApi extends YpServerApi {
   }
 
   public async getMemoryFromServer(domainId: number): Promise<{
-    chatLog: PsSimpleChatLog[];
+    chatLog: YpSimpleChatLog[];
   }> {
     return this.fetchWrapper(
       this.baseUrlPath +
@@ -208,7 +208,7 @@ export class YpAssistantServerApi extends YpServerApi {
 
   private saveChatToLocalStorage(
     serverMemoryId: string,
-    chatLog: PsSimpleChatLog[]
+    chatLog: YpSimpleChatLog[]
   ): void {
     try {
       const savedChats = this.loadChatsFromLocalStorage();

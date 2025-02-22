@@ -36,7 +36,7 @@ export declare abstract class YpStreamingLlmBase extends YpBaseElement {
     addThinkingChatBotMessage(): void;
     abstract addChatBotElement(wsMessage: YpAssistantMessage): Promise<void>;
     addChatUserElement(data: YpAssistantMessage): void;
-    get simplifiedChatLog(): PsSimpleChatLog[];
+    get simplifiedChatLog(): YpSimpleChatLog[];
     reset(): void;
 }
 //# sourceMappingURL=yp-streaming-llm-base.d.ts.map

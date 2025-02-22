@@ -68,7 +68,7 @@ interface YpAssistantClientSystemMessage extends YpAssistantMessage {
 
 type YpSenderType = "assistant" | "user" | "system";
 
-interface PsSimpleChatLog {
+interface YpSimpleChatLog {
   html?: string;
   avatarUrl?: string;
   sender: YpSenderType;

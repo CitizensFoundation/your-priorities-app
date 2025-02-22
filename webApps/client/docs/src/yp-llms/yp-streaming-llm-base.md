@@ -37,7 +37,7 @@ Abstract class that provides base functionality for streaming chat messages over
 | addThinkingChatBotMessage |                            | void        | Adds a thinking message to the chat bot.         |
 | addChatBotElement      | wsMessage: PsAiChatWsMessage   | Promise<void> | Abstract method to add a chat bot element.    |
 | addChatUserElement     | data: PsAiChatWsMessage        | void        | Adds a chat user element to the chat log.        |
-| simplifiedChatLog      |                                | PsSimpleChatLog[] | Gets a simplified version of the chat log.    |
+| simplifiedChatLog      |                                | YpSimpleChatLog[] | Gets a simplified version of the chat log.    |
 | reset                  |                                | void        | Resets the chat log and WebSocket connection.    |
 
 ## Events

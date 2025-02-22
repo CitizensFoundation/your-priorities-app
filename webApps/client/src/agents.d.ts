@@ -191,7 +191,7 @@ interface YpAgentProductBundleAttributes extends YpBaseModelAttributes {
 }
 
 interface YpBaseChatBotMemoryData extends PsAgentBaseMemoryData {
-  chatLog?: PsSimpleChatLog[];
+  chatLog?: YpSimpleChatLog[];
 }
 
 interface AssistantModeData<T = unknown> {
@@ -229,7 +229,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
     configurationState: YpAssistantAgentConfigurationState;
   };
 
-  allChatLogs?: PsSimpleChatLog[];
+  allChatLogs?: YpSimpleChatLog[];
 
   loginState?: YpAssistantLoginState;
 

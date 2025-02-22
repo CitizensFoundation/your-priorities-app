@@ -41,7 +41,7 @@ An abstract base class for handling WebSocket connections and chat message manag
 | addThinkingChatBotMessage |                         | void        | Adds a "thinking" message from the assistant to the chat log.               |
 | addChatBotElement     | wsMessage: YpAssistantMessage | Promise<void> | Abstract method to add a chat bot element to the chat log.                  |
 | addChatUserElement    | data: YpAssistantMessage    | void        | Adds a user message to the chat log.                                        |
-| simplifiedChatLog     |                             | PsSimpleChatLog[] | Returns a simplified version of the chat log, excluding certain message types. |
+| simplifiedChatLog     |                             | YpSimpleChatLog[] | Returns a simplified version of the chat log, excluding certain message types. |
 | reset                 |                             | void        | Resets the chat log and reinitializes the WebSocket connection.             |
 
 ## Events

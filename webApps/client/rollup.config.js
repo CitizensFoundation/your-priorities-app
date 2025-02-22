@@ -1,11 +1,21 @@
-//import summary from 'rollup-plugin-summary';
-import terser  from "@rollup/plugin-terser";
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+import terser from "@rollup/plugin-terser";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import commonjs from '@rollup/plugin-commonjs';
-import pkg from './package.json' assert { type: 'json' };
 import copy from 'rollup-plugin-copy';
 import { rollupPluginHTML as html } from '@web/rollup-plugin-html';
+
+// Establish __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Read and parse package.json
+const pkgPath = join(__dirname, 'package.json');
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 
 function getCustomVersion(version) {
   const date = new Date();
@@ -56,7 +66,7 @@ export default {
         { src: 'images', dest: 'dist/' },
         { src: 'sw.js', dest: 'dist/' },
         { src: 'offline.html', dest: 'dist/' },
-        //TODO: Remove this after the new version has been fully launched - in here so one can switch between the old and new version
+        // TODO: Remove this after the new version has been fully launched
         { src: '../old/client/build/bundled/src', dest: 'dist/' },
         { src: '../old/client/build/bundled/bower_components', dest: 'dist/' },
         { src: 'node_modules/broadcastchannel-polyfill/index.js', dest: 'dist/node_modules/broadcastchannel-polyfill/' },

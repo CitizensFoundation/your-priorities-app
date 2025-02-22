@@ -192,7 +192,7 @@ export class AoiServerApi extends YpServerApi {
   public llmAnswerConverstation(
     groupId: number,
     wsClientId: string,
-    chatLog: PsSimpleChatLog[],
+    chatLog: YpSimpleChatLog[],
     languageName: string
   ): Promise<void> {
     return this.fetchWrapper(

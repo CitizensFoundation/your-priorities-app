@@ -10,6 +10,6 @@ export declare class AoiServerApi extends YpServerApi {
     postVote(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" | "right" | "skip"): Promise<AoiVoteResponse | null>;
     postVoteSkip(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData): Promise<AoiVoteResponse | null>;
     getResults(groupId: number, questionId: number, showAll?: boolean): Promise<AoiChoiceData[]>;
-    llmAnswerConverstation(groupId: number, wsClientId: string, chatLog: PsSimpleChatLog[], languageName: string): Promise<void>;
+    llmAnswerConverstation(groupId: number, wsClientId: string, chatLog: YpSimpleChatLog[], languageName: string): Promise<void>;
 }
 //# sourceMappingURL=AoiServerApi.d.ts.map
