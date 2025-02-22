@@ -1,10 +1,9 @@
 "use strict";
-var DEBUG_EMAILS_TO_TEMP_FIlE = true;
+var DEBUG_EMAILS_TO_TEMP_FIlE = false;
 var log = require("../../utils/logger.cjs");
 var async = require("async");
 var path = require("path");
 var nodemailer = require("nodemailer");
-const nodemailerSendgrid = require("nodemailer-sendgrid");
 var ejs = require("ejs");
 var i18n = require("../../utils/i18n.cjs");
 var airbrake = null;
@@ -21,9 +20,15 @@ var i18nFilter = function (text) {
 };
 var transport = null;
 if (process.env.SENDGRID_API_KEY) {
-    transport = nodemailer.createTransport(nodemailerSendgrid({
-        apiKey: process.env.SENDGRID_API_KEY,
-    }));
+    transport = nodemailer.createTransport({
+        host: "smtp.sendgrid.net",
+        port: 587,
+        secure: false, // false for STARTTLS; use 465 for SSL if preferred
+        auth: {
+            user: "apikey", // This literal string "apikey" is required
+            pass: process.env.SENDGRID_API_KEY
+        }
+    });
 }
 else if (process.env.GMAIL_ADDRESS &&
     process.env.GMAIL_CLIENT_ID &&
