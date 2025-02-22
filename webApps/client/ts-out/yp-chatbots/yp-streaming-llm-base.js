@@ -69,6 +69,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
             // Reset reconnect parameters on a successful connection.
             YpStreamingLlmBase.reconnectDelay = 1000;
             YpStreamingLlmBase.reconnectionAttempts = 1;
+            window.dispatchEvent(new Event("wsConnected"));
         };
         YpStreamingLlmBase.ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -94,7 +95,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
             YpStreamingLlmBase.scheduleReconnect();
         };
     }
-    static scheduleReconnect() {
+    static scheduleReconnect(doItNow = false) {
         // Do not attempt to reconnect if the socket was manually closed.
         if (YpStreamingLlmBase.wsManuallyClosed)
             return;
@@ -107,7 +108,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
             YpStreamingLlmBase.reconnectDelay = Math.min(YpStreamingLlmBase.reconnectDelay *
                 YpStreamingLlmBase.reconnectionAttempts, 5000);
             YpStreamingLlmBase.reconnectionAttempts++;
-        }, YpStreamingLlmBase.reconnectDelay);
+        }, doItNow ? 0 : YpStreamingLlmBase.reconnectDelay);
     }
     sendClientMessage(payload) {
         console.info("Sending client message");

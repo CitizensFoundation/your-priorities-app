@@ -333,6 +333,8 @@ export class WavRecorder {
       }
       this.stream = await navigator.mediaDevices.getUserMedia(config);
     } catch (err) {
+      console.error('Could not start media stream');
+      document.dispatchEvent(new CustomEvent("yp-error", { detail: "Can't find microphone" }) );
       throw new Error('Could not start media stream');
     }
 
