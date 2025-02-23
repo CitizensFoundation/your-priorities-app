@@ -35,6 +35,7 @@ export class DalleImageGenerator {
         else if (type === "icon") {
             size = "1024x1024";
         }
+        const modelQuality = "standard";
         while (retrying && retryCount < this.maxRetryCount) {
             try {
                 // If using Azure OpenAI
@@ -43,7 +44,7 @@ export class DalleImageGenerator {
                         prompt,
                         n: 1,
                         size,
-                        quality: "hd",
+                        quality: modelQuality,
                     });
                 }
                 else {
@@ -53,7 +54,7 @@ export class DalleImageGenerator {
                         prompt,
                         n: 1,
                         size,
-                        quality: "hd",
+                        quality: modelQuality,
                     });
                 }
                 if (result) {

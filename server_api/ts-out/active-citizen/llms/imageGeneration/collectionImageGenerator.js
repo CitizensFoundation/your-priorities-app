@@ -14,7 +14,7 @@ const dbModels = models;
 const Image = dbModels.Image;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 const disableFlux = false;
-const useImagen = true;
+const useImagen = false;
 export class CollectionImageGenerator {
     constructor() {
         this.s3Service = new S3Service(process.env.CLOUDFLARE_API_KEY, process.env.CLOUDFLARE_ZONE_ID);
