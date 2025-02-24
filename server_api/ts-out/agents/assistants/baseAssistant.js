@@ -57,7 +57,8 @@ Never engage in off topic conversations, always politely steer the conversation 
         });
         this.eventEmitter = new EventEmitter();
         this.setupClientSystemMessageListener();
-        this.clientSystemMessageListener = this.handleClientSystemMessage.bind(this);
+        this.clientSystemMessageListener =
+            this.handleClientSystemMessage.bind(this);
         this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
     destroy() {
@@ -207,7 +208,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 }
                 console.log(`agent_run_changed emitting`);
                 const currentWorkflowStep = agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
-                this.emit("update-ai-model-session", `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, currentWorkflowStep, null, 2)} offer the user assistance with this next step in the workflow`);
+                this.emit("update-ai-model-session", `The agent run status has been updated to ${agentRun.status} ${JSON.stringify({ workflow: agentRun.workflow, currentWorkflowStep }, null, 2)} offer the user assistance with this next step in the workflow`);
             }
             catch (error) {
                 console.error(`Error finding agent run: ${error}`);

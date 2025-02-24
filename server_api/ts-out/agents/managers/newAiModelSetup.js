@@ -84,6 +84,37 @@ export class NewAiModelSetup {
             console.log("Anthropic model already exists: Anthropic Sonnet 3.5");
         }
     }
+    static async seedAnthropic37Models(userId) {
+        const anthropicSonnet = await PsAiModel.findOne({
+            where: { name: "Anthropic Sonnet 3.7" },
+        });
+        if (!anthropicSonnet) {
+            const anthropicSonnetConfig = {
+                type: PsAiModelType.Text,
+                modelSize: PsAiModelSize.Medium,
+                provider: "anthropic",
+                prices: {
+                    costInTokensPerMillion: 3,
+                    costOutTokensPerMillion: 15,
+                    currency: "USD",
+                },
+                maxTokensOut: 8000,
+                defaultTemperature: 0.7,
+                model: "claude-3-7-sonnet-20250219",
+                active: true,
+            };
+            const createdModel = await PsAiModel.create({
+                name: "Anthropic Sonnet 3.7",
+                organization_id: 1,
+                user_id: userId,
+                configuration: anthropicSonnetConfig,
+            });
+            console.log("Created Anthropic model:", createdModel);
+        }
+        else {
+            console.log("Anthropic model already exists: Anthropic Sonnet 3.5");
+        }
+    }
     /**
      * Seeds OpenAI models.
      * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,

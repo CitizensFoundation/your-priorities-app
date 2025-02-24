@@ -71,7 +71,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.setupClientSystemMessageListener();
 
-    this.clientSystemMessageListener = this.handleClientSystemMessage.bind(this);
+    this.clientSystemMessageListener =
+      this.handleClientSystemMessage.bind(this);
 
     this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
   }
@@ -88,25 +89,25 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   }
 
   removeClientSystemMessageListener() {
-    this.wsClientSocket.removeListener("message", this.clientSystemMessageListener);
+    this.wsClientSocket.removeListener(
+      "message",
+      this.clientSystemMessageListener
+    );
   }
 
   handleClientSystemMessage(data: Buffer) {
     try {
       const message = JSON.parse(data.toString());
 
-        switch (message.type) {
-          case "client_system_message":
-            console.log(
-              "WebSockets: Processing client_system_message:",
-              message
-            );
-            this.processClientSystemMessage(message);
-            break;
-          default:
-          //console.log('Unhandled message type:', message.type);
-        }
-      } catch (error) {
+      switch (message.type) {
+        case "client_system_message":
+          console.log("WebSockets: Processing client_system_message:", message);
+          this.processClientSystemMessage(message);
+          break;
+        default:
+        //console.log('Unhandled message type:', message.type);
+      }
+    } catch (error) {
       console.error("Error processing message:", error);
     }
   }
@@ -117,7 +118,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       this.wsClientId
     );
 
-    this.wsClientSocket.on("message", this.handleClientSystemMessage.bind(this));
+    this.wsClientSocket.on(
+      "message",
+      this.handleClientSystemMessage.bind(this)
+    );
 
     const listenerCountAfter = this.wsClientSocket.listenerCount("message");
     console.log(
@@ -284,15 +288,15 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         console.log(`agent_run_changed emitting`);
 
-        const currentWorkflowStep = agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
+        const currentWorkflowStep =
+          agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
 
         this.emit(
           "update-ai-model-session",
           `The agent run status has been updated to ${
             agentRun.status
           } ${JSON.stringify(
-            agentRun.workflow,
-            currentWorkflowStep,
+            { workflow: agentRun.workflow, currentWorkflowStep },
             null,
             2
           )} offer the user assistance with this next step in the workflow`
@@ -914,7 +918,7 @@ Never engage in off topic conversations, always politely steer the conversation 
     return chatLog
       .filter((message) => message.sender !== "system")
       .map((message) => {
-        if (message.message!=null) {
+        if (message.message != null) {
           return { role: message.sender, content: message.message };
         } else {
           console.debug(
