@@ -48,6 +48,8 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     );
     const wsClient = this.wsClients.get(wsClientId);
     if (wsClient) {
+      const currentWorkflowStep =
+        updatedWorkflow?.steps[updatedWorkflow?.currentStepIndex];
       wsClient.send(
         JSON.stringify({
           type: "updated_workflow",
@@ -55,7 +57,11 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
           status,
           result,
           agentRunId,
-          updatedWorkflow: { workflow: updatedWorkflow, status: status },
+          updatedWorkflow: {
+            workflow: updatedWorkflow,
+            status: status,
+            currentWorkflowStep,
+          },
         })
       );
     } else {
@@ -299,7 +305,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     }
   }
 
-  static async getAgentRun(agentRunId: number): Promise<YpAgentProductRun | null> {
+  static async getAgentRun(
+    agentRunId: number
+  ): Promise<YpAgentProductRun | null> {
     return await YpAgentProductRun.findOne({
       where: { id: agentRunId },
       attributes: ["id", "status", "workflow"],
@@ -407,7 +415,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
-            const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
+            const agentRun = await NotificationAgentQueueManager.getAgentRun(
+              agentRunId
+            );
 
             if (!agentRun) {
               console.error(
@@ -506,7 +516,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
               include: [{ model: PsAgentClass, as: "Class" }],
             });
 
-            const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
+            const agentRun = await NotificationAgentQueueManager.getAgentRun(
+              agentRunId
+            );
 
             if (agent && agentRun) {
               // Send notification email
@@ -631,7 +643,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       return undefined;
     }
 
-    const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
+    const agentRun = await NotificationAgentQueueManager.getAgentRun(
+      agentRunId
+    );
 
     if (!agentRun) {
       console.error(
@@ -682,7 +696,9 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       );
     }
 
-    const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
+    const agentRun = await NotificationAgentQueueManager.getAgentRun(
+      agentRunId
+    );
 
     if (!agentRun) {
       console.error(
