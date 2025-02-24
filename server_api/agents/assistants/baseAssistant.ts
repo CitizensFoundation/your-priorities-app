@@ -284,12 +284,15 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         console.log(`agent_run_changed emitting`);
 
+        const currentWorkflowStep = agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
+
         this.emit(
           "update-ai-model-session",
           `The agent run status has been updated to ${
             agentRun.status
           } ${JSON.stringify(
             agentRun.workflow,
+            currentWorkflowStep,
             null,
             2
           )} offer the user assistance with this next step in the workflow`
