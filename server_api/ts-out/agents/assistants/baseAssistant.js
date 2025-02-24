@@ -206,7 +206,8 @@ Never engage in off topic conversations, always politely steer the conversation 
                     throw new Error("No agent run found");
                 }
                 console.log(`agent_run_changed emitting`);
-                this.emit("update-ai-model-session", `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, null, 2)} offer the user assistance with this next step in the workflow`);
+                const currentWorkflowStep = agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
+                this.emit("update-ai-model-session", `The agent run status has been updated to ${agentRun.status} ${JSON.stringify(agentRun.workflow, currentWorkflowStep, null, 2)} offer the user assistance with this next step in the workflow`);
             }
             catch (error) {
                 console.error(`Error finding agent run: ${error}`);

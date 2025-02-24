@@ -291,11 +291,7 @@ export class YpAppUser extends YpCodeBase {
             dialog.open(event.detail);
         });
     }
-    getUser() {
-        return this.sessionGet("user");
-    }
     setLoggedInUser(user) {
-        this.sessionSet("user", user);
         this.user = user;
         this.fireGlobal("yp-logged-in", this.user);
         // TODO: Look at this. Fire another signal a bit later in case some components had not set up their listeners

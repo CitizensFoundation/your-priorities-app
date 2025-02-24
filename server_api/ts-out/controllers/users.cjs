@@ -1291,6 +1291,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
                     user.dataValues.loginProvider = req.user.loginProvider;
                 if (req.user.isSamlEmployee)
                     user.dataValues.isSamlEmployee = req.user.isSamlEmployee;
+                delete user.dataValues.private_profile_data;
                 setSAMLSettingsOnUser(req, user, (error) => {
                     if (error) {
                         log.error("User IsLoggedIn Error 2", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });

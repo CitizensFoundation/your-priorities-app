@@ -28,11 +28,11 @@ export class AgentModels {
     }
     convertToUnderscoresWithMaxLength(str) {
         const converted = str
-            .replace(/\s+/g, '_') // Replace spaces with underscores
-            .replace(/([A-Z])/g, '_$1') // Add underscore before capital letters
-            .replace(/^_/, '') // Remove leading underscore
-            .replace(/-/g, '_') // Replace hyphens with underscores
-            .replace(/_+/g, '_') // Replace multiple underscores with single
+            .replace(/\s+/g, "_") // Replace spaces with underscores
+            .replace(/([A-Z])/g, "_$1") // Add underscore before capital letters
+            .replace(/^_/, "") // Remove leading underscore
+            .replace(/-/g, "_") // Replace hyphens with underscores
+            .replace(/_+/g, "_") // Replace multiple underscores with single
             .toLowerCase();
         return converted.length > 34 ? converted.slice(0, 34) : converted;
     }
@@ -76,6 +76,8 @@ export class AgentModels {
             await agentRunToUpdate.save();
             return {
                 agentRun: agentRunToUpdate,
+                previousStep: currentStep,
+                currentStep: workflow.steps[currentStepIndex],
                 message: "Agent workflow started successfully",
             };
         }
@@ -97,7 +99,8 @@ export class AgentModels {
         if (agentRun.run.workflow.currentStepIndex === 0) {
             return agentRun.run.workflow.steps[0];
         }
-        if (agentRun.run.workflow.currentStepIndex >= agentRun.run.workflow.steps.length - 1) {
+        if (agentRun.run.workflow.currentStepIndex >=
+            agentRun.run.workflow.steps.length - 1) {
             return undefined;
         }
         return agentRun.run.workflow.steps[agentRun.run.workflow.currentStepIndex + 1];

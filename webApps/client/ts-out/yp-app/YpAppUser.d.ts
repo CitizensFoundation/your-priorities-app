@@ -102,7 +102,6 @@ export declare class YpAppUser extends YpCodeBase {
     openNotificationSettings(): void;
     _forgotPassword(event: CustomEvent): void;
     _resetPassword(event: CustomEvent): void;
-    getUser(): any;
     setLoggedInUser(user: YpUserData): void;
     removeAnonymousUser(): void;
     removeUserSession(): void;

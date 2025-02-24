@@ -424,12 +424,7 @@ export class YpAppUser extends YpCodeBase {
     });
   }
 
-  getUser() {
-    return this.sessionGet("user");
-  }
-
   setLoggedInUser(user: YpUserData) {
-    this.sessionSet("user", user);
     this.user = user;
     this.fireGlobal("yp-logged-in", this.user);
 
