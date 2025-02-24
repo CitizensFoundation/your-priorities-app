@@ -399,64 +399,29 @@ export class AssistantController {
   ) => {
     if (req.user && req.params.domainId) {
       try {
-        // Get the current anonymous memory ID based on client UUID
         let memoryId = this.getMemoryUserId(req);
         let redisKey = YpAgentAssistant.getRedisKey(memoryId);
         console.log(
           `Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`
         );
-
-        // Load the anonymous memory
-        let anonymousMemory = (await YpAgentAssistant.loadMemoryFromRedis(
+        let memory = (await YpAgentAssistant.loadMemoryFromRedis(
           memoryId
         )) as YpBaseAssistantMemoryData;
+        if (memory) {
+          memory.currentUser = req.user;
+          await req.redisClient.set(redisKey, JSON.stringify(memory));
 
-        if (anonymousMemory) {
-          // Create a user-specific memory ID
-          const userMemoryId = `${req.params.domainId}-user-${req.user.id}`;
-          const userRedisKey = YpAgentAssistant.getRedisKey(userMemoryId);
-
-          // Check if the user already has existing memory
-          let userMemory = await YpAgentAssistant.loadMemoryFromRedis(userMemoryId) as YpBaseAssistantMemoryData;
-
-          if (userMemory) {
-            // If user already has memory, we need to decide if we should merge or replace
-            // Here we'll append the anonymous chat log to user's existing chat log
-            console.log(`Found existing user memory for ${userMemoryId}, merging with anonymous memory`);
-            userMemory.chatLog = [
-              ...(userMemory.chatLog || []),
-              ...(anonymousMemory.chatLog || [])
-            ];
-
-            // Update other fields as needed
-            userMemory.currentMode = anonymousMemory.currentMode;
-            userMemory.modeData = anonymousMemory.modeData;
-            userMemory.currentUser = req.user;
-
-            // Save the updated user memory
-            await req.redisClient.set(userRedisKey, JSON.stringify(userMemory));
-          } else {
-            // If user has no existing memory, just transfer the anonymous memory
-            console.log(`No existing user memory for ${userMemoryId}, transferring anonymous memory`);
-            anonymousMemory.redisKey = userRedisKey;
-            anonymousMemory.currentUser = req.user;
-
-            // Save as user memory
-            await req.redisClient.set(userRedisKey, JSON.stringify(anonymousMemory));
-          }
-
-          // Return both keys so the client can update its reference
-          res.status(200).json({
-            previousMemoryId: memoryId,
-            newMemoryId: userMemoryId,
-            success: true
-          });
+          //TODO: Check if needed, wait for 300ms to make sure redis is saved
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          console.log(
+            `Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`
+          );
         } else {
           console.error(
             `No memory found to update login status for id ${memoryId}`
           );
-          res.sendStatus(404);
         }
+        res.sendStatus(200);
       } catch (error) {
         console.error("Error updating login status:", error);
         res.sendStatus(500);
@@ -479,16 +444,8 @@ export class AssistantController {
 
   private clearChatLog = async (req: YpRequest, res: express.Response) => {
     try {
-      // Determine the correct memory ID based on login status
-      let memoryId;
-      if (req.user && req.params.domainId) {
-        memoryId = `${req.params.domainId}-user-${req.user.id}`;
-        console.log(`Clearing chat log for user-specific memory: ${memoryId}`);
-      } else {
-        memoryId = this.getMemoryUserId(req);
-        console.log(`Clearing chat log for client memory: ${memoryId}`);
-      }
-
+      const memoryId = this.getMemoryUserId(req);
+      console.log(`Clearing chat log for memoryId: ${memoryId}`);
       const redisKey = YpAgentAssistant.getRedisKey(memoryId);
       const memory = (await YpAgentAssistant.loadMemoryFromRedis(
         memoryId
@@ -537,43 +494,14 @@ export class AssistantController {
     let memoryId: string | undefined;
 
     try {
-      // If user is logged in, try to get their user-specific memory first
-      if (req.user && req.params.domainId) {
-        const userMemoryId = `${req.params.domainId}-user-${req.user.id}`;
-        console.log(`Checking for user-specific memory: ${userMemoryId}`);
-        memory = (await YpAgentAssistant.loadMemoryFromRedis(
-          userMemoryId
-        )) as YpBaseAssistantMemoryData;
-
-        if (memory) {
-          console.log(`Found user-specific memory for: ${userMemoryId}`);
-          memoryId = userMemoryId;
-
-          // Make sure user data is up-to-date
-          memory.currentUser = req.user;
-          await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
-
-          // Return the user memory
-          res.send({
-            ...memory,
-            memoryId: userMemoryId,
-            isUserMemory: true
-          });
-          return;
-        }
-      }
-
-      // If no user-specific memory found or user not logged in, fall back to client UUID-based memory
       memoryId = this.getMemoryUserId(req);
-      console.log(`Falling back to client memory for memoryId: ${memoryId}`);
-
+      console.log(`Getting memory for memoryId: ${memoryId}`);
       if (memoryId) {
         memory = (await YpAgentAssistant.loadMemoryFromRedis(
           memoryId
         )) as YpBaseAssistantMemoryData;
-
         if (!memory) {
-          console.log(`Client memory not found for id ${memoryId}, creating new memory`);
+          console.log(`memory not found for id ${memoryId}`);
           memory = {
             redisKey: YpAgentAssistant.getRedisKey(memoryId),
             chatLog: [],
@@ -584,14 +512,13 @@ export class AssistantController {
 
           await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
         } else {
-          // Update user status in memory
           if (req.user && !memory.currentUser) {
             memory.currentUser = req.user;
-            await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
           } else if (!req.user && memory.currentUser) {
             memory.currentUser = undefined;
-            await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
           }
+
+          await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
         }
       }
     } catch (error) {
@@ -601,11 +528,7 @@ export class AssistantController {
     }
 
     if (memory) {
-      res.send({
-        ...memory,
-        memoryId: memoryId,
-        isUserMemory: false
-      });
+      res.send(memory);
     } else {
       console.error(`No memory found for memoryId: ${memoryId}`);
       res.send({});
@@ -615,17 +538,7 @@ export class AssistantController {
   private async startVoiceSession(req: YpRequest, res: express.Response) {
     try {
       const { wsClientId, currentMode } = req.body;
-
-      // Determine the correct memory ID based on login status
-      let memoryId;
-      if (req.user && req.params.domainId) {
-        memoryId = `${req.params.domainId}-user-${req.user.id}`;
-        console.log(`Using user-specific memory ID: ${memoryId}`);
-      } else {
-        memoryId = this.getMemoryUserId(req);
-        console.log(`Using client memory ID: ${memoryId}`);
-      }
-
+      const memoryId = this.getMemoryUserId(req);
       console.log(`Starting chat session for client: ${wsClientId}`);
 
       let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
@@ -658,7 +571,6 @@ export class AssistantController {
       res.status(200).json({
         message: "Voice session initialized",
         wsClientId,
-        memoryId,
       });
     } catch (error) {
       console.error("Error starting voice session:", error);
@@ -669,17 +581,7 @@ export class AssistantController {
   private async sendChatMessage(req: YpRequest, res: express.Response) {
     try {
       const { wsClientId, chatLog, currentMode } = req.body;
-
-      // Determine the correct memory ID based on login status
-      let memoryId;
-      if (req.user && req.params.domainId) {
-        memoryId = `${req.params.domainId}-user-${req.user.id}`;
-        console.log(`Using user-specific memory ID: ${memoryId}`);
-      } else {
-        memoryId = this.getMemoryUserId(req);
-        console.log(`Using client memory ID: ${memoryId}`);
-      }
-
+      const memoryId = this.getMemoryUserId(req);
       console.log(
         `Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`
       );
@@ -714,7 +616,6 @@ export class AssistantController {
       res.status(200).json({
         message: "Chat session initialized",
         wsClientId,
-        memoryId,
       });
     } catch (error) {
       console.error("Error starting chat session:", error);
