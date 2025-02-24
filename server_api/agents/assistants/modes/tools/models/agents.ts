@@ -14,9 +14,10 @@ export class AgentModels {
   constructor(assistant: YpAgentAssistant) {
     this.assistant = assistant;
     this.subscriptionModels = new SubscriptionModels(assistant);
-    this.queueManager = new NotificationAgentQueueManager(this.assistant.wsClients);
+    this.queueManager = new NotificationAgentQueueManager(
+      this.assistant.wsClients
+    );
   }
-
 
   public async getCurrentAgentAndWorkflow(): Promise<{
     agent: YpAgentProductAttributes;
@@ -42,11 +43,11 @@ export class AgentModels {
 
   public convertToUnderscoresWithMaxLength(str: string): string {
     const converted = str
-      .replace(/\s+/g, '_')           // Replace spaces with underscores
-      .replace(/([A-Z])/g, '_$1')     // Add underscore before capital letters
-      .replace(/^_/, '')              // Remove leading underscore
-      .replace(/-/g, '_')             // Replace hyphens with underscores
-      .replace(/_+/g, '_')            // Replace multiple underscores with single
+      .replace(/\s+/g, "_") // Replace spaces with underscores
+      .replace(/([A-Z])/g, "_$1") // Add underscore before capital letters
+      .replace(/^_/, "") // Remove leading underscore
+      .replace(/-/g, "_") // Replace hyphens with underscores
+      .replace(/_+/g, "_") // Replace multiple underscores with single
       .toLowerCase();
 
     return converted.length > 34 ? converted.slice(0, 34) : converted;
@@ -57,11 +58,11 @@ export class AgentModels {
     structuredAnswersOverrides?: YpStructuredAnswer[]
   ): Promise<{
     agentRun: YpAgentProductRunAttributes;
+    previousStep: YpWorkflowStep;
+    currentStep: YpWorkflowStep;
     message: string;
   }> {
-
     try {
-
       const agentRunToUpdate = await YpAgentProductRun.findByPk(agentRunId);
 
       if (!agentRunToUpdate) {
@@ -126,10 +127,11 @@ export class AgentModels {
       await agentRunToUpdate.save();
 
       return {
-       agentRun: agentRunToUpdate,
+        agentRun: agentRunToUpdate,
+        previousStep: currentStep,
+        currentStep: workflow.steps[currentStepIndex],
         message: "Agent workflow started successfully",
       };
-
     } catch (error) {
       console.error(error);
       throw new Error("Error starting agent workflow step");
@@ -138,7 +140,9 @@ export class AgentModels {
 
   public async getCurrentWorkflowStep(): Promise<YpWorkflowStep> {
     const agentRun = await this.getCurrentAgentAndWorkflow();
-    return agentRun.run!.workflow.steps[agentRun.run!.workflow.currentStepIndex];
+    return agentRun.run!.workflow.steps[
+      agentRun.run!.workflow.currentStepIndex
+    ];
   }
 
   public async getNextWorkflowStep(): Promise<YpWorkflowStep | undefined> {
@@ -151,10 +155,15 @@ export class AgentModels {
     if (agentRun.run!.workflow.currentStepIndex === 0) {
       return agentRun.run!.workflow.steps[0];
     }
-    if (agentRun.run!.workflow.currentStepIndex >= agentRun.run!.workflow.steps.length - 1) {
+    if (
+      agentRun.run!.workflow.currentStepIndex >=
+      agentRun.run!.workflow.steps.length - 1
+    ) {
       return undefined;
     }
-    return agentRun.run!.workflow.steps[agentRun.run!.workflow.currentStepIndex + 1];
+    return agentRun.run!.workflow.steps[
+      agentRun.run!.workflow.currentStepIndex + 1
+    ];
   }
 
   public async stopCurrentWorkflowStep(): Promise<{
@@ -165,16 +174,16 @@ export class AgentModels {
     console.log("---------------------> stopCurrentWorkflowStep");
     const agent = await this.assistant.getCurrentAgentProduct();
 
-    const currentRun =
-      (await YpAgentProductRun.findByPk(
-        this.assistant.memory.currentAgentStatus?.activeAgentRunId
-      ))!;
+    const currentRun = (await YpAgentProductRun.findByPk(
+      this.assistant.memory.currentAgentStatus?.activeAgentRunId
+    ))!;
 
     if (!currentRun) {
       throw new Error("No active workflow found to stop");
     }
 
-    const currentStep = currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
+    const currentStep =
+      currentRun.workflow.steps[currentRun.workflow.currentStepIndex];
 
     if (!agent) {
       throw new Error("No agent found");
@@ -185,7 +194,11 @@ export class AgentModels {
     }
 
     // Stop processing using queue manager
-    await this.queueManager.stopAgentProcessing(currentStep.agentId, this.assistant.wsClientId, currentRun.id);
+    await this.queueManager.stopAgentProcessing(
+      currentStep.agentId,
+      this.assistant.wsClientId,
+      currentRun.id
+    );
 
     // Update run status
     currentRun.status = "stopped";
