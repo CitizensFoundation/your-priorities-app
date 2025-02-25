@@ -168,7 +168,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         if (data.type !== "stream_followup" &&
             data.type !== "voice_input" &&
             data.type !== "updated_workflow" &&
-            data.type !== "heartbeat_ack" && // already handled
+            data.type !== "heartbeat_ack" &&
             data.type !== "hiddenContextMessage") {
             this.scrollDown();
         }

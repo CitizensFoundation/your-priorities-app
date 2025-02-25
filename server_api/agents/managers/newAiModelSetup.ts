@@ -98,22 +98,21 @@ export class NewAiModelSetup {
     const anthropicSonnet = await PsAiModel.findOne({
       where: { name: "Anthropic Sonnet 3.7" },
     });
+    const anthropicSonnetConfig = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Medium,
+      provider: "anthropic",
+      prices: {
+        costInTokensPerMillion: 3,
+        costOutTokensPerMillion: 15,
+        currency: "USD",
+      },
+      maxTokensOut: 8000,
+      defaultTemperature: 0.7,
+      model: "claude-3-7-sonnet-20250219",
+      active: true,
+    };
     if (!anthropicSonnet) {
-      const anthropicSonnetConfig = {
-        type: PsAiModelType.Text,
-        modelSize: PsAiModelSize.Medium,
-        provider: "anthropic",
-        prices: {
-          costInTokensPerMillion: 3,
-          costOutTokensPerMillion: 15,
-          currency: "USD",
-        },
-        maxTokensOut: 8000,
-        defaultTemperature: 0.7,
-        model: "claude-3-7-sonnet-20250219",
-        active: true,
-      };
-
       const createdModel = await PsAiModel.create({
         name: "Anthropic Sonnet 3.7",
         organization_id: 1,
@@ -122,7 +121,7 @@ export class NewAiModelSetup {
       });
       console.log("Created Anthropic model:", createdModel);
     } else {
-      console.log("Anthropic model already exists: Anthropic Sonnet 3.5");
+      console.log("Anthropic model already exists: Anthropic Sonnet 3.7");
     }
   }
 
@@ -431,6 +430,7 @@ export class NewAiModelSetup {
   static async seedAiModels(userId: number): Promise<void> {
     try {
       await NewAiModelSetup.seedAnthropicModels(userId);
+      await NewAiModelSetup.seedAnthropic37Models(userId);
       await NewAiModelSetup.seedOpenAiModels(userId);
       await NewAiModelSetup.seedGoogleModels(userId);
 
