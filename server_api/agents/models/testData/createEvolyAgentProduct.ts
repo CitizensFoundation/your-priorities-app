@@ -41,7 +41,7 @@ async function createAgentProductsAndPlans() {
       },
     } as YpAgentProductBundleAttributes;
 
-    const competitionAgentWorkflow: YpWorkflowConfiguration = {
+    const competitionAgentWorkflow: YpAgentRunWorkflowConfiguration = {
       currentStepIndex: 0,
       steps: [
         {
@@ -100,7 +100,7 @@ async function createAgentProductsAndPlans() {
       ],
     };
 
-    const fundingAgentWorkflow: YpWorkflowConfiguration = {
+    const fundingAgentWorkflow: YpAgentRunWorkflowConfiguration = {
       currentStepIndex: 0,
       steps: [
         {

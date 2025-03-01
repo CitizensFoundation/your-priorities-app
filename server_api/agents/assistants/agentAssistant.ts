@@ -115,14 +115,14 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   async getCurrentAgentWorkflow(): Promise<
-    YpWorkflowConfiguration | undefined
+    YpAgentRunWorkflowConfiguration | undefined
   > {
     const agentRun = await this.getCurrentAgentRun();
     return agentRun?.workflow;
   }
 
   async getCurrentAgentWorkflowCurrentStep(): Promise<
-    YpWorkflowStep | undefined
+    YpAgentRunWorkflowStep | undefined
   > {
     const agentRun = await this.getCurrentAgentRun();
     return agentRun?.workflow?.steps[agentRun?.workflow?.currentStepIndex ?? 0];

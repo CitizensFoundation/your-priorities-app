@@ -39,7 +39,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
     status: string,
     result: any,
     agentRunId?: number,
-    updatedWorkflow?: YpWorkflowConfiguration
+    updatedWorkflow?: YpAgentRunWorkflowConfiguration
   ) {
     console.log(
       "NotificationAgentQueueManager: Sending notification",
@@ -80,7 +80,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
   async sendNotificationEmail(
     agent: PsAgent,
     agentRun: YpAgentProductRun,
-    updatedWorkflow: YpWorkflowConfiguration
+    updatedWorkflow: YpAgentRunWorkflowConfiguration
   ) {
     // Send email notification
     const subject = `${agentRun.Subscription?.Plan?.AgentProduct?.name} - ${
@@ -175,7 +175,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       return;
     }
 
-    const workflowConfig = agentRun.workflow as YpWorkflowConfiguration;
+    const workflowConfig = agentRun.workflow as YpAgentRunWorkflowConfiguration;
     if (
       currentWorkflowStepIndex !== undefined &&
       currentWorkflowStepIndex !== workflowConfig.currentStepIndex
@@ -238,7 +238,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
         return;
       }
 
-      const workflowConfig = agentRun.workflow as YpWorkflowConfiguration;
+      const workflowConfig = agentRun.workflow as YpAgentRunWorkflowConfiguration;
 
       if (status === "failed") {
         // Mark the workflow as failed
@@ -654,7 +654,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       return undefined;
     }
 
-    const currentWorkflow = agentRun.workflow as YpWorkflowConfiguration;
+    const currentWorkflow = agentRun.workflow as YpAgentRunWorkflowConfiguration;
 
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);
@@ -707,7 +707,7 @@ export class NotificationAgentQueueManager extends AgentQueueManager {
       return false;
     }
 
-    const currentWorkflow = agentRun.workflow as YpWorkflowConfiguration;
+    const currentWorkflow = agentRun.workflow as YpAgentRunWorkflowConfiguration;
 
     const queueName = agent.Class.configuration.queueName;
     const queue = this.getQueue(queueName);

@@ -92,7 +92,7 @@ export class SubscriptionManager {
     agentProduct: YpAgentProduct,
     domainId: number,
     currentUser: UserClass
-  ): Promise<{ workflow: YpWorkflowConfiguration; requiredQuestions?: any[] }> {
+  ): Promise<{ workflow: YpAgentRunWorkflowConfiguration; requiredQuestions?: any[] }> {
     console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
     let newCommunity = await this.cloneCommunityTemplate(
       agentProduct.configuration.templateWorkflowCommunityId,

@@ -16,6 +16,7 @@ import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
+import { WorkflowManager } from "../managers/workflowManager.js";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -47,10 +48,12 @@ export class AssistantController {
   public chatAssistantInstances = new Map<string, YpAgentAssistant>();
   public voiceAssistantInstances = new Map<string, YpAgentAssistant>();
   private agentQueueManager!: AgentQueueManager;
+  private workflowManager!: WorkflowManager;
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
     this.agentQueueManager = new AgentQueueManager();
+    this.workflowManager = new WorkflowManager();
     this.initializeRoutes();
     this.initializeModels();
   }
@@ -145,6 +148,22 @@ export class AssistantController {
       "/:groupId/:agentId/getDocxReport",
       auth.can("view domain"),
       this.getDocxReport.bind(this)
+    );
+    
+    this.router.get(
+      "/:domainId/workflows/running",
+      auth.can("view domain"),
+      this.getRunningWorkflows.bind(this)
+    );
+    this.router.get(
+      "/:domainId/workflows/all",
+      auth.can("view domain"),
+      this.getAllWorkflows.bind(this)
+    );
+    this.router.put(
+      "/:domainId/workflows/connect",
+      auth.can("view domain"),
+      this.connectToWorkflow.bind(this)
     );
   }
 
@@ -622,4 +641,58 @@ export class AssistantController {
       res.status(500).json({ error: "Internal server error" });
     }
   }
+
+  // New API endpoints for workflow management
+
+  private getRunningWorkflows = async (req: YpRequest, res: express.Response) => {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    try {
+      const workflows = await this.workflowManager.getRunningWorkflowsForUser(req.user.id);
+      res.status(200).json({
+        success: true,
+        data: { workflows },
+        message: "Running workflows retrieved successfully"
+      });
+    } catch (error: any) {
+      console.error("Error retrieving running workflows:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  private getAllWorkflows = async (req: YpRequest, res: express.Response) => {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    try {
+      const workflows = await this.workflowManager.getWorkflowsForUser(req.user.id);
+      res.status(200).json({
+        success: true,
+        data: { workflows },
+        message: "All workflows retrieved successfully"
+      });
+    } catch (error: any) {
+      console.error("Error retrieving all workflows:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  private connectToWorkflow = async (req: YpRequest, res: express.Response) => {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    try {
+      const { workflowId, connectionData } = req.body;
+      const updatedWorkflow = await this.workflowManager.connectToWorkflow(workflowId, connectionData || {});
+      res.status(200).json({
+        success: true,
+        data: updatedWorkflow,
+        message: `Connected to workflow ${workflowId} successfully`
+      });
+    } catch (error: any) {
+      console.error("Error connecting to workflow:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
 }

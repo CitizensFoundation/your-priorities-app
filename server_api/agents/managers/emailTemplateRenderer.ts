@@ -26,7 +26,7 @@ export class EmailTemplateRenderer {
     recipientName: string,
     invitedBy: string,
     agentName: string,
-    workflow: YpWorkflowConfiguration,
+    workflow: YpAgentRunWorkflowConfiguration,
     ctaLink: string,
     brandLogoUrl: string,
     brandName: string,

@@ -13,14 +13,14 @@ export class BaseAssistantMode {
     return this.assistant.memory;
   }
 
-  renderSimplifiedWorkflowStep(step: YpWorkflowStep | undefined) {
+  renderSimplifiedWorkflowStep(step: YpAgentRunWorkflowStep | undefined) {
     if (!step) {
       return "";
     }
     return `<${step.type}>${step.name}: ${step.description}</${step.type}>`;
   }
 
-  renderSimplifiedWorkflow(workflow: YpWorkflowConfiguration) {
+  renderSimplifiedWorkflow(workflow: YpAgentRunWorkflowConfiguration) {
     let workflowInfo = "";
     for (let step of workflow.steps) {
       workflowInfo += this.renderSimplifiedWorkflowStep(step);

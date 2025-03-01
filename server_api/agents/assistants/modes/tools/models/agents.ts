@@ -58,8 +58,8 @@ export class AgentModels {
     structuredAnswersOverrides?: YpStructuredAnswer[]
   ): Promise<{
     agentRun: YpAgentProductRunAttributes;
-    previousStep: YpWorkflowStep;
-    currentStep: YpWorkflowStep;
+    previousStep: YpAgentRunWorkflowStep;
+    currentStep: YpAgentRunWorkflowStep;
     message: string;
   }> {
     try {
@@ -138,14 +138,14 @@ export class AgentModels {
     }
   }
 
-  public async getCurrentWorkflowStep(): Promise<YpWorkflowStep> {
+  public async getCurrentWorkflowStep(): Promise<YpAgentRunWorkflowStep> {
     const agentRun = await this.getCurrentAgentAndWorkflow();
     return agentRun.run!.workflow.steps[
       agentRun.run!.workflow.currentStepIndex
     ];
   }
 
-  public async getNextWorkflowStep(): Promise<YpWorkflowStep | undefined> {
+  public async getNextWorkflowStep(): Promise<YpAgentRunWorkflowStep | undefined> {
     const agentRun = await this.getCurrentAgentAndWorkflow();
     if (!agentRun.run) {
       return undefined;

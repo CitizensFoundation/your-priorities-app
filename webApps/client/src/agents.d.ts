@@ -25,7 +25,7 @@ interface YpAgentProductAttributes extends YpBaseModelAttributes {
 interface YpAgentProductConfiguration {
   displayName?: string;
   displayDescription?: string;
-  workflow: YpWorkflowConfiguration;
+  workflow: YpAgentRunWorkflowConfiguration;
   templateWorkflowCommunityId: number;
   structuredAnswersOverride: YpStructuredAnswer[];
   //TODO: This is duplicate from plan configuration, let's see which one we should use
@@ -161,7 +161,7 @@ interface YpAgentProductRunAttributes extends YpBaseModelAttributes {
   end_time?: Date;
   duration?: number; // Duration in seconds
   status: YpAgentProductRunStatus;
-  workflow: YpWorkflowConfiguration;
+  workflow: YpAgentRunWorkflowConfiguration;
   input_data?: YpAgentProductRunInputData;
   output_data?: YpAgentProductRunOutputData;
   error_message?: string;
@@ -241,7 +241,12 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   }>;
 }
 
-interface YpWorkflowStep {
+interface YpWorkflowConfiguration {
+  type: "mainAssisant" | "subAgent";
+  running?: boolean;
+}
+
+interface YpAgentRunWorkflowStep {
   name: string;
   shortName: string;
   description: string;
@@ -253,6 +258,7 @@ interface YpWorkflowStep {
   groupId?: number;
   type:
     | "agentOps"
+    | "subAgent"
     | "engagmentFromOutputConnector"
     | "engagmentFromInputConnector";
   configuration?: Record<string, any>;
@@ -265,14 +271,15 @@ interface YpWorkflowStep {
   emailInstructions?: string;
 }
 
-interface YpWorkflowConfiguration {
-  steps: YpWorkflowStep[];
+interface YpAgentRunWorkflowConfiguration {
+  steps: YpAgentRunWorkflowStep[];
   currentStepIndex: number;
   workflowGroupId?: number;
   timeoutTotal?: number;
 }
 
 ///
+
 
 interface YpAgentUnsubscribeProperties {
   useHasVerballyConfirmedUnsubscribeWithTheAgentName: {

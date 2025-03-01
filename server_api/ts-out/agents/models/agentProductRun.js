@@ -10,6 +10,7 @@ YpAgentProductRun.init({
     start_time: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     end_time: { type: DataTypes.DATE, allowNull: true },
     duration: { type: DataTypes.INTEGER, allowNull: true },
+    parent_agent_product_run_id: { type: DataTypes.INTEGER, allowNull: true },
     status: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -39,5 +40,13 @@ YpAgentProductRun.associate = (models) => {
     YpAgentProductRun.belongsTo(models.YpSubscription, {
         foreignKey: 'subscription_id',
         as: 'Subscription',
+    });
+    YpAgentProductRun.belongsTo(models.YpAgentProductRun, {
+        foreignKey: 'parent_agent_product_run_id',
+        as: 'ParentAgentProduct',
+    });
+    YpAgentProductRun.hasMany(models.YpAgentProductRun, {
+        foreignKey: 'parent_agent_product_run_id',
+        as: 'ChildAgentProducts',
     });
 };

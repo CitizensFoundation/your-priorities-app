@@ -322,6 +322,36 @@ export class NewAiModelSetup {
     } else {
       console.log("OpenAI model already exists: o3 mini");
     }
+
+    const openAiGpt45 = await PsAiModel.findOne({
+      where: { name: "GPT-4.5 Preview" },
+    });
+    const openAiGpt45Config = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 75,
+        costOutTokensPerMillion: 150,
+        currency: "USD",
+      },
+      maxTokensOut: 100000,
+      defaultTemperature: 0.7,
+      model: "gpt-4.5-preview",
+      active: true,
+    };
+
+    if (!openAiGpt45) {
+      await PsAiModel.create({
+        name: "GPT-4.5 Preview",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt45Config,
+      });
+      console.log("Created OpenAI model: GPT-4.5 Preview");
+    } else {
+      console.log("OpenAI model already exists: GPT-4.5 Preview updating");
+    }
   }
 
   /**
@@ -521,8 +551,10 @@ export class NewAiModelSetup {
     // Explicitly type envKey as a key of apiKeys
     const modelsMapping: { name: string; envKey: keyof typeof apiKeys }[] = [
       { name: "Anthropic Sonnet 3.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Sonnet 3.7", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
       { name: "o1 Preview", envKey: "OPENAI_API_KEY" },
       { name: "o1 Mini", envKey: "OPENAI_API_KEY" },
       { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },

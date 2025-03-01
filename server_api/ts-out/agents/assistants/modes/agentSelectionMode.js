@@ -17,9 +17,9 @@ export class AgentSelectionMode extends BaseAssistantMode {
     async getCurrentModeTools() {
         const tools = [
             this.subscriptionTools.listAllAgentsAvailableForSubscription,
-            this.navigationTools.connectDirectlyToAgent,
         ];
         if (this.assistant.isLoggedIn) {
+            tools.push(this.navigationTools.connectDirectlyToAgent);
             tools.push(this.loginTools.logout);
             tools.push(this.subscriptionTools.listMyAgentSubscriptions);
         }

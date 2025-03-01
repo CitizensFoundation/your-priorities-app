@@ -27,14 +27,18 @@ export class AgentSelectionMode extends BaseAssistantMode {
   protected async getCurrentModeTools(): Promise<AssistantChatbotTool[]> {
     const tools: AssistantChatbotTool[] = [
       this.subscriptionTools.listAllAgentsAvailableForSubscription,
-      this.navigationTools.connectDirectlyToAgent,
     ];
 
     if (this.assistant.isLoggedIn) {
+      tools.push(this.navigationTools.connectDirectlyToAgent);
       tools.push(this.loginTools.logout);
       tools.push(this.subscriptionTools.listMyAgentSubscriptions);
     } else {
-      tools.push(this.loginTools.showLogin("Show login widget to the user if they ask to be logged in or if they ask specfically to list all of their subscribed agents. You do not need to log in to connect to an agent."));
+      tools.push(
+        this.loginTools.showLogin(
+          "Show login widget to the user if they ask to be logged in or if they ask specfically to list all of their subscribed agents. You do not need to log in to connect to an agent."
+        )
+      );
       if (this.assistant.haveShownLoginWidget) {
         tools.push(this.loginTools.clickMainLoginButton);
         tools.push(this.loginTools.clickGoogleLoginButton);

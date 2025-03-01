@@ -3,7 +3,7 @@ import { YpSubscriptionPlan } from "../../subscriptionPlan.js";
 
 async function setupAgentProductsConfiguration() {
 
-  const competitionAgentWorkflow: YpWorkflowConfiguration = {
+  const competitionAgentWorkflow: YpAgentRunWorkflowConfiguration = {
     currentStepIndex: 0,
     steps: [
       {
@@ -94,7 +94,7 @@ async function setupAgentProductsConfiguration() {
   const fundingAgent = await YpAgentProduct.findByPk(6);
   if (fundingAgent) {
 
-    const fundingAgentWorkflow: YpWorkflowConfiguration = {
+    const fundingAgentWorkflow: YpAgentRunWorkflowConfiguration = {
       currentStepIndex: 0,
       steps: [
         {

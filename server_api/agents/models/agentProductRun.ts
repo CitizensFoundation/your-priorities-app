@@ -16,12 +16,15 @@ export class YpAgentProductRun extends Model {
   declare error_message?: string;
   declare run_type?: string;
   declare metadata?: any;
-  declare workflow: YpWorkflowConfiguration;
+  declare workflow: YpAgentRunWorkflowConfiguration;
+  declare parent_agent_product_run_id?: number;
   declare created_at: Date;
   declare updated_at: Date;
 
   // Associations
   declare Subscription?: YpSubscription;
+  declare ParentAgentProductRun?: YpAgentProductRun;
+  declare ChildAgentProductRuns?: YpAgentProductRun[];
 }
 
 YpAgentProductRun.init(
@@ -33,6 +36,7 @@ YpAgentProductRun.init(
     start_time: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     end_time: { type: DataTypes.DATE, allowNull: true },
     duration: { type: DataTypes.INTEGER, allowNull: true },
+    parent_agent_product_run_id: { type: DataTypes.INTEGER, allowNull: true },
     status: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -65,5 +69,15 @@ YpAgentProductRun.init(
   YpAgentProductRun.belongsTo(models.YpSubscription, {
     foreignKey: 'subscription_id',
     as: 'Subscription',
+  });
+
+  YpAgentProductRun.belongsTo(models.YpAgentProductRun, {
+    foreignKey: 'parent_agent_product_run_id',
+    as: 'ParentAgentProduct',
+  });
+
+  YpAgentProductRun.hasMany(models.YpAgentProductRun, {
+    foreignKey: 'parent_agent_product_run_id',
+    as: 'ChildAgentProducts',
   });
 };

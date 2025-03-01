@@ -33,9 +33,13 @@ YpAgentProduct.init({
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    parent_agent_product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     configuration: {
         type: DataTypes.JSONB,
-        allowNull: false
+        allowNull: false,
     },
     status: {
         type: DataTypes.JSONB,
@@ -54,12 +58,13 @@ YpAgentProduct.init({
     },
 }, {
     sequelize,
-    tableName: 'agent_products',
+    tableName: "agent_products",
     indexes: [
-        { fields: ['uuid'], unique: true },
-        { fields: ['user_id'] },
-        { fields: ['group_id'] },
-        { fields: ['domain_id'] },
+        { fields: ["uuid"], unique: true },
+        { fields: ["user_id"] },
+        { fields: ["group_id"] },
+        { fields: ["domain_id"] },
+        { fields: ["parent_agent_product_id"] },
     ],
     timestamps: true,
     underscored: true,
@@ -67,37 +72,45 @@ YpAgentProduct.init({
 YpAgentProduct.associate = (models) => {
     console.log(`YpAgentProduct.associate`);
     YpAgentProduct.belongsTo(models.YpSubscriptionUser, {
-        foreignKey: 'user_id',
-        as: 'User'
+        foreignKey: "user_id",
+        as: "User",
     });
     YpAgentProduct.belongsTo(models.Group, {
-        foreignKey: 'group_id',
-        as: 'Group'
+        foreignKey: "group_id",
+        as: "Group",
     });
     YpAgentProduct.hasOne(models.YpAgentProductBundle, {
-        foreignKey: 'agent_bundle_id',
-        as: 'AgentBundle'
+        foreignKey: "agent_bundle_id",
+        as: "AgentBundle",
     });
     YpAgentProduct.hasMany(models.YpAgentProductBoosterPurchase, {
-        foreignKey: 'agent_product_id',
-        as: 'BoosterPurchases',
+        foreignKey: "agent_product_id",
+        as: "BoosterPurchases",
     });
     YpAgentProduct.hasMany(models.YpSubscription, {
-        foreignKey: 'agent_product_id',
-        as: 'Subscriptions',
+        foreignKey: "agent_product_id",
+        as: "Subscriptions",
     });
     YpAgentProduct.hasMany(models.YpSubscriptionPlan, {
-        foreignKey: 'agent_product_id',
-        as: 'SubscriptionPlans',
+        foreignKey: "agent_product_id",
+        as: "SubscriptionPlans",
     });
     YpAgentProduct.hasMany(models.YpAgentProductRun, {
-        foreignKey: 'agent_product_id',
-        as: 'Runs',
+        foreignKey: "agent_product_id",
+        as: "Runs",
     });
     YpAgentProduct.belongsToMany(models.YpAgentProductBundle, {
-        through: 'agent_product_bundles_products',
-        foreignKey: 'agent_product_id',
-        otherKey: 'agent_product_bundle_id',
-        as: 'AgentBundles'
+        through: "agent_product_bundles_products",
+        foreignKey: "agent_product_id",
+        otherKey: "agent_product_bundle_id",
+        as: "AgentBundles",
+    });
+    YpAgentProduct.belongsTo(YpAgentProduct, {
+        as: "ParentAgentProduct",
+        foreignKey: "parent_agent_product_id",
+    });
+    YpAgentProduct.hasMany(YpAgentProduct, {
+        as: "ChildAgentProducts",
+        foreignKey: "parent_agent_product_id",
     });
 };

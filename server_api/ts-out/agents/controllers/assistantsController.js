@@ -14,6 +14,7 @@ import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
+import { WorkflowManager } from "../managers/workflowManager.js";
 const models = {
     YpAgentProduct,
     YpAgentProductBundle,
@@ -335,8 +336,62 @@ export class AssistantController {
                 res.send({});
             }
         };
+        // New API endpoints for workflow management
+        this.getRunningWorkflows = async (req, res) => {
+            if (!req.user || !req.user.id) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            try {
+                const workflows = await this.workflowManager.getRunningWorkflowsForUser(req.user.id);
+                res.status(200).json({
+                    success: true,
+                    data: { workflows },
+                    message: "Running workflows retrieved successfully"
+                });
+            }
+            catch (error) {
+                console.error("Error retrieving running workflows:", error);
+                res.status(500).json({ error: error.message });
+            }
+        };
+        this.getAllWorkflows = async (req, res) => {
+            if (!req.user || !req.user.id) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            try {
+                const workflows = await this.workflowManager.getWorkflowsForUser(req.user.id);
+                res.status(200).json({
+                    success: true,
+                    data: { workflows },
+                    message: "All workflows retrieved successfully"
+                });
+            }
+            catch (error) {
+                console.error("Error retrieving all workflows:", error);
+                res.status(500).json({ error: error.message });
+            }
+        };
+        this.connectToWorkflow = async (req, res) => {
+            if (!req.user || !req.user.id) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            try {
+                const { workflowId, connectionData } = req.body;
+                const updatedWorkflow = await this.workflowManager.connectToWorkflow(workflowId, connectionData || {});
+                res.status(200).json({
+                    success: true,
+                    data: updatedWorkflow,
+                    message: `Connected to workflow ${workflowId} successfully`
+                });
+            }
+            catch (error) {
+                console.error("Error connecting to workflow:", error);
+                res.status(500).json({ error: error.message });
+            }
+        };
         this.wsClients = wsClients;
         this.agentQueueManager = new AgentQueueManager();
+        this.workflowManager = new WorkflowManager();
         this.initializeRoutes();
         this.initializeModels();
     }
@@ -355,6 +410,9 @@ export class AssistantController {
         this.router.post("/:groupId/:agentId/stopCurrentWorkflowStep", this.stopCurrentWorkflowStep.bind(this));
         this.router.put("/:groupId/:agentId/:runId/advanceOrStopWorkflow", this.advanceOrStopCurrentWorkflowStep.bind(this));
         this.router.get("/:groupId/:agentId/getDocxReport", auth.can("view domain"), this.getDocxReport.bind(this));
+        this.router.get("/:domainId/workflows/running", auth.can("view domain"), this.getRunningWorkflows.bind(this));
+        this.router.get("/:domainId/workflows/all", auth.can("view domain"), this.getAllWorkflows.bind(this));
+        this.router.put("/:domainId/workflows/connect", auth.can("view domain"), this.connectToWorkflow.bind(this));
     }
     async getLastStatusMessageFromDB(agentId) {
         const status = await this.agentQueueManager.getAgentStatus(agentId);

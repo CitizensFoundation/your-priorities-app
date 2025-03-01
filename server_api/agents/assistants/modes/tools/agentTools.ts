@@ -558,12 +558,12 @@ export class AgentTools extends BaseAssistantTools {
     }
   }
 
-  getSimpleWorkflow(workflow: YpWorkflowConfiguration) {
+  getSimpleWorkflow(workflow: YpAgentRunWorkflowConfiguration) {
     const workflowCopy = JSON.parse(
       JSON.stringify(workflow)
-    ) as YpWorkflowConfiguration;
+    ) as YpAgentRunWorkflowConfiguration;
     if (workflowCopy.steps) {
-      workflowCopy.steps.forEach((step: YpWorkflowStep) => {
+      workflowCopy.steps.forEach((step: YpAgentRunWorkflowStep) => {
         step.emailInstructions = "";
       });
     }
@@ -577,7 +577,7 @@ export class AgentTools extends BaseAssistantTools {
     const subscription = await this.assistant.getCurrentSubscription();
     const workflowCopy = this.getSimpleWorkflow(
       run.workflow
-    ) as YpWorkflowConfiguration;
+    ) as YpAgentRunWorkflowConfiguration;
 
     const workflowBase64 = btoa(JSON.stringify(workflowCopy));
     return `<yp-agent-run-widget
