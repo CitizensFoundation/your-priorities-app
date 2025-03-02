@@ -146,6 +146,8 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         ],
       });
       return subscriptionPlan?.AgentProduct;
+    } else {
+      console.error("--------------------> No subscription plan found");
     }
     return undefined;
   }

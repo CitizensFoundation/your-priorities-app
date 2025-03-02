@@ -109,6 +109,9 @@ Never engage in off topic conversations, always politely steer the conversation 
             });
             return subscriptionPlan?.AgentProduct;
         }
+        else {
+            console.error("--------------------> No subscription plan found");
+        }
         return undefined;
     }
     async getCurrentSubscriptionPlan() {

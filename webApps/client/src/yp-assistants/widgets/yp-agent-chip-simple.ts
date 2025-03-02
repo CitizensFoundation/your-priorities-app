@@ -104,7 +104,7 @@ export class YpAgentChipSimple extends YpAgentChip {
 
         .container {
           width: calc(768px - 48px);
-          border: 1px solid #eaeaea;
+          border: 1px solid #cecece;
           padding: 16px;
           margin-bottom: 16px;
         }

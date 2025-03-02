@@ -109,7 +109,7 @@ export class SubscriptionTools extends BaseAssistantTools {
                     return typeComparison;
                 }
                 // If both are the same type and it's "paid", sort by price descending
-                if (a.type === "paid" && b.type === "paid") {
+                if (b.price && a.price && a.type === "paid" && b.type === "paid") {
                     return b.price - a.price;
                 }
                 // Otherwise keep them in the same order if they're not "paid"
@@ -122,9 +122,6 @@ export class SubscriptionTools extends BaseAssistantTools {
           agentName="${agent.name}"
           agentDescription="${agent.description}"
           agentImageUrl="${agent.imageUrl}"
-          price="${agent.price}"
-          currency="${agent.currency}"
-          maxRunsPerCycle="${agent.maxRunsPerCycle}"
         ></yp-agent-chip-for-purchase>`;
             }
             const html = `<div class="agent-chips">${agentChips}</div>`;

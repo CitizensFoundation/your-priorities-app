@@ -54,9 +54,9 @@ interface AssistantAgentPlan {
   type: YpSubscriptionPlanType;
   description: string;
   imageUrl: string;
-  price: number;
-  currency: string;
-  maxRunsPerCycle: number;
+  price?: number;
+  currency?: string;
+  maxRunsPerCycle?: number;
 }
 
 interface AssistantAgentPlanStatus {

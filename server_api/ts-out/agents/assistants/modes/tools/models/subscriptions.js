@@ -53,9 +53,9 @@ export class SubscriptionModels {
                     name: plan.AgentProduct?.configuration?.displayName || "No name available",
                     description: plan.AgentProduct?.description || "No description available",
                     imageUrl: plan.configuration?.imageUrl || "",
-                    price: plan.configuration?.amount || 0,
-                    currency: plan.configuration?.currency || "USD",
-                    maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0,
+                    // price: plan.configuration?.amount || 0,
+                    // currency: plan.configuration?.currency || "USD",
+                    // maxRunsPerCycle: plan.configuration?.max_runs_per_cycle || 0,
                 })),
                 availableBundle: firstBundle
                     ? {

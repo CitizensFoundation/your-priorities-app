@@ -31,9 +31,12 @@ export class AgentTools extends BaseAssistantTools {
       const { agent, run } =
         await this.agentModels.getCurrentAgentAndWorkflow();
 
+      console.log("--------------------> agent", agent);
+
       const workflowJson = JSON.stringify(
         this.getSimpleWorkflow(agent.configuration.workflow)
       );
+
       const base64Workflow = btoa(workflowJson);
 
       const html = `<yp-agent-workflow-widget
@@ -72,6 +75,7 @@ export class AgentTools extends BaseAssistantTools {
           ? error.message
           : "Failed to show workflow widget";
       console.error(errorMessage);
+      console.error("--------------------_> ", error);
       return {
         success: false,
         error: errorMessage,
@@ -448,7 +452,7 @@ export class AgentTools extends BaseAssistantTools {
       name: "show_configuration_widget_if_needed_or_user_asks_to_show_it",
       description:
         "Show the configuration widget for the current agent. The user needs to fill out the configuration before running the agent workflow to make sure to offer it to the user. \
-        The user can not provide you with the confiruation verbally or through chat, the user must provide the configuration through the configuration widget.",
+        The user can not provide you with the configuration verbally or through chat, the user must provide the configuration through the configuration widget.",
       type: "function",
       parameters: {
         type: "object",
