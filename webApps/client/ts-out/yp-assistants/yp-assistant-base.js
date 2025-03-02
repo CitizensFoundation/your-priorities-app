@@ -44,6 +44,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.canvasCtx = null;
         this.renderLoopActive = false;
         this.haveLoggedIn = false;
+        this.storageKey = `yp-assistant-${this.domainId}-client-uuid-v2`;
         this.renderLoop = () => {
             if (!this.renderLoopActive)
                 return;
@@ -86,18 +87,21 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
             requestAnimationFrame(this.renderLoop);
         };
         this.setupVoiceCapabilities();
-        const storageKey = `yp-assistant-${this.domainId}-client-uuid`;
-        const savedUuid = localStorage.getItem(storageKey);
+        const savedUuid = localStorage.getItem(this.storageKey);
         if (savedUuid) {
             this.clientMemoryUuid = savedUuid;
             window.appGlobals.currentClientMemoryUuid = savedUuid;
         }
         else {
             this.clientMemoryUuid = crypto.randomUUID();
-            localStorage.setItem(storageKey, this.clientMemoryUuid);
+            localStorage.setItem(this.storageKey, this.clientMemoryUuid);
             window.appGlobals.currentClientMemoryUuid = this.clientMemoryUuid;
         }
         this.setupServerApi();
+    }
+    clearClientMemoryUuid() {
+        localStorage.removeItem(this.storageKey);
+        window.appGlobals.currentClientMemoryUuid = undefined;
     }
     async setupServerApi() {
         this.serverApi = new YpAssistantServerApi(this.clientMemoryUuid);
@@ -680,6 +684,8 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
         this.resetLastDirectAvatarUrlAndName();
         this.stopCanvasRendering();
         this.requestUpdate();
+        this.clearClientMemoryUuid();
+        await window.appUser.logout();
         location.reload();
     }
     async clearHistory() {

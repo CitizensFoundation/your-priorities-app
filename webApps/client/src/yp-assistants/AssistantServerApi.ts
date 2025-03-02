@@ -7,7 +7,7 @@ interface SavedChat {
 }
 
 export class YpAssistantServerApi extends YpServerApi {
-  private readonly localStorageChatsKey = "yp-assistant-chats-v1";
+  private readonly localStorageChatsKey = "yp-assistant-chats-v2";
   clientMemoryUuid: string;
   constructor(clientMemoryUuid: string, urlPath: string = "/api/assistants") {
     super();
@@ -91,6 +91,16 @@ export class YpAssistantServerApi extends YpServerApi {
         true
       );
 
+      if (
+        response.status &&
+        (response.status === 401 || response.status === 403)
+      ) {
+        throw {
+          status: response.status,
+          message: response.status === 401 ? "Unauthorized" : "Forbidden",
+        };
+      }
+
       if (response.status && response.status === 500) {
         throw new Error("Internal Server Error");
       }
@@ -99,8 +109,14 @@ export class YpAssistantServerApi extends YpServerApi {
         this.saveChatToLocalStorage(response.serverMemoryId, chatLog);
       }
       return response;
-    } catch (err) {
-      console.warn("Error detected on sendChatMessage, triggering reconnection...");
+    } catch (err: any) {
+      if (err && err.status && (err.status === 401 || err.status === 403)) {
+        throw err;
+      }
+
+      console.warn(
+        "Error detected on sendChatMessage, triggering reconnection..."
+      );
       YpStreamingLlmBase.scheduleReconnect();
 
       try {
@@ -128,25 +144,26 @@ export class YpAssistantServerApi extends YpServerApi {
     currentMode: string,
     serverMemoryId?: string
   ): Promise<void> {
-
     try {
       return this.fetchWrapper(
         this.baseUrlPath + `/${domainId}/voice`,
         {
-        method: "POST",
-        body: JSON.stringify({
-          wsClientId,
-          currentMode,
-          serverMemoryId,
-          clientMemoryUuid: this.clientMemoryUuid,
-        }),
-      },
-      false,
-      undefined,
-      true
-    );
+          method: "POST",
+          body: JSON.stringify({
+            wsClientId,
+            currentMode,
+            serverMemoryId,
+            clientMemoryUuid: this.clientMemoryUuid,
+          }),
+        },
+        false,
+        undefined,
+        true
+      );
     } catch (err) {
-      console.warn("Error detected on startVoiceSession, triggering reconnection...");
+      console.warn(
+        "Error detected on startVoiceSession, triggering reconnection..."
+      );
       YpStreamingLlmBase.scheduleReconnect();
 
       try {
@@ -165,7 +182,6 @@ export class YpAssistantServerApi extends YpServerApi {
       }
     }
   }
-
 
   public updateAssistantMemoryUserLoginStatus(domainId: number) {
     return this.fetchWrapper(
@@ -203,8 +219,6 @@ export class YpAssistantServerApi extends YpServerApi {
       false
     );
   }
-
-
 
   private saveChatToLocalStorage(
     serverMemoryId: string,
@@ -267,7 +281,8 @@ export class YpAssistantServerApi extends YpServerApi {
     requiredQuestionsAnswers: YpStructuredAnswer[]
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/${subscriptionId}/submitAgentConfiguration`,
+      this.baseUrlPath +
+        `/${domainId}/${subscriptionId}/submitAgentConfiguration`,
       {
         method: "PUT",
         body: JSON.stringify({
@@ -283,48 +298,48 @@ export class YpAssistantServerApi extends YpServerApi {
     subscriptionId: string
   ): Promise<{ success: boolean; data: YpStructuredAnswer[] }> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${domainId}/${subscriptionId}/getConfigurationAnswers`
+      this.baseUrlPath +
+        `/${domainId}/${subscriptionId}/getConfigurationAnswers`
     );
   }
 
   // Helper function that waits for a reconnection event with a given timeout.
-private waitForWsReconnection(timeout: number): Promise<boolean> {
-  return new Promise((resolve) => {
-    let resolved = false;
+  private waitForWsReconnection(timeout: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      let resolved = false;
 
-    // Handler for the WS reconnection event.
-    const onWsConnected = () => {
-      resolved = true;
-      window.removeEventListener("wsConnected", onWsConnected);
-      resolve(true);
-    };
-
-    // Listen for the global reconnection event.
-    window.addEventListener("wsConnected", onWsConnected, { once: true });
-
-    // Set a timeout after which we resolve false if not reconnected.
-    setTimeout(() => {
-      if (!resolved) {
+      // Handler for the WS reconnection event.
+      const onWsConnected = () => {
+        resolved = true;
         window.removeEventListener("wsConnected", onWsConnected);
-        resolve(false);
-      }
-    }, timeout);
-  });
-}
+        resolve(true);
+      };
 
-// Retry function that attempts reconnection with delays: 1 sec, 3 sec, 5 sec.
-private async waitForWsReconnectionWithRetry(): Promise<void> {
-  const retryDelays = [1000, 3000, 5000, 10000, 20000, 30000];
-  for (const delay of retryDelays) {
-    console.log(`Waiting ${delay}ms for WebSocket reconnection...`);
-    const reconnected = await this.waitForWsReconnection(delay);
-    if (reconnected) {
-      console.log("WebSocket reconnected successfully.");
-      return; // Exit once reconnected.
-    }
+      // Listen for the global reconnection event.
+      window.addEventListener("wsConnected", onWsConnected, { once: true });
+
+      // Set a timeout after which we resolve false if not reconnected.
+      setTimeout(() => {
+        if (!resolved) {
+          window.removeEventListener("wsConnected", onWsConnected);
+          resolve(false);
+        }
+      }, timeout);
+    });
   }
-  // If all retries fail, throw an error.
-  throw new Error("WebSocket reconnection failed after 3 attempts.");
-}
 
+  // Retry function that attempts reconnection with delays: 1 sec, 3 sec, 5 sec.
+  private async waitForWsReconnectionWithRetry(): Promise<void> {
+    const retryDelays = [1000, 3000, 5000, 10000, 20000, 30000];
+    for (const delay of retryDelays) {
+      console.log(`Waiting ${delay}ms for WebSocket reconnection...`);
+      const reconnected = await this.waitForWsReconnection(delay);
+      if (reconnected) {
+        console.log("WebSocket reconnected successfully.");
+        return; // Exit once reconnected.
+      }
+    }
+    // If all retries fail, throw an error.
+    throw new Error("WebSocket reconnection failed after 3 attempts.");
+  }
 }

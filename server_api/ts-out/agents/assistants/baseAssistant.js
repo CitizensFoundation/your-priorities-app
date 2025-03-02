@@ -13,8 +13,8 @@ export var CommonModes;
     CommonModes["ErrorRecovery"] = "error_recovery";
 })(CommonModes || (CommonModes = {}));
 export class YpBaseAssistant extends YpBaseChatBot {
-    constructor(wsClientId, wsClients, redis, domainId, memoryId) {
-        super(wsClientId, wsClients, memoryId);
+    constructor(wsClientId, wsClients, redis, redisKey, domainId) {
+        super(wsClientId, wsClients, redis, redisKey);
         this.persistMemory = true;
         this.DEBUG = false;
         this.modes = new Map();
@@ -56,9 +56,8 @@ Never engage in off topic conversations, always politely steer the conversation 
             apiKey: process.env.OPENAI_API_KEY,
         });
         this.eventEmitter = new EventEmitter();
+        this.clientSystemMessageListener = this.handleClientSystemMessage.bind(this);
         this.setupClientSystemMessageListener();
-        this.clientSystemMessageListener =
-            this.handleClientSystemMessage.bind(this);
         this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
     destroy() {
@@ -89,8 +88,8 @@ Never engage in off topic conversations, always politely steer the conversation 
         }
     }
     setupClientSystemMessageListener() {
-        console.log("WebSockets: setupClientSystemMessageListener called for wsClientId:", this.wsClientId);
-        this.wsClientSocket.on("message", this.handleClientSystemMessage.bind(this));
+        console.log("WebSockets: setupClientSystemMessageListener called for wsClientId:", this.wsClientId, this.clientSystemMessageListener);
+        this.wsClientSocket.on("message", this.clientSystemMessageListener);
         const listenerCountAfter = this.wsClientSocket.listenerCount("message");
         console.log('Number of "message" listeners after adding:', listenerCountAfter);
     }
@@ -272,16 +271,6 @@ Never engage in off topic conversations, always politely steer the conversation 
             name: toolCall.name,
         };
     }
-    getEmptyMemory() {
-        return {
-            redisKey: this.redisKey,
-            chatLog: [],
-            completeChatLog: [],
-            currentMode: "agent_selection_mode",
-            modeHistory: [],
-            modeData: undefined,
-        };
-    }
     /**
      * Handle executing tool calls with results
      */
@@ -412,25 +401,13 @@ Never engage in off topic conversations, always politely steer the conversation 
             throw error;
         }
     }
-    async setupMemory(memoryId = undefined) {
-        // DO nothing override call from constructor
-    }
     async setupMemoryAsync() {
         if (!this.memory) {
-            console.log("setupMemoryAsync: loading memory");
+            console.log("loadMemoryWithOwnership: loading memory");
             this.memory = (await this.loadMemory());
         }
         if (!this.memory) {
-            console.log("setupMemoryAsync: creating new memory");
-            //this.memoryId = uuidv4();
-            this.memory = this.getEmptyMemory();
-            if (this.wsClientSocket) {
-                this.sendMemoryId();
-            }
-            else {
-                console.error("No wsClientSocket found");
-            }
-            await this.saveMemory();
+            console.error("loadMemoryWithOwnership: No memory found!!!");
         }
     }
     async loadMemoryAsync() {

@@ -2,6 +2,7 @@ import { response } from "express";
 import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import { YpBaseAssistant } from "./baseAssistant.js";
 import WebSocket from "ws";
+import ioredis from "ioredis";
 
 interface VoiceMessage {
   delta: any;
@@ -63,11 +64,12 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
   constructor(
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
-    memoryId: string,
+    redisKey: string,
+    redisConnection: ioredis.Redis,
     voiceEnabled: boolean = false,
     parentAssistant: YpBaseAssistant
   ) {
-    super(wsClientId, wsClients, memoryId);
+    super(wsClientId, wsClients, redisConnection, redisKey);
     this.parentAssistant = parentAssistant;
     this.voiceEnabled = voiceEnabled;
     this.voiceState = {

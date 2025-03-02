@@ -233,6 +233,8 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
 
   loginState?: YpAssistantLoginState;
 
+  ownerUserId?: number | null;
+
   modeData?: AssistantModeData;
   modeHistory?: Array<{
     mode: YpAssistantMode;

@@ -1,8 +1,8 @@
 import { YpBaseAssistant } from "./baseAssistant.js";
 import { YpBaseChatBotWithVoice } from "./voiceAssistant.js";
 export class YpBaseAssistantWithVoice extends YpBaseAssistant {
-    constructor(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId) {
-        super(wsClientId, wsClients, redis, domainId, memoryId);
+    constructor(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId) {
+        super(wsClientId, wsClients, redis, redisKey, domainId);
         if (!domainId) {
             throw new Error("Domain ID is required");
         }
@@ -34,7 +34,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
         }
     }
     async createVoiceBot() {
-        this.voiceBot = new YpBaseChatBotWithVoice(this.wsClientId, this.wsClients, this.memoryId, true, this);
+        this.voiceBot = new YpBaseChatBotWithVoice(this.wsClientId, this.wsClients, this.redisKey, this.redis, true, this);
         await this.voiceBot.initializeMainAssistantVoiceConnection();
         this.setupVoiceEventForwarder();
         await this.voiceBot.updateVoiceConfig({

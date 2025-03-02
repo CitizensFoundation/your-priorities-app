@@ -26,10 +26,10 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
     voiceEnabled: boolean,
-    domainId: number,
-    memoryId: string
+    redisKey: string,
+    domainId: number
   ) {
-    super(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId);
+    super(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId);
     this.agentSelectionMode = new AgentSelectionMode(this);
     this.directConversationMode = new DirectConversationMode(this);
     this.subscriptionManager = new SubscriptionManager();
@@ -88,6 +88,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   get hasConfiguredcurrentAgentProduct(): boolean {
+    console.log(`configuration: ${this.redisKey}: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
     return this.memory.currentAgentStatus?.configurationState === "configured";
   }
 

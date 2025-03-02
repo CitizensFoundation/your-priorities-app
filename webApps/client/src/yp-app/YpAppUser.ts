@@ -266,7 +266,7 @@ export class YpAppUser extends YpCodeBase {
     this.openUserlogin();
   }
 
-  loginFor401(refreshFunction: Function) {
+  loginFor401(refreshFunction: Function | undefined) {
     this.loginFor401refreshFunction = refreshFunction;
     this.openUserlogin();
   }

@@ -1,6 +1,4 @@
 import { OpenAI } from "openai";
-import { v4 as uuidv4 } from "uuid";
-import ioredis from "ioredis";
 const DEBUG = false;
 const url = process.env.REDIS_MEMORY_URL ||
     process.env.REDIS_URL ||
@@ -9,68 +7,36 @@ const tlsOptions = url.startsWith("rediss://")
     ? { rejectUnauthorized: false }
     : undefined;
 export class YpBaseChatBot {
-    get redisKey() {
-        return `${YpBaseChatBot.redisMemoryKeyPrefix}-${this.memoryId}`;
-    }
     destroy() {
         this.wsClientSocket = undefined;
-    }
-    static loadMemoryFromRedis(memoryId) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                //@ts-ignore
-                const redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
-                    process.env.REDIS_URL ||
-                    "redis://localhost:6379", {
-                    tls: tlsOptions,
-                });
-                const memoryString = await redis.get(`${YpBaseChatBot.redisMemoryKeyPrefix}-${memoryId}`);
-                if (memoryString) {
-                    const memory = JSON.parse(memoryString);
-                    resolve(memory);
-                }
-                else {
-                    resolve(undefined);
-                }
-            }
-            catch (error) {
-                console.error("Can't load memory from redis", error);
-                resolve(undefined);
-            }
-        });
-    }
-    static getRedisKey(memoryId) {
-        return `${YpBaseChatBot.redisMemoryKeyPrefix}-${memoryId}`;
     }
     loadMemory() {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log("loadMemoryWithOwnership loadMemory: redisKey: ", this.redisKey);
                 const memoryString = await this.redis.get(this.redisKey);
                 if (memoryString) {
                     const memory = JSON.parse(memoryString);
                     resolve(memory);
                 }
                 else {
-                    resolve(this.getEmptyMemory());
+                    console.error("loadMemoryWithOwnership loadMemory: no memory found");
+                    resolve(undefined);
                 }
             }
             catch (error) {
-                console.error("Can't load memory from redis", error);
-                resolve(this.getEmptyMemory());
+                console.error("loadMemoryWithOwnership loadMemory: Can't load memory from redis", error);
+                resolve(undefined);
             }
         });
     }
-    constructor(wsClientId, wsClients, memoryId) {
+    constructor(wsClientId, wsClients, redisConnection, redisKey) {
         this.temperature = 0.7;
         this.maxTokens = 16000;
         this.llmModel = "gpt-4o";
         this.persistMemory = false;
-        //@ts-ignore
-        this.redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
-            process.env.REDIS_URL ||
-            "redis://localhost:6379", {
-            tls: tlsOptions,
-        });
+        this.redis = redisConnection;
+        this.redisKey = redisKey;
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
         this.wsClients = wsClients;
@@ -81,34 +47,6 @@ export class YpBaseChatBot {
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-        this.memoryId = memoryId;
-        this.setupMemory(memoryId);
-    }
-    async setupMemory(memoryId = undefined) {
-        if (!this.memory) {
-            this.memory = await this.loadMemory();
-        }
-        else {
-            this.memoryId = uuidv4();
-            this.memory = this.getEmptyMemory();
-            if (this.wsClientSocket) {
-                this.sendMemoryId();
-            }
-            else {
-                console.error("No wsClientSocket found");
-            }
-        }
-    }
-    async getLoadedMemory() {
-        return await this.loadMemory();
-    }
-    sendMemoryId() {
-        const botMessage = {
-            sender: "assistant",
-            type: "memoryIdCreated",
-            data: this.memoryId,
-        };
-        this.wsClientSocket.send(JSON.stringify(botMessage));
     }
     async saveMemory() {
         if (this.memory) {
@@ -160,11 +98,6 @@ export class YpBaseChatBot {
             message: message,
         };
         this.wsClientSocket.send(JSON.stringify(botMessage));
-    }
-    getEmptyMemory() {
-        return {
-            redisKey: this.redisKey,
-        };
     }
     sendToClient(sender, message, type = "stream", uniqueToken = undefined, hiddenContextMessage = false) {
         try {

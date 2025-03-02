@@ -101,8 +101,6 @@ export class YpConfirmationDialog extends YpBaseElement {
       this.hideCancel = false;
     }
 
-    debugger;
-
     this.fireGlobal("yp-dialog-opened");
   }
 

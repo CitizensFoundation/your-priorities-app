@@ -1,8 +1,18 @@
 import { OpenAI } from "openai";
 import { YpBaseChatBot } from "../../llms/baseChatBot.js";
+import ioredis from "ioredis";
+import { v4 as uuidv4 } from "uuid";
+const tlsOptions = process.env.REDIS_MEMORY_URL?.startsWith("rediss://")
+    ? { rejectUnauthorized: false }
+    : undefined;
 export class ExplainAnswersAssistant extends YpBaseChatBot {
     constructor(wsClientId, wsClients, languageName) {
-        super(wsClientId, wsClients, "undefined");
+        const redisConnection = new ioredis.default(process.env.REDIS_MEMORY_URL ||
+            process.env.REDIS_URL ||
+            "redis://localhost:6379", {
+            tls: tlsOptions,
+        });
+        super(wsClientId, wsClients, redisConnection, `${YpBaseChatBot.redisMemoryKeyPrefix}-${uuidv4()}-explain-answers-assistant`);
         this.modelName = "gpt-4o";
         this.maxTokens = 4000;
         this.temperature = 0.8;

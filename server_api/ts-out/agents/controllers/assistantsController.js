@@ -188,7 +188,7 @@ export class AssistantController {
             const { requiredQuestionsAnswers } = req.body;
             const subscriptionId = parseInt(req.params.subscriptionId);
             try {
-                const memoryId = this.getMemoryUserId(req);
+                const memoryId = this.getMemoryRedisKey(req);
                 // Get subscription
                 const subscription = await YpSubscription.findOne({
                     where: {
@@ -213,80 +213,57 @@ export class AssistantController {
             res.sendStatus(200);
         };
         this.updateAssistantMemoryLoginStatus = async (req, res) => {
-            if (req.user && req.params.domainId) {
-                try {
-                    let memoryId = this.getMemoryUserId(req);
-                    let redisKey = YpAgentAssistant.getRedisKey(memoryId);
-                    console.log(`Starting to update login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
-                    let memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
-                    if (memory) {
-                        memory.currentUser = req.user;
-                        await req.redisClient.set(redisKey, JSON.stringify(memory));
-                        //TODO: Check if needed, wait for 300ms to make sure redis is saved
-                        await new Promise((resolve) => setTimeout(resolve, 300));
-                        console.log(`Updated login status for memoryId: ${memoryId} with user: ${req.user?.name}`);
-                    }
-                    else {
-                        console.error(`No memory found to update login status for id ${memoryId}`);
-                    }
-                    res.sendStatus(200);
-                }
-                catch (error) {
-                    console.error("Error updating login status:", error);
-                    res.sendStatus(500);
-                }
+            if (!req.user) {
+                return res.status(401).json({ error: "Unauthorized" });
             }
-            else {
-                res.sendStatus(401);
+            try {
+                const memory = await this.loadMemoryWithOwnership(req, res);
+                if (!memory)
+                    return; // already 401/403 if not allowed
+                // Now memory is either newly created or already owned by this user (or still guest if you didn't upgrade)
+                memory.currentUser = req.user;
+                await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
+                res.sendStatus(200);
+            }
+            catch (error) {
+                console.error("Error updating login status:", error);
+                res.sendStatus(500);
             }
         };
         this.defaultStartAgentMode = "agent_selection_mode";
-        this.getMemoryUserId = (req) => {
-            const userIdentifier = req.body.clientMemoryUuid || req.query.clientMemoryUuid;
-            if (!userIdentifier) {
-                throw new Error("No user identifier found");
-            }
-            return `${req.params.domainId}-${userIdentifier}`;
-        };
         this.clearChatLog = async (req, res) => {
             try {
-                const memoryId = this.getMemoryUserId(req);
-                console.log(`Clearing chat log for memoryId: ${memoryId}`);
-                const redisKey = YpAgentAssistant.getRedisKey(memoryId);
-                const memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
-                if (memory) {
-                    if (!memory.allChatLogs) {
-                        memory.allChatLogs = [];
-                    }
-                    if (memory.chatLog) {
-                        memory.allChatLogs = [...memory.allChatLogs, ...memory.chatLog];
-                    }
-                    memory.chatLog = [];
-                    memory.currentMode = this.defaultStartAgentMode;
-                    memory.haveShownConfigurationWidget = false;
-                    memory.haveShownLoginWidget = false;
-                    memory.currentAgentStatus = undefined;
-                    if (!req.user) {
-                        memory.currentUser = undefined;
-                    }
-                    await req.redisClient.set(redisKey, JSON.stringify(memory));
-                    if (req.user) {
-                        //TODO: REMOVE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-                        await YpSubscription.destroy({
-                            where: {
-                                user_id: req.user?.id,
-                            },
-                        });
-                    }
-                    else {
-                        console.warn("No user found to clear runs for");
-                    }
-                    res.sendStatus(200);
+                const memory = await this.loadMemoryWithOwnership(req, res);
+                if (!memory)
+                    return; // loadMemoryWithOwnership has already sent 401/403 if needed
+                // Now we know this request is allowed to see/modify the memory
+                if (!memory.allChatLogs) {
+                    memory.allChatLogs = [];
+                }
+                if (memory.chatLog) {
+                    memory.allChatLogs = [...memory.allChatLogs, ...memory.chatLog];
+                }
+                memory.chatLog = [];
+                memory.currentMode = this.defaultStartAgentMode;
+                memory.haveShownConfigurationWidget = false;
+                memory.haveShownLoginWidget = false;
+                memory.currentAgentStatus = undefined;
+                if (!req.user && memory.ownerUserId === null) {
+                    memory.currentUser = undefined;
+                }
+                await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
+                if (req.user) {
+                    //TODO: REMOVE THIS when we have multi workflows
+                    await YpSubscription.destroy({
+                        where: {
+                            user_id: req.user?.id,
+                        },
+                    });
                 }
                 else {
-                    console.warn(`No memory found to clear for id ${memoryId}`);
-                    res.sendStatus(200);
+                    console.warn("No user found to clear runs for");
                 }
+                res.sendStatus(200);
             }
             catch (error) {
                 console.error("Error clearing chat log:", error);
@@ -294,47 +271,11 @@ export class AssistantController {
             }
         };
         this.getMemory = async (req, res) => {
-            let memory;
-            let memoryId;
-            try {
-                memoryId = this.getMemoryUserId(req);
-                console.log(`Getting memory for memoryId: ${memoryId}`);
-                if (memoryId) {
-                    memory = (await YpAgentAssistant.loadMemoryFromRedis(memoryId));
-                    if (!memory) {
-                        console.log(`memory not found for id ${memoryId}`);
-                        memory = {
-                            redisKey: YpAgentAssistant.getRedisKey(memoryId),
-                            chatLog: [],
-                            currentMode: this.defaultStartAgentMode,
-                            modeHistory: [],
-                            modeData: undefined,
-                        };
-                        await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
-                    }
-                    else {
-                        if (req.user && !memory.currentUser) {
-                            memory.currentUser = req.user;
-                        }
-                        else if (!req.user && memory.currentUser) {
-                            memory.currentUser = undefined;
-                        }
-                        await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
-                    }
-                }
-            }
-            catch (error) {
-                console.log(error);
-                res.sendStatus(500);
+            const memory = await this.loadMemoryWithOwnership(req, res);
+            if (!memory)
                 return;
-            }
-            if (memory) {
-                res.send(memory);
-            }
-            else {
-                console.error(`No memory found for memoryId: ${memoryId}`);
-                res.send({});
-            }
+            console.log(`Getting memory at key: ${memory.redisKey}`);
+            return res.json(memory);
         };
         // New API endpoints for workflow management
         this.getRunningWorkflowConversations = async (req, res) => {
@@ -418,10 +359,102 @@ export class AssistantController {
         const status = await this.agentQueueManager.getAgentStatus(agentId);
         return status ? status.messages[status.messages.length - 1] : null;
     }
+    getMemoryRedisKey(req) {
+        const userIdentifier = req.body.clientMemoryUuid || req.query.clientMemoryUuid;
+        return `assistant:${ /*req.params.domainId*/1}:${userIdentifier}`;
+    }
+    async loadMemoryWithOwnership(req, res) {
+        // Get the calling function name from the stack trace
+        const stackTrace = new Error().stack;
+        const callerLine = stackTrace?.split("\n")[2]; // First line is Error, second is current function, third is caller
+        const callerMatch = callerLine?.match(/at\s+(.*)\s+\(/);
+        const caller = callerMatch ? callerMatch[1] : "unknown";
+        console.debug(`loadMemoryWithOwnership called by: ${caller}`);
+        console.debug(`loadMemoryWithOwnership: ${JSON.stringify(req.body, null, 2)}`);
+        const redisKey = this.getMemoryRedisKey(req);
+        console.debug(`loadMemoryWithOwnership: redisKey: ${redisKey}`);
+        try {
+            const rawMemory = await req.redisClient.get(redisKey);
+            let memory = rawMemory
+                ? JSON.parse(rawMemory)
+                : null;
+            // If no memory, create new
+            if (!memory) {
+                console.debug(`loadMemoryWithOwnership: creating new memory`);
+                memory = {
+                    redisKey,
+                    chatLog: [],
+                    completeChatLog: [],
+                    currentMode: this.defaultStartAgentMode,
+                    modeHistory: [],
+                    modeData: undefined,
+                    ownerUserId: null,
+                };
+                if (req.user) {
+                    console.debug(`loadMemoryWithOwnership: setting ownerUserId to ${req.user.id}`);
+                    memory.ownerUserId = req.user.id;
+                }
+                else {
+                    console.debug(`loadMemoryWithOwnership: no user in request`);
+                }
+                await req.redisClient.set(redisKey, JSON.stringify(memory));
+                const rawAfterSet = await req.redisClient.get(redisKey);
+                console.log("loadMemoryWithOwnership: After set, raw in Redis is:", rawAfterSet);
+                console.debug(`loadMemoryWithOwnership: returning new memory`);
+                return memory;
+            }
+            else {
+                console.debug(`loadMemoryWithOwnership: memory already exists`);
+                console.debug(`loadMemoryWithOwnership: memory: ${JSON.stringify(memory, null, 2)}`);
+            }
+            // If memory is owned by someone
+            if (memory.ownerUserId !== null) {
+                console.debug(`loadMemoryWithOwnership: memory is owned by ${memory.ownerUserId}`);
+                if (!req.user) {
+                    console.debug(`loadMemoryWithOwnership: no user in request`);
+                    res.status(401).json({ error: "Unauthorized" });
+                    return;
+                }
+                else {
+                    console.debug(`loadMemoryWithOwnership: user in request`);
+                }
+                if (memory.ownerUserId !== req.user.id) {
+                    console.debug(`loadMemoryWithOwnership: ownerUserId does not match ${memory.ownerUserId} !== ${req.user.id}`);
+                    res.status(403).json({ error: "Forbidden" });
+                    return;
+                }
+                else {
+                    console.debug(`loadMemoryWithOwnership: ownerUserId matches ${memory.ownerUserId} === ${req.user.id}`);
+                }
+                // Same user => fine
+                return memory;
+            }
+            else {
+                // memory is guest
+                if (req.user) {
+                    // optionally upgrade
+                    memory.ownerUserId = req.user.id;
+                    await req.redisClient.set(redisKey, JSON.stringify(memory));
+                    console.debug(`loadMemoryWithOwnership: returning memory with ownerUserId ${memory.ownerUserId}`);
+                }
+                else {
+                    console.debug(`loadMemoryWithOwnership: returning memory with ownerUserId null`);
+                }
+                return memory;
+            }
+        }
+        catch (error) {
+            console.error("Error loading memory:", error);
+            res.status(500).json({ error: "Internal server error" });
+            return;
+        }
+    }
     async startVoiceSession(req, res) {
         try {
             const { wsClientId, currentMode } = req.body;
-            const memoryId = this.getMemoryUserId(req);
+            const memory = await this.loadMemoryWithOwnership(req, res);
+            if (!memory)
+                return;
             console.log(`Starting chat session for client: ${wsClientId}`);
             let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
             if (oldVoiceAssistant) {
@@ -433,7 +466,7 @@ export class AssistantController {
                 oldChatAssistant.destroy();
                 this.chatAssistantInstances.delete("mainAssistant");
             }
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, parseInt(req.params.domainId), memoryId);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, true, memory.redisKey, parseInt(req.params.domainId));
             this.voiceAssistantInstances.set("voiceAssistant", assistant);
             await assistant.initialize();
             res.status(200).json({
@@ -448,9 +481,10 @@ export class AssistantController {
     }
     async sendChatMessage(req, res) {
         try {
+            const memory = await this.loadMemoryWithOwnership(req, res);
+            if (!memory)
+                return; // ends early if 401/403
             const { wsClientId, chatLog, currentMode } = req.body;
-            const memoryId = this.getMemoryUserId(req);
-            console.log(`Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`);
             const oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
             if (oldVoiceAssistant) {
                 oldVoiceAssistant.destroy();
@@ -461,7 +495,7 @@ export class AssistantController {
                 oldAssistant.destroy();
                 this.chatAssistantInstances.delete("mainAssistant");
             }
-            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, parseInt(req.params.domainId), memoryId);
+            const assistant = new YpAgentAssistant(wsClientId, this.wsClients, req.redisClient, false, memory.redisKey, parseInt(req.params.domainId));
             this.chatAssistantInstances.set("mainAssistant", assistant);
             assistant.conversation(chatLog);
             res.status(200).json({

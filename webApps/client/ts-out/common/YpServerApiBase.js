@@ -55,37 +55,14 @@ export class YpServerApiBase extends YpCodeBase {
             return await this.handleResponse(response, showUserError, errorId, throwError);
         }
     }
-    //TODO: Handle 401
-    /*
-  
-    _error: function (event) {
-          this._setActive(false);
-          if (!navigator.onLine) {
-            this._showToast(this.t('youAreOffline'));
-            event.stopPropagation();
-          } else {
-            if (this.dispatchError) {
-              event.stopPropagation();
-              if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
-                this.fire("error", event.detail.request.xhr.response.error);
-              } else if (event.detail.request.xhr.response && event.detail.request.xhr.response.message) {
-                this.fire("error", event.detail.request.xhr.response.message);
-              } else if (event.detail.request.xhr.statusText) {
-                this.fire("error", event.detail.request.xhr.statusText);
-              } else {
-                this.fire("error", event.detail.error);
-              }
-            } else if (event.detail.error && event.detail.error.message &&
-              this._is401(event.detail.error.message) && !window.appUser.user &&
-              this.retryMethodAfter401Login) {
-              window.appUser.loginFor401(this.retryMethodAfter401Login);
-            } else if (this.useDialog && !this.disableUserError) {
-              this.showErrorDialog(event.detail.error);
-            }
-          }
-        },
-  
-    */
+    accessError() {
+        if (!navigator.onLine) {
+            this.showToast(this.t("youAreOffline"));
+        }
+        else {
+            window.appUser.loginFor401(window.appGlobals.retryMethodAfter401Login);
+        }
+    }
     async handleResponse(response, showUserError, errorId = undefined, throwError = false) {
         if (response.ok) {
             let responseJson = null;
@@ -93,8 +70,12 @@ export class YpServerApiBase extends YpCodeBase {
                 responseJson = await response.json();
             }
             catch (error) {
-                if (response.status === 200 || response.statusText === "OK") {
+                if (response.status === 200 ||
+                    (response.statusText === "OK" && response.status != 401)) {
                     // Do nothing
+                }
+                else if (response.status === 401) {
+                    this.accessError();
                 }
                 else {
                     this.fireGlobal("yp-network-error", {
@@ -116,15 +97,20 @@ export class YpServerApiBase extends YpCodeBase {
             }
         }
         else {
-            this.fireGlobal("yp-network-error", {
-                response: response,
-                showUserError,
-                errorId,
-            });
-            if (throwError) {
-                throw response.statusText;
+            if (response.status == 401) {
+                this.accessError();
             }
-            return null;
+            else {
+                this.fireGlobal("yp-network-error", {
+                    response: response,
+                    showUserError,
+                    errorId,
+                });
+                if (throwError) {
+                    throw response.statusText;
+                }
+                return null;
+            }
         }
     }
 }

@@ -114,20 +114,26 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   private dialogClosingTimeout: NodeJS.Timeout | undefined;
 
+  private storageKey = `yp-assistant-${this.domainId}-client-uuid-v2`;
+
   constructor() {
     super();
     this.setupVoiceCapabilities();
-    const storageKey = `yp-assistant-${this.domainId}-client-uuid`;
-    const savedUuid = localStorage.getItem(storageKey);
+    const savedUuid = localStorage.getItem(this.storageKey);
     if (savedUuid) {
       this.clientMemoryUuid = savedUuid;
       window.appGlobals.currentClientMemoryUuid = savedUuid;
     } else {
       this.clientMemoryUuid = crypto.randomUUID();
-      localStorage.setItem(storageKey, this.clientMemoryUuid);
+      localStorage.setItem(this.storageKey, this.clientMemoryUuid);
       window.appGlobals.currentClientMemoryUuid = this.clientMemoryUuid;
     }
     this.setupServerApi();
+  }
+
+  clearClientMemoryUuid() {
+    localStorage.removeItem(this.storageKey);
+    window.appGlobals.currentClientMemoryUuid = undefined;
   }
 
   override async setupServerApi(): Promise<void> {
@@ -891,6 +897,8 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.resetLastDirectAvatarUrlAndName();
     this.stopCanvasRendering();
     this.requestUpdate();
+    this.clearClientMemoryUuid();
+    await window.appUser.logout();
     location.reload();
   }
 

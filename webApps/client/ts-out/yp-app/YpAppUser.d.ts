@@ -91,7 +91,7 @@ export declare class YpAppUser extends YpCodeBase {
         value: string;
         content: string;
     }): void;
-    loginFor401(refreshFunction: Function): void;
+    loginFor401(refreshFunction: Function | undefined): void;
     loginForNotificationSettings(): void;
     openUserlogin(email?: string | undefined, collectionConfiguration?: object | undefined): void;
     autoAnonymousLogin(): void;

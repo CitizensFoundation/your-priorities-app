@@ -2,8 +2,8 @@ import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
 import WebSocket from "ws";
 // Extend the base class with voice capabilities
 export class YpBaseChatBotWithVoice extends YpBaseChatBot {
-    constructor(wsClientId, wsClients, memoryId, voiceEnabled = false, parentAssistant) {
-        super(wsClientId, wsClients, memoryId);
+    constructor(wsClientId, wsClients, redisKey, redisConnection, voiceEnabled = false, parentAssistant) {
+        super(wsClientId, wsClients, redisConnection, redisKey);
         this.voiceEnabled = false;
         this.VAD_TIMEOUT = 1000; // 1 second of silence for VAD
         this.sendTranscriptsToClient = false;

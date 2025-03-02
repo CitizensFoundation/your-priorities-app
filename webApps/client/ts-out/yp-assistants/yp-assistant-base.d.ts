@@ -39,7 +39,9 @@ export declare abstract class YpAssistantBase extends YpChatbotBase {
     serverApi: YpAssistantServerApi;
     clientMemoryUuid: string;
     private dialogClosingTimeout;
+    private storageKey;
     constructor();
+    clearClientMemoryUuid(): void;
     setupServerApi(): Promise<void>;
     connectedCallback(): void;
     disconnectedCallback(): void;

@@ -3,7 +3,7 @@ import { YpStreamingLlmBase } from "../yp-chatbots/yp-streaming-llm-base.js";
 export class YpAssistantServerApi extends YpServerApi {
     constructor(clientMemoryUuid, urlPath = "/api/assistants") {
         super();
-        this.localStorageChatsKey = "yp-assistant-chats-v1";
+        this.localStorageChatsKey = "yp-assistant-chats-v2";
         this.baseUrlPath = urlPath;
         this.clientMemoryUuid = clientMemoryUuid;
     }
@@ -46,6 +46,13 @@ export class YpAssistantServerApi extends YpServerApi {
                     clientMemoryUuid: this.clientMemoryUuid,
                 }),
             }, false, undefined, true);
+            if (response.status &&
+                (response.status === 401 || response.status === 403)) {
+                throw {
+                    status: response.status,
+                    message: response.status === 401 ? "Unauthorized" : "Forbidden",
+                };
+            }
             if (response.status && response.status === 500) {
                 throw new Error("Internal Server Error");
             }
@@ -55,6 +62,9 @@ export class YpAssistantServerApi extends YpServerApi {
             return response;
         }
         catch (err) {
+            if (err && err.status && (err.status === 401 || err.status === 403)) {
+                throw err;
+            }
             console.warn("Error detected on sendChatMessage, triggering reconnection...");
             YpStreamingLlmBase.scheduleReconnect();
             try {
@@ -158,7 +168,8 @@ export class YpAssistantServerApi extends YpServerApi {
         }, false);
     }
     submitAgentConfiguration(domainId, subscriptionId, requiredQuestionsAnswers) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/${subscriptionId}/submitAgentConfiguration`, {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId}/${subscriptionId}/submitAgentConfiguration`, {
             method: "PUT",
             body: JSON.stringify({
                 requiredQuestionsAnswers,
@@ -167,7 +178,8 @@ export class YpAssistantServerApi extends YpServerApi {
         });
     }
     getConfigurationAnswers(domainId, subscriptionId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${domainId}/${subscriptionId}/getConfigurationAnswers`);
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId}/${subscriptionId}/getConfigurationAnswers`);
     }
     // Helper function that waits for a reconnection event with a given timeout.
     waitForWsReconnection(timeout) {

@@ -4,8 +4,8 @@ import { AgentSelectionMode } from "./modes/agentSelectionMode.js";
 import { DirectConversationMode } from "./modes/agentDirectConnection.js";
 import { SubscriptionManager } from "../managers/subscriptionManager.js";
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
-    constructor(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId) {
-        super(wsClientId, wsClients, redis, voiceEnabled, domainId, memoryId);
+    constructor(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId) {
+        super(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId);
         this.availableAgents = [];
         this.runningAgents = [];
         this.agentSelectionMode = new AgentSelectionMode(this);
@@ -44,6 +44,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
         return this.memory.currentAgentStatus?.subscriptionId != undefined;
     }
     get hasConfiguredcurrentAgentProduct() {
+        console.log(`configuration: ${this.redisKey}: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
         return this.memory.currentAgentStatus?.configurationState === "configured";
     }
     async isCurrentAgentRunning() {

@@ -85,7 +85,6 @@ let YpConfirmationDialog = class YpConfirmationDialog extends YpBaseElement {
         else {
             this.hideCancel = false;
         }
-        debugger;
         this.fireGlobal("yp-dialog-opened");
     }
     _confirm() {

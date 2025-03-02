@@ -52,10 +52,10 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     wsClientId: string,
     wsClients: Map<string, WebSocket>,
     redis: ioredis.Redis,
-    domainId: number,
-    memoryId: string
+    redisKey: string,
+    domainId: number
   ) {
-    super(wsClientId, wsClients, memoryId);
+    super(wsClientId, wsClients, redis, redisKey);
     this.voiceEnabled = false;
     this.domainId = domainId;
     if (!domainId) {
@@ -69,10 +69,9 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     this.eventEmitter = new EventEmitter();
 
-    this.setupClientSystemMessageListener();
+    this.clientSystemMessageListener = this.handleClientSystemMessage.bind(this);
 
-    this.clientSystemMessageListener =
-      this.handleClientSystemMessage.bind(this);
+    this.setupClientSystemMessageListener();
 
     this.on("update-ai-model-session", this.updateAiModelSession.bind(this));
   }
@@ -115,13 +114,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   setupClientSystemMessageListener() {
     console.log(
       "WebSockets: setupClientSystemMessageListener called for wsClientId:",
-      this.wsClientId
+      this.wsClientId,
+      this.clientSystemMessageListener
     );
 
-    this.wsClientSocket.on(
-      "message",
-      this.handleClientSystemMessage.bind(this)
-    );
+    this.wsClientSocket.on("message", this.clientSystemMessageListener);
 
     const listenerCountAfter = this.wsClientSocket.listenerCount("message");
     console.log(
@@ -394,17 +391,6 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     };
   }
 
-  getEmptyMemory() {
-    return {
-      redisKey: this.redisKey,
-      chatLog: [],
-      completeChatLog: [],
-      currentMode: "agent_selection_mode",
-      modeHistory: [],
-      modeData: undefined,
-    } as YpBaseAssistantMemoryData;
-  }
-
   /**
    * Handle executing tool calls with results
    */
@@ -595,26 +581,14 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    */
   abstract defineAvailableModes(): Promise<AssistantChatbotMode[]>;
 
-  async setupMemory(memoryId: string | undefined = undefined) {
-    // DO nothing override call from constructor
-  }
-
   async setupMemoryAsync() {
     if (!this.memory) {
-      console.log("setupMemoryAsync: loading memory");
+      console.log("loadMemoryWithOwnership: loading memory");
       this.memory = (await this.loadMemory()) as YpBaseAssistantMemoryData;
     }
 
     if (!this.memory) {
-      console.log("setupMemoryAsync: creating new memory");
-      //this.memoryId = uuidv4();
-      this.memory = this.getEmptyMemory();
-      if (this.wsClientSocket) {
-        this.sendMemoryId();
-      } else {
-        console.error("No wsClientSocket found");
-      }
-      await this.saveMemory();
+      console.error("loadMemoryWithOwnership: No memory found!!!");
     }
   }
 
