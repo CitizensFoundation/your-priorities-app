@@ -293,6 +293,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   async getMemoryFromServer() {
     if (!this.chatLog || this.chatLog.length === 0) {
       try {
+        window.appGlobals.retryMethodAfter401Login = this.getMemoryFromServer.bind(this);
         const { chatLog, modeData, currentMode } =
           (await this.serverApi.getMemoryFromServer(
             this.domainId

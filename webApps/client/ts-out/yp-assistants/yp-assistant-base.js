@@ -212,6 +212,7 @@ let YpAssistantBase = YpAssistantBase_1 = class YpAssistantBase extends YpChatbo
     async getMemoryFromServer() {
         if (!this.chatLog || this.chatLog.length === 0) {
             try {
+                window.appGlobals.retryMethodAfter401Login = this.getMemoryFromServer.bind(this);
                 const { chatLog, modeData, currentMode } = (await this.serverApi.getMemoryFromServer(this.domainId));
                 this.currentMode = currentMode;
                 if (chatLog && chatLog.length > 0) {
