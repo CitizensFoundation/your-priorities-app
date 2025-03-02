@@ -47,7 +47,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     get isWaitingOnUser(): boolean;
     get isCompleted(): boolean;
     private renderAgentRunningStatus;
-    get runStatusForButton(): "start" | "stop";
+    get runStatusForButton(): "stop" | "start";
     startNextWorkflowStep(): Promise<void>;
     stopCurrentWorkflowStep(): Promise<void>;
     renderStartStopButtons(): TemplateResult<1>;
