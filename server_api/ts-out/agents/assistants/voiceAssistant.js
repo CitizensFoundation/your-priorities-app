@@ -82,7 +82,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             throw new Error("No subscription plan found");
         }
         if (subscriptionPlan?.AgentProduct.name) {
-            this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${subscriptionPlan.AgentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
+            this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${subscriptionPlan.AgentProduct.name}. (it happened on a seperate channel). Now help the user with agent selection`;
         }
         this.sendToClient("assistant", "", "clear_audio_buffer");
         if (this.directAgentVoiceConnection) {
@@ -132,7 +132,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.directAgentVoiceConnection = undefined;
             this.parentAssistant.memory.chatLog.push({
                 sender: "user",
-                message: "Thank you for the information, I would now like to speak to the main assistant about selecting agents or managing subscriptions",
+                message: "Thank you for the information, I would now like to speak to the main assistant about selecting agents",
             });
             await this.parentAssistant.saveMemory();
         }
@@ -189,7 +189,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                         await this.handleSpeechStopped();
                         break;
                     case "response.cancelled":
-                        console.log("-------------------MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMZZZZZZZZZZZZZZ>>>>>>>>>>>>>>>>>>> response.cancelled");
+                        console.log("response.cancelled");
                         this.isWaitingOnCancelResponseCompleted = false;
                         break;
                     case "conversation.item.input_audio_transcription.completed":

@@ -24,10 +24,10 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     parseWorkflow(): void;
     setupInitialWorkflow(): Promise<void>;
     updateWorkflow(updatedWorkflow: {
-        workflow: YpWorkflowConfiguration;
+        workflow: YpAgentRunWorkflowConfiguration;
         status: YpAgentProductRunStatus;
     }): void;
-    get parsedWorkflow(): YpWorkflowConfiguration;
+    get parsedWorkflow(): YpAgentRunWorkflowConfiguration;
     disconnectedCallback(): void;
     private startStatusUpdates;
     private stopStatusUpdates;
@@ -51,7 +51,7 @@ export declare class YpAgentRunWidget extends YpBaseElement {
     startNextWorkflowStep(): Promise<void>;
     stopCurrentWorkflowStep(): Promise<void>;
     renderStartStopButtons(): TemplateResult<1>;
-    get groupId(): any;
+    get groupId(): number | undefined;
     sendEmailInvitesForAnons(): Promise<void>;
     private viewList;
     openMarkdownReport(): void;

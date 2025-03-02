@@ -25,7 +25,7 @@ export declare class PsServerApi extends YpServerApiBase {
     getAgentStatus(groupId: number, agentId: number): Promise<PsAgentStatus>;
     advanceOrStopCurrentAgentRun(groupId: number, agentId: number, runId: number, status: string, wsClientId: string): Promise<any>;
     getUpdatedWorkflow(groupId: number, runId: number): Promise<{
-        workflow: YpWorkflowConfiguration;
+        workflow: YpAgentRunWorkflowConfiguration;
         status: YpAgentProductRunStatus;
     } | null>;
     startWorkflowAgent(groupId: number, agentId: number, wsClientId: string): Promise<any>;

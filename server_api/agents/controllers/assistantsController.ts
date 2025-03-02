@@ -16,7 +16,7 @@ import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
-import { WorkflowManager } from "../managers/workflowManager.js";
+import { WorkflowConversationManager } from "../managers/workflowConversationManager.js";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -48,12 +48,12 @@ export class AssistantController {
   public chatAssistantInstances = new Map<string, YpAgentAssistant>();
   public voiceAssistantInstances = new Map<string, YpAgentAssistant>();
   private agentQueueManager!: AgentQueueManager;
-  private workflowManager!: WorkflowManager;
+  private workflowConversationManager!: WorkflowConversationManager;
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
     this.agentQueueManager = new AgentQueueManager();
-    this.workflowManager = new WorkflowManager();
+    this.workflowConversationManager = new WorkflowConversationManager();
     this.initializeRoutes();
     this.initializeModels();
   }
@@ -149,21 +149,21 @@ export class AssistantController {
       auth.can("view domain"),
       this.getDocxReport.bind(this)
     );
-    
+
     this.router.get(
-      "/:domainId/workflows/running",
+      "/:domainId/workflowConversations/running",
       auth.can("view domain"),
-      this.getRunningWorkflows.bind(this)
+      this.getRunningWorkflowConversations.bind(this)
     );
     this.router.get(
-      "/:domainId/workflows/all",
+      "/:domainId/workflowConversations/all",
       auth.can("view domain"),
-      this.getAllWorkflows.bind(this)
+      this.getAllWorkflowConversations.bind(this)
     );
     this.router.put(
-      "/:domainId/workflows/connect",
+      "/:domainId/workflowConversations/connect",
       auth.can("view domain"),
-      this.connectToWorkflow.bind(this)
+      this.connectToWorkflowConversation.bind(this)
     );
   }
 
@@ -192,9 +192,7 @@ export class AssistantController {
       console.debug(`match: ${JSON.stringify(match, null, 2)}`);
 
       if (!match || match.length < 2) {
-        console.error(
-          "No <markdownReport>...</markdownReport> content found."
-        );
+        console.error("No <markdownReport>...</markdownReport> content found.");
         return res
           .status(400)
           .send("No <markdownReport>...</markdownReport> content found.");
@@ -204,7 +202,7 @@ export class AssistantController {
 
       const htmlContent = await marked(markdownContent);
 
-      const docxBuffer = await HTMLtoDOCX(htmlContent) as Buffer;
+      const docxBuffer = (await HTMLtoDOCX(htmlContent)) as Buffer;
 
       console.debug(`docxBuffer: ${docxBuffer.length}`);
 
@@ -277,9 +275,11 @@ export class AssistantController {
     }
   };
 
-  public getAgentConfigurationAnswers = async (req: YpRequest, res: express.Response) => {
+  public getAgentConfigurationAnswers = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
     try {
-
       if (!req.user) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -290,7 +290,7 @@ export class AssistantController {
       const subscription = await YpSubscription.findOne({
         where: {
           id: subscriptionId,
-          user_id: req.user.id
+          user_id: req.user.id,
         },
       });
 
@@ -299,18 +299,21 @@ export class AssistantController {
       }
 
       // Extract the requiredQuestionsAnswered from subscription.configuration
-      const answers = subscription.configuration?.requiredQuestionsAnswered || [];
+      const answers =
+        subscription.configuration?.requiredQuestionsAnswered || [];
 
       return res.status(200).json({
         success: true,
         data: answers,
       });
     } catch (error: any) {
-      console.error("Error retrieving subscription agent configuration:", error);
+      console.error(
+        "Error retrieving subscription agent configuration:",
+        error
+      );
       return res.status(500).json({ error: error.message });
     }
   };
-
 
   private getUpdatedWorkflow = async (
     req: YpRequest,
@@ -378,8 +381,7 @@ export class AssistantController {
       `submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`
     );
 
-    const { requiredQuestionsAnswers } =
-      req.body;
+    const { requiredQuestionsAnswers } = req.body;
 
     const subscriptionId = parseInt(req.params.subscriptionId);
 
@@ -560,7 +562,8 @@ export class AssistantController {
       const memoryId = this.getMemoryUserId(req);
       console.log(`Starting chat session for client: ${wsClientId}`);
 
-      let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
+      let oldVoiceAssistant =
+        this.voiceAssistantInstances.get("voiceAssistant");
 
       if (oldVoiceAssistant) {
         oldVoiceAssistant.destroy();
@@ -605,7 +608,8 @@ export class AssistantController {
         `Starting chat session for client: ${wsClientId} with currentMode: ${currentMode}`
       );
 
-      const oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
+      const oldVoiceAssistant =
+        this.voiceAssistantInstances.get("voiceAssistant");
 
       if (oldVoiceAssistant) {
         oldVoiceAssistant.destroy();
@@ -644,16 +648,22 @@ export class AssistantController {
 
   // New API endpoints for workflow management
 
-  private getRunningWorkflows = async (req: YpRequest, res: express.Response) => {
+  private getRunningWorkflowConversations = async (
+    req: YpRequest,
+    res: express.Response
+  ) => {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Unauthorized" });
     }
     try {
-      const workflows = await this.workflowManager.getRunningWorkflowsForUser(req.user.id);
+      const workflows =
+        await this.workflowConversationManager.getRunningWorkflowConversationsForUser(
+          req.user.id
+        );
       res.status(200).json({
         success: true,
         data: { workflows },
-        message: "Running workflows retrieved successfully"
+        message: "Running workflows retrieved successfully",
       });
     } catch (error: any) {
       console.error("Error retrieving running workflows:", error);
@@ -661,16 +671,19 @@ export class AssistantController {
     }
   };
 
-  private getAllWorkflows = async (req: YpRequest, res: express.Response) => {
+  private getAllWorkflowConversations = async (req: YpRequest, res: express.Response) => {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Unauthorized" });
     }
     try {
-      const workflows = await this.workflowManager.getWorkflowsForUser(req.user.id);
+      const workflows =
+        await this.workflowConversationManager.getWorkflowConversationsForUser(
+          req.user.id
+        );
       res.status(200).json({
         success: true,
         data: { workflows },
-        message: "All workflows retrieved successfully"
+        message: "All workflows retrieved successfully",
       });
     } catch (error: any) {
       console.error("Error retrieving all workflows:", error);
@@ -678,20 +691,24 @@ export class AssistantController {
     }
   };
 
-  private connectToWorkflow = async (req: YpRequest, res: express.Response) => {
+  private connectToWorkflowConversation = async (req: YpRequest, res: express.Response) => {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Unauthorized" });
     }
     try {
-      const { workflowId, connectionData } = req.body;
-      const updatedWorkflow = await this.workflowManager.connectToWorkflow(workflowId, connectionData || {});
+      const { workflowConversationId, connectionData } = req.body;
+      const updatedWorkflowConversation =
+        await this.workflowConversationManager.connectToWorkflowConversation(
+          workflowConversationId,
+          connectionData || {}
+        );
       res.status(200).json({
         success: true,
-        data: updatedWorkflow,
-        message: `Connected to workflow ${workflowId} successfully`
+        data: updatedWorkflowConversation,
+        message: `Connected to workflow conversation ${workflowConversationId} successfully`,
       });
     } catch (error: any) {
-      console.error("Error connecting to workflow:", error);
+      console.error("Error connecting to workflow conversation:", error);
       res.status(500).json({ error: error.message });
     }
   };

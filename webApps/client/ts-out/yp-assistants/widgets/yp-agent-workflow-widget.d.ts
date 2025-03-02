@@ -6,7 +6,7 @@ export declare class YpAgentWorkflowWidget extends YpBaseElement {
     agentDescription: string;
     workflowStatus: string;
     workflow: string;
-    get parsedWorkflow(): YpWorkflowConfiguration;
+    get parsedWorkflow(): YpAgentRunWorkflowConfiguration;
     static get styles(): any[];
     private getStepClass;
     private renderStep;

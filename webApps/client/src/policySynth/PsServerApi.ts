@@ -294,7 +294,7 @@ export class PsServerApi extends YpServerApiBase {
     groupId: number,
     runId: number
   ): Promise<{
-    workflow: YpWorkflowConfiguration;
+    workflow: YpAgentRunWorkflowConfiguration;
     status: YpAgentProductRunStatus;
   } | null> {
     return this.fetchWrapper(
@@ -304,7 +304,7 @@ export class PsServerApi extends YpServerApiBase {
       },
       false
     ) as Promise<{
-      workflow: YpWorkflowConfiguration;
+      workflow: YpAgentRunWorkflowConfiguration;
       status: YpAgentProductRunStatus;
     } | null>;
   }

@@ -54,7 +54,9 @@ export class SubscriptionTools extends BaseAssistantTools {
           }"
           price="${subscription.Plan?.configuration.amount}"
           currency="${subscription.Plan?.configuration.currency}"
-          maxRunsPerCycle="${subscription.Plan?.configuration.max_runs_per_cycle}"
+          maxRunsPerCycle="${
+            subscription.Plan?.configuration.max_runs_per_cycle
+          }"
         ></yp-agent-chip-for-purchase></div>`;
       }
       let html;
@@ -141,7 +143,8 @@ export class SubscriptionTools extends BaseAssistantTools {
       // 2) Custom sort function
       const sortedPlans = [...status.availablePlans].sort((a, b) => {
         // Compare by type priority first
-        const typeComparison = planTypePriority(a.type) - planTypePriority(b.type);
+        const typeComparison =
+          planTypePriority(a.type) - planTypePriority(b.type);
         if (typeComparison !== 0) {
           // If types differ, that decides the order
           return typeComparison;
@@ -170,7 +173,8 @@ export class SubscriptionTools extends BaseAssistantTools {
       return {
         success: true,
         data: {
-          messageToAssistant: "You have shown the user the available agents for purchase with a UI widget, now the user needs to choose which one to connect to then subscribe to",
+          messageToAssistant:
+            "You have shown the user the available agents for purchase with a UI widget, now the user needs to choose which one to connect to then subscribe to",
           status,
         },
         html,
@@ -239,7 +243,8 @@ export class SubscriptionTools extends BaseAssistantTools {
         )}`
       );
 
-      const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+      const subscriptionPlan =
+        await this.assistant.getCurrentSubscriptionPlan();
 
       if (!subscriptionPlan) {
         throw new Error("No subscription plan found");
@@ -296,7 +301,8 @@ export class SubscriptionTools extends BaseAssistantTools {
         success: true,
         html,
         data: {
-          message: "Successfully subscribed to agent plan, now offer to show the configuration input tool/widget to configure the agent",
+          message:
+            "Successfully subscribed to agent plan, now offer to show the configuration input tool/widget to configure the agent",
           subscription: result.subscription,
           subscriptionPlan: result.plan,
         },
@@ -355,7 +361,8 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      const subscriptionPlan = await this.assistant.getCurrentSubscriptionPlan();
+      const subscriptionPlan =
+        await this.assistant.getCurrentSubscriptionPlan();
 
       if (!subscriptionPlan) {
         return {

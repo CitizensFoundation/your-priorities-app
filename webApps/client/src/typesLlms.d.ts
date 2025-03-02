@@ -57,7 +57,7 @@ interface YpAssistantMessage {
   url?: string;
   avatarUrl?: string;
   updatedWorkflow?: {
-    workflow: YpWorkflowConfiguration;
+    workflow: YpAgentRunWorkflowConfiguration;
     status: YpAgentProductStatus;
   };
 }

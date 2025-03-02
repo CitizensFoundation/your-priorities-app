@@ -170,7 +170,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     if (subscriptionPlan?.AgentProduct!.name) {
       this.exitMessageFromDirectAgentConversation = `Welcome the user back from their conversation with the ${
         subscriptionPlan.AgentProduct!.name
-      }. (it happened on a seperate channel). Now help the user with agent selection and subscription management.`;
+      }. (it happened on a seperate channel). Now help the user with agent selection`;
     }
 
     this.sendToClient("assistant", "", "clear_audio_buffer");
@@ -235,7 +235,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
       this.parentAssistant.memory.chatLog!.push({
         sender: "user",
         message:
-          "Thank you for the information, I would now like to speak to the main assistant about selecting agents or managing subscriptions",
+          "Thank you for the information, I would now like to speak to the main assistant about selecting agents",
       } as YpSimpleChatLog);
       await this.parentAssistant.saveMemory();
     }
@@ -312,7 +312,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
 
           case "response.cancelled":
             console.log(
-              "-------------------MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMZZZZZZZZZZZZZZ>>>>>>>>>>>>>>>>>>> response.cancelled"
+              "response.cancelled"
             );
             this.isWaitingOnCancelResponseCompleted = false;
             break;

@@ -105,7 +105,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     get logout() {
         return {
             name: "logout",
-            description: "Log out from the system with confirmation if the user asks for it",
+            description: "Log out from the system with confirmation if the user asks for it. If this tools is showing it means that the user is already logged in.",
             type: "function",
             parameters: {
                 type: "object",

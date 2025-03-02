@@ -103,13 +103,13 @@ export class YpAgentRunWidget extends YpBaseElement {
   }
 
   updateWorkflow(updatedWorkflow: {
-    workflow: YpWorkflowConfiguration;
+    workflow: YpAgentRunWorkflowConfiguration;
     status: YpAgentProductRunStatus;
   }) {
     // remove emailInstructions from all steps
-    const workflowCopy = JSON.parse(JSON.stringify(updatedWorkflow.workflow)) as YpWorkflowConfiguration;
+    const workflowCopy = JSON.parse(JSON.stringify(updatedWorkflow.workflow)) as YpAgentRunWorkflowConfiguration;
     if (workflowCopy.steps) {
-      workflowCopy.steps.forEach((step: YpWorkflowStep) => {
+      workflowCopy.steps.forEach((step: YpAgentRunWorkflowStep) => {
         step.emailInstructions = "";
       });
     }
@@ -119,7 +119,7 @@ export class YpAgentRunWidget extends YpBaseElement {
     this.requestUpdate();
   }
 
-  get parsedWorkflow(): YpWorkflowConfiguration {
+  get parsedWorkflow(): YpAgentRunWorkflowConfiguration {
     try {
       const decodedWorkflow = atob(this.workflow);
       return JSON.parse(decodedWorkflow);
@@ -495,7 +495,7 @@ export class YpAgentRunWidget extends YpBaseElement {
     window.open(`/group/${groupId}?forAgentBundle=true`, "_blank");
   }
 
-  private renderStep(step: YpWorkflowStep, index: number, isSelected: boolean) {
+  private renderStep(step: YpAgentRunWorkflowStep, index: number, isSelected: boolean) {
     const stepClass = this.getStepClass(index);
     const isActive = (
       isSelected &&

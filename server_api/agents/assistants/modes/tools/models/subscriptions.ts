@@ -291,7 +291,8 @@ export class SubscriptionModels {
 
   public async subscribeToAgentPlan(
     agentProductId: number,
-    subscriptionPlanId: number
+    subscriptionPlanId: number,
+    returnCurrentSubscription: boolean = false
   ): Promise<SubscribeResult> {
     try {
       const plan = await YpSubscriptionPlan.findOne({
@@ -319,6 +320,26 @@ export class SubscriptionModels {
         return {
           success: false,
           error: "User not found",
+        };
+      }
+
+      const existingSubscription = await YpSubscription.findOne({
+        where: {
+          subscription_plan_id: subscriptionPlanId,
+          user_id: userId,
+        },
+      });
+
+      if (returnCurrentSubscription && existingSubscription) {
+        return {
+          success: true,
+          plan: plan as YpSubscriptionPlanAttributes,
+          subscription: existingSubscription as YpSubscriptionAttributes,
+        };
+      } else if (existingSubscription) {
+        return {
+          success: false,
+          error: "User already subscribed to this plan",
         };
       }
 

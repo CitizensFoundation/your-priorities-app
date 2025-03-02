@@ -1,5 +1,5 @@
 import { BaseAssistantTools } from "./baseTools.js";
-export class WorkflowTools extends BaseAssistantTools {
+export class WorkflowConversationTools extends BaseAssistantTools {
     constructor(assistant) {
         super(assistant);
     }

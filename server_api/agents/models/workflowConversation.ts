@@ -1,16 +1,16 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 
-export class YpWorkflow extends Model {
+export class YpWorkflowConversation extends Model {
   public id!: number;
   public agentProductId!: number;
   public userId!: number | null;
-  public configuration!: YpWorkflowConfiguration;
+  public configuration!: YpWorkflowConversationConfiguration;
   public created_at!: Date;
   public updated_at!: Date;
 
-  static initModel(sequelizeInstance = sequelize): typeof YpWorkflow {
-    YpWorkflow.init(
+  static initModel(sequelizeInstance = sequelize): typeof YpWorkflowConversation {
+    YpWorkflowConversation.init(
       {
         id: {
           type: DataTypes.INTEGER,
@@ -45,20 +45,20 @@ export class YpWorkflow extends Model {
       },
       {
         sequelize: sequelizeInstance,
-        tableName: "workflows",
-        timestamps: false,
+        tableName: "workflow_conversations",
+        timestamps: true,
       }
     );
-    return YpWorkflow;
+    return YpWorkflowConversation;
   }
 
   static associate(models: Record<string, any>): void {
-    YpWorkflow.belongsTo(models.YpAgentProduct, {
+    YpWorkflowConversation.belongsTo(models.YpAgentProduct, {
       foreignKey: "agentProductId",
       as: "agentProduct",
     });
 
-    YpWorkflow.hasMany(models.YpAgentProductRun, {
+    YpWorkflowConversation.hasMany(models.YpAgentProductRun, {
       foreignKey: "workflowId",
       as: "agentProductRuns",
     });

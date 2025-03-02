@@ -241,7 +241,7 @@ interface YpBaseAssistantMemoryData extends YpBaseChatBotMemoryData {
   }>;
 }
 
-interface YpWorkflowConfiguration {
+interface YpWorkflowConversationConfiguration {
   type: "mainAssisant" | "subAgent";
   running?: boolean;
 }

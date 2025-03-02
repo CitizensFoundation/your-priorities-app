@@ -1,23 +1,19 @@
 import { BaseAssistantMode } from "./baseAssistantMode.js";
 import { YpAgentAssistant } from "../agentAssistant.js";
-import { YpSubscriptionPlan } from "../../models/subscriptionPlan.js";
-import { YpSubscription } from "../../models/subscription.js";
 import { SubscriptionTools } from "./tools/subscriptionTools.js";
 import { NavigationTools } from "./tools/navigationTools.js";
 import { LoginAssistantTools } from "./tools/loginTools.js";
-import { AgentTools } from "./tools/agentTools.js";
 
 export class AgentSelectionMode extends BaseAssistantMode {
   constructor(assistant: YpAgentAssistant) {
     super(assistant);
   }
 
-  subscriptionTools = new SubscriptionTools(this.assistant);
   navigationTools = new NavigationTools(this.assistant);
   loginTools = new LoginAssistantTools(this.assistant);
 
   protected async getCurrentModeSystemPrompt(): Promise<string> {
-    let systemPrompt = `You are the main AI agent assistant. Help users select AI agents to subscribe to or connect to. Use your tools when needed.`;
+    let systemPrompt = `You are the main AI agent assistant. Help users select AI agent workflows to connect to. Use your tools when needed.`;
 
     systemPrompt += await this.renderCommon();
 
@@ -26,17 +22,16 @@ export class AgentSelectionMode extends BaseAssistantMode {
 
   protected async getCurrentModeTools(): Promise<AssistantChatbotTool[]> {
     const tools: AssistantChatbotTool[] = [
-      this.subscriptionTools.listAllAgentsAvailableForSubscription,
+      this.navigationTools.listAllAgentsAvailableForConnection,
     ];
 
     if (this.assistant.isLoggedIn) {
       tools.push(this.navigationTools.connectDirectlyToAgent);
       tools.push(this.loginTools.logout);
-      tools.push(this.subscriptionTools.listMyAgentSubscriptions);
     } else {
       tools.push(
         this.loginTools.showLogin(
-          "Show login widget to the user if they ask to be logged in or if they ask specfically to list all of their subscribed agents. You do not need to log in to connect to an agent."
+          "Show login widget to the user when needed. You do need to log in to connect to an agent. When you have logged in the connect directly to agent tool will be available."
         )
       );
       if (this.assistant.haveShownLoginWidget) {
@@ -56,7 +51,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
     return {
       name: "agent_selection_mode",
       description:
-        "List available agents the user is subscribed to or available for purchase then connect the user to the agent selected by the user",
+        "List available agents the user can connect to then connect the user to the agent selected by the user",
       systemPrompt: systemPrompt,
       tools: tools,
       allowedTransitions: ["agent_direct_connection_mode"],

@@ -256,7 +256,7 @@ export class SubscriptionModels {
             };
         }
     }
-    async subscribeToAgentPlan(agentProductId, subscriptionPlanId) {
+    async subscribeToAgentPlan(agentProductId, subscriptionPlanId, returnCurrentSubscription = false) {
         try {
             const plan = await YpSubscriptionPlan.findOne({
                 where: {
@@ -280,6 +280,25 @@ export class SubscriptionModels {
                 return {
                     success: false,
                     error: "User not found",
+                };
+            }
+            const existingSubscription = await YpSubscription.findOne({
+                where: {
+                    subscription_plan_id: subscriptionPlanId,
+                    user_id: userId,
+                },
+            });
+            if (returnCurrentSubscription && existingSubscription) {
+                return {
+                    success: true,
+                    plan: plan,
+                    subscription: existingSubscription,
+                };
+            }
+            else if (existingSubscription) {
+                return {
+                    success: false,
+                    error: "User already subscribed to this plan",
                 };
             }
             console.log(`-------> subscribing to agent plan ${subscriptionPlanId} for user ${userId}`);

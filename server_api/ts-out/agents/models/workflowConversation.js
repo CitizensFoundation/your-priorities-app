@@ -35,8 +35,8 @@ export class YpWorkflowConversation extends Model {
             },
         }, {
             sequelize: sequelizeInstance,
-            tableName: "workflows",
-            timestamps: false,
+            tableName: "workflow_conversations",
+            timestamps: true,
         });
         return YpWorkflowConversation;
     }

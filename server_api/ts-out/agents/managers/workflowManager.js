@@ -1,9 +1,9 @@
-import { YpWorkflow } from "../models/workflow.js";
+import { YpWorkflowConversation } from "../models/workflowConverstation.js";
 export class WorkflowManager {
     constructor() { }
     async createWorkflow(data) {
         try {
-            const workflow = await YpWorkflow.create({
+            const workflow = await YpWorkflowConversation.create({
                 agentProductId: data.agentProductId,
                 userId: data.userId || null,
                 configuration: data.configuration || {},
@@ -16,7 +16,7 @@ export class WorkflowManager {
     }
     async getWorkflow(workflowId) {
         try {
-            const workflow = await YpWorkflow.findByPk(workflowId);
+            const workflow = await YpWorkflowConversation.findByPk(workflowId);
             return workflow;
         }
         catch (error) {
@@ -25,7 +25,7 @@ export class WorkflowManager {
     }
     async updateWorkflow(workflowId, updates) {
         try {
-            const workflow = await YpWorkflow.findByPk(workflowId);
+            const workflow = await YpWorkflowConversation.findByPk(workflowId);
             if (!workflow) {
                 throw new Error("Workflow not found");
             }
@@ -39,7 +39,7 @@ export class WorkflowManager {
     }
     async connectToWorkflow(workflowId, connectionData) {
         try {
-            const workflow = await YpWorkflow.findByPk(workflowId);
+            const workflow = await YpWorkflowConversation.findByPk(workflowId);
             if (!workflow) {
                 throw new Error("Workflow not found");
             }
@@ -53,7 +53,7 @@ export class WorkflowManager {
     }
     async getWorkflowsForUser(userId) {
         try {
-            const workflows = await YpWorkflow.findAll({ where: { userId } });
+            const workflows = await YpWorkflowConversation.findAll({ where: { userId } });
             return workflows;
         }
         catch (error) {

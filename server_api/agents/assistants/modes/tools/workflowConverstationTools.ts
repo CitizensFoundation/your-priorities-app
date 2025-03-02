@@ -1,14 +1,14 @@
 import { YpAgentAssistant } from "../../agentAssistant.js";
 import { BaseAssistantTools } from "./baseTools.js";
 
-export class WorkflowTools extends BaseAssistantTools {
+export class WorkflowConversationTools extends BaseAssistantTools {
   constructor(assistant: YpAgentAssistant) {
     super(assistant);
   }
 
-  get show_running_workflows() {
+  get show_running_workflow_conversations() {
     return {
-      name: "show_running_workflows",
+      name: "show_running_workflow_conversations",
       description: "Display running workflow conversations",
       type: "function",
       parameters: {
@@ -43,9 +43,9 @@ export class WorkflowTools extends BaseAssistantTools {
     }
   }
 
-  get show_all_workflows() {
+  get show_all_workflow_conversations() {
     return {
-      name: "show_all_workflows",
+      name: "show_all_workflow_conversations",
       description: "Display all workflow conversations",
       type: "function",
       parameters: {
@@ -80,9 +80,9 @@ export class WorkflowTools extends BaseAssistantTools {
     }
   }
 
-  get connect_to_workflow() {
+  get connect_to_workflow_conversation() {
     return {
-      name: "connect_to_workflow",
+      name: "connect_to_workflow_conversation",
       description: "Connect to an existing workflow conversation",
       type: "function",
       parameters: {
@@ -109,8 +109,8 @@ export class WorkflowTools extends BaseAssistantTools {
         metadata: { timestamp: new Date().toISOString() }
       };
     } catch (error: any) {
-      const errorMessage = error instanceof Error ? error.message : "Error connecting to workflow";
-      console.error(`Error in connect_to_workflow: ${errorMessage}`);
+      const errorMessage = error instanceof Error ? error.message : "Error connecting to workflow conversation";
+      console.error(`Error in connect_to_workflow_conversation: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage

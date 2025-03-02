@@ -14,7 +14,7 @@ import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
-import { WorkflowManager } from "../managers/workflowManager.js";
+import { WorkflowConversationManager } from "../managers/workflowConversationManager.js";
 const models = {
     YpAgentProduct,
     YpAgentProductBundle,
@@ -66,7 +66,7 @@ export class AssistantController {
                 }
                 const markdownContent = match[1];
                 const htmlContent = await marked(markdownContent);
-                const docxBuffer = await HTMLtoDOCX(htmlContent);
+                const docxBuffer = (await HTMLtoDOCX(htmlContent));
                 console.debug(`docxBuffer: ${docxBuffer.length}`);
                 res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                 res.setHeader("Content-disposition", 'attachment; filename="converted.docx"');
@@ -122,7 +122,7 @@ export class AssistantController {
                 const subscription = await YpSubscription.findOne({
                     where: {
                         id: subscriptionId,
-                        user_id: req.user.id
+                        user_id: req.user.id,
                     },
                 });
                 if (!subscription) {
@@ -337,16 +337,16 @@ export class AssistantController {
             }
         };
         // New API endpoints for workflow management
-        this.getRunningWorkflows = async (req, res) => {
+        this.getRunningWorkflowConversations = async (req, res) => {
             if (!req.user || !req.user.id) {
                 return res.status(401).json({ error: "Unauthorized" });
             }
             try {
-                const workflows = await this.workflowManager.getRunningWorkflowsForUser(req.user.id);
+                const workflows = await this.workflowConversationManager.getRunningWorkflowConversationsForUser(req.user.id);
                 res.status(200).json({
                     success: true,
                     data: { workflows },
-                    message: "Running workflows retrieved successfully"
+                    message: "Running workflows retrieved successfully",
                 });
             }
             catch (error) {
@@ -354,16 +354,16 @@ export class AssistantController {
                 res.status(500).json({ error: error.message });
             }
         };
-        this.getAllWorkflows = async (req, res) => {
+        this.getAllWorkflowConversations = async (req, res) => {
             if (!req.user || !req.user.id) {
                 return res.status(401).json({ error: "Unauthorized" });
             }
             try {
-                const workflows = await this.workflowManager.getWorkflowsForUser(req.user.id);
+                const workflows = await this.workflowConversationManager.getWorkflowConversationsForUser(req.user.id);
                 res.status(200).json({
                     success: true,
                     data: { workflows },
-                    message: "All workflows retrieved successfully"
+                    message: "All workflows retrieved successfully",
                 });
             }
             catch (error) {
@@ -371,27 +371,27 @@ export class AssistantController {
                 res.status(500).json({ error: error.message });
             }
         };
-        this.connectToWorkflow = async (req, res) => {
+        this.connectToWorkflowConversation = async (req, res) => {
             if (!req.user || !req.user.id) {
                 return res.status(401).json({ error: "Unauthorized" });
             }
             try {
-                const { workflowId, connectionData } = req.body;
-                const updatedWorkflow = await this.workflowManager.connectToWorkflow(workflowId, connectionData || {});
+                const { workflowConversationId, connectionData } = req.body;
+                const updatedWorkflowConversation = await this.workflowConversationManager.connectToWorkflowConversation(workflowConversationId, connectionData || {});
                 res.status(200).json({
                     success: true,
-                    data: updatedWorkflow,
-                    message: `Connected to workflow ${workflowId} successfully`
+                    data: updatedWorkflowConversation,
+                    message: `Connected to workflow conversation ${workflowConversationId} successfully`,
                 });
             }
             catch (error) {
-                console.error("Error connecting to workflow:", error);
+                console.error("Error connecting to workflow conversation:", error);
                 res.status(500).json({ error: error.message });
             }
         };
         this.wsClients = wsClients;
         this.agentQueueManager = new AgentQueueManager();
-        this.workflowManager = new WorkflowManager();
+        this.workflowConversationManager = new WorkflowConversationManager();
         this.initializeRoutes();
         this.initializeModels();
     }
@@ -410,9 +410,9 @@ export class AssistantController {
         this.router.post("/:groupId/:agentId/stopCurrentWorkflowStep", this.stopCurrentWorkflowStep.bind(this));
         this.router.put("/:groupId/:agentId/:runId/advanceOrStopWorkflow", this.advanceOrStopCurrentWorkflowStep.bind(this));
         this.router.get("/:groupId/:agentId/getDocxReport", auth.can("view domain"), this.getDocxReport.bind(this));
-        this.router.get("/:domainId/workflows/running", auth.can("view domain"), this.getRunningWorkflows.bind(this));
-        this.router.get("/:domainId/workflows/all", auth.can("view domain"), this.getAllWorkflows.bind(this));
-        this.router.put("/:domainId/workflows/connect", auth.can("view domain"), this.connectToWorkflow.bind(this));
+        this.router.get("/:domainId/workflowConversations/running", auth.can("view domain"), this.getRunningWorkflowConversations.bind(this));
+        this.router.get("/:domainId/workflowConversations/all", auth.can("view domain"), this.getAllWorkflowConversations.bind(this));
+        this.router.put("/:domainId/workflowConversations/connect", auth.can("view domain"), this.connectToWorkflowConversation.bind(this));
     }
     async getLastStatusMessageFromDB(agentId) {
         const status = await this.agentQueueManager.getAgentStatus(agentId);

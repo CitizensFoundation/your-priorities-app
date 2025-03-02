@@ -24,10 +24,8 @@ export class DirectConversationMode extends BaseAssistantMode {
                 // User logged in
                 console.log("Mode: agent_direct_connection_mode, User logged in");
                 tools.push(this.loginTools.logout);
+                tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
                 if (this.assistant.isSubscribedToCurrentAgentProduct) {
-                    // User is subscribed to the current agent
-                    console.log("Mode: agent_direct_connection_mode, User is subscribed to the current agent");
-                    tools.push(this.subscriptionTools.unsubscribeFromCurrentAgentSubscription);
                     if (this.assistant.hasConfiguredcurrentAgentProduct) {
                         // User has configured the current agent
                         console.log("Mode: agent_direct_connection_mode, User has configured the current agent");
@@ -61,20 +59,7 @@ export class DirectConversationMode extends BaseAssistantMode {
                 }
                 else {
                     // User is not subscribed to the current agent
-                    console.log("Mode: agent_direct_connection_mode, User is not subscribed to the current agent");
-                    tools.push(this.subscriptionTools.subscribeToCurrentAgentPlan);
-                    tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
-                }
-            }
-            else {
-                // User not logged in
-                console.log("Mode: agent_direct_connection_mode, User not logged in");
-                tools.push(this.loginTools.showLogin("Show login widget to the user if wants to subscribe to an agent or start an agent workflow. Always show the login widget if the user asks to be logged in."));
-                tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
-                if (this.assistant.haveShownLoginWidget) {
-                    console.log("Mode: agent_direct_connection_mode, User has shown the login widget");
-                    tools.push(this.loginTools.clickGoogleLoginButton);
-                    tools.push(this.loginTools.clickMainLoginButton);
+                    console.error("Mode: agent_direct_connection_mode, User is not subscribed to the current agent should not happen");
                 }
             }
             return tools;

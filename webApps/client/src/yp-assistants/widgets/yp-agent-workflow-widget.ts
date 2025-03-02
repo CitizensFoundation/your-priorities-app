@@ -13,7 +13,7 @@ export class YpAgentWorkflowWidget extends YpBaseElement {
   @property({ type: String })
   workflow!: string;
 
-  get parsedWorkflow(): YpWorkflowConfiguration {
+  get parsedWorkflow(): YpAgentRunWorkflowConfiguration {
     try {
       const decodedWorkflow = atob(this.workflow);
       return JSON.parse(decodedWorkflow);
@@ -122,7 +122,7 @@ export class YpAgentWorkflowWidget extends YpBaseElement {
     return "step-disabled";
   }
 
-  private renderStep(step: YpWorkflowStep, index: number, isLast: boolean) {
+  private renderStep(step: YpAgentRunWorkflowStep, index: number, isLast: boolean) {
     const stepClass = this.getStepClass(index);
 
     return html`
