@@ -12,6 +12,7 @@ Your Priorities is a platform we've been refining since 2008. It's recognized as
 
 ## Key Features
 
+* Helps groups take better decisions together by merging collective and artificial intellgience
 * Citizen participation social network for digital democracy and social innovation
 * Communities and groups for simple organization of any type of participation project
 * Crowdsource ideas about any subject
