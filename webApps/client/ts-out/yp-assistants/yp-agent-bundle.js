@@ -11,8 +11,8 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
     constructor() {
         super(...arguments);
         this.loggedInChecked = false;
-        //TODO: Remove when a better db driven solution is implemented
-        this.temporaryAccessIds = [
+        this.temporaryAccessIds = ["dx5x616b-e65x-47a3-bb8b-14924cdd7xb8"];
+        this.temporaryAccessIdsOld = [
             "d155616b-e657-47a3-bb8b-14924cdd78b8",
             "6a1e8403-8fc9-4cb5-87aa-bd768200cff3",
             "63d76e5e-33c7-477f-9dd2-c6a86a63da22",
@@ -150,14 +150,14 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
         this.loggedInUser = event.detail;
         if (!this.loggedInChecked &&
             !this.loggedInUser &&
-            !localStorage.getItem("temporaryAmpliferAlphaAccessId")) {
+            !localStorage.getItem("temporaryAmpliferAlphaAccessIdV2")) {
             this.loggedInChecked = true;
             if (window.appGlobals.originalQueryParameters.accessToken) {
                 if (!this.temporaryAccessIds.includes(window.appGlobals.originalQueryParameters.accessToken)) {
                     window.location.href = "https://evoly.ai/en/amplifier/";
                 }
                 else {
-                    localStorage.setItem("temporaryAmpliferAlphaAccessId", window.appGlobals.originalQueryParameters.accessToken);
+                    localStorage.setItem("temporaryAmpliferAlphaAccessIdV2", window.appGlobals.originalQueryParameters.accessToken);
                 }
             }
             else {

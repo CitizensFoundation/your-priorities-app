@@ -67,8 +67,9 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
     }
   }
 
-  //TODO: Remove when a better db driven solution is implemented
-  temporaryAccessIds = [
+  temporaryAccessIds = ["dx5x616b-e65x-47a3-bb8b-14924cdd7xb8"]
+
+  temporaryAccessIdsOld = [
     "d155616b-e657-47a3-bb8b-14924cdd78b8",
     "6a1e8403-8fc9-4cb5-87aa-bd768200cff3",
     "63d76e5e-33c7-477f-9dd2-c6a86a63da22",
@@ -161,7 +162,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
     if (
       !this.loggedInChecked &&
       !this.loggedInUser &&
-      !localStorage.getItem("temporaryAmpliferAlphaAccessId")
+      !localStorage.getItem("temporaryAmpliferAlphaAccessIdV2")
     ) {
       this.loggedInChecked = true;
       if (window.appGlobals.originalQueryParameters.accessToken) {
@@ -173,7 +174,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
           window.location.href = "https://evoly.ai/en/amplifier/";
         } else {
           localStorage.setItem(
-            "temporaryAmpliferAlphaAccessId",
+            "temporaryAmpliferAlphaAccessIdV2",
             window.appGlobals.originalQueryParameters.accessToken as string
           );
         }

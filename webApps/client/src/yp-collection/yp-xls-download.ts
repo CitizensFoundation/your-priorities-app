@@ -181,7 +181,8 @@ export class YpXlsDownload extends YpBaseElement {
     // Build the "start creation" endpoint, e.g. /api/groups/123/xls/start_report_creation
     let url = `/api/${this.collectionType}s/${this.collectionId}/xls/start_report_creation`;
     if (this.language) {
-      url += `?translateLanguage=${this.language}`;
+      //TODO: Look into this if needed but should not happen by default for large documents due to google translate costs
+      //url += `?translateLanguage=${this.language}`;
     }
 
     try {
