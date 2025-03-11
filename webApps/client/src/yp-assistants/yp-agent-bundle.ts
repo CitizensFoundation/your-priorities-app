@@ -171,7 +171,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
             window.appGlobals.originalQueryParameters.accessToken as string
           )
         ) {
-          window.location.href = "https://evoly.ai/en/amplifier/";
+          window.location.href = "https://evoly.ai/";
         } else {
           localStorage.setItem(
             "temporaryAmpliferAlphaAccessIdV2",
@@ -179,7 +179,7 @@ export class YpAgentBundle extends YpBaseElementWithLogin {
           );
         }
       } else {
-        window.location.href = "https://evoly.ai/en/amplifier/";
+        window.location.href = "https://evoly.ai/";
       }
     }
     this.requestUpdate();

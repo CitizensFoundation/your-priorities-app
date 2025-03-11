@@ -154,14 +154,14 @@ let YpAgentBundle = class YpAgentBundle extends YpBaseElementWithLogin {
             this.loggedInChecked = true;
             if (window.appGlobals.originalQueryParameters.accessToken) {
                 if (!this.temporaryAccessIds.includes(window.appGlobals.originalQueryParameters.accessToken)) {
-                    window.location.href = "https://evoly.ai/en/amplifier/";
+                    window.location.href = "https://evoly.ai/";
                 }
                 else {
                     localStorage.setItem("temporaryAmpliferAlphaAccessIdV2", window.appGlobals.originalQueryParameters.accessToken);
                 }
             }
             else {
-                window.location.href = "https://evoly.ai/en/amplifier/";
+                window.location.href = "https://evoly.ai/";
             }
         }
         this.requestUpdate();
