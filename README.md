@@ -5,13 +5,14 @@
 ## The Top Rated Citizen Engagement Platform
 Your Priorities is a platform we've been refining since 2008. It's recognized as the world's leading citizen engagement tool.
 
-- Rated #1 on PeoplePowered: [2024 Platform Ratings](https://www.peoplepowered.org/platform-ratings)
+- Rated #1 on PeoplePowered: [2025 Participation Platform Ratings](https://www.peoplepowered.org/platform-ratings)
 - Top ranking in the [2024 Digital Democracy Report](https://www.solonian-institute.com/publications)
 - Top listing in [OECD Guidelines for Citizen Participation Processes](https://www.oecd.org/publications/oecd-guidelines-for-citizen-participation-processes-f765caf6-en.htm)
 
 
 ## Key Features
 
+* Helps groups take better decisions together by merging collective and artificial intellgience
 * Citizen participation social network for digital democracy and social innovation
 * Communities and groups for simple organization of any type of participation project
 * Crowdsource ideas about any subject
