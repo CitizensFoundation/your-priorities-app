@@ -23,7 +23,7 @@
     "@lit-labs/motion": "^1.0.7",
     "@lit-labs/virtualizer": "^2.0.13",
     "@material/material-color-utilities": "^0.3.0",
-    "@material/web": "^2.2.0",
+    "@material/web": "^2.3.0",
     "@policysynth/agents": "^1.3.37",
     "@polymer/polymer": "^3.5.1",
     "@trystan2k/fleshy-jsoneditor": "^3.0.0",
