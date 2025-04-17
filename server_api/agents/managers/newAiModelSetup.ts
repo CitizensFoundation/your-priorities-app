@@ -262,6 +262,7 @@ export class NewAiModelSetup {
     const openAio11712 = await PsAiModel.findOne({
       where: { name: "o1 24" },
     });
+
     const openAio11712Config = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Medium,
@@ -351,6 +352,71 @@ export class NewAiModelSetup {
       console.log("Created OpenAI model: GPT-4.5 Preview");
     } else {
       console.log("OpenAI model already exists: GPT-4.5 Preview updating");
+    }
+
+    const openAio3 = await PsAiModel.findOne({
+      where: { name: "o3" },
+    });
+
+    const openAio3Config = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Medium,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 10.0,
+        costOutTokensPerMillion: 40.0,
+        currency: "USD",
+      },
+      maxTokensOut: 100000,
+      defaultTemperature: 0.0,
+      model: "o3",
+      active: true,
+    };
+
+    if (!openAio3) {
+      await PsAiModel.create({
+        name: "o3",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAio3Config,
+      });
+      console.log("Created OpenAI model: o3");
+    } else {
+      console.log("OpenAI model already exists: o3 updating");
+      openAio3.set("configuration", openAio3Config);
+      openAio3.changed("configuration", true);
+      await openAio3.save();
+    }
+
+    const openAio3mini = await PsAiModel.findOne({
+      where: { name: "o3 mini" },
+    });
+
+    const openAio3miniConfig = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Small,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 1.1,
+        costOutTokensPerMillion: 4.4,
+        currency: "USD",
+      },
+      maxTokensOut: 100000,
+      defaultTemperature: 0.0,
+      model: "o3-mini",
+      active: true,
+    };
+
+    if (!openAio3mini) {
+      await PsAiModel.create({
+        name: "o3 mini",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAio3miniConfig,
+      });
+      console.log("Created OpenAI model: o3 mini");
+    } else {
+      console.log("OpenAI model already exists: o3 mini");
     }
   }
 
