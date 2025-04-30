@@ -365,6 +365,7 @@ export class NewAiModelSetup {
       prices: {
         costInTokensPerMillion: 10.0,
         costOutTokensPerMillion: 40.0,
+        cacheCostInTokensPerMillion: 2.5,
         currency: "USD",
       },
       maxTokensOut: 100000,
@@ -388,35 +389,68 @@ export class NewAiModelSetup {
       await openAio3.save();
     }
 
-    const openAio3mini = await PsAiModel.findOne({
-      where: { name: "o3 mini" },
+    const openAio4mini = await PsAiModel.findOne({
+      where: { name: "o4 mini" },
     });
 
-    const openAio3miniConfig = {
+    const openAio4miniConfig = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
         costInTokensPerMillion: 1.1,
         costOutTokensPerMillion: 4.4,
+        cacheCostInTokensPerMillion: 0.275,
         currency: "USD",
       },
       maxTokensOut: 100000,
       defaultTemperature: 0.0,
-      model: "o3-mini",
+      model: "o4-mini",
       active: true,
     };
 
-    if (!openAio3mini) {
+    if (!openAio4mini) {
       await PsAiModel.create({
-        name: "o3 mini",
+        name: "o4 mini",
         organization_id: 1,
         user_id: userId,
-        configuration: openAio3miniConfig,
+        configuration: openAio4miniConfig,
       });
-      console.log("Created OpenAI model: o3 mini");
+      console.log("Created OpenAI model: o4 mini");
     } else {
-      console.log("OpenAI model already exists: o3 mini");
+      console.log("OpenAI model already exists: o4 mini");
+    }
+
+    const openAiGpt41 = await PsAiModel.findOne({
+      where: { name: "GPT-4.1" },
+    });
+
+    const openAiGpt41Config = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Medium,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 2,
+        costOutTokensPerMillion: 8,
+        currency: "USD",
+        cacheCostInTokensPerMillion: 0.5
+      },
+      maxTokensOut: 100000,
+      defaultTemperature: 0.7,
+      model: "gpt-4.1",
+      active: true,
+    };
+
+    if (!openAiGpt41) {
+      await PsAiModel.create({
+        name: "GPT-4.1",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt41Config,
+      });
+      console.log("Created OpenAI model: GPT-4.1");
+    } else {
+      console.log("OpenAI model already exists: GPT-4.1");
     }
   }
 
@@ -628,6 +662,9 @@ export class NewAiModelSetup {
       { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
       { name: "o1 24", envKey: "OPENAI_API_KEY" },
       { name: "o3 mini", envKey: "OPENAI_API_KEY" },
+      { name: "o4 mini", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-4.1", envKey: "OPENAI_API_KEY" },
+      { name: "o3", envKey: "OPENAI_API_KEY" },
     ];
 
     const groupAccessConfig: { aiModelId: number; apiKey: string }[] = [];
