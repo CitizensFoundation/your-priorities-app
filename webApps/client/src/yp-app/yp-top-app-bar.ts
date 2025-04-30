@@ -403,8 +403,6 @@ export class YpTopAppBar extends YpBaseElement {
       isLink: true,
     }));
 
-    const isMobile = window.innerWidth <= 480;
-
     let breadcrumbsWithTitle: Array<BreadcrumbItem>;
 
     const lastBreadcrumbName =
@@ -421,7 +419,7 @@ export class YpTopAppBar extends YpBaseElement {
       computedBreadcrumbs = computedBreadcrumbs.slice(0, -1); // Remove last breadcrumb if it's the same as titleString
     }
 
-    if (isMobile) {
+    if (!this.wide) {
       // On mobile, show only the parent (second to last breadcrumb) and the final title
       if (computedBreadcrumbs.length > 0) {
         breadcrumbsWithTitle = [
