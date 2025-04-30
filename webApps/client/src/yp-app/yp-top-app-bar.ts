@@ -243,15 +243,25 @@ export class YpTopAppBar extends YpBaseElement {
         .title md-icon-button {
         }
 
+        /* Restore this rule */
         slot[name="action"]::slotted(*) {
           display: flex;
           flex-direction: row;
           align-items: center;
+          /* Default desktop margin */
+          margin-left: 8px;
+          margin-right: 8px;
         }
 
         @media (max-width: 480px) {
           .middleContainer {
             width: auto;
+          }
+
+          /* Restore this rule */
+          slot[name="action"]::slotted(*) {
+            margin-left: 4px;
+            margin-right: 4px;
           }
 
           .title {
