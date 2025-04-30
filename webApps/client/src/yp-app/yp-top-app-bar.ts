@@ -18,6 +18,12 @@ import { YpBaseElement } from "../common/yp-base-element";
 import { Corner } from "@material/web/menu/menu.js";
 import { YpNavHelpers } from "../common/YpNavHelpers";
 
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+  isLink: boolean;
+}
+
 @customElement("yp-top-app-bar")
 export class YpTopAppBar extends YpBaseElement {
   @state()
@@ -34,8 +40,12 @@ export class YpTopAppBar extends YpBaseElement {
 
   @property({ type: Boolean })
   hideTitle = false;
+
   @property({ type: Boolean })
   restrictWidth = false;
+
+  @property({ type: Boolean })
+  disableDomainDropdown = true;
 
   @property({ type: Boolean })
   disableArrowBasedNavigation = false;
@@ -111,35 +121,43 @@ export class YpTopAppBar extends YpBaseElement {
   }
 
   renderMyDomainsDropdown() {
-    if (this.myDomains && this.myDomains.length > 1) {
-      return html`
-        <md-icon-button id="domainTrigger" @click="${this._toggleMenu}" ?hidden="${this.hideTitle}">
-          <md-icon>unfold_more</md-icon>
-        </md-icon-button>
-        <md-menu
-          id="domainMenu"
-          anchor="domainTrigger"
-          positioning="popover"
-          .open="${this.isMenuOpen}"
-          @closed="${this._onMenuClosed}"
-          .menuCorner="${Corner.START_END}"
-        >
-          ${this.myDomains.map(
-            (domain, index) => html`
-              <md-menu-item
-                @click=${() => this.redirectTo(`/domain/${domain.id}`)}
-              >
-                ${domain.name}
-              </md-menu-item>
-              ${this.myDomains && index < this.myDomains.length - 1
-                ? html`<md-divider></md-divider>`
-                : ""}
-            `
-          )}
-        </md-menu>
-      `;
+    if (this.disableDomainDropdown) {
+      return html``;
     } else {
-      return nothing;
+      if (this.myDomains && this.myDomains!.length > 1) {
+        return html`
+          <md-icon-button
+            id="domainTrigger"
+            @click="${this._toggleMenu}"
+            ?hidden="${this.hideTitle}"
+          >
+            <md-icon>unfold_more</md-icon>
+          </md-icon-button>
+          <md-menu
+            id="domainMenu"
+            anchor="domainTrigger"
+            positioning="popover"
+            .open="${this.isMenuOpen}"
+            @closed="${this._onMenuClosed}"
+            .menuCorner="${Corner.START_END}"
+          >
+            ${this.myDomains?.map(
+              (domain, index) => html`
+                <md-menu-item
+                  @click=${() => this.redirectTo(`/domain/${domain.id}`)}
+                >
+                  ${domain.name}
+                </md-menu-item>
+                ${this.myDomains && index < this.myDomains.length - 1
+                  ? html`<md-divider></md-divider>`
+                  : ""}
+              `
+            )}
+          </md-menu>
+        `;
+      } else {
+        return nothing;
+      }
     }
   }
 
@@ -232,12 +250,16 @@ export class YpTopAppBar extends YpBaseElement {
         }
 
         @media (max-width: 480px) {
+          .middleContainer {
+            width: auto;
+          }
+
           .title {
             margin-bottom: 4px;
           }
 
-          .middleContainer {
-            padding-left: 4px;
+          .titleText {
+            margin-left: 0;
           }
 
           .top-app-bar {
@@ -279,7 +301,6 @@ export class YpTopAppBar extends YpBaseElement {
           slot[name="action"] {
             position: absolute;
             right: 0;
-            top: 4px;
             display: flex;
             align-items: center;
           }
@@ -367,34 +388,79 @@ export class YpTopAppBar extends YpBaseElement {
       ? "top-app-bar expanded"
       : "top-app-bar";
 
-    const computedBreadcrumbs = this.computedBreadcrumbs.map((crumb) => ({
+    let computedBreadcrumbs = this.computedBreadcrumbs.map((crumb) => ({
       ...crumb,
       isLink: true,
     }));
-    let breadcrumbsWithTitle = [...computedBreadcrumbs];
+
+    const isMobile = window.innerWidth <= 480;
+
+    let breadcrumbsWithTitle: Array<BreadcrumbItem>;
 
     const lastBreadcrumbName =
       computedBreadcrumbs.length > 0
         ? computedBreadcrumbs[computedBreadcrumbs.length - 1].name
         : null;
 
+    let finalTitle = "";
+
     if (this.titleString && this.titleString !== lastBreadcrumbName) {
-      breadcrumbsWithTitle.push({
-        name: this.titleString,
-        url: "",
-        isLink: false,
-      });
+      finalTitle = this.titleString;
+    } else if (lastBreadcrumbName) {
+      finalTitle = lastBreadcrumbName;
+      computedBreadcrumbs = computedBreadcrumbs.slice(0, -1); // Remove last breadcrumb if it's the same as titleString
+    }
+
+    if (isMobile) {
+      // On mobile, show only the parent (second to last breadcrumb) and the final title
+      if (computedBreadcrumbs.length > 0) {
+        breadcrumbsWithTitle = [
+          computedBreadcrumbs[computedBreadcrumbs.length - 1],
+        ];
+        // Truncate the name if it's too long
+        if (breadcrumbsWithTitle[0].name.length > 16) {
+          breadcrumbsWithTitle[0].name =
+            breadcrumbsWithTitle[0].name.substring(0, 17) + "...";
+        }
+      } else {
+        breadcrumbsWithTitle = [];
+      }
+    } else {
+      // On desktop, show all breadcrumbs and the final title
+      breadcrumbsWithTitle = [...computedBreadcrumbs];
+      if (finalTitle) {
+        breadcrumbsWithTitle.push({
+          name: finalTitle,
+          url: "",
+          isLink: false,
+        });
+      }
+    }
+
+    // Ensure the last item is not a link if it's the final title derived from breadcrumbs
+    if (
+      breadcrumbsWithTitle.length > 0 &&
+      !breadcrumbsWithTitle[breadcrumbsWithTitle.length - 1].isLink &&
+      breadcrumbsWithTitle[breadcrumbsWithTitle.length - 1].name ===
+        lastBreadcrumbName &&
+      !(this.titleString && this.titleString !== lastBreadcrumbName)
+    ) {
+      // This logic seems redundant now with the separate finalTitle handling, review if needed.
     }
 
     return html`
-      <div ?useLowestContainerColor="${this.useLowestContainerColor}"
+      <div
+        ?useLowestContainerColor="${this.useLowestContainerColor}"
         class="${appBarClass} layout"
         ?restrict-width="${this.restrictWidth}"
       >
-        <div class="middleContainer" ?restrict-width="${this.restrictWidth}" >
+        <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
           ${this.renderMyDomainsDropdown()}
-          <div class="title ${this.isTitleLong ? "expanded" : ""}" ?hidden="${this.hideTitle}">
+          <div
+            class="title ${this.isTitleLong ? "expanded" : ""}"
+            ?hidden="${this.hideTitle}"
+          >
             ${breadcrumbsWithTitle.map(
               (crumb, index) => html`
                 ${crumb.isLink
