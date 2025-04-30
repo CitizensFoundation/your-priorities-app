@@ -1,1 +1,0 @@
-{"version":3,"file":"yp-base-element-with-login.d.ts","sourceRoot":"","sources":["../../src/common/yp-base-element-with-login.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,aAAa,EAAE,MAAM,sBAAsB,CAAC;AAErD,qBAAa,sBAAuB,SAAQ,aAAa;IAEvD,YAAY,EAAE,UAAU,GAAC,SAAS,CAAC;;IAU1B,iBAAiB;IASjB,oBAAoB;IAS7B,IAAI,UAAU,YAEb;IAED,SAAS,CAAC,KAAK,EAAE,WAAW;CAI7B"}

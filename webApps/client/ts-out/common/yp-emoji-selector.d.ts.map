@@ -1,1 +1,0 @@
-{"version":3,"file":"yp-emoji-selector.d.ts","sourceRoot":"","sources":["../../src/common/yp-emoji-selector.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,aAAa,EAAE,MAAM,sBAAsB,CAAC;AAGrD,OAAO,yCAAyC,CAAC;AACjD,OAAO,sBAAsB,CAAC;AAG9B,qBACa,eAAgB,SAAQ,aAAa;IAEhD,WAAW,EAAE,gBAAgB,GAAG,SAAS,CAAC;IAG1C,IAAI,EAAE,OAAO,CAAS;IAEb,MAAM;IAiBT,YAAY;CAOnB"}
