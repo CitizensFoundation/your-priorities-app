@@ -1214,13 +1214,11 @@ router.post(
 
 router.get(
   "/:domainId/getTemplates",
-  auth.can("edit community"),
+  auth.can("view domain"),
   async (req, res) => {
     try {
       const userId   = req.user.id;
       const domainId = req.params.domainId;
-
-      console.log("-------------_> domainId", domainId);
 
       const templateCommunities = await models.Community.findAll({
         where: {

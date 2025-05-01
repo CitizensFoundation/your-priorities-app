@@ -5427,17 +5427,56 @@ router.put(
 );
 
 router.get(
-  "/:groupId/getTemplates",
-  auth.can("edit group"),
+  "/:domainId/getTemplates",
+  auth.can("view domain"),
   async (req, res) => {
     try {
+      const userId   = req.user.id;
+      const domainId = req.params.domainId;
+
       const templateGroups = await models.Group.findAll({
         where: {
-          "configuration.useAsTemplate": true,
+          [Op.and]: [
+            { "configuration.useAsTemplate": true },
+            {
+              [Op.or]: [
+                // public templates
+                { access: models.Group.ACCESS_PUBLIC },
+                // templates where user is an admin
+                literal(`"GroupAdmins"."id" IS NOT NULL`)
+              ]
+            }
+          ]
         },
+        include: [
+          {
+            model: models.User,
+            as: "GroupAdmins",
+            attributes: [],
+            through: { attributes: [] },
+            where: { id: userId },
+            required: false,
+          },
+          {
+            model: models.Community,
+            as: "Community",
+            attributes: ["id", "name"],
+            required: true,
+            include: [
+              {
+                model: models.Domain,
+                attributes: ["id", "name"],
+                required: true,
+                where: { id: domainId }
+              },
+            ],
+          }
+        ],
         attributes: ["id", "name"],
-        order: [["name", "ASC"]],
+        distinct: true,
+        order: [["name", "ASC"]]
       });
+
       res.send(templateGroups || []);
     } catch (error) {
       log.error("Could not get template groups", {
