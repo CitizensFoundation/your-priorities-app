@@ -722,6 +722,7 @@ const updateCommunityConfigParameters = function (req, community) {
         : null);
     community.set("configuration.forceSecureSamlLogin", truthValueFromBody(req.body.forceSecureSamlLogin));
     community.set("configuration.hideRecommendationOnNewsFeed", truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
+    community.set("configuration.useAsTemplate", truthValueFromBody(req.body.useAsTemplate));
     community.set("configuration.closeNewsfeedSubmissions", truthValueFromBody(req.body.closeNewsfeedSubmissions));
     community.set("configuration.useCommunityIdForAnalytics", truthValueFromBody(req.body.useCommunityIdForAnalytics));
     community.set("configuration.disableGroupDynamicFontSizes", truthValueFromBody(req.body.disableGroupDynamicFontSizes));

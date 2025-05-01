@@ -621,6 +621,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             </div>
           `,
         },
+        {
+          text: "useAsTemplate",
+          type: "checkbox",
+          value: this.group.configuration.useAsTemplate,
+          translationToken: "useAsTemplate",
+        },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
 
@@ -1276,7 +1282,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         { name: "arrows", translatedName: this.t("endorsementArrows") },
         { name: "thumbs", translatedName: this.t("endorsementThumbs") },
         { name: "hats", translatedName: this.t("endorsementHats") },
-        { name: "thumbsWithColor", translatedName: this.t("endorsementThumbsWithColor") },
+        {
+          name: "thumbsWithColor",
+          translatedName: this.t("endorsementThumbsWithColor"),
+        },
       ];
     } else {
       return [];

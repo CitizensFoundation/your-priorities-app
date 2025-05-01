@@ -365,6 +365,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   };
   useNewVersion?: boolean;
   agents?: YpPsAgentConfiguration;
+  useAsTemplate?: boolean;
 }
 
 interface YpGroupPrivateAccessConfiguration {
@@ -455,6 +456,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   onlyAdminsCanCreateGroups?: boolean;
   alwaysShowOnDomainPage?: boolean;
   alwaysHideLogoImage?: boolean;
+  useAsTemplate?: boolean;
 }
 
 interface YpPromoterRights {

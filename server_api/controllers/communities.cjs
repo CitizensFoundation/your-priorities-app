@@ -859,6 +859,10 @@ const updateCommunityConfigParameters = function (req, community) {
     truthValueFromBody(req.body.hideRecommendationOnNewsFeed)
   );
   community.set(
+    "configuration.useAsTemplate",
+    truthValueFromBody(req.body.useAsTemplate)
+  );
+  community.set(
     "configuration.closeNewsfeedSubmissions",
     truthValueFromBody(req.body.closeNewsfeedSubmissions)
   );

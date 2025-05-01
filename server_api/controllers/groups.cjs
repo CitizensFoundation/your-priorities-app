@@ -693,6 +693,11 @@ var updateGroupConfigParameters = function (req, group) {
   );
 
   group.set(
+    "configuration.useAsTemplate",
+    truthValueFromBody(req.body.useAsTemplate)
+  );
+
+  group.set(
     "configuration.disableMachineTranscripts",
     truthValueFromBody(req.body.disableMachineTranscripts)
   );

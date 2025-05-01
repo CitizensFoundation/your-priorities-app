@@ -349,6 +349,7 @@ var updateGroupConfigParameters = function (req, group) {
         ? req.body.customVoteDownHoverText
         : null);
     group.set("configuration.hideRecommendationOnNewsFeed", truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
+    group.set("configuration.useAsTemplate", truthValueFromBody(req.body.useAsTemplate));
     group.set("configuration.disableMachineTranscripts", truthValueFromBody(req.body.disableMachineTranscripts));
     group.set("configuration.hideLogoBoxExceptOnMobile", truthValueFromBody(req.body.hideLogoBoxExceptOnMobile));
     group.set("configuration.hideInfoBoxExceptForAdmins", truthValueFromBody(req.body.hideInfoBoxExceptForAdmins));
