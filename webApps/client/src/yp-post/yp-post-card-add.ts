@@ -44,9 +44,9 @@ export class YpPostCardAdd extends YpBaseElement {
         }
 
         md-fab {
-          --md-fab-container-shape: 4px;
-          --md-fab-label-text-size: 16px !important;
-          --md-fab-label-text-weight: 600 !important;
+          --md-fab-container-shape: 24px;
+          --md-fab-label-text-size: 22px !important;
+          --md-fab-label-text-weight: 500 !important;
           margin-bottom: 24px;
           --md-fab-container-elevation: 0;
           --md-fab-container-shadow-color: transparent;

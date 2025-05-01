@@ -957,7 +957,7 @@ export class YpGroup extends YpCollection {
             class="xlsDownloadContainer"
             ?hidden="${!YpAccessHelpers.checkGroupAccess(
               this.collection as YpGroupData
-            )}"
+            ) || !window.location.href.includes("agentBundle")}"
           >
             ${this.renderXlsDownload()}
           </div>
@@ -1230,9 +1230,7 @@ export class YpGroup extends YpCollection {
       <div class="layout vertical center-center">
         <div class="layout vertical topContainer">
           ${this.renderHeader()}
-          <div class="layout horizontal mainContent wrap">
-            ${this.renderTabs()}
-            <div class="flex"></div>
+          <div class="layout horizontal center-center">
             <yp-post-card-add
               ?hidden=${this.hideBigHeaders ||
               (this.collection!.configuration as YpGroupConfiguration)
@@ -1242,6 +1240,10 @@ export class YpGroup extends YpCollection {
               .disableNewPosts="${this.disableNewPosts}"
               @new-post="${this._newPost}"
             ></yp-post-card-add>
+          </div>
+          <div class="layout horizontal mainContent wrap">
+            ${this.renderTabs()}
+            <div class="flex"></div>
           </div>
         </div>
       </div>
