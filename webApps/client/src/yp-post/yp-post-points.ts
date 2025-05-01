@@ -708,13 +708,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     headerTextType: string,
     pointsLength: number
   ) {
-    const pointsLengthText = pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
+    const pointsLengthText =
+      pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
     return !alternativeHeader
       ? html`
           <div
             class="pointMainHeader layout horizontal"
             role="heading"
             aria-level="2"
+            ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
@@ -911,8 +913,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     return html`
       <div
         class="pointInfo layout vertical center-center"
-        ?hidden="${this.post.Group.configuration?.hidePointAgainst &&
-        this.post.Group.configuration?.hidePointFor}"
+        ?hidden="${(this.post.Group.configuration?.hidePointAgainst &&
+          this.post.Group.configuration?.hidePointFor) ||
+        this.post.Group.configuration?.disableDebate}"
       >
         <div>
           ${this.t("upvote")}
