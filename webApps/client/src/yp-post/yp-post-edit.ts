@@ -812,7 +812,7 @@ export class YpPostEdit extends YpEditBase {
                 <md-outlined-select
                   class="categoryDropDown"
                   .label="${this.t("category.select")}"
-                  .index="${this.selectedCategoryArrayId}"
+                  .selectedIndex="${this.selectedCategoryArrayId ?? -1}"
                   @change="${this._selectedCategory}"
                   ?required="${this.group.configuration.makeCategoryRequiredOnNewPost}"
                 >
