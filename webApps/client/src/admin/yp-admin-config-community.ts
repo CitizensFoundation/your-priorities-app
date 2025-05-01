@@ -1203,16 +1203,16 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
   }
 
-  async _cloneTemplate(template: YpCommunityData) {
+  async _cloneTemplate(template: YpCommunityData, event: Event) {
     if (this.cloningTemplateId) return; // Already cloning
+
+    event.preventDefault();
 
     console.log("Cloning template:", template.name);
     this.cloningTemplateId = template.id;
-    (this.$$("#templatesDialog") as Dialog).close();
 
     window.appGlobals.activity("open", "community.cloneFromTemplate");
 
-    debugger;
 
     try {
       const newCommunity = (await window.serverApi.apiAction(
@@ -1242,7 +1242,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             ? this.templates.map(
                 (t) => html`
                   <md-list-item
-                    @click="${() => this._cloneTemplate(t)}"
+                    @click="${(e: Event) => this._cloneTemplate(t, e)}"
                     ?disabled="${this.cloningTemplateId !== null}"
                   >
                     <div slot="headline" class="layout horizontal center-center">
@@ -1250,7 +1250,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
                       ${this.cloningTemplateId === t.id
                         ? html`<md-circular-progress
                             indeterminate
-                            style="--md-circular-progress-size:24px; margin-left: 8px;"
+                            style="--md-circular-progress-size:32px; margin-left: 12px;"
                           ></md-circular-progress>`
                         : nothing}
                     </div>

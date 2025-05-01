@@ -1289,6 +1289,12 @@ const copyCommunity = (
             if (newCommunity.hostname) {
               newCommunity.set("hostname", newCommunity.hostname + "-copy");
             }
+
+            newCommunity.set(
+              "configuration.useAsTemplate",
+              false
+            );
+
             newCommunity.save().then(function () {
               async.series(
                 [
