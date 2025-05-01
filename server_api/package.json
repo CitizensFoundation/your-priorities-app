@@ -139,7 +139,9 @@
     "dev": "nodemon --config nodemon.json ./ts-out/server.js",
     "heroku-postbuild": "echo 'Skipping build'",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk api_app.ts",
-    "build": "tsc --project ./ --outDir ./dist && ncp views dist/views && ncp config dist/config && ncp active-citizen/email_templates dist/active-citizen/email_templates && ncp active-citizen/locales dist/active-citizen/locales"
+    "build": "tsc --project ./ --outDir ./dist && ncp views dist/views && ncp config dist/config && ncp active-citizen/email_templates dist/active-citizen/email_templates && ncp active-citizen/locales dist/active-citizen/locales",
+    "build:dev": "tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp active-citizen/email_templates ts-out/active-citizen/email_templates && ncp active-citizen/locales ts-out/active-citizen/locales"
+
   },
   "cacheDirectories": [
     "node_modules"
