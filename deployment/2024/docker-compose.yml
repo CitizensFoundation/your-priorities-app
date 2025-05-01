@@ -36,7 +36,7 @@ x-your-priorities-app-common: &your-priorities-app-common
    # - FORCE_DB_SYNC=true
   restart: always
   image: your-priorities-app:current
-  command: node ts-out/server.js
+  command: node dist/server.js
   healthcheck:
     test: ["CMD", "curl", "-f", "http://localhost:9080/api/users/has/AutoTranslation"]
     interval: 30s
