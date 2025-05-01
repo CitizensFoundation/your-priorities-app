@@ -723,7 +723,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           </div>
         `
       : html`
-          <div class="pointMainHeader layout horizontal">
+          <div
+            class="pointMainHeader layout horizontal"
+            ?hidden="${this.post.Group.configuration?.disableDebate}"
+          >
             ${this.renderHeaderIcon(headerTextType)}
             <yp-magic-text
               .contentId="${this.post.Group.id}"

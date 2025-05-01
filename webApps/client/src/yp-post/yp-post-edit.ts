@@ -8,6 +8,8 @@ import "@material/web/radio/radio.js";
 import "@material/web/tabs/secondary-tab.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/select/outlined-select.js";
+import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 
 import "../common/yp-generate-ai-image.js";
 import "../common/yp-image.js";
@@ -807,29 +809,29 @@ export class YpPostEdit extends YpEditBase {
               : nothing}
             ${this.showCategories && this.group.Categories
               ? html`
-                  <md-outlined-select
-                    class="categoryDropDown"
-                    .label="${this.t("category.select")}"
-                    @selected="${this._selectedCategory}"
-                    ?required="${this.group.configuration
-                      .makeCategoryRequiredOnNewPost}"
-                  >
-                    ${this.group.Categories.map(
-                      (category) => html`
-                        <md-select-option .data-category-id="${category.id}"
-                          >${category.name}</md-select-option
-                        >
-                      `
-                    )}
-                  </md-outlined-select>
-                  <input
-                    type="hidden"
-                    name="categoryId"
-                    .value="${this.selectedCategoryId
-                      ? this.selectedCategoryId.toString()
-                      : ""}"
-                  />
-                `
+                <md-outlined-select
+                  class="categoryDropDown"
+                  .label="${this.t("category.select")}"
+                  .index="${this.selectedCategoryArrayId}"
+                  @change="${this._selectedCategory}"
+                  ?required="${this.group.configuration.makeCategoryRequiredOnNewPost}"
+                >
+                  ${this.group.Categories.map(
+                    (category) => html`
+                      <md-select-option .data-category-id="${category.id}"
+                        >${category.name}</md-select-option
+                      >
+                    `
+                  )}
+                </md-outlined-select>
+                <input
+                  type="hidden"
+                  name="categoryId"
+                  .value="${this.selectedCategoryId
+                    ? this.selectedCategoryId.toString()
+                    : ""}"
+                />
+              `
               : nothing}
             ${this.group &&
             this.group.configuration &&
@@ -839,7 +841,7 @@ export class YpPostEdit extends YpEditBase {
                   name="tags"
                   type="text"
                   .label="${this.t("commaSeperatedTags")}"
-                  .value="${this.post!.public_data!.tags}"
+                  .value="${this.post!.public_data!.tags || ''}"
                 >
                 </md-outlined-text-field>`
               : nothing}
@@ -1148,7 +1150,7 @@ export class YpPostEdit extends YpEditBase {
                       raised
                       .uploadLimitSeconds="${this.group!.configuration
                         .audioPostUploadLimitSec}"
-                      .multi="false"
+                      ?multi="${false}"
                       audioUpload
                       method="POST"
                       buttonIcon="keyboard_voice"
@@ -2020,14 +2022,16 @@ export class YpPostEdit extends YpEditBase {
     }, 50);
   }
 
-  _selectedCategory(event: CustomEvent) {
-    this.selectedCategoryArrayId = event.detail.index;
+  _selectedCategory(event: Event) {
+    const select = event.target as MdOutlinedSelect;
+    this.selectedCategoryArrayId = select.selectedIndex;
   }
 
   _selectedCategoryChanged() {
-    if (this.selectedCategoryArrayId && this.group && this.group.Categories)
+    if (this.selectedCategoryArrayId != null && this.group && this.group.Categories) {
       this.selectedCategoryId =
         this.group.Categories[this.selectedCategoryArrayId].id;
+    }
   }
 
   get showCategories() {
