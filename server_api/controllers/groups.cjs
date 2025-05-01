@@ -3460,17 +3460,20 @@ router.post("/:id/clone", auth.can("edit group"), function (req, res) {
           group.id,
           group.Community,
           group.Community.domain_id,
-          { skipUser: true, skipActivities: true },
-          (error) => {
+          { skipUsers: true, skipActivities: true },
+          (error, newGroup) => {
             if (error) {
               log.error("Group Cloned Failed", {
                 error,
                 groupId: req.params.id,
               });
               res.sendStatus(500);
-            } else {
+            } else if (newGroup) {
               log.info("Group Cloned", { groupId: req.params.id });
               res.send({ id: newGroup.id });
+            } else {
+              log.error("Group Cloned succeeded but newGroup is missing", { groupId: req.params.id });
+              res.sendStatus(500);
             }
           }
         );

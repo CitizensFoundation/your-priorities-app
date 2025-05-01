@@ -892,7 +892,12 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                                   ...JSON.parse(JSON.stringify(options)),
                                   setInGroupFolderId: newGroup.id,
                                 },
-                                groupInFolderCallback
+                                (recursiveError, nestedNewGroup) => {
+                                  if (recursiveError) {
+                                    return groupInFolderCallback(recursiveError);
+                                  }
+                                  groupInFolderCallback();
+                                }
                               );
                             },
                             (error) => {
