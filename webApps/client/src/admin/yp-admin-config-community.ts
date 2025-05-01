@@ -80,6 +80,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   @property({ type: Boolean })
   cloning = false;
 
+  @property({ type: Number })
+  cloningTemplateId: number | null = null;
+
   constructor() {
     super();
     this.action = "/communities";
@@ -1200,22 +1203,34 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
   }
 
-  _applyTemplate(template: YpCommunityData) {
-    // TODO: Implement template application logic
-    // This might involve merging fields, confirmation, etc.
-    console.log("Applying template:", template.name);
-    Object.assign(this.collection as YpCommunityData, {
-      name: template.name,
-      description: template.description,
-      // Be careful about which fields to merge!
-      // configuration: template.configuration, // Example - likely needs deeper merge or selective copying
-    });
-    // You might need to manually update specific fields bound in the template
-    // e.g., (this.$$("#description") as TextArea).value = template.description;
-    this.requestUpdate();
+  async _cloneTemplate(template: YpCommunityData) {
+    if (this.cloningTemplateId) return; // Already cloning
+
+    console.log("Cloning template:", template.name);
+    this.cloningTemplateId = template.id;
     (this.$$("#templatesDialog") as Dialog).close();
-    window.appGlobals.showToast(this.t("templateApplied")); // Assuming a translation key exists
-    this._configChanged(); // Mark config as changed so save button enables
+
+    window.appGlobals.activity("open", "community.cloneFromTemplate");
+
+    debugger;
+
+    try {
+      const newCommunity = (await window.serverApi.apiAction(
+        `/api/communities/${template.id}/clone`,
+        "POST",
+        {}
+      )) as YpCommunityData;
+
+      window.appGlobals.activity("completed", "cloneCommunityFromTemplate");
+      window.appGlobals.showToast(this.t("templateClonedSuccessfully")); // Assuming a translation key exists
+      window.location.href = `/admin/community/${newCommunity.id}`;
+    } catch (err) {
+      console.error("Template clone failed", err);
+      window.appGlobals.activity("error", "cloneCommunityFromTemplate", (err as Error).message);
+      window.appGlobals.showToast(this.t("templateCloningFailed"), 5000); // Assuming a translation key exists
+      this.cloningTemplateId = null; // Reset on error
+    }
+    // No finally block needed as redirection happens on success
   }
 
   override renderTemplatesDialog() {
@@ -1226,8 +1241,19 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           ${this.templates && this.templates.length > 0
             ? this.templates.map(
                 (t) => html`
-                  <md-list-item @click="${() => this._applyTemplate(t)}">
-                    <div slot="headline">${t.name}</div>
+                  <md-list-item
+                    @click="${() => this._cloneTemplate(t)}"
+                    ?disabled="${this.cloningTemplateId !== null}"
+                  >
+                    <div slot="headline" class="layout horizontal center-center">
+                      ${t.name}
+                      ${this.cloningTemplateId === t.id
+                        ? html`<md-circular-progress
+                            indeterminate
+                            style="--md-circular-progress-size:24px; margin-left: 8px;"
+                          ></md-circular-progress>`
+                        : nothing}
+                    </div>
                   </md-list-item>
                 `
               )
@@ -1236,6 +1262,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         <div slot="actions">
           <md-text-button
             @click="${() => (this.$$("#templatesDialog") as Dialog).close()}"
+            ?disabled="${this.cloningTemplateId !== null}"
             dialogAction="close"
             >${this.t("close")}</md-text-button
           >
