@@ -140,7 +140,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             type="text"
             @keyup="${this._hostnameChanged}"
             label="${this.t("community.hostname")}"
-            .value="${(this.collection as YpCommunityData).hostname || ''}"
+            .value="${(this.collection as YpCommunityData).hostname || ""}"
             ?required="${!(this.collection as YpCommunityData)
               .is_community_folder}"
             maxlength="80"
@@ -163,12 +163,12 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             </div>
             <div class="layout vertical center-center">
               ${this.renderSaveButton()}
-                <md-text-button
-                  @click="${this._openTemplatesDialog}"
-                  class="templatesButton"
-                  ?hidden="${this.collectionId !== 'new'}"
-                  >${this.t('templates')}</md-text-button
-                >
+              <md-text-button
+                @click="${this._openTemplatesDialog}"
+                class="templatesButton"
+                ?hidden="${this.collectionId !== "new"}"
+                >${this.t("templates")}</md-text-button
+              >
               <div
                 ?hidden="${this.collectionId == "new"}"
                 class="actionButtonContainer layout horizontal center-center"
@@ -184,13 +184,14 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   renderActionMenu() {
     return html`
-      <div style="position: relative;">
+      <div style="position: relative;" class="layout vertical center-center">
         <md-outlined-icon-button
           .ariaLabelSelected="${this.t("actions")}"
           id="menuAnchor"
           type="button"
           @click="${() => ((this.$$("#actionMenu") as Menu).open = true)}"
-        ><md-icon>menu</md-icon></md-outlined-icon-button>
+          ><md-icon>menu</md-icon></md-outlined-icon-button
+        >
         <md-menu
           id="actionMenu"
           positioning="popover"
@@ -208,17 +209,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             <div slot="headline">Delete</div>
           </md-menu-item>
           <md-menu-item
-            @click="${this._onCloneMenuItemClick}"
+            @click="${this._menuSelection}"
             id="cloneMenuItem"
             ?disabled="${this.cloning}"
           >
             <div slot="headline" class="layout horizontal center-center">
-              ${this.cloning
-                ? html`<md-circular-progress
-                    indeterminate
-                    style="--md-circular-progress-size:16px; margin-right:8px;"
-                  ></md-circular-progress>`
-                : nothing}
               ${this.t("cloneCommunity")}
             </div>
           </md-menu-item>
@@ -244,15 +239,14 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             <div slot="headline">Anonymize</div>
           </md-menu-item>
         </md-menu>
+        ${this.cloning
+          ? html`<md-circular-progress
+              indeterminate
+              style="--md-circular-progress-size:24px; margin-right: 4px;"
+            ></md-circular-progress>`
+          : nothing}
       </div>
     `;
-  }
-
-  private _onCloneMenuItemClick(e: MouseEvent) {
-    // prevent menu's default close-on-click
-    e.stopPropagation();
-    // then delegate to our existing menu-selection logic
-    this._menuSelection(e as unknown as CustomEvent);
   }
 
   _onDeleted() {
@@ -338,11 +332,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
     try {
       // direct POST to clone endpoint (no intermediate dialog)
-      const newCommunity = await window.serverApi.apiAction(
+      const newCommunity = (await window.serverApi.apiAction(
         `/api/communities/${this.collection!.id}/clone`,
         "POST",
         {}
-      ) as YpCommunityData;
+      )) as YpCommunityData;
 
       // once we have the new ID, redirect into the admin namespace
       window.appGlobals.activity("completed", "cloneCommunity");
@@ -353,8 +347,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     } finally {
       console.log("_openClone finished");
       this.cloning = false;
-      // now that spinner's gone, we can close the menu
-      (this.$$("#actionMenu") as Menu).open = false;
     }
   }
 
@@ -642,7 +634,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       }
     } else {
       this.action = `/communities/${this.collectionId}`;
-      await this.checkDomainName((this.collection as YpCommunityData).Domain!.id);
+      await this.checkDomainName(
+        (this.collection as YpCommunityData).Domain!.id
+      );
     }
   }
 
@@ -667,7 +661,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         this.hideHostnameInput = false;
       }
     }
-
   }
 
   async _checkCommunityFolders(community: YpCommunityData) {
@@ -841,7 +834,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         {
           text: "useAsTemplate",
           type: "checkbox",
-          value: (this.collection as YpCommunityData).configuration.useAsTemplate,
+          value: (this.collection as YpCommunityData).configuration
+            .useAsTemplate,
           translationToken: "useAsTemplate",
         },
       ] as Array<YpStructuredConfigData>,
@@ -1199,10 +1193,10 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       );
       this.requestUpdate();
       await this.updateComplete;
-      (this.$$('#templatesDialog') as Dialog).show();
+      (this.$$("#templatesDialog") as Dialog).show();
     } catch (error) {
-       console.error("Failed to fetch community templates", error);
-       // Optionally show an error to the user
+      console.error("Failed to fetch community templates", error);
+      // Optionally show an error to the user
     }
   }
 
@@ -1219,26 +1213,32 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     // You might need to manually update specific fields bound in the template
     // e.g., (this.$$("#description") as TextArea).value = template.description;
     this.requestUpdate();
-    (this.$$('#templatesDialog') as Dialog).close();
-    window.appGlobals.showToast(this.t('templateApplied')); // Assuming a translation key exists
+    (this.$$("#templatesDialog") as Dialog).close();
+    window.appGlobals.showToast(this.t("templateApplied")); // Assuming a translation key exists
     this._configChanged(); // Mark config as changed so save button enables
   }
 
   override renderTemplatesDialog() {
     return html`
       <md-dialog id="templatesDialog">
-        <div slot="headline">${this.t('templates')}</div>
+        <div slot="headline">${this.t("templates")}</div>
         <md-list slot="content">
-          ${this.templates && this.templates.length > 0 ? this.templates.map(
-            t => html`
-              <md-list-item @click="${() => this._applyTemplate(t)}">
-                <div slot="headline">${t.name}</div>
-              </md-list-item>
-            `
-          ) : html`<md-list-item>${this.t('noTemplatesFound')}</md-list-item>`}
+          ${this.templates && this.templates.length > 0
+            ? this.templates.map(
+                (t) => html`
+                  <md-list-item @click="${() => this._applyTemplate(t)}">
+                    <div slot="headline">${t.name}</div>
+                  </md-list-item>
+                `
+              )
+            : html`<md-list-item>${this.t("noTemplatesFound")}</md-list-item>`}
         </md-list>
         <div slot="actions">
-           <md-text-button @click="${() => (this.$$('#templatesDialog') as Dialog).close()}" dialogAction="close">${this.t("close")}</md-text-button>
+          <md-text-button
+            @click="${() => (this.$$("#templatesDialog") as Dialog).close()}"
+            dialogAction="close"
+            >${this.t("close")}</md-text-button
+          >
         </div>
       </md-dialog>
     `;
