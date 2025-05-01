@@ -3470,7 +3470,7 @@ router.post("/:id/clone", auth.can("edit group"), function (req, res) {
               res.sendStatus(500);
             } else {
               log.info("Group Cloned", { groupId: req.params.id });
-              res.sendStatus(200);
+              res.send({ id: newGroup.id });
             }
           }
         );

@@ -45,6 +45,8 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpAdminHtmlEditor } from "./yp-admin-html-editor.js";
 import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpApiActionDialog } from "../yp-api-action-dialog/yp-api-action-dialog.js";
+import { MdCircularProgress } from "@material/web/progress/circular-progress.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
@@ -110,6 +112,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   @property({ type: Object })
   group: YpGroupData;
+
+  @property({ type: Boolean })
+  cloning = false;
 
   isDataVisualizationGroup: any;
   dataForVisualizationJsonError: any;
@@ -287,7 +292,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       <input
         type="hidden"
         name="objectives"
-        value="${this.collection?.description}"
+        value="${ifDefined(this.collection?.description)}"
       />
 
       ${window.appGlobals.originalQueryParameters["createCommunityForGroup"]
@@ -1073,7 +1078,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             <yp-file-upload
               id="docxSurveyUpload"
               raised
-              multi="false"
+              .multi="${false}"
               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               .target="${this
                 .apiEndpoint}/groups/-1/convert_docx_survey_to_json"
@@ -1132,7 +1137,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             <yp-file-upload
               id="defaultPostImageUpload"
               raised
-              multi="false"
+              .multi="${false}"
               .target="${this.apiEndpoint}/images?itemType=group-logo"
               method="POST"
               @success="${this._defaultPostImageUploaded}"
@@ -1149,7 +1154,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             <yp-file-upload
               id="defaultDataImageUpload"
               raised
-              multi="false"
+              .multi="${false}"
               .target="${this.apiEndpoint}/images?itemType=group-logo"
               method="POST"
               @success="${this._defaultDataImageUploaded}"
@@ -1748,7 +1753,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   renderActionMenu() {
     return html`
-      <div style="position: relative;">
+      <div style="position: relative;" class="layout vertical center-center">
         <md-outlined-icon-button
           .ariaLabelSelected="${this.t("actions")}"
           id="menuAnchor"
@@ -1773,11 +1778,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             <div slot="headline">Delete</div>
           </md-menu-item>
           <md-menu-item
-            hidden
             @click="${this._menuSelection}"
             id="cloneMenuItem"
+            ?disabled="${this.cloning}"
           >
-            <div slot="headline">Clone</div>
+            <div slot="headline">${this.t("cloneGroup")}</div>
           </md-menu-item>
           <md-menu-item
             hidden
@@ -1801,6 +1806,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             <div slot="headline">Anonymize</div>
           </md-menu-item>
         </md-menu>
+        ${this.cloning
+          ? html`<md-circular-progress
+              indeterminate
+              style="--md-circular-progress-size:32px; margin-top: 12px;"
+            ></md-circular-progress>`
+          : nothing}
       </div>
     `;
   }
@@ -1829,8 +1840,16 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _menuSelection(event: CustomEvent) {
-    const id = (event.target as any)?.id;
-    this._openDelete();
+    const targetElement = event.target as HTMLElement;
+    const currentTargetElement = event.currentTarget as HTMLElement;
+    const id = targetElement?.id || currentTargetElement?.id || "";
+
+    if (id === "deleteMenuItem") {
+      this._openDelete();
+    } else if (id === "cloneMenuItem") {
+      this._openClone();
+    }
+
     /*switch (id) {
       case "newCategoryMenuItem":
         this._openCategoryEdit();
@@ -1860,6 +1879,29 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         break;
     }
     */
+  }
+
+  async _openClone() {
+    console.log("_openClone started");
+    this.cloning = true;
+    window.appGlobals.activity("open", "group.clone");
+
+    try {
+      const newGroup = (await window.serverApi.apiAction(
+        `/api/groups/${this.collection!.id}/clone`,
+        "POST",
+        {}
+      )) as YpGroupData;
+
+      window.appGlobals.activity("completed", "cloneGroup");
+      window.location.href = `/admin/group/${newGroup.id}`;
+    } catch (err) {
+      console.error("Clone failed", err);
+      // optionally show error toast or dialog here
+    } finally {
+      console.log("_openClone finished");
+      this.cloning = false;
+    }
   }
 
   earlConfigChanged(event: CustomEvent) {

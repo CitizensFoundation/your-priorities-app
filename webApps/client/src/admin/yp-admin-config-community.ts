@@ -242,7 +242,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         ${this.cloning
           ? html`<md-circular-progress
               indeterminate
-              style="--md-circular-progress-size:24px; margin-right: 4px;"
+              style="--md-circular-progress-size:32px; margin-top: 12px;"
             ></md-circular-progress>`
           : nothing}
       </div>
