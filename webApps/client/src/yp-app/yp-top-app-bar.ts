@@ -433,7 +433,7 @@ export class YpTopAppBar extends YpBaseElement {
       } else {
         breadcrumbsWithTitle = [];
       }
-    } else {
+    } else if (this.disableArrowBasedNavigation) {
       // On desktop, show all breadcrumbs and the final title
       breadcrumbsWithTitle = [...computedBreadcrumbs];
       if (finalTitle) {
@@ -442,6 +442,14 @@ export class YpTopAppBar extends YpBaseElement {
           url: "",
           isLink: false,
         });
+      }
+    } else {
+      if (computedBreadcrumbs.length > 0) {
+        breadcrumbsWithTitle = [
+          computedBreadcrumbs[computedBreadcrumbs.length - 1],
+        ];
+      } else {
+        breadcrumbsWithTitle = [];
       }
     }
 

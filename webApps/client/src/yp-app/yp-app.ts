@@ -612,9 +612,7 @@ export class YpApp extends YpBaseElement {
 
     let icons = html``;
 
-    let closeButtonVisible =
-      this.page !== "post" ||
-      (this.page === "post" && this.scrollPosition > 64);
+    let closeButtonVisible = true;
 
     if (this.closePostHeader) {
       icons = html`<md-icon-button
