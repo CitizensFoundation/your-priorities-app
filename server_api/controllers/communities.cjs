@@ -8,6 +8,7 @@ var _ = require("lodash");
 var async = require("async");
 var crypto = require("crypto");
 var queue = require("../active-citizen/workers/queue.cjs");
+const { Op, literal } = require("sequelize");
 const getAllModeratedItemsByCommunity =
   require("../active-citizen/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByCommunity;
 const performSingleModerationAction =
@@ -1210,6 +1211,59 @@ router.post(
     );
   }
 );
+
+router.get(
+  "/:domainId/getTemplates",
+  auth.can("edit community"),
+  async (req, res) => {
+    try {
+      const userId   = req.user.id;
+      const domainId = req.params.domainId;
+
+      console.log("-------------_> domainId", domainId);
+
+      const templateCommunities = await models.Community.findAll({
+        where: {
+          [Op.and]: [
+            { domain_id: domainId },
+            { "configuration.useAsTemplate": true },
+            {
+              [Op.or]: [
+                // public templates
+                { access: models.Community.ACCESS_PUBLIC },
+                // templates where user is an admin
+                literal(`"CommunityAdmins"."id" IS NOT NULL`)
+              ]
+            }
+          ]
+        },
+        include: [
+          {
+            model: models.User,
+            as: "CommunityAdmins",
+            attributes: [],
+            through: { attributes: [] },
+            where: { id: userId },
+            required: false,
+          }
+        ],
+        attributes: ["id", "name"],
+        distinct: true,
+        order: [["name", "ASC"]]
+      });
+
+      res.send(templateCommunities || []);
+    } catch (error) {
+      log.error("Could not get template communities", {
+        err: error,
+        context: "getTemplates",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
+  }
+);
+
 
 router.post(
   "/:communityId/:userEmail/invite_user",

@@ -6,6 +6,10 @@ import { YpAdminPage } from "./yp-admin-page.js";
 import "@material/web/radio/radio.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
+import "@material/web/dialog/dialog.js";
+import "@material/web/list/list.js";
+import "@material/web/list/list-item.js";
+import "@material/web/button/text-button.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
 
@@ -31,6 +35,7 @@ import { Radio } from "@material/web/radio/internal/radio.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpApiActionDialog } from "../yp-api-action-dialog/yp-api-action-dialog.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-admin-config-community")
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -67,6 +72,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   @property({ type: Boolean })
   hideHostnameInput = false;
 
+  @property({ type: Array })
+  templates?: Array<YpCommunityData>;
+
   constructor() {
     super();
     this.action = "/communities";
@@ -81,6 +89,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       super.styles,
       css`
         .accessContainer {
+        }
+
+        .templatesButton {
+          margin-top: 16px;
+          margin-left: 16px;
         }
 
         .accessHeader {
@@ -122,7 +135,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             type="text"
             @keyup="${this._hostnameChanged}"
             label="${this.t("community.hostname")}"
-            .value="${(this.collection as YpCommunityData).hostname}"
+            .value="${(this.collection as YpCommunityData).hostname || ''}"
             ?required="${!(this.collection as YpCommunityData)
               .is_community_folder}"
             maxlength="80"
@@ -144,9 +157,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               ${this.renderNameAndDescription()} ${this.renderHostname()}
             </div>
             <div class="layout vertical center-center">
-              <div class="layout horizontal center-center">
-                ${this.renderSaveButton()}
-              </div>
+              ${this.renderSaveButton()}
+                <md-text-button
+                  @click="${this._openTemplatesDialog}"
+                  class="templatesButton"
+                  ?hidden="${this.collectionId !== 'new'}"
+                  >${this.t('templates')}</md-text-button
+                >
               <div
                 ?hidden="${this.collectionId == "new"}"
                 class="actionButtonContainer layout horizontal center-center"
@@ -187,7 +204,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             <div slot="headline">Delete</div>
           </md-menu-item>
           <md-menu-item
-            hidden
             @click="${this._menuSelection}"
             id="cloneMenuItem"
           >
@@ -247,7 +263,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   _menuSelection(event: CustomEvent) {
     const id = (event.target as any)?.id;
-    this._openDelete();
+    if (id=="deleteMenuItem") {
+       this._openDelete();
+    } else if (id=="cloneMenuItem") {
+       this._openClone();
+    }
     /*switch (id) {
       case "newCategoryMenuItem":
         this._openCategoryEdit();
@@ -277,6 +297,27 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         break;
     }
     */
+  }
+
+  _openClone() {
+    window.appGlobals.activity("open", "community.clone");
+    window.appDialogs.getDialogAsync("apiActionDialog", (dialog: YpApiActionDialog) => {
+      dialog.setup(
+        `/api/communities/${this.collection!.id}/clone`,
+        this.t('areYouSureCloneCommunity'),
+        this._onCloned.bind(this),
+        this.t('cloneCommunity'),
+        "POST"
+      );
+      dialog.open({ finalDeleteWarning: false });
+    });
+  }
+
+  _onCloned(response: YpCommunityData) {
+    // TODO: Redirect or provide feedback
+    console.log("Community cloned:", response);
+    YpNavHelpers.redirectTo("/community/" + response.id);
+    window.appGlobals.activity("completed", "cloneCommunity");
   }
 
   renderHiddenAccessSettings() {
@@ -384,6 +425,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     this.welcomePageId = undefined;
     this.availableCommunityFolders = undefined;
     (this.$$("#appHomeScreenIconImageUpload") as YpFileUpload).clear();
+    this._configChanged();
   }
 
   override updated(
@@ -758,6 +800,12 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             .alwaysShowOnDomainPage,
           translationToken: "alwaysShowOnDomainPage",
         },
+        {
+          text: "useAsTemplate",
+          type: "checkbox",
+          value: (this.collection as YpCommunityData).configuration.useAsTemplate,
+          translationToken: "useAsTemplate",
+        },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
   }
@@ -1102,5 +1150,61 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     var image = JSON.parse(event.detail.xhr.response);
     this.appHomeScreenIconImageId = image.id;
     this._configChanged();
+  }
+
+  async _openTemplatesDialog() {
+    const domainId = (this.collection as YpCommunityData).Domain?.id;
+    debugger;
+    if (!domainId) return;
+    try {
+      this.templates = await window.adminServerApi.getCommunityTemplates(
+        domainId
+      );
+      debugger;
+      this.requestUpdate();
+      await this.updateComplete;
+      (this.$$('#templatesDialog') as Dialog).show();
+    } catch (error) {
+       console.error("Failed to fetch community templates", error);
+       // Optionally show an error to the user
+    }
+  }
+
+  _applyTemplate(template: YpCommunityData) {
+    // TODO: Implement template application logic
+    // This might involve merging fields, confirmation, etc.
+    console.log("Applying template:", template.name);
+    Object.assign(this.collection as YpCommunityData, {
+      name: template.name,
+      description: template.description,
+      // Be careful about which fields to merge!
+      // configuration: template.configuration, // Example - likely needs deeper merge or selective copying
+    });
+    // You might need to manually update specific fields bound in the template
+    // e.g., (this.$$("#description") as TextArea).value = template.description;
+    this.requestUpdate();
+    (this.$$('#templatesDialog') as Dialog).close();
+    window.appGlobals.showToast(this.t('templateApplied')); // Assuming a translation key exists
+    this._configChanged(); // Mark config as changed so save button enables
+  }
+
+  override renderTemplatesDialog() {
+    return html`
+      <md-dialog id="templatesDialog">
+        <div slot="headline">${this.t('templates')}</div>
+        <md-list slot="content">
+          ${this.templates && this.templates.length > 0 ? this.templates.map(
+            t => html`
+              <md-list-item @click="${() => this._applyTemplate(t)}">
+                <div slot="headline">${t.name}</div>
+              </md-list-item>
+            `
+          ) : html`<md-list-item>${this.t('noTemplatesFound')}</md-list-item>`}
+        </md-list>
+        <div slot="actions">
+           <md-text-button @click="${() => (this.$$('#templatesDialog') as Dialog).close()}" dialogAction="close">${this.t("close")}</md-text-button>
+        </div>
+      </md-dialog>
+    `;
   }
 }

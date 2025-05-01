@@ -1,5 +1,7 @@
 {
   "useAsTemplate": "Use as template",
+  "templates": "Templates",
+  "noTemplatesFound": "No templates found",
   "resetWorkflow": "Reset workflow",
   "agentConfigurationSubmitted": "Agent configuration submitted",
   "comingSoon": "Coming soon",

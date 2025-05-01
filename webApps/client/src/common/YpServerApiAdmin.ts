@@ -262,6 +262,12 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
+  public getCommunityTemplates(domainId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/communities/${domainId}/getTemplates`
+    );
+  }
+
   public getAnalyticsData(communityId: number, type: string, params: string) {
     return this.fetchWrapper(
       this.baseUrlPath +

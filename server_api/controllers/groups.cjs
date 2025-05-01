@@ -5424,6 +5424,30 @@ router.put(
 );
 
 router.get(
+  "/:groupId/getTemplates",
+  auth.can("edit group"),
+  async (req, res) => {
+    try {
+      const templateGroups = await models.Group.findAll({
+        where: {
+          "configuration.useAsTemplate": true,
+        },
+        attributes: ["id", "name"],
+        order: [["name", "ASC"]],
+      });
+      res.send(templateGroups || []);
+    } catch (error) {
+      log.error("Could not get template groups", {
+        err: error,
+        context: "getTemplates",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
+  }
+);
+
+router.get(
   "/:groupId/:type/getPlausibleSeries",
   auth.can("edit group marketing"),
   async (req, res) => {

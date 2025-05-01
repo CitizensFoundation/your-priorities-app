@@ -320,7 +320,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   renderSaveButton(): TemplateResult {
     return html`
-      <div class="layout horizontal">
+      <div class="layout horizontal center-center">
         <md-filled-button
           raised
           class="saveButton"
@@ -1041,6 +1041,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
+  renderTemplatesDialog() {
+    return nothing;
+  }
+
   override render() {
     let collectionType, collectionId, name, description;
 
@@ -1104,6 +1108,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             @got-image="${this._gotAiImage}"
           >
           </yp-generate-ai-image>
+          ${this.renderTemplatesDialog()}
         `
       : nothing;
   }
