@@ -3471,7 +3471,7 @@ router.post("/:id/clone", auth.can("edit community"), function (req, res) {
             } else if (newCommunity) {
               recountCommunity(newCommunity.id, () => {
                 log.info("Community Cloned", { communityId: req.params.id });
-                res.sendStatus(200);
+                res.send({ id: newCommunity.id });
               });
             } else {
               log.error("Community Clone Failed", {

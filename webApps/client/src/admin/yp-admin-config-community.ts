@@ -10,6 +10,7 @@ import "@material/web/dialog/dialog.js";
 import "@material/web/list/list.js";
 import "@material/web/list/list-item.js";
 import "@material/web/button/text-button.js";
+import "@material/web/progress/circular-progress.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
 
@@ -36,6 +37,7 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpApiActionDialog } from "../yp-api-action-dialog/yp-api-action-dialog.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import { MdCircularProgress } from "@material/web/progress/circular-progress.js";
 
 @customElement("yp-admin-config-community")
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -74,6 +76,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   @property({ type: Array })
   templates?: Array<YpCommunityData>;
+
+  @property({ type: Boolean })
+  cloning = false;
 
   constructor() {
     super();
@@ -185,8 +190,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           id="menuAnchor"
           type="button"
           @click="${() => ((this.$$("#actionMenu") as Menu).open = true)}"
-          ><md-icon>menu</md-icon></md-outlined-icon-button
-        >
+        ><md-icon>menu</md-icon></md-outlined-icon-button>
         <md-menu
           id="actionMenu"
           positioning="popover"
@@ -204,10 +208,19 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             <div slot="headline">Delete</div>
           </md-menu-item>
           <md-menu-item
-            @click="${this._menuSelection}"
+            @click="${this._onCloneMenuItemClick}"
             id="cloneMenuItem"
+            ?disabled="${this.cloning}"
           >
-            <div slot="headline">Clone</div>
+            <div slot="headline" class="layout horizontal center-center">
+              ${this.cloning
+                ? html`<md-circular-progress
+                    indeterminate
+                    style="--md-circular-progress-size:16px; margin-right:8px;"
+                  ></md-circular-progress>`
+                : nothing}
+              ${this.t("cloneCommunity")}
+            </div>
           </md-menu-item>
           <md-menu-item
             hidden
@@ -233,6 +246,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         </md-menu>
       </div>
     `;
+  }
+
+  private _onCloneMenuItemClick(e: MouseEvent) {
+    // prevent menu's default close-on-click
+    e.stopPropagation();
+    // then delegate to our existing menu-selection logic
+    this._menuSelection(e as unknown as CustomEvent);
   }
 
   _onDeleted() {
@@ -262,11 +282,23 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   _menuSelection(event: CustomEvent) {
-    const id = (event.target as any)?.id;
-    if (id=="deleteMenuItem") {
-       this._openDelete();
-    } else if (id=="cloneMenuItem") {
-       this._openClone();
+    // Log both target and currentTarget to understand the event source
+    console.log("Menu selection event:", event);
+    console.log("event.target:", event.target);
+    console.log("event.currentTarget:", event.currentTarget);
+
+    // Attempt to get id from currentTarget if target doesn't have it
+    const targetElement = event.target as HTMLElement;
+    const currentTargetElement = event.currentTarget as HTMLElement;
+    const id = targetElement?.id || currentTargetElement?.id || "";
+
+    console.log(`Menu item clicked, derived id: ${id}`); // <-- Updated log
+
+    if (id == "deleteMenuItem") {
+      this._openDelete();
+    } else if (id == "cloneMenuItem") {
+      console.log("Calling _openClone...");
+      this._openClone();
     }
     /*switch (id) {
       case "newCategoryMenuItem":
@@ -299,25 +331,31 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     */
   }
 
-  _openClone() {
+  async _openClone() {
+    console.log("_openClone started");
+    this.cloning = true;
     window.appGlobals.activity("open", "community.clone");
-    window.appDialogs.getDialogAsync("apiActionDialog", (dialog: YpApiActionDialog) => {
-      dialog.setup(
-        `/api/communities/${this.collection!.id}/clone`,
-        this.t('areYouSureCloneCommunity'),
-        this._onCloned.bind(this),
-        this.t('cloneCommunity'),
-        "POST"
-      );
-      dialog.open({ finalDeleteWarning: false });
-    });
-  }
 
-  _onCloned(response: YpCommunityData) {
-    // TODO: Redirect or provide feedback
-    console.log("Community cloned:", response);
-    YpNavHelpers.redirectTo("/community/" + response.id);
-    window.appGlobals.activity("completed", "cloneCommunity");
+    try {
+      // direct POST to clone endpoint (no intermediate dialog)
+      const newCommunity = await window.serverApi.apiAction(
+        `/api/communities/${this.collection!.id}/clone`,
+        "POST",
+        {}
+      ) as YpCommunityData;
+
+      // once we have the new ID, redirect into the admin namespace
+      window.appGlobals.activity("completed", "cloneCommunity");
+      window.location.href = `/admin/community/${newCommunity.id}`;
+    } catch (err) {
+      console.error("Clone failed", err);
+      // optionally show error toast or dialog here
+    } finally {
+      console.log("_openClone finished");
+      this.cloning = false;
+      // now that spinner's gone, we can close the menu
+      (this.$$("#actionMenu") as Menu).open = false;
+    }
   }
 
   renderHiddenAccessSettings() {
@@ -1154,13 +1192,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   async _openTemplatesDialog() {
     const domainId = (this.collection as YpCommunityData).Domain?.id;
-    debugger;
     if (!domainId) return;
     try {
       this.templates = await window.adminServerApi.getCommunityTemplates(
         domainId
       );
-      debugger;
       this.requestUpdate();
       await this.updateComplete;
       (this.$$('#templatesDialog') as Dialog).show();

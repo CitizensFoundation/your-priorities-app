@@ -1042,7 +1042,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   renderTemplatesDialog() {
-    return nothing;
+    return html``;
   }
 
   override render() {
