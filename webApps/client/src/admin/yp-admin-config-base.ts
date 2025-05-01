@@ -390,9 +390,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         ${configItems.map(
           (question, index) => html`
             ${question.type == "html"
-              ? html`<div class="layout vertical center-center"><div class="htmlItem">${question.templateData}</div></div>`
+              ? html`<div class="layout vertical"><div class="htmlItem">${question.templateData}</div></div>`
               : html`
-                  <div class="layout vertical center-center">
+                  <div class="layout vertical">
                     <yp-structured-question-edit
                       index="${index}"
                       id="configQuestion_${index}"

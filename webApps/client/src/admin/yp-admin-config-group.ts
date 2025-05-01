@@ -1162,10 +1162,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               .multi="${false}"
               .target="${this.apiEndpoint}/images?itemType=group-logo"
               method="POST"
+              .buttonText="${this.t("defaultPostImage")}"
               @success="${this._defaultPostImageUploaded}"
             >
               <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span>${this.t("defaultPostImage")}</span>
             </yp-file-upload>
           `,
         },
@@ -1179,10 +1179,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               .multi="${false}"
               .target="${this.apiEndpoint}/images?itemType=group-logo"
               method="POST"
+              .buttonText="${this.t("defaultDataImage")}"
               @success="${this._defaultDataImageUploaded}"
             >
-              <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span>${this.t("defaultDataImage")}</span>
             </yp-file-upload>
           `,
         },
