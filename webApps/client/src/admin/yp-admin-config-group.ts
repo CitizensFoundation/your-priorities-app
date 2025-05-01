@@ -47,6 +47,10 @@ import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpApiActionDialog } from "../yp-api-action-dialog/yp-api-action-dialog.js";
 import { MdCircularProgress } from "@material/web/progress/circular-progress.js";
 import { ifDefined } from "lit/directives/if-defined.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import "@material/web/list/list.js";
+import "@material/web/list/list-item.js";
+import "@material/web/button/text-button.js";
 
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
@@ -116,6 +120,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   @property({ type: Boolean })
   cloning = false;
 
+  @property({ type: Array })
+  templates?: Array<YpGroupData>;
+
+  @property({ type: Number })
+  cloningTemplateId: number | null = null;
+
   isDataVisualizationGroup: any;
   dataForVisualizationJsonError: any;
   groupMoveToOptions: any;
@@ -159,6 +169,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         .mainImage {
           width: 432px;
           height: 243px;
+        }
+
+        .templatesButton {
+          margin-top: 16px;
+          margin-left: 16px;
         }
 
         yp-admin-html-editor {
@@ -247,8 +262,15 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               ${this.renderGroupTypeSelection()}
             </div>
             <div class="layout vertical center-center">
-              <div class="layout horizontal center-center">
+              <div class="layout vertical center-center">
                 ${this.renderSaveButton()}
+                <md-text-button hidden
+                  @click="${this._openTemplatesDialog}"
+                  class="templatesButton"
+                  style="margin-left: 8px;"
+                  ?hiddenOld="${this.collectionId !== "new"}"
+                  >${this.t("templates")}</md-text-button
+                >
               </div>
               <div
                 ?hidden="${this.collectionId == "new"}"
@@ -2424,5 +2446,100 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     var image = JSON.parse(event.detail.xhr.response);
     this.appHomeScreenIconImageId = image.id;
     this._configChanged();
+  }
+
+  async _openTemplatesDialog() {
+    const domainId = (this.parentCollection as YpCommunityData).domain_id;
+    if (!domainId) {
+      console.error("Domain ID not found for fetching group templates");
+      debugger;
+      return;
+    }
+    try {
+      // Assuming an adminServerApi method exists to fetch group templates for a community
+      this.templates = await window.adminServerApi.getGroupTemplates(domainId);
+      this.requestUpdate();
+      await this.updateComplete;
+      (this.$$("#templatesDialog") as Dialog).show();
+    } catch (error) {
+      console.error("Failed to fetch group templates", error);
+      window.appGlobals.showToast(this.t("failedToFetchGroupTemplates"), 5000); // Assuming translation exists
+    }
+  }
+
+  async _cloneTemplate(template: YpGroupData) {
+    if (this.cloningTemplateId) return; // Already cloning
+
+    console.log("Cloning group template:", template.name);
+    this.cloningTemplateId = template.id;
+    (this.$$("#templatesDialog") as Dialog).close();
+
+    window.appGlobals.activity("open", "group.cloneFromTemplate");
+
+    try {
+      const newGroup = (await window.serverApi.apiAction(
+        // Use the correct group cloning endpoint
+        `/api/groups/${template.id}/clone`,
+        "POST",
+        {}
+      )) as YpGroupData;
+
+      window.appGlobals.activity("completed", "cloneGroupFromTemplate");
+      window.appGlobals.showToast(this.t("templateClonedSuccessfully")); // Assuming translation exists
+      // Redirect to the new group's admin page
+      window.location.href = `/admin/group/${newGroup.id}`;
+    } catch (err) {
+      console.error("Group template clone failed", err);
+      window.appGlobals.activity(
+        "error",
+        "cloneGroupFromTemplate",
+        (err as Error).message
+      );
+      window.appGlobals.showToast(this.t("templateCloningFailed"), 5000); // Assuming translation exists
+      this.cloningTemplateId = null; // Reset on error
+    }
+  }
+
+  override renderTemplatesDialog() {
+    return html`
+      <md-dialog id="templatesDialog">
+        <div slot="headline">${this.t("selectGroupTemplate")}</div>
+        <md-list slot="content">
+          ${this.templates && this.templates.length > 0
+            ? this.templates.map(
+                (t) => html`
+                  <md-list-item
+                    @click="${() => this._cloneTemplate(t)}"
+                    ?disabled="${this.cloningTemplateId !== null}"
+                  >
+                    <div
+                      slot="headline"
+                      class="layout horizontal center-center"
+                    >
+                      ${t.name}
+                      ${this.cloningTemplateId === t.id
+                        ? html`<md-circular-progress
+                            indeterminate
+                            style="--md-circular-progress-size:24px; margin-left: 8px;"
+                          ></md-circular-progress>`
+                        : nothing}
+                    </div>
+                  </md-list-item>
+                `
+              )
+            : html`<md-list-item
+                >${this.t("noGroupTemplatesFound")}</md-list-item
+              >`}
+        </md-list>
+        <div slot="actions">
+          <md-text-button
+            @click="${() => (this.$$("#templatesDialog") as Dialog).close()}"
+            ?disabled="${this.cloningTemplateId !== null}"
+            dialogAction="close"
+            >${this.t("close")}</md-text-button
+          >
+        </div>
+      </md-dialog>
+    `;
   }
 }

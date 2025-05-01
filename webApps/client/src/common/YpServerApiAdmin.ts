@@ -268,6 +268,12 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
+  public getGroupTemplates(domainId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${domainId}/getTemplates`
+    );
+  }
+
   public getAnalyticsData(communityId: number, type: string, params: string) {
     return this.fetchWrapper(
       this.baseUrlPath +

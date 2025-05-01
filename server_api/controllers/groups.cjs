@@ -15,6 +15,7 @@ var getExportFileDataForGroup =
   require("../utils/export_utils.cjs").getExportFileDataForGroup;
 const exportGroupToDocx = require("../utils/docx_utils.cjs").exportGroupToDocx;
 const { v4: uuidv4 } = require("uuid");
+const { Op, literal } = require("sequelize");
 
 var moment = require("moment");
 var sanitizeFilename = require("sanitize-filename");
