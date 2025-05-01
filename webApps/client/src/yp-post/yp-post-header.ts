@@ -243,14 +243,19 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 textType="postContent"
                 .contentLanguage="${this.post.language}"
                 content="${this.post.description}"
-                ?noUserInfo="${!this.post.Group.configuration?.showWhoPostedPosts}"
+                ?noUserInfo="${!this.post.Group.configuration
+                  ?.showWhoPostedPosts}"
                 disableTranslation
-                .structuredQuestionsConfig="${this.post.Group.configuration?.structuredQuestions}"
-                ?hasCustomRatings="${this.post.Group.configuration?.customRatings}"
-                ?simpleFormat="${this.post.Group.configuration?.descriptionSimpleFormat}"
+                .structuredQuestionsConfig="${this.post.Group.configuration
+                  ?.structuredQuestions}"
+                ?hasCustomRatings="${this.post.Group.configuration
+                  ?.customRatings}"
+                ?simpleFormat="${this.post.Group.configuration
+                  ?.descriptionSimpleFormat}"
                 .contentId="${this.post.id}"
                 class="description"
-                .truncate="${this.post.Group.configuration?.descriptionTruncateAmount}"
+                .truncate="${this.post.Group.configuration
+                  ?.descriptionTruncateAmount}"
                 .moreText="${this.t("readMore")}"
                 .closeDialogText="${this.t("close")}"
               >
@@ -262,7 +267,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 textType="postContent"
                 .contentLanguage="${this.post.language}"
                 .content="${this.structuredAnswersFormatted}"
-                ?noUserInfo="${!this.post.Group.configuration?.showWhoPostedPosts}"
+                ?noUserInfo="${!this.post.Group.configuration
+                  ?.showWhoPostedPosts}"
                 simpleFormat
                 skipSanitize
                 .contentId="${this.post.id}"
@@ -301,19 +307,22 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             </md-menu-item>
             <md-menu-item
               @click="${this._openMovePost}"
-              ?hidden="${true || !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+              ?hidden="${true ||
+              !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
             >
               ${this.t("post.move")}
             </md-menu-item>
             <md-menu-item
               @click="${this._openPostStatusChange}"
-              ?hidden="${true || !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+              ?hidden="${true ||
+              !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
             >
               ${this.t("post.statusChange")}
             </md-menu-item>
             <md-menu-item
               @click="${this._openPostStatusChangeNoEmails}"
-              ?hidden="${true || !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+              ?hidden="${true ||
+              !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
             >
               ${this.t("post.statusChangeNoEmails")}
             </md-menu-item>
@@ -418,7 +427,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
   renderTopActionButtons() {
     return html`
-      ${this.loggedInUser
+      ${this.hasPostAccess
         ? html`
             <md-filled-tonal-icon-button
               type="button"
@@ -428,15 +437,14 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               ><md-icon>edit</md-icon>
             </md-filled-tonal-icon-button>
           `
-        : html`
-            <md-filled-tonal-icon-button
-              type="button"
-              class="topActionButton"
-              @click="${this._openReport}"
-              title="${this.t("openReportPost")}"
-              ><md-icon>report</md-icon>
-            </md-filled-tonal-icon-button>
-          `}
+        : nothing}
+      <md-filled-tonal-icon-button
+        type="button"
+        class="topActionButton"
+        @click="${this._openReport}"
+        title="${this.t("openReportPost")}"
+        ><md-icon>report</md-icon>
+      </md-filled-tonal-icon-button>
       <md-filled-tonal-icon-button
         type="button"
         ?hidden="${this.post.Group.configuration?.hideSharing}"
@@ -477,7 +485,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               ${this.post.Group.configuration?.showWhoPostedPosts
                 ? this.renderUser()
                 : nothing}
-              <div class="layout horizontal ${!this.wide ? 'wrap' : ''}">
+              <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
                 <div class="layout vertical center-center mediaContainer">
                   ${this.renderCoverMedia()} ${this.renderActions()}
                 </div>

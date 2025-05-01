@@ -177,6 +177,7 @@ export class YpLanguageSelector extends YpBaseElement {
         ${this.dropdownVisible ? this.renderAutoComplete() : nothing}
         <div ?hidden="${!this.canUseAutoTranslate}">
           <md-filled-button
+            style="max-width: 250px;"
             ?hidden="${this.autoTranslate}"
             class="layout horizontal translateButton"
             @click="${this.startTranslation}"
