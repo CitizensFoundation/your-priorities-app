@@ -591,7 +591,7 @@ export class YpApp extends YpBaseElement {
         ?has-no-organizations="${!window.appGlobals.myDomains ||
         window.appGlobals.myDomains.length < 2}"
         slot="actionItems"
-        ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn ||
+        ?hidden="${!this.user ||
         this.page === "agent_bundle"}"
         class="topActionItem"
         @click="${this._openNavDrawer}"

@@ -114,6 +114,7 @@ export class YpPageDialog extends YpBaseElement {
       <md-dialog
         @cancel="${this.scrimDisableAction}"
         id="dialog"
+        style="max-width: 90vh;max-height: 90vh;"
         ?is-safari="${this.isSafari}"
         ?rtl="${this.rtl}"
       >
@@ -122,7 +123,7 @@ export class YpPageDialog extends YpBaseElement {
         <div
           id="content"
           slot="content"
-          style="text-align: left"
+          style="text-align: left;line-height: 1.5;"
           class="layout vertical center-center"
         ></div>
 
