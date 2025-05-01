@@ -48,10 +48,7 @@ export class YpDomainHeader extends YpCollectionHeader {
           justify-content: flex-start;
         }
 
-        .image {
-          width: 200px;
-          height: 113px;
-        }
+
 
         @media (max-width: 600px) {
           .nameAndActions {
