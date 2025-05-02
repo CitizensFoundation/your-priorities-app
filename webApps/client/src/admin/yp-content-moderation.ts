@@ -896,7 +896,6 @@ export class YpContentModeration extends YpBaseElement {
   _itemsResponse(items: Array<YpModerationItem>) {
     this.forceSpinner = false;
     this.items = items;
-    debugger;
     this._resetSelectedAndClearCache();
   }
 

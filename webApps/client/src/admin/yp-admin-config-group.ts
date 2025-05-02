@@ -732,8 +732,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       ]);
     }
 
-    debugger;
-
     return base;
   }
 
