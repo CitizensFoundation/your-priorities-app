@@ -78,6 +78,7 @@
     "passport-local": "^1.0.0",
     "passport-openidconnect": "git+https://github.com/rbjarnason/passport-openidconnect.git",
     "passport-sso": "git+https://github.com/rbjarnason/passport-sso.git",
+    "pug": "^3.0.3",
     "randomstring": "^1.3.1",
     "rate-limit-redis": "^4.2.0",
     "replicate": "^1.0.1",
@@ -141,7 +142,6 @@
     "dev:debug": "nodemon --config nodemon.json --inspect-brk api_app.ts",
     "build": "tsc --project ./ --outDir ./dist && ncp views dist/views && ncp config dist/config && ncp active-citizen/email_templates dist/active-citizen/email_templates && ncp active-citizen/locales dist/active-citizen/locales",
     "build:dev": "tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp active-citizen/email_templates ts-out/active-citizen/email_templates && ncp active-citizen/locales ts-out/active-citizen/locales"
-
   },
   "cacheDirectories": [
     "node_modules"
