@@ -64,6 +64,12 @@ export class YpPostsFilter extends YpBaseElement {
           margin-bottom: 0 !important;
         }
 
+        @media (max-width: 600px) {
+          #categoriesMenu {
+            margin-top: 16px;
+          }
+        }
+
         .mainContainer {
           margin-bottom: 24px;
         }
@@ -177,7 +183,7 @@ export class YpPostsFilter extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="layout horizontal mainContainer">
+      <div class="layout horizontal mainContainer wrap">
         ${this.showFilter
           ? html`
               <div>

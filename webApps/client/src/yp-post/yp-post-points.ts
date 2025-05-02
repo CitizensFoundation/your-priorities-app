@@ -716,7 +716,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             class="pointMainHeader layout horizontal"
             role="heading"
             aria-level="2"
-            ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
@@ -725,7 +724,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       : html`
           <div
             class="pointMainHeader layout horizontal"
-            ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
             ${this.renderHeaderIcon(headerTextType)}
             <yp-magic-text

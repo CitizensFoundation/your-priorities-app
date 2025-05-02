@@ -199,6 +199,7 @@ export class YpPostsList extends YpBaseElement {
 
           .searchContainer {
             margin-top: 0;
+            margin-left: 0;
           }
 
           .postsFilter {

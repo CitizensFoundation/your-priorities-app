@@ -147,6 +147,18 @@ export class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        #loginDialog {
+          max-width: 600px;
+          max-height: 90vh;
+        }
+
+        @media (max-width: 600px) {
+          #loginDialog {
+            max-width: 100vw;
+            height: 100vh;
+          }
+        }
+
         .userCreateInfo {
           font-size: 15px;
           margin-right: 4px;

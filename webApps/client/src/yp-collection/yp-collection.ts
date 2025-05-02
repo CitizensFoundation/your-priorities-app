@@ -486,7 +486,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           @media (max-width: 960px) {
             .createFab {
               margin-top: 32px;
-              max-width: 310px;
+              max-width: 100%;
               margin-left: auto;
               margin-right: auto;
             }
