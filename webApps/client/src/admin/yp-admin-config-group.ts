@@ -1940,7 +1940,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       )) as YpGroupData;
 
       window.appGlobals.activity("completed", "cloneGroup");
-      window.location.href = `/admin/group/${newGroup.id}`;
+      window.location.href = `/group/${newGroup.id}`;
     } catch (err) {
       console.error("Clone failed", err);
       // optionally show error toast or dialog here
@@ -2516,7 +2516,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       window.appGlobals.activity("completed", "cloneGroupFromTemplate");
       window.appGlobals.showToast(this.t("templateClonedSuccessfully")); // Assuming translation exists
       // Redirect to the new group's admin page
-      window.location.href = `/admin/group/${newGroup.id}`;
+      window.location.href = `/group/${newGroup.id}`;
     } catch (err) {
       console.error("Group template clone failed", err);
       window.appGlobals.activity(
