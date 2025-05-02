@@ -1,4 +1,9 @@
 {
+  "useAsTemplate": "Use as template",
+  "templates": "Templates",
+  "noTemplatesFound": "No templates found",
+  "templateClonedSuccessfully": "Template cloned successfully",
+  "templateCloningFailed": "Template cloning failed",
   "resetWorkflow": "Reset workflow",
   "agentConfigurationSubmitted": "Agent configuration submitted",
   "comingSoon": "Coming soon",
