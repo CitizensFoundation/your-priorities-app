@@ -343,7 +343,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
       // once we have the new ID, redirect into the admin namespace
       window.appGlobals.activity("completed", "cloneCommunity");
-      window.location.href = `/admin/community/${newCommunity.id}`;
+      window.location.href = `/community/${newCommunity.id}`;
     } catch (err) {
       console.error("Clone failed", err);
       // optionally show error toast or dialog here
