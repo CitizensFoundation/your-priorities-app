@@ -234,6 +234,9 @@ export class YpPost extends YpCollection {
           .outerFrameContainer {
             max-width: 100%;
             width: 100%;
+
+            padding: 0;
+            padding-top: 32px;
           }
 
           .frameContainer {
@@ -590,6 +593,8 @@ export class YpPost extends YpCollection {
     super.connectedCallback();
     this.addListener("yp-post-image-count", this._updatePostImageCount);
     document.addEventListener("keydown", this.handleKeydown.bind(this));
+    this.addGlobalListener("yp-go-to-next-post", this.goToNextPost.bind(this));
+    this.addGlobalListener("yp-go-to-previous-post", this.goToPreviousPost.bind(this));
   }
 
   override disconnectedCallback() {
@@ -597,6 +602,8 @@ export class YpPost extends YpCollection {
     this.removeListener("yp-debate-info", this._updateDebateInfo);
     this.removeListener("yp-post-image-count", this._updatePostImageCount);
     document.removeEventListener("keydown", this.handleKeydown.bind(this));
+    this.removeGlobalListener("yp-go-to-next-post", this.goToNextPost.bind(this));
+    this.removeGlobalListener("yp-go-to-previous-post", this.goToPreviousPost.bind(this));
   }
 
   _updatePostImageCount(event: CustomEvent) {

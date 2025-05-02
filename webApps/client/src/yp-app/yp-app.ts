@@ -1910,7 +1910,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _handleTouchStart(event: any) {
-    if (this.page === "post" && this.goForwardToPostId) {
+    if (this.page === "post") {
       const touches = event.touches || event.originalEvent.touches;
       const firstTouch = touches[0];
 
@@ -1927,7 +1927,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _handleTouchMove(event: any) {
-    if (this.page === "post" && this.touchXDown && this.goForwardToPostId) {
+    if (this.page === "post" && this.touchXDown) {
       const touches = event.touches || event.originalEvent.touches;
       this.touchXUp = touches[0].clientX;
       this.touchYUp = touches[0].clientY;
@@ -1940,8 +1940,7 @@ export class YpApp extends YpBaseElement {
       this.touchXDown &&
       this.touchYDown &&
       this.touchYUp &&
-      this.touchXUp &&
-      this.goForwardToPostId
+      this.touchXUp
     ) {
       const xDiff = this.touchXDown - this.touchXUp;
       const yDiff = this.touchYDown - this.touchYUp;
@@ -1963,13 +1962,15 @@ export class YpApp extends YpBaseElement {
             window.scrollTo(0, 0);
             window.appGlobals.activity("swipe", "postForward");
             this.$$("#goPostForward")?.dispatchEvent(new Event("tap"));
+            this.fireGlobal("yp-go-to-next-post");
           } else if (xDiff < 0 && xDiff < -Math.abs(minScrollFactorPx)) {
             if (this.showBackToPost === true) {
               window.scrollTo(0, 0);
               this._goToPreviousPost();
-              window.appGlobals.activity("swipe", "postBackward");
             }
-          }
+            this.fireGlobal("yp-go-to-previous-post");
+            window.appGlobals.activity("swipe", "postBackward");
+        }
         } else {
           console.log("Recommendation swipe not active with open drawers");
         }

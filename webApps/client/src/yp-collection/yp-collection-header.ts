@@ -258,6 +258,13 @@ export class YpCollectionHeader extends YpBaseElement {
           margin-right: 64px;
         }
 
+        @media (max-width: 600px) {
+          .allContent {
+            margin-left: 16px;
+            margin-right: 16px;
+          }
+        }
+
         .collection-name {
           font-family: var(
             --md-ref-typeface-brand
@@ -375,12 +382,18 @@ export class YpCollectionHeader extends YpBaseElement {
             padding-bottom: 42px;
           }
 
+          @media (max-width: 600px) {
+            .description {
+              padding-bottom: 24px;
+            }
+          }
+
           .textBox {
             margin-left: 8px;
           }
         }
 
-        @media (max-width: 375px) {
+        @media (max-width: 430px) {
           yp-image,
           video,
           .image {
@@ -423,7 +436,7 @@ export class YpCollectionHeader extends YpBaseElement {
           }
         }
 
-        @media (max-width: 320px) {
+        @media (max-width: 600px) {
           yp-image,
           video,
           .image {

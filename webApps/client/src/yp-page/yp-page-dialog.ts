@@ -22,7 +22,7 @@ export class YpPageDialog extends YpBaseElement {
   textButtonText: string | undefined;
 
   @property({ type: Boolean })
-  modal = false
+  modal = false;
 
   closeFunction: Function | undefined;
 
@@ -53,7 +53,9 @@ export class YpPageDialog extends YpBaseElement {
           text-align: center;
         }
 
-        #dialog {
+        .dialog {
+          max-width: 1024px;
+          max-height: 90vh;
         }
 
         .languageButton {
@@ -62,7 +64,7 @@ export class YpPageDialog extends YpBaseElement {
         }
 
         md-dialog {
-         // height: 100%;
+          // height: 100%;
         }
 
         md-dialog[open][is-safari] {
@@ -74,7 +76,7 @@ export class YpPageDialog extends YpBaseElement {
 
         @media (max-width: 600px) {
           #content {
-            padding: 0;
+            padding: 8px;
           }
 
           .headline {
@@ -88,7 +90,16 @@ export class YpPageDialog extends YpBaseElement {
             margin-bottom: 8px;
           }
 
-
+          .dialog {
+            max-width: calc(100vw - 16px);
+            max-height: calc(100vh - 16px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+          }
         }
 
         md-dialog[rtl] {
@@ -114,7 +125,7 @@ export class YpPageDialog extends YpBaseElement {
       <md-dialog
         @cancel="${this.scrimDisableAction}"
         id="dialog"
-        style="max-width: 90vh;max-height: 90vh;"
+        class="dialog"
         ?is-safari="${this.isSafari}"
         ?rtl="${this.rtl}"
       >

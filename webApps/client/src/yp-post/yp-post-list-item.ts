@@ -38,8 +38,8 @@ export class YpPostListItem extends YpBaseElement {
       super.styles,
       css`
         .outerContainer {
-          margin:0;
-          padding:0;
+          margin: 0;
+          padding: 0;
         }
 
         .innerContainer {
@@ -53,6 +53,17 @@ export class YpPostListItem extends YpBaseElement {
           cursor: pointer;
         }
 
+        @media (max-width: 600px) {
+          .outerContainer {
+            padding: 0px;
+          }
+
+          .innerContainer {
+            border-radius: 4px;
+            padding: 0px;
+          }
+        }
+
         .outerContainer:hover {
           background-color: var(--md-sys-color-surface-container);
         }
@@ -64,9 +75,7 @@ export class YpPostListItem extends YpBaseElement {
           text-align: left;
           margin-bottom: 8px;
           line-height: 33px;
-          font-family: var(
-            --md-ref-typeface-brand
-          );
+          font-family: var(--md-ref-typeface-brand);
         }
 
         .share {
@@ -226,7 +235,6 @@ export class YpPostListItem extends YpBaseElement {
           display: none;
         }
 
-
         @media (max-width: 960px) {
           .description {
             width: 100%;
@@ -244,14 +252,13 @@ export class YpPostListItem extends YpBaseElement {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const urls = formattedAnswer.match(urlRegex) || [];
 
-
     let urlAdjustment = 0;
-    urls.forEach(url => {
+    urls.forEach((url) => {
       urlAdjustment += url.length - 23;
     });
 
     if (urls.length > 0) {
-      return textLimit+urlAdjustment;
+      return textLimit + urlAdjustment;
     } else {
       return textLimit;
     }
@@ -263,7 +270,8 @@ export class YpPostListItem extends YpBaseElement {
         ? html`
             <yp-magic-text
               class="description layout horizontal"
-              ?hasCustomRatings="${this.post.Group.configuration?.customRatings}"
+              ?hasCustomRatings="${this.post.Group.configuration
+                ?.customRatings}"
               ?hidden="${this.hideDescription}"
               textType="postContent"
               .contentLanguage="${this.post.language}"
@@ -316,7 +324,7 @@ export class YpPostListItem extends YpBaseElement {
                   @click="${this.goToPostIfNotHeader}"
                   id="mainArea"
                 >
-                  <div class="layout horizontal ${!this.wide ? 'wrap' : ''}">
+                  <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
                     <yp-post-cover-media
                       ?mini="${this.mini}"
                       top-radius
@@ -356,7 +364,7 @@ export class YpPostListItem extends YpBaseElement {
                 class="layout horizontal end"
                 ?hidden="${
                   this.post.Group.configuration?.hidePostActionsInGrid
-                  }"
+                }"
                   @click="${this._onBottomClick}"
                 >
                   ${this.renderActions()}
@@ -412,7 +420,8 @@ export class YpPostListItem extends YpBaseElement {
               class="postActions"
               .post="${this.post}"
               forceHideDebate
-              .forceShowDebate="${this.post.Group.configuration?.forceShowDebateCountOnPost}"
+              .forceShowDebate="${this.post.Group.configuration
+                ?.forceShowDebateCountOnPost}"
               ?hidden="${this.mini}"
             >
             </yp-post-actions>

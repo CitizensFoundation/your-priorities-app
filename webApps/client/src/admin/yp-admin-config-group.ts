@@ -138,6 +138,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   structuredQuestionsJsonError: any;
   hasSamlLoginProvider: any;
   questionNameHasChanged = false;
+  registrationQuestionsJsonError: boolean = false;
 
   groupTypeOptions = [
     "ideaGenerationGroupType",
@@ -661,7 +662,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       this.groupTypeIndex !== YpAdminConfigGroup.GroupType.allOurIdeas &&
       this.groupTypeIndex !== YpAdminConfigGroup.GroupType.htmlContent
     ) {
-      base.items.concat([
+      base.items = base.items.concat([
         {
           text: "allowAnonymousUsers",
           type: "checkbox",
@@ -714,9 +715,24 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           maxRows: 8,
           value: this.group.configuration.registrationQuestions,
           translationToken: "registrationQuestions",
+          onChange: this._registrationQuestionsChanged,
+        },
+        {
+          text: "registrationQuestionsJsonErrorInfo",
+          type: "html",
+          templateData: html`
+            <div
+              ?hidden="${!this.registrationQuestionsJsonError}"
+              style="color: var(--md-sys-color-error); font-weight: bold; margin-top: -4px; margin-bottom: 8px;"
+            >
+              ${this.t("structuredQuestionsJsonFormatNotValid")}
+            </div>
+          `,
         },
       ]);
     }
+
+    debugger;
 
     return base;
   }
@@ -1084,9 +1100,15 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         },
         {
           text: "structuredQuestionsJsonErrorInfo",
-          type: "textdescription",
-          translationToken: "structuredQuestionsJsonFormatNotValid",
-          hidden: !this.structuredQuestionsJsonError,
+          type: "html",
+          templateData: html`
+            <div
+              ?hidden="${!this.structuredQuestionsJsonError}"
+              style="color: var(--md-sys-color-error); font-weight: bold; margin-top: -4px; margin-bottom: 8px;"
+            >
+              ${this.t("structuredQuestionsJsonFormatNotValid")}
+            </div>
+          `,
         },
         {
           text: "structuredQuestionsInfo",
@@ -1105,10 +1127,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               .target="${this
                 .apiEndpoint}/groups/-1/convert_docx_survey_to_json"
               method="PUT"
+              .buttonText="${this.t("uploadDocxSurveyFormat")}"
               @success="${this._haveUploadedDocxSurvey}"
             >
-              <iron-icon class="icon" icon="sort"></iron-icon>
-              <span>${this.t("uploadDocxSurveyFormat")}</span>
             </yp-file-upload>
           `,
         },
@@ -1721,9 +1742,15 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         },
         {
           text: "dataForVisualizationJsonError",
-          type: "textdescription",
-          hidden: !this.dataForVisualizationJsonError,
-          translationToken: "structuredQuestionsJsonFormatNotValid",
+          type: "html",
+          templateData: html`
+            <div
+              ?hidden="${!this.dataForVisualizationJsonError}"
+              style="color: var(--md-sys-color-error); font-weight: bold; margin-top: -4px; margin-bottom: 8px;"
+            >
+              ${this.t("structuredQuestionsJsonFormatNotValid")}
+            </div>
+          `,
         },
         {
           text: "moveGroupTo",
@@ -2404,7 +2431,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _dataForVisualizationChanged(event: CustomEvent) {
-    // Handle change event for dataForVisualization textarea
+    const value = (event.target as any).value;
+    if (this.group.configuration) {
+      this.group.configuration.dataForVisualization = value;
+      this._validateJson(value, 'dataForVisualizationJsonError');
+      this._configChanged(); // Also call config changed when the value updates
+    }
   }
 
   _moveGroupToSelected(event: CustomEvent) {
@@ -2540,5 +2572,45 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         </div>
       </md-dialog>
     `;
+  }
+
+  _validateJson(value: string | undefined | null, errorProp: keyof YpAdminConfigGroup) {
+    let jsonError = false;
+    if (value) {
+      const trimmedValue = value.trim();
+      if (trimmedValue.startsWith("[") || trimmedValue.startsWith("{")) {
+        try {
+          JSON.parse(trimmedValue);
+        } catch (e) {
+          jsonError = true;
+          console.error("JSON validation error:", e);
+        }
+      } else if (trimmedValue !== "") {
+        // Consider non-empty, non-JSON string as an error if it's not supposed to be plain text
+        // Adjust this logic if plain text is sometimes valid for these fields
+        // jsonError = true;
+      }
+    }
+    (this as any)[errorProp] = jsonError;
+    // No need to call _configChanged here as the value itself is already handled by the primary onChange
+    this.requestUpdate(errorProp); // Request update specifically for the error property
+  }
+
+  _structuredQuestionsChanged(event: CustomEvent) {
+    const value = (event.target as any).value;
+    if (this.group.configuration) {
+      this.group.configuration.structuredQuestions = value;
+      this._validateJson(value, 'structuredQuestionsJsonError');
+      this._configChanged(); // Also call config changed when the value updates
+    }
+  }
+
+  _registrationQuestionsChanged(event: CustomEvent) {
+    const value = (event.target as any).value;
+     if (this.group.configuration) {
+      this.group.configuration.registrationQuestions = value;
+      this._validateJson(value, 'registrationQuestionsJsonError');
+      this._configChanged(); // Also call config changed when the value updates
+    }
   }
 }
