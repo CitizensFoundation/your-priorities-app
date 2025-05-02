@@ -1094,7 +1094,7 @@ interface YpEmojiSelectorData {
 }
 
 interface YpShareDialogData {
-  open(url: string, label: string, sharedContent: Function): () => void;
+  open(url: string, label: string, image: string, sharedContent: Function): () => void;
 }
 
 interface YpCommentCountsResponse {

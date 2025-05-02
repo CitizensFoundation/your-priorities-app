@@ -219,7 +219,7 @@ export class YpPostsFilter extends YpBaseElement {
                   @change="${this._changeCategory}"
                   class="dropdown-content wrap categoriesDropdownMenu"
                 >
-                  <md-select-option data-category-id="-1" name="-1">
+                  <md-select-option data-category-id="-1" name="-1" selected>
                     <md-icon icon="select-all" class="filterIcon"></md-icon>
                     <span
                       >${this.t("categories.the_all")}

@@ -203,6 +203,7 @@ export class YpPointActions extends YpBaseElement {
         dialog.open(
           this.pointUrl || "",
           this.t("sharePoint"),
+          "",
           this._sharedContent
         );
       }

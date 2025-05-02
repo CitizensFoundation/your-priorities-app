@@ -18,6 +18,7 @@ import "./yp-post-actions.js";
 import "./yp-post-tags.js";
 
 import "@material/web/iconbutton/outlined-icon-button.js";
+import { YpPostCoverMedia } from "./yp-post-cover-media.js";
 
 @customElement("yp-post-card")
 export class YpPostCard extends YpBaseElement {
@@ -531,7 +532,8 @@ export class YpPostCard extends YpBaseElement {
       (dialog: YpShareDialogData) => {
         dialog.open(
           this._fullPostUrl,
-          this.t("post.shareInfo"),
+          this.post.name,
+          (this.$$("yp-post-cover-media") as YpPostCoverMedia).anyImagePath || "",
           this._sharedContent
         );
       }

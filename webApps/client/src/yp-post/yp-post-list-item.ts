@@ -17,6 +17,7 @@ import "./yp-post-actions.js";
 import "./yp-post-tags.js";
 
 import "@material/web/iconbutton/outlined-icon-button.js";
+import { YpPostCoverMedia } from "./yp-post-cover-media.js";
 
 @customElement("yp-post-list-item")
 export class YpPostListItem extends YpBaseElement {
@@ -527,9 +528,11 @@ export class YpPostListItem extends YpBaseElement {
     window.appDialogs.getDialogAsync(
       "shareDialog",
       (dialog: YpShareDialogData) => {
+
         dialog.open(
           this._fullPostUrl,
-          this.t("post.shareInfo"),
+          this.post.name,
+          (this.$$("yp-post-cover-media") as YpPostCoverMedia).anyImagePath || "",
           this._sharedContent
         );
       }

@@ -305,6 +305,13 @@ export class YpPostCoverMedia extends YpBaseElement {
     ];
   }
 
+  get anyImagePath() {
+    if (this.postImagePath) return this.postImagePath;
+    if (this.activeDefaultImageUrl) return this.activeDefaultImageUrl;
+    if (this.categoryImagePath) return this.categoryImagePath;
+    return "";
+  }
+
   override render() {
     return html`
       <div

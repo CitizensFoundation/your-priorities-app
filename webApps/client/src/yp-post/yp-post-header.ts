@@ -24,6 +24,7 @@ import "./yp-post-transcript.js";
 //import { any /*YpApiActionDialog*/ } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 import { YpPostBaseWithAnswers } from "./yp-post-base-with-answers.js";
 import { Corner, MdMenu } from "@material/web/menu/menu.js";
+import { YpPostCoverMedia } from "./yp-post-cover-media.js";
 
 @customElement("yp-post-header")
 export class YpPostHeader extends YpPostBaseWithAnswers(
@@ -143,7 +144,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           }
 
           yp-post-cover-media {
-            width: 100% !important;
+            width: 409px;
+            height: 225px;
           }
 
           .coverContainer {
@@ -163,7 +165,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           }
 
           yp-post-cover-media {
-            height: 230px;
+            width: 409px;
+            height: 225px;
           }
         }
 
@@ -181,7 +184,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           }
 
           yp-post-cover-media {
-            height: 225px;
+            height: 169px;
+            width: 300px;
           }
 
           .headerTopLevel {
@@ -523,7 +527,12 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
       "shareDialog",
       (dialog: YpShareDialogData) => {
         const url = "https://" + window.location.host + "/post/" + this.post.id;
-        dialog.open(url, this.t("post.shareInfo"), this._sharedContent);
+        dialog.open(
+          url,
+          this.post.name,
+          (this.$$("yp-post-cover-media") as YpPostCoverMedia).anyImagePath || "",
+          this._sharedContent
+        );
       }
     );
   }
