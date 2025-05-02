@@ -405,7 +405,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         ?hasTranscript="${this.post.public_data?.transcript?.text}"
         .altTag="${this.post.name}"
         ?audio-cover="${this.isAudioCover}"
-        header-mode
+        headerMode
         .post="${this.post}"
       >
       </yp-post-cover-media>

@@ -374,7 +374,7 @@ export class YpPostCoverMedia extends YpBaseElement {
           : nothing}
         ${this.isVideoActive
           ? html`
-              ${this.showVideo
+              ${this.headerMode
                 ? html`
                     <video
                       id="videoPlayer"
@@ -402,7 +402,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                         class="main-image pointer"
                         src="${this.postVideoPosterPath}"></yp-image>
                     </div>
-                    <md-icon
+                    <md-icon hidden
                       class="videoCamStatic">videocam</md-icon>
                   `}
             `
