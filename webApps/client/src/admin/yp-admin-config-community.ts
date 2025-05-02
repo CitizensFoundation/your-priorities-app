@@ -1223,7 +1223,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
       window.appGlobals.activity("completed", "cloneCommunityFromTemplate");
       window.appGlobals.showToast(this.t("templateClonedSuccessfully")); // Assuming a translation key exists
-      window.location.href = `/admin/community/${newCommunity.id}`;
+      window.location.href = `/community/${newCommunity.id}`;
     } catch (err) {
       console.error("Template clone failed", err);
       window.appGlobals.activity("error", "cloneCommunityFromTemplate", (err as Error).message);
