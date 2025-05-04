@@ -1,184 +1,187 @@
 # YpApp
 
-The `YpApp` class is a LitElement-based web component that serves as the main application container for a web application. It manages the application's state, navigation, and user interactions, and integrates with various other components and services.
+The `YpApp` class is the main application shell for the Yp web application. It manages global state, routing, navigation, user sessions, event handling, and the rendering of the main app layout, including drawers, dialogs, top bar, and page content. It extends `YpBaseElement` and is registered as the `<yp-app>` custom element.
 
 ## Properties
 
-| Name                          | Type                                      | Description                                                                 |
-|-------------------------------|-------------------------------------------|-----------------------------------------------------------------------------|
-| homeLink                      | YpHomeLinkData \| undefined               | The home link data for the application.                                     |
-| page                          | string \| undefined                       | The current page being displayed.                                           |
-| scrollPosition                | number                                    | The current scroll position of the window.                                  |
-| appMode                       | YpAppModes                                | The current mode of the application (e.g., "main", "admin").                |
-| user                          | YpUserData \| undefined                   | The current user data.                                                      |
-| backPath                      | string \| undefined                       | The path to navigate back to.                                               |
-| showSearch                    | boolean                                   | Whether the search functionality is visible.                                |
-| showBack                      | boolean                                   | Whether the back button is visible.                                         |
-| loadingAppSpinner             | boolean                                   | Whether the loading spinner is visible.                                     |
-| forwardToPostId               | string \| undefined                       | The ID of the post to forward to.                                           |
-| headerTitle                   | string \| undefined                       | The title of the header.                                                    |
-| numberOfUnViewedNotifications | string \| undefined                       | The number of unviewed notifications.                                       |
-| hideHelpIcon                  | boolean                                   | Whether the help icon is hidden.                                            |
-| autoTranslate                 | boolean                                   | Whether auto-translation is enabled.                                        |
-| languageName                  | string \| undefined                       | The name of the current language.                                           |
-| goForwardToPostId             | number \| undefined                       | The ID of the post to go forward to.                                        |
-| showBackToPost                | boolean                                   | Whether the back to post button is visible.                                 |
-| goForwardPostName             | string \| undefined                       | The name of the post to go forward to.                                      |
-| pages                         | Array<YpHelpPageData>                     | The list of help pages.                                                     |
-| headerDescription             | string \| undefined                       | The description of the header.                                              |
-| notifyDialogHeading           | string \| undefined                       | The heading of the notification dialog.                                     |
-| notifyDialogText              | string \| undefined                       | The text of the notification dialog.                                        |
-| route                         | string                                    | The current route of the application.                                       |
-| subRoute                      | string \| undefined                       | The sub-route of the current route.                                         |
-| currentTitle                  | string \| undefined                       | The current title of the application.                                       |
-| routeData                     | Record<string, string>                    | The data associated with the current route.                                 |
-| userDrawerOpened              | boolean                                   | Whether the user drawer is opened.                                          |
-| navDrawerOpened               | boolean                                   | Whether the navigation drawer is opened.                                    |
-| notificationDrawerOpened      | boolean                                   | Whether the notification drawer is opened.                                  |
-| currentTheme                  | YpThemeConfiguration \| undefined         | The current theme configuration.                                            |
-| keepOpenForPost               | string \| undefined                       | The path to keep open for a post.                                           |
-| keepOpenForGroup              | string \| undefined                       | The path to keep open for a group.                                          |
-| breadcrumbs                   | Array<{ name: string; url: string }>      | The list of breadcrumbs for navigation.                                     |
-| anchor                        | HTMLElement \| null                       | The anchor element for certain operations.                                  |
-| previousSearches              | Array<string>                             | The list of previous search queries.                                        |
-| storedBackPath                | string \| undefined                       | The stored back path for navigation.                                        |
-| storedLastDocumentTitle       | string \| undefined                       | The stored last document title.                                             |
-| useHardBack                   | boolean                                   | Whether to use hard back navigation.                                        |
-| _scrollPositionMap            | Record<string, number>                    | A map of scroll positions for different pages.                              |
-| goBackToPostId                | number \| undefined                       | The ID of the post to go back to.                                           |
-| currentPostId                 | number \| undefined                       | The ID of the current post.                                                 |
-| goForwardCount                | number                                    | The count of forward navigations.                                           |
-| firstLoad                     | boolean                                   | Whether it is the first load of the application.                            |
-| communityBackOverride         | Record<string, Record<string, string>> \| undefined | Overrides for community back navigation.                                    |
-| touchXDown                    | number \| undefined                       | The X coordinate of the touch start event.                                  |
-| touchYDown                    | number \| undefined                       | The Y coordinate of the touch start event.                                  |
-| touchXUp                      | number \| undefined                       | The X coordinate of the touch end event.                                    |
-| touchYUp                      | number \| undefined                       | The Y coordinate of the touch end event.                                    |
-| userDrawerOpenedDelayed       | boolean                                   | Whether the user drawer is opened with a delay.                             |
-| navDrawOpenedDelayed          | boolean                                   | Whether the navigation drawer is opened with a delay.                       |
-| haveLoadedAdminApp            | boolean                                   | Whether the admin app has been loaded.                                      |
-| haveLoadedPromotionApp        | boolean                                   | Whether the promotion app has been loaded.                                  |
+| Name                              | Type                                                      | Description                                                                                   |
+|------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| homeLink                          | YpHomeLinkData \| undefined                              | The home link data for navigation.                                                            |
+| page                              | string \| undefined                                       | The current page identifier.                                                                  |
+| scrollPosition                    | number                                                    | The current scroll position of the window.                                                    |
+| appMode                           | "main" \| "admin" \| "promotion" \| "analytics"           | The current application mode.                                                                 |
+| user                              | YpUserData \| undefined                                   | The currently logged-in user data.                                                            |
+| backPath                          | string \| undefined                                       | The path to navigate back to.                                                                 |
+| showSearch                        | boolean                                                   | Whether to show the search UI.                                                                |
+| showBack                          | boolean                                                   | Whether to show the back navigation button.                                                   |
+| loadingAppSpinner                 | boolean                                                   | Whether to show the loading spinner for app transitions.                                      |
+| forwardToPostId                   | string \| undefined                                       | The ID of the post to forward to.                                                             |
+| headerTitle                       | string \| undefined                                       | The current header title.                                                                     |
+| numberOfUnViewedNotifications     | string \| undefined                                       | The number of unviewed notifications (as a string, e.g., "9+").                              |
+| hideHelpIcon                      | boolean                                                   | Whether to hide the help icon in the top bar.                                                 |
+| autoTranslate                     | boolean                                                   | Whether auto-translation is enabled.                                                          |
+| languageName                      | string \| undefined                                       | The name of the current language.                                                             |
+| goForwardToPostId                 | number \| undefined                                       | The ID of the post to go forward to.                                                          |
+| showBackToPost                    | boolean                                                   | Whether to show the "back to post" UI.                                                        |
+| goForwardPostName                 | string \| undefined                                       | The name of the post to go forward to.                                                        |
+| pages                             | Array<YpHelpPageData>                                     | The list of help pages available.                                                             |
+| headerDescription                 | string \| undefined                                       | The current header description.                                                               |
+| notifyDialogHeading               | string \| undefined                                       | The heading for the notification dialog.                                                      |
+| notifyDialogText                  | string \| undefined                                       | The text for the notification dialog.                                                         |
+| route                             | string                                                    | The current route path.                                                                       |
+| subRoute                          | string \| undefined                                       | The sub-route path.                                                                           |
+| currentTitle                      | string \| undefined                                       | The current document title.                                                                   |
+| routeData                         | Record<string, string>                                    | The current route parameters.                                                                 |
+| userDrawerOpened                  | boolean                                                   | Whether the user drawer is open.                                                              |
+| navDrawerOpened                   | boolean                                                   | Whether the navigation drawer is open.                                                        |
+| notificationDrawerOpened          | boolean                                                   | Whether the notification drawer is open.                                                      |
+| currentTheme                      | YpThemeConfiguration \| undefined                         | The current theme configuration.                                                              |
+| keepOpenForPost                   | string \| undefined                                       | The path to keep open for a post (for modal navigation).                                      |
+| keepOpenForGroup                  | string \| undefined                                       | The path to keep open for a group (for modal navigation).                                     |
+| breadcrumbs                       | Array<{ name: string; url: string }>                      | The current navigation breadcrumbs.                                                           |
+
+### Internal/Instance Properties
+
+| Name                              | Type                                                      | Description                                                                                   |
+|------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| anchor                            | HTMLElement \| null                                       | The anchor element for menus.                                                                 |
+| previousSearches                  | Array<string>                                             | List of previous search queries.                                                              |
+| storedBackPath                    | string \| undefined                                       | Stored back path for modal navigation.                                                        |
+| storedLastDocumentTitle           | string \| undefined                                       | Stored document title for modal navigation.                                                   |
+| useHardBack                       | boolean                                                   | Whether to use a hard back navigation (full page reload).                                     |
+| _scrollPositionMap                | Record<string, number>                                    | Map of scroll positions per page.                                                             |
+| goBackToPostId                    | number \| undefined                                       | The ID of the post to go back to.                                                             |
+| currentPostId                     | number \| undefined                                       | The current post ID.                                                                          |
+| goForwardCount                    | number                                                    | The number of times the user has gone forward in post navigation.                             |
+| firstLoad                         | boolean                                                   | Whether this is the first load of the app.                                                    |
+| communityBackOverride             | Record<string, Record<string, string>> \| undefined       | Overrides for community back navigation.                                                      |
+| touchXDown, touchYDown            | number \| undefined                                       | Touch start coordinates for swipe navigation.                                                 |
+| touchXUp, touchYUp                | number \| undefined                                       | Touch end coordinates for swipe navigation.                                                   |
+| userDrawerOpenedDelayed           | boolean                                                   | Delayed state for user drawer open.                                                           |
+| navDrawOpenedDelayed              | boolean                                                   | Delayed state for nav drawer open.                                                            |
+| haveLoadedAdminApp                | boolean                                                   | Whether the admin app has been loaded.                                                        |
+| haveLoadedPromotionApp            | boolean                                                   | Whether the promotion app has been loaded.                                                    |
 
 ## Methods
 
-| Name                          | Parameters                                                                 | Return Type | Description                                                                 |
-|-------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| constructor                   | -                                                                          | -           | Initializes the YpApp instance and sets up global variables and event listeners. |
-| setupAppGlobals               | -                                                                          | void        | Sets up the application globals.                                            |
-| connectedCallback             | -                                                                          | void        | Called when the element is added to the document's DOM.                     |
-| disconnectedCallback          | -                                                                          | void        | Called when the element is removed from the document's DOM.                 |
-| _handleScroll                 | -                                                                          | void        | Handles the scroll event and updates the scroll position.                   |
-| updated                       | changedProperties: Map<string \| number \| symbol, unknown>                | Promise<void> | Called when the element's properties have changed.                          |
-| _navDrawOpened                | event: CustomEvent                                                         | void        | Handles the navigation drawer opened event.                                 |
-| _languageLoaded               | -                                                                          | void        | Handles the language loaded event.                                          |
-| _ypError                      | event: CustomEvent                                                         | void        | Handles the YP error event.                                                 |
-| _netWorkError                 | event: CustomEvent                                                         | void        | Handles the network error event.                                            |
-| _setupEventListeners          | -                                                                          | void        | Sets up the event listeners for the application.                            |
-| _themeUpdated                 | event: CustomEvent                                                         | void        | Handles the theme updated event.                                            |
-| _removeEventListeners         | -                                                                          | void        | Removes the event listeners for the application.                            |
-| static get styles             | -                                                                          | CSSResult[] | Returns the styles for the component.                                       |
-| _haveCopiedNotification       | -                                                                          | void        | Handles the copied notification event.                                      |
-| _appDialogsReady              | event: CustomEvent                                                         | void        | Handles the app dialogs ready event.                                        |
-| get hasStaticBadgeTheme       | -                                                                          | boolean     | Returns whether the badge theme is static.                                  |
-| updateLocation                | -                                                                          | void        | Updates the location based on the current URL.                              |
-| _openUserEdit                 | -                                                                          | void        | Opens the user edit dialog.                                                 |
-| get isFullScreenMode          | -                                                                          | boolean     | Returns whether the application is in full screen mode.                     |
-| renderNavigationIcon          | -                                                                          | TemplateResult | Renders the navigation icon.                                                |
-| renderNavigation              | -                                                                          | TemplateResult | Renders the navigation elements.                                            |
-| _openHelpMenu                 | -                                                                          | void        | Opens the help menu.                                                        |
-| renderNonArrowNavigation      | -                                                                          | TemplateResult | Renders the non-arrow navigation elements.                                  |
-| renderActionItems             | -                                                                          | TemplateResult | Renders the action items in the top bar.                                    |
-| renderTopBar                  | -                                                                          | TemplateResult | Renders the top bar of the application.                                     |
-| renderMainApp                 | -                                                                          | TemplateResult | Renders the main application content.                                       |
-| renderGroupPage               | -                                                                          | TemplateResult | Renders the group page content.                                             |
-| renderPage                    | -                                                                          | TemplateResult | Renders the current page content.                                           |
-| renderDrawers                 | -                                                                          | TemplateResult | Renders the drawers for navigation and notifications.                       |
-| renderFooter                  | -                                                                          | TemplateResult | Renders the footer of the application.                                      |
-| renderAdminApp                | -                                                                          | TemplateResult | Renders the admin application content.                                      |
-| renderPromotionApp            | -                                                                          | TemplateResult | Renders the promotion application content.                                  |
-| render                        | -                                                                          | TemplateResult | Renders the entire application.                                             |
-| _openNotifyDialog             | event: CustomEvent                                                         | void        | Opens the notification dialog.                                              |
-| _openToast                    | event: CustomEvent                                                         | void        | Opens the toast notification.                                               |
-| _resetNotifyDialogText        | -                                                                          | void        | Resets the notification dialog text.                                        |
-| translatedPages               | pages: Array<YpHelpPageData>                                               | Array<YpHelpPageData> | Returns a translated copy of the pages.                                     |
-| openPageFromId                | pageId: number                                                             | void        | Opens a page by its ID.                                                     |
-| _openPageFromMenu             | event: Event                                                               | void        | Opens a page from the menu.                                                 |
-| _openPage                     | page: YpHelpPageData                                                       | void        | Opens a specific page.                                                      |
-| _getPageLocale                | page: YpHelpPageData                                                       | string      | Returns the locale of a page.                                               |
-| _getLocalizePageTitle         | page: YpHelpPageData                                                       | string      | Returns the localized title of a page.                                      |
-| _setPages                     | event: CustomEvent                                                         | void        | Sets the pages property from an event.                                      |
-| _addBackCommunityOverride     | event: CustomEvent                                                         | void        | Adds a back community override from an event.                               |
-| _goToNextPost                 | -                                                                          | void        | Navigates to the next post.                                                 |
-| _goToPreviousPost             | -                                                                          | void        | Navigates to the previous post.                                             |
-| _setNextPost                  | event: CustomEvent                                                         | void        | Sets the next post from an event.                                           |
-| _clearNextPost                | -                                                                          | void        | Clears the next post data.                                                  |
-| _setupSamlCallback            | -                                                                          | void        | Sets up the SAML callback for authentication.                               |
-| _openPageFromEvent            | event: CustomEvent                                                         | void        | Opens a page from an event.                                                 |
-| openUserInfoPage              | pageId: number                                                             | void        | Opens a user info page by its ID.                                           |
-| _setLanguageName              | event: CustomEvent                                                         | void        | Sets the language name from an event.                                       |
-| _autoTranslateEvent           | event: CustomEvent                                                         | void        | Handles the auto-translate event.                                           |
-| _refreshGroup                 | -                                                                          | Promise<void> | Refreshes the group data.                                                   |
-| _refreshCommunity             | -                                                                          | Promise<void> | Refreshes the community data.                                               |
-| _refreshDomain                | -                                                                          | void        | Refreshes the domain data.                                                  |
-| _refreshByName                | id: string                                                                 | Promise<void> | Refreshes a collection by its ID.                                           |
-| _setNumberOfUnViewedNotifications | event: CustomEvent                                                     | void        | Sets the number of unviewed notifications from an event.                    |
-| _redirectTo                   | event: CustomEvent                                                         | void        | Redirects to a path from an event.                                          |
-| _routeChanged                 | -                                                                          | void        | Handles changes to the route.                                               |
-| _routePageChanged             | oldRouteData: Record<string, string>                                       | void        | Handles changes to the route page.                                          |
-| loadDataViz                   | -                                                                          | void        | Loads the data visualization component.                                     |
-| _pageChanged                  | -                                                                          | void        | Handles changes to the page.                                                |
-| openResetPasswordDialog       | resetPasswordToken: string                                                 | void        | Opens the reset password dialog.                                            |
-| openUserNotificationsDialog   | -                                                                          | void        | Opens the user notifications dialog.                                        |
-| openAcceptInvitationDialog    | inviteToken: string                                                        | void        | Opens the accept invitation dialog.                                         |
-| _showPage404                  | -                                                                          | void        | Shows the 404 page.                                                         |
-| _setHomeLink                  | event: CustomEvent                                                         | void        | Sets the home link from an event.                                           |
-| setKeepOpenForPostsOn         | goBackToPage: string                                                       | void        | Sets the keep open for posts on a specific page.                            |
-| _resetKeepOpenForPage         | -                                                                          | void        | Resets the keep open for page data.                                         |
-| _closeForGroup                | -                                                                          | void        | Closes the group view.                                                      |
-| _closePost                    | -                                                                          | void        | Closes the post view.                                                       |
-| get closePostHeader           | -                                                                          | boolean     | Returns whether the post header is closed.                                  |
-| _isGroupOpen                  | params: { groupId?: number; postId?: number }, keepOpenForPost: boolean     | boolean     | Returns whether a group is open.                                            |
-| _isCommunityOpen              | params: { communityId?: number; postId?: number }, keepOpenForPost: boolean | boolean     | Returns whether a community is open.                                        |
-| _isDomainOpen                 | params: { domainId?: number; postId?: number }, keepOpenForPost: boolean    | boolean     | Returns whether a domain is open.                                           |
-| _openNavDrawer                | -                                                                          | Promise<void> | Opens the navigation drawer.                                                |
-| _closeNavDrawer               | -                                                                          | Promise<void> | Closes the navigation drawer.                                               |
-| getDialogAsync                | idName: string, callback: Function                                         | Promise<void> | Gets a dialog asynchronously.                                               |
-| closeDialog                   | idName: string                                                             | void        | Closes a dialog by its ID.                                                  |
-| _dialogClosed                 | event: CustomEvent                                                         | void        | Handles the dialog closed event.                                            |
-| scrollPageToTop               | -                                                                          | void        | Scrolls the page to the top.                                                |
-| _openUserDrawer               | -                                                                          | Promise<void> | Opens the user drawer.                                                      |
-| _closeUserDrawer              | -                                                                          | Promise<void> | Closes the user drawer.                                                     |
-| _openNotificationDrawer       | -                                                                          | Promise<void> | Opens the notification drawer.                                              |
-| _closeNotificationDrawer      | -                                                                          | Promise<void> | Closes the notification drawer.                                             |
-| get isOnDomainLoginPageAndNotLoggedIn | -                                                                  | boolean     | Returns whether the user is on the domain login page and not logged in.     |
-| _login                        | -                                                                          | void        | Initiates the login process.                                                |
-| _onChangeHeader               | event: CustomEvent                                                         | void        | Handles changes to the header.                                              |
-| updateBreadcrumbs             | newBreadcrumb: { name: string; url: string }                               | void        | Updates the breadcrumbs for navigation.                                     |
-| goBack                        | -                                                                          | void        | Navigates back to the previous page.                                        |
-| _onSearch                     | e: CustomEvent                                                             | void        | Handles the search event.                                                   |
-| _onUserChanged                | event: CustomEvent                                                         | void        | Handles changes to the user data.                                           |
-| toggleSearch                  | -                                                                          | void        | Toggles the search functionality.                                           |
-| _handleKeyDown                | event: KeyboardEvent                                                       | void        | Handles the key down event.                                                 |
-| _setupTouchEvents             | -                                                                          | void        | Sets up touch events for the application.                                   |
-| _removeTouchEvents            | -                                                                          | void        | Removes touch events for the application.                                   |
-| _handleTouchStart             | event: any                                                                 | void        | Handles the touch start event.                                              |
-| _handleTouchMove              | event: any                                                                 | void        | Handles the touch move event.                                               |
-| _handleTouchEnd               | -                                                                          | void        | Handles the touch end event.                                                |
+| Name                                 | Parameters                                                                 | Return Type         | Description                                                                                   |
+|-------------------------------------- |----------------------------------------------------------------------------|---------------------|-----------------------------------------------------------------------------------------------|
+| constructor                          | -                                                                          | void                | Initializes the app, sets up global singletons, and translation system.                       |
+| setupAppGlobals                      | -                                                                          | void                | Sets up global app globals.                                                                   |
+| connectedCallback                    | -                                                                          | void                | Lifecycle: sets up event listeners and routing.                                               |
+| disconnectedCallback                 | -                                                                          | void                | Lifecycle: removes event listeners.                                                           |
+| updated                              | changedProperties: Map<string \| number \| symbol, unknown>                | Promise<void>       | Handles updates, including dynamic loading of admin/promotion apps.                           |
+| _navDrawOpened                       | event: CustomEvent                                                         | void                | Handles nav drawer open/close with delay.                                                     |
+| _languageLoaded                      | -                                                                          | void                | Sets language loaded flag.                                                                    |
+| _ypError                             | event: CustomEvent                                                         | void                | Handles application errors and opens error dialog.                                            |
+| _netWorkError                        | event: CustomEvent                                                         | void                | Handles network errors and opens error dialog.                                                |
+| _setupEventListeners                 | -                                                                          | void                | Adds all global and local event listeners.                                                    |
+| _themeUpdated                        | event: CustomEvent                                                         | void                | Updates the theme configuration.                                                              |
+| _removeEventListeners                | -                                                                          | void                | Removes all global and local event listeners.                                                 |
+| _haveCopiedNotification              | -                                                                          | void                | Shows a notification that content was copied to clipboard.                                    |
+| _appDialogsReady                     | event: CustomEvent                                                         | void                | Sets global appDialogs when ready.                                                            |
+| hasStaticBadgeTheme                  | -                                                                          | boolean             | Returns true if the current theme uses a static badge color.                                  |
+| updateLocation                       | -                                                                          | void                | Updates the route and app mode based on the current URL.                                      |
+| _openUserEdit                        | -                                                                          | void                | Opens the user edit dialog.                                                                   |
+| isFullScreenMode                     | -                                                                          | boolean             | Returns true if the app is in full screen mode (agent workflow).                              |
+| renderNavigationIcon                 | -                                                                          | TemplateResult      | Renders the navigation icon button.                                                           |
+| renderNavigation                     | -                                                                          | TemplateResult      | Renders the navigation/back/close icons based on state.                                       |
+| _openHelpMenu                        | -                                                                          | void                | Opens the help menu.                                                                          |
+| renderNonArrowNavigation             | -                                                                          | TemplateResult      | Renders the non-arrow navigation icon.                                                        |
+| renderActionItems                    | -                                                                          | TemplateResult      | Renders the action items in the top bar (help, notifications, user, login, etc).              |
+| renderTopBar                         | -                                                                          | TemplateResult      | Renders the top app bar.                                                                      |
+| renderMainApp                        | -                                                                          | TemplateResult      | Renders the main app content area.                                                            |
+| renderGroupPage                      | -                                                                          | TemplateResult      | Renders the group page.                                                                       |
+| renderPage                           | -                                                                          | TemplateResult      | Renders the current page based on the route.                                                  |
+| renderDrawers                        | -                                                                          | TemplateResult      | Renders the navigation, notification, and user drawers.                                       |
+| renderFooter                         | -                                                                          | TemplateResult      | Renders the app footer, including update toast and dialogs.                                   |
+| renderAdminApp                       | -                                                                          | TemplateResult      | Renders the admin app if in admin mode.                                                       |
+| renderPromotionApp                   | -                                                                          | TemplateResult      | Renders the promotion/analytics app if in those modes.                                        |
+| render                               | -                                                                          | TemplateResult      | Main render method for the app.                                                               |
+| _openNotifyDialog                    | event: CustomEvent                                                         | void                | Opens the notification dialog with provided text.                                             |
+| _openToast                           | event: CustomEvent                                                         | void                | Opens the snackbar toast with provided text.                                                  |
+| _resetNotifyDialogText               | -                                                                          | void                | Resets and closes the notification dialog.                                                    |
+| translatedPages                      | pages: Array<YpHelpPageData>                                               | Array<YpHelpPageData>| Returns a deep copy of the help pages array.                                                  |
+| openPageFromId                       | pageId: number                                                             | void                | Opens a help page by its ID.                                                                  |
+| _openPageFromMenu                    | event: Event                                                               | void                | Opens a help page from the help menu.                                                         |
+| _openPage                            | page: YpHelpPageData                                                       | void                | Opens a help page dialog.                                                                     |
+| _getPageLocale                       | page: YpHelpPageData                                                       | string              | Gets the best locale for a help page.                                                         |
+| _getLocalizePageTitle                | page: YpHelpPageData                                                       | string              | Gets the localized title for a help page.                                                     |
+| _setPages                            | event: CustomEvent                                                         | void                | Sets the help pages array.                                                                    |
+| _addBackCommunityOverride            | event: CustomEvent                                                         | void                | Adds a back navigation override for a community.                                              |
+| _goToNextPost                        | -                                                                          | void                | Navigates to the next recommended post.                                                       |
+| _goToPreviousPost                    | -                                                                          | void                | Navigates back to the previous post.                                                          |
+| _setNextPost                         | event: CustomEvent                                                         | void                | Sets the next post to navigate to.                                                            |
+| _clearNextPost                       | -                                                                          | void                | Clears the next post navigation state.                                                        |
+| _setupSamlCallback                   | -                                                                          | void                | Sets up SAML login callback listener.                                                         |
+| _openPageFromEvent                   | event: CustomEvent                                                         | void                | Opens a help page from a custom event.                                                        |
+| openUserInfoPage                     | pageId: number                                                             | void                | Opens a user info help page by its index.                                                     |
+| _setLanguageName                     | event: CustomEvent                                                         | void                | Sets the current language name.                                                               |
+| _autoTranslateEvent                  | event: CustomEvent                                                         | void                | Sets the auto-translate state.                                                                |
+| _refreshGroup                        | -                                                                          | Promise<void>       | Refreshes the group page.                                                                     |
+| _refreshCommunity                    | -                                                                          | Promise<void>       | Refreshes the community page.                                                                 |
+| _refreshDomain                       | -                                                                          | void                | Refreshes the domain page.                                                                    |
+| _refreshByName                       | id: string                                                                 | Promise<void>       | Refreshes a collection page by its element ID.                                                |
+| _setNumberOfUnViewedNotifications    | event: CustomEvent                                                         | void                | Sets the number of unviewed notifications.                                                    |
+| _redirectTo                          | event: CustomEvent                                                         | void                | Redirects to a given path.                                                                    |
+| _routeChanged                        | -                                                                          | Promise<void>       | Handles route changes and updates the page.                                                   |
+| _routePageChanged                    | oldRouteData: Record<string, string>                                       | void                | Handles changes to the route page and manages scroll/transition logic.                        |
+| loadDataViz                          | -                                                                          | void                | Loads the data visualization dialog.                                                          |
+| _pageChanged                         | -                                                                          | void                | Handles logic when the page changes (analytics, etc).                                         |
+| openResetPasswordDialog              | resetPasswordToken: string                                                 | void                | Opens the reset password dialog.                                                              |
+| openUserNotificationsDialog          | -                                                                          | void                | Opens the user notifications dialog.                                                          |
+| openAcceptInvitationDialog           | inviteToken: string                                                        | void                | Opens the accept invitation dialog.                                                           |
+| _showPage404                         | -                                                                          | void                | Sets the page to the 404 view.                                                                |
+| _setHomeLink                         | event: CustomEvent                                                         | void                | Sets the home link data.                                                                      |
+| setKeepOpenForPostsOn                | goBackToPage: string                                                       | void                | Sets the keep open for post modal navigation state.                                           |
+| _resetKeepOpenForPage                | -                                                                          | void                | Resets the keep open for page state.                                                          |
+| _closeForGroup                       | -                                                                          | void                | Closes the group modal navigation.                                                            |
+| _closePost                           | -                                                                          | void                | Closes the post modal navigation.                                                             |
+| closePostHeader (getter)             | -                                                                          | boolean             | Returns true if the post header should be closed.                                             |
+| _isGroupOpen                         | params: { groupId?: number; postId?: number }, keepOpenForPost?: boolean   | boolean             | Returns true if a group is open.                                                              |
+| _isCommunityOpen                     | params: { communityId?: number; postId?: number }, keepOpenForPost?: boolean| boolean            | Returns true if a community is open.                                                          |
+| _isDomainOpen                        | params: { domainId?: number; postId?: number }, keepOpenForPost?: boolean  | boolean             | Returns true if a domain is open.                                                             |
+| _openNavDrawer                       | -                                                                          | Promise<void>       | Opens the navigation drawer.                                                                  |
+| _closeNavDrawer                      | -                                                                          | Promise<void>       | Closes the navigation drawer.                                                                 |
+| getDialogAsync                       | idName: string, callback: Function                                         | Promise<void>       | Gets a dialog asynchronously from the dialog container.                                        |
+| closeDialog                          | idName: string                                                             | void                | Closes a dialog by ID.                                                                        |
+| _dialogClosed                        | event: CustomEvent                                                         | void                | Handles dialog closed events.                                                                 |
+| scrollPageToTop                      | -                                                                          | void                | Scrolls the main area to the top.                                                             |
+| _openUserDrawer                      | -                                                                          | Promise<void>       | Opens the user drawer.                                                                        |
+| _closeUserDrawer                     | -                                                                          | Promise<void>       | Closes the user drawer.                                                                       |
+| _openNotificationDrawer              | -                                                                          | Promise<void>       | Opens the notification drawer.                                                                |
+| _closeNotificationDrawer             | -                                                                          | Promise<void>       | Closes the notification drawer.                                                               |
+| isOnDomainLoginPageAndNotLoggedIn    | -                                                                          | boolean             | Returns true if on the domain login page and not logged in.                                   |
+| isOnAgentBundleLoginPageAndNotLoggedIn| -                                                                         | boolean             | Returns true if on the agent bundle login page and not logged in.                             |
+| _login                               | -                                                                          | void                | Initiates the login process.                                                                  |
+| _onChangeHeader                      | event: CustomEvent                                                         | void                | Handles changes to the header (title, breadcrumbs, etc).                                      |
+| updateBreadcrumbs                    | newBreadcrumb: { name: string; url: string }                               | void                | Updates the navigation breadcrumbs.                                                           |
+| goBack                               | -                                                                          | void                | Navigates back to the previous page or path.                                                  |
+| _onSearch                            | e: CustomEvent                                                             | void                | Handles search events.                                                                        |
+| _onUserChanged                       | event: CustomEvent                                                         | void                | Handles user login/logout events.                                                             |
+| toggleSearch                         | -                                                                          | void                | Toggles the search UI.                                                                        |
+| _handleKeyDown                       | event: KeyboardEvent                                                       | void                | Handles keyboard events (e.g., Escape for closing modals).                                    |
+| _setupTouchEvents                    | -                                                                          | void                | Sets up touch event listeners for swipe navigation.                                           |
+| _removeTouchEvents                   | -                                                                          | void                | Removes touch event listeners.                                                                |
+| _handleTouchStart                    | event: any                                                                 | void                | Handles touch start for swipe navigation.                                                     |
+| _handleTouchMove                     | event: any                                                                 | void                | Handles touch move for swipe navigation.                                                      |
+| _handleTouchEnd                      | -                                                                          | void                | Handles touch end for swipe navigation.                                                       |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpApp component
-import { html, LitElement } from "lit";
+import { html, render } from "lit";
 import "./yp-app.js";
 
-class MyApp extends LitElement {
-  render() {
-    return html`
-      <yp-app></yp-app>
-    `;
-  }
-}
+const app = document.createElement("yp-app");
+document.body.appendChild(app);
 
-customElements.define("my-app", MyApp);
+// Access global app state
+console.log(window.app.user);
+
+// Programmatically open a help page
+window.app.openPageFromId(123);
+
+// Open the user drawer
+window.app._openUserDrawer();
 ```

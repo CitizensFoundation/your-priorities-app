@@ -1,89 +1,89 @@
 # YpPost
 
-The `YpPost` class is a custom web component that extends `YpCollection`. It represents a post within a group, providing functionalities to navigate between posts, render post details, and manage post-related actions.
+A custom web component for displaying and managing a single post within a group context. It provides navigation between posts, tabbed views (debate, news, location, photos), and integrates with group/community theming, analytics, and access control. Inherits from `YpCollection`.
 
 ## Properties
 
-| Name               | Type                     | Description                                                                 |
-|--------------------|--------------------------|-----------------------------------------------------------------------------|
-| isAdmin            | boolean                  | Indicates if the current user has admin privileges for the post.            |
-| disableNewPosts    | boolean                  | Determines if new posts can be added.                                       |
-| currentPage        | string \| undefined      | The current page identifier.                                                |
-| post               | YpPostData \| undefined  | The data object representing the current post.                              |
-| scrollToPointId    | number \| undefined      | The ID of the point to scroll to within the post.                           |
-| debateCount        | string \| undefined      | The count of debates associated with the post.                              |
-| photosCount        | string \| undefined      | The count of photos associated with the post.                               |
-| currentPostIndex   | number \| undefined      | The index of the current post in the group.                                 |
-| totalPosts         | number \| undefined      | The total number of posts in the group.                                     |
-| postPositionCounter| string                   | A string representing the position of the post within the group.            |
+| Name                | Type                        | Description                                                                                 |
+|---------------------|-----------------------------|---------------------------------------------------------------------------------------------|
+| isAdmin             | boolean                     | Indicates if the current user has admin privileges for the post.                            |
+| disableNewPosts     | boolean                     | If true, disables the ability to add new posts.                                             |
+| currentPage         | string \| undefined         | The current page context (e.g., "post").                                                    |
+| post                | YpPostData \| undefined     | The post data object being displayed.                                                       |
+| scrollToPointId     | number \| undefined         | If set, scrolls to a specific point within the post.                                        |
+| debateCount         | string \| undefined         | The number of debates associated with the post (formatted).                                 |
+| photosCount         | string \| undefined         | The number of photos associated with the post (formatted).                                  |
+| currentPostIndex    | number \| undefined         | The index of the current post within the group.                                             |
+| totalPosts          | number \| undefined         | The total number of posts in the group.                                                     |
+| postPositionCounter | string                      | A string representing the current post's position (e.g., "2 / 10").                         |
 
 ## Methods
 
-| Name                                      | Parameters                          | Return Type | Description                                                                 |
-|-------------------------------------------|-------------------------------------|-------------|-----------------------------------------------------------------------------|
-| scrollToCollectionItemSubClass            | -                                   | void        | Resets the scroll point ID.                                                 |
-| constructor                               | -                                   | -           | Initializes the component with default values.                              |
-| scrollToCollection_processIncomingPostItemSubClass | -                                   | void        | Placeholder method for processing incoming post items.                      |
-| setupTheme                                | -                                   | void        | Sets up the theme based on the post's group configuration.                  |
-| get styles                                | -                                   | CSSResult[] | Returns the styles for the component.                                       |
-| get leftArrowDisabled                     | -                                   | boolean     | Determines if the left navigation arrow should be disabled.                 |
-| get rightArrowDisabled                    | -                                   | boolean     | Determines if the right navigation arrow should be disabled.                |
-| get bothArrowsDisabled                    | -                                   | boolean     | Determines if both navigation arrows should be disabled.                    |
-| handleKeydown                             | event: KeyboardEvent                | void        | Handles keyboard navigation for posts.                                      |
-| renderPostStaticHeader                    | -                                   | TemplateResult | Renders the static header of the post.                                      |
-| renderPostHeader                          | -                                   | TemplateResult | Renders the header of the post.                                             |
-| renderPostTabs                            | -                                   | TemplateResult | Renders the tabs for the post.                                              |
-| renderCurrentPostTabPage                  | -                                   | TemplateResult \| undefined | Renders the content of the currently selected post tab.                     |
-| goToPreviousPost                          | -                                   | void        | Navigates to the previous post in the group.                                |
-| goToNextPost                              | -                                   | void        | Navigates to the next post in the group.                                    |
-| renderNavigationButtons                   | -                                   | TemplateResult | Renders the navigation buttons for the post.                                |
-| get isEditingPost                         | -                                   | boolean     | Determines if the post is currently being edited.                           |
-| get forAgentBundle                        | -                                   | boolean     | Checks if the post is for an agent bundle.                                  |
-| render                                    | -                                   | TemplateResult | Renders the component.                                                      |
-| get tabDebateCount                        | -                                   | string      | Returns the label for the debate tab with the count.                        |
-| get tabPhotosCount                        | -                                   | string      | Returns the label for the photos tab with the count.                        |
-| _selectedTabChanged                       | -                                   | void        | Handles changes to the selected tab.                                        |
-| updated                                   | changedProperties: Map<string \| number \| symbol, unknown> | void | Called when the component is updated.                                       |
-| get isPostPage                            | -                                   | boolean     | Determines if the current page is a post page.                              |
-| _newPost                                  | -                                   | void        | Triggers the creation of a new post.                                        |
-| connectedCallback                         | -                                   | void        | Lifecycle method called when the component is added to the DOM.             |
-| disconnectedCallback                      | -                                   | void        | Lifecycle method called when the component is removed from the DOM.         |
-| _updatePostImageCount                     | event: CustomEvent                  | void        | Updates the count of images in the post.                                    |
-| _updateDebateInfo                         | event: CustomEvent                  | void        | Updates the debate information for the post.                                |
-| _mainContainerClasses                     | -                                   | string      | Returns the CSS classes for the main container.                             |
-| _headerClasses                            | -                                   | string      | Returns the CSS classes for the header.                                     |
-| get postName                              | -                                   | string      | Returns the truncated name of the post.                                     |
-| get postDescription                       | -                                   | string      | Returns the truncated description of the post.                              |
-| getCollection                             | -                                   | Promise<void> | Placeholder method for getting the collection.                              |
-| _getPost                                  | -                                   | Promise<void> | Fetches the post data from the server.                                      |
-| collectionIdChanged                       | -                                   | void        | Handles changes to the collection ID.                                       |
-| _processIncomingPost                      | fromCache: boolean = false          | void        | Processes the incoming post data.                                           |
-| updatePostPosition                        | postsList: YpPostData[]             | void        | Updates the position of the post within the group.                          |
-| fetchGroupPosts                           | -                                   | Promise<void> | Fetches the posts for the group from the server.                            |
-| setPostPositionCounter                    | -                                   | void        | Sets the post position counter string.                                      |
-| _processRecommendation                    | recommendedPost: YpPostData         | void        | Processes the recommended post data.                                        |
-| refresh                                   | -                                   | void        | Refreshes the component with the latest post data.                          |
+| Name                                 | Parameters                                                                 | Return Type         | Description                                                                                                 |
+|-------------------------------------- |----------------------------------------------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------|
+| scrollToCollectionItemSubClass        | none                                                                       | void                | Resets `scrollToPointId` to undefined.                                                                      |
+| constructor                          | none                                                                       | YpPost              | Initializes the component with default values and parent constructor.                                        |
+| scrollToCollection_processIncomingPostItemSubClass | none                                                        | void                | Placeholder for processing incoming post item (currently does nothing).                                      |
+| setupTheme                           | none                                                                       | void                | Sets up the theme for the post based on group/community configuration.                                       |
+| static get styles                    | none                                                                       | CSSResult[]         | Returns the component's styles.                                                                              |
+| leftArrowDisabled (getter)           | none                                                                       | boolean             | Returns true if the left navigation arrow should be disabled.                                                |
+| rightArrowDisabled (getter)          | none                                                                       | boolean             | Returns true if the right navigation arrow should be disabled.                                               |
+| bothArrowsDisabled (getter)          | none                                                                       | boolean             | Returns true if both navigation arrows should be disabled.                                                   |
+| handleKeydown                        | event: KeyboardEvent                                                       | void                | Handles keyboard navigation (left/right arrows, escape).                                                     |
+| renderPostStaticHeader               | none                                                                       | TemplateResult      | Renders the static post header.                                                                              |
+| renderPostHeader                     | none                                                                       | TemplateResult      | Renders the main post header.                                                                                |
+| renderPostTabs                       | none                                                                       | TemplateResult      | Renders the tab navigation for the post (debate, news, location, photos).                                   |
+| renderCurrentPostTabPage             | none                                                                       | TemplateResult \| undefined | Renders the content for the currently selected tab.                                                          |
+| goToPreviousPost                     | none                                                                       | void                | Navigates to the previous post in the group.                                                                 |
+| goToNextPost                         | none                                                                       | void                | Navigates to the next post in the group.                                                                     |
+| renderNavigationButtons              | none                                                                       | TemplateResult      | Renders the left/right navigation buttons.                                                                   |
+| isEditingPost (getter)               | none                                                                       | boolean             | Returns true if the post is currently being edited.                                                          |
+| forAgentBundle (getter)              | none                                                                       | any                 | Returns the `forAgentBundle` query parameter from global state.                                              |
+| render (override)                    | none                                                                       | TemplateResult      | Main render method for the component.                                                                        |
+| tabDebateCount (getter)              | none                                                                       | string              | Returns the label for the debate tab, including the debate count.                                            |
+| tabPhotosCount (getter)              | none                                                                       | string              | Returns the label for the photos tab, including the photos count.                                            |
+| _selectedTabChanged                  | none                                                                       | void                | Handles logic when the selected tab changes.                                                                 |
+| updated (override)                   | changedProperties: Map<string \| number \| symbol, unknown>                | void                | Lifecycle method called when properties are updated.                                                         |
+| isPostPage (getter)                  | none                                                                       | boolean             | Returns true if the current page is "post".                                                                  |
+| _newPost                             | none                                                                       | void                | Fires an event to create a new post.                                                                         |
+| connectedCallback (override)         | none                                                                       | void                | Lifecycle method called when the component is added to the DOM.                                              |
+| disconnectedCallback (override)      | none                                                                       | void                | Lifecycle method called when the component is removed from the DOM.                                          |
+| _updatePostImageCount                | event: CustomEvent                                                         | void                | Updates the photos count when the image count changes.                                                       |
+| _updateDebateInfo                    | event: CustomEvent                                                         | void                | Updates the debate count when debate info changes.                                                           |
+| _mainContainerClasses                | none                                                                       | string              | Returns the CSS classes for the main container based on layout.                                              |
+| _headerClasses                       | none                                                                       | string              | Returns the CSS classes for the header based on layout.                                                      |
+| postName (getter)                    | none                                                                       | string              | Returns the truncated and trimmed post name.                                                                 |
+| postDescription (getter)             | none                                                                       | string              | Returns the truncated and trimmed post description.                                                          |
+| getCollection (override)             | none                                                                       | Promise<void>       | Warns if trying to get a collection in the post context.                                                     |
+| _getPost                             | none                                                                       | Promise<void>       | Fetches the post data from the server and processes it.                                                      |
+| collectionIdChanged (override)       | none                                                                       | void                | Handles logic when the collection ID changes (fetches from cache or server as needed).                       |
+| _processIncomingPost                 | fromCache?: boolean                                                        | void                | Processes the incoming post data, updates cache, and sets admin status.                                      |
+| updatePostPosition                   | postsList: YpPostData[]                                                    | void                | Updates the current post index and total posts based on the posts list.                                      |
+| fetchGroupPosts                      | none                                                                       | Promise<void>       | Fetches the list of posts for the group and updates cache and position.                                      |
+| setPostPositionCounter               | none                                                                       | void                | Sets the `postPositionCounter` string based on current index and total posts.                                |
+| _processRecommendation               | recommendedPost: YpPostData                                                | void                | Processes a recommended post and fires an event for navigation.                                              |
+| refresh (override)                   | none                                                                       | void                | Refreshes the component, updates analytics, access, and other group/post-related state.                      |
+
+## Events
+
+- **yp-scroll-to-post-for-group-id**: Fired when navigating to a previous or next post, with `{ groupId, postId }`.
+- **yp-new-post**: Fired when the user initiates creating a new post, with `{ group }`.
+- **yp-set-next-post**: Fired when a recommended post is processed, with `{ currentPostId, goForwardToPostId, goForwardPostName }`.
+- **yp-change-header**: Fired to update the app header, with `{ headerTitle, documentTitle, headerDescription, backPath, backListItem, hideHelpIcon }`.
+- **yp-set-home-link**: Fired to set the home link, with `{ type, id, name }`.
+- **yp-set-next-post**: Fired when a new recommended post is available for navigation.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPost component
 import './yp-post.js';
 
 const postElement = document.createElement('yp-post');
+postElement.collectionId = 12345; // Set the post ID to display
 document.body.appendChild(postElement);
 
-postElement.post = {
-  id: 1,
-  name: 'Sample Post',
-  description: 'This is a sample post description.',
-  group_id: 123,
-  Group: {
-    id: 123,
-    name: 'Sample Group',
-    configuration: {
-      theme: 'dark',
-    },
-  },
-};
+// Listen for new post event
+postElement.addEventListener('yp-new-post', (e) => {
+  console.log('Create new post for group:', e.detail.group);
+});
 ```

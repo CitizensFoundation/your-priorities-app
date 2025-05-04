@@ -1,102 +1,107 @@
 # YpContentModeration
 
-The `YpContentModeration` class is a custom web component that extends `YpBaseElement`. It provides a user interface for moderating content items, such as posts and points, within a group, community, domain, or user context. The component includes features for sorting, filtering, and performing actions on selected content items.
+A web component for moderating content items (posts, points, etc.) in a collection (group, community, domain, or user). Provides a grid interface for reviewing, filtering, sorting, and performing moderation actions (approve, block, delete, anonymize, clear flags) on selected or individual items. Integrates with Material Web Components and Vaadin Grid.
 
 ## Properties
 
-| Name                    | Type                                                                 | Description                                                                 |
-|-------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| `multiSortEnabled`      | `boolean`                                                            | Indicates if multi-sort is enabled for the grid.                            |
-| `opened`                | `boolean`                                                            | Indicates if the component is opened.                                       |
-| `showReload`            | `boolean`                                                            | Indicates if the reload button should be shown.                             |
-| `forceSpinner`          | `boolean`                                                            | Forces the display of a loading spinner.                                    |
-| `selectedItemsEmpty`    | `boolean`                                                            | Indicates if there are no selected items.                                   |
-| `items`                 | `Array<YpModerationItem> \| undefined`                               | The list of moderation items to display.                                    |
-| `selectedItems`         | `Array<YpModerationItem> \| undefined`                               | The list of currently selected moderation items.                            |
-| `headerText`            | `string \| undefined`                                                | The text to display in the header.                                          |
-| `groupId`               | `number \| undefined`                                                | The ID of the group being moderated.                                        |
-| `communityId`           | `number \| undefined`                                                | The ID of the community being moderated.                                    |
-| `domainId`              | `number \| undefined`                                                | The ID of the domain being moderated.                                       |
-| `userId`                | `number \| undefined`                                                | The ID of the user being moderated.                                         |
-| `selected`              | `YpDatabaseItem \| undefined`                                        | The currently selected database item.                                       |
-| `modelType`             | `string \| undefined`                                                | The type of model being moderated (e.g., groups, communities).              |
-| `selectedItemsCount`    | `number`                                                             | The count of selected items.                                                |
-| `selectedItemIdsAndType`| `Array<SelectedItemIdsAndType> \| undefined`                         | The IDs and types of selected items.                                        |
-| `selectedItemId`        | `number \| undefined`                                                | The ID of the selected item.                                                |
-| `selectedModelClass`    | `string \| undefined \| null`                                        | The class of the selected model.                                            |
-| `collectionName`        | `string \| undefined`                                                | The name of the collection being moderated.                                 |
-| `itemsCountText`        | `string \| undefined`                                                | The text to display for the item count.                                     |
-| `resizeTimeout`         | `any \| undefined`                                                   | Timeout for resizing operations.                                            |
-| `typeOfModeration`      | `"moderate_all_content" \| "flagged_content"`                        | The type of moderation being performed.                                     |
-| `activeItem`            | `YpDatabaseItem \| undefined`                                        | The currently active item in the grid.                                      |
-| `allowGridEventsAfterMenuOpen` | `boolean`                                                     | Allows grid events after a menu is opened.                                  |
+| Name                    | Type                                                                 | Description                                                                                      |
+|-------------------------|----------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| multiSortEnabled        | boolean                                                              | Enables or disables multi-column sorting in the grid.                                            |
+| opened                  | boolean                                                              | Indicates if the moderation dialog is open.                                                      |
+| showReload              | boolean                                                              | Shows the reload button if true.                                                                 |
+| forceSpinner            | boolean                                                              | Forces the spinner to be active, typically during async operations.                              |
+| selectedItemsEmpty      | boolean                                                              | True if no items are selected in the grid.                                                       |
+| items                   | Array&lt;YpModerationItem&gt; \| undefined                          | The list of moderation items displayed in the grid.                                              |
+| selectedItems           | Array&lt;YpModerationItem&gt; \| undefined                          | The currently selected items in the grid.                                                        |
+| headerText              | string \| undefined                                                  | The header text displayed above the grid.                                                        |
+| groupId                 | number \| undefined                                                  | The group ID for which content is being moderated.                                               |
+| communityId             | number \| undefined                                                  | The community ID for which content is being moderated.                                           |
+| domainId                | number \| undefined                                                  | The domain ID for which content is being moderated.                                              |
+| userId                  | number \| undefined                                                  | The user ID for which content is being moderated.                                                |
+| selected                | YpDatabaseItem \| undefined                                          | The currently selected database item.                                                            |
+| modelType               | string \| undefined                                                  | The type of model being moderated (e.g., "groups", "communities", "domains", "users").          |
+| selectedItemsCount      | number                                                               | The number of selected items.                                                                    |
+| selectedItemIdsAndType  | Array&lt;SelectedItemIdsAndType&gt; \| undefined                    | Array of selected item IDs and their model types.                                                |
+| selectedItemId          | number \| undefined                                                  | The ID of the currently selected item.                                                           |
+| selectedModelClass      | string \| undefined \| null                                          | The model class of the currently selected item.                                                  |
+| collectionName          | string \| undefined                                                  | The name of the collection being moderated.                                                      |
+| itemsCountText          | string \| undefined                                                  | Text describing the count of items (e.g., "items", "contentItemsFlagged").                       |
+| resizeTimeout           | any \| undefined                                                     | Timeout ID for throttling resize events.                                                         |
+| typeOfModeration        | "moderate_all_content" \| "flagged_content"                          | The type of moderation being performed.                                                          |
+| activeItem              | YpDatabaseItem \| undefined                                          | The currently active item (for details view).                                                    |
+| allowGridEventsAfterMenuOpen | boolean                                                        | Internal flag to allow grid events after menu is opened.                                         |
 
 ## Methods
 
-| Name                        | Parameters                                                                 | Return Type | Description                                                                 |
-|-----------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| `updated`                   | `changedProperties: Map<string \| number \| symbol, unknown>`              | `void`      | Called when the component is updated.                                       |
-| `renderContent`             | `root: HTMLElement, column: any, rowData: RowData`                         | `void`      | Renders the content for a grid cell.                                        |
-| `renderItemDetail`          | `root: HTMLElement, column: any, rowData: RowData`                         | `void`      | Renders the details for a grid row.                                         |
-| `renderActionHeader`        | `root: HTMLElement, column?: GridColumnElement \| undefined`               | `void`      | Renders the action header for the grid.                                     |
-| `renderAction`              | `root: HTMLElement, column: any, rowData: RowData`                         | `void`      | Renders the action menu for a grid cell.                                    |
-| `render`                    | `none`                                                                     | `TemplateResult` | Renders the component's template.                                           |
-| `spinnerActive`             | `none`                                                                     | `boolean`   | Returns whether the spinner is active.                                      |
-| `_ajaxError`                | `error: any \| undefined`                                                  | `void`      | Handles AJAX errors.                                                        |
-| `_reload`                   | `none`                                                                     | `Promise<void>` | Reloads the data.                                                           |
-| `_masterRequest`            | `action: string, itemIdsAndType: Array<SelectedItemIdsAndType> \| undefined` | `Promise<void>` | Sends a master request for an action on items.                              |
-| `_generateRequest`          | `id: number`                                                               | `Promise<void>` | Generates a request for items based on an ID.                               |
-| `_itemsResponse`            | `items: Array<YpModerationItem>`                                           | `void`      | Handles the response for items.                                             |
-| `onlyFlaggedItems`          | `none`                                                                     | `boolean`   | Returns whether only flagged items are being moderated.                     |
-| `_manyItemsResponse`        | `none`                                                                     | `void`      | Handles the response for many items.                                        |
-| `_singleItemResponse`       | `none`                                                                     | `void`      | Handles the response for a single item.                                     |
-| `_menuSelection`            | `none`                                                                     | `void`      | Handles menu selection events.                                              |
-| `_reallyAnonymize`          | `none`                                                                     | `Promise<void>` | Anonymizes the selected items.                                              |
-| `_reallyAnonymizeSelected`  | `none`                                                                     | `Promise<void>` | Anonymizes the selected items.                                              |
-| `_reallyDelete`             | `none`                                                                     | `Promise<void>` | Deletes the selected items.                                                 |
-| `_reallyDeleteSelected`     | `none`                                                                     | `Promise<void>` | Deletes the selected items.                                                 |
-| `_approve`                  | `event: CustomEvent`                                                       | `Promise<void>` | Approves a content item.                                                    |
-| `_approveSelected`          | `event: CustomEvent`                                                       | `Promise<void>` | Approves selected content items.                                            |
-| `_block`                    | `event: CustomEvent`                                                       | `Promise<void>` | Blocks a content item.                                                      |
-| `_blockSelected`            | `event: CustomEvent`                                                       | `Promise<void>` | Blocks selected content items.                                              |
-| `_clearFlags`               | `event: CustomEvent`                                                       | `Promise<void>` | Clears flags from a content item.                                           |
-| `_clearSelectedFlags`       | `event: CustomEvent`                                                       | `Promise<void>` | Clears flags from selected content items.                                   |
-| `_refreshAfterChange`       | `none`                                                                     | `Promise<void>` | Refreshes the component after a change.                                     |
-| `_domainIdChanged`          | `none`                                                                     | `void`      | Handles changes to the domain ID.                                           |
-| `_groupIdChanged`           | `none`                                                                     | `void`      | Handles changes to the group ID.                                            |
-| `_communityIdChanged`       | `none`                                                                     | `void`      | Handles changes to the community ID.                                        |
-| `_userIdChanged`            | `none`                                                                     | `void`      | Handles changes to the user ID.                                             |
-| `_getType`                  | `type: string`                                                             | `string`    | Returns the translated type of a content item.                              |
-| `_activeItemChanged`        | `item: YpDatabaseItem \| undefined, oldItem: YpDatabaseItem \| undefined`  | `void`      | Handles changes to the active item.                                         |
-| `_refreshGridAsync`         | `none`                                                                     | `void`      | Refreshes the grid asynchronously.                                          |
-| `_refreshGridAsyncDelay`    | `none`                                                                     | `void`      | Refreshes the grid asynchronously with a delay.                             |
-| `_refreshGridAsyncBase`     | `ms: number`                                                               | `void`      | Base method for refreshing the grid asynchronously.                         |
-| `connectedCallback`         | `none`                                                                     | `void`      | Called when the component is added to the document.                         |
-| `firstUpdated`              | `_changedProperties: PropertyValueMap<any> \| Map<PropertyKey, unknown>`   | `void`      | Called after the component's first update.                                  |
-| `_toPercent`                | `number: number \| undefined`                                              | `string \| null` | Converts a number to a percentage string.                                   |
-| `_resizeThrottler`          | `none`                                                                     | `void`      | Throttles resize events.                                                    |
-| `_setGridSize`              | `none`                                                                     | `void`      | Sets the size of the grid based on the window size.                         |
-| `totalItemsCount`           | `none`                                                                     | `string \| null` | Returns the total count of items as a formatted string.                     |
-| `_selectedItemsChanged`     | `none`                                                                     | `void`      | Handles changes to the selected items.                                      |
-| `_setupItemIdFromEvent`     | `event: CustomEvent`                                                       | `void`      | Sets up the selected item ID from an event.                                 |
-| `_deleteSelected`           | `event: CustomEvent`                                                       | `void`      | Deletes selected content items after confirmation.                          |
-| `_delete`                   | `event: CustomEvent`                                                       | `void`      | Deletes a content item after confirmation.                                  |
-| `_anonymizeSelected`        | `event: CustomEvent`                                                       | `void`      | Anonymizes selected content items after confirmation.                       |
-| `_anonymize`                | `event: CustomEvent`                                                       | `void`      | Anonymizes a content item after confirmation.                               |
-| `_menuOpened`               | `none`                                                                     | `void`      | Handles the event when a menu is opened.                                    |
-| `_setSelected`              | `event: CustomEvent`                                                       | `void`      | Sets the selected item based on an event.                                   |
-| `_findItemFromId`           | `id: number`                                                               | `YpModerationItem \| undefined` | Finds an item by its ID.                                                    |
-| `setup`                     | `groupId: number \| undefined, communityId: number \| undefined, domainId: number \| undefined, typeOfModeration: "flagged_content" \| "moderate_all_content" \| undefined, userId: number \| undefined` | `void` | Sets up the component with the given parameters.                            |
-| `open`                      | `name: string`                                                             | `void`      | Opens the component with the given collection name.                         |
-| `_reset`                    | `none`                                                                     | `void`      | Resets the component's state.                                               |
-| `_resetSelectedAndClearCache` | `none`                                                                   | `void`      | Resets the selected items and clears the grid cache.                        |
-| `_setupHeaderText`          | `none`                                                                     | `void`      | Sets up the header text based on the current context.                       |
+| Name                        | Parameters                                                                                                         | Return Type | Description                                                                                                 |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------|
+| updated                     | changedProperties: Map&lt;string \| number \| symbol, unknown&gt;                                                  | void        | Lifecycle method called when properties are updated. Handles refresh and active item changes.                |
+| renderContent               | root: HTMLElement, column: any, rowData: RowData                                                                   | void        | Renders the content cell for a grid row.                                                                    |
+| renderItemDetail            | root: HTMLElement, column: any, rowData: RowData                                                                   | void        | Renders the details section for a grid row.                                                                 |
+| renderActionHeader          | root: HTMLElement, column?: GridColumnElement \| undefined                                                         | void        | Renders the action menu header for the grid.                                                                |
+| renderAction                | root: HTMLElement, column: any, rowData: RowData                                                                   | void        | Renders the action menu for a grid row.                                                                     |
+| render                      | none                                                                                                               | unknown     | Renders the main template for the component.                                                                |
+| spinnerActive               | none                                                                                                               | boolean     | Returns true if the spinner should be active.                                                               |
+| _ajaxError                  | error?: any \| undefined                                                                                           | void        | Handles AJAX errors and disables the spinner.                                                               |
+| _reload                     | none                                                                                                               | Promise&lt;void&gt; | Reloads the moderation items.                                                                               |
+| _masterRequest              | action: string, itemIdsAndType?: Array&lt;SelectedItemIdsAndType&gt; \| undefined                                  | Promise&lt;void&gt; | Performs a moderation action (approve, block, delete, etc.) on one or many items.                           |
+| _generateRequest            | id: number                                                                                                         | Promise&lt;void&gt; | Fetches moderation items for a given collection ID.                                                         |
+| _itemsResponse              | items: Array&lt;YpModerationItem&gt;                                                                               | void        | Handles the response for items fetch.                                                                       |
+| onlyFlaggedItems            | none                                                                                                               | boolean     | Returns true if only flagged items are being moderated.                                                     |
+| _manyItemsResponse          | none                                                                                                               | void        | Handles the response for many items (shows reload and notifies user).                                       |
+| _singleItemResponse         | none                                                                                                               | void        | Handles the response for a single item (reloads items).                                                     |
+| _menuSelection              | none                                                                                                               | void        | Closes all open menus and refreshes the grid.                                                               |
+| _reallyAnonymize            | none                                                                                                               | Promise&lt;void&gt; | Performs anonymization on the selected item.                                                                |
+| _reallyAnonymizeSelected    | none                                                                                                               | Promise&lt;void&gt; | Performs anonymization on selected items.                                                                    |
+| _reallyDelete               | none                                                                                                               | Promise&lt;void&gt; | Deletes the selected item.                                                                                   |
+| _reallyDeleteSelected       | none                                                                                                               | Promise&lt;void&gt; | Deletes selected items.                                                                                      |
+| _approve                    | event: CustomEvent                                                                                                 | Promise&lt;void&gt; | Approves the selected item.                                                                                  |
+| _approveSelected            | event: CustomEvent                                                                                                 | Promise&lt;void&gt; | Approves selected items.                                                                                    |
+| _block                      | event: CustomEvent                                                                                                 | Promise&lt;void&gt; | Blocks the selected item.                                                                                   |
+| _blockSelected              | event: CustomEvent                                                                                                 | Promise&lt;void&gt; | Blocks selected items.                                                                                      |
+| _clearFlags                 | event: CustomEvent                                                                                                 | Promise&lt;void&gt; | Clears flags from the selected item.                                                                        |
+| _clearSelectedFlags         | event: CustomEvent                                                                                                 | Promise&lt;void&gt; | Clears flags from selected items.                                                                           |
+| _refreshAfterChange         | none                                                                                                               | Promise&lt;void&gt; | Refreshes the grid after a change in collection selection.                                                  |
+| _domainIdChanged            | none                                                                                                               | void        | Placeholder for domain ID change observer.                                                                  |
+| _groupIdChanged             | none                                                                                                               | void        | Placeholder for group ID change observer.                                                                   |
+| _communityIdChanged         | none                                                                                                               | void        | Placeholder for community ID change observer.                                                               |
+| _userIdChanged              | none                                                                                                               | void        | Placeholder for user ID change observer.                                                                    |
+| _getType                    | type: string                                                                                                       | string      | Returns a localized string for the item type.                                                               |
+| _activeItemChanged          | item: YpDatabaseItem \| undefined, oldItem: YpDatabaseItem \| undefined                                            | void        | Handles changes to the active item (opens/closes details in the grid).                                      |
+| _refreshGridAsync           | none                                                                                                               | void        | Refreshes the grid asynchronously.                                                                          |
+| _refreshGridAsyncDelay      | none                                                                                                               | void        | Refreshes the grid asynchronously with a delay.                                                             |
+| _refreshGridAsyncBase       | ms: number                                                                                                         | void        | Base method for refreshing the grid after a delay.                                                          |
+| connectedCallback           | none                                                                                                               | void        | Lifecycle method called when the component is added to the DOM.                                             |
+| firstUpdated                | _changedProperties: PropertyValueMap&lt;any&gt; \| Map&lt;PropertyKey, unknown&gt;                                | void        | Lifecycle method called after the first update.                                                             |
+| _toPercent                  | number: number \| undefined                                                                                        | string \| null | Converts a number to a percentage string.                                                                   |
+| _resizeThrottler            | none                                                                                                               | void        | Throttles resize events to avoid excessive grid resizing.                                                   |
+| _setGridSize                | none                                                                                                               | void        | Sets the grid size based on the window size.                                                                |
+| totalItemsCount             | none                                                                                                               | string \| null | Returns the formatted total number of items.                                                                |
+| _selectedItemsChanged       | none                                                                                                               | void        | Updates selection state and triggers grid refresh when selected items change.                               |
+| _setupItemIdFromEvent       | event: CustomEvent                                                                                                | void        | Extracts item ID and model class from an event and updates selection.                                       |
+| _deleteSelected             | event: CustomEvent                                                                                                | void        | Opens a confirmation dialog to delete selected items.                                                       |
+| _delete                     | event: CustomEvent                                                                                                | void        | Opens a confirmation dialog to delete a single item.                                                        |
+| _anonymizeSelected          | event: CustomEvent                                                                                                | void        | Opens a confirmation dialog to anonymize selected items.                                                    |
+| _anonymize                  | event: CustomEvent                                                                                                | void        | Opens a confirmation dialog to anonymize a single item.                                                     |
+| _menuOpened                 | none                                                                                                               | void        | Sets internal flag when a menu is opened.                                                                   |
+| _setSelected                | event: CustomEvent                                                                                                | void        | Selects an item in the grid based on an event.                                                              |
+| _findItemFromId             | id: number                                                                                                        | YpModerationItem \| undefined | Finds an item by its ID from the items array.                                                               |
+| setup                       | groupId: number \| undefined, communityId: number \| undefined, domainId: number \| undefined, typeOfModeration: "flagged_content" \| "moderate_all_content" \| undefined, userId: number \| undefined | void        | Sets up the component for a specific collection and moderation type.                                        |
+| open                        | name: string                                                                                                      | void        | Sets the collection name and opens the moderation dialog.                                                   |
+| _reset                      | none                                                                                                               | void        | Resets the items and selection state.                                                                       |
+| _resetSelectedAndClearCache | none                                                                                                               | void        | Resets selection state and clears the grid cache.                                                           |
+| _setupHeaderText            | none                                                                                                               | void        | Sets up the header text and item count text based on the current context.                                   |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpContentModeration component
-const moderationComponent = document.createElement('yp-content-moderation');
-moderationComponent.setup(1, undefined, undefined, "flagged_content", undefined);
-document.body.appendChild(moderationComponent);
+import "./yp-content-moderation.js";
+
+const moderation = document.createElement("yp-content-moderation");
+moderation.setup(123, undefined, undefined, "flagged_content", undefined);
+moderation.open("Example Group");
+document.body.appendChild(moderation);
+
+// To trigger reload:
+moderation._reload();
 ```

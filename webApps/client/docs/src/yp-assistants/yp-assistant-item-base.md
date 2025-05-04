@@ -1,38 +1,36 @@
 # YpAssistantItemBase
 
-The `YpAssistantItemBase` class is a custom web component that extends the `YpAiChatbotItemBase` class. It is designed to handle the rendering of chat messages and avatars, with additional support for voice mode and HTML content rendering.
+A base web component for rendering assistant/chatbot items with support for voice mode, avatars, markdown rendering, and dynamic HTML content. Extends `YpAiChatbotItemBase` and provides additional UI and logic for assistant interactions, including voice status and avatar display.
 
 ## Properties
 
 | Name         | Type      | Description                                                                 |
 |--------------|-----------|-----------------------------------------------------------------------------|
-| isVoiceMode  | boolean   | Indicates whether the voice mode is enabled.                                |
-| isListening  | boolean   | Indicates whether the component is currently listening for voice input.     |
-| isSpeaking   | boolean   | Overrides the base class property to indicate if the component is speaking. |
-| htmlToRender | string    | Optional HTML content to render within the chat interface.                  |
-| avatarUrl    | string    | Optional URL for the avatar image to display.                               |
+| isVoiceMode  | boolean   | Indicates if the assistant is in voice mode.                                |
+| isListening  | boolean   | Indicates if the assistant is currently listening for voice input.          |
+| isSpeaking   | boolean   | Indicates if the assistant is currently speaking. Overrides base property.  |
+| htmlToRender | string \| undefined | Optional HTML string to render as part of the assistant's response.         |
+| avatarUrl    | string \| undefined | Optional URL for the assistant's avatar image.                              |
 
 ## Methods
 
-| Name            | Parameters                  | Return Type | Description                                                                 |
-|-----------------|-----------------------------|-------------|-----------------------------------------------------------------------------|
-| firstUpdated    | changedProps: Map<string, any> | void        | Lifecycle method called after the component's first update.                 |
-| updated         | changedProps: Map<string, any> | void        | Lifecycle method called after each update of the component.                 |
-| get styles      | None                        | CSSResult[] | Returns the styles for the component, including inherited styles.           |
-| renderAvatar    | None                        | TemplateResult | Renders the avatar image or a default image if no URL is provided.          |
-| renderChatGPT   | None                        | TemplateResult | Renders the chat interface for displaying messages from the assistant.      |
-| renderUser      | None                        | TemplateResult | Renders the chat interface for displaying user messages.                    |
+| Name             | Parameters                | Return Type | Description                                                                                  |
+|------------------|--------------------------|-------------|----------------------------------------------------------------------------------------------|
+| firstUpdated     | changedProps: Map<string, any> | void        | Lifecycle method called after the component's first update. Calls the superclass method.      |
+| updated          | changedProps: Map<string, any> | void        | Lifecycle method called after each update. Calls the superclass method.                       |
+| renderAvatar     | none                     | unknown     | Renders the assistant's avatar image if `avatarUrl` is set, otherwise calls `renderCGImage`.  |
+| renderChatGPT    | none                     | unknown     | Renders the assistant's chat message, including avatar, markdown, and optional HTML content.  |
+| renderUser       | none                     | unknown     | Renders the user's chat message.                                                              |
 
 ## Examples
 
 ```typescript
-import './path/to/yp-assistant-item-base.js';
+import './yp-assistant-item-base.js';
 
 const assistantItem = document.createElement('yp-assistant-item-base');
+assistantItem.message = "Hello! How can I help you today?";
 assistantItem.isVoiceMode = true;
-assistantItem.avatarUrl = 'https://example.com/avatar.png';
-assistantItem.htmlToRender = '<p>Custom HTML content</p>';
+assistantItem.avatarUrl = "https://example.com/avatar.png";
+assistantItem.htmlToRender = "<b>Special offer!</b>";
 document.body.appendChild(assistantItem);
 ```
-
-This example demonstrates how to create an instance of the `YpAssistantItemBase` component, set some properties, and append it to the document body.

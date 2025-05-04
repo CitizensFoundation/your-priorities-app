@@ -1,40 +1,38 @@
 # YpServerApiBase
 
-The `YpServerApiBase` class extends `YpCodeBase` and provides base functionalities for server API interactions, including a method to transform collection types to API endpoints, a fetch wrapper for network requests, and a response handler.
+Base class for server API interactions, extending `YpCodeBase`. Provides utility methods for transforming collection types, handling fetch requests with offline support, error handling, and response processing.
 
 ## Properties
 
-| Name         | Type   | Description                                      |
-|--------------|--------|--------------------------------------------------|
-| baseUrlPath  | string | The base path for the API, defaulting to "/api". |
+| Name         | Type     | Description                                  |
+|--------------|----------|----------------------------------------------|
+| baseUrlPath  | string   | The base URL path for API requests (`/api`). |
 
 ## Methods
 
-| Name                          | Parameters                                                                 | Return Type            | Description                                                                                   |
-|-------------------------------|----------------------------------------------------------------------------|------------------------|-----------------------------------------------------------------------------------------------|
-| transformCollectionTypeToApi  | type: string                                                               | string                 | Static method to transform a given collection type to its corresponding API endpoint string.  |
-| fetchWrapper                  | url: string, options: RequestInit, showUserError: boolean, errorId: string \| undefined, throwError: boolean | Promise<any>           | Protected method to perform fetch requests with error handling and offline support.           |
-| handleResponse                | response: Response, showUserError: boolean, errorId: string \| undefined, throwError: boolean | Promise<any \| null>   | Protected method to handle the response from fetch requests, including error management.      |
+| Name                                 | Parameters                                                                                                                                         | Return Type        | Description                                                                                                   |
+|-------------------------------------- |----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|---------------------------------------------------------------------------------------------------------------|
+| static transformCollectionTypeToApi   | type: string                                                                                                                                       | string             | Transforms a singular collection type (e.g., "domain") to its API plural form (e.g., "domains").              |
+| fetchWrapper                         | url: string, options?: RequestInit, showUserError?: boolean, errorId?: string \| undefined, throwError?: boolean                                   | Promise<any>       | Wrapper for `fetch` with offline support, error handling, and response processing.                             |
+| accessError                          | none                                                                                                                                               | void               | Handles access errors, showing offline toast or triggering login for 401 errors.                               |
+| handleResponse                       | response: Response, showUserError: boolean, errorId?: string \| undefined, throwError?: boolean                                                    | Promise<any>       | Handles the response from a fetch request, including error handling and JSON parsing.                          |
+
+## Events
+
+- **yp-network-error**: Fired globally when a network error occurs during a fetch request. The event detail includes the response, error information, and user error display options.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpServerApiBase class to transform a collection type to an API endpoint
-const apiEndpoint = YpServerApiBase.transformCollectionTypeToApi('user');
-console.log(apiEndpoint); // Output: "users"
-
-// Example usage of the YpServerApiBase class to perform a fetch request
-const serverApiBase = new YpServerApiBase();
-serverApiBase.fetchWrapper('https://example.com/api/data', {
-  method: 'GET',
-  headers: {
-    'Authorization': 'Bearer your-token-here'
+class MyApi extends YpServerApiBase {
+  async getCommunities() {
+    const url = `${this.baseUrlPath}/communities`;
+    return await this.fetchWrapper(url, { method: "GET" });
   }
-}).then(data => {
-  console.log(data);
-}).catch(error => {
-  console.error('Fetch error:', error);
+}
+
+const api = new MyApi();
+api.getCommunities().then(communities => {
+  console.log(communities);
 });
 ```
-
-Please note that the actual implementation of the `YpServerApiBase` class may include additional methods, properties, and events that are not documented here. This documentation provides an overview of the key components of the class as it pertains to API interactions.

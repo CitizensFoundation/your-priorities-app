@@ -1,92 +1,107 @@
 # YpPostCoverMedia
 
-The `YpPostCoverMedia` class is a custom element that extends `YpBaseElement` to display various types of media associated with a post, such as images, videos, audio, maps, and street views. It supports different configurations for displaying media, including default images, category icons, and header modes.
+A web component for displaying the cover media of a post, supporting images, videos, audio, maps, and category icons. It adapts its display based on the post's configuration and media type, and integrates with Google Maps and Street View. It also handles media playback events and navigation to the post.
 
 ## Properties
 
-| Name                        | Type                      | Description                                                                 |
-|-----------------------------|---------------------------|-----------------------------------------------------------------------------|
-| post                        | YpPostData                | The post data associated with the media.                                    |
-| topRadius                   | boolean                   | Determines if the top radius is applied to the media container.              |
-| topLeftRadius               | boolean                   | Determines if the top left radius is applied to the media container.         |
-| altTag                      | string \| undefined       | The alt tag for the media, used for accessibility.                           |
-| postAudioId                 | number \| undefined       | The ID of the audio associated with the post.                                |
-| postVideoId                 | number \| undefined       | The ID of the video associated with the post.                                |
-| headerMode                  | boolean                   | Indicates if the media is displayed in header mode.                          |
-| disableMaps                 | boolean                   | Determines if maps should be disabled.                                       |
-| mapActivated                | boolean                   | Indicates if the map is activated.                                           |
-| streetViewActivated         | boolean                   | Indicates if the street view is activated.                                   |
-| tiny                        | boolean                   | Determines if a tiny version of the category icon should be used.            |
-| staticMapsApiKey            | string                    | The API key for Google Static Maps.                                          |
-| uploadedDefaultPostImageId  | number \| undefined       | The ID of the default post image uploaded to the server.                     |
-| defaultImageGroupId         | number \| undefined       | The ID of the group associated with the default post image.                  |
-| defaultPostImageEnabled     | boolean                   | Indicates if the default post image is enabled.                              |
-| showVideo                   | boolean                   | Determines if the video should be displayed.                                 |
-| showAudio                   | boolean                   | Determines if the audio should be displayed.                                 |
-| portraitVideo               | boolean                   | Indicates if the video is in portrait mode.                                  |
-| playStartedAt               | Date \| undefined         | The date and time when playback started.                                     |
-| videoPlayListener           | Function \| undefined     | The listener function for video play events.                                 |
-| videoPauseListener          | Function \| undefined     | The listener function for video pause events.                                |
-| videoEndedListener          | Function \| undefined     | The listener function for video ended events.                                |
-| audioPlayListener           | Function \| undefined     | The listener function for audio play events.                                 |
-| audioPauseListener          | Function \| undefined     | The listener function for audio pause events.                                |
-| audioEndedListener          | Function \| undefined     | The listener function for audio ended events.                                |
+| Name                        | Type                        | Description                                                                                      |
+|-----------------------------|-----------------------------|--------------------------------------------------------------------------------------------------|
+| post                        | YpPostData                  | The post data object to display media for.                                                       |
+| topRadius                   | boolean                     | If true, applies a top border radius to the media container.                                     |
+| topLeftRadius               | boolean                     | If true, applies a top-left border radius to the media container.                                |
+| altTag                      | string \| undefined         | The alt text for images.                                                                         |
+| postAudioId                 | number \| undefined         | The ID of the audio file associated with the post.                                               |
+| postVideoId                 | number \| undefined         | The ID of the video file associated with the post.                                               |
+| headerMode                  | boolean                     | If true, enables header mode, affecting media listeners and display.                             |
+| disableMaps                 | boolean                     | If true, disables map and street view display.                                                   |
+| mapActivated                | boolean                     | If true, activates the map display.                                                              |
+| streetViewActivated         | boolean                     | If true, activates the street view display.                                                      |
+| tiny                        | boolean                     | If true, displays a smaller version of the category icon.                                        |
+| staticMapsApiKey            | string                      | The API key for Google Static Maps.                                                              |
+| uploadedDefaultPostImageId  | number \| undefined         | The ID of the uploaded default post image for the group.                                         |
+| defaultImageGroupId         | number \| undefined         | The group ID associated with the default post image.                                             |
+| defaultPostImageEnabled     | boolean                     | If true, enables the use of a default post image.                                                |
+| showVideo                   | boolean                     | If true, shows the video player.                                                                 |
+| showAudio                   | boolean                     | If true, shows the audio player.                                                                 |
+| portraitVideo               | boolean                     | If true, indicates the video is in portrait orientation.                                         |
+| playStartedAt               | Date \| undefined           | The date and time when media playback started.                                                   |
+| videoPlayListener           | Function \| undefined       | Listener for video play events.                                                                  |
+| videoPauseListener          | Function \| undefined       | Listener for video pause events.                                                                 |
+| videoEndedListener          | Function \| undefined       | Listener for video ended events.                                                                 |
+| audioPlayListener           | Function \| undefined       | Listener for audio play events.                                                                  |
+| audioPauseListener          | Function \| undefined       | Listener for audio pause events.                                                                 |
+| audioEndedListener          | Function \| undefined       | Listener for audio ended events.                                                                 |
 
 ## Methods
 
-| Name                  | Parameters | Return Type | Description                                                                 |
-|-----------------------|------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback     |            | void        | Lifecycle method that runs when the element is added to the DOM.            |
-| disconnectedCallback  |            | void        | Lifecycle method that runs when the element is removed from the DOM.        |
-| updated               | Map        | void        | Lifecycle method that runs when the element's properties have changed.      |
-| render                |            | TemplateResult | Returns the template for rendering the element.                          |
-| sizingMode            |            | string      | Determines the sizing mode for images based on the post's group settings.   |
-| activeDefaultImageUrl |            | string \| undefined | Returns the URL for the active default image if enabled.               |
-| _goToPost             |            | void        | Navigates to the post when the media is clicked.                            |
-| latitude              |            | number      | Retrieves the latitude from the post's location.                            |
-| longitude             |            | number      | Retrieves the longitude from the post's location.                           |
-| isNoneActive          |            | boolean     | Checks if the 'none' media type is active.                                  |
-| isCategoryActive      |            | boolean     | Checks if the 'category' media type is active.                              |
-| _isDomainWithOldCategories |      | boolean     | Helper method to support old square category images.                        |
-| isCategoryLargeActive |            | boolean     | Checks if the 'category' media type is active with large images.            |
-| isImageActive         |            | boolean     | Checks if the 'image' media type is active.                                 |
-| isVideoActive         |            | boolean     | Checks if the 'video' media type is active.                                 |
-| isAudioActive         |            | boolean     | Checks if the 'audio' media type is active.                                 |
-| isMapActive           |            | boolean     | Checks if the 'map' media type is active.                                   |
-| isStreetViewActive    |            | boolean     | Checks if the 'streetView' media type is active.                            |
-| zoomLevel             |            | string      | Retrieves the zoom level for maps.                                          |
-| mapType               |            | string      | Retrieves the map type for maps.                                            |
-| _withCoverMediaType   | post: YpPostData, mediaType: string | boolean | Helper method to check the cover media type of the post. |
-| mapPosition           |            | Object      | Retrieves the map position from the post's location.                        |
-| postImagePath         |            | string      | Retrieves the image path for the post's header image.                       |
-| postVideoPath         |            | string \| undefined | Retrieves the video path for the post's video.                         |
-| postAudioPath         |            | string \| undefined | Retrieves the audio path for the post's audio.                         |
-| postVideoPosterPath   |            | string \| undefined | Retrieves the video poster path for the post's video.                  |
-| categoryImagePath     |            | string      | Retrieves the image path for the post's category icon.                      |
-
-## Events (if any)
-
-- **yp-pause-media-playback**: Emitted when media playback should be paused.
+| Name                    | Parameters                                                                 | Return Type | Description                                                                                                 |
+|-------------------------|----------------------------------------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------|
+| connectedCallback       | none                                                                       | void        | Lifecycle method called when the element is added to the DOM. Sets up media listeners if in header mode.    |
+| disconnectedCallback    | none                                                                       | void        | Lifecycle method called when the element is removed from the DOM. Cleans up media listeners if in header mode.|
+| updated                 | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties are updated. Handles changes to post and headerMode.                |
+| render                  | none                                                                       | unknown     | Renders the component's template based on the current state and post data.                                  |
+| sizingMode (getter)     | none                                                                       | string      | Returns the image sizing mode ('contain' or 'cover') based on group configuration.                          |
+| activeDefaultImageUrl (getter) | none                                                               | string \| undefined | Returns the URL for the group's default post image if enabled.                                              |
+| _goToPost               | none                                                                       | void        | Navigates to the post, unless resourceLibraryLinkMode is enabled.                                           |
+| latitude (getter)       | none                                                                       | number      | Returns the latitude from the post's location, or 0.0 if not available.                                     |
+| longitude (getter)      | none                                                                       | number      | Returns the longitude from the post's location, or 0.0 if not available.                                    |
+| isNoneActive (getter)   | none                                                                       | boolean     | Returns true if no cover media is active for the post.                                                      |
+| isCategoryActive (getter)| none                                                                      | boolean     | Returns true if the category icon should be displayed (old category style).                                 |
+| _isDomainWithOldCategories | none                                                                   | boolean     | Returns true if the current domain is configured for old category images.                                   |
+| isCategoryLargeActive (getter)| none                                                                | boolean     | Returns true if the large category icon should be displayed (new category style).                           |
+| isImageActive (getter)  | none                                                                       | boolean     | Returns true if an image is the active cover media.                                                         |
+| isVideoActive (getter)  | none                                                                       | boolean     | Returns true if a video is the active cover media.                                                          |
+| isAudioActive (getter)  | none                                                                       | boolean     | Returns true if audio is the active cover media.                                                            |
+| isMapActive (getter)    | none                                                                       | boolean     | Returns true if a map is the active cover media.                                                            |
+| isStreetViewActive (getter)| none                                                                   | boolean     | Returns true if street view is the active cover media.                                                      |
+| zoomLevel (getter)      | none                                                                       | string \| number | Returns the zoom level for the map, or '10' if not specified.                                               |
+| mapType (getter)        | none                                                                       | string      | Returns the map type for the map, or 'roadmap' if not specified.                                            |
+| _withCoverMediaType     | post: YpPostData, mediaType: string                                        | boolean     | Checks if the post has the specified cover media type.                                                      |
+| mapPosition (getter)    | none                                                                       | { lat: number, lng: number } | Returns the map position object for Google Maps/Street View.                                                |
+| postImagePath (getter)  | none                                                                       | string      | Returns the URL for the post's header image, or an empty string if not available.                           |
+| postVideoPath (getter)  | none                                                                       | string \| undefined | Returns the URL for the post's video, or undefined if not available.                                        |
+| postAudioPath (getter)  | none                                                                       | string \| undefined | Returns the URL for the post's audio, or undefined if not available.                                        |
+| postVideoPosterPath (getter)| none                                                                  | string \| undefined | Returns the URL for the post's video poster image, or undefined if not available.                           |
+| categoryImagePath (getter)| none                                                                    | string      | Returns the URL for the category icon image, or an empty string if not available.                           |
+| anyImagePath (getter)   | none                                                                       | string      | Returns the first available image path among post image, default image, or category image.                  |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostCoverMedia custom element
-<yp-post-cover-media
-  .post="${this.postData}"
-  .topRadius="${true}"
-  .topLeftRadius="${false}"
-  .altTag="${'Post Cover Image'}"
-  .headerMode="${false}"
-  .disableMaps="${false}"
-  .mapActivated="${true}"
-  .streetViewActivated="${false}"
-  .tiny="${false}"
-  .defaultPostImageEnabled="${true}"
-  .showVideo="${true}"
-  .showAudio="${false}"
-  .portraitVideo="${false}"
-></yp-post-cover-media>
-```
+import './yp-post-cover-media.js';
 
-Note: The above example assumes that `this.postData` is an instance of `YpPostData` containing the necessary post information.
+const postData = {
+  id: 123,
+  Group: {
+    id: 1,
+    configuration: {
+      uploadedDefaultPostImageId: 10,
+      useContainImageMode: true,
+      resourceLibraryLinkMode: false
+    }
+  },
+  Category: {
+    name: "Environment",
+    CategoryIconImages: [/* ... */]
+  },
+  location: {
+    latitude: 64.1466,
+    longitude: -21.9426,
+    map_zoom: 12,
+    mapType: "roadmap"
+  },
+  cover_media_type: "image",
+  PostHeaderImages: [/* ... */],
+  PostVideos: [/* ... */],
+  PostAudios: [/* ... */]
+};
+
+html`
+  <yp-post-cover-media
+    .post="${postData}"
+    .headerMode="${true}"
+    .topRadius="${true}"
+    .altTag="${'Post cover image'}">
+  </yp-post-cover-media>
+`;
+```

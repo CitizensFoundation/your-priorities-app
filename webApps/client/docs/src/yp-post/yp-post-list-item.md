@@ -1,68 +1,71 @@
 # YpPostListItem
 
-A custom web component that represents a post list item, providing various functionalities such as rendering post details, handling user interactions, and managing post actions.
+A web component for displaying a post item in a list, with support for cover media, actions, tags, sharing, and structured answers. It is designed for use in a social or content-sharing platform and is highly configurable based on the post's group configuration.
 
 ## Properties
 
-| Name              | Type                  | Description                                                                 |
-|-------------------|-----------------------|-----------------------------------------------------------------------------|
-| selectedMenuItem  | `string \| undefined` | The currently selected menu item.                                           |
-| mini              | `boolean`             | Determines if the component should be rendered in a compact form.           |
-| isAudioCover      | `boolean`             | Indicates if the post cover is an audio type.                               |
-| post              | `YpPostData`          | The data object representing the post.                                      |
+| Name             | Type                       | Description                                                                                 |
+|------------------|----------------------------|---------------------------------------------------------------------------------------------|
+| selectedMenuItem | `string \| undefined`      | The currently selected menu item, if any.                                                   |
+| mini             | `boolean`                  | If true, renders the post in a compact "mini" mode.                                         |
+| isAudioCover     | `boolean`                  | If true, indicates the post's cover media is audio.                                         |
+| post             | `YpPostData`               | The post data object to render.                                                             |
 
 ## Methods
 
-| Name                             | Parameters                                                                 | Return Type | Description                                                                 |
-|----------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| structuredAnswerTruncateLength   | None                                                                       | `number`    | Calculates the truncate length for structured answers based on URL length.  |
-| renderDescription                | None                                                                       | `TemplateResult` | Renders the description of the post.                                        |
-| renderTags                       | None                                                                       | `TemplateResult` | Renders the tags associated with the post.                                  |
-| render                           | None                                                                       | `TemplateResult` | Renders the entire post list item component.                                |
-| renderShare                      | None                                                                       | `TemplateResult` | Renders the share button for the post.                                      |
-| renderDebate                     | None                                                                       | `TemplateResult` | Renders the debate actions for the post.                                    |
-| renderActions                    | None                                                                       | `TemplateResult` | Renders the action buttons for the post.                                    |
-| _sharedContent                   | `event: CustomEvent`                                                       | `void`      | Handles the event when content is shared.                                   |
-| _fullPostUrl                     | None                                                                       | `string`    | Constructs the full URL for the post.                                       |
-| structuredAnswersFormatted       | None                                                                       | `string`    | Formats the structured answers for display.                                 |
-| _onBottomClick                   | `event: CustomEvent`                                                       | `void`      | Prevents default behavior and stops event propagation for bottom clicks.    |
-| clickOnA                         | None                                                                       | `void`      | Simulates a click on the main area of the post.                             |
-| _getPostLink                     | `post: YpPostData`                                                         | `string`    | Generates the link for the post based on its configuration.                 |
-| _shareTap                        | `event: CustomEvent`                                                       | `void`      | Handles the tap event for sharing the post.                                 |
-| hideDescription                  | None                                                                       | `boolean`   | Determines if the description should be hidden based on configuration.      |
-| goToPostIfNotHeader              | `event: CustomEvent`                                                       | `void`      | Navigates to the post page unless disabled by configuration.                |
-| updated                          | `changedProperties: Map<string \| number \| symbol, unknown>`              | `void`      | Lifecycle method called when properties are updated.                        |
-| updateDescriptionIfEmpty         | `description: string`                                                      | `void`      | Updates the post description if it is empty.                                |
-| _refresh                         | None                                                                       | `void`      | Refreshes the component, typically after an edit.                           |
-| _openReport                      | None                                                                       | `void`      | Opens the report dialog for the post.                                       |
-| _onReport                        | None                                                                       | `void`      | Handles the report action for the post.                                     |
+| Name                           | Parameters                                                                 | Return Type | Description                                                                                                   |
+|--------------------------------|----------------------------------------------------------------------------|-------------|---------------------------------------------------------------------------------------------------------------|
+| `structuredAnswerTruncateLength` | None                                                                     | `number`    | Gets the truncate length for structured answers, adjusting for URLs.                                          |
+| `renderDescription`            | None                                                                      | `unknown`   | Renders the post description or structured answers using `<yp-magic-text>`.                                  |
+| `renderTags`                   | None                                                                      | `unknown`   | Renders the post tags using `<yp-post-tags>`.                                                                 |
+| `render`                       | None                                                                      | `unknown`   | Main render method for the component.                                                                         |
+| `renderShare`                  | None                                                                      | `unknown`   | Renders the share button if sharing is enabled.                                                               |
+| `renderDebate`                 | None                                                                      | `unknown`   | Renders the debate actions using `<yp-post-actions>`.                                                         |
+| `renderActions`                | None                                                                      | `unknown`   | Renders the post actions or custom ratings, depending on group configuration.                                 |
+| `_sharedContent`               | `event: CustomEvent`                                                      | `void`      | Handles the event when content is shared, logs the activity.                                                  |
+| `_fullPostUrl`                 | None                                                                      | `string`    | Gets the full encoded URL for the post.                                                                       |
+| `structuredAnswersFormatted`   | None                                                                      | `string`    | Returns a formatted string of structured answers for the post.                                                |
+| `_onBottomClick`               | `event: CustomEvent`                                                      | `void`      | Prevents event propagation for bottom action bar clicks.                                                      |
+| `clickOnA`                     | None                                                                      | `void`      | Programmatically clicks the main area anchor.                                                                 |
+| `_getPostLink`                 | `post: YpPostData`                                                        | `string`    | Returns the URL for the post, based on group configuration.                                                   |
+| `_shareTap`                    | `event: CustomEvent`                                                      | `void`      | Handles the share button tap, opens the share dialog.                                                         |
+| `hideDescription`              | None                                                                      | `boolean`   | Returns true if the description should be hidden (mini mode or group config).                                 |
+| `goToPostIfNotHeader`          | `event: CustomEvent`                                                      | `void`      | Navigates to the post page unless disabled by group configuration.                                            |
+| `updated`                      | `changedProperties: Map<string \| number \| symbol, unknown>`             | `void`      | Lit lifecycle method, updates `isAudioCover` if the post's cover media type is audio.                        |
+| `updateDescriptionIfEmpty`     | `description: string`                                                     | `void`      | Updates the post's description if it is empty.                                                                |
+| `_refresh`                     | None                                                                      | `void`      | Opens the post edit dialog and fires a "refresh" event.                                                       |
+| `_openReport`                  | None                                                                      | `void`      | Opens the report dialog for the post.                                                                         |
+| `_onReport`                    | None                                                                      | `void`      | Notifies the user via toast that the post has been reported.                                                  |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostListItem component
 import './yp-post-list-item.js';
 
-const postListItem = document.createElement('yp-post-list-item');
-postListItem.post = {
-  id: 1,
-  name: 'Sample Post',
-  description: 'This is a sample post description.',
-  language: 'en',
+const postData: YpPostData = {
+  id: 123,
+  name: "Example Post",
+  description: "This is an example post.",
+  language: "en",
+  cover_media_type: "image",
   Group: {
     configuration: {
       hidePostCover: false,
       hidePostDescription: false,
       hidePostActionsInGrid: false,
       customRatings: false,
-      usePostTagsForPostCards: true,
+      usePostTagsForPostCards: false,
       structuredQuestionsJson: [],
-    },
+      disablePostPageLink: false,
+      resourceLibraryLinkMode: false,
+      hideSharing: false,
+      forceShowDebateCountOnPost: false
+    }
   },
-  public_data: {
-    structuredAnswersJson: [],
-  },
+  public_data: {}
 };
 
+const postListItem = document.createElement('yp-post-list-item');
+postListItem.post = postData;
 document.body.appendChild(postListItem);
 ```

@@ -1,59 +1,71 @@
 # YpPostsFilter
 
-The `YpPostsFilter` class is a custom web component that extends `YpBaseElement`. It provides functionality for filtering and categorizing posts within a group, allowing users to select different filters and categories to view posts accordingly.
+A web component for filtering and categorizing posts within a group, providing UI controls for selecting filters and categories, and managing the state and navigation for filtered post lists.
 
 ## Properties
 
-| Name                | Type                              | Description                                                                 |
-|---------------------|-----------------------------------|-----------------------------------------------------------------------------|
-| group               | YpGroupData                       | The group data associated with the posts.                                   |
-| filterName          | string \| undefined               | The name of the current filter applied.                                     |
-| filter              | string                            | The current filter applied to the posts. Defaults to "newest".              |
-| categoryId          | number \| undefined               | The ID of the selected category.                                            |
-| categoryName        | string \| undefined               | The name of the selected category.                                          |
-| subTitle            | string                            | The subtitle displayed, indicating the current filter and category.         |
-| searchingFor        | string \| undefined               | The search term used for filtering posts.                                   |
-| showFilter          | boolean                           | Indicates whether the filter options should be displayed. Defaults to true. |
-| postsCount          | number \| undefined               | The count of posts available.                                               |
-| allPostCount        | number                            | The total count of all posts. Defaults to 0.                                |
-| tabName             | string \| undefined               | The name of the current tab.                                                |
-| category            | YpCategoryData \| undefined       | The data of the selected category.                                          |
-| categoriesWithCount | Array<YpCategoryData> \| undefined| The list of categories with their respective post counts.                   |
+| Name                | Type                                      | Description                                                                                 |
+|---------------------|-------------------------------------------|---------------------------------------------------------------------------------------------|
+| group               | YpGroupData                               | The group data object containing group and category information.                             |
+| filterName          | string \| undefined                       | The translated name of the current filter.                                                  |
+| filter              | string                                    | The current filter applied to the posts (e.g., "newest", "top").                            |
+| categoryId          | number \| undefined                       | The ID of the currently selected category.                                                  |
+| categoryName        | string \| undefined                       | The name of the currently selected category.                                                |
+| subTitle            | string                                    | The subtitle displayed in the filter UI.                                                    |
+| searchingFor        | string \| undefined                       | The current search query string, if searching is active.                                    |
+| showFilter          | boolean                                   | Whether to show the filter dropdown UI.                                                     |
+| postsCount          | number \| undefined                       | The number of posts currently shown (filtered).                                             |
+| allPostCount        | number                                    | The total number of posts across all categories.                                            |
+| tabName             | string \| undefined                       | The name of the current tab (used in URL construction).                                     |
+| category            | YpCategoryData \| undefined               | The currently selected category object.                                                     |
+| categoriesWithCount | Array&lt;YpCategoryData&gt; \| undefined  | The list of categories with their post counts, for populating the category dropdown.        |
 
 ## Methods
 
-| Name                     | Parameters                                                                 | Return Type | Description                                                                 |
-|--------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| render                   | None                                                                       | TemplateResult | Renders the HTML template for the component.                                |
-| _getCategoryCount        | id: number, categoryCounts: Array<YpCategoriesCount>                       | number      | Retrieves the count of posts for a specific category ID.                    |
-| _oldCategory             | category: YpCategoryData                                                   | boolean     | Determines if a category is considered old based on its ID.                 |
-| _openDropDown            | None                                                                       | void        | Opens the dropdown menu for category selection.                             |
-| openFilter               | None                                                                       | void        | Triggers an activity indicating the filter is opened.                       |
-| _languageEvent           | event: CustomEvent                                                         | void        | Handles language change events and updates the title accordingly.           |
-| searchFor                | value: string                                                              | void        | Initiates a search for posts based on the provided search term.             |
-| _updateTitle             | None                                                                       | void        | Updates the subtitle based on the current filter and category.              |
-| _changeFilter            | event: CustomEvent                                                         | Promise<void> | Changes the current filter based on user selection.                         |
-| _changeCategory          | event: CustomEvent                                                         | void        | Changes the current category based on user selection.                       |
-| buildPostsUrlPath        | None                                                                       | string      | Constructs the URL path for the current posts view based on filter and category. |
-| _updateAfterFiltering    | None                                                                       | void        | Updates the view after a filter or category change.                         |
-| _ifCategories            | None                                                                       | boolean     | Checks if the group has categories available.                               |
-| resetSelection           | id: string \| undefined = undefined                                        | void        | Resets the category selection to the specified ID or clears it.             |
-| _setupCategories         | None                                                                       | Promise<void> | Sets up the categories with their respective post counts.                   |
-| _updateMainListMenuValue | None                                                                       | void        | Updates the main list menu value to reflect the current filter.             |
-| updated                  | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties change, updating the component state. |
-| chunk                    | input: Array<any>, size: number                                            | Array<any>  | Splits an array into chunks of the specified size.                          |
-| _categoryItems           | None                                                                       | Array<any>  | Retrieves the categories in chunks for display.                             |
-| _categoryImageSrc        | category: YpCategoryData                                                   | string      | Retrieves the image source URL for a category's icon.                       |
+| Name                        | Parameters                                                                 | Return Type | Description                                                                                                 |
+|-----------------------------|----------------------------------------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------|
+| render                      | —                                                                          | unknown     | Renders the component's template.                                                                           |
+| _getCategoryCount           | id: number, categoryCounts: Array&lt;YpCategoriesCount&gt;                 | number      | Returns the post count for a given category ID from a list of category counts.                              |
+| _oldCategory                | category: YpCategoryData                                                   | boolean     | Determines if a category is considered "old" (ID less than 804).                                            |
+| _openDropDown               | —                                                                          | void        | Opens the dropdown menu for category selection.                                                             |
+| openFilter                  | —                                                                          | void        | Triggers an activity event for opening the filter.                                                          |
+| _languageEvent              | event: CustomEvent                                                         | void        | Handles language change events and updates the title accordingly.                                            |
+| searchFor                   | value: string                                                              | void        | Initiates a search for posts matching the given value, updates navigation, and fires a refresh event.       |
+| _updateTitle                | —                                                                          | void        | Updates the subtitle based on the current filter, category, or search state.                                |
+| _changeFilter               | event: CustomEvent                                                         | Promise&lt;void&gt; | Handles changes to the post filter dropdown and updates the filter state.                                    |
+| _changeCategory             | event: CustomEvent                                                         | void        | Handles changes to the category dropdown, updates state, and fires a category change event.                 |
+| buildPostsUrlPath           | —                                                                          | string      | Constructs the URL path for the current filter and category selection.                                      |
+| _updateAfterFiltering       | —                                                                          | void        | Updates navigation and fires a refresh event after filtering.                                               |
+| _ifCategories               | —                                                                          | boolean     | Returns true if the group has categories.                                                                   |
+| resetSelection              | id?: string \| undefined                                                   | void        | Resets the category dropdown selection to the specified ID or clears it.                                    |
+| _setupCategories            | —                                                                          | Promise&lt;void&gt; | Fetches category counts from the server and sets up the categoriesWithCount property.                        |
+| _updateMainListMenuValue    | —                                                                          | void        | Updates the main filter dropdown to reflect the current filter value.                                       |
+| updated                     | changedProperties: Map&lt;string \| number \| symbol, unknown&gt;          | void        | Lifecycle method called after properties are updated; manages state and UI updates.                         |
+| chunk                       | input: Array&lt;any&gt;, size: number                                      | Array&lt;any[]&gt; | Splits an array into chunks of the specified size.                                                          |
+| _categoryItems              | —                                                                          | Array&lt;any[]&gt; | Returns the group categories split into chunks of 7 for display purposes.                                   |
+| _categoryImageSrc           | category: YpCategoryData                                                   | string      | Returns the image URL for a category's icon using YpMediaHelpers.                                           |
+
+## Events
+
+- **refresh-group**: Fired after filtering or searching to indicate the group data should be refreshed.
+- **yp-filter-category-change**: Fired when the category filter changes, with the new category ID as detail.
+- **yp-filter-changed**: Fired when the main filter changes, with the new filter value as detail.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostsFilter component
-import './path/to/yp-posts-filter.js';
+import "./yp-posts-filter.js";
 
-const filterElement = document.createElement('yp-posts-filter');
-filterElement.group = { /* YpGroupData object */ };
-document.body.appendChild(filterElement);
+const filter = document.createElement("yp-posts-filter");
+filter.group = myGroupData;
+filter.tabName = "discussion";
+document.body.appendChild(filter);
+
+filter.addEventListener("yp-filter-category-change", (e) => {
+  console.log("Category changed to:", e.detail);
+});
+
+filter.addEventListener("yp-filter-changed", (e) => {
+  console.log("Filter changed to:", e.detail);
+});
 ```
-
-This documentation provides a comprehensive overview of the `YpPostsFilter` class, detailing its properties, methods, and usage example.

@@ -1,42 +1,66 @@
 # YpAgentWorkflowWidget
 
-The `YpAgentWorkflowWidget` is a custom web component that extends the `YpBaseElement`. It is designed to display a workflow for an agent, showing various steps and their statuses.
+A web component for displaying an agent workflow, including its steps, status, and visual representation. It decodes a base64-encoded workflow configuration and renders each step with contextual icons and styles.
 
 ## Properties
 
-| Name              | Type   | Description                                                                 |
-|-------------------|--------|-----------------------------------------------------------------------------|
-| agentProductId    | String | The ID of the agent product.                                                |
-| runId             | String | The ID of the current run.                                                  |
-| agentName         | String | The name of the agent.                                                      |
-| agentDescription  | String | A description of the agent.                                                 |
-| workflowStatus    | String | The current status of the workflow. Defaults to "not_started".              |
-| workflow          | String | The encoded workflow configuration.                                         |
+| Name             | Type     | Description                                                                 |
+|------------------|----------|-----------------------------------------------------------------------------|
+| agentProductId   | string   | The product ID of the agent.                                                |
+| runId            | string   | The run ID associated with the workflow.                                    |
+| agentName        | string   | The name of the agent.                                                      |
+| agentDescription | string   | The description of the agent.                                               |
+| workflowStatus   | string   | The current status of the workflow. Defaults to `"not_started"`.            |
+| workflow         | string   | The base64-encoded workflow configuration.                                  |
 
 ## Methods
 
-| Name            | Parameters                                      | Return Type             | Description                                                                 |
-|-----------------|-------------------------------------------------|-------------------------|-----------------------------------------------------------------------------|
-| parsedWorkflow  | None                                            | YpWorkflowConfiguration | Decodes and parses the workflow property to return a workflow configuration.|
-| getStepClass    | index: number                                   | string                  | Determines the CSS class for a step based on its index and workflow status. |
-| renderStep      | step: YpWorkflowStep, index: number, isLast: boolean | TemplateResult          | Renders a single step in the workflow.                                      |
-| renderIcon      | type: "users" \| "sparkles"                     | TemplateResult          | Renders an icon based on the type provided.                                 |
-| renderExplanation | None                                          | TemplateResult          | Renders an explanation of the step icons.                                   |
-| render          | None                                            | TemplateResult          | Renders the entire workflow widget.                                         |
+| Name             | Parameters                                                                 | Return Type                        | Description                                                                                      |
+|------------------|----------------------------------------------------------------------------|------------------------------------|--------------------------------------------------------------------------------------------------|
+| parsedWorkflow   | None                                                                       | YpAgentRunWorkflowConfiguration    | Decodes and parses the `workflow` property. Returns a default object if decoding/parsing fails.  |
+| styles           | None                                                                       | CSSResultGroup                     | Returns the component's styles, including inherited styles.                                      |
+| getStepClass     | index: number                                                              | string                             | Returns a CSS class for a step based on its index and the workflow status.                       |
+| renderStep       | step: YpAgentRunWorkflowStep, index: number, isLast: boolean               | TemplateResult                     | Renders a single workflow step with its icon, title, and description.                            |
+| renderIcon       | type: "users" \| "sparkles"                                                | TemplateResult                     | Renders an SVG icon based on the type ("users" or "sparkles").                                   |
+| renderExplanation| None                                                                       | TemplateResult                     | Renders the explanation row for the workflow step icons.                                         |
+| render           | None                                                                       | TemplateResult                     | Main render method. Renders the workflow steps or a message if no configuration is available.     |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpAgentWorkflowWidget component
-import './path/to/yp-agent-workflow-widget.js';
+import './yp-agent-workflow-widget';
 
 const widget = document.createElement('yp-agent-workflow-widget');
-widget.agentProductId = '12345';
-widget.runId = 'run-67890';
-widget.agentName = 'Agent Smith';
-widget.agentDescription = 'An example agent for demonstration purposes.';
-widget.workflow = 'encodedWorkflowString';
+widget.agentProductId = 'prod-123';
+widget.runId = 'run-456';
+widget.agentName = 'Example Agent';
+widget.agentDescription = 'This is an example agent.';
+widget.workflowStatus = 'running';
+widget.workflow = btoa(JSON.stringify({
+  currentStepIndex: 1,
+  steps: [
+    {
+      shortName: 'Start',
+      shortDescription: 'Initial step',
+      type: 'sparkles',
+      stepBackgroundColor: '#fff',
+      stepTextColor: '#000'
+    },
+    {
+      shortName: 'Engage',
+      shortDescription: 'Engagement step',
+      type: 'engagmentFromOutputConnector',
+      stepBackgroundColor: '#eee',
+      stepTextColor: '#111'
+    }
+  ]
+}));
 document.body.appendChild(widget);
 ```
 
-This component is styled using CSS and supports responsive design for different screen sizes. It uses the LitElement library for rendering and managing state. The workflow is expected to be a base64 encoded JSON string that describes the steps and their configurations.
+---
+
+**Note:**  
+- `YpAgentRunWorkflowConfiguration` and `YpAgentRunWorkflowStep` are expected to be defined elsewhere in your codebase.
+- This component extends `YpBaseElement`, which should provide localization (`t`) and layout utilities.  
+- The `workflow` property must be a base64-encoded JSON string matching the expected workflow configuration structure.

@@ -1,63 +1,47 @@
 # YpAppStyles
 
-This module exports a set of CSS styles for a web component, designed to provide a consistent and responsive layout for the application. The styles are defined using the `lit` library's `css` function.
+A set of global CSS styles for the Yp web application, defined using the Lit `css` template tag. These styles are intended to be shared across the application to provide consistent layout, theming, and component appearance.
 
 ## Properties
 
-| Name                             | Type   | Description                                                                 |
-|----------------------------------|--------|-----------------------------------------------------------------------------|
-| `:host`                          | CSS    | Styles applied to the host element, setting minimum height and flex layout. |
-| `.userIcon`                      | CSS    | Styles for user icon size.                                                  |
-| `main`                           | CSS    | Styles for the main content area to grow and fill available space.          |
-| `.topActionItem`                 | CSS    | Margin styles for top action items.                                         |
-| `.activeBadge`                   | CSS    | Styles for active badge elements.                                           |
-| `yp-user-info`                   | CSS    | Margin styles for user info component.                                      |
-| `yp-language-selector`           | CSS    | Margin styles for language selector component.                              |
-| `.userImageNotificationContainer`| CSS    | Margin styles for user image notification container.                        |
-| `yp-user-image`                  | CSS    | Dimensions for user image component.                                        |
-| `#leftDrawer`                    | CSS    | Margin styles for left drawer.                                              |
-| `.loadingAppSpinnerPage`         | CSS    | Styles for loading spinner page, including positioning and visibility.      |
-| `#userDrawer`                    | CSS    | Styles for user drawer, including fixed positioning and dimensions.         |
-| `#dialog`                        | CSS    | Color styles for dialog components.                                         |
-| `.errorText`                     | CSS    | Padding and font styles for error text.                                     |
-| `#errorCloseButton`              | CSS    | Color styles for error close button.                                        |
-| `yp-admin-app`                   | CSS    | Positioning and transition styles for admin app component.                  |
-| `yp-promotion-app`               | CSS    | Positioning and transition styles for promotion app component.              |
-| `.mainPage`                      | CSS    | Margin styles for main page, with conditional styling for agent bundle.     |
-| `#helpIconButton`                | CSS    | Margin styles for help icon button.                                         |
-| `#navIconButton`                 | CSS    | Margin styles for navigation icon button, conditional on organization state.|
-| `.closeButton`                   | CSS    | Visibility and transition styles for close button.                          |
-| `yp-top-app-bar`                 | CSS    | Max-width and margin styles for top app bar, with responsive adjustments.   |
+| Name         | Type   | Description                                                                                 |
+|--------------|--------|---------------------------------------------------------------------------------------------|
+| YpAppStyles  | CSSResult | A Lit `css` template literal containing the global styles for the Yp application.         |
 
 ## Methods
 
-This module does not define any methods.
+_None_
 
 ## Events
 
-This module does not emit any events.
+_None_
 
 ## Examples
 
 ```typescript
-// Importing and using the YpAppStyles in a LitElement component
-import { LitElement, html } from 'lit';
 import { YpAppStyles } from './YpAppStyles.js';
+import { css, LitElement } from 'lit';
 
-class MyApp extends LitElement {
-  static styles = [YpAppStyles];
-
-  render() {
-    return html`
-      <div class="mainPage">
-        <yp-top-app-bar></yp-top-app-bar>
-        <main>
-          <!-- Main content goes here -->
-        </main>
-      </div>
-    `;
-  }
+class MyComponent extends LitElement {
+  static styles = [
+    YpAppStyles,
+    css`
+      /* Additional component-specific styles */
+    `
+  ];
 }
-
-customElements.define('my-app', MyApp);
 ```
+
+---
+
+**Style Highlights:**
+- Sets up a flex column layout for the root host with `min-height: 100vh`.
+- Provides utility classes such as `.userIcon`, `.activeBadge`, `.closeButton`, and `.loadingAppSpinnerPage`.
+- Styles for custom elements like `yp-user-info`, `yp-language-selector`, `yp-user-image`, `yp-top-app-bar`, `yp-admin-app`, and `yp-promotion-app`.
+- Responsive adjustments for `yp-top-app-bar` on small screens.
+- Theming variables for Material Design components (e.g., dialog, badge, button).
+- Transition effects for loading spinners and app switching.
+- Hides elements with the `[hidden]` attribute.
+
+**Note:**  
+This export is a CSSResult object and is intended to be used in the `static styles` property of LitElement-based components.

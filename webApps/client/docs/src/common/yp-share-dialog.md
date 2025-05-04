@@ -1,39 +1,39 @@
 # YpShareDialog
 
-`YpShareDialog` is a custom web component that extends `YpBaseElement` to provide a share dialog functionality. It uses a `share-menu` component to allow users to share content via various platforms such as clipboard, Facebook, Twitter, WhatsApp, email, and LinkedIn.
+A web component for displaying a share dialog with multiple sharing targets (email, Facebook, Twitter, WhatsApp, LinkedIn). Extends `YpBaseElement` and uses the `share-menu` web component for sharing functionality.
 
 ## Properties
 
-| Name          | Type             | Description                                       |
-|---------------|------------------|---------------------------------------------------|
-| sharedContent | Function         | A function to be called when the share event occurs. |
-| url           | string           | The URL to be shared.                             |
-| label         | string           | A label for the share dialog.                     |
+| Name                     | Type                | Description                                                                 |
+|--------------------------|---------------------|-----------------------------------------------------------------------------|
+| haveSharedContentCallback| Function \| undefined | Callback function invoked when the share dialog is closed.                   |
+| url                      | string \| undefined | The URL to be shared.                                                        |
+| image                    | string \| undefined | The image URL to be shared.                                                  |
+| label                    | string \| undefined | The label or title for the shared content.                                   |
 
 ## Methods
 
-| Name   | Parameters                                | Return Type | Description                                             |
-|--------|-------------------------------------------|-------------|---------------------------------------------------------|
-| open   | url: string, label: string, sharedContent: Function | Promise<void> | Opens the share dialog with the provided URL, label, and sharedContent function. |
-
-## Events
-
-- **share**: Emitted when the share action is triggered.
+| Name   | Parameters                                                                                                  | Return Type | Description                                                                                      |
+|--------|-------------------------------------------------------------------------------------------------------------|-------------|--------------------------------------------------------------------------------------------------|
+| open   | url: string, label: string, image: string, haveSharedContentCallback: Function                              | Promise<void> | Opens the share dialog with the specified URL, label, image, and callback for share completion.   |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpShareDialog web component
-const shareDialog = document.createElement('yp-share-dialog');
+import './yp-share-dialog.js';
+
+const shareDialog = document.createElement('yp-share-dialog') as any;
+
 document.body.appendChild(shareDialog);
 
-const urlToShare = 'https://example.com';
-const shareLabel = 'Check this out!';
-const shareFunction = () => {
-  console.log('Content shared!');
-};
+function onShareClosed() {
+  console.log('Share dialog closed or content shared.');
+}
 
-shareDialog.open(urlToShare, shareLabel, shareFunction);
+shareDialog.open(
+  'https://example.com',
+  'Check out this link!',
+  'https://example.com/image.png',
+  onShareClosed
+);
 ```
-
-Please note that the actual implementation of the `share-menu` component is not provided in the given code snippet, and the `any/*ShareMenu*/` type cast is used as a placeholder for the actual `ShareMenu` type.

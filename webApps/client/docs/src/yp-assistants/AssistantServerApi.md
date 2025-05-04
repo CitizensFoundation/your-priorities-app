@@ -1,39 +1,57 @@
 # YpAssistantServerApi
 
-The `YpAssistantServerApi` class extends the `YpServerApi` and provides methods to interact with the YP Assistant server, including managing workflows, sending chat messages, and handling local storage of chat data.
+A server API class for managing assistant-related operations, including chat workflows, memory management, voice sessions, and configuration handling. Extends `YpServerApi` and provides methods for interacting with the assistant server, handling chat logs, and managing local storage for chat sessions.
 
 ## Properties
 
-| Name                   | Type   | Description                                      |
-|------------------------|--------|--------------------------------------------------|
-| localStorageChatsKey   | string | Key used for storing chats in local storage.     |
-| clientMemoryUuid       | string | UUID for client memory, used in server requests. |
+| Name                   | Type     | Description                                                                 |
+|------------------------|----------|-----------------------------------------------------------------------------|
+| localStorageChatsKey   | string   | Key used for storing chats in localStorage (private, constant).             |
+| clientMemoryUuid       | string   | Unique identifier for the client's memory/session.                          |
+| baseUrlPath            | string   | Base URL path for API requests (inherited from YpServerApi).                |
 
 ## Methods
 
-| Name                                 | Parameters                                                                                                                                  | Return Type                                           | Description                                                                                     |
-|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| constructor                          | clientMemoryUuid: string, urlPath: string = "/api/assistants"                                                                              |                                                       | Initializes a new instance of the `YpAssistantServerApi` class.                                 |
-| startNextWorkflowStep                | groupId: number, agentId: string                                                                                                            | Promise<void>                                         | Initiates the next step in a workflow for a given group and agent.                              |
-| sendEmailInvitesForAnons             | groupId: number, agentId: string, agentRunId: number, emails: string                                                                        | Promise<void>                                         | Sends email invites to anonymous users for a specific group and agent run.                      |
-| stopCurrentWorkflowStep              | groupId: number, agentId: string                                                                                                            | Promise<void>                                         | Stops the current workflow step for a given group and agent.                                    |
-| sendChatMessage                      | domainId: number, wsClientId: string, chatLog: YpSimpleChatLog[], languageName: string, currentMode: string \| undefined = undefined, serverMemoryId?: string | Promise<{ serverMemoryId: string }>                   | Sends a chat message to the server and optionally saves the chat to local storage.              |
-| updateAssistantMemoryUserLoginStatus | domainId: number                                                                                                                            | Promise<void>                                         | Updates the login status of the assistant memory for a given domain.                            |
-| getMemoryFromServer                  | domainId: number                                                                                                                            | Promise<{ chatLog: YpSimpleChatLog[] }>               | Retrieves the chat log memory from the server for a given domain.                               |
-| clearChatLogFromServer               | domainId: number                                                                                                                            | Promise<void>                                         | Clears the chat log from the server for a given domain.                                         |
-| startVoiceSession                    | domainId: number, wsClientId: string, currentMode: string, serverMemoryId?: string                                                          | Promise<void>                                         | Starts a voice session for a given domain and client.                                           |
-| saveChatToLocalStorage               | serverMemoryId: string, chatLog: YpSimpleChatLog[]                                                                                          | void                                                  | Saves a chat to local storage, updating existing entries if necessary.                          |
-| loadChatsFromLocalStorage            |                                                                                                                                             | SavedChat[]                                           | Loads chats from local storage.                                                                 |
-| clearServerMemory                    | serverMemoryId: string                                                                                                                      | Promise<void>                                         | Clears the server memory for a given server memory ID.                                          |
-| submitAgentConfiguration             | domainId: number, subscriptionId: string, requiredQuestionsAnswers: YpStructuredAnswer[]                                                    | Promise<void>                                         | Submits the agent configuration with required questions and answers for a given domain.         |
-| getConfigurationAnswers              | domainId: number, subscriptionId: string                                                                                                    | Promise<{ success: boolean; data: YpStructuredAnswer[] }> | Retrieves the configuration answers for a given domain and subscription.                        |
+| Name                                   | Parameters                                                                                                                                                                                                 | Return Type                                                      | Description                                                                                                   |
+|---------------------------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| constructor                            | clientMemoryUuid: string, urlPath?: string                                                                                                                          | YpAssistantServerApi                                             | Creates a new instance with the given client memory UUID and optional URL path.                               |
+| startNextWorkflowStep                   | groupId: number, agentId: string                                                                                                                                    | Promise<void>                                                    | Starts the next workflow step for a group and agent.                                                          |
+| sendEmailInvitesForAnons                | groupId: number, agentId: string, agentRunId: number, emails: string                                                                                                | Promise<void>                                                    | Sends email invites for anonymous users in a group.                                                           |
+| stopCurrentWorkflowStep                  | groupId: number, agentId: string                                                                                                                                    | Promise<void>                                                    | Stops the current workflow step for a group and agent.                                                        |
+| sendChatMessage                         | domainId: number, wsClientId: string, chatLog: YpSimpleChatLog[], languageName: string, currentMode?: string, serverMemoryId?: string                               | Promise<{ serverMemoryId: string }>                              | Sends a chat message, handles reconnection logic, and saves chat to local storage.                            |
+| startVoiceSession                       | domainId: number, wsClientId: string, currentMode: string, serverMemoryId?: string                                                                                  | Promise<void>                                                    | Starts a voice session, with reconnection logic on failure.                                                   |
+| updateAssistantMemoryUserLoginStatus     | domainId: number                                                                                                                                                    | Promise<any>                                                     | Updates the assistant memory user login status for a domain.                                                  |
+| getMemoryFromServer                     | domainId: number                                                                                                                                                    | Promise<{ chatLog: YpSimpleChatLog[] }>                          | Retrieves the chat memory from the server for a domain.                                                       |
+| clearChatLogFromServer                  | domainId: number                                                                                                                                                    | Promise<void>                                                    | Clears the chat log from the server for a domain.                                                             |
+| loadChatsFromLocalStorage               | (none)                                                                                                                                                              | SavedChat[]                                                      | Loads saved chats from local storage.                                                                         |
+| clearServerMemory                       | serverMemoryId: string                                                                                                                                              | Promise<void>                                                    | Clears the server memory for a given server memory ID.                                                        |
+| submitAgentConfiguration                | domainId: number, subscriptionId: string, requiredQuestionsAnswers: YpStructuredAnswer[]                                                                            | Promise<void>                                                    | Submits agent configuration answers for a domain and subscription.                                            |
+| getConfigurationAnswers                 | domainId: number, subscriptionId: string                                                                                                                            | Promise<{ success: boolean; data: YpStructuredAnswer[] }>        | Retrieves configuration answers for a domain and subscription.                                                |
+| saveChatToLocalStorage                  | serverMemoryId: string, chatLog: YpSimpleChatLog[]                                                                                                                  | void                                                             | Saves a chat log to local storage (private).                                                                  |
+| waitForWsReconnection                   | timeout: number                                                                                                                                                     | Promise<boolean>                                                 | Waits for a WebSocket reconnection event within a given timeout (private).                                    |
+| waitForWsReconnectionWithRetry          | (none)                                                                                                                                                              | Promise<void>                                                    | Retries WebSocket reconnection with increasing delays (private).                                              |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpAssistantServerApi class
-const api = new YpAssistantServerApi('client-uuid-1234');
-api.startNextWorkflowStep(1, 'agent-123').then(() => {
-  console.log('Next workflow step started.');
-});
+import { YpAssistantServerApi } from './YpAssistantServerApi.js';
+
+const clientMemoryUuid = 'unique-client-uuid';
+const api = new YpAssistantServerApi(clientMemoryUuid);
+
+// Start next workflow step
+await api.startNextWorkflowStep(123, 'agent-abc');
+
+// Send a chat message
+const chatLog = [{ message: "Hello!", sender: "user" }];
+const response = await api.sendChatMessage(1, 'ws-client-1', chatLog, 'en');
+
+// Load chats from local storage
+const savedChats = api.loadChatsFromLocalStorage();
+
+// Start a voice session
+await api.startVoiceSession(1, 'ws-client-1', 'default');
+
+// Clear server memory
+await api.clearServerMemory('server-memory-id');
 ```

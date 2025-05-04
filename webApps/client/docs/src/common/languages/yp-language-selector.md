@@ -1,63 +1,80 @@
 # YpLanguageSelector
 
-The `YpLanguageSelector` is a web component that allows users to select a language from a list of available languages. It provides features such as autocomplete for language selection, auto-translation options, and the ability to save the selected language locale.
+A web component for selecting languages, supporting autocomplete, highlighted languages, and auto-translation features. Integrates with Material Web Components and provides events for language changes and translation actions.
 
 ## Properties
 
-| Name                        | Type      | Description                                                                 |
-|-----------------------------|-----------|-----------------------------------------------------------------------------|
-| `refreshLanguages`          | Boolean   | Indicates whether the language list should be refreshed.                    |
-| `noUserEvents`              | Boolean   | If true, user events are not triggered.                                     |
-| `selectedLocale`            | String    | The currently selected locale.                                              |
-| `value`                     | String    | The value of the selected language.                                         |
-| `autocompleteText`          | String    | The text used for filtering languages in autocomplete.                      |
-| `name`                      | String    | The name attribute for the component.                                       |
-| `autoTranslateOptionDisabled` | Boolean | Disables the auto-translate option if true.                                 |
-| `autoTranslate`             | Boolean   | Indicates whether auto-translation is enabled.                              |
-| `dropdownVisible`           | Boolean   | Controls the visibility of the language dropdown.                           |
-| `hasServerAutoTranslation`  | Boolean   | Indicates if server-side auto-translation is available.                     |
-| `isOutsideChangeEvent`      | Boolean   | Tracks if the change event is triggered from outside the component.         |
+| Name                        | Type       | Description                                                                                  |
+|-----------------------------|------------|----------------------------------------------------------------------------------------------|
+| refreshLanguages            | boolean    | Triggers a refresh of the language list when toggled.                                        |
+| noUserEvents                | boolean    | If true, disables user event handling and server requests.                                   |
+| selectedLocale              | string \| undefined | The currently selected locale code.                                                          |
+| value                       | string     | The value of the selected language (locale code).                                            |
+| autocompleteText            | string     | The current text in the autocomplete input.                                                  |
+| name                        | string     | The name attribute for the selector (for forms).                                             |
+| autoTranslateOptionDisabled | boolean    | If true, disables the auto-translate option.                                                 |
+| autoTranslate               | boolean    | Indicates if auto-translation is currently active.                                           |
+| dropdownVisible             | boolean    | Controls the visibility of the language dropdown/autocomplete.                               |
+| hasServerAutoTranslation    | boolean    | Indicates if the server supports auto-translation.                                           |
+| isOutsideChangeEvent        | boolean    | Internal flag to track if a change event is from outside the component.                      |
 
 ## Methods
 
-| Name                      | Parameters                                      | Return Type | Description                                                                 |
-|---------------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| `updated`                 | `changedProperties: Map<string | number | symbol, unknown>` | void        | Called when the component is updated. Handles changes to `selectedLocale`.  |
-| `_refreshLanguage`        |                                                 | void        | Refreshes the language list and toggles the dropdown visibility.            |
-| `get styles`              |                                                 | CSSResult[] | Returns the styles for the component.                                       |
-| `get foundAutoCompleteLanguages` |                                         | Array       | Filters and returns languages matching the autocomplete text.               |
-| `openMenu`                |                                                 | Promise<void> | Opens the language selection menu.                                          |
-| `_autoCompleteChange`     | `event: CustomEvent`                            | void        | Updates the autocomplete text based on user input.                          |
-| `_selectLanguage`         | `event: CustomEvent`                            | void        | Sets the selected language based on user selection.                         |
-| `renderMenuItem`          | `index: number, item: YpLanguageMenuItem`       | TemplateResult | Renders a menu item for a language.                                         |
-| `renderAutoComplete`      |                                                 | TemplateResult | Renders the autocomplete text field and language menu.                      |
-| `render`                  |                                                 | TemplateResult | Renders the component's template.                                           |
-| `connectedCallback`       |                                                 | Promise<void> | Lifecycle method called when the component is added to the DOM.             |
-| `disconnectedCallback`    |                                                 | void        | Lifecycle method called when the component is removed from the DOM.         |
-| `firstUpdated`            | `_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>` | void | Called after the first update of the component.                             |
-| `_autoTranslateEvent`     | `event: CustomEvent`                            | void        | Handles auto-translate events.                                              |
-| `_stopTranslation`        |                                                 | void        | Stops the auto-translation process.                                         |
-| `startTranslation`        |                                                 | void        | Starts the auto-translation process.                                        |
-| `get canUseAutoTranslate` |                                                 | Boolean     | Determines if auto-translation can be used based on current settings.       |
-| `get languages`           |                                                 | YpLanguageMenuItem[] | Returns a sorted list of available languages.                               |
-| `_selectedLocaleChanged`  | `oldLocale: string`                            | void        | Handles changes to the selected locale and updates related settings.        |
+| Name                    | Parameters                                                                 | Return Type | Description                                                                                       |
+|-------------------------|----------------------------------------------------------------------------|-------------|---------------------------------------------------------------------------------------------------|
+| updated                 | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties are updated. Fires `yp-selected-locale-changed` event.    |
+| _refreshLanguage        | none                                                                       | void        | Refreshes the language dropdown by toggling its visibility.                                       |
+| foundAutoCompleteLanguages | none                                                                    | YpLanguageMenuItem[] | Returns the list of languages matching the autocomplete text.                                      |
+| openMenu                | none                                                                       | Promise<void> | Opens the language selection menu and clears the text field.                                      |
+| _autoCompleteChange     | event: CustomEvent                                                         | void        | Handles changes in the autocomplete text field.                                                   |
+| _selectLanguage         | event: CustomEvent                                                         | void        | Handles language selection from the menu and saves the selection to localStorage.                 |
+| renderMenuItem          | index: number, item: YpLanguageMenuItem                                    | unknown     | Renders a single language menu item.                                                              |
+| renderAutoComplete      | none                                                                       | unknown     | Renders the autocomplete text field and language menu.                                            |
+| render                  | none                                                                       | unknown     | Renders the main template for the component.                                                      |
+| connectedCallback       | none                                                                       | Promise<void> | Lifecycle method called when the component is added to the DOM. Sets up listeners and checks server translation support. |
+| disconnectedCallback    | none                                                                       | void        | Lifecycle method called when the component is removed from the DOM. Removes global listeners.     |
+| firstUpdated            | _changedProperties: PropertyValueMap<any> \| Map<PropertyKey, unknown>     | void        | Lifecycle method called after the first update. Sets the text field value based on the language.  |
+| _autoTranslateEvent     | event: CustomEvent                                                         | void        | Handles the `yp-auto-translate` event to toggle auto-translation.                                 |
+| _stopTranslation        | none                                                                       | void        | Stops auto-translation, fires events, and shows a toast notification.                             |
+| startTranslation        | none                                                                       | void        | Starts auto-translation, fires events, and shows a toast notification.                            |
+| canUseAutoTranslate     | none                                                                       | boolean     | Returns true if auto-translation can be used based on current state and server support.           |
+| languages               | none                                                                       | YpLanguageMenuItem[] | Returns the list of available languages, with highlighted languages at the top.                   |
+| _selectedLocaleChanged  | oldLocale: string                                                          | void        | Handles changes to the selected locale, fires events, and updates user/app state.                 |
 
 ## Events
 
-- **yp-selected-locale-changed**: Emitted when the selected locale changes.
-- **changed**: Emitted when the language value changes.
-- **yp-language-name**: Emitted with the English name of the selected language.
+- **yp-selected-locale-changed**: Fired when the selected locale changes. Payload: `selectedLocale`.
+- **changed**: Fired when the value (locale) changes. Payload: `value`.
+- **yp-language-name**: Fired when the language name is needed (e.g., after translation actions). Payload: English name of the language.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpLanguageSelector component
-import './yp-language-selector.js';
+import "./yp-language-selector.js";
 
-const languageSelector = document.createElement('yp-language-selector');
-document.body.appendChild(languageSelector);
-
-languageSelector.addEventListener('yp-selected-locale-changed', (event) => {
-  console.log('Selected locale changed:', event.detail);
-});
+html`
+  <yp-language-selector
+    .selectedLocale=${"en"}
+    .autoTranslateOptionDisabled=${false}
+    .noUserEvents=${false}
+    @yp-selected-locale-changed=${(e) => console.log("Locale changed:", e.detail)}
+  ></yp-language-selector>
+`
 ```
+
+---
+
+**Type Definitions Used:**
+
+```typescript
+interface YpLanguageMenuItem {
+  language: string;
+  name: string;
+}
+```
+
+**Note:**  
+- This component depends on global objects like `window.appGlobals`, `window.appUser`, and `window.appDialogs`.
+- It uses Material Web Components for UI elements.
+- The `YpLanguages` utility provides language data and helpers.  
+- The component extends `YpBaseElement`, which should provide base functionality for Lit-based elements.

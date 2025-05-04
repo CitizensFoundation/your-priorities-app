@@ -1,69 +1,69 @@
 # YpPostCard
 
-The `YpPostCard` class is a custom web component that extends `YpBaseElement`. It represents a card UI component for displaying post information, including media, description, and actions.
+A Lit-based web component that displays a post card with cover media, title, description, tags, and actions. It supports various display modes (mini, audio cover, etc.) and adapts its layout responsively. The card can show or hide elements based on the post's group configuration and provides sharing, reporting, and navigation functionalities.
 
 ## Properties
 
-| Name             | Type                | Description                                                                 |
-|------------------|---------------------|-----------------------------------------------------------------------------|
-| selectedMenuItem | string \| undefined | The currently selected menu item.                                           |
-| mini             | boolean             | Determines if the card should be displayed in a mini format.                |
-| isAudioCover     | boolean             | Indicates if the post cover is an audio type.                               |
-| post             | YpPostData          | The data object representing the post to be displayed.                      |
+| Name             | Type                | Description                                                                                 |
+|------------------|---------------------|---------------------------------------------------------------------------------------------|
+| selectedMenuItem | string \| undefined | The currently selected menu item, if any.                                                   |
+| mini             | boolean             | If true, displays the card in a compact "mini" mode.                                        |
+| isAudioCover     | boolean             | If true, indicates the post cover is audio.                                                 |
+| post             | YpPostData          | The post data object to display. Must be provided.                                          |
 
 ## Methods
 
-| Name                        | Parameters                                                                 | Return Type | Description                                                                 |
-|-----------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| renderDescription           | None                                                                       | TemplateResult | Renders the description of the post.                                        |
-| renderTags                  | None                                                                       | TemplateResult | Renders the tags associated with the post.                                  |
-| render                      | None                                                                       | TemplateResult | Renders the entire post card component.                                     |
-| _sharedContent              | event: CustomEvent                                                         | void        | Handles the event when content is shared.                                   |
-| _fullPostUrl                | None                                                                       | string      | Constructs the full URL for the post.                                       |
-| structuredAnswersFormatted  | None                                                                       | string      | Formats structured answers for display.                                     |
-| _onBottomClick              | event: CustomEvent                                                         | void        | Prevents default behavior and stops event propagation for bottom clicks.    |
-| clickOnA                    | None                                                                       | void        | Simulates a click on the main area of the card.                             |
-| _getPostLink                | post: YpPostData                                                           | string      | Generates the link for the post based on its configuration.                 |
-| _shareTap                   | event: CustomEvent                                                         | void        | Handles the tap event for sharing the post.                                 |
-| hideDescription             | None                                                                       | boolean     | Determines if the description should be hidden based on configuration.      |
-| goToPostIfNotHeader         | event: CustomEvent                                                         | void        | Navigates to the post page unless disabled by configuration.                |
-| updated                     | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties are updated.                        |
-| updateDescriptionIfEmpty    | description: string                                                        | void        | Updates the post description if it is empty.                                |
-| _refresh                    | None                                                                       | void        | Refreshes the post card, typically after an edit.                           |
-| _openReport                 | None                                                                       | void        | Opens a dialog to report the post.                                          |
-| _onReport                   | None                                                                       | void        | Handles the report action for the post.                                     |
+| Name                        | Parameters                                                                 | Return Type | Description                                                                                                    |
+|-----------------------------|----------------------------------------------------------------------------|-------------|----------------------------------------------------------------------------------------------------------------|
+| renderDescription           | none                                                                       | unknown     | Renders the post description or structured answers using `<yp-magic-text>`.                                   |
+| renderTags                  | none                                                                       | unknown     | Renders the post tags using `<yp-post-tags>`.                                                                 |
+| render                      | none                                                                       | unknown     | Main render method for the component. Returns the card's HTML template.                                        |
+| _sharedContent              | event: CustomEvent                                                         | void        | Handles the event when the post is shared, logs the activity.                                                  |
+| _fullPostUrl (getter)       | none                                                                       | string      | Returns the encoded full URL for the post.                                                                     |
+| structuredAnswersFormatted (getter) | none                                                               | string      | Returns a formatted string of structured answers for the post, if available.                                   |
+| _onBottomClick              | event: CustomEvent                                                         | void        | Prevents event propagation for clicks on the bottom actions area.                                              |
+| clickOnA                    | none                                                                       | void        | Programmatically clicks the main area anchor (`#mainArea`).                                                    |
+| _getPostLink                | post: YpPostData                                                           | string      | Returns the appropriate link for the post based on group configuration.                                        |
+| _shareTap                   | event: CustomEvent                                                         | void        | Handles the share button tap, opens the share dialog, and logs the activity.                                   |
+| hideDescription (getter)    | none                                                                       | boolean     | Returns true if the description should be hidden (mini mode or group config).                                  |
+| goToPostIfNotHeader         | event: CustomEvent                                                         | void        | Navigates to the post page unless disabled by group configuration. Caches the post if not in mini mode.        |
+| updated                     | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lit lifecycle method. Updates `isAudioCover` if the post's cover media type is audio.                         |
+| updateDescriptionIfEmpty    | description: string                                                        | void        | Updates the post's description if it is empty.                                                                 |
+| _refresh                    | none                                                                       | void        | Opens the post edit dialog and fires a "refresh" event.                                                        |
+| _openReport                 | none                                                                       | void        | Opens the report dialog for the post and logs the activity.                                                    |
+| _onReport                   | none                                                                       | void        | Notifies the user via toast that the post has been reported.                                                   |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostCard component
 import './yp-post-card.js';
 
-const postCard = document.createElement('yp-post-card');
-postCard.post = {
-  id: 1,
-  name: 'Sample Post',
-  description: 'This is a sample post description.',
-  language: 'en',
+const postData = {
+  id: 123,
+  name: "Example Post",
+  description: "This is an example post.",
+  language: "en",
+  cover_media_type: "image",
   Group: {
     configuration: {
       hidePostCover: false,
       hidePostDescription: false,
       hidePostActionsInGrid: false,
+      usePostTagsForPostCards: false,
       customRatings: false,
-      usePostTagsForPostCards: true,
+      hideSharing: false,
+      forceShowDebateCountOnPost: false,
       disablePostPageLink: false,
       resourceLibraryLinkMode: false,
-      forceShowDebateCountOnPost: false,
+      structuredQuestionsJson: [],
     }
   },
   public_data: {
-    structuredAnswersJson: [],
-  },
-  cover_media_type: 'image',
+    structuredAnswersJson: []
+  }
 };
 
-document.body.appendChild(postCard);
+const card = document.createElement('yp-post-card');
+card.post = postData;
+document.body.appendChild(card);
 ```
-
-This documentation provides an overview of the `YpPostCard` class, its properties, methods, and an example of how to use it.

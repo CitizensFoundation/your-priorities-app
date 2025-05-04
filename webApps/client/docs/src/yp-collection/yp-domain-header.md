@@ -1,34 +1,29 @@
 # YpDomainHeader
 
-The `YpDomainHeader` class is a custom web component that extends the `YpCollectionHeader` class. It is designed to display a header for a domain collection, including media content, name, description, and additional actions if the user has access.
+A custom web component that extends `YpCollectionHeader` to display a domain/group header with media, name, actions, description, and stats. It is styled responsively and conditionally renders content based on the presence of a collection.
 
 ## Properties
 
-| Name       | Type                  | Description                                      |
-|------------|-----------------------|--------------------------------------------------|
-| collection | YpGroupData \| undefined | The collection data to be displayed in the header. |
+| Name        | Type                        | Description                                      |
+|-------------|-----------------------------|--------------------------------------------------|
+| collection  | YpGroupData \| undefined    | The group/domain data to display in the header.  |
 
 ## Methods
 
-| Name            | Parameters | Return Type | Description                                                                 |
-|-----------------|------------|-------------|-----------------------------------------------------------------------------|
-| render          | None       | TemplateResult | Renders the HTML template for the component, including media, name, and description. |
+| Name         | Parameters | Return Type | Description                                                                                 |
+|--------------|------------|-------------|---------------------------------------------------------------------------------------------|
+| render       | none       | unknown     | Renders the header layout, including media, name, actions, description, stats, and footer.  |
 
 ## Examples
 
 ```typescript
-// Example usage of the yp-domain-header web component
-import './yp-domain-header.js';
+import "./yp-domain-header";
 
-const domainHeader = document.createElement('yp-domain-header');
-domainHeader.collection = {
-  // Example YpGroupData object
-  name: 'Example Collection',
-  description: 'This is an example description for the collection.',
-  // Additional properties as required by YpGroupData
+const groupData: YpGroupData = {
+  // ...group data properties
 };
 
-document.body.appendChild(domainHeader);
+const header = document.createElement("yp-domain-header");
+header.collection = groupData;
+document.body.appendChild(header);
 ```
-
-This component uses the Lit library for rendering and styling, and it includes responsive design considerations for different screen sizes. The `render` method conditionally displays content based on the presence of the `collection` property.

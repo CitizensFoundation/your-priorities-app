@@ -1,80 +1,83 @@
 # YpCollection
 
-The `YpCollection` class is an abstract web component that extends `YpBaseElementWithLogin`. It is designed to manage and display a collection of items, such as communities or groups, with various functionalities like tabs for different views, headers, and floating action buttons (FABs).
+An abstract base class for collection-based views in a Lit web component application. Handles rendering, tab navigation, data fetching, and user access logic for collections such as domains, communities, and groups. Designed to be extended for specific collection types.
 
 ## Properties
 
-| Name                   | Type                                                                 | Description                                                                 |
-|------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| noHeader               | boolean                                                              | Determines if the header should be hidden.                                  |
-| tabsHidden             | boolean                                                              | Determines if the tabs should be hidden.                                    |
-| collectionId           | number \| undefined                                                  | The ID of the collection.                                                   |
-| collectionName         | string \| undefined                                                  | The name of the collection.                                                 |
-| collection             | YpCollectionData \| undefined                                        | The data of the collection.                                                 |
-| subRoute               | string \| undefined                                                  | The sub-route for navigation purposes.                                      |
-| selectedTab            | number                                                               | The currently selected tab, default is `CollectionTabTypes.Collection`.     |
-| collectionItems        | Array<YpCommunityData \| YpGroupData> \| undefined                   | The items within the collection.                                            |
-| hideNewsfeed           | boolean                                                              | Determines if the newsfeed tab should be hidden.                            |
-| locationHidden         | boolean                                                              | Determines if the location tab should be hidden.                            |
-| hideCollection         | boolean                                                              | Determines if the collection tab should be hidden.                          |
-| createFabIcon          | string \| undefined                                                  | The icon for the create FAB.                                                |
-| createFabLabel         | string \| undefined                                                  | The label for the create FAB.                                               |
-| headerImageUrl         | string \| undefined                                                  | The URL for the header image.                                               |
-| useEvenOddItemLayout   | boolean                                                              | Determines if an even-odd layout should be used for items.                  |
-| collectionHeaderHidden | boolean                                                              | Determines if the collection header should be hidden.                       |
-| collectionType         | string                                                               | The type of the collection (e.g., domain, community).                       |
-| collectionItemType     | string \| null                                                       | The type of items in the collection.                                        |
-| collectionCreateFabIcon| string                                                               | The icon for creating a new collection item.                                |
-| collectionCreateFabLabel| string                                                              | The label for creating a new collection item.                               |
+| Name                    | Type                                                                 | Description                                                                                 |
+|-------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| noHeader                | boolean                                                              | If true, hides the collection header.                                                       |
+| tabsHidden              | boolean                                                              | If true, hides the tab navigation.                                                          |
+| collectionId            | number \| undefined                                                  | The ID of the current collection.                                                           |
+| collectionName          | string \| undefined                                                  | The name of the current collection.                                                         |
+| collection              | YpCollectionData \| undefined                                        | The collection data object.                                                                 |
+| subRoute                | string \| undefined                                                  | The current sub-route for navigation.                                                       |
+| selectedTab             | number                                                               | The currently selected tab index.                                                           |
+| collectionItems         | Array&lt;YpCommunityData \| YpGroupData&gt; \| undefined             | The list of items in the collection.                                                        |
+| hideNewsfeed            | boolean                                                              | If true, hides the newsfeed tab.                                                            |
+| locationHidden          | boolean                                                              | If true, hides the location/map tab.                                                        |
+| hideCollection          | boolean                                                              | If true, hides the collection tab.                                                          |
+| createFabIcon           | string \| undefined                                                  | The icon for the floating action button (FAB) to create a new collection.                   |
+| createFabLabel          | string \| undefined                                                  | The label for the FAB to create a new collection.                                           |
+| headerImageUrl          | string \| undefined                                                  | The URL for the header image.                                                               |
+| useEvenOddItemLayout    | boolean                                                              | If true, uses an even/odd layout for collection items.                                      |
+| collectionHeaderHidden  | boolean                                                              | If true, hides the collection header (can be toggled by events).                            |
+| collectionType          | string                                                               | The type of the collection (e.g., "domain", "community", "group").                          |
+| collectionItemType      | string \| null                                                       | The type of items in the collection (e.g., "community", "group").                           |
+| collectionCreateFabIcon | string                                                               | The default icon for the create FAB.                                                        |
+| collectionCreateFabLabel| string                                                               | The default label for the create FAB.                                                       |
 
 ## Methods
 
-| Name                          | Parameters                                                                 | Return Type | Description                                                                 |
-|-------------------------------|----------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| constructor                   | collectionType: string, collectionItemType: string \| null, collectionCreateFabIcon: string, collectionCreateFabLabel: string | void        | Initializes a new instance of the `YpCollection` class.                    |
-| loggedInUserCustom            | none                                                                       | Promise<void> | Refreshes the component when the user logs in.                             |
-| abstract scrollToCollectionItemSubClass | none                                                             | void        | Abstract method to scroll to a specific collection item.                   |
-| setupTheme                    | none                                                                       | void        | Sets up the theme for the component.                                        |
-| connectedCallback             | none                                                                       | void        | Lifecycle method called when the component is added to the DOM.            |
-| hideCollectionHeader          | event: CustomEvent                                                         | void        | Hides the collection header based on the event detail.                     |
-| themeApplied                  | none                                                                       | Promise<void> | Requests an update when the theme is applied.                              |
-| disconnectedCallback          | none                                                                       | void        | Lifecycle method called when the component is removed from the DOM.        |
-| refresh                       | none                                                                       | void        | Refreshes the component's data and UI.                                     |
-| getCollection                 | none                                                                       | Promise<void> | Fetches the collection data from the server.                               |
-| _getHelpPages                 | collectionTypeOverride: string \| undefined, collectionIdOverride: number \| undefined | Promise<void> | Fetches help pages related to the collection.                              |
-| collectionTabLabel            | none                                                                       | string      | Gets the label for the collection tab.                                     |
-| collectionIdChanged           | none                                                                       | void        | Handles changes to the collection ID.                                      |
-| updated                       | changedProperties: Map<string \| number \| symbol, unknown>                | void        | Lifecycle method called when properties are updated.                       |
-| _selectTab                    | event: CustomEvent                                                         | void        | Handles tab selection changes.                                             |
-| _openAdmin                    | none                                                                       | void        | Redirects to the admin page for the collection.                            |
-| _setSelectedTabFromRoute      | routeTabName: string                                                       | void        | Sets the selected tab based on the route.                                  |
-| scrollToCachedItem            | none                                                                       | void        | Scrolls to a cached item if available.                                     |
-| scrollToCollectionItemSubClassDomain | none                                                               | void        | Scrolls to a specific item in the domain collection.                       |
-| setFabIconIfAccess            | onlyAdminCanCreate: boolean, hasCollectionAccess: boolean                  | void        | Sets the FAB icon and label based on access rights.                        |
-| _useHardBack                  | configuration: YpCollectionConfiguration                                   | boolean     | Determines if a hard back URL should be used.                              |
-| createNewCollection           | none                                                                       | void        | Creates a new collection item.                                             |
-| renderHeader                  | none                                                                       | TemplateResult | Renders the header of the collection.                                      |
-| renderAssistantTab            | none                                                                       | TemplateResult | Renders the assistant tab.                                                 |
-| renderNewsAndMapTabs          | none                                                                       | TemplateResult | Renders the news and map tabs.                                             |
-| renderTabs                    | none                                                                       | TemplateResult | Renders the tabs for the collection.                                       |
-| renderCurrentTabPage          | none                                                                       | TemplateResult \| undefined | Renders the current tab page.                                              |
-| render                        | none                                                                       | TemplateResult | Renders the entire component.                                              |
+| Name                              | Parameters                                                                                      | Return Type                | Description                                                                                                 |
+|----------------------------------- |------------------------------------------------------------------------------------------------|----------------------------|-------------------------------------------------------------------------------------------------------------|
+| constructor                       | collectionType: string, collectionItemType: string \| null, collectionCreateFabIcon: string, collectionCreateFabLabel: string | void                       | Initializes the collection with type, item type, FAB icon, and label. Sets up global event listeners.       |
+| loggedInUserCustom                | none                                                                                           | Promise&lt;void&gt;        | Called when the user logs in; triggers a refresh.                                                           |
+| scrollToCollectionItemSubClass    | none                                                                                           | void                       | Abstract method to scroll to a collection item; must be implemented by subclasses.                          |
+| setupTheme                        | none                                                                                           | void                       | Placeholder for theme setup; should be implemented in subclasses.                                           |
+| connectedCallback                 | none                                                                                           | void                       | Lifecycle method; sets up listeners and refreshes data as needed.                                           |
+| hideCollectionHeader              | event: CustomEvent                                                                             | void                       | Handles hiding/showing the collection header based on event detail.                                         |
+| themeApplied                      | none                                                                                           | Promise&lt;void&gt;        | Called when the theme is applied; requests a UI update.                                                     |
+| disconnectedCallback              | none                                                                                           | void                       | Lifecycle method; removes global event listeners.                                                           |
+| refresh                           | none                                                                                           | void                       | Refreshes the collection data and updates the UI.                                                           |
+| getCollection                     | none                                                                                           | Promise&lt;void&gt;        | Fetches the collection data from the server and refreshes the UI.                                           |
+| _getHelpPages                     | collectionTypeOverride?: string, collectionIdOverride?: number                                 | Promise&lt;void&gt;        | Fetches help pages for the collection and fires an event with the result.                                   |
+| collectionTabLabel (getter)       | none                                                                                           | string                     | Returns the label for the collection tab, including the item count.                                         |
+| collectionIdChanged               | none                                                                                           | void                       | Called when the collection ID changes; fetches new data and help pages.                                     |
+| updated                           | changedProperties: Map&lt;string \| number \| symbol, unknown&gt;                              | void                       | Lifecycle method; handles changes to subRoute and collectionId.                                             |
+| _selectTab                        | event: CustomEvent                                                                             | void                       | Handles tab selection changes.                                                                              |
+| _openAdmin                        | none                                                                                           | void                       | Redirects to the admin page for the current collection.                                                     |
+| _setSelectedTabFromRoute          | routeTabName: string                                                                           | void                       | Sets the selected tab based on the route name.                                                              |
+| scrollToCachedItem                | none                                                                                           | void                       | Scrolls to a cached item in the activities or collection list, if available.                                |
+| scrollToCollectionItemSubClassDomain | none                                                                                        | void                       | Scrolls to a cached domain community item, if available.                                                    |
+| setFabIconIfAccess                | onlyAdminCanCreate: boolean, hasCollectionAccess: boolean                                      | void                       | Sets the FAB icon and label if the user has access.                                                         |
+| _useHardBack                      | configuration: YpCollectionConfiguration                                                       | boolean                    | Determines if a hard back navigation should be used based on configuration.                                 |
+| createNewCollection               | none                                                                                           | void                       | Initiates the creation of a new child collection and redirects to the admin page for it.                    |
+| renderHeader                      | none                                                                                           | TemplateResult \| typeof nothing | Renders the collection header if available and not hidden.                                                  |
+| renderAssistantTab                | none                                                                                           | TemplateResult             | Renders the (currently hidden) assistant tab.                                                               |
+| renderNewsAndMapTabs              | none                                                                                           | TemplateResult             | Renders the newsfeed and map tabs, conditionally hidden.                                                    |
+| renderTabs                        | none                                                                                           | TemplateResult \| typeof nothing | Renders the tab navigation if the collection is loaded and tabs are not hidden.                             |
+| renderCurrentTabPage              | none                                                                                           | TemplateResult \| undefined | Renders the content for the currently selected tab.                                                         |
+| render                            | none                                                                                           | TemplateResult             | Main render method; displays the collection UI or a loading indicator.                                      |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpCollection component
-class MyCollection extends YpCollection {
+class MyCommunityCollection extends YpCollection {
   constructor() {
-    super('community', 'group', 'add', 'Create Group');
+    super("community", "group", "add", "Create Group");
   }
 
-  scrollToCollectionItemSubClass(): void {
-    // Implementation for scrolling to a specific collection item
+  scrollToCollectionItemSubClass() {
+    // Custom scroll logic for this subclass
   }
 
   setupTheme() {
-    // Custom theme setup
+    // Custom theme logic
   }
 }
+
+const myCollection = new MyCommunityCollection();
+myCollection.collectionId = 123;
+document.body.appendChild(myCollection);
 ```

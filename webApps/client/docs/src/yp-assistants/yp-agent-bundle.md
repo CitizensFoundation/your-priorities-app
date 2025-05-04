@@ -1,34 +1,36 @@
 # YpAgentBundle
 
-The `YpAgentBundle` class is a custom web component that extends `YpBaseElementWithLogin`. It is designed to manage the display and functionality of an agent bundle, including handling user login and rendering a logo.
+A web component that serves as a bundle for the Evoly AI agent interface, handling authentication, domain routing, and rendering the assistant UI. Inherits from `YpBaseElementWithLogin`.
 
 ## Properties
 
-| Name            | Type     | Description                                                                 |
-|-----------------|----------|-----------------------------------------------------------------------------|
-| domainId        | number   | The domain ID associated with the agent bundle.                             |
-| subRoute        | string   | An optional sub-route string used to determine the domain ID.               |
-| loggedInChecked | boolean  | A flag indicating whether the login status has been checked. Default is `false`. |
+| Name                  | Type      | Description                                                                                  |
+|-----------------------|-----------|----------------------------------------------------------------------------------------------|
+| domainId              | number    | The current domain ID, parsed from the subRoute or set directly.                             |
+| subRoute              | string \| undefined | The sub-route string, typically from the URL, used to extract the domain ID.         |
+| loggedInChecked       | boolean   | Indicates whether the login check has been performed. Defaults to `false`.                   |
+| temporaryAccessIds    | string[]  | List of valid temporary access IDs for alpha access.                                         |
+| temporaryAccessIdsOld | string[]  | List of old/legacy temporary access IDs for alpha access.                                    |
 
 ## Methods
 
-| Name         | Parameters                                      | Return Type | Description                                                                 |
-|--------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------|
-| updated      | changedProperties: Map<string \| number \| symbol, unknown> | void        | Called when the element's properties change. Updates the domain ID based on the `subRoute`. |
-| _loggedIn    | event: CustomEvent                              | void        | Handles the login event, checking access tokens and updating login status.  |
-| renderLogo   |                                                 | TemplateResult | Renders the logo based on the theme mode.                                    |
-| render       |                                                 | TemplateResult | Renders the main layout of the component, including the assistant or a placeholder. |
+| Name         | Parameters                | Return Type | Description                                                                                                   |
+|--------------|---------------------------|-------------|---------------------------------------------------------------------------------------------------------------|
+| updated      | changedProperties: Map<string \| number \| symbol, unknown> | void        | Lifecycle method called when properties are updated. Parses `subRoute` to set `domainId` if changed.          |
+| _loggedIn    | event: CustomEvent        | void        | Handles login events. Checks for valid access tokens and manages temporary access logic and redirects.         |
+| renderLogo   | none                      | unknown     | Renders the Evoly AI logo based on the current theme.                                                         |
+| render       | none                      | unknown     | Renders the main layout, including the assistant or a placeholder if `domainId` is not set.                   |
 
 ## Examples
 
 ```typescript
-// Example usage of the YpAgentBundle web component
-import './path/to/yp-agent-bundle.js';
+import "./yp-agent-bundle.js";
 
-const agentBundle = document.createElement('yp-agent-bundle');
+const agentBundle = document.createElement("yp-agent-bundle");
 agentBundle.domainId = 123;
-agentBundle.subRoute = '/some/sub/route';
 document.body.appendChild(agentBundle);
 ```
 
-This component is styled using CSS to provide a consistent layout and appearance, including a fixed position for certain elements and a responsive design for the assistant and logo. The component also includes a temporary access ID mechanism for managing user access during the alpha phase.
+```html
+<yp-agent-bundle domainId="123"></yp-agent-bundle>
+```

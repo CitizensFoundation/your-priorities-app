@@ -215,6 +215,7 @@
   - [wave-renderer](src/yp-assistants/wave-renderer.md)
   - widgets
     - [yp-agent-chip-for-purchase](src/yp-assistants/widgets/yp-agent-chip-for-purchase.md)
+    - [yp-agent-chip-simple](src/yp-assistants/widgets/yp-agent-chip-simple.md)
     - [yp-agent-chip](src/yp-assistants/widgets/yp-agent-chip.md)
     - [yp-agent-configuration-widget](src/yp-assistants/widgets/yp-agent-configuration-widget.md)
     - [yp-agent-run-widget](src/yp-assistants/widgets/yp-agent-run-widget.md)
@@ -231,6 +232,7 @@
   - [yp-chatbot-base](src/yp-chatbots/yp-chatbot-base.md)
   - [yp-chatbot-item-base](src/yp-chatbots/yp-chatbot-item-base.md)
   - [yp-streaming-llm-base](src/yp-chatbots/yp-streaming-llm-base.md)
+  - [yp-streaming-llm-scrolling](src/yp-chatbots/yp-streaming-llm-scrolling.md)
 - yp-collection
   - [yp-collection-header](src/yp-collection/yp-collection-header.md)
   - [yp-collection-item-card](src/yp-collection/yp-collection-item-card.md)

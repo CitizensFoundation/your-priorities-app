@@ -1,35 +1,36 @@
 # YpUserInfo
 
-`YpUserInfo` is a custom web component that displays user information, including their avatar, name, and email. It provides buttons for editing user information, logging out, and optionally creating a new organization.
+A web component that displays user information, including avatar, name, email, and action buttons for editing the user, logging out, and (optionally) creating a new organization. It extends `YpBaseElement` and uses Material Web buttons and a custom user image component.
 
 ## Properties
 
-| Name                      | Type      | Description                                                                 |
-|---------------------------|-----------|-----------------------------------------------------------------------------|
-| user                      | YpUserData | The user data object containing information about the user.                 |
-| showCreateNewOrganization | boolean   | Determines whether the "Create New Organization" button is visible or not.  |
+| Name                      | Type                | Description                                                                                 |
+|---------------------------|---------------------|---------------------------------------------------------------------------------------------|
+| user                      | YpUserData          | The user data object to display.                                                            |
+| showCreateNewOrganization | boolean             | Whether to show the "Create New Organization" button, determined by domain access checking. |
 
 ## Methods
 
-| Name                        | Parameters | Return Type | Description                                                                 |
-|-----------------------------|------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback           | None       | void        | Lifecycle method called when the element is added to the document.          |
-| _createNewOrganization      | None       | void        | Redirects to the new organization creation page and closes all drawers.     |
-| _openAllContentModeration   | None       | void        | Opens the user content moderation activity.                                 |
-| _openEdit                   | None       | void        | Fires an event to open the user edit interface.                             |
-| _logout                     | None       | void        | Logs out the current user.                                                  |
+| Name                        | Parameters | Return Type | Description                                                                                      |
+|-----------------------------|------------|-------------|--------------------------------------------------------------------------------------------------|
+| render                      |            | unknown     | Renders the user info UI, including avatar, name, email, and action buttons.                     |
+| connectedCallback           |            | void        | Lifecycle method called when the element is added to the DOM. Checks if organization creation is allowed. |
+| _createNewOrganization      |            | void        | Redirects to the new organization creation page and fires a global event to close all drawers.   |
+| _openAllContentModeration   |            | void        | Opens the content moderation dialog for the user (currently not fully implemented).              |
+| _openEdit                   |            | void        | Fires an event to open the user edit dialog.                                                     |
+| _logout                     |            | void        | Logs out the current user.                                                                       |
 
 ## Examples
 
 ```typescript
-import './yp-user-info.js';
+import "./yp-user-info.js";
 
-const userInfoElement = document.createElement('yp-user-info');
-userInfoElement.user = {
-  name: 'John Doe',
-  email: 'john.doe@example.com'
+const userInfo = document.createElement("yp-user-info");
+userInfo.user = {
+  id: 1,
+  name: "Jane Doe",
+  email: "jane@example.com",
+  // ...other YpUserData fields
 };
-document.body.appendChild(userInfoElement);
+document.body.appendChild(userInfo);
 ```
-
-This example demonstrates how to create and use the `YpUserInfo` component, setting the `user` property to display user information.
