@@ -86,11 +86,16 @@ export class YpUserInfo extends YpBaseElement {
                     >${this.t("user.edit")}</md-outlined-button
                   >
 
-                  <md-outlined-button hidden @click="${this._openAllContentModeration}"
+                  <md-outlined-button
+                    hidden
+                    @click="${this._openAllContentModeration}"
                     >${this.t("myContent")}</md-outlined-button
                   >
 
-                  <md-outlined-button @click="${this._createNewOrganization}" ?hidden="${!this.showCreateNewOrganization}"
+                  <md-outlined-button
+                    @click="${this._createNewOrganization}"
+                    hidden
+                    ?hiddenOld="${!this.showCreateNewOrganization}"
                     >${this.t("createOrganization")}</md-outlined-button
                   >
 
@@ -107,11 +112,15 @@ export class YpUserInfo extends YpBaseElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.showCreateNewOrganization = YpAccessHelpers.checkDomainAccess(window.appGlobals.domain as YpDomainData);
+    this.showCreateNewOrganization = YpAccessHelpers.checkDomainAccess(
+      window.appGlobals.domain as YpDomainData
+    );
   }
 
   _createNewOrganization() {
-    YpNavHelpers.redirectTo(`/admin/domain/new/${window.appGlobals.domain?.id}`);
+    YpNavHelpers.redirectTo(
+      `/admin/domain/new/${window.appGlobals.domain?.id}`
+    );
     this.fireGlobal("yp-close-all-drawers");
   }
 
