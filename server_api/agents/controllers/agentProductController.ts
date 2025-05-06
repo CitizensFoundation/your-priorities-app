@@ -78,7 +78,8 @@ export class AgentProductController {
         agentProductId
       );
       if (!agentProduct) {
-        return res.status(404).json({ error: 'Agent product not found' });
+        res.status(404).json({ error: 'Agent product not found' });
+        return;
       }
       res.json(agentProduct);
     } catch (error: any) {

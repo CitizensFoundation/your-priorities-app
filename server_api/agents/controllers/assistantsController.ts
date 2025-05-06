@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import WebSocket from "ws";
 import { marked } from "marked";
 import HTMLtoDOCX from "html-to-docx";
@@ -174,7 +174,7 @@ export class AssistantController {
     return status ? status.messages[status.messages.length - 1] : null;
   }
 
-  private getDocxReport = async (req: YpRequest, res: express.Response) => {
+  private getDocxReport = async (req: YpRequest, res: express.Response): Promise<void> => {
     try {
       const { agentId } = req.params;
 
@@ -183,22 +183,28 @@ export class AssistantController {
       );
 
       if (!lastStatusMessage) {
-        return res.status(404).send("No status message found.");
+        res.status(404).send("No status message found.");
       }
 
       const regex = /<markdownReport>([\s\S]*?)<\/markdownReport>/i;
-      const match = lastStatusMessage.match(regex);
+      const match = lastStatusMessage ? lastStatusMessage.match(regex) : null;
 
       console.debug(`match: ${JSON.stringify(match, null, 2)}`);
 
       if (!match || match.length < 2) {
         console.error("No <markdownReport>...</markdownReport> content found.");
-        return res
+        res
           .status(400)
           .send("No <markdownReport>...</markdownReport> content found.");
       }
 
-      const markdownContent = match[1];
+      const markdownContent = match ? match[1] : null ;
+
+      if (!markdownContent) {
+        console.error("No markdown content found.");
+        res.status(400).send("No markdown content found.");
+        return;
+      }
 
       const htmlContent = await marked(markdownContent);
 
@@ -215,17 +221,17 @@ export class AssistantController {
         'attachment; filename="converted.docx"'
       );
 
-      return res.send(docxBuffer);
+      res.send(docxBuffer);
     } catch (error) {
       console.error("Error converting Markdown to DOCX:", error);
-      return res.status(500).send("Server error");
+      res.status(500).send("Server error");
     }
   };
 
   private advanceOrStopCurrentWorkflowStep = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     const { groupId, agentId, runId } = req.params;
     const { status, wsClientId } = req.body;
 
@@ -249,7 +255,7 @@ export class AssistantController {
   private startNextWorkflowStep = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     const { groupId, agentId } = req.params;
 
     try {
@@ -264,7 +270,7 @@ export class AssistantController {
   private stopCurrentWorkflowStep = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     const { groupId, agentId } = req.params;
     try {
       //await this.agentQueueManager.stopCurrentWorkflowStep(parseInt(agentId), parseInt(groupId));
@@ -278,10 +284,11 @@ export class AssistantController {
   public getAgentConfigurationAnswers = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     try {
       if (!req.user) {
-        return res.status(401).json({ error: "Unauthorized" });
+        res.status(401).json({ error: "Unauthorized" });
+        return;
       }
 
       const subscriptionId = parseInt(req.params.subscriptionId);
@@ -295,14 +302,14 @@ export class AssistantController {
       });
 
       if (!subscription) {
-        return res.status(404).json({ error: "Subscription not found" });
+        res.status(404).json({ error: "Subscription not found" });
       }
 
       // Extract the requiredQuestionsAnswered from subscription.configuration
       const answers =
-        subscription.configuration?.requiredQuestionsAnswered || [];
+        subscription?.configuration?.requiredQuestionsAnswered || [];
 
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         data: answers,
       });
@@ -311,19 +318,20 @@ export class AssistantController {
         "Error retrieving subscription agent configuration:",
         error
       );
-      return res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   };
 
   private getUpdatedWorkflow = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     const { runId } = req.params;
     const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     try {
@@ -354,7 +362,7 @@ export class AssistantController {
   private startWorkflowAgent = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     const { groupId, agentId, wsClientId } = req.params;
 
     try {
@@ -373,10 +381,10 @@ export class AssistantController {
     }
   };
 
-  private submitAgentConfiguration = async (
+  private submitAgentConfiguration: RequestHandler = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     console.log(
       `submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`
     );
@@ -408,7 +416,6 @@ export class AssistantController {
     } catch (error) {
       console.error("Error saving subscription:", error);
       res.sendStatus(500);
-      return;
     }
 
     res.sendStatus(200);
@@ -417,9 +424,10 @@ export class AssistantController {
   private updateAssistantMemoryLoginStatus = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
     try {
       const memory = await this.loadMemoryWithOwnership(req, res);
@@ -596,7 +604,7 @@ export class AssistantController {
     if (!memory) return;
     console.log(`Getting memory at key: ${memory.redisKey}`);
 
-    return res.json(memory);
+    res.json(memory);
   };
 
   private async startVoiceSession(req: YpRequest, res: express.Response) {
@@ -694,9 +702,10 @@ export class AssistantController {
   private getRunningWorkflowConversations = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     if (!req.user || !req.user.id) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
     try {
       const workflows =
@@ -717,9 +726,10 @@ export class AssistantController {
   private getAllWorkflowConversations = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     if (!req.user || !req.user.id) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
     try {
       const workflows =
@@ -740,9 +750,10 @@ export class AssistantController {
   private connectToWorkflowConversation = async (
     req: YpRequest,
     res: express.Response
-  ) => {
+  ): Promise<void> => {
     if (!req.user || !req.user.id) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
     try {
       const { workflowConversationId, connectionData } = req.body;

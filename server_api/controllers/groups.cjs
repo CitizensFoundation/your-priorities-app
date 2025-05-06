@@ -4029,7 +4029,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
 };
 
 router.get(
-  "/:id/posts/:filter/:categoryId/:status?",
+  "/:id/posts/:filter/:categoryId{/:status}",
   auth.can("view group"),
   function (req, res) {
     const redisKey = `cache:posts:${req.params.id}:${req.params.filter}:${req.params.categoryId}:${req.params.status}:${req.query.offset}:${req.query.randomSeed}`;

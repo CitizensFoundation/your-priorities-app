@@ -525,31 +525,31 @@ router.get("/", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/domain*", function (req, res) {
+router.get("/domain{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/organization*", function (req, res) {
+router.get("/organization{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/community*", function (req, res) {
+router.get("/community{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/agent_bundle*", function (req, res) {
+router.get("/agent_bundle{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/group*", function (req, res) {
+router.get("/group{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/post*", function (req, res) {
+router.get("/post{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 
-router.get("/user*", function (req, res) {
+router.get("/user{/*splat}", function (req, res) {
   sendIndex(req, res);
 });
 

@@ -657,30 +657,30 @@ export class YourPrioritiesApi {
     // Promotion app
     const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
     this.app.use("/promotion", express.static(promotionAppPath));
-    this.app.use("/promotion/domain/*", express.static(promotionAppPath));
-    this.app.use("/promotion/organization/*", express.static(promotionAppPath));
-    this.app.use("/promotion/community/*", express.static(promotionAppPath));
-    this.app.use("/promotion/group/*", express.static(promotionAppPath));
-    this.app.use("/promotion/post/*", express.static(promotionAppPath));
+    this.app.use("/promotion/domain/*splat", express.static(promotionAppPath));
+    this.app.use("/promotion/organization/*splat", express.static(promotionAppPath));
+    this.app.use("/promotion/community/*splat", express.static(promotionAppPath));
+    this.app.use("/promotion/group/*splat", express.static(promotionAppPath));
+    this.app.use("/promotion/post/*splat", express.static(promotionAppPath));
     this.app.use(
-      "/promotion/locales/en/*",
+      "/promotion/locales/en/*splat",
       express.static(path.join(promotionAppPath, "locales/en"))
     );
     this.app.use(
-      "/promotion/locales/is/*",
+      "/promotion/locales/is/*splat",
       express.static(path.join(promotionAppPath, "locales/is"))
     );
 
     // Land use game
     const landUseGamePath = path.join(baseDir, "land_use_game/dist");
     this.app.use("/land_use", express.static(landUseGamePath));
-    this.app.use("/land_use/*", express.static(landUseGamePath));
+    this.app.use("/land_use/*splat", express.static(landUseGamePath));
     this.app.use(
-      "/land_use/locales/en/*",
+      "/land_use/locales/en/*splat",
       express.static(path.join(landUseGamePath, "locales/en"))
     );
     this.app.use(
-      "/land_use/locales/is/*",
+      "/land_use/locales/is/*splat",
       express.static(path.join(landUseGamePath, "locales/is"))
     );
     this.app.use(
@@ -737,12 +737,12 @@ export class YourPrioritiesApi {
     this.app.use("/domain", index);
     this.app.use("/community", index);
     this.app.use("/organization", index);
-    this.app.use("/agent_bundle/*", index);
+    this.app.use("/agent_bundle/*splat", index);
     this.app.use("/group", index);
     this.app.use("/post", index);
     this.app.use("/user", index);
     this.app.use("/admin", index);
-    this.app.use("/survey*", index);
+    this.app.use('/survey*splat', index);
     this.app.use("/api/domains", domains);
     this.app.use("/api/organizations", organizations);
     this.app.use("/api/communities", communities);

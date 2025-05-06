@@ -6,7 +6,7 @@ import models from "../models/index.cjs";
 import auth from "../authorization.cjs";
 
 import { v4 as uuidv4 } from "uuid";
-import express, { Request, Response } from "express";
+import express, { Request, RequestHandler, Response } from "express";
 import crypto from "crypto";
 
 const dbModels: Models = models;
@@ -607,7 +607,8 @@ export class AllOurIdeasController {
     console.log(`in createQuestion: ${JSON.stringify(questionParams.ideas)}`);
 
     if (questionParams.ideas.length < 4) {
-      return res.status(400).json({ error: "Invalid input" });
+      res.status(400).json({ error: "Invalid input" });
+      return;
     }
 
     const requestBody = {

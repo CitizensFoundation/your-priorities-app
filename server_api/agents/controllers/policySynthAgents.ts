@@ -144,18 +144,18 @@ export class PolicySynthAgentsController {
       auth.can("edit group"),
       this.addAgentAiModel
     );
-    this.router.get(
-      "/:groupId/:agentId/memory",
-      auth.can("view group"),
-      this.getAgentMemory
-    );
     this.router.put(
       "/:groupId/:agentId/memory",
       auth.can("edit group"),
       this.replaceAgentMemory
     );
     this.router.post(
-      "/:groupId/:agentId/:type(input|output)Connectors/existing",
+      "/:groupId/:agentId/inputConnectors/existing",
+      auth.can("edit group"),
+      this.addExistingConnector
+    );
+    this.router.post(
+      "/:groupId/:agentId/outputConnectors/existing",
       auth.can("edit group"),
       this.addExistingConnector
     );
@@ -172,16 +172,16 @@ export class PolicySynthAgentsController {
 
       if (!memory || Object.keys(memory).length === 0) {
         console.log(`Received empty memory for agent ${agentId}`);
-        return res.status(400).json({ error: "Cannot save empty memory" });
+        res.status(400).json({ error: "Cannot save empty memory" });
+        return;
       }
 
       try {
         JSON.parse(JSON.stringify(memory));
       } catch (jsonError) {
         console.log(`Received invalid JSON for agent ${agentId}`);
-        return res
-          .status(400)
-          .json({ error: "Invalid JSON format for memory" });
+        res.status(400).json({ error: "Invalid JSON format for memory" });
+        return;
       }
 
       const memoryKey = await this.agentManager.getSubAgentMemoryKey(
@@ -191,9 +191,10 @@ export class PolicySynthAgentsController {
 
       if (!memoryKey) {
         console.log(`Memory key not found for agent ${agentId}`);
-        return res
+        res
           .status(404)
           .json({ error: "Memory key not found for the specified agent" });
+        return;
       }
 
       console.log(`Memory key found: ${memoryKey}`);
@@ -210,19 +211,32 @@ export class PolicySynthAgentsController {
       } else {
         res.status(500).json({ error: "An unexpected error occurred" });
       }
+      return;
     }
   };
 
   addExistingConnector = async (req: YpRequest, res: express.Response) => {
-    const { groupId, agentId, type } = req.params;
+    const { groupId, agentId } = req.params;
     const { connectorId } = req.body;
 
+    let type: "input" | "output";
+    if (req.path.includes("/inputConnectors/")) {
+      type = "input";
+    } else if (req.path.includes("/outputConnectors/")) {
+      type = "output";
+    } else {
+      // This case should ideally not be reached if routes are set up correctly
+      res.status(400).send("Could not determine connector type from path");
+      return;
+    }
+
     if (!groupId || !agentId || !connectorId) {
-      return res
+      res
         .status(400)
         .send(
           "Group ID, agent ID and connector ID (input/output) are required"
         );
+      return;
     }
 
     try {
@@ -230,7 +244,7 @@ export class PolicySynthAgentsController {
         parseInt(groupId),
         parseInt(agentId),
         parseInt(connectorId),
-        type as "input" | "output"
+        type
       );
       res.status(200).json({
         message: `Existing ${connectorId} connector added successfully`,
@@ -259,9 +273,10 @@ export class PolicySynthAgentsController {
 
       if (!memoryKey) {
         console.log(`Memory key not found for agent ${agentId}`);
-        return res
+        res
           .status(404)
           .json({ error: "Memory key not found for the specified agent" });
+        return;
       }
 
       console.log(`Memory key found: ${memoryKey}`);
@@ -270,7 +285,8 @@ export class PolicySynthAgentsController {
 
       if (!memoryContents) {
         console.log(`Memory contents not found for key ${memoryKey}`);
-        return res.status(404).json({ error: "Memory contents not found" });
+        res.status(404).json({ error: "Memory contents not found" });
+        return;
       }
 
       console.log(`Memory contents retrieved successfully`);
@@ -285,6 +301,7 @@ export class PolicySynthAgentsController {
       } else {
         res.status(500).json({ error: "An unexpected error occurred" });
       }
+      return;
     }
   };
 
@@ -295,6 +312,7 @@ export class PolicySynthAgentsController {
     } catch (error) {
       console.error("Error in getAgent:", error);
       res.status(500).send("Internal Server Error");
+      return;
     }
   };
 
@@ -355,13 +373,15 @@ export class PolicySynthAgentsController {
           updatedConfig
         );
       } else {
-        return res.status(400).send("Invalid node type");
+        res.status(400).send("Invalid node type");
+        return;
       }
 
       res.json({ message: `${nodeType} configuration updated successfully` });
     } catch (error) {
       console.error(`Error updating ${nodeType} configuration:`, error);
       res.status(500).send("Internal Server Error");
+      return;
     }
   };
 
