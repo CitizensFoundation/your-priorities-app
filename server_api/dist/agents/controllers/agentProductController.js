@@ -22,7 +22,8 @@ export class AgentProductController {
                 const agentProductId = parseInt(req.params.agentProductId);
                 const agentProduct = await this.agentProductManager.getAgentProduct(agentProductId);
                 if (!agentProduct) {
-                    return res.status(404).json({ error: 'Agent product not found' });
+                    res.status(404).json({ error: 'Agent product not found' });
+                    return;
                 }
                 res.json(agentProduct);
             }

@@ -31,5 +31,5 @@
     "node_modules/@policysynth/agents/streamingLLms.d.ts",
     "node_modules/@policysynth/agents/validation.d.ts"
   ],
-  "exclude": ["webAppsDist", "ts-out"]
+  "exclude": ["webAppsDist", "ts-out","dist"]
 }

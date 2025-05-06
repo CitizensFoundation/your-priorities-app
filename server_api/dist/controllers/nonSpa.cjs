@@ -504,7 +504,7 @@ var sendUser = function sendUserForBot(id, req, res) {
         res.sendStatus(500);
     });
 };
-router.get('/*', function botController(req, res, next) {
+router.get('/{*splat}', function botController(req, res, next) {
     const { splitUrl, splitPath, id, url } = getSplitUrl(req);
     let communitiesOffset = 0;
     if (url.indexOf("communitiesOffset=") > -1) {

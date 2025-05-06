@@ -21,22 +21,25 @@ export class AgentSubscriptionController {
                         },
                     });
                     if (!subscription) {
-                        return res.status(404).json({ error: "Subscription not found" });
+                        res.status(404).json({ error: "Subscription not found" });
+                        return;
                     }
                     // Extract the requiredQuestionsAnswered from subscription.configuration
                     const answers = subscription.configuration?.requiredQuestionsAnswered || [];
-                    return res.status(200).json({
+                    res.status(200).json({
                         success: true,
                         data: answers,
                     });
+                    return;
                 }
                 else {
-                    return res.status(401).json({ error: "Unauthorized" });
+                    res.status(401).json({ error: "Unauthorized" });
+                    return;
                 }
             }
             catch (error) {
                 console.error("Error retrieving subscription agent configuration:", error);
-                return res.status(500).json({ error: error.message });
+                res.status(500).json({ error: error.message });
             }
         };
         this.updateAgentConfiguration = async (req, res) => {
@@ -44,13 +47,15 @@ export class AgentSubscriptionController {
                 const subscriptionId = parseInt(req.params.subscriptionId);
                 const requiredQuestionsAnswered = req.body.requiredQuestionsAnswered;
                 if (!requiredQuestionsAnswered) {
-                    return res.status(400).json({ error: "requiredQuestionsAnswered is required" });
+                    res.status(400).json({ error: "requiredQuestionsAnswered is required" });
+                    return;
                 }
                 const subscription = await YpSubscription.findOne({
                     where: { id: subscriptionId, user_id: req.user.id }
                 });
                 if (!subscription) {
-                    return res.status(404).json({ error: "Subscription not found" });
+                    res.status(404).json({ error: "Subscription not found" });
+                    return;
                 }
                 subscription.configuration.requiredQuestionsAnswered = JSON.parse(requiredQuestionsAnswered);
                 subscription.changed('configuration', true);
@@ -78,13 +83,13 @@ export class AgentSubscriptionController {
                 const userId = req.user.id;
                 // If not a free trial request, redirect to payment intent endpoint
                 if (!isFreeTrialRequest) {
-                    return res.status(400).json({
+                    res.status(400).json({
                         error: "For paid subscriptions, please use /stripe-create-payment-intent instead",
                     });
                 }
                 // Handle free trial subscription
                 if (!planIds) {
-                    return res.status(400).json({
+                    res.status(400).json({
                         error: "agentProductIds and planIds are required",
                     });
                 }
@@ -146,7 +151,8 @@ export class AgentSubscriptionController {
                     where: { id: subscriptionId, user_id: userId },
                 });
                 if (!subscription) {
-                    return res.status(404).json({ error: "Subscription not found" });
+                    res.status(404).json({ error: "Subscription not found" });
+                    return;
                 }
                 subscription.status = "cancelled";
                 await subscription.save();
@@ -166,7 +172,8 @@ export class AgentSubscriptionController {
                     where: { id: subscriptionId, user_id: userId },
                 });
                 if (!subscription) {
-                    return res.status(404).json({ error: "Subscription not found" });
+                    res.status(404).json({ error: "Subscription not found" });
+                    return;
                 }
                 // Apply updates (validate as necessary)
                 Object.assign(subscription, updates);
@@ -183,15 +190,17 @@ export class AgentSubscriptionController {
                 const userId = req.user.id;
                 const { planIds, paymentMethodId } = req.body;
                 if (!planIds || !paymentMethodId) {
-                    return res.status(400).json({
+                    res.status(400).json({
                         error: "planIds, and paymentMethodId are required",
                     });
+                    return;
                 }
                 const result = await this.subscriptionManager.createSubscriptions(userId, planIds, paymentMethodId);
                 res.status(200).json({
                     clientSecret: result.clientSecret,
                     subscriptionId: result.subscriptionId,
                 });
+                return;
             }
             catch (error) {
                 console.error("Error creating payment intent:", error);

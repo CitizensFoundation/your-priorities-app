@@ -22,23 +22,24 @@ export class PolicySynthAgentsController {
                 console.log(`Attempting to replace memory for agent ${agentId} in group ${groupId}`);
                 if (!memory || Object.keys(memory).length === 0) {
                     console.log(`Received empty memory for agent ${agentId}`);
-                    return res.status(400).json({ error: "Cannot save empty memory" });
+                    res.status(400).json({ error: "Cannot save empty memory" });
+                    return;
                 }
                 try {
                     JSON.parse(JSON.stringify(memory));
                 }
                 catch (jsonError) {
                     console.log(`Received invalid JSON for agent ${agentId}`);
-                    return res
-                        .status(400)
-                        .json({ error: "Invalid JSON format for memory" });
+                    res.status(400).json({ error: "Invalid JSON format for memory" });
+                    return;
                 }
                 const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
                 if (!memoryKey) {
                     console.log(`Memory key not found for agent ${agentId}`);
-                    return res
+                    res
                         .status(404)
                         .json({ error: "Memory key not found for the specified agent" });
+                    return;
                 }
                 console.log(`Memory key found: ${memoryKey}`);
                 await req.redisClient.set(memoryKey, JSON.stringify(memory));
@@ -53,15 +54,29 @@ export class PolicySynthAgentsController {
                 else {
                     res.status(500).json({ error: "An unexpected error occurred" });
                 }
+                return;
             }
         };
         this.addExistingConnector = async (req, res) => {
-            const { groupId, agentId, type } = req.params;
+            const { groupId, agentId } = req.params;
             const { connectorId } = req.body;
+            let type;
+            if (req.path.includes("/inputConnectors/")) {
+                type = "input";
+            }
+            else if (req.path.includes("/outputConnectors/")) {
+                type = "output";
+            }
+            else {
+                // This case should ideally not be reached if routes are set up correctly
+                res.status(400).send("Could not determine connector type from path");
+                return;
+            }
             if (!groupId || !agentId || !connectorId) {
-                return res
+                res
                     .status(400)
                     .send("Group ID, agent ID and connector ID (input/output) are required");
+                return;
             }
             try {
                 await this.agentConnectorManager.addExistingConnector(parseInt(groupId), parseInt(agentId), parseInt(connectorId), type);
@@ -86,15 +101,17 @@ export class PolicySynthAgentsController {
                 const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
                 if (!memoryKey) {
                     console.log(`Memory key not found for agent ${agentId}`);
-                    return res
+                    res
                         .status(404)
                         .json({ error: "Memory key not found for the specified agent" });
+                    return;
                 }
                 console.log(`Memory key found: ${memoryKey}`);
                 const memoryContents = await req.redisClient.get(memoryKey);
                 if (!memoryContents) {
                     console.log(`Memory contents not found for key ${memoryKey}`);
-                    return res.status(404).json({ error: "Memory contents not found" });
+                    res.status(404).json({ error: "Memory contents not found" });
+                    return;
                 }
                 console.log(`Memory contents retrieved successfully`);
                 const parsedMemoryContents = JSON.parse(memoryContents);
@@ -108,6 +125,7 @@ export class PolicySynthAgentsController {
                 else {
                     res.status(500).json({ error: "An unexpected error occurred" });
                 }
+                return;
             }
         };
         this.getAgent = async (req, res) => {
@@ -118,6 +136,7 @@ export class PolicySynthAgentsController {
             catch (error) {
                 console.error("Error in getAgent:", error);
                 res.status(500).send("Internal Server Error");
+                return;
             }
         };
         this.getAgentAiModels = async (req, res) => {
@@ -163,13 +182,15 @@ export class PolicySynthAgentsController {
                     await this.agentConnectorManager.updateConnectorConfiguration(nodeId, updatedConfig);
                 }
                 else {
-                    return res.status(400).send("Invalid node type");
+                    res.status(400).send("Invalid node type");
+                    return;
                 }
                 res.json({ message: `${nodeType} configuration updated successfully` });
             }
             catch (error) {
                 console.error(`Error updating ${nodeType} configuration:`, error);
                 res.status(500).send("Internal Server Error");
+                return;
             }
         };
         this.createInputConnector = async (req, res) => {
@@ -388,8 +409,8 @@ export class PolicySynthAgentsController {
         this.router.get("/:groupId/:id/ai-models", auth.can("view group"), this.getAgentAiModels);
         this.router.delete("/:groupId/:agentId/ai-models/:modelId", auth.can("edit group"), this.removeAgentAiModel);
         this.router.post("/:groupId/:agentId/ai-models", auth.can("edit group"), this.addAgentAiModel);
-        this.router.get("/:groupId/:agentId/memory", auth.can("view group"), this.getAgentMemory);
         this.router.put("/:groupId/:agentId/memory", auth.can("edit group"), this.replaceAgentMemory);
-        this.router.post("/:groupId/:agentId/:type(input|output)Connectors/existing", auth.can("edit group"), this.addExistingConnector);
+        this.router.post("/:groupId/:agentId/inputConnectors/existing", auth.can("edit group"), this.addExistingConnector);
+        this.router.post("/:groupId/:agentId/outputConnectors/existing", auth.can("edit group"), this.addExistingConnector);
     }
 }

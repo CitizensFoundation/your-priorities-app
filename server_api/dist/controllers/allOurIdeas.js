@@ -378,7 +378,8 @@ export class AllOurIdeasController {
         const questionParams = req.body;
         console.log(`in createQuestion: ${JSON.stringify(questionParams.ideas)}`);
         if (questionParams.ideas.length < 4) {
-            return res.status(400).json({ error: "Invalid input" });
+            res.status(400).json({ error: "Invalid input" });
+            return;
         }
         const requestBody = {
             name: questionParams.question,
