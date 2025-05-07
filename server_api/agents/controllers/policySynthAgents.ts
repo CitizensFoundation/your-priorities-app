@@ -149,6 +149,11 @@ export class PolicySynthAgentsController {
       auth.can("edit group"),
       this.replaceAgentMemory
     );
+    this.router.get(
+      "/:groupId/:agentId/memory",
+      auth.can("edit group"),
+      this.getAgentMemory
+    );
     this.router.post(
       "/:groupId/:agentId/inputConnectors/existing",
       auth.can("edit group"),

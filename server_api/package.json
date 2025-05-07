@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.105",
+  "version": "9.0.107",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -114,6 +114,7 @@
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.18.1",
     "axios": "^1.9.0",
+    "copyfiles": "^2.4.1",
     "csv-parse": "^5.6.0",
     "diacritics": "^1.3.0",
     "jshint": "^2.13.6",
@@ -132,7 +133,7 @@
   },
   "scripts": {
     "copyInLocalAgents": "cp -R ../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
-    "publish_live": "npm run build;npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_live": "npm run build:dev;copyfiles './controllers/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server.js",
     "watch-start": "DEBUG=router:* tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",
