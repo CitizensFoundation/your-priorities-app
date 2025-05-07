@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.110",
+  "version": "9.0.111",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -98,6 +98,7 @@
     "@maxmind/geoip2-node": "^6.1.0",
     "@tsconfig/node18": "^18.2.4",
     "@tsconfig/node22": "^22.0.1",
+    "@types/bcrypt": "^5.0.2",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-prettystream": "^0.1.35",
     "@types/compression": "^1.7.5",

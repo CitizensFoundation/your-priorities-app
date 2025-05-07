@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath, pathToFileURL } from 'url';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import { Sequelize, DataTypes, Op, ModelCtor } from "sequelize";
 import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
 
@@ -311,6 +313,15 @@ async function seedAllModels() {
   console.log("FORCE_DB_SYNC (ignored, always true for this script):", process.env.FORCE_DB_SYNC);
   console.log("FORCE_DB_INDEX_SYNC (ignored, indexes created after forced sync):", process.env.FORCE_DB_INDEX_SYNC);
 
+  const args = process.argv.slice(2);
+  if (args.length < 2) {
+    console.error("Usage: node <script_path> <username/email> <password>");
+    process.exit(1);
+  }
+  const userEmail = args[0].toLowerCase();
+  const userName = args[0]; // Using email as name for simplicity, or a fixed name
+  const userPassword = args[1];
+
   // Check for main database config outside of production if not using DATABASE_URL
   if (env !== "production") {
     if (
@@ -335,6 +346,72 @@ async function seedAllModels() {
   try {
     await syncMainDatabase();
     await syncPolicySynthDatabase();
+
+    console.log("--- Databases Synchronized ---");
+    console.log("--- Creating User and Domain ---");
+
+    if (!mainDb.User) {
+      console.error("User model (mainDb.User) not found after sync.");
+      process.exit(1);
+    }
+    if (!mainDb.Domain) {
+      console.error("Domain model (mainDb.Domain) not found after sync.");
+      process.exit(1);
+    }
+
+    // Create User
+    console.log(`Attempting to create user: ${userEmail}`);
+    const newUser = mainDb.User.build({
+      email: userEmail,
+      name: userName, // Or a dedicated name argument if preferred
+      status: 'active',
+      // Attempt to set default notifications, fallback if AcNotification not on mainDb
+      notifications_settings: mainDb.AcNotification ? mainDb.AcNotification.defaultNotificationSettings : { email: true },
+    });
+
+    // createPasswordHash is an instance method on User model from user.cjs
+    const salt = bcrypt.genSaltSync(10);
+    newUser.encrypted_password = bcrypt.hashSync(userPassword, salt);
+
+    await newUser.save();
+    console.log(`User ${newUser.email} created with ID: ${newUser.id}`);
+
+    // Create Domain
+    const randomDomainName = crypto.randomBytes(8).toString('hex') + ".seed.local"; // Shorter and identifiable
+    console.log(`Attempting to create domain: ${randomDomainName} for user ${newUser.id}`);
+    const newDomain = mainDb.Domain.build({
+      name: `Default Domain for ${userName}`,
+      domain_name: randomDomainName,
+      access: mainDb.Domain.ACCESS_PUBLIC !== undefined ? mainDb.Domain.ACCESS_PUBLIC : 0, // Use constant if available
+      default_locale: "en",
+      ip_address: "::1",
+      user_agent: "seedModelsScript/1.0",
+      user_id: newUser.id, // Associate domain with the new user
+      configuration: {},
+      // Fill other required non-nullable fields based on domain.cjs definition if any
+      // deleted: false, (already defaults to false)
+    });
+
+    await newDomain.save();
+    console.log(`Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`);
+
+    // Associate User with Domain
+    if (typeof newDomain.addDomainUsers === 'function') {
+      await newDomain.addDomainUsers(newUser);
+      console.log(`User ${newUser.email} added to domain ${newDomain.domain_name} as a user.`);
+    } else {
+      console.warn(`newDomain.addDomainUsers is not a function. Skipping adding user to domain users.`);
+    }
+
+    if (typeof newDomain.addDomainAdmins === 'function') {
+      await newDomain.addDomainAdmins(newUser);
+      console.log(`User ${newUser.email} added to domain ${newDomain.domain_name} as an admin.`);
+    } else {
+      console.warn(`newDomain.addDomainAdmins is not a function. Skipping adding user to domain admins.`);
+    }
+
+    console.log("--- User and Domain Creation Complete ---");
+
     console.log("--- All model seeding and synchronization complete. ---");
   } catch (error) {
     console.error("Unhandled error during seeding process:", error);
