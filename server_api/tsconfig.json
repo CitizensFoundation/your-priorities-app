@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "target": "es2020",
     "moduleResolution": "NodeNext",
@@ -11,6 +11,7 @@
     "outDir": "./ts-out",
     "rootDir": "./",
     "allowJs": true,
+    "declaration": true,
     "types": [
       "./server.d.ts",
       "../webApps/client/src/types.d.ts",

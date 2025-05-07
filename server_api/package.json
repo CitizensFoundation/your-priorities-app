@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.107",
+  "version": "9.0.109",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -97,6 +97,7 @@
   "devDependencies": {
     "@maxmind/geoip2-node": "^6.1.0",
     "@tsconfig/node18": "^18.2.4",
+    "@tsconfig/node22": "^22.0.1",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-prettystream": "^0.1.35",
     "@types/compression": "^1.7.5",
@@ -133,7 +134,7 @@
   },
   "scripts": {
     "copyInLocalAgents": "cp -R ../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
-    "publish_live": "npm run build:dev;copyfiles './controllers/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_live": "npm run build:dev;copyfiles './utils/**/*.d.ts' './controllers/**/*.d.ts' './agents/**/*.d.ts' './models/**/*.d.ts' './active-citizen/controllers/**/*.d.ts' './active-citizen/models/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server.js",
     "watch-start": "DEBUG=router:* tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",

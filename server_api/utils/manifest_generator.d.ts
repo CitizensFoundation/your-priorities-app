@@ -1,7 +1,5 @@
-import { Request, Response } from 'express';
-
-// Define the module path based on convention from other .d.ts files
 declare module '@yrpri/api/utils/manifest_generator.cjs' {
+  import { Request, Response } from 'express';
 
   interface YpRequest extends Request {
     ypCommunity?: YpCommunity;
