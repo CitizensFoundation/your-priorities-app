@@ -286,7 +286,7 @@ async function syncPolicySynthDatabase() {
   console.log("Starting PolicySynth database synchronization...");
   try {
     // This script is intended for creating a new database, so always force sync.
-    await psSequelize.sync({ force: true });
+    await psSequelize.sync({ force: false });
     console.log("PolicySynth database schema forcefully synchronized (tables dropped and recreated).");
 
     console.log("Associating PolicySynth models...");
@@ -413,6 +413,7 @@ async function seedAllModels() {
     console.log("--- User and Domain Creation Complete ---");
 
     console.log("--- All model seeding and synchronization complete. ---");
+    process.exit(0);
   } catch (error) {
     console.error("Unhandled error during seeding process:", error);
     process.exit(1);
