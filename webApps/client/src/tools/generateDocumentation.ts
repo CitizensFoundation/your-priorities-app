@@ -35,7 +35,7 @@ Do not output other sections
 You MUST output the full detailed documentation for the typescript file the user submits.
 `;
 
-const indexHeader = '# Policy Synth WebApp API Documentation\n\n';
+const indexHeader = '# Your Priorities WebApp API Documentation\n\n';
 
 import * as fs from 'fs';
 import * as path from 'path';
