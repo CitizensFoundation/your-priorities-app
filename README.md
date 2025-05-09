@@ -65,7 +65,7 @@ Get started with Your Priorities on our cloud platform.
 
 ## How to use SDKs
 
-# @yrpri/api
+### @yrpri/api
 
 The server API SDK for Your Priorities. It handles all the backend logic, data processing, and communication with the database.
 For more details, see the [Your Priorities Server SDK Documentation](https://github.com/CitizensFoundation/your-priorities-app/blob/master/server_api/docs/README.md).
@@ -74,7 +74,7 @@ For more details, see the [Your Priorities Server SDK Documentation](https://git
 npm install @yrpri/api
 ```
 
-# @yrpri/webapp
+### @yrpri/webapp
 
 The client-side web application SDK for Your Priorities. This is the user interface that users interact with in their browsers. It's built with web components and provides a responsive experience across devices.
 For more details, see the [Your Priorities WebApp SDK Documentation](https://github.com/CitizensFoundation/your-priorities-app/blob/master/webApps/client/docs/README.md).
