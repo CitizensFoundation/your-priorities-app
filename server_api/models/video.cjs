@@ -3,7 +3,7 @@ const async = require("async");
 const log = require("../utils/logger.cjs");
 const aws = require("aws-sdk");
 const _ = require("lodash");
-const queue = require("../active-citizen/workers/queue.cjs");
+const queue = require("../services/workers/queue.cjs");
 
 let bullVideoQueue;
 
@@ -850,7 +850,7 @@ module.exports = (sequelize, DataTypes) => {
           video.deleted = true;
           await video.save();
 
-          import("../active-citizen/llms/imageGeneration/collectionImageGenerator.js").then(
+          import("../services/llms/imageGeneration/collectionImageGenerator.js").then(
             async ({ CollectionImageGenerator }) => {
               try {
                 const mediaManager = new CollectionImageGenerator();

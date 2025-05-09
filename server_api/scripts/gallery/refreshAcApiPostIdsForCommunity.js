@@ -1,4 +1,4 @@
-const queue = require('../../active-citizen/workers/queue.cjs');
+const queue = require('../../services/workers/queue.cjs');
 const models = require("../../models/index.cjs");
 
 (async () => {

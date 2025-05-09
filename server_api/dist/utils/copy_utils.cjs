@@ -1,10 +1,10 @@
 "use strict";
 var models = require("../models/index.cjs");
 var async = require("async");
-const { cloneTranslationForGroup, } = require("../active-citizen/utils/translation_cloning.cjs");
-const { cloneTranslationForCommunity, } = require("../active-citizen/utils/translation_cloning.cjs");
-const { cloneTranslationForPoint, } = require("../active-citizen/utils/translation_cloning.cjs");
-const { cloneTranslationForPost, } = require("../active-citizen/utils/translation_cloning.cjs");
+const { cloneTranslationForGroup, } = require("../services/utils/translation_cloning.cjs");
+const { cloneTranslationForCommunity, } = require("../services/utils/translation_cloning.cjs");
+const { cloneTranslationForPoint, } = require("../services/utils/translation_cloning.cjs");
+const { cloneTranslationForPost, } = require("../services/utils/translation_cloning.cjs");
 const { recountCommunity } = require("./recount_utils.cjs");
 const clonePagesForCollection = (model, modelRelField, inCollection, outCollection, done) => {
     const oldToNewHash = {};

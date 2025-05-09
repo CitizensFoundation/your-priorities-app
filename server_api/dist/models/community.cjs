@@ -3,7 +3,7 @@ const async = require("async");
 const log = require('../utils/logger.cjs');
 const toJson = require('../utils/to_json.cjs');
 const parseDomain = require('../utils/parse_domain.cjs');
-const queue = require('../active-citizen/workers/queue.cjs');
+const queue = require('../services/workers/queue.cjs');
 const _ = require("lodash");
 module.exports = (sequelize, DataTypes) => {
     const Community = sequelize.define("Community", {

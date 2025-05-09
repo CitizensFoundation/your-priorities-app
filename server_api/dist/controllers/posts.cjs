@@ -7,10 +7,10 @@ var log = require("../utils/logger.cjs");
 var toJson = require("../utils/to_json.cjs");
 var async = require("async");
 var _ = require("lodash");
-var queue = require("../active-citizen/workers/queue.cjs");
-const getAnonymousUser = require("../active-citizen/utils/get_anonymous_system_user.cjs");
+var queue = require("../services/workers/queue.cjs");
+const getAnonymousUser = require("../services/utils/get_anonymous_system_user.cjs");
 const moment = require("moment");
-const { plausibleStatsProxy, } = require("../active-citizen/engine/analytics/plausible/manager.cjs");
+const { plausibleStatsProxy, } = require("../services/engine/analytics/plausible/manager.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
 var changePostCounter = function (req, postId, column, upDown, next) {
     models.Post.findOne({

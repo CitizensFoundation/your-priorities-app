@@ -1,6 +1,6 @@
 "use strict";
 const async = require("async");
-const queue = require('../active-citizen/workers/queue.cjs');
+const queue = require('../services/workers/queue.cjs');
 const log = require('../utils/logger.cjs');
 const _ = require('lodash');
 module.exports = (sequelize, DataTypes) => {

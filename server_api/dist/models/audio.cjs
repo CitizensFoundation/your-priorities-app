@@ -2,7 +2,7 @@
 const log = require('../utils/logger.cjs');
 const aws = require('aws-sdk');
 const _ = require('lodash');
-const queue = require('../active-citizen/workers/queue.cjs');
+const queue = require('../services/workers/queue.cjs');
 let bullAudioQueue;
 if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
     const Queue = require('bull');

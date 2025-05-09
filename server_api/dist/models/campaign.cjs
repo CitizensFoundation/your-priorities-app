@@ -1,5 +1,5 @@
 "use strict";
-const queue = require("../active-citizen/workers/queue.cjs");
+const queue = require("../services/workers/queue.cjs");
 module.exports = (sequelize, DataTypes) => {
     const Campaign = sequelize.define("Campaign", {
         configuration: DataTypes.JSONB,

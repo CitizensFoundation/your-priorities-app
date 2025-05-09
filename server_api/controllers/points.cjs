@@ -7,7 +7,7 @@ var toJson = require("../utils/to_json.cjs");
 var async = require("async");
 const ogs = require("open-graph-scraper");
 var _ = require("lodash");
-var queue = require("../active-citizen/workers/queue.cjs");
+var queue = require("../services/workers/queue.cjs");
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.findOne({

@@ -3,7 +3,7 @@ const async = require("async");
 const log = require("../utils/logger.cjs");
 const toJson = require("../utils/to_json.cjs");
 const parseDomain = require("../utils/parse_domain.cjs");
-var queue = require("../active-citizen/workers/queue.cjs");
+var queue = require("../services/workers/queue.cjs");
 const Community = require("./community.cjs");
 const checkValidKeys = (keys) => {
     return (keys.client_id &&

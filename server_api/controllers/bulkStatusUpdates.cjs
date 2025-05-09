@@ -6,7 +6,7 @@ var log = require('../utils/logger.cjs');
 var toJson = require('../utils/to_json.cjs');
 var _ = require('lodash');
 var async = require('async');
-var queue = require('../active-citizen/workers/queue.cjs');
+var queue = require('../services/workers/queue.cjs');
 
 var sendBulkStatusUpdateOrError = function (res, bulkStatusUpdate, context, user, error, errorStatus) {
   if (error || !bulkStatusUpdate) {

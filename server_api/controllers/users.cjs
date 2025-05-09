@@ -8,14 +8,14 @@ var auth = require('../authorization.cjs');
 var log = require('../utils/logger.cjs');
 var toJson = require('../utils/to_json.cjs');
 var _ = require('lodash');
-var queue = require('../active-citizen/workers/queue.cjs');
+var queue = require('../services/workers/queue.cjs');
 const url = require('url');
 
 const randomstring = require('randomstring');
-const {sendPlausibleFavicon} = require("../active-citizen/engine/analytics/plausible/manager.cjs");
+const {sendPlausibleFavicon} = require("../services/engine/analytics/plausible/manager.cjs");
 
-var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items.cjs').getAllModeratedItemsByUser;
-const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items.cjs').performSingleModerationAction;
+var getAllModeratedItemsByUser = require('../services/engine/moderation/get_moderation_items.cjs').getAllModeratedItemsByUser;
+const performSingleModerationAction = require('../services/engine/moderation/process_moderation_items.cjs').performSingleModerationAction;
 
 const logoutFromSession = (req, res, statusCode = 200) => {
   if (req.session) {

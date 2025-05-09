@@ -158,7 +158,7 @@ fs.readdirSync(__dirname)
     db[model.name] = model;
 });
 // Read from active citizen,
-const acDirname = __dirname + "/../active-citizen/models";
+const acDirname = __dirname + "/../services/models";
 fs.readdirSync(acDirname)
     .filter((file) => {
     return file.indexOf(".") !== 0;

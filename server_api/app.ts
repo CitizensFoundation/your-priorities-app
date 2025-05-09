@@ -26,10 +26,10 @@ if (process.env.NEW_RELIC_APP_NAME) {
 
 import auth from "./authorization.cjs";
 import index from "./controllers/index.cjs";
-import news_feeds from "./active-citizen/controllers/news_feeds.cjs";
-import activities from "./active-citizen/controllers/activities.cjs";
-import notifications from "./active-citizen/controllers/notifications.cjs";
-import recommendations from "./active-citizen/controllers/recommendations.cjs";
+import news_feeds from "./services/controllers/news_feeds.cjs";
+import activities from "./services/controllers/activities.cjs";
+import notifications from "./services/controllers/notifications.cjs";
+import recommendations from "./services/controllers/recommendations.cjs";
 import posts from "./controllers/posts.cjs";
 import groups from "./controllers/groups.cjs";
 import communities from "./controllers/communities.cjs";

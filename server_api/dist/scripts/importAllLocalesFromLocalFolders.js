@@ -7,7 +7,7 @@ var clientAppImportPath = importFolderPath + '/clientApp/';
 var serverApiImportPath = importFolderPath + '/serverApi/';
 var yourPrioritiesPath = process.argv[3] ? process.argv[3] : '/home/robert/production-your-priorities-app';
 var clientAppLocales = yourPrioritiesPath + '/client_app/locales/';
-var serverApiLocales = yourPrioritiesPath + '/server_api/active-citizen/locales/';
+var serverApiLocales = yourPrioritiesPath + '/server_api/services/locales/';
 async.series([
     (callback) => {
         fs.readdir(clientAppImportPath, function (err, files) {

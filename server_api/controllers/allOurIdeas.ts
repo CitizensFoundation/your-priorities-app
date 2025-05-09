@@ -40,10 +40,10 @@ interface YpRequest extends express.Request {
 }
 
 //import auth from "../authorization.js";
-import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
-import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
+import { AiHelper } from "../services/engine/allOurIdeas/aiHelper.js";
+import { ExplainAnswersAssistant } from "../services/engine/allOurIdeas/explainAnswersAssistant.js";
 import OpenAI from "openai";
-import queue from "../active-citizen/workers/queue.cjs";
+import queue from "../services/workers/queue.cjs";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";

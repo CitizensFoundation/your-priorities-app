@@ -6,7 +6,7 @@ var multerMultipartResolver = multer({ dest: "uploads/" }).single("file");
 var auth = require("../authorization.cjs");
 var log = require("../utils/logger.cjs");
 var toJson = require("../utils/to_json.cjs");
-var queue = require("../active-citizen/workers/queue.cjs");
+var queue = require("../services/workers/queue.cjs");
 const _ = require("lodash");
 
 router.get("/hasVideoUploadSupport", (req, res) => {

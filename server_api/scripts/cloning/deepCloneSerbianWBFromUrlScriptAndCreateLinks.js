@@ -4,7 +4,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
 const deepCopyCommunityOnlyStructureWithAdminsAndPosts = require('../../utils/copy_utils').deepCopyCommunityOnlyStructureWithAdminsAndPosts;
-const updateTranslation = require('../../active-citizen/utils/translation_helpers').updateTranslation;
+const updateTranslation = require('../../services/utils/translation_helpers').updateTranslation;
 
 let domainId = process.argv[2];
 let userId = process.argv[3];

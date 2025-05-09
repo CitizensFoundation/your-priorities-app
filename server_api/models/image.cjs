@@ -318,7 +318,7 @@ module.exports = (sequelize, DataTypes) => {
         image.deleted = true;
         await image.save();
 
-        import("../active-citizen/llms/imageGeneration/collectionImageGenerator.js").then(
+        import("../services/llms/imageGeneration/collectionImageGenerator.js").then(
           async ({ CollectionImageGenerator }) => {
             try {
               const mediaManager = new CollectionImageGenerator();

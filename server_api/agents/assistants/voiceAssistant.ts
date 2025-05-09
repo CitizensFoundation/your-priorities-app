@@ -1,5 +1,5 @@
 import { response } from "express";
-import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
+import { YpBaseChatBot } from "../../services/llms/baseChatBot.js";
 import { YpBaseAssistant } from "./baseAssistant.js";
 import WebSocket from "ws";
 import ioredis from "ioredis";

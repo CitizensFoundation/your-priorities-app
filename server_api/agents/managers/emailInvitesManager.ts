@@ -4,7 +4,7 @@ import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { YpAgentProductRun } from "../models/agentProductRun.js";
 import models from "../../models/index.cjs";
 import { EmailTemplateRenderer } from "./emailTemplateRenderer.js";
-import queue from "../../active-citizen/workers/queue.cjs";
+import queue from "../../services/workers/queue.cjs";
 import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
 const dbModels: Models = models;
 const Group = dbModels.Group as GroupClass;

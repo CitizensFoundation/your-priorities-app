@@ -234,7 +234,7 @@ async function syncMainDatabase() {
 
   const acModelsPath = path.join(
     __dirname,
-    "../active-citizen/models"
+    "../services/models"
   );
   if (fs.existsSync(acModelsPath)) {
     const acModelFiles = fs.readdirSync(acModelsPath)
@@ -254,12 +254,12 @@ async function syncMainDatabase() {
         const model = modelFactory(mainSequelize, DataTypes);
         mainDb[model.name] = model;
       } catch (err) {
-        console.error(`Error importing active-citizen model ${file}:`, err);
+        console.error(`Error importing services model ${file}:`, err);
         throw err; // Re-throw to stop the process if a model fails to load
       }
     }
   } else {
-    console.warn(`Directory not found, skipping active-citizen models: ${acModelsPath}`);
+    console.warn(`Directory not found, skipping services models: ${acModelsPath}`);
   }
 
   Object.keys(mainDb).forEach((modelName) => {

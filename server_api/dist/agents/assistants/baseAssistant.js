@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
 import { EventEmitter } from "events";
-import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
+import { YpBaseChatBot } from "../../services/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";

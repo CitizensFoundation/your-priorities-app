@@ -8,7 +8,7 @@ import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
-import queue from "../../active-citizen/workers/queue.cjs";
+import queue from "../../services/workers/queue.cjs";
 import { EmailTemplateRenderer } from "./emailTemplateRenderer.js";
 const dbModels = models;
 const Group = dbModels.Group;

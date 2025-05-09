@@ -135,15 +135,15 @@
   },
   "scripts": {
     "copyInLocalAgents": "cp -R ../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
-    "publish_live": "npm run build:dev;copyfiles './utils/**/*.d.ts' './controllers/**/*.d.ts' './agents/**/*.d.ts' './models/**/*.d.ts' './active-citizen/controllers/**/*.d.ts' './active-citizen/models/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_live": "npm run build:dev;copyfiles './utils/**/*.d.ts' './controllers/**/*.d.ts' './agents/**/*.d.ts' './models/**/*.d.ts' './services/controllers/**/*.d.ts' './services/models/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server.js",
     "watch-start": "DEBUG=router:* tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",
     "dev": "nodemon --config nodemon.json ./ts-out/server.js",
     "heroku-postbuild": "echo 'Skipping build'",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk api_app.ts",
-    "build": "tsc --project ./ --outDir ./dist && ncp views dist/views && ncp config dist/config && ncp active-citizen/email_templates dist/active-citizen/email_templates && ncp active-citizen/locales dist/active-citizen/locales",
-    "build:dev": "tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp active-citizen/email_templates ts-out/active-citizen/email_templates && ncp active-citizen/locales ts-out/active-citizen/locales"
+    "build": "tsc --project ./ --outDir ./dist && ncp views dist/views && ncp config dist/config && ncp services/email_templates dist/services/email_templates && ncp services/locales dist/services/locales",
+    "build:dev": "tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp services/email_templates ts-out/services/email_templates && ncp services/locales ts-out/services/locales"
   },
   "cacheDirectories": [
     "node_modules"

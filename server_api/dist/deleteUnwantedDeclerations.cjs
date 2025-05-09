@@ -5,15 +5,15 @@ const tsOutDir = './ts-out';
 const keepDeclarations = new Set([
     "app.d.ts",
     "server.d.ts",
-    path.join("active-citizen", "llms", "baseChatBot.d.ts"),
-    path.join("active-citizen", "llms", "llmTranslation.d.ts"),
-    path.join("active-citizen", "engine", "allOurIdeas", "aiHelper.d.ts"),
-    path.join("active-citizen", "engine", "allOurIdeas", "iconGenerator.d.ts"),
-    path.join("active-citizen", "engine", "allOurIdeas", "explainAnswerAssistant.d.ts"),
+    path.join("services", "llms", "baseChatBot.d.ts"),
+    path.join("services", "llms", "llmTranslation.d.ts"),
+    path.join("services", "engine", "allOurIdeas", "aiHelper.d.ts"),
+    path.join("services", "engine", "allOurIdeas", "iconGenerator.d.ts"),
+    path.join("services", "engine", "allOurIdeas", "explainAnswerAssistant.d.ts"),
     path.join("utils", "loggerTs.d.ts"),
     path.join("utils", "ypLanguages.d.ts"),
-    path.join("active-citizen", "utils", "updateAllLocalesFromEn.d.ts"),
-    path.join("active-citizen", "utils", "updateLocaleFolders.d.ts"),
+    path.join("services", "utils", "updateAllLocalesFromEn.d.ts"),
+    path.join("services", "utils", "updateLocaleFolders.d.ts"),
 ]);
 // Function to delete files recursively in a directory
 function deleteDtsFiles(dir) {

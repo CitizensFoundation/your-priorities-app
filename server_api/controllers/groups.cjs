@@ -19,49 +19,49 @@ const { Op, literal } = require("sequelize");
 
 var moment = require("moment");
 var sanitizeFilename = require("sanitize-filename");
-var queue = require("../active-citizen/workers/queue.cjs");
+var queue = require("../services/workers/queue.cjs");
 const getAllModeratedItemsByGroup =
-  require("../active-citizen/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByGroup;
+  require("../services/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByGroup;
 const performSingleModerationAction =
-  require("../active-citizen/engine/moderation/process_moderation_items.cjs").performSingleModerationAction;
+  require("../services/engine/moderation/process_moderation_items.cjs").performSingleModerationAction;
 const request = require("request");
 const {
   updateAnswerTranslation,
-} = require("../active-citizen/utils/translation_helpers.cjs");
+} = require("../services/utils/translation_helpers.cjs");
 const {
   updateSurveyTranslation,
-} = require("../active-citizen/utils/translation_helpers.cjs");
+} = require("../services/utils/translation_helpers.cjs");
 const {
   plausibleStatsProxy,
   getPlausibleStats,
-} = require("../active-citizen/engine/analytics/plausible/manager.cjs");
+} = require("../services/engine/analytics/plausible/manager.cjs");
 const {
   countAllModeratedItemsByGroup,
-} = require("../active-citizen/engine/moderation/get_moderation_items.cjs");
+} = require("../services/engine/moderation/get_moderation_items.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
 const { Sequelize } = require("sequelize");
 
 const getFromAnalyticsApi =
-  require("../active-citizen/engine/analytics/manager.cjs").getFromAnalyticsApi;
+  require("../services/engine/analytics/manager.cjs").getFromAnalyticsApi;
 const triggerSimilaritiesTraining =
-  require("../active-citizen/engine/analytics/manager.cjs").triggerSimilaritiesTraining;
+  require("../services/engine/analytics/manager.cjs").triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError =
-  require("../active-citizen/engine/analytics/manager.cjs").sendBackAnalyticsResultsOrError;
+  require("../services/engine/analytics/manager.cjs").sendBackAnalyticsResultsOrError;
 const countModelRowsByTimePeriod =
-  require("../active-citizen/engine/analytics/statsCalc.cjs").countModelRowsByTimePeriod;
+  require("../services/engine/analytics/statsCalc.cjs").countModelRowsByTimePeriod;
 const getGroupIncludes =
-  require("../active-citizen/engine/analytics/statsCalc.cjs").getGroupIncludes;
+  require("../services/engine/analytics/statsCalc.cjs").getGroupIncludes;
 const getPointGroupIncludes =
-  require("../active-citizen/engine/analytics/statsCalc.cjs").getPointGroupIncludes;
+  require("../services/engine/analytics/statsCalc.cjs").getPointGroupIncludes;
 const getParsedSimilaritiesContent =
-  require("../active-citizen/engine/analytics/manager.cjs").getParsedSimilaritiesContent;
+  require("../services/engine/analytics/manager.cjs").getParsedSimilaritiesContent;
 const getTranslatedTextsForGroup =
-  require("../active-citizen/utils/translation_helpers.cjs").getTranslatedTextsForGroup;
+  require("../services/utils/translation_helpers.cjs").getTranslatedTextsForGroup;
 const updateTranslationForGroup =
-  require("../active-citizen/utils/translation_helpers.cjs").updateTranslationForGroup;
+  require("../services/utils/translation_helpers.cjs").updateTranslationForGroup;
 
 const convertDocxSurveyToJson =
-  require("../active-citizen/engine/analytics/manager.cjs").convertDocxSurveyToJson;
+  require("../services/engine/analytics/manager.cjs").convertDocxSurveyToJson;
 
 const copyGroup = require("../utils/copy_utils.cjs").copyGroup;
 

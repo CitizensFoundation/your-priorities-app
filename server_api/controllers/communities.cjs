@@ -7,12 +7,12 @@ var toJson = require("../utils/to_json.cjs");
 var _ = require("lodash");
 var async = require("async");
 var crypto = require("crypto");
-var queue = require("../active-citizen/workers/queue.cjs");
+var queue = require("../services/workers/queue.cjs");
 const { Op, literal } = require("sequelize");
 const getAllModeratedItemsByCommunity =
-  require("../active-citizen/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByCommunity;
+  require("../services/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByCommunity;
 const performSingleModerationAction =
-  require("../active-citizen/engine/moderation/process_moderation_items.cjs").performSingleModerationAction;
+  require("../services/engine/moderation/process_moderation_items.cjs").performSingleModerationAction;
 const getLoginsExportDataForCommunity =
   require("../utils/export_utils.cjs").getLoginsExportDataForCommunity;
 const getUsersForCommunity =
@@ -29,32 +29,32 @@ const { getMapForCommunity } = require("../utils/community_mapping_tools.cjs");
 const {
   getPlausibleStats,
   plausibleStatsProxy,
-} = require("../active-citizen/engine/analytics/plausible/manager.cjs");
+} = require("../services/engine/analytics/plausible/manager.cjs");
 const {
   countAllModeratedItemsByCommunity,
-} = require("../active-citizen/engine/moderation/get_moderation_items.cjs");
+} = require("../services/engine/moderation/get_moderation_items.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
 const { copyGroup, copyCommunity } = require("../utils/copy_utils.cjs");
 const { recountCommunity } = require("../utils/recount_utils.cjs");
 
 const getFromAnalyticsApi =
-  require("../active-citizen/engine/analytics/manager.cjs").getFromAnalyticsApi;
+  require("../services/engine/analytics/manager.cjs").getFromAnalyticsApi;
 const triggerSimilaritiesTraining =
-  require("../active-citizen/engine/analytics/manager.cjs").triggerSimilaritiesTraining;
+  require("../services/engine/analytics/manager.cjs").triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError =
-  require("../active-citizen/engine/analytics/manager.cjs").sendBackAnalyticsResultsOrError;
+  require("../services/engine/analytics/manager.cjs").sendBackAnalyticsResultsOrError;
 const countModelRowsByTimePeriod =
-  require("../active-citizen/engine/analytics/statsCalc.cjs").countModelRowsByTimePeriod;
+  require("../services/engine/analytics/statsCalc.cjs").countModelRowsByTimePeriod;
 const getCommunityIncludes =
-  require("../active-citizen/engine/analytics/statsCalc.cjs").getCommunityIncludes;
+  require("../services/engine/analytics/statsCalc.cjs").getCommunityIncludes;
 const getPointCommunityIncludes =
-  require("../active-citizen/engine/analytics/statsCalc.cjs").getPointCommunityIncludes;
+  require("../services/engine/analytics/statsCalc.cjs").getPointCommunityIncludes;
 const getParsedSimilaritiesContent =
-  require("../active-citizen/engine/analytics/manager.cjs").getParsedSimilaritiesContent;
+  require("../services/engine/analytics/manager.cjs").getParsedSimilaritiesContent;
 const getTranslatedTextsForCommunity =
-  require("../active-citizen/utils/translation_helpers.cjs").getTranslatedTextsForCommunity;
+  require("../services/utils/translation_helpers.cjs").getTranslatedTextsForCommunity;
 const updateTranslationForCommunity =
-  require("../active-citizen/utils/translation_helpers.cjs").updateTranslationForCommunity;
+  require("../services/utils/translation_helpers.cjs").updateTranslationForCommunity;
 
 var sendCommunityOrError = function (
   res,

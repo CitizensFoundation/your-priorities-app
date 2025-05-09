@@ -11,7 +11,7 @@ import {
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
 import { FunctionDefinition } from "openai/resources/shared.mjs";
-import { YpBaseChatBot } from "../../active-citizen/llms/baseChatBot.js";
+import { YpBaseChatBot } from "../../services/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
