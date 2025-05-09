@@ -410,6 +410,7 @@ export class PolicySynthAgentsController {
         this.router.delete("/:groupId/:agentId/ai-models/:modelId", auth.can("edit group"), this.removeAgentAiModel);
         this.router.post("/:groupId/:agentId/ai-models", auth.can("edit group"), this.addAgentAiModel);
         this.router.put("/:groupId/:agentId/memory", auth.can("edit group"), this.replaceAgentMemory);
+        this.router.get("/:groupId/:agentId/memory", auth.can("edit group"), this.getAgentMemory);
         this.router.post("/:groupId/:agentId/inputConnectors/existing", auth.can("edit group"), this.addExistingConnector);
         this.router.post("/:groupId/:agentId/outputConnectors/existing", auth.can("edit group"), this.addExistingConnector);
     }

@@ -1,4 +1,4 @@
-import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
+import { sequelize as psSequelize, User, } from "@policysynth/agents/dbModels/index.js";
 import { PsAiModel } from "@policysynth/agents/dbModels/aiModel.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
 import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
@@ -33,14 +33,14 @@ export class NewAiModelSetup {
      */
     static async initializeModels() {
         try {
+            if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
+                await psSequelize.sync();
+            }
             console.log("All Models Loaded Init");
             for (const modelName of Object.keys(psModels)) {
                 if (typeof psModels[modelName].associate === "function") {
                     await psModels[modelName].associate(psSequelize.models);
                 }
-            }
-            if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
-                await psSequelize.sync();
             }
             console.log("All models initialized successfully.");
         }
@@ -410,7 +410,7 @@ export class NewAiModelSetup {
                 costInTokensPerMillion: 2,
                 costOutTokensPerMillion: 8,
                 currency: "USD",
-                cacheCostInTokensPerMillion: 0.5
+                cacheCostInTokensPerMillion: 0.5,
             },
             maxTokensOut: 100000,
             defaultTemperature: 0.7,
@@ -587,7 +587,15 @@ export class NewAiModelSetup {
     static setupAiModels(userId) {
         setTimeout(async () => {
             console.log("Seeding AI models");
-            await NewAiModelSetup.seedAiModels(userId);
+            const user = await User.findOne({
+                attributes: ["id"],
+                where: { id: userId },
+            });
+            if (!user) {
+                console.error("User not found");
+                return;
+            }
+            await NewAiModelSetup.seedAiModels(user.id);
         }, 100);
     }
     /**

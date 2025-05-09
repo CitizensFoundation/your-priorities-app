@@ -1,0 +1,31 @@
+import { Model } from "sequelize";
+import { YpSubscriptionUser } from "./subscriptionUser.js";
+import { YpAgentProductBoosterPurchase } from "./agentProductBoosterPurchase.js";
+import { YpSubscription } from "./subscription.js";
+import { YpAgentProductRun } from "./agentProductRun.js";
+import { YpSubscriptionPlan } from "./subscriptionPlan.js";
+import { YpAgentProductBundle } from "./agentProductBundle.js";
+export declare class YpAgentProduct extends Model {
+    id: number;
+    uuid: string;
+    name: string;
+    description: string;
+    user_id: number;
+    group_id: number;
+    domain_id: number;
+    parent_agent_product_id: number;
+    configuration: YpAgentProductConfiguration;
+    status?: YpAgentProductStatus;
+    created_at: Date;
+    updated_at: Date;
+    User?: YpSubscriptionUser;
+    Group?: YpGroupData;
+    BoosterPurchases?: YpAgentProductBoosterPurchase[];
+    Subscriptions?: YpSubscription[];
+    SubscriptionPlans?: YpSubscriptionPlan[];
+    Runs?: YpAgentProductRun[];
+    AgentBundles?: YpAgentProductBundle[];
+    AgentBundle?: YpAgentProductBundle;
+    ParentAgentProduct?: YpAgentProduct;
+    ChildAgentProducts?: YpAgentProduct[];
+}

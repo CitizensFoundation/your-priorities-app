@@ -1,0 +1,11 @@
+export function copyCommunityNoUsersNoEndorsementsOneGroup(communityId: any, groupId: any, toDomainId: any, done: any): void;
+export function copyCommunityNoUsersNoEndorsements(communityId: any, toDomainId: any, done: any): void;
+export function copyCommunityNoUsersNoEndorsementsNoPoints(communityId: any, toDomainId: any, done: any): void;
+export function copyCommunityWithEverything(communityId: any, toDomainId: any, options: any, done: any): void;
+export function clonePagesForGroup(inGroup: any, outGroup: any, done: any): void;
+export function deepCopyCommunityOnlyStructureWithAdminsAndPosts(communityId: any, toDomainId: any, done: any): void;
+export function clonePagesForCommunity(inCommunity: any, outCommunity: any, done: any): void;
+export function copyCommunity(fromCommunityId: any, toDomainId: any, options: any, linkFromOptions: any, done: any): void;
+export function copyCommunityOnlyGroups(communityId: any, toDomainId: any, done: any): void;
+export function copyGroup(fromGroupId: any, toCommunityIn: any, toDomainId: any, options: any, done: any): void;
+export function copyPost(fromPostId: any, toGroupId: any, options: any, done: any): void;

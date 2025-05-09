@@ -151,7 +151,7 @@ const compoundIndexCommands = [
 // Read models from local folder
 fs.readdirSync(__dirname)
     .filter((file) => {
-    return file.indexOf(".") !== 0 && file !== "index.cjs";
+    return file.indexOf(".") !== 0 && file.endsWith(".cjs") && !file.endsWith(".d.cjs") && !file.endsWith(".d.cts") && file !== "index.cjs";
 })
     .forEach((file) => {
     const model = require(path.join(__dirname, file))(sequelize, DataTypes);
@@ -161,7 +161,7 @@ fs.readdirSync(__dirname)
 const acDirname = __dirname + "/../services/models";
 fs.readdirSync(acDirname)
     .filter((file) => {
-    return file.indexOf(".") !== 0;
+    return file.indexOf(".") !== 0 && file.endsWith(".cjs") && !file.endsWith(".d.cjs") && !file.endsWith(".d.cts");
 })
     .forEach((file) => {
     const model = require(path.join(acDirname, file))(sequelize, DataTypes);
