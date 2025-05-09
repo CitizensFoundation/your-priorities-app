@@ -1,4 +1,4 @@
-import { YpAgentAssistant } from "agents/assistants/agentAssistant.js";
+import { YpAgentAssistant } from "../../agentAssistant.js";
 export declare class BaseAssistantTools {
     protected assistant: YpAgentAssistant;
     constructor(assistant: YpAgentAssistant);

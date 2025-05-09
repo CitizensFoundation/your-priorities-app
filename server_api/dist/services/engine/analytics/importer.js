@@ -2,11 +2,11 @@ const models = require('../../../models/index.cjs');
 const _ = require('lodash');
 const async = require('async');
 const log = require('../../../utils/logger.cjs');
-const importDomain = require('./utils').importDomain;
-const importCommunity = require('./utils').importCommunity;
-const importGroup = require('./utils').importGroup;
-const importPost = require('./utils').importPost;
-const importPoint = require('./utils').importPoint;
+const importDomain = require('./utils.js').importDomain;
+const importCommunity = require('./utils.js').importCommunity;
+const importGroup = require('./utils.js').importGroup;
+const importPost = require('./utils.js').importPost;
+const importPoint = require('./utils.js').importPoint;
 let updateAsyncLimit = 5;
 let lineCrCounter = 0;
 const processDots = () => {

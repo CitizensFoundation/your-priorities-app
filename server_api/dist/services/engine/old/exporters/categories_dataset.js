@@ -10,9 +10,9 @@ var classesCategoriesCsvFilename = 'datasets/better_reykjavik/categories/classes
 var categories = {};
 var categoriesIds = [];
 MAX_CATEGORY_LENGTH = 1700;
-var clean = require('./dataset_tools').clean;
-var shuffleArray = require('./dataset_tools').shuffleArray;
-var replaceBetterReykjavikCategoryId = require('./dataset_tools').replaceBetterReykjavikCategoryId;
+var clean = require('./dataset_tools.js').clean;
+var shuffleArray = require('./dataset_tools.js').shuffleArray;
+var replaceBetterReykjavikCategoryId = require('./dataset_tools.js').replaceBetterReykjavikCategoryId;
 async.series([
     function (callback) {
         var categoriesCsvRows = [];

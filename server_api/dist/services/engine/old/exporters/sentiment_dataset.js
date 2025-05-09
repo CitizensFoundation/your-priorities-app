@@ -14,8 +14,8 @@ var negative = [];
 var categories = { 0: [], 1: [] };
 var categoriesIds = [0, 1];
 MAX_SENTIMENT_LENGTH = 700;
-var clean = require('./dataset_tools').clean;
-var shuffleArray = require('./dataset_tools').shuffleArray;
+var clean = require('./dataset_tools.js').clean;
+var shuffleArray = require('./dataset_tools.js').shuffleArray;
 async.series([
     function (callback) {
         var categoriesCsvRows = [];

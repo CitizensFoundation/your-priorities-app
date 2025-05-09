@@ -1,5 +1,5 @@
 import { SubscriptionModels } from "./subscriptions.js";
-import { YpAgentAssistant } from "../../../../assistants/agentAssistant.js";
+import { YpAgentAssistant } from "../../../agentAssistant.js";
 export declare class AgentModels {
     subscriptionModels: SubscriptionModels;
     assistant: YpAgentAssistant;

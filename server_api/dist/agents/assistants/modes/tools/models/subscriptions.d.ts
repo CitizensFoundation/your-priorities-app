@@ -1,4 +1,4 @@
-import { YpAgentAssistant } from "../../../../assistants/agentAssistant.js";
+import { YpAgentAssistant } from "../../../agentAssistant.js";
 export declare class SubscriptionModels {
     assistant: YpAgentAssistant;
     constructor(assistant: YpAgentAssistant);
