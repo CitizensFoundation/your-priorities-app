@@ -1,4 +1,19 @@
-# Your Priorities Server API Documentation\n\n- agents
+# Your Priorities Server — Backend Developer Documentation
+
+Your Priorities is an open-source digital democracy platform that empowers citizens, communities and governments to crowd-source ideas, deliberate on proposals and make evidence-based policy decisions. The server application you are browsing is a TypeScript &amp; Express.js backend that powers the REST and WebSocket API consumed by the web client, mobile apps and third-party integrations.
+
+Key responsibilities of the server include:
+
+- Authentication, authorization and security
+- Business logic for domains, communities, groups, posts, points, users,AI models and AI assistants
+- Content moderation and fraud detection
+- Analytics aggregation and reporting
+- Notification delivery via e-mail, push and in-app channels
+- Background workers for long-running and scheduled jobs
+
+## API Documentation
+
+- agents
   - assistants
     - [agentAssistant](agents/assistants/agentAssistant.md)
     - [baseAssistant](agents/assistants/baseAssistant.md)
