@@ -24,13 +24,13 @@ Your Priorities is a platform we've been refining since 2008. It's recognized as
 * Plausible Analytics is built in with useful promotion features
 * AI driven recommendation engine that recommends relevant posts to users
 * Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3 or the Your Priorities Encoder)
-* Automatic Speech to Text conversion in 28 languages (using Google's TextToSpeech API)
-* Machine translations between 28 languages (using Google Translate API)
+* Automatic Speech to Text conversion in 200 languages (using Google's TextToSpeech API and LLMs)
+* Machine translations between 200 languages (using Google Translate API)
 * Simple moderation of all content for community and groups in one place
 * Assigns an automated toxicity score for all incoming content. Uses the open source Perspective API, developed by the New York Times, The Economist, Guardian, Google & others.
 * Users can view and moderate their own submitted content in one place
 * Full GDPR compliance
-* Localized in 28 languages
+* Localized in 200 languages
 * Advanced anti-Fraud system for detection malicious actors and quickly deleting unwanted content
 * Bad BOT management system for managing badly behaving crawlers, includes rate control
 * Post status system where posts can be set to open open, in progress, approved or rejected
