@@ -1,0 +1,493 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8"> <!-- utf-8 works for most cases -->
+  <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+  <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+
+  <!-- Web Font / @font-face : BEGIN -->
+  <!-- NOTE: If web fonts are not required, lines 9 - 26 can be safely removed. -->
+
+  <!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+  <!--[if mso]>
+  <style>
+    * {
+      font-family: sans-serif !important;
+    }
+  </style>
+  <![endif]-->
+
+  <!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ -->
+  <!--[if !mso]><!-->
+  <!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> -->
+  <!--<![endif]-->
+
+  <!-- Web Font / @font-face : END -->
+
+  <!-- CSS Reset -->
+  <style type="text/css">
+
+    /* What it does: Remove spaces around the email design added by some email clients. */
+    /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+    html,
+    body {
+      margin: 0 auto !important;
+      padding: 0 !important;
+      height: 100% !important;
+      width: 100% !important;
+    }
+
+    /* What it does: Stops email clients resizing small text. */
+    * {
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* What is does: Centers email on Android 4.4 */
+    div[style*="margin: 16px 0"] {
+      margin:0 !important;
+    }
+
+    /* What it does: Stops Outlook from adding extra spacing to tables. */
+    table,
+    td {
+      mso-table-lspace: 0pt !important;
+      mso-table-rspace: 0pt !important;
+    }
+
+    /* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+    table {
+      border-spacing: 0 !important;
+      border-collapse: collapse !important;
+      table-layout: fixed !important;
+      Margin: 0 auto !important;
+    }
+    table table table {
+      table-layout: auto;
+    }
+
+    /* What it does: Uses a better rendering method when resizing images in IE. */
+    img {
+      -ms-interpolation-mode:bicubic;
+    }
+
+    /* What it does: A work-around for iOS meddling in triggered links. */
+    .mobile-link--footer a,
+    a[x-apple-data-detectors] {
+      color:inherit !important;
+      text-decoration: underline !important;
+    }
+
+    .pointLink {
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .topHeaderText {
+        font-size: 20px;
+      }
+    }
+
+  </style>
+
+  <!-- Progressive Enhancements -->
+  <style>
+
+    /* What it does: Hover styles for buttons */
+    .button-td,
+    .button-a {
+      transition: all 100ms ease-in;
+    }
+    .button-td:hover,
+    .button-a:hover {
+      background: #555555 !important;
+      border-color: #555555 !important;
+    }
+
+  </style>
+
+</head>
+<body width="100%" bgcolor="#c3c6c9" style="Margin: 0;">
+<center style="width: 100%; background: #c3c6c9;">
+
+  <!--
+      Set the email width. Defined in two places:
+      1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 600px.
+      2. MSO tags for Desktop Windows Outlook enforce a 600px width.
+  -->
+  <div style="max-width: 600px; margin: auto;">
+    <!--[if (gte mso 9)|(IE)]>
+    <table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+      <tr>
+        <td>
+    <![endif]-->
+
+    <!-- Email Body : BEGIN -->
+    <table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff" width="100%" style="max-width: 600px;">
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+            <tr>
+              <td style="padding: 16px; font-family: sans-serif; font-size: 24px; mso-height-rule: exactly; color: #333;" align="center">
+                <div hidden>1 klukkutíma tilkynningar fyrir þínar hugmyndir</div>
+                <div class="topHeaderText">News from Your Priorities</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding: 24px; padding-top: 0; padding-bottom: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                Hi Robert
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 24px; padding-top: 0; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                Here are news from ideas you have participated in. <a href="">Click here to change your notification settings.</a>
+              </td>
+            </tr>
+            <tr hidden>
+              <td style="padding: 24px; padding-top: 0; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                We have recently activated our email notification system. <a href="">Click here to change your notification settings.</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Hero Image, Flush : BEGIN -->
+      <tr>
+        <td style="padding-top: 0px;">
+          <img hidden src="https://yrpri6-production.s3.amazonaws.com/47/Yt/Hs-retina.png" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px;">
+          <img src="https://yrpri6-production.s3.amazonaws.com/aG/9F/mJ-retina.png" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px;">
+          <img hidden src="http://placehold.it/600x338" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px;">
+        </td>
+      </tr>
+      <!-- Hero Image, Flush : END -->
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+            <tr>
+              <td style="padding-top: 24px; font-family: sans-serif; font-size: 19px; mso-height-rule: exactly; line-height: 10px; color: #333;" align="center">
+                Okkar Mosó
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+            <tr>
+              <td style="padding-top: 16px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; line-height: 10px; color: #444;" align="center">
+                Okkar Mosó 2017
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 16px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #666;">
+                New points
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #111;">Gaelic Language resources to A&BC libraries</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #333;" class="pointLink">Accessible to all ages Available throughout region Nil cost to end user...</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 4px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #555;">
+                <a href="" style="color: #333;" class="pointLink">Would this include community libraries like the one in Lismore?</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #111;">Feasibility study for a stand alone Gaelic school in Oban</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #111;">Gaelic Ambassadors</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 16px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #666;">
+                New votes on your posts
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Gaelic Language resources to A&BC libraries</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Feasibility study for a stand alone Gaelic school in Oban</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 16px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #666;">
+                New votes on your points
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;" class="">Accessible to all ages Available throughout region Nil cost to end user...</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;" class="">Would this include community libraries like the one in Lismore?</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Hero Image, Flush : BEGIN -->
+      <tr>
+        <td style="padding-top: 16px;">
+          <img src="https://yrpri6-production.s3.amazonaws.com/47/Yt/Hs-retina.png" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px;">
+          <img hidden src="https://yrpri6-production.s3.amazonaws.com/aG/9F/mJ-retina.png" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px;">
+          <img hidden src="http://placehold.it/600x338" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px;">
+        </td>
+      </tr>
+      <!-- Hero Image, Flush : END -->
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+            <tr>
+              <td style="padding-top: 24px; font-family: sans-serif; font-size: 19px; mso-height-rule: exactly; line-height: 10px; color: #333;" align="center">
+                Argyll & Bute
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+            <tr>
+              <td style="padding-top: 24px; padding-bottom: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; line-height: 10px; color: #444;" align="center">
+                Argyll & Bute Growing Galec
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 16px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #555;">
+                New points:
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Gaelic Language resources to A&BC libraries</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Feasibility study for a stand alone Gaelic school in Oban</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Gaelic Ambassadors</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 16px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #555;">
+                New votes:
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Gaelic Language resources to A&BC libraries</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td style="padding-left: 24px;padding-right: 24px;padding-top: 8px; font-family: sans-serif; font-size: 16px; mso-height-rule: exactly; color: #333;">
+                <a href="" style="color: #000;">Feasibility study for a stand alone Gaelic school in Oban</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+
+      <!-- Two Even Columns : END -->
+
+    </table>
+    <!-- Email Body : END -->
+
+    <table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px;">
+      <tr>
+        <td style="padding-top: 28px; text-align: center">
+          <img src="https://yrpri6-production.s3.amazonaws.com/z4/Tg/qx-retina.png" width="200" height="113" alt="alt_text" border="0">
+        </td>
+      </tr>
+    </table>
+
+    <!-- Email Footer : BEGIN -->
+    <table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+      <tr>
+        <td style="padding: 28px 10px;width: 100%;font-size: 12px; font-family: sans-serif; mso-height-rule: exactly; line-height:18px; text-align: center; color: #FFF;">
+          Citizens Foundation Iceland<br><span class="mobile-link--footer">Vegmúli 2, 108 Reykjavík, Iceland</span><br>
+          <br>
+          <unsubscribe style="color:#FFF; font-size: 16px; text-decoration:underline;">Unsubscribe or change email settings</unsubscribe>
+        </td>
+      </tr>
+    </table>
+    <!-- Email Footer : END -->
+
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+    </tr>
+    </table>
+    <![endif]-->
+  </div>
+</center>
+</body>
+</html>

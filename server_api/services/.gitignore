@@ -1,0 +1,5 @@
+dbpedia_csv/
+tf_temp_models/
+tf_temp_summaries/
+runs/
+predictionio-driver/
