@@ -35,7 +35,8 @@ Do not output other sections
 You MUST output the full detailed documentation for the typescript file the user submits.
 `;
 
-const indexHeader = '# Your Priorities WebApp API Documentation\n\n';
+// Default header used **only** when a README does not already exist.
+const indexHeader = '# Your Priorities Web App — Client Developer Documentation\n\n';
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -127,10 +128,31 @@ function generateDocsReadme() {
   const tree = buildDirectoryTree('docs/src');
   console.log(JSON.stringify(tree, null, 2));
   const markdown = generateMarkdownFromTree(tree);
-  fs.writeFileSync(
-    path.join(docsDir, 'README.md'),
-    `${indexHeader}${markdown}`
-  );
+
+  const readmePath = path.join(docsDir, 'README.md');
+  const apiHeader = '## API Documentation';
+
+  let newReadmeContent = '';
+
+  if (fs.existsSync(readmePath)) {
+    const existing = fs.readFileSync(readmePath, 'utf8');
+
+    const headerIndex = existing.indexOf(apiHeader);
+
+    if (headerIndex !== -1) {
+      // Keep everything *up to* the API header (inclusive) and replace the rest.
+      const before = existing.substring(0, headerIndex).trimEnd();
+      newReadmeContent = `${before}\n\n${apiHeader}\n\n${markdown}`;
+    } else {
+      // Header not found – append it to the end of the existing README.
+      newReadmeContent = `${existing.trimEnd()}\n\n${apiHeader}\n\n${markdown}`;
+    }
+  } else {
+    // README does not exist – create a minimal one with the index header and API docs section.
+    newReadmeContent = `${indexHeader}${apiHeader}\n\n${markdown}`;
+  }
+
+  fs.writeFileSync(readmePath, newReadmeContent);
 }
 
 function findTSFiles(dir: string, fileList: string[] = []): string[] {

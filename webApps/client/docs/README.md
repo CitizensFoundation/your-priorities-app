@@ -1,4 +1,42 @@
-# Your Priorities WebApp API Documentation
+# Your Priorities Web App — Client Developer Documentation
+
+Your Priorities is an open-source digital democracy platform that enables communities, organisations and governments to crowd-source ideas, deliberate on proposals and make evidence-based decisions together. Developed and maintained by the non-profit Citizens Foundation Iceland since 2008, the platform has empowered millions of citizens around the world to influence public policy at local, national and international levels.
+
+This documentation focuses on the front-end client located in the `webApps/client` folder. The codebase is written in TypeScript using Lit Web Components and is organised in a feature-oriented directory structure. The pages you are reading are generated automatically from the source code and provide a searchable API reference for every component.
+
+## Overview of Client Source Code Structure
+
+Below is a list of the key modules (directories) identified within the `webApps/client/src` folder, along with a brief description of their purpose:
+
+- **`ac-activities`**: Manages components related to activity feeds and user actions.
+- **`ac-notifications`**: Handles user notifications and their display.
+- **`admin`**: Contains components for the administration interface, including configuration for various parts of the platform like communities, groups, and domains, as well as user management and content moderation tools.
+- **`allOurIdeas`**: Implements features related to the "All Our Ideas" survey methodology, including survey administration and participation interfaces.
+- **`analytics-and-promotion`**: Provides tools and components for website analytics (potentially using Plausible, given `pl-components`) and managing promotional campaigns.
+- **`common`**: A collection of shared utilities, base classes (e.g., `YpBaseElement`), helper functions (for formatting, navigation, media), language selection, and theme management.
+- **`flexbox-literals`**: Likely contains utilities or definitions for using flexbox CSS layouts.
+- **`policySynth`**: Components related to Policy Synth, possibly for AI-driven policy analysis or generation, including agent and operations management.
+- **`tools`**: Includes various utility scripts, potentially for development tasks like documentation generation, localization management, and audio file processing.
+- **`yp-api-action-dialog`**: A specific UI component for handling API actions via a dialog.
+- **`yp-app`**: Core application setup, global state management (e.g., `YpAppGlobals`, `YpAppUser`), main application layout (navigation drawer, top bar), and styling.
+- **`yp-assistants`**: Relates to AI assistants, including their configuration, display, and interaction widgets.
+- **`yp-chatbots`**: Base components and logic for implementing chatbot functionalities, including streaming responses.
+- **`yp-collection`**: Components for displaying and managing collections of items, such as communities, domains, and groups, including headers, cards, and data visualization.
+- **`yp-dialog-container`**: Manages various types of dialogs used throughout the application.
+- **`yp-edit-dialog`**: A specialized dialog for editing content.
+- **`yp-file-upload`**: Components for handling file uploads, including icons and video cover selection.
+- **`yp-llms`**: Components related to Large Language Models, possibly extending or specializing the chatbot functionalities.
+- **`yp-magic-text`**: Implements "magic text" features, likely AI-powered text generation or enhancement.
+- **`yp-media-recorder`**: Components for media recording capabilities.
+- **`yp-page`**: Generic page components or dialogs for displaying static content.
+- **`yp-point`**: Manages "points" within the application, including their display, actions, comments, and news story integration.
+- **`yp-post`**: Handles "posts," a core content type, including their creation, display (cards, lists, grids), editing, and associated features like tags, location, and user images.
+- **`yp-rating`**: Components for displaying and managing ratings.
+- **`yp-survey`**: Tools and components for creating and displaying surveys and structured questions.
+- **`yp-theme`**: Manages application themes, including color selection and input components.
+- **`yp-user`**: Components related to user authentication (login, forgot password, registration), profile management, and user information display.
+
+## API Documentation
 
 - ac-activities
   - [ac-activities](src/ac-activities/ac-activities.md)

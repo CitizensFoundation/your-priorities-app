@@ -55,12 +55,6 @@ https://citizens.is/getting-started/
 
 Get started with Your Priorities on our cloud platform.
 
-## Deployment with Docker Compose
-
-[Docker deployment guide](https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/)
-
-[Docker admin guide](https://docs.google.com/document/d/1lG0FwKbsy5J2RMio08Q-viR7xG0YYGVmY2zqmENcNtM/)
-
 ## Examples of live servers running Your Priorities
 
 * https://yrpri.org/
@@ -69,60 +63,69 @@ Get started with Your Priorities on our cloud platform.
 * https://www.junges.wien/
 * https://engage.parliament.scot/
 
-## How to run
+## How to use SDKs
+
+# @yrpri/api
+
+The server API SDK for Your Priorities. It handles all the backend logic, data processing, and communication with the database.
+For more details, see the [Your Priorities Server SDK Documentation](https://github.com/CitizensFoundation/your-priorities-app/blob/master/server_api/docs/README.md).
+
+```bash
+npm install @yrpri/api
+```
+
+# @yrpri/webapp
+
+The client-side web application SDK for Your Priorities. This is the user interface that users interact with in their browsers. It's built with web components and provides a responsive experience across devices.
+For more details, see the [Your Priorities WebApp SDK Documentation](https://github.com/CitizensFoundation/your-priorities-app/blob/master/webApps/client/docs/README.md).
+
+```bash
+npm install @yrpri/webapp
+```
+
+## How to run server
 
 ```
-# Git clone with the Active Citizen submodule library
 git clone https://github.com/rbjarnason/your-priorities-app.git
 cd your-priorities-app
-git submodule init
-git submodule update
 
-# In web app root folder
-yarn install
-cd client_app
-bower install
+cd server_api
+npm install
 
-cp server_api/config/config.json.dist server_api/config/config.json
-vi server_api/config/config.json # Add information about an empty postgres database
+cp startWatchWithEnv.sh-dist startWatchWithEnv.sh
 
-./start
+# Add minimum env variables like dev database
+vi startWatchWithEnv.sh
 
-Go to localhost:4242 in your browser
+./startWatchWithEnv.sh
+
+<in another terminal>
+
+cp startWorkerWithEnv.sh-dist startWorkerWithEnv.sh
+
+# Add minimum env variables like dev database
+vi startWorkerWithEnv.sh
+./startWorkerWithEnv.sh
+
+cd ../webApps/client
+npm install
+npm run start
 ```
 
 Create an user and give it admin privileges by running the following command in the root of the app
 ```bash
-node server_api/scripts/setAdminOnAll.js your@email.com
+node ts-out/server_api/scripts/setAdminOnAll.cjs your@email.com
 ```
 
 You need to set the ENV var REDIS_URL to point to your local redis installation with 
 URL format like redis://user:pwd@hostname:port
-
-Bunyan is used for logging into JSON, which is great for feeding for 
-example into Elastic Search for analytic - https://github.com/trentm/node-bunyan 
-The log is piped to STDOUT so you need to pipe it into a file > /var/log/yrpri.log
-
-To build a client_app/build production folder with web components
-```bash
-npm install polymer-cli
-cd client_app
-./createDist
-```
-
-If you are moving from version 6 to version 7 make sure to clear out the bower_components folder before running bower install
-```bash
-rm -r client_app/bower_components
-```
 
 For production mode you need to supply the URL to the database as an ENV variable
 ```bash
 postgres://username:password@dbhost:dbport/dbname
 ```
 
-For production please define SESSION_SECRET=somethingrandomandlong
-
-Google Analytics can be disabled through DISABLE_GA=1
+Google Analytics can be disabled through DISABLE_GA=1 and Your Priorities has the open source Plausible Analytics built in.
 
 ## Email Support
 
@@ -155,46 +158,17 @@ AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_ENDPOINT=my
 
 You will need to have the ImageMagick package installed otherwise you might get errors like: "Command failed: identify"
 
-## Your Priorities uses Active Citizen
-```
-Active Citizen is an open source library, API and UI for activity streams and notifications 
-using machine learning to recommend content to users.
-```
-[https://github.com/rbjarnason/active-citizen](https://github.com/rbjarnason/active-citizen)
-
-## Running the Active Citizen background workers
-
-The background workers community via the main Redis connection of the app. To start run the following command with all environmental variables needed
-```
-node server_api/active-citizen/workers/main.js
-```
-
 ## Your Priorities user help
 ```
-Here are basic user instructions.
+Here are basic user instructions - a bit old.
 ```
 [User Instructions](https://docs.google.com/document/d/1OVCkpcOa4GcUmw6iDPqckMzWIaGi5Wso6UGacrIfFpw)
 
+## Deployment with Docker Compose (old)
 
-## Active Citizen PredictionIO recommendations (optional)
-```
-Install PredictionIO
+[Docker deployment guide](https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/)
 
-Install Universal Recommendation
-
-Import your data with the Active Citizen events_importer script (if you already have some data)
-
-train the template
-deploy the template
-```
-[https://prediction.io/](https://prediction.io/) and [https://github.com/actionml/universal-recommender](https://github.com/actionml/universal-recommender)
-
-```
-Here is a Dockerfile that can either be used to build a Docker container with PredictionIO 
-and Universal Recommendation or as a recipe for building your own non-Docker Ubuntu/Debian 
-based predictionIO VM on any cloud or locally.
-```
-[https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile](https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile)
+[Docker admin guide](https://docs.google.com/document/d/1lG0FwKbsy5J2RMio08Q-viR7xG0YYGVmY2zqmENcNtM/)
 
 ## Environmental variables used for a full production environment with all features
 
@@ -202,19 +176,11 @@ All those configuration variables are optional but some depend on each other.
 ```
 AC_ANALYTICS_BASE_URL              
 AC_ANALYTICS_CLUSTER_ID            
-AC_ANALYTICS_KEY                  
-ADEPT_SCALE_LICENSE_KE          
-ADEPT_SCALE_URL                    
+AC_ANALYTICS_KEY                   
 AIRBRAKE_API_KEY                    
 AIRBRAKE_PROJECT_ID                
 AWS_ACCESS_KEY_ID                  
-AWS_SECRET_ACCESS_KEY                
-AWS_TRANSCODER_AUDIO_PIPELINE_ID  
-AWS_TRANSCODER_AUDIO_PRESET_ID    
-AWS_TRANSCODER_FLAC_PRESET_ID      
-AWS_TRANSCODER_PIPELINE_ID          
-AWS_TRANSCODER_PORTRAIT_PRESET_ID  
-AWS_TRANSCODER_PRESET_ID          
+AWS_SECRET_ACCESS_KEY                       
 DATABASE_URL                      
 EMBEDLY_KEY                        
 GOOGLE_APPLICATION_CREDENTIALS_JSON
@@ -224,10 +190,7 @@ HEROKU_POSTGRESQL_URL
 NEW_RELIC_APP_NAME                work
 NEW_RELIC_LICENSE_KEY              
 NEW_RELIC_LOG                      
-NEW_RELIC_NO_CONFIG_FILE            
-PIOAccessKey                        
-PIOEngineUrl                     
-PIOEventUrl                      
+NEW_RELIC_NO_CONFIG_FILE         
 REDIS_URL                          
 S3_ACCELERATED_ENDPOINT            
 S3_AUDIO_PUBLIC_BUCKET              

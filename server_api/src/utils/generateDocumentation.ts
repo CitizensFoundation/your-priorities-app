@@ -91,6 +91,7 @@ For "Type", use TypeScript definitions where possible (e.g., \`string\`, \`numbe
 Prioritize documenting all exported functions, classes, modules, and route handlers.
 You MUST output the full detailed documentation for the TypeScript or JavaScript (.cjs) file the user submits. If a file contains elements not perfectly fitting the above categories (e.g., configuration objects, constants), document them clearly under a suitable general heading like "Configuration" or "Exported Constants".
 When creating internal links to other documented source files, ensure the link uses the .md extension (e.g., [MyClass](./MyClass.md)).
+When referencing Policy Synth entities, especially PsAgent, ensure that links point to the correct repository and path, for example, a link to PsAgent should be [PsAgent](https://github.com/CitizensFoundation/policy-synth/blob/main/agents/src/dbModels/agent.ts).
 `;
 
 const indexHeader = '# Your Priorities Server API Documentation\\n\\n';
