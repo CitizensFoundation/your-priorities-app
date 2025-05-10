@@ -33,6 +33,14 @@ declare module "models/index.cjs" { // Module path relative to baseUrl ("server_
   type RatingInstance = ModelInstance<YpRatingData>;
   type UserInstance = ModelInstance<YpUserData>;
   type VideoInstance = ModelInstance<YpVideoData>;
+  type AcActivityInstance = ModelInstance<AcActivityData>;
+  type AcBackgroundJobInstance = ModelInstance<AcBackgroundJobData>;
+  type AcClientActivityInstance = ModelInstance<AcClientActivityData>;
+  type AcDelayedNotificationInstance = ModelInstance<AcDelayedNotificationData>;
+  type AcFollowingInstance = ModelInstance<AcFollowingData>;
+  type AcMuteInstance = ModelInstance<AcMuteData>;
+  type AcNotificationInstance = ModelInstance<AcNotificationData>;
+  type AcTranslationCacheInstance = ModelInstance<AcTranslationCacheData>;
   // Add other specific instance types if new models are included
 
   // --- Interface for the Exported DB Object (local to this module declaration) ---
@@ -58,6 +66,16 @@ declare module "models/index.cjs" { // Module path relative to baseUrl ("server_
     Rating: ModelStatic<RatingInstance>;
     User: ModelStatic<UserInstance>;
     Video: ModelStatic<VideoInstance>;
+    AcActivity: ModelStatic<AcActivityInstance>;
+    AcBackgroundJob: ModelStatic<AcBackgroundJobInstance>;
+    AcCampaign: ModelStatic<AcCampaignInstance>;
+    AcClientActivity: ModelStatic<AcClientActivityInstance>;
+    AcDelayedNotification: ModelStatic<AcDelayedNotificationInstance>;
+    AcFollowing: ModelStatic<AcFollowingInstance>;
+    AcMute: ModelStatic<AcMuteInstance>;
+    AcNotification: ModelStatic<AcNotificationInstance>;
+    AcTranslationCache: ModelStatic<AcTranslationCacheInstance>;
+
     // Add other ModelStatic types as new models are included
   }
 
