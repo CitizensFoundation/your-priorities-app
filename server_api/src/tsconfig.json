@@ -14,7 +14,7 @@
     "declaration": true,
     "types": [
       "./server.d.ts",
-      "./models/models.d.ts",
+      "./models/index.d.ts",
       "../../webApps/client/src/types.d.ts",
       "../../webApps/client/src/agents.d.ts",
       "../../webApps/client/src/typesAoi.d.ts",
