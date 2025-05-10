@@ -17,10 +17,6 @@ import {
   PsAiModelSize,
   PsAiModelType,
 } from "@policysynth/agents/aiModelTypes.js";
-import models from "../../models/index.cjs";
-
-const dbModels: any = models;
-const Group = dbModels.Group; // for reference elsewhere if needed
 
 // List of models that need to be initialized/associated
 const psModels: { [key: string]: any } = {

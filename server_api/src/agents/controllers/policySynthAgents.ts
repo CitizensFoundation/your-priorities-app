@@ -7,7 +7,7 @@ import { AgentConnectorManager } from "@policysynth/agents/operations/agentConne
 import { AgentRegistryManager } from "@policysynth/agents/operations/agentRegistryManager.js";
 import { PsAiModel } from "@policysynth/agents/dbModels/aiModel.js";
 import auth from "../../authorization.cjs";
-import models from "../../models/index.cjs";
+
 import {
   PsAiModelSize,
   PsAiModelType,
@@ -23,6 +23,7 @@ import { PsExternalApi } from "@policysynth/agents/dbModels/externalApis.js";
 import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
 import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
+import { domainIncludes } from "services/engine/moderation/get_moderation_items.cjs";
 
 
 interface YpRequest extends express.Request {
@@ -64,11 +65,6 @@ export class PolicySynthAgentsController {
    * @param group The group instance to configure
    */
   public static async setupApiKeysForGroup(group: any): Promise<void> {
-    const domain = await models.default.Domain.findOne({
-      where: {
-        id: group.id,
-      },
-    });
     return NewAiModelSetup.setupApiKeysForGroup(group);
   }
 
