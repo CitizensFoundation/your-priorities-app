@@ -791,6 +791,8 @@ export class NewAiModelSetup {
       { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
+      { name: "Gemini 2.5 Pro Preview 1", envKey: "GEMINI_API_KEY" },
+      { name: "Gemini 2.5 Pro Preview 2", envKey: "GEMINI_API_KEY" },
       { name: "o1 24", envKey: "OPENAI_API_KEY" },
       { name: "o3 mini", envKey: "OPENAI_API_KEY" },
       { name: "o4 mini", envKey: "OPENAI_API_KEY" },
