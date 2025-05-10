@@ -24,9 +24,6 @@ import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
 import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
 
-const dbModels: any = models;
-const Group = dbModels.Group;
-const User = dbModels.User;
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -67,6 +64,11 @@ export class PolicySynthAgentsController {
    * @param group The group instance to configure
    */
   public static async setupApiKeysForGroup(group: any): Promise<void> {
+    const domain = await models.default.Domain.findOne({
+      where: {
+        id: group.id,
+      },
+    });
     return NewAiModelSetup.setupApiKeysForGroup(group);
   }
 
