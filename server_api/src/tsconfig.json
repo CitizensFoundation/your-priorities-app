@@ -14,7 +14,7 @@
     "declaration": true,
     "types": [
       "./server.d.ts",
-      "./models/index.d.ts",
+      "./models/index.d.cts",
       "../../webApps/client/src/types.d.ts",
       "../../webApps/client/src/agents.d.ts",
       "../../webApps/client/src/typesAoi.d.ts",
@@ -31,7 +31,8 @@
     "../node_modules/@policysynth/agents/connectors.d.ts",
     "../node_modules/@policysynth/agents/rag.d.ts",
     "../node_modules/@policysynth/agents/streamingLLms.d.ts",
-    "../node_modules/@policysynth/agents/validation.d.ts"
+    "../node_modules/@policysynth/agents/validation.d.ts",
+    "models/index.d.cts"
   ],
   "exclude": ["webAppsDist", "ts-out", "dist"]
 }
