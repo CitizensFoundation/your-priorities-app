@@ -134,7 +134,8 @@
   },
   "scripts": {
     "copyInLocalAgents": "cp -R ../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
-    "publish_live": "npm run build:dev;copyfiles './src/utils/**/*.d.ts' './src/controllers/**/*.d.ts' './src/agents/**/*.d.ts' './src/models/**/*.d.ts' './src/services/controllers/**/*.d.ts' './src/services/models/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_live_with_copy": "npm run build:dev;copyfiles './src/utils/**/*.d.ts' './src/controllers/**/*.d.ts' './src/agents/**/*.d.ts' './src/models/**/*.d.ts' './src/services/controllers/**/*.d.ts' './src/services/models/**/*.d.ts' 'ts-out/';npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_live": "npm run build:dev;npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server.js",
     "watch-start": "DEBUG=router:* tsc --project ./src --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",

@@ -1,13 +1,77 @@
 "use strict";
 
+import type {
+  Sequelize as SequelizeBaseType,
+  Model,
+  ModelStatic,
+} from "sequelize";
+
 const fs = require("fs");
 const path = require("path");
 const env = process.env.NODE_ENV || "development";
 const _ = require("lodash");
 const { Sequelize, DataTypes } = require("sequelize");
 
-let sequelize;
+let sequelize: SequelizeBaseType;
 
+// -----------------------------------------------------------------------------
+// Generic and model-specific instance helpers
+// -----------------------------------------------------------------------------
+type ModelInstance<T extends object> = Model<T, Partial<T>> & T;
+
+// (All the Yp…Data / Ac…Data interfaces are assumed to be globally available.)
+type AudioInstance                = ModelInstance<YpAudioData>;
+type CategoryInstance             = ModelInstance<YpCategoryData>;
+type CommunityInstance            = ModelInstance<YpCommunityData>;
+type DomainInstance               = ModelInstance<YpDomainData>;
+type EndorsementInstance          = ModelInstance<YpEndorsement>;
+type GroupInstance                = ModelInstance<YpGroupData>;
+type ImageInstance                = ModelInstance<YpImageData>;
+type PageInstance                 = ModelInstance<YpHelpPageData>;
+type PointInstance                = ModelInstance<YpPointData>;
+type PointQualityInstance         = ModelInstance<YpPointQuality>;
+type PointRevisionInstance        = ModelInstance<YpPointRevision>;
+type PostInstance                 = ModelInstance<YpPostData>;
+type PostStatusChangeInstance     = ModelInstance<YpPostStatusChange>;
+type OrganizationInstance         = ModelInstance<YpOrganizationData>;
+type RatingInstance               = ModelInstance<YpRatingData>;
+type UserInstance                 = ModelInstance<YpUserData>;
+type VideoInstance                = ModelInstance<YpVideoData>;
+type AcActivityInstance           = ModelInstance<AcActivityData>;
+type AcNotificationInstance       = ModelInstance<AcNotificationData>;
+
+
+// -----------------------------------------------------------------------------
+// Interface describing the exported DB object
+// -----------------------------------------------------------------------------
+interface DeclaredYpModels {
+  sequelize: SequelizeBaseType;
+  Sequelize: typeof SequelizeBaseType;
+
+  Audio:               ModelStatic<AudioInstance>;
+  Category:            ModelStatic<CategoryInstance>;
+  Community:           ModelStatic<CommunityInstance>;
+  Domain:              ModelStatic<DomainInstance>;
+  Endorsement:         ModelStatic<EndorsementInstance>;
+  Group:               ModelStatic<GroupInstance>;
+  Image:               ModelStatic<ImageInstance>;
+  Page:                ModelStatic<PageInstance>;
+  Point:               ModelStatic<PointInstance>;
+  PointQuality:        ModelStatic<PointQualityInstance>;
+  PointRevision:       ModelStatic<PointRevisionInstance>;
+  Post:                ModelStatic<PostInstance>;
+  PostStatusChange:    ModelStatic<PostStatusChangeInstance>;
+  Organization:        ModelStatic<OrganizationInstance>;
+  Rating:              ModelStatic<RatingInstance>;
+  User:                ModelStatic<UserInstance>;
+  Video:               ModelStatic<VideoInstance>;
+  AcActivity:          ModelStatic<AcActivityInstance>;
+  AcNotification:      ModelStatic<AcNotificationInstance>;
+}
+
+// -----------------------------------------------------------------------------
+// DB bootstrap
+// -----------------------------------------------------------------------------
 const Op = Sequelize.Op;
 const operatorsAliases = {
   $gt: Op.gt,
@@ -34,23 +98,18 @@ if (process.env.NODE_ENV === "production") {
       dialect: "postgres",
       minifyAliases: true,
       logging: false,
-      operatorsAliases: operatorsAliases,
+      operatorsAliases,
     });
   } else {
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect: "postgres",
-      dialectOptions: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      },
+      dialectOptions: { ssl: { rejectUnauthorized: false } },
       minifyAliases: true,
       logging: false,
-      operatorsAliases: operatorsAliases,
+      operatorsAliases,
     });
   }
 } else {
-  let config;
   try {
     sequelize = new Sequelize(
       process.env.YP_DEV_DATABASE_NAME,
@@ -62,30 +121,30 @@ if (process.env.NODE_ENV === "production") {
         host: process.env.YP_DEV_DATABASE_HOST,
         port: process.env.YP_DEV_DATABASE_PORT,
         minifyAliases: true,
-        dialectOptions: {
-          ssl: false,
-          rejectUnauthorized: false,
-        },
+        dialectOptions: { ssl: false, rejectUnauthorized: false },
         logging: false,
-        operatorsAliases: operatorsAliases,
+        operatorsAliases,
       }
     );
   } catch (error) {
-    console.error("Error reading or parsing config file:", error);
+    console.error("Error configuring Sequelize:", error);
     process.exit(1);
   }
 }
 
-const db = {};
+// -----------------------------------------------------------------------------
+// Model loading
+// -----------------------------------------------------------------------------
+const db = {} as DeclaredYpModels;
 
-async function createCompoundIndexes(indexCommands) {
+async function createCompoundIndexes(indexCommands: string[]) {
   for (const command of indexCommands) {
     try {
       await sequelize.query(command);
       console.log(`Successfully created index with command: ${command}`);
-    } catch (error) {
-      if (error.message.indexOf("already exists") > -1) {
-        //console.log("already exists")
+    } catch (error: any) {
+      if (error.message.includes("already exists")) {
+        /* ignore duplicate index */
       } else {
         console.error(`Error creating index with command: ${command}`);
         console.error(error.message);
@@ -177,43 +236,60 @@ const compoundIndexCommands = [
   `CREATE INDEX posts_idx2_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted)`,
 ];
 
-// Read models from local folder
+// Load local models (.cjs only)
 fs.readdirSync(__dirname)
-  .filter((file) => {
-    return file.indexOf(".") !== 0 && file.endsWith(".cjs") && !file.endsWith(".d.cjs") && !file.endsWith(".d.cts") && file !== "index.cjs";
-  })
-  .forEach((file) => {
+  .filter(
+    (file: string) =>
+      file.indexOf(".") !== 0 &&
+      file.endsWith(".cjs") &&
+      !file.endsWith(".d.cjs") &&
+      !file.endsWith(".d.cts") &&
+      file !== "index.cjs"
+  )
+  .forEach((file: string) => {
     const model = require(path.join(__dirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
+    db[model.name as keyof DeclaredYpModels] = model;
   });
 
-// Read from active citizen,
-const acDirname = __dirname + "/../services/models";
+// Load from ActiveCitizen services/models (.cjs only)
+const acDirname = path.join(__dirname, "..", "services", "models");
 fs.readdirSync(acDirname)
-  .filter((file) => {
-    return file.indexOf(".") !== 0 && file.endsWith(".cjs") && !file.endsWith(".d.cjs") && !file.endsWith(".d.cts");
-  })
-  .forEach((file) => {
+  .filter(
+    (file: string) =>
+      file.indexOf(".") !== 0 &&
+      file.endsWith(".cjs") &&
+      !file.endsWith(".d.cjs") &&
+      !file.endsWith(".d.cts")
+  )
+  .forEach((file: string) => {
     const model = require(path.join(acDirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
+    db[model.name as keyof DeclaredYpModels] = model;
   });
 
-Object.keys(db).forEach((modelName) => {
-  if ("associate" in db[modelName]) {
-    db[modelName].associate(db);
+// Wire up associations
+Object.keys(db).forEach((modelName: string) => {
+  if ("associate" in db[modelName as keyof DeclaredYpModels]) {
+    (db[modelName as keyof DeclaredYpModels] as any).associate(
+      db as unknown as DeclaredYpModels
+    );
   }
 });
 
+// Sync & index creation
 if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
   sequelize.sync().then(async () => {
     await createCompoundIndexes(compoundIndexCommands);
-    db.Post.addFullTextIndex();
+    (db.Post as any).addFullTextIndex();
   });
 } else if (process.env.FORCE_DB_INDEX_SYNC) {
   createCompoundIndexes(compoundIndexCommands);
 }
 
+// Expose
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+// -----------------------------------------------------------------------------
+// CommonJS export for a .cts file
+// -----------------------------------------------------------------------------
+export = db;
