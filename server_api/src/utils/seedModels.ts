@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath, pathToFileURL } from 'url';
-import crypto from 'crypto';
-import bcrypt from 'bcrypt';
+import { fileURLToPath, pathToFileURL } from "url";
+import crypto from "crypto";
+import bcrypt from "bcrypt";
 import { Sequelize, DataTypes, Op, ModelCtor } from "sequelize";
 import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
 
@@ -21,7 +21,9 @@ import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js
 import { PsAgentConnectorClass } from "@policysynth/agents/dbModels/agentConnectorClass.js";
 import { PsAgentRegistry } from "@policysynth/agents/dbModels/agentRegistry.js";
 
-const psModels: { [key: string]: ModelCtor<any> & { associate?: (models: any) => void } } = {
+const psModels: {
+  [key: string]: ModelCtor<any> & { associate?: (models: any) => void };
+} = {
   PsAgentClass,
   PsExternalApiUsage,
   PsModelUsage,
@@ -59,7 +61,9 @@ const mainOperatorsAliases = {
 
 if (env === "production") {
   if (!process.env.DATABASE_URL) {
-    console.error("DATABASE_URL environment variable is not set for production.");
+    console.error(
+      "DATABASE_URL environment variable is not set for production."
+    );
     process.exit(1);
   }
   if (process.env.DISABLE_PG_SSL) {
@@ -148,7 +152,7 @@ const mainCompoundIndexCommands: string[] = [
   'CREATE INDEX groupheaderimage_idx2_group_id_c ON "GroupHeaderImage" (group_id, created_at)',
   'CREATE INDEX grouplogoimage_idx2_group_id_c ON "GroupLogoImage" (group_id, created_at)',
   'CREATE INDEX grouplogovideo_idx2_group_id_c ON "GroupLogoVideo" (group_id, created_at)',
-  'CREATE INDEX idx2_group_categories_name ON Categories (group_id, name)',
+  "CREATE INDEX idx2_group_categories_name ON Categories (group_id, name)",
   'CREATE INDEX organizationlogoimag_idx_organization_id ON "OrganizationLogoImage" (organization_id)',
   'CREATE INDEX organizationlogoimag_idx_organization_id_u ON "OrganizationLogoImage" (organization_id, updated_at)',
   'CREATE INDEX organizationlogoimag_idx_organization_id_c ON "OrganizationLogoImage" (organization_id, created_at)',
@@ -159,7 +163,7 @@ const mainCompoundIndexCommands: string[] = [
   'CREATE INDEX pointvideo_idx2_point_id_u ON "PointVideo" (point_id, updated_at)',
   'CREATE INDEX pointaudio_idx2_point_id_c ON "PointAudio" (point_id, created_at)',
   'CREATE INDEX pointvideo_idx2_point_id_c ON "PointVideo" (point_id, created_at)',
-  'CREATE INDEX points_idx2_counter_sum_post_id_status_value_deleted ON points ((counter_quality_up-counter_quality_down), post_id, status, value, deleted)',
+  "CREATE INDEX points_idx2_counter_sum_post_id_status_value_deleted ON points ((counter_quality_up-counter_quality_down), post_id, status, value, deleted)",
   'CREATE INDEX userprofileimage_idx2_user_id ON "UserProfileImage" (user_id)',
   'CREATE INDEX userprofileimage_idx2_user_id_u ON "UserProfileImage" (user_id, updated_at)',
   'CREATE INDEX userprofileimage_idx2_user_id_c ON "UserProfileImage" (user_id, created_at)',
@@ -181,8 +185,8 @@ const mainCompoundIndexCommands: string[] = [
   'CREATE INDEX idx2_post_images_c ON "PostImage" (post_id, created_at)',
   'CREATE INDEX idx2_post_audios_c ON "PostAudio" (post_id, created_at)',
   'CREATE INDEX idx2_post_videos_c ON "PostVideo" (post_id, created_at)',
-  'CREATE INDEX posts_idx2_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted)',
-  'CREATE INDEX posts_idx2_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted)',
+  "CREATE INDEX posts_idx2_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted)",
+  "CREATE INDEX posts_idx2_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted)",
 ];
 
 async function createMainCompoundIndexes(
@@ -192,7 +196,9 @@ async function createMainCompoundIndexes(
   for (const command of indexCommands) {
     try {
       await sequelizeInstance.query(command);
-      console.log(`Successfully created main index: ${command.substring(0, 100)}...`);
+      console.log(
+        `Successfully created main index: ${command.substring(0, 100)}...`
+      );
     } catch (error: any) {
       if (error.message && error.message.indexOf("already exists") > -1) {
         // console.log(`Main index already exists: ${command.substring(0,100)}...`);
@@ -208,7 +214,8 @@ async function syncMainDatabase() {
   console.log("Starting main database synchronization...");
 
   const modelsPath = path.join(__dirname, "../models");
-  const modelFiles = fs.readdirSync(modelsPath)
+  const modelFiles = fs
+    .readdirSync(modelsPath)
     .filter(
       (file) =>
         file.indexOf(".") !== 0 &&
@@ -232,12 +239,10 @@ async function syncMainDatabase() {
     }
   }
 
-  const acModelsPath = path.join(
-    __dirname,
-    "../services/models"
-  );
+  const acModelsPath = path.join(__dirname, "../services/models");
   if (fs.existsSync(acModelsPath)) {
-    const acModelFiles = fs.readdirSync(acModelsPath)
+    const acModelFiles = fs
+      .readdirSync(acModelsPath)
       .filter(
         (file) =>
           file.indexOf(".") !== 0 &&
@@ -259,25 +264,34 @@ async function syncMainDatabase() {
       }
     }
   } else {
-    console.warn(`Directory not found, skipping services models: ${acModelsPath}`);
+    console.warn(
+      `Directory not found, skipping services models: ${acModelsPath}`
+    );
   }
 
   Object.keys(mainDb).forEach((modelName) => {
-    if (mainDb[modelName] && typeof mainDb[modelName].associate === "function") {
+    if (
+      mainDb[modelName] &&
+      typeof mainDb[modelName].associate === "function"
+    ) {
       mainDb[modelName].associate(mainDb);
     }
   });
 
   // This script is intended for creating a new database, so always force sync.
   await mainSequelize.sync({ force: true });
-  console.log("Main database schema forcefully synchronized (tables dropped and recreated).");
+  console.log(
+    "Main database schema forcefully synchronized (tables dropped and recreated)."
+  );
   await createMainCompoundIndexes(mainSequelize, mainCompoundIndexCommands);
   if (mainDb.Post && typeof mainDb.Post.addFullTextIndex === "function") {
     console.log("Adding full text index for Post model...");
     await mainDb.Post.addFullTextIndex();
     console.log("Full text index for Post model added.");
   } else {
-    console.warn("Post model or addFullTextIndex method not found in mainDb. Skipping full text index.");
+    console.warn(
+      "Post model or addFullTextIndex method not found in mainDb. Skipping full text index."
+    );
   }
   console.log("Main database synchronization finished.");
 }
@@ -287,7 +301,9 @@ async function syncPolicySynthDatabase() {
   try {
     // This script is intended for creating a new database, so always force sync.
     await psSequelize.sync({ force: false });
-    console.log("PolicySynth database schema forcefully synchronized (tables dropped and recreated).");
+    console.log(
+      "PolicySynth database schema forcefully synchronized (tables dropped and recreated)."
+    );
 
     console.log("Associating PolicySynth models...");
     for (const modelName of Object.keys(psModels)) {
@@ -306,12 +322,20 @@ async function syncPolicySynthDatabase() {
 
 async function seedAllModels() {
   console.log("--- Starting Database Seeding and Synchronization ---");
-  console.log("NOTE: This script will forcefully synchronize the database (drop and recreate tables).");
+  console.log(
+    "NOTE: This script will forcefully synchronize the database (drop and recreate tables)."
+  );
   console.log("NODE_ENV:", env);
   // The following environment variables are logged for informational purposes,
   // but this script will always force database synchronization.
-  console.log("FORCE_DB_SYNC (ignored, always true for this script):", process.env.FORCE_DB_SYNC);
-  console.log("FORCE_DB_INDEX_SYNC (ignored, indexes created after forced sync):", process.env.FORCE_DB_INDEX_SYNC);
+  console.log(
+    "FORCE_DB_SYNC (ignored, always true for this script):",
+    process.env.FORCE_DB_SYNC
+  );
+  console.log(
+    "FORCE_DB_INDEX_SYNC (ignored, indexes created after forced sync):",
+    process.env.FORCE_DB_INDEX_SYNC
+  );
 
   const args = process.argv.slice(2);
   if (args.length < 2) {
@@ -338,8 +362,8 @@ async function seedAllModels() {
     }
   } else {
     if (!process.env.DATABASE_URL) {
-        console.error("Missing DATABASE_URL for production environment.");
-        process.exit(1);
+      console.error("Missing DATABASE_URL for production environment.");
+      process.exit(1);
     }
   }
 
@@ -364,9 +388,11 @@ async function seedAllModels() {
     const newUser = mainDb.User.build({
       email: userEmail,
       name: userName, // Or a dedicated name argument if preferred
-      status: 'active',
+      status: "active",
       // Attempt to set default notifications, fallback if AcNotification not on mainDb
-      notifications_settings: mainDb.AcNotification ? mainDb.AcNotification.defaultNotificationSettings : { email: true },
+      notifications_settings: mainDb.AcNotification
+        ? mainDb.AcNotification.defaultNotificationSettings
+        : { email: true },
     });
 
     // createPasswordHash is an instance method on User model from user.cjs
@@ -377,37 +403,58 @@ async function seedAllModels() {
     console.log(`User ${newUser.email} created with ID: ${newUser.id}`);
 
     // Create Domain
-    const randomDomainName = crypto.randomBytes(8).toString('hex') + ".seed.local"; // Shorter and identifiable
-    console.log(`Attempting to create domain: ${randomDomainName} for user ${newUser.id}`);
+    const randomDomainName =
+      crypto.randomBytes(8).toString("hex") + ".seed.local"; // Shorter and identifiable
+    console.log(
+      `Attempting to create domain: ${randomDomainName} for user ${newUser.id}`
+    );
     const newDomain = mainDb.Domain.build({
       name: `Default Domain for ${userName}`,
       domain_name: randomDomainName,
-      access: mainDb.Domain.ACCESS_PUBLIC !== undefined ? mainDb.Domain.ACCESS_PUBLIC : 0, // Use constant if available
+      access:
+        mainDb.Domain.ACCESS_PUBLIC !== undefined
+          ? mainDb.Domain.ACCESS_PUBLIC
+          : 0, // Use constant if available
       default_locale: "en",
-      ip_address: "::1",
+      ip_address: "::1", // Using localhost IP
       user_agent: "seedModelsScript/1.0",
       user_id: newUser.id, // Associate domain with the new user
       configuration: {},
+      secret_api_keys: {},
+      data: {},
+      other_social_media_info: {},
+      public_api_keys: {},
+      info_texts: {},
       // Fill other required non-nullable fields based on domain.cjs definition if any
       // deleted: false, (already defaults to false)
     });
 
     await newDomain.save();
-    console.log(`Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`);
+    console.log(
+      `Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`
+    );
 
     // Associate User with Domain
-    if (typeof newDomain.addDomainUsers === 'function') {
+    if (typeof newDomain.addDomainUsers === "function") {
       await newDomain.addDomainUsers(newUser);
-      console.log(`User ${newUser.email} added to domain ${newDomain.domain_name} as a user.`);
+      console.log(
+        `User ${newUser.email} added to domain ${newDomain.domain_name} as a user.`
+      );
     } else {
-      console.warn(`newDomain.addDomainUsers is not a function. Skipping adding user to domain users.`);
+      console.warn(
+        `newDomain.addDomainUsers is not a function. Skipping adding user to domain users.`
+      );
     }
 
-    if (typeof newDomain.addDomainAdmins === 'function') {
+    if (typeof newDomain.addDomainAdmins === "function") {
       await newDomain.addDomainAdmins(newUser);
-      console.log(`User ${newUser.email} added to domain ${newDomain.domain_name} as an admin.`);
+      console.log(
+        `User ${newUser.email} added to domain ${newDomain.domain_name} as an admin.`
+      );
     } else {
-      console.warn(`newDomain.addDomainAdmins is not a function. Skipping adding user to domain admins.`);
+      console.warn(
+        `newDomain.addDomainAdmins is not a function. Skipping adding user to domain admins.`
+      );
     }
 
     console.log("--- User and Domain Creation Complete ---");
