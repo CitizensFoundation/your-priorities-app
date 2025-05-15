@@ -519,7 +519,9 @@ async function initializeIndexCache() {
   }
 }
 
-initializeIndexCache();
+if (!process.env.SKIP_INDEX_HTML_CACHE) {
+  initializeIndexCache();
+}
 
 router.get("/", function (req, res) {
   sendIndex(req, res);
