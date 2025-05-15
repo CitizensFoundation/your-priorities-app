@@ -423,6 +423,7 @@ module.exports = (sequelize, DataTypes) => {
                 req,
                 domain,
                 (error, providers) => {
+                  log.info("Login Providers", { providers });
                   req.ypDomain.loginProviders = providers;
                   sequelize.models.Domain.getLoginHosts(domain, (error, hosts) => {
                     req.ypDomain.loginHosts = hosts;

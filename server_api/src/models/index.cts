@@ -44,6 +44,22 @@ type AcNotificationInstance       = ModelInstance<AcNotificationData>;
 // -----------------------------------------------------------------------------
 // Interface describing the exported DB object
 // -----------------------------------------------------------------------------
+/*export interface DomainModel extends ModelStatic<DomainInstance> {
+  // Static properties
+  ACCESS_PUBLIC: number;
+  ACCESS_CLOSED: number;
+  ACCESS_SECRET: number;
+  defaultAttributesPublic: string[];
+
+  // Static methods
+  setYpDomain(req: any, res: any, next: Function): void;
+  getLoginProviders(req: any, domain: DomainInstance, callback: Function): void;
+  getLoginHosts(domain: DomainInstance, callback: Function): void;
+  extractDomain(url: string): string;
+  extractHost(url: string): string | null;
+  isIpAddress(domain: string): boolean;
+}*/
+
 interface DeclaredYpModels {
   sequelize: SequelizeBaseType;
   Sequelize: typeof SequelizeBaseType;
@@ -289,7 +305,4 @@ if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// -----------------------------------------------------------------------------
-// CommonJS export for a .cts file
-// -----------------------------------------------------------------------------
 export = db;
