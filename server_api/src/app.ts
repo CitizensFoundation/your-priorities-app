@@ -894,24 +894,65 @@ export class YourPrioritiesApi {
           }
         );
       } else if (profile.provider === "oidc") {
-        (models as any).User.serializeOidcUser(
-          profile,
-          req,
-          (error: any, user: any) => {
-            if (error) {
-              log.error("Error in User Serialized from OIDC", { err: error });
-              done(error);
-            } else {
-              log.info("User Serialized", {
-                context: "loginFromOidc",
-                userId: user.id,
-              });
-              this.registerUserLogin(user, user.id, "oidc", req, () => {
-                done(null, { userId: user.id, loginProvider: "saml" });
-              });
+        // Decide which helper to call by inspecting claims
+        if (profile.issuer?.includes('b2clogin.com')) {
+          (models as any).User.serializeAzureB2CUser(
+            profile,
+            req,
+            (error: any, user: any) => {
+              if (error) {
+                log.error("Error in User Serialized from Azure B2C OIDC", { err: error });
+                done(error);
+              } else {
+                log.info("User Serialized", {
+                  context: "loginFromAzureB2COidc",
+                  userId: user.id,
+                });
+                this.registerUserLogin(user, user.id, "oidc", req, () => {
+                  done(null, { userId: user.id, loginProvider: "oidc" }); // Changed from saml to oidc
+                });
+              }
             }
-          }
-        );
+          );
+        } else if (profile.issuer?.includes('login.microsoftonline.com') || profile.tid /* tenant id claim */) {
+          (models as any).User.serializeMicrosoftUser(
+            profile,
+            req,
+            (error: any, user: any) => {
+              if (error) {
+                log.error("Error in User Serialized from Microsoft Entra ID OIDC", { err: error });
+                done(error);
+              } else {
+                log.info("User Serialized", {
+                  context: "loginFromMicrosoftEntraIDOidc",
+                  userId: user.id,
+                });
+                this.registerUserLogin(user, user.id, "oidc", req, () => {
+                  done(null, { userId: user.id, loginProvider: "oidc" }); // Changed from saml to oidc
+                });
+              }
+            }
+          );
+        } else {
+          (models as any).User.serializeOidcUser(
+            profile,
+            req,
+            (error: any, user: any) => {
+              if (error) {
+                log.error("Error in User Serialized from OIDC", { err: error });
+                done(error);
+              } else {
+                log.info("User Serialized", {
+                  context: "loginFromOidc",
+                  userId: user.id,
+                });
+                this.registerUserLogin(user, user.id, "oidc", req, () => {
+                  done(null, { userId: user.id, loginProvider: "oidc" }); // Changed from saml to oidc
+                });
+              }
+            }
+          );
+        }
       } else {
         log.info("User Serialized", {
           context: "serializeUser",

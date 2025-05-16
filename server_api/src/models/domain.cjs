@@ -279,6 +279,51 @@ module.exports = (sequelize, DataTypes) => {
           });
         }
 
+        console.log(`Checking Microsoft Entra ID keys for domain ${domain.id}`);
+        if (process.env.AUTH_MICROSOFT_ENTRA_ID_CLIENT_ID && process.env.AUTH_MICROSOFT_ENTRA_ID_CLIENT_SECRET) {
+          const authorityDomain = process.env.AUTH_MICROSOFT_ENTRA_ID_AUTHORITY_DOMAIN || 'login.microsoftonline.com';
+          const tenantId = process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID || 'common';
+          providers.push({
+            name: "microsoft-entra-id-strategy-" + domain.id,
+            provider: "oidc",
+            protocol: "oidc",
+            strategyObject: "Strategy",
+            strategyPackage: "passport-openidconnect",
+            clientID: process.env.AUTH_MICROSOFT_ENTRA_ID_CLIENT_ID,
+            clientSecret: process.env.AUTH_MICROSOFT_ENTRA_ID_CLIENT_SECRET,
+            issuer: `https://${authorityDomain}/${tenantId}/v2.0`,
+            authorizationURL: `https://${authorityDomain}/${tenantId}/oauth2/v2.0/authorize`,
+            tokenURL: `https://${authorityDomain}/${tenantId}/oauth2/v2.0/token`,
+            userInfoURL: `https://${authorityDomain}/${tenantId}/openid/userinfo`,
+            scope: ["openid", "profile", "email"],
+            callbackUrl: `https://${callbackDomainName}/api/users/auth/entra/callback`,
+            urlCallback: `https://${callbackDomainName}/api/users/auth/entra/callback`,
+          });
+        }
+
+        console.log(`Checking Azure AD B2C keys for domain ${domain.id}`);
+        if (process.env.AUTH_AZURE_AD_B2C_CLIENT_ID && process.env.AUTH_AZURE_AD_B2C_CLIENT_SECRET && process.env.AUTH_AZURE_AD_B2C_TENANT_NAME && process.env.AUTH_AZURE_AD_B2C_USER_FLOW) {
+          const tenantName = process.env.AUTH_AZURE_AD_B2C_TENANT_NAME;
+          const userFlow = process.env.AUTH_AZURE_AD_B2C_USER_FLOW;
+          const base = `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${userFlow}`;
+          providers.push({
+            name: "azure-ad-b2c-strategy-" + domain.id,
+            provider: "oidc",
+            protocol: "oidc",
+            strategyObject: "Strategy",
+            strategyPackage: "passport-openidconnect",
+            clientID: process.env.AUTH_AZURE_AD_B2C_CLIENT_ID,
+            clientSecret: process.env.AUTH_AZURE_AD_B2C_CLIENT_SECRET,
+            issuer: `${base}/v2.0/`,
+            authorizationURL: `${base}/oauth2/v2.0/authorize`,
+            tokenURL: `${base}/oauth2/v2.0/token`,
+            userInfoURL: `${base}/openid/userinfo`,
+            scope: ["openid", "profile", "email"],
+            callbackUrl: `https://${callbackDomainName}/api/users/auth/b2c/callback`,
+            urlCallback: `https://${callbackDomainName}/api/users/auth/b2c/callback`,
+          });
+        }
+
         if (
           domain.secret_api_keys &&
           domain.secret_api_keys.saml &&

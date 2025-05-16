@@ -417,6 +417,167 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  User.serializeMicrosoftUser = (profile, req, callback) => {
+    log.info("User Serialized In Serialize Microsoft User", { context: 'serializeMicrosoftUser', profile: profile });
+    let user;
+    const email = profile.email || profile.preferred_username;
+    const objectId = profile.oid;
+
+    async.series([
+      (seriesCallback) => {
+        if (email) {
+          sequelize.models.User.findOne({
+            where: {
+              email: email.toLowerCase()
+            },
+            attributes: User.defaultAttributesWithSocialMedia
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              // If user found by email, ensure private_profile_data is initialized and set microsoft_oid
+              if (!user.private_profile_data) {
+                user.private_profile_data = {};
+              }
+              user.private_profile_data.microsoft_oid = objectId;
+              user.private_profile_data.oidc_provider = 'microsoft-entra-id';
+              log.info("User Serialized Found Microsoft User by email", { context: 'serializeMicrosoftUser', userId: user.id });
+              user.save().then(() => seriesCallback()).catch(seriesCallback);
+            } else {
+              seriesCallback();
+            }
+          }).catch(seriesCallback);
+        } else {
+          seriesCallback();
+        }
+      },
+      (seriesCallback) => {
+        if (!user && objectId) { // If not found by email, try by objectId
+          sequelize.models.User.findOne({
+            where: {
+              private_profile_data: { microsoft_oid: objectId }
+            },
+            attributes: User.defaultAttributesWithSocialMedia
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Found Microsoft User by OID", { context: 'serializeMicrosoftUser', userId: user.id });
+            }
+            seriesCallback();
+          }).catch(seriesCallback);
+        } else {
+          seriesCallback();
+        }
+      },
+      (seriesCallback) => {
+        if (!user) {
+          sequelize.models.User.create({
+            name: profile.name || 'Microsoft User',
+            email: email ? email.toLowerCase() : undefined,
+            private_profile_data: {
+              microsoft_oid: objectId,
+              oidc_provider: 'microsoft-entra-id'
+            },
+            profile_data: {
+              isAnonymousUser: !email // Consider anonymous if no email, adjust as needed
+            },
+            notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+            status: 'active'
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Created Microsoft User", { context: 'serializeMicrosoftUser', userId: user.id });
+            }
+            seriesCallback(userIn ? null : "Could not create user from Microsoft Entra ID");
+          }).catch(seriesCallback);
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) => {
+      callback(error, user);
+    });
+  };
+
+  User.serializeAzureB2CUser = (profile, req, callback) => {
+    log.info("User Serialized In Serialize AzureB2C User", { context: 'serializeAzureB2CUser', profile: profile });
+    let user;
+    const email = profile.emails && profile.emails[0];
+    const objectId = profile.sub;
+
+    async.series([
+      (seriesCallback) => {
+        if (email) {
+          sequelize.models.User.findOne({
+            where: {
+              email: email.toLowerCase()
+            },
+            attributes: User.defaultAttributesWithSocialMedia
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              if (!user.private_profile_data) {
+                user.private_profile_data = {};
+              }
+              user.private_profile_data.azure_b2c_oid = objectId;
+              user.private_profile_data.oidc_provider = 'azure-ad-b2c';
+              log.info("User Serialized Found Azure B2C User by email", { context: 'serializeAzureB2CUser', userId: user.id });
+              user.save().then(() => seriesCallback()).catch(seriesCallback);
+            } else {
+              seriesCallback();
+            }
+          }).catch(seriesCallback);
+        } else {
+          seriesCallback();
+        }
+      },
+      (seriesCallback) => {
+        if (!user && objectId) {
+          sequelize.models.User.findOne({
+            where: {
+              private_profile_data: { azure_b2c_oid: objectId }
+            },
+            attributes: User.defaultAttributesWithSocialMedia
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Found Azure B2C User by OID", { context: 'serializeAzureB2CUser', userId: user.id });
+            }
+            seriesCallback();
+          }).catch(seriesCallback);
+        } else {
+          seriesCallback();
+        }
+      },
+      (seriesCallback) => {
+        if (!user) {
+          sequelize.models.User.create({
+            name: profile.name || 'Azure B2C User',
+            email: email ? email.toLowerCase() : undefined,
+            private_profile_data: {
+              azure_b2c_oid: objectId,
+              oidc_provider: 'azure-ad-b2c'
+            },
+            profile_data: {
+              isAnonymousUser: !email
+            },
+            notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+            status: 'active'
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Created Azure B2C User", { context: 'serializeAzureB2CUser', userId: user.id });
+            }
+            seriesCallback(userIn ? null : "Could not create user from Azure AD B2C");
+          }).catch(seriesCallback);
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) => {
+      callback(error, user);
+    });
+  };
+
   User.localCallback = (req, email, password, done) => {
     sequelize.models.User.findOne({
       where: { email: email },

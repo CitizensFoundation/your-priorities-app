@@ -152,7 +152,7 @@ router.post('/login', function (req, res) {
   log.info('User Login start', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
     log.info(`User Login before get ${req.user ? "HASUSER" : "NOUSER"}`,err, { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
-    getUserWithAll(req.user.id, true, async function (error, user) {
+    getUserWithAll(req.user.id, true,async function (error, user) {
       log.info('User Login completed', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
@@ -2237,6 +2237,46 @@ router.get('/auth/oidc/callback', function(req, res) {
       res.render('samlLoginComplete', {});
     }
   })
+});
+
+router.get('/auth/entra', function(req, res) {
+  req.sso.authenticate('microsoft-entra-id-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Entra ID login init", { err: error });
+      res.sendStatus(500);
+    }
+  });
+});
+
+router.get('/auth/entra/callback', function(req, res) {
+  req.sso.authenticate('microsoft-entra-id-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Entra ID login callback", { err: error });
+      res.sendStatus(500);
+    } else {
+      res.render('samlLoginComplete', {});
+    }
+  });
+});
+
+router.get('/auth/b2c', function(req, res) {
+  req.sso.authenticate('azure-ad-b2c-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Azure AD B2C login init", { err: error });
+      res.sendStatus(500);
+    }
+  });
+});
+
+router.get('/auth/b2c/callback', function(req, res) {
+  req.sso.authenticate('azure-ad-b2c-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Azure AD B2C login callback", { err: error });
+      res.sendStatus(500);
+    } else {
+      res.render('samlLoginComplete', {});
+    }
+  });
 });
 
 router.get('/auth/audkenni/callback', async function(req, res) {
