@@ -182,11 +182,11 @@ export class YpPost extends YpCollection {
         }
 
         .arrowNavigation {
-          --md-filled-tonal-icon-button-container-width: 64px;
-          --md-filled-tonal-icon-button-container-height: 64px;
-          --md-filled-tonal-icon-button-icon-size: 48px;
+          --md-filled-tonal-icon-button-container-width: 48px;
+          --md-filled-tonal-icon-button-container-height: 48px;
+          --md-filled-tonal-icon-button-icon-size: 32px;
           position: fixed;
-          top: 500px;
+          top: 50vh;
           transform: translateY(-50%);
           z-index: 20;
           --md-filled-tonal-icon-button-disabled-container-opacity: 1.0;
@@ -194,11 +194,21 @@ export class YpPost extends YpCollection {
         }
 
         .leftArrowNavigationButton {
-          left: calc(50% - (940px / 2) - 80px);
+          left: 16px;
         }
 
         .rightArrowNavigationButton {
-          right: calc(50% - (940px / 2) - 80px);
+          right: 16px;
+        }
+
+        @media (max-width: 600px) {
+          .leftArrowNavigationButton {
+            left: 8px;
+          }
+
+          .rightArrowNavigationButton {
+            right: 8px;
+          }
         }
 
         md-tabs {
@@ -461,6 +471,7 @@ export class YpPost extends YpCollection {
     return html`
       <div style="position: relative;" ?hidden="${this.bothArrowsDisabled}">
         <md-filled-tonal-icon-button
+          title="${this.t('previousPostHint')}"
           ?disabled="${this.leftArrowDisabled}"
           @click="${this.goToPreviousPost}"
           class="arrowNavigation leftArrowNavigationButton"
@@ -468,6 +479,7 @@ export class YpPost extends YpCollection {
           <md-icon>keyboard_arrow_left</md-icon>
         </md-filled-tonal-icon-button>
         <md-filled-tonal-icon-button
+          title="${this.t('nextPostHint')}"
           ?disabled="${this.rightArrowDisabled}"
           @click="${this.goToNextPost}"
           class="arrowNavigation rightArrowNavigationButton"

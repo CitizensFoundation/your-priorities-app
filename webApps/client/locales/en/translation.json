@@ -603,6 +603,8 @@
   "structuredQuestionsInfo": "Use comma to separate questions and max character lengths. Keep questions to less than 32 characters for display on mobiles. Example: Question 1,200,Question 2,600,Question 3,600",
   "backToPost": "Back to post",
   "forwardToPost": "Forward to recommended post",
+  "previousPostHint": "Swipe left or tap to see the previous post",
+  "nextPostHint": "Swipe right or tap to see the next post",
   "hostnameTaken": "This hostname is already taken",
   "updateCommunityFolder": "Update project folder",
   "inCommunityFolder": "In project folder",
