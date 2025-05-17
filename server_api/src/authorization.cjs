@@ -285,7 +285,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
     });
 };
 
-auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
+auth.authNeedsCommunityAdminForCreate = function (community, req, done) {
   models.Community.findOne({
     where: { id: community.id },
     attributes: ["id", "access", "user_id", "configuration"],
@@ -1534,7 +1534,7 @@ auth.entity("category", function (req, done) {
 auth.role(
   "createCommunityBulkStatusUpdate.createBulkStatusUpdate",
   function (community, req, done) {
-    auth.authNeedsCommunnityAdminForCreate(community, req, done);
+    auth.authNeedsCommunityAdminForCreate(community, req, done);
   }
 );
 
@@ -1744,14 +1744,14 @@ auth.role(
 
 auth.role(
   "createCommunityOrganization.createCommunityOrganization",
-  function (domain, req, done) {
+  function (community, req, done) {
     models.Community.findOne({
       where: { id: community.id },
     })
       .then(function (community) {
         if (!auth.isAuthenticated(req)) {
           done(null, false);
-        } else if (community.access === models.Domain.ACCESS_PUBLIC) {
+        } else if (community.access === models.Community.ACCESS_PUBLIC) {
           done(null, true);
         } else if (community.user_id === req.user.id) {
           done(null, true);

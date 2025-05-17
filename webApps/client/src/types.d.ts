@@ -649,6 +649,8 @@ interface YpGroupData extends YpCollectionData {
   CommunityLink?: YpCommunityData;
   GroupAdmins?: Array<YpUserData>;
   GroupUsers?: Array<YpUserData>;
+
+  save: () => Promise<YpGroupData>;
 }
 
 interface YpBaseMedia {
@@ -683,11 +685,24 @@ interface YpCategoryData {
   count: number;
 }
 
+enum YpPostContentType {
+  CONTENT_IDEA = 0,
+  CONTENT_STORY = 1,
+  CONTENT_NEWSFEED = 2,
+  CONTENT_PERSON = 3,
+  CONTENT_BLOG = 4,
+  CONTENT_QUESTION = 5,
+  CONTENT_SURVEY = 6,
+  CONTENT_AGENT_CONVERSATION = 7
+}
+
 interface YpPostData extends YpDatabaseItem {
   cover_media_type?: string;
+  content_type?: YpPostContentType;
   group_id: number;
   user_id?: number;
   language?: string;
+  status?: string;
   PostHeaderImages?: Array<YpImageData>;
   Category?: YpCategoryData;
   Group: YpGroupData;
@@ -727,10 +742,15 @@ interface YpPostData extends YpDatabaseItem {
   PostAudios?: Array<YpAudioData>;
   categoryId?: number;
   newEndorsement?: YpEndorsement;
+  user_agent?: string;
+  ip_address?: string;
+
+  save: () => Promise<YpPostData>;
 }
 
 interface YpPointRevision {
   id: number;
+  point_id: number;
   content: string;
   User: YpUserData;
 }
@@ -750,9 +770,12 @@ interface YpPointData {
   name?: string;
   created_at: Date;
   user_id?: number;
+  group_id?: number;
+  post_id?: number;
   language?: string;
   Post?: YpPostData;
   User?: YpUserData;
+  status?: string;
   counter_quality_up: number;
   counter_quality_down: number;
   latestContent?: string;
@@ -766,9 +789,14 @@ interface YpPointData {
       text: string;
       language?: string;
     };
+    agent_data?: {
+      sender: "agent" | "human";
+    };
   };
   embed_data?: YpEmbedData;
   isLastPointInList?: boolean;
+  user_agent?: string;
+  ip_address?: string;
 }
 
 interface YpUserProfileData {

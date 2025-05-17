@@ -12,7 +12,7 @@ export class ChatGptImageGenerator implements IImageGenerator {
   }
 
   /**
-   * Generates an image URL from a prompt using OpenAI’s gpt-image-1 model.
+   * Generates an image URL from a prompt using OpenAI's gpt-image-1 model.
    * The returned link remains live for ~60 minutes – be sure to download
    * or cache it right away in the calling service.
    */
@@ -48,12 +48,17 @@ export class ChatGptImageGenerator implements IImageGenerator {
           prompt: finalPrompt,
           quality: "medium",
           n: 1,
-          size
+          size,
         });
 
-        const url = res?.data?.[0]?.url;
-        if (url) return url;
-        throw new Error("No URL returned");
+        console.log("res", JSON.stringify(res, null, 2));
+
+        const b64Json = res?.data?.[0]?.b64_json;
+        if (b64Json) {
+          // Assuming the image is a PNG, adjust if another format is expected
+          return `data:image/png;base64,${b64Json}`;
+        }
+        throw new Error("No b64_json returned");
       } catch (err) {
         retryCount += 1;
         if (retryCount >= this.maxRetryCount) {
