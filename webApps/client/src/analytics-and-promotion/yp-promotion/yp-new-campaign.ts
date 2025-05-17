@@ -403,6 +403,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
             <yp-image
               class="collectionLogoImage"
               sizing="cover"
+              .alt="${this.collection?.name}"
               .src="${this.collectionImageUrl}"
             ></yp-image>
           </div>

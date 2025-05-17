@@ -347,6 +347,7 @@ export class YpCollectionItemCard extends YpBaseElement {
             <yp-image
               ?archived="${this.archived}"
               sizing="cover"
+              .alt="${this.collection!.name}"
               class="main-image withPointer"
               src="https://i.imgur.com/sdsFAoT.png"
             ></yp-image>

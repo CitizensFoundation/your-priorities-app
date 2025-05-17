@@ -324,6 +324,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
                 <yp-image
                   class="collectionLogoImage"
                   sizing="contain"
+                  .alt="${this.collection?.name}"
                   .src="${YpCollectionHelpers.logoImagePath(
                     this.collectionType,
                     this.collection!

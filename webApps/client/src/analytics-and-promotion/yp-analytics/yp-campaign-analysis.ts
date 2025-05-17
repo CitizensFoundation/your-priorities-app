@@ -110,6 +110,7 @@ export class YpCampaignAnalysis extends YpCampaign {
           <yp-image
             class="mediumImage"
             sizing="contain"
+            .alt="${medium.utm_medium}"
             .src="${this.getMediumImageUrl(medium.utm_medium)}"
           >
           </yp-image>
