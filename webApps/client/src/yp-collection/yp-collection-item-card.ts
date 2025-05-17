@@ -127,6 +127,12 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         yp-image[archived] {
+          filter: grayscale(100%);
+          opacity: 0.6;
+        }
+
+        :host([archived]) {
+          opacity: 0.6;
         }
 
         yp-membership-button {
@@ -229,9 +235,8 @@ export class YpCollectionItemCard extends YpBaseElement {
     ];
   }
 
-  get archived(): boolean {
-    return this.item?.status === "archived";
-  }
+  @property({ type: Boolean, reflect: true })
+  archived = false;
 
   get featured(): boolean {
     return this.item?.status === "featured";
@@ -318,6 +323,10 @@ export class YpCollectionItemCard extends YpBaseElement {
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
+
+    if (changedProperties.has("item")) {
+      this.archived = this.item?.status === "archived";
+    }
 
     if (changedProperties.has("collection") && this.collection) {
       //TODO: Check if we need to setTimeout here
