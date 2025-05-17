@@ -517,6 +517,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         community_id: this.parentCollectionId,
         hostname: "",
         is_group_folder: this.collectionId == "newFolder" ? true : false,
+        save: () => {
+          return Promise.resolve(this.collection as YpGroupData);
+        },
       } as YpGroupData;
       this.group = this.collection as YpGroupData;
 

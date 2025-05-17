@@ -443,7 +443,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
             root: HTMLElement,
             _column: unknown,
             rowData: { item: PsDetailedAgentCostResults }
-          ) => {
+          ): void => {
             root.textContent = `${YpFormattingHelpers.number(
               rowData.item.tokenInCount
             )}`;
@@ -456,9 +456,48 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
             root: HTMLElement,
             _column: unknown,
             rowData: { item: PsDetailedAgentCostResults }
-          ) => {
+          ): void => {
             root.textContent = `${YpFormattingHelpers.number(
               rowData.item.tokenOutCount
+            )}`;
+          }}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="longContextIn"
+          header="${this.t("Long Context In")}"
+          .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: PsDetailedAgentCostResults }
+          ): void => {
+            root.textContent = `${YpFormattingHelpers.number(
+              rowData.item.longContextTokenInCount || 0
+            )}`;
+          }}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="longContextIn"
+          header="${this.t("Long Context Out")}"
+          .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: PsDetailedAgentCostResults }
+          ): void => {
+            root.textContent = `${YpFormattingHelpers.number(
+              rowData.item.longContextTokenOutCount || 0
+            )}`;
+          }}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="cachedContextIn"
+          header="${this.t("Cached Context In")}"
+          .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: PsDetailedAgentCostResults }
+          ): void => {
+            root.textContent = `${YpFormattingHelpers.number(
+              rowData.item.tokenInCachedContextCount || 0
             )}`;
           }}"
         ></vaadin-grid-sort-column>
@@ -469,7 +508,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
             root: HTMLElement,
             _column: unknown,
             rowData: { item: PsDetailedAgentCostResults }
-          ) => {
+          ): void => {
             root.textContent = `$${rowData.item.costIn.toFixed(4)}`;
           }}"
         >
@@ -481,7 +520,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
             root: HTMLElement,
             _column: unknown,
             rowData: { item: PsDetailedAgentCostResults }
-          ) => {
+          ): void => {
             root.textContent = `$${rowData.item.costOut.toFixed(4)}`;
           }}"
         >
@@ -493,11 +532,12 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
             root: HTMLElement,
             _column: unknown,
             rowData: { item: PsDetailedAgentCostResults }
-          ) => {
+          ): void => {
             root.textContent = `$${rowData.item.totalCost.toFixed(4)}`;
           }}"
         >
         </vaadin-grid-sort-column>
+
       </vaadin-grid>
     `;
   }
@@ -545,7 +585,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           ?open="${this.showAddAgentDialog}"
           @close="${() => (this.showAddAgentDialog = false)}"
           @agent-added="${this.getAgent}"
-          .parentAgentId="${this.currentAgent?.id}"
+          .parentAgentId="${this.currentAgent?.id || -1}"
           .groupId="${this.groupId}"
         ></ps-add-agent-dialog>
 
@@ -554,7 +594,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           .groupId="${this.groupId}"
           @connector-added="${this.getAgent}"
           .selectedAgentId="${this.selectedAgentIdForConnector}"
-          .selectedInputOutputType="${this.selectedInputOutputType}"
+          .selectedInputOutputType="${this.selectedInputOutputType as "input" | "output" | null}"
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
@@ -607,7 +647,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           ? html`
               <ps-operations-view
                 .minimizeWorkflow="${this.minimizeWorkflow}"
-                .currentAgent="${this.currentAgent}"
+                .currentAgent="${this.currentAgent!}"
                 .groupId="${this.groupId}"
                 .group="${this.group}"
               ></ps-operations-view>
