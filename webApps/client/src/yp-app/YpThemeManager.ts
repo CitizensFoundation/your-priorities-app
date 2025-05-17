@@ -528,6 +528,11 @@ export class YpThemeManager {
         this.importFonts(null);
       }
 
+      if (configuration.theme.backgroundColor) {
+        const bg = configuration.theme.backgroundColor;
+        document.body.style.backgroundColor = bg.startsWith('#') ? bg : `#${bg}`;
+      }
+
       this.themeChanged();
 
       this.updateBrowserThemeColor();

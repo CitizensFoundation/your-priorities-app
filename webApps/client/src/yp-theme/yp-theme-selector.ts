@@ -37,6 +37,9 @@ export class YpThemeSelector extends YpBaseElement {
   themeNeutralVariantColor: string | undefined;
 
   @property({ type: String })
+  themeBackgroundColor: string | undefined;
+
+  @property({ type: String })
   fontStyles: string | undefined;
 
   @property({ type: String })
@@ -169,6 +172,7 @@ export class YpThemeSelector extends YpBaseElement {
       this.themeNeutralColor = this.themeConfiguration.neutralColor;
       this.themeNeutralVariantColor =
         this.themeConfiguration.neutralVariantColor;
+      this.themeBackgroundColor = this.themeConfiguration.backgroundColor;
       this.useLowestContainerSurface =
         this.themeConfiguration.useLowestContainerSurface || false;
 
@@ -208,6 +212,7 @@ export class YpThemeSelector extends YpBaseElement {
       "themeTertiaryColor",
       "themeNeutralColor",
       "themeNeutralVariantColor",
+      "themeBackgroundColor",
       "useLowestContainerSurface",
       "fontStyles",
       "fontImports",
@@ -233,6 +238,7 @@ export class YpThemeSelector extends YpBaseElement {
         tertiaryColor: this.themeTertiaryColor,
         neutralColor: this.themeNeutralColor,
         neutralVariantColor: this.themeNeutralVariantColor,
+        backgroundColor: this.themeBackgroundColor,
         useLowestContainerSurface: this.useLowestContainerSurface,
         fontStyles: this.fontStyles,
         fontImports: this.fontImports,
@@ -299,6 +305,7 @@ export class YpThemeSelector extends YpBaseElement {
       this.themeTertiaryColor,
       this.themeNeutralColor,
       this.themeNeutralVariantColor,
+      this.themeBackgroundColor,
     ].some((color) => this.isValidHex(color));
 
     this.disableMultiInputs = this.isValidHex(this.oneDynamicThemeColor);
@@ -434,6 +441,17 @@ export class YpThemeSelector extends YpBaseElement {
               .disableSelection="${this.disableMultiInputs}"
               @input="${(e: any) => {
                 this.themeNeutralVariantColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
+
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Theme Background Color")}"
+              .color="${this.themeBackgroundColor}"
+              .disableSelection="${this.disableMultiInputs}"
+              @input="${(e: any) => {
+                this.themeBackgroundColor = e.detail.color;
               }}"
             >
             </yp-theme-color-input>

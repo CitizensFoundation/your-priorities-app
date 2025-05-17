@@ -12,6 +12,7 @@ The `YpThemeSelector` is a web component that allows users to select and configu
 | themeTertiaryColor          | `string \| undefined`         | The tertiary color of the theme.                                            |
 | themeNeutralColor           | `string \| undefined`         | The neutral color of the theme.                                             |
 | themeNeutralVariantColor    | `string \| undefined`         | The neutral variant color of the theme.                                     |
+| themeBackgroundColor       | `string \| undefined`         | The background color of the theme.                                        |
 | fontStyles                  | `string \| undefined`         | The font styles to be applied to the theme.                                 |
 | fontImports                 | `string \| undefined`         | The font imports to be used in the theme.                                   |
 | selectedThemeScheme         | `string`                      | The selected theme scheme, default is "tonal".                              |

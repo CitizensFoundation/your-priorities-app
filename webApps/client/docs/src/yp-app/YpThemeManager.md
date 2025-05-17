@@ -35,7 +35,7 @@ The `YpThemeManager` class is responsible for managing and applying themes, incl
 | sanitizeFontImports           | fontImports: string[]                                                      | string[]    | Sanitizes the given font import URLs to allow only certain domains.         |
 | applyFontStyles               | fontStyles: string \| null                                                 | void        | Applies the given font styles to the document.                              |
 | importFonts                   | fontImportsString: string \| null                                          | void        | Imports fonts from the given URLs into the document.                        |
-| setTheme                      | number: number \| undefined, configuration: YpCollectionConfiguration \| undefined | void        | Sets the theme based on the given configuration.                            |
+| setTheme                      | number: number \| undefined, configuration: YpCollectionConfiguration \| undefined | void        | Sets the theme based on the given configuration and applies the background color. |
 | updateBrowserThemeColor       | -                                                                          | void        | Updates the browser's theme color meta tag based on the current theme.      |
 | updateLiveFromConfiguration   | theme: YpThemeConfiguration                                                | void        | Updates the theme live from the given configuration.                        |
 | themeChanged                  | target: HTMLElement \| undefined                                           | void        | Applies the current theme settings to the document.                         |
