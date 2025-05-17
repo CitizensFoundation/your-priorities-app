@@ -1049,6 +1049,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           translationToken: "sortGroupsBySortOrder",
         },
         {
+          text: "sortAlphabetically",
+          type: "checkbox",
+          translationToken: "sortGroupsAlphabetically",
+        },
+        {
           text: "highlightedLanguages",
           type: "textfield",
           maxLength: 200,
