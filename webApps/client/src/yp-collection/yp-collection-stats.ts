@@ -36,6 +36,28 @@ export class YpCollectionStats extends YpBaseElement {
           margin-bottom: 8px;
           margin-right: 8px;
         }
+
+        @media (max-width: 600px) {
+          .stats {
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+          }
+
+          .stats > .layout {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+
+          .stats-text {
+            text-align: center;
+            margin: 4px;
+          }
+
+          .stats-icon {
+            margin: 4px;
+          }
+        }
       `,
     ];
   }
