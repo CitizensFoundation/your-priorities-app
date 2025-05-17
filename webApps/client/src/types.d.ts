@@ -75,6 +75,7 @@ interface YpCollectionConfiguration {
   customBackName?: string;
   customBackURL?: string;
   hideAllTabs?: boolean;
+  showItemCount?: boolean;
   highlightedLanguages?: string;
 }
 

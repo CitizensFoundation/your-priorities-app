@@ -854,6 +854,7 @@ function updateDomainProperties(domain, req) {
     domain.set('configuration.hideDomainNews', truthValueFromBody(req.body.hideDomainNews));
     domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
     domain.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
+    domain.set('configuration.showItemCount', truthValueFromBody(req.body.showItemCount));
     domain.set('configuration.useFixedTopAppBar', truthValueFromBody(req.body.useFixedTopAppBar));
     domain.set('configuration.disableArrowBasedTopNavigation', truthValueFromBody(req.body.disableArrowBasedTopNavigation));
     domain.set('configuration.onlyAllowCreateUserOnInvite', truthValueFromBody(req.body.onlyAllowCreateUserOnInvite));

@@ -396,13 +396,12 @@ export class YpCollectionItemCard extends YpBaseElement {
           .content="${this.contentName}"
           .contentId="${this.contentId}"
         ></yp-magic-text>
-        ${this.collectionItemCount > 0
-          ? html`
-              <div class="collectionItemCount">
-                (${this.collectionItemCount})
-              </div>
-            `
-          : nothing}
+        ${
+          this.collectionItemCount > 0 &&
+          (this.collection?.configuration?.showItemCount ?? true)
+            ? html`<div class="collectionItemCount">(${this.collectionItemCount})</div>`
+            : nothing
+        }
       </div>
     `;
   }
