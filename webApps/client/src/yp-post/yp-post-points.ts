@@ -642,7 +642,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   renderMobilePointSelection() {
-    html` <div class="layout vertical end-justified">
+    return html` <div class="layout vertical end-justified">
       <div
         class="layout horizontal center-center pointButtons"
         ?hidden="${this.post.Group.configuration?.hidePointAgainst &&
