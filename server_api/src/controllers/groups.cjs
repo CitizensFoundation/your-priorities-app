@@ -524,8 +524,8 @@ var updateGroupConfigParameters = function (req, group) {
     truthValueFromBody(req.body.hideStatsAndMembership)
   );
   group.set(
-    "configuration.showItemCount",
-    truthValueFromBody(req.body.showItemCount)
+    "configuration.hideItemCount",
+    truthValueFromBody(req.body.hideItemCount)
   );
   group.set(
     "configuration.centerGroupName",

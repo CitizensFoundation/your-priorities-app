@@ -379,6 +379,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   renderCollectionName() {
+    debugger;
     return html`
       <div class="layout horizontal">
         <yp-magic-text
@@ -398,7 +399,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         ></yp-magic-text>
         ${
           this.collectionItemCount > 0 &&
-          (this.collection?.configuration?.showItemCount ?? true)
+          !(this.collection?.configuration?.hideItemCount)
             ? html`<div class="collectionItemCount">(${this.collectionItemCount})</div>`
             : nothing
         }

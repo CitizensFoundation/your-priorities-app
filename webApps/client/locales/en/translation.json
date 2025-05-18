@@ -359,7 +359,7 @@
   "noGroupCardShadow": "No group card shadow",
   "centerGroupName": "Center group name in lists",
   "hideStatsAndMembership": "Hide stats and membership in lists",
-  "showItemCount": "Show item count",
+  "hideItemCount": "Hide item count",
   "showNameUnderLogoImage": "Show name under logo image",
   "galleryMode": "Gallery mode",
   "muteNotificationsForEndorsements": "Mute notifications for endorsements",

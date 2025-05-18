@@ -395,6 +395,10 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     this.showAddAgentDialog = true;
   }
 
+  override firstUpdated() {
+    this.fetchAgentCosts();
+  }
+
   randomizeTheme() {
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
     this.fire("yp-theme-color", `#${randomColor}`);

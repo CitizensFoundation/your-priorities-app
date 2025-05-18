@@ -1054,10 +1054,10 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           maxLength: 200,
         },
         {
-          text: "showItemCount",
+          text: "hideItemCount",
           type: "checkbox",
-          value: this.collection?.configuration.showItemCount,
-          translationToken: "showItemCount",
+          value: this.collection?.configuration.hideItemCount,
+          translationToken: "hideItemCount",
         },
         {
           text: "customBackName",

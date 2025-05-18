@@ -1524,10 +1524,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "hideStatsAndMembership",
         },
         {
-          text: "showItemCount",
+          text: "hideItemCount",
           type: "checkbox",
-          value: this.group.configuration.showItemCount,
-          translationToken: "showItemCount",
+          value: this.group.configuration.hideItemCount,
+          translationToken: "hideItemCount",
         },
         {
           text: "customBackURL",

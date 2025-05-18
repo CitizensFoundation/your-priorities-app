@@ -319,10 +319,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
-          text: "showItemCount",
+          text: "hideItemCount",
           type: "checkbox",
-          value: this.collection?.configuration.showItemCount,
-          translationToken: "showItemCount",
+          value: this.collection?.configuration.hideItemCount,
+          translationToken: "hideItemCount",
         },
         {
           text: "hideDomainNews",

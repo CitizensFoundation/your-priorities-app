@@ -887,8 +887,8 @@ const updateCommunityConfigParameters = function (req, community) {
     truthValueFromBody(req.body.alwaysHideLogoImage)
   );
   community.set(
-    "configuration.showItemCount",
-    truthValueFromBody(req.body.showItemCount)
+    "configuration.hideItemCount",
+    truthValueFromBody(req.body.hideItemCount)
   );
 
   community.set(
