@@ -336,6 +336,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
             <yp-image
               sizing="cover"
               class="mediumActivationImage"
+              .alt="${this.mediumToActivate!.utm_medium}"
               .src="${this.getMediumImageUrl(
                 this.mediumToActivate!.utm_medium
               )}"
@@ -384,6 +385,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
             <yp-image
               sizing="cover"
               class="mediumActivationImage mediumShowImage"
+              .alt="${this.mediumToShow!.utm_medium}"
               .src="${this.getMediumImageUrl(this.mediumToShow!.utm_medium)}"
             >
             </yp-image>
@@ -413,6 +415,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
           <yp-image
             class="mediumImage"
             sizing="contain"
+            .alt="${medium.utm_medium}"
             .src="${this.getMediumImageUrl(medium.utm_medium)}"
           >
           </yp-image>

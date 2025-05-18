@@ -323,6 +323,7 @@ export class YpPostCoverMedia extends YpBaseElement {
               <yp-image
                 ?header-mode="${this.headerMode}"
                 sizing="cover"
+                .alt="${ifDefined(this.altTag || this.post?.name)}"
                 ?hidden="${this.defaultPostImageEnabled}"
                 class="main-image pointer"
                 src="https://i.imgur.com/sdsFAoT.png"
@@ -406,6 +407,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                         ?headerMode="${this.headerMode}"
                         @click="${this._goToPost}"
                         sizing="cover"
+                        .alt="${ifDefined(this.altTag || this.post?.name)}"
                         class="main-image pointer"
                         src="${this.postVideoPosterPath}"></yp-image>
                     </div>
@@ -460,6 +462,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                       @click="${this._goToPost}"
                       class="main-image pointer"
                       sizing="cover"
+                      .alt="${ifDefined(this.altTag || this.post?.name)}"
                       src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.staticMapsApiKey}"
                       ?hidden="${this.streetViewActivated}"></yp-image>
 
@@ -483,6 +486,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                       class="main-image pointer"
                       ?hidden="${this.mapActivated}"
                       sizing="cover"
+                      .alt="${ifDefined(this.altTag || this.post?.name)}"
                       src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;size=432x243&amp;zoom=${this.zoomLevel}&amp;maptype=${this.mapType}&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.staticMapsApiKey}"></yp-image>
 
                     ${this.mapActivated
