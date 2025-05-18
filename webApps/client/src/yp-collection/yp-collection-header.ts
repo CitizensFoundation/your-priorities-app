@@ -350,7 +350,6 @@ export class YpCollectionHeader extends YpBaseElement {
 
           .collectionDescription {
             width: auto;
-            height: 100%;
             margin-left: 8px;
             margin-right: 8px;
             margin-top: 8px !important;

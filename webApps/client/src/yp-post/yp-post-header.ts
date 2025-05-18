@@ -421,6 +421,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
   renderClose() {
     return html`<md-filled-tonal-icon-button
+      ?hidden="${!this.wide}"
       @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
       title="${this.t("close")}"
       ><md-icon
@@ -530,7 +531,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         dialog.open(
           url,
           this.post.name,
-          (this.$$("yp-post-cover-media") as YpPostCoverMedia).anyImagePath || "",
+          (this.$$("yp-post-cover-media") as YpPostCoverMedia).anyImagePath ||
+            "",
           this._sharedContent
         );
       }
