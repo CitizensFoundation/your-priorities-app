@@ -380,7 +380,6 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   renderCollectionName() {
-    debugger;
     return html`
       <div class="layout horizontal">
         <yp-magic-text
