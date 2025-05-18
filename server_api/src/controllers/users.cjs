@@ -1615,14 +1615,29 @@ router.post('/reset/:token', function(req, res) {
     },
     function(done) {
       if (req.user) {
-        models.AcActivity.createActivity({
-          type: 'activity.password.changed',
-          userId: req.user.id,
-          domainId: req.ypDomain.id,
-          groupId: req.params.groupId
+        const fetchGroup = req.params.groupId
+          ? models.Group.findOne({
+              where: { id: req.params.groupId },
+              attributes: ['id', 'community_id'],
+              include: [
+                {
+                  model: models.Community,
+                  attributes: ['id', 'domain_id']
+                }
+              ]
+            })
+          : Promise.resolve(null);
+        fetchGroup.then(function(group) {
+          models.AcActivity.createActivity({
+            type: 'activity.password.changed',
+            userId: req.user.id,
+            domainId:
+              group && group.Community ? group.Community.domain_id : req.ypDomain.id,
+            groupId: req.params.groupId
 //          communityId: req.ypCommunity ?  req.ypCommunity.id : null
-        }, function (error) {
-          done(error);
+          }, function (error) {
+            done(error);
+          });
         });
       } else {
         done('Not found');

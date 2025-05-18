@@ -88,16 +88,27 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
   });
   category.save().then(function() {
     log.info('Category Created', { category: category, context: 'create', user: toJson(req.user) });
-    models.AcActivity.createActivity({
-      type: 'activity.category.created',
-      userId: req.user.id,
-      domainId: req.ypDomain.id,
-      groupId: req.params.groupId,
+    models.Group.findOne({
+      where: { id: req.params.groupId },
+      attributes: ['id', 'community_id'],
+      include: [
+        {
+          model: models.Community,
+          attributes: ['id', 'domain_id']
+        }
+      ]
+    }).then(function(group) {
+      models.AcActivity.createActivity({
+        type: 'activity.category.created',
+        userId: req.user.id,
+        domainId: group && group.Community ? group.Community.domain_id : req.ypDomain.id,
+        groupId: req.params.groupId,
 //      communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-      object: { categoryId: category.id }
-    }, function () {
-      category.setupImages(req.body, function(error) {
-        sendCategoryOrError(res, category, 'setupImages', req.user, error);
+        object: { categoryId: category.id }
+      }, function () {
+        category.setupImages(req.body, function(error) {
+          sendCategoryOrError(res, category, 'setupImages', req.user, error);
+        });
       });
     });
   }).catch(function(error) {

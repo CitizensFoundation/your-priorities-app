@@ -107,16 +107,39 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
           });
         },
         function (seriesCallback) {
-          models.AcActivity.createActivity({
-            type: 'activity.post.rating.new',
-            userId: rating.user_id,
-            domainId: req.ypDomain.id,
-            groupId : post.group_id,
-            ratingId: rating.id,
-            postId : post.id,
-            access: models.AcActivity.ACCESS_PRIVATE
-          }, function (error) {
-            seriesCallback(error);
+          models.Post.findOne({
+            where: { id: rating.post_id },
+            attributes: ['id', 'group_id'],
+            include: [
+              {
+                model: models.Group,
+                attributes: ['id', 'community_id'],
+                include: [
+                  {
+                    model: models.Community,
+                    attributes: ['id', 'domain_id']
+                  }
+                ]
+              }
+            ]
+          }).then(function (loadedPost) {
+            const domainId =
+              loadedPost &&
+              loadedPost.Group &&
+              loadedPost.Group.Community
+                ? loadedPost.Group.Community.domain_id
+                : req.ypDomain.id;
+            models.AcActivity.createActivity({
+              type: 'activity.post.rating.new',
+              userId: rating.user_id,
+              domainId: domainId,
+              groupId : post.group_id,
+              ratingId: rating.id,
+              postId : post.id,
+              access: models.AcActivity.ACCESS_PRIVATE
+            }, function (error) {
+              seriesCallback(error);
+            });
           });
         }
       ], function (error) {
