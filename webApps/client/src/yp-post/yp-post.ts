@@ -234,7 +234,6 @@ export class YpPost extends YpCollection {
           .outerFrameContainer {
             max-width: 100%;
             width: 100%;
-
             padding: 0;
             padding-top: 32px;
           }
@@ -246,6 +245,23 @@ export class YpPost extends YpCollection {
             padding: 0;
             border-radius: 0;
             border: none;
+          }
+
+          .arrowNavigation {
+            --md-filled-tonal-icon-button-container-width: 48px;
+            --md-filled-tonal-icon-button-container-height: 48px;
+            --md-filled-tonal-icon-button-icon-size: 32px;
+            top: auto; /* Reset top positioning */
+            bottom: 8px; /* Position 8px from the bottom */
+            transform: none; /* Reset any inherited transforms */
+          }
+
+          .leftArrowNavigationButton {
+            left: 16px; /* Position at left edge */
+          }
+
+          .rightArrowNavigationButton {
+            right: 16px; /* Position at right edge */
           }
         }
 
