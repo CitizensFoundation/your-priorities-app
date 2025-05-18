@@ -729,6 +729,7 @@ const updateCommunityConfigParameters = function (req, community) {
     community.set("configuration.disableGroupDynamicFontSizes", truthValueFromBody(req.body.disableGroupDynamicFontSizes));
     community.set("configuration.hideGroupListCardObjectives", truthValueFromBody(req.body.hideGroupListCardObjectives));
     community.set("configuration.alwaysHideLogoImage", truthValueFromBody(req.body.alwaysHideLogoImage));
+    community.set("configuration.showItemCount", truthValueFromBody(req.body.showItemCount));
     community.set("configuration.recalculateCountersRecursively", truthValueFromBody(req.body.recalculateCountersRecursively));
     if (req.body.google_analytics_code && req.body.google_analytics_code != "") {
         community.google_analytics_code = req.body.google_analytics_code;
