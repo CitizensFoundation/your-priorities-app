@@ -325,6 +325,11 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           translationToken: "hideItemCount",
         },
         {
+          text: "sortAlphabetically",
+          type: "checkbox",
+          translationToken: "sortCommunitiesAlphabetically",
+        },
+        {
           text: "hideDomainNews",
           type: "checkbox",
         },
