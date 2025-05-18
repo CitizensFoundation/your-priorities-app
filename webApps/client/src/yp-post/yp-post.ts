@@ -248,20 +248,20 @@ export class YpPost extends YpCollection {
           }
 
           .arrowNavigation {
-            --md-filled-tonal-icon-button-container-width: 48px;
-            --md-filled-tonal-icon-button-container-height: 48px;
-            --md-filled-tonal-icon-button-icon-size: 32px;
+            --md-filled-tonal-icon-button-container-width: 34px;
+            --md-filled-tonal-icon-button-container-height: 34px;
+            --md-filled-tonal-icon-button-icon-size: 28px;
             top: auto; /* Reset top positioning */
-            bottom: 8px; /* Position 8px from the bottom */
+            bottom: 12px; /* Position 8px from the bottom */
             transform: none; /* Reset any inherited transforms */
           }
 
           .leftArrowNavigationButton {
-            left: 16px; /* Position at left edge */
+            left: 12px; /* Position at left edge */
           }
 
           .rightArrowNavigationButton {
-            right: 16px; /* Position at right edge */
+            right: 12px; /* Position at right edge */
           }
         }
 
