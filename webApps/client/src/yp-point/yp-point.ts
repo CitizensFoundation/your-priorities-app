@@ -112,6 +112,14 @@ export class YpPoint extends YpBaseElement {
   audioPauseListener: Function | undefined;
   audioEndedListener: Function | undefined;
 
+  renderMobileMoodIcon() {
+    if (!this.point || this.point.value === 0) return nothing; // No icon for neutral points
+    // Use this.point.value directly to determine mood
+    return this.point.value > 0
+      ? html`<md-icon class="happyFace">sentiment_satisfied</md-icon>`
+      : html`<md-icon class="sadFace">sentiment_dissatisfied</md-icon>`;
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
@@ -207,6 +215,22 @@ export class YpPoint extends YpBaseElement {
       css`
         :host {
           display: block;
+        }
+
+        .happyFace {
+          color: var(--yp-sys-color-up);
+          --md-icon-size: 48px; /* Or a smaller size like 36px if 48px is too large */
+          margin-right: 16px;
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+
+        .sadFace {
+          color: var(--yp-sys-color-down);
+          --md-icon-size: 48px; /* Or a smaller size like 36px */
+          margin-right: 16px;
+          margin-top: 8px;
+          margin-bottom: 8px;
         }
 
         .shareIcon {
@@ -415,6 +439,18 @@ export class YpPoint extends YpBaseElement {
           margin-top: -16px;
           padding-left: 0;
           margin-left: 0;
+        }
+
+        @media (max-width: 985px) {
+          .pointTopContainer {
+            width: 100%;
+            min-width: initial;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            padding: 8px; /* Adjusted padding for mobile */
+            box-sizing: border-box;
+          }
         }
       `,
     ];
@@ -669,6 +705,7 @@ export class YpPoint extends YpBaseElement {
         ?up-voted="${this.isUpVoted}"
         ?down-voted="${this.isDownVoted}"
       >
+        ${!this.wide ? this.renderMobileMoodIcon() : nothing}
         ${this.renderUserHeader()}
 
         <div class="layout vertical">

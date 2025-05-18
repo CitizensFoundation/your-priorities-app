@@ -475,7 +475,7 @@ export class YpTopAppBar extends YpBaseElement {
           ${this.renderMyDomainsDropdown()}
           <div
             class="title ${this.isTitleLong ? "expanded" : ""}"
-            ?hidden="${this.hideTitle}"
+            ?hidden="${this.hideTitle || !this.wide}"
           >
             ${breadcrumbsWithTitle.map(
               (crumb, index) => html`

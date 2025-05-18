@@ -104,6 +104,16 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           margin-bottom: 16px;
         }
 
+        @media (max-width: 600px) {
+          .postName {
+            font-size: var(--md-sys-typescale-title-medium-size, 26px);
+            font-weight: var(--md-sys-typescale-title-medium-weight, 700);
+            line-height: var(--md-sys-typescale-title-medium-line-height, 32px);
+            margin-top: 16px;
+            margin-bottom: 16px;
+          }
+        }
+
         .actionBar {
           margin-bottom: 48px;
         }
