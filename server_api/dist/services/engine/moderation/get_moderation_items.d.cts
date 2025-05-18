@@ -1,13 +1,13 @@
 export function domainIncludes(domainId: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     attributes: string[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
         required: boolean;
         attributes: string[];
         include: {
-            model: any;
+            model: import("sequelize").ModelStatic<import("sequelize").Model<YpDomainData, Partial<YpDomainData>> & YpDomainData>;
             attributes: string[];
             where: {
                 id: any;
@@ -17,11 +17,11 @@ export function domainIncludes(domainId: any): {
     }[];
 }[];
 export function communityIncludes(communityId: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     attributes: string[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
         required: boolean;
         attributes: string[];
         where: {
@@ -30,7 +30,7 @@ export function communityIncludes(communityId: any): {
     }[];
 }[];
 export function groupIncludes(groupId: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     attributes: string[];
     where: {
@@ -38,7 +38,7 @@ export function groupIncludes(groupId: any): {
     };
 }[];
 export function userIncludes(userId: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpUserData, Partial<YpUserData>> & YpUserData>;
     attributes: any;
     required: boolean;
     where: {

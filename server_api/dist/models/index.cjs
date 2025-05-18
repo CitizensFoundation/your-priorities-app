@@ -5,6 +5,9 @@ const env = process.env.NODE_ENV || "development";
 const _ = require("lodash");
 const { Sequelize, DataTypes } = require("sequelize");
 let sequelize;
+// -----------------------------------------------------------------------------
+// DB bootstrap
+// -----------------------------------------------------------------------------
 const Op = Sequelize.Op;
 const operatorsAliases = {
     $gt: Op.gt,
@@ -30,25 +33,20 @@ if (process.env.NODE_ENV === "production") {
             dialect: "postgres",
             minifyAliases: true,
             logging: false,
-            operatorsAliases: operatorsAliases,
+            operatorsAliases,
         });
     }
     else {
         sequelize = new Sequelize(process.env.DATABASE_URL, {
             dialect: "postgres",
-            dialectOptions: {
-                ssl: {
-                    rejectUnauthorized: false,
-                },
-            },
+            dialectOptions: { ssl: { rejectUnauthorized: false } },
             minifyAliases: true,
             logging: false,
-            operatorsAliases: operatorsAliases,
+            operatorsAliases,
         });
     }
 }
 else {
-    let config;
     try {
         sequelize = new Sequelize(process.env.YP_DEV_DATABASE_NAME, process.env.YP_DEV_DATABASE_USERNAME, process.env.YP_DEV_DATABASE_PASSWORD, {
             dialect: "postgres",
@@ -56,19 +54,19 @@ else {
             host: process.env.YP_DEV_DATABASE_HOST,
             port: process.env.YP_DEV_DATABASE_PORT,
             minifyAliases: true,
-            dialectOptions: {
-                ssl: false,
-                rejectUnauthorized: false,
-            },
+            dialectOptions: { ssl: false, rejectUnauthorized: false },
             logging: false,
-            operatorsAliases: operatorsAliases,
+            operatorsAliases,
         });
     }
     catch (error) {
-        console.error("Error reading or parsing config file:", error);
+        console.error("Error configuring Sequelize:", error);
         process.exit(1);
     }
 }
+// -----------------------------------------------------------------------------
+// Model loading
+// -----------------------------------------------------------------------------
 const db = {};
 async function createCompoundIndexes(indexCommands) {
     for (const command of indexCommands) {
@@ -77,8 +75,8 @@ async function createCompoundIndexes(indexCommands) {
             console.log(`Successfully created index with command: ${command}`);
         }
         catch (error) {
-            if (error.message.indexOf("already exists") > -1) {
-                //console.log("already exists")
+            if (error.message.includes("already exists")) {
+                /* ignore duplicate index */
             }
             else {
                 console.error(`Error creating index with command: ${command}`);
@@ -148,30 +146,35 @@ const compoundIndexCommands = [
     `CREATE INDEX posts_idx2_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted)`,
     `CREATE INDEX posts_idx2_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted)`,
 ];
-// Read models from local folder
+// Load local models (.cjs only)
 fs.readdirSync(__dirname)
-    .filter((file) => {
-    return file.indexOf(".") !== 0 && file.endsWith(".cjs") && !file.endsWith(".d.cjs") && !file.endsWith(".d.cts") && file !== "index.cjs";
-})
+    .filter((file) => file.indexOf(".") !== 0 &&
+    file.endsWith(".cjs") &&
+    !file.endsWith(".d.cjs") &&
+    !file.endsWith(".d.cts") &&
+    file !== "index.cjs")
     .forEach((file) => {
     const model = require(path.join(__dirname, file))(sequelize, DataTypes);
     db[model.name] = model;
 });
-// Read from active citizen,
-const acDirname = __dirname + "/../services/models";
+// Load from ActiveCitizen services/models (.cjs only)
+const acDirname = path.join(__dirname, "..", "services", "models");
 fs.readdirSync(acDirname)
-    .filter((file) => {
-    return file.indexOf(".") !== 0 && file.endsWith(".cjs") && !file.endsWith(".d.cjs") && !file.endsWith(".d.cts");
-})
+    .filter((file) => file.indexOf(".") !== 0 &&
+    file.endsWith(".cjs") &&
+    !file.endsWith(".d.cjs") &&
+    !file.endsWith(".d.cts"))
     .forEach((file) => {
     const model = require(path.join(acDirname, file))(sequelize, DataTypes);
     db[model.name] = model;
 });
+// Wire up associations
 Object.keys(db).forEach((modelName) => {
     if ("associate" in db[modelName]) {
         db[modelName].associate(db);
     }
 });
+// Sync & index creation
 if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
     sequelize.sync().then(async () => {
         await createCompoundIndexes(compoundIndexCommands);
@@ -181,6 +184,7 @@ if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
 else if (process.env.FORCE_DB_INDEX_SYNC) {
     createCompoundIndexes(compoundIndexCommands);
 }
+// Expose
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 module.exports = db;

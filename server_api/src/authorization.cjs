@@ -911,6 +911,8 @@ auth.entity("group", function (req, done) {
   if (!match) match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match) match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
   if (!match) match = req.originalUrl.match(/agents\/(\w+)/);
+  if (!match) match = req.originalUrl.match(/pdf_processing\/(\w+)/);
+  if (!match) match = req.originalUrl.match(/feedback\/(\w+)/);
   if (!match) match = req.originalUrl.match(/assistants\/(\w+)/);
   if (!match) match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
   if (!match) match = req.originalUrl.match(/images\/(\w+)/);

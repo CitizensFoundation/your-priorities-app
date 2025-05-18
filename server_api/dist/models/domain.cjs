@@ -365,6 +365,7 @@ module.exports = (sequelize, DataTypes) => {
                         req.url.indexOf("/login") > -1 ||
                         req.url.indexOf("saml_assertion") > -1) {
                         sequelize.models.Domain.getLoginProviders(req, domain, (error, providers) => {
+                            log.info("Login Providers", { providers });
                             req.ypDomain.loginProviders = providers;
                             sequelize.models.Domain.getLoginHosts(domain, (error, hosts) => {
                                 req.ypDomain.loginHosts = hosts;

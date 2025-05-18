@@ -206,6 +206,7 @@ module.exports = (sequelize, DataTypes) => {
     Post.CONTENT_BLOG = 4;
     Post.CONTENT_QUESTION = 5;
     Post.CONTENT_SURVEY = 6;
+    Post.CONTENT_AGENT_CONVERSATION = 7;
     Post.getSearchVector = () => {
         return 'PostText';
     };

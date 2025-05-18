@@ -90,16 +90,23 @@ Description of the utility module or standalone function, its purpose, and how i
 For "Type", use TypeScript definitions where possible (e.g., \`string\`, \`number\`, \`MyInterface\`).
 Prioritize documenting all exported functions, classes, modules, and route handlers.
 You MUST output the full detailed documentation for the TypeScript or JavaScript (.cjs) file the user submits. If a file contains elements not perfectly fitting the above categories (e.g., configuration objects, constants), document them clearly under a suitable general heading like "Configuration" or "Exported Constants".
+When creating internal links to other documented source files, ensure the link uses the .md extension (e.g., [MyClass](./MyClass.md)).
+When referencing Policy Synth entities, especially PsAgent, ensure that links point to the correct repository and path, for example, a link to PsAgent should be [PsAgent](https://github.com/CitizensFoundation/policy-synth/blob/main/agents/src/dbModels/agent.ts).
 `;
 const indexHeader = '# Your Priorities Server API Documentation\\n\\n';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { OpenAI } from 'openai';
+import { fileURLToPath } from 'url'; // Import for ES module __dirname equivalent
+// ES module equivalent for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const openaiClient = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
-const rootDir = process.cwd();
+// const rootDir = path.resolve(__dirname, '..', '..', '..'); // Adjusted for ts-out/utils structure
+const rootDir = path.resolve(__dirname, '..', '..'); // Corrected rootDir for ts-out/utils structure
 const docsDir = path.join(rootDir, 'docs');
 const checksumDir = path.join(docsDir, 'cks');
 const IGNORED_PATTERNS = [
@@ -169,18 +176,36 @@ function generateMarkdownFromTree(tree, depth = 0) {
             markdown += generateMarkdownFromTree(item.children, depth + 1);
         }
         else if (item.type === 'file') {
-            // Correct the path for files directly under 'src'
-            const filePath = depth === 0 ? `src/${item.path}` : `src/${item.path}`;
-            markdown += `${indent}- [${item.name.replace('.md', '')}](${filePath})\n`;
+            markdown += `${indent}- [${item.name.replace('.md', '')}](${item.path})\n`;
         }
     });
     return markdown;
 }
 function generateDocsReadme() {
-    const tree = buildDirectoryTree('docs/src');
+    const tree = buildDirectoryTree(docsDir);
     console.log(JSON.stringify(tree, null, 2));
     const markdown = generateMarkdownFromTree(tree);
-    fs.writeFileSync(path.join(docsDir, 'README.md'), `${indexHeader}${markdown}`);
+    const readmePath = path.join(docsDir, 'README.md');
+    const apiHeader = '## API Documentation';
+    let newReadmeContent = '';
+    if (fs.existsSync(readmePath)) {
+        const existing = fs.readFileSync(readmePath, 'utf8');
+        const headerIndex = existing.indexOf(apiHeader);
+        if (headerIndex !== -1) {
+            // Keep everything up to the API header (inclusive) and replace the rest.
+            const before = existing.substring(0, headerIndex).trimEnd();
+            newReadmeContent = `${before}\n\n${apiHeader}\n\n${markdown}`;
+        }
+        else {
+            // Header not found – append it to the end.
+            newReadmeContent = `${existing.trimEnd()}\n\n${apiHeader}\n\n${markdown}`;
+        }
+    }
+    else {
+        // No README yet – create with index header + API docs.
+        newReadmeContent = `${indexHeader}${apiHeader}\n\n${markdown}`;
+    }
+    fs.writeFileSync(readmePath, newReadmeContent);
 }
 function findSourceFiles(dir, fileList = []) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -232,9 +257,9 @@ async function generateDocumentation(fileList, systemPrompt) {
                 let docContent = completion.choices[0].message.content;
                 console.log(docContent);
                 docContent = docContent.replace(/```markdown\s+/g, '');
-                const docFilePath = file
-                    .replace(rootDir, docsDir)
-                    .replace('.ts', '.md');
+                const sourceDir = path.join(rootDir, 'src');
+                const relativePathInSrc = path.relative(sourceDir, file);
+                const docFilePath = path.join(docsDir, relativePathInSrc).replace(/\.(ts|cjs)$/, '.md');
                 const docDirPath = path.dirname(docFilePath);
                 if (!fs.existsSync(docDirPath)) {
                     fs.mkdirSync(docDirPath, { recursive: true });
@@ -254,7 +279,7 @@ async function generateDocumentation(fileList, systemPrompt) {
     }
 }
 async function main() {
-    const sourceFiles = findSourceFiles(rootDir);
+    const sourceFiles = findSourceFiles(path.join(rootDir, 'src'));
     generateDocsReadme();
     await generateDocumentation(sourceFiles, systemPromptServerApi);
     generateDocsReadme();

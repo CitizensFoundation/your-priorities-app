@@ -1,11 +1,22 @@
 export function activitiesDefaultIncludes(options: any): ({
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpUserData, Partial<YpUserData>> & YpUserData>;
     required: boolean;
     attributes: any;
+    include: {
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpImageData, Partial<YpImageData>> & YpImageData>;
+        as: string;
+        attributes: any;
+        required: boolean;
+    }[];
     where?: undefined;
-    include?: undefined;
 } | {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpDomainData, Partial<YpDomainData>> & YpDomainData>;
+    required: boolean;
+    attributes: any;
+    include?: undefined;
+    where?: undefined;
+} | {
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
     required: boolean;
     attributes: any;
     where: {
@@ -14,7 +25,13 @@ export function activitiesDefaultIncludes(options: any): ({
     };
     include?: undefined;
 } | {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
+    attributes: any;
+    required: boolean;
+    include?: undefined;
+    where?: undefined;
+} | {
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     attributes: any;
     where: {
@@ -24,32 +41,55 @@ export function activitiesDefaultIncludes(options: any): ({
         access?: undefined;
     };
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpImageData, Partial<YpImageData>> & YpImageData>;
         as: string;
         attributes: any;
         required: boolean;
     }[];
 } | {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
+    required: boolean;
+    attributes: any;
+    include: {
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpImageData, Partial<YpImageData>> & YpImageData>;
+        as: string;
+        attributes: any;
+        required: boolean;
+    }[];
+    where?: undefined;
+} | {
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpPostData, Partial<YpPostData>> & YpPostData>;
     required: boolean;
     attributes: any;
     include: ({
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
         required: boolean;
         attributes: string[];
         as?: undefined;
         include?: undefined;
     } | {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpUserData, Partial<YpUserData>> & YpUserData>;
+        attributes: string[];
+        required: boolean;
+        as?: undefined;
+        include?: undefined;
+    } | {
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpImageData, Partial<YpImageData>> & YpImageData>;
         as: string;
         attributes: any;
         required: boolean;
         include?: undefined;
     } | {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpAudioData, Partial<YpAudioData>> & YpAudioData>;
+        required: boolean;
+        attributes: string[];
+        as: string;
+        include?: undefined;
+    } | {
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpCategoryData, Partial<YpCategoryData>> & YpCategoryData>;
         required: boolean;
         include: {
-            model: any;
+            model: import("sequelize").ModelStatic<import("sequelize").Model<YpImageData, Partial<YpImageData>> & YpImageData>;
             attributes: any;
             required: boolean;
             as: string;
@@ -59,32 +99,44 @@ export function activitiesDefaultIncludes(options: any): ({
     })[];
     where?: undefined;
 } | {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpPointData, Partial<YpPointData>> & YpPointData>;
     required: boolean;
     attributes: any[];
     include: ({
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpPointRevision, Partial<YpPointRevision>> & YpPointRevision>;
         attributes: any;
         include: {
-            model: any;
+            model: import("sequelize").ModelStatic<import("sequelize").Model<YpUserData, Partial<YpUserData>> & YpUserData>;
             attributes: any;
             required: boolean;
         }[];
         required: boolean;
         as?: undefined;
     } | {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpAudioData, Partial<YpAudioData>> & YpAudioData>;
         required: boolean;
         attributes: string[];
         as: string;
         include?: undefined;
     } | {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpPostData, Partial<YpPostData>> & YpPostData>;
+        attributes: string[];
+        required: boolean;
+        include?: undefined;
+        as?: undefined;
+    } | {
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpUserData, Partial<YpUserData>> & YpUserData>;
         attributes: string[];
         required: boolean;
         include?: undefined;
         as?: undefined;
     })[];
+    where?: undefined;
+} | {
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpPostStatusChange, Partial<YpPostStatusChange>> & YpPostStatusChange>;
+    attributes: any;
+    required: boolean;
+    include?: undefined;
     where?: undefined;
 })[];
 export function getCommonWhereOptions(options: any): {

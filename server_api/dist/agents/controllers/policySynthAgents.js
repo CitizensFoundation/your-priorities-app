@@ -6,11 +6,7 @@ import { AgentConnectorManager } from "@policysynth/agents/operations/agentConne
 import { AgentRegistryManager } from "@policysynth/agents/operations/agentRegistryManager.js";
 import { PsAiModel } from "@policysynth/agents/dbModels/aiModel.js";
 import auth from "../../authorization.cjs";
-import models from "../../models/index.cjs";
 import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
-const dbModels = models;
-const Group = dbModels.Group;
-const User = dbModels.User;
 export class PolicySynthAgentsController {
     constructor(wsClients) {
         this.path = "/api/agents";

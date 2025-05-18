@@ -1,17 +1,17 @@
 export function getPointDomainIncludes(id: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpPostData, Partial<YpPostData>> & YpPostData>;
     required: boolean;
     attributes: never[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
         required: boolean;
         attributes: never[];
         include: {
-            model: any;
+            model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
             required: boolean;
             attributes: never[];
             include: {
-                model: any;
+                model: import("sequelize").ModelStatic<import("sequelize").Model<YpDomainData, Partial<YpDomainData>> & YpDomainData>;
                 where: {
                     id: any;
                 };
@@ -22,15 +22,15 @@ export function getPointDomainIncludes(id: any): {
     }[];
 }[];
 export function getDomainIncludes(id: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     attributes: never[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
         required: boolean;
         attributes: never[];
         include: {
-            model: any;
+            model: import("sequelize").ModelStatic<import("sequelize").Model<YpDomainData, Partial<YpDomainData>> & YpDomainData>;
             where: {
                 id: any;
             };
@@ -40,15 +40,15 @@ export function getDomainIncludes(id: any): {
     }[];
 }[];
 export function getPointCommunityIncludes(id: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpPostData, Partial<YpPostData>> & YpPostData>;
     required: boolean;
     attributes: never[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
         required: boolean;
         attributes: never[];
         include: {
-            model: any;
+            model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
             where: {
                 id: any;
             };
@@ -58,11 +58,11 @@ export function getPointCommunityIncludes(id: any): {
     }[];
 }[];
 export function getCommunityIncludes(id: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     attributes: never[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpCommunityData, Partial<YpCommunityData>> & YpCommunityData>;
         where: {
             id: any;
         };
@@ -71,11 +71,11 @@ export function getCommunityIncludes(id: any): {
     }[];
 }[];
 export function getPointGroupIncludes(id: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpPostData, Partial<YpPostData>> & YpPostData>;
     required: boolean;
     attributes: never[];
     include: {
-        model: any;
+        model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
         required: boolean;
         where: {
             id: any;
@@ -84,7 +84,7 @@ export function getPointGroupIncludes(id: any): {
     }[];
 }[];
 export function getGroupIncludes(id: any): {
-    model: any;
+    model: import("sequelize").ModelStatic<import("sequelize").Model<YpGroupData, Partial<YpGroupData>> & YpGroupData>;
     required: boolean;
     where: {
         id: any;

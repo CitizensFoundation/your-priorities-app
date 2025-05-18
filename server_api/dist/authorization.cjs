@@ -270,7 +270,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
         done(null, false);
     });
 };
-auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
+auth.authNeedsCommunityAdminForCreate = function (community, req, done) {
     models.Community.findOne({
         where: { id: community.id },
         attributes: ["id", "access", "user_id", "configuration"],
@@ -1577,7 +1577,7 @@ auth.entity("category", function (req, done) {
 // CREATE
 // Create bulkStatusUpdate
 auth.role("createCommunityBulkStatusUpdate.createBulkStatusUpdate", function (community, req, done) {
-    auth.authNeedsCommunnityAdminForCreate(community, req, done);
+    auth.authNeedsCommunityAdminForCreate(community, req, done);
 });
 auth.entity("createCommunityBulkStatusUpdate", function (req, done) {
     var match = req.originalUrl.match(/bulk_status_updates\/(\w+)/);
@@ -1772,7 +1772,7 @@ auth.role("createDomainOrganization.createDomainOrganization", function (domain,
         done(null, false);
     });
 });
-auth.role("createCommunityOrganization.createCommunityOrganization", function (domain, req, done) {
+auth.role("createCommunityOrganization.createCommunityOrganization", function (community, req, done) {
     models.Community.findOne({
         where: { id: community.id },
     })
@@ -1780,7 +1780,7 @@ auth.role("createCommunityOrganization.createCommunityOrganization", function (d
         if (!auth.isAuthenticated(req)) {
             done(null, false);
         }
-        else if (community.access === models.Domain.ACCESS_PUBLIC) {
+        else if (community.access === models.Community.ACCESS_PUBLIC) {
             done(null, true);
         }
         else if (community.user_id === req.user.id) {

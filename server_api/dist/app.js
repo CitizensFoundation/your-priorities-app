@@ -507,10 +507,13 @@ export class YourPrioritiesApi {
         this.app.set("views", __dirname + "/views");
         this.app.set("view engine", "pug");
         const store = new RedisStore({ client: this.redisClient, ttl: 86400 });
+        if (!process.env.SESSION_SECRET) {
+            throw new Error("SESSION_SECRET is not set");
+        }
         const sessionConfig = {
             store: store,
             name: "yrpri.sid",
-            secret: process.env.SESSION_SECRET || "not so secret... use env var.",
+            secret: process.env.SESSION_SECRET,
             resave: false,
             proxy: process.env.USING_NGINX_PROXY ? true : undefined,
             cookie: { autoSubDomain: true },

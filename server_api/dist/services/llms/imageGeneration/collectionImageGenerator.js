@@ -69,11 +69,22 @@ export class CollectionImageGenerator {
                     newImageUrl = imageUrl;
                 }
                 else {
-                    // 2) Download image to temporary location
-                    await this.imageProcessorService.downloadImage(imageUrl, imageFilePath, axios);
-                    console.debug(fs.existsSync(imageFilePath)
-                        ? "File downloaded successfully."
-                        : "File download failed.");
+                    // 2) Download image to temporary location or write data URI to file
+                    if (imageUrl.startsWith("data:image")) {
+                        const base64Data = imageUrl.split(",")[1];
+                        if (!base64Data) {
+                            return reject("Invalid data URI format.");
+                        }
+                        const imageBuffer = Buffer.from(base64Data, "base64");
+                        fs.writeFileSync(imageFilePath, imageBuffer);
+                        console.debug("Data URI written to file successfully.");
+                    }
+                    else {
+                        await this.imageProcessorService.downloadImage(imageUrl, imageFilePath, axios);
+                        console.debug(fs.existsSync(imageFilePath)
+                            ? "File downloaded successfully."
+                            : "File download failed.");
+                    }
                     // (Optional) If you want to resize the image before upload:
                     // const resizedPath = await this.imageProcessorService.resizeImage(imageFilePath, 1024, 1024);
                     // Upload the `resizedPath` instead of `imageFilePath`
