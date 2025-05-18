@@ -21,6 +21,14 @@
          } catch (e) {
            console.error(e);
          }
+      } else if (containerConfig && containerConfig.sortAlphabetically) {
+         try {
+           items = items.sort(function (a, b) {
+             return (a.name || '').localeCompare(b.name || '');
+           });
+         } catch (e) {
+           console.error(e);
+         }
       }
       return {
         active: __.filter(items, function (o) {

@@ -492,6 +492,7 @@
   "highlightedLanguages": "Highlighted locales (en,is,fr)",
   "optionalSortOrder": "Optional sort order",
   "sortGroupsBySortOrder": "Sort groups by sort order",
+  "sortGroupsAlphabetically": "Sort groups alphabetically",
   "openAnalyticsApp": "Open Analytics App",
   "sendInviteByEmail": "Send invite by email",
   "addUserDirectlyIfExist": "Add user if exist",

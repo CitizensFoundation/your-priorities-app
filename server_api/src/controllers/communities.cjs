@@ -1040,6 +1040,10 @@ const updateCommunityConfigParameters = function (req, community) {
     truthValueFromBody(req.body.sortBySortOrder)
   );
   community.set(
+    "configuration.sortAlphabetically",
+    truthValueFromBody(req.body.sortAlphabetically)
+  );
+  community.set(
     "configuration.orderByRandom",
     truthValueFromBody(req.body.orderByRandom)
   );

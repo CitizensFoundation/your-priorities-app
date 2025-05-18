@@ -13,6 +13,14 @@ export class YpCollectionHelpers {
       } catch (e) {
         console.error(e);
       }
+    } else if (containerConfig && containerConfig.sortAlphabetically) {
+      try {
+        items = items.sort((a, b) => {
+          return (a.name || '').localeCompare(b.name || '');
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     return {

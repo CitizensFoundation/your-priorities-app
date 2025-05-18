@@ -12,6 +12,7 @@ interface YpCollectionConfiguration {
   useVideoCover?: boolean;
   welcomeHTML?: string;
   sortBySortOrder?: boolean;
+  sortAlphabetically?: boolean;
   optionalSortOrder?: number;
   locationHidden?: boolean;
   welcomePageId?: number;
