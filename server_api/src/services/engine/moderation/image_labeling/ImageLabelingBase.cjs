@@ -31,17 +31,27 @@ class ImageLabelingBase {
         const splitUrl = imageUrl.split('/');
         const fileName =  splitUrl[splitUrl.length-1];
         const fileNameWithPath = '/tmp/'+fileName;
-        downloadFile(imageUrl, { filename: fileName, directory: '/tmp/'}, async (error) => {
+        downloadFile(imageUrl, { filename: fileName, directory: '/tmp/' }, async (error) => {
           if (error) {
-            fs.unlink(fileNameWithPath, unlinkError => {
+            fs.unlink(fileNameWithPath, () => {
               reject('Could not download file');
-              return;
-            })
-          } else {
-            const [result] = await this.visionClient.annotateImage({
-              ...this.visionRequesBase,
-                image: { source: { filename: fileNameWithPath } }
             });
+            return;
+          } else {
+            let result;
+            try {
+              ;[result] = await this.visionClient.annotateImage({
+                ...this.visionRequesBase,
+                image: { content: fs.readFileSync(fileNameWithPath) }
+              });
+            } catch (annotationError) {
+              log.error('Vision API annotateImage failed', annotationError);
+              fs.unlink(fileNameWithPath, unlinkErr => {
+                if (unlinkErr) log.error(unlinkErr);
+              });
+              resolve();
+              return;
+            }
 
             try {
               fs.unlink(fileNameWithPath, async (unlinkError) => {
