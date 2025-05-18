@@ -128,11 +128,11 @@ export class YpCollectionItemCard extends YpBaseElement {
 
         yp-image[archived] {
           filter: grayscale(100%);
-          opacity: 0.6;
+          opacity: 0.8;
         }
 
         :host([archived]) {
-          opacity: 0.6;
+          opacity: 0.8;
         }
 
         yp-membership-button {
