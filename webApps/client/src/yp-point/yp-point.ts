@@ -254,8 +254,6 @@ export class YpPoint extends YpBaseElement {
           padding: 16px;
           border-radius: 4px;
           line-height: 25px;
-          padding-left: 0;
-          padding-top: 0;
           border: 2px solid var(--md-sys-color-outline-variant);
         }
 

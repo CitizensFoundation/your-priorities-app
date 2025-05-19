@@ -720,7 +720,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             aria-level="2"
           >
             ${this.renderHeaderIcon(headerTextType)} ${header}
-            ${pointsLengthText}eskto
+            ${pointsLengthText}
           </div>
         `
       : html`
