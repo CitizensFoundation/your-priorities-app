@@ -488,6 +488,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   disableArrowBasedTopNavigation?: boolean;
   useFixedTopAppBar?: boolean;
   onlyAllowCreateUserOnInvite?: boolean;
+  hideDomainNews?: boolean;
 }
 
 interface YpHelpPageData {
