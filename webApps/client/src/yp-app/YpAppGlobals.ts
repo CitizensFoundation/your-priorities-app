@@ -3,6 +3,8 @@ import i18next from "i18next";
 //import moment from 'moment';
 import HttpApi from "i18next-http-backend";
 
+declare let __LOCALES_DIR__: string;
+
 import { YpServerApi } from "../common/YpServerApi.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpCodeBase } from "../common/YpCodeBaseclass.js";
@@ -407,11 +409,13 @@ export class YpAppGlobals extends YpCodeBase {
 
     defaultLocale = defaultLocale.replace("-", "_").toLowerCase();
 
+    const localesFolder = typeof __LOCALES_DIR__ !== 'undefined' ? __LOCALES_DIR__ : 'locales';
+
     i18next.use(HttpApi).init(
       {
         lng: defaultLocale,
         fallbackLng: "en",
-        backend: { loadPath: `${loadPathPrefix}/locales/{{lng}}/{{ns}}.json` },
+        backend: { loadPath: `${loadPathPrefix}/${localesFolder}/{{lng}}/{{ns}}.json` },
       },
       () => {
         window.appGlobals.locale = defaultLocale;
