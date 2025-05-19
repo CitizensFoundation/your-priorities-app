@@ -85,7 +85,7 @@ export default {
     }),
     copy({
       targets: [
-        { src: 'locales', dest: `dist/locales-${localesHash}` },
+        { src: 'locales/*', dest: `dist/locales-${localesHash}` },
         { src: 'topo', dest: 'dist/' },
         { src: 'images', dest: 'dist/' },
         { src: 'sw.js', dest: 'dist/' },
