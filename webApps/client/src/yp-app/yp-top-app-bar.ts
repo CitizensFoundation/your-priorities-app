@@ -68,6 +68,10 @@ export class YpTopAppBar extends YpBaseElement {
   @property({ type: Array })
   myDomains: Array<YpShortDomainList> | undefined;
 
+  private _boundHandleScroll = this.handleScroll.bind(this);
+  private _boundOnDomainChanged = this._onDomainChanged.bind(this);
+  private _boundOnMyDomainsLoaded = this._onMyDomainsLoaded.bind(this);
+
   get computedBreadcrumbs() {
     const domain = this.domain;
     if (!domain) {
@@ -334,26 +338,26 @@ export class YpTopAppBar extends YpBaseElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    window.addEventListener("scroll", this.handleScroll.bind(this));
+    window.addEventListener("scroll", this._boundHandleScroll);
     this.addGlobalListener(
       "yp-domain-changed",
-      this._onDomainChanged.bind(this)
+      this._boundOnDomainChanged
     );
     this.addGlobalListener(
       "yp-my-domains-loaded",
-      this._onMyDomainsLoaded.bind(this)
+      this._boundOnMyDomainsLoaded
     );
   }
 
   override disconnectedCallback(): void {
-    window.removeEventListener("scroll", this.handleScroll.bind(this));
+    window.removeEventListener("scroll", this._boundHandleScroll);
     this.removeGlobalListener(
       "yp-domain-changed",
-      this._onDomainChanged.bind(this)
+      this._boundOnDomainChanged
     );
     this.removeGlobalListener(
       "yp-my-domains-loaded",
-      this._onMyDomainsLoaded.bind(this)
+      this._boundOnMyDomainsLoaded
     );
     super.disconnectedCallback();
   }

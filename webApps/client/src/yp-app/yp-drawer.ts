@@ -13,6 +13,9 @@ export class YpDrawer extends YpBaseElement {
   @property({ type: Boolean, reflect: true })
   transparentScrim: boolean = true;
 
+  private _boundHandleEscKey = this._handleEscKey.bind(this);
+  private _boundCloseAllDrawers = this._closeAllDrawers.bind(this);
+
   static override get styles() {
     return [
       super.styles,
@@ -91,16 +94,16 @@ export class YpDrawer extends YpBaseElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    document.addEventListener("keydown", this._handleEscKey.bind(this));
+    document.addEventListener("keydown", this._boundHandleEscKey);
     this.addEventListener("click", this._handleScrimClick);
-    this.addGlobalListener("yp-close-all-drawers", this._closeAllDrawers.bind(this));
+    this.addGlobalListener("yp-close-all-drawers", this._boundCloseAllDrawers);
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    document.removeEventListener("keydown", this._handleEscKey.bind(this));
+    document.removeEventListener("keydown", this._boundHandleEscKey);
     this.removeEventListener("click", this._handleScrimClick);
-    this.removeGlobalListener("yp-close-all-drawers", this._closeAllDrawers.bind(this));
+    this.removeGlobalListener("yp-close-all-drawers", this._boundCloseAllDrawers);
   }
 
   _closeAllDrawers() {
