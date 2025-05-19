@@ -448,8 +448,17 @@ export class YpPoint extends YpBaseElement {
             max-width: 100%;
             margin-left: 0;
             margin-right: 0;
-            padding: 8px; /* Adjusted padding for mobile */
+            padding: 8px 4px; /* Reduced left/right padding */
             box-sizing: border-box;
+          }
+
+          .happyFace,
+          .sadFace {
+            --md-icon-size: 36px; /* Smaller icon size for mobile */
+            margin-left: auto; /* Centering: auto margins on flex item */
+            margin-right: auto; /* Centering: auto margins on flex item */
+            margin-top: 4px; /* Adjust top/bottom margin as needed */
+            margin-bottom: 4px;
           }
         }
       `,
