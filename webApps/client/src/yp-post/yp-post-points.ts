@@ -332,6 +332,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         yp-point {
+          width: 100%;
+          display: block;
+          box-sizing: border-box;
         }
 
         .pointMaterial {
@@ -457,6 +460,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           .point {
             padding-left: 0;
             padding-right: 0;
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+          }
+
+          .item {
             width: 100%;
           }
         }

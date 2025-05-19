@@ -49,6 +49,9 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: Boolean })
   autoTranslate = false;
 
+  @property({ type: Boolean })
+  useFullWidth = false;
+
   @property({ type: Number })
   truncate: number | undefined;
 
@@ -112,6 +115,16 @@ export class YpMagicText extends YpBaseElement {
           display: block;
         }
 
+        :host[use-full-width] {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .container[use-full-width] {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
         .container[rtl] {
           direction: rtl;
         }
@@ -159,6 +172,7 @@ export class YpMagicText extends YpBaseElement {
         class="container layout vertical"
         ?rlt="${this.rtl}"
         ?more-text="${this.showMoreText}"
+        ?use-full-width="${this.useFullWidth}"
       >
         ${this.finalContent
           ? html` <div>${unsafeHTML(`${this.finalContent}${this.postfixText}`)}</div> `

@@ -228,9 +228,11 @@ export class YpGroup extends YpCollection {
     const labelTranslation = this.t("posts." + type);
     if (type === "inProgress") type = "in_progress";
 
-    return `${labelTranslation} (${
-      this.tabCounters[type] != undefined ? this.tabCounters[type] : "..."
-    })`;
+    if (this.tabCounters[type]) {
+      return `${labelTranslation} (${this.tabCounters[type]})`;
+    } else {
+      return labelTranslation;
+    }
   }
 
   getCurrentTabElement(): HTMLElement | undefined {

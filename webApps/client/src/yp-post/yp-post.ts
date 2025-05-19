@@ -544,9 +544,11 @@ export class YpPost extends YpCollection {
   get tabDebateCount(): string {
     const labelTranslation = this.t("post.tabs.debate");
 
-    return `${labelTranslation} (${
-      this.debateCount != undefined ? this.debateCount : "..."
-    })`;
+    if (this.debateCount) {
+      return `${labelTranslation} (${this.debateCount})`;
+    } else {
+      return labelTranslation;
+    }
   }
 
   get tabPhotosCount(): string {

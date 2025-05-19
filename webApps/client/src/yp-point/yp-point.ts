@@ -271,6 +271,8 @@ export class YpPoint extends YpBaseElement {
           padding-right: 16px;
           padding-left: 16px;
           margin-top: 8px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         #pointContentTranscript,
@@ -548,6 +550,7 @@ export class YpPoint extends YpBaseElement {
         >
           <yp-magic-text
             simpleFormat
+            useFullWidth
             textType="pointContent"
             .contentLanguage="${this.point.language}"
             .content="${this.point.latestContent}"
