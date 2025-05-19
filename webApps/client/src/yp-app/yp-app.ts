@@ -229,6 +229,25 @@ export class YpApp extends YpBaseElement {
   haveLoadedAdminApp = false;
   haveLoadedPromotionApp = false;
 
+  private _boundHandleKeyDown = this._handleKeyDown.bind(this);
+  private _boundHandleScroll = this._handleScroll.bind(this);
+  private _boundTouchStart = this._handleTouchStart.bind(this);
+  private _boundTouchMove = this._handleTouchMove.bind(this);
+  private _boundTouchEnd = this._handleTouchEnd.bind(this);
+  private _boundUpdateLocation = this.updateLocation.bind(this);
+  private _boundAutoTranslateEvent = this._autoTranslateEvent.bind(this);
+  private _boundOnChangeHeader = this._onChangeHeader.bind(this);
+  private _boundOnUserChanged = this._onUserChanged.bind(this);
+  private _boundNetWorkError = this._netWorkError.bind(this);
+  private _boundYpError = this._ypError.bind(this);
+  private _boundOpenToast = this._openToast.bind(this);
+  private _boundLanguageLoaded = this._languageLoaded.bind(this);
+  private _boundRefreshDomain = this._refreshDomain.bind(this);
+  private _boundRefreshCommunity = this._refreshCommunity.bind(this);
+  private _boundRefreshGroup = this._refreshGroup.bind(this);
+  private _boundCloseNavDrawer = this._closeNavDrawer.bind(this);
+  private _boundAppDialogsReady = this._appDialogsReady.bind(this);
+
   constructor() {
     super();
     window.app = this;
@@ -249,15 +268,15 @@ export class YpApp extends YpBaseElement {
     this._setupEventListeners();
     this._setupSamlCallback();
     this.updateLocation();
-    document.addEventListener("keydown", this._handleKeyDown.bind(this));
-    window.addEventListener("scroll", this._handleScroll.bind(this));
+    document.addEventListener("keydown", this._boundHandleKeyDown);
+    window.addEventListener("scroll", this._boundHandleScroll);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
-    document.removeEventListener("keydown", this._handleKeyDown.bind(this));
-    window.removeEventListener("scroll", this._handleScroll.bind(this));
+    document.removeEventListener("keydown", this._boundHandleKeyDown);
+    window.removeEventListener("scroll", this._boundHandleScroll);
   }
 
   _handleScroll() {
@@ -347,16 +366,16 @@ export class YpApp extends YpBaseElement {
   _setupEventListeners() {
     this.addGlobalListener(
       "yp-auto-translate",
-      this._autoTranslateEvent.bind(this)
+      this._boundAutoTranslateEvent
     );
     this.addGlobalListener(
       "yp-theme-configuration-updated",
       this._themeUpdated
     );
-    this.addGlobalListener("yp-change-header", this._onChangeHeader.bind(this));
-    this.addGlobalListener("yp-logged-in", this._onUserChanged.bind(this));
-    this.addGlobalListener("yp-network-error", this._netWorkError.bind(this));
-    this.addGlobalListener("yp-error", this._ypError.bind(this));
+    this.addGlobalListener("yp-change-header", this._boundOnChangeHeader);
+    this.addGlobalListener("yp-logged-in", this._boundOnUserChanged);
+    this.addGlobalListener("yp-network-error", this._boundNetWorkError);
+    this.addGlobalListener("yp-error", this._boundYpError);
     this.addListener(
       "yp-add-back-community-override",
       this._addBackCommunityOverride,
@@ -369,27 +388,27 @@ export class YpApp extends YpBaseElement {
     );
     this.addListener("yp-open-login", this._login, this);
     this.addListener("yp-open-page", this._openPageFromEvent, this);
-    this.addGlobalListener("yp-open-toast", this._openToast.bind(this));
+    this.addGlobalListener("yp-open-toast", this._boundOpenToast);
     this.addListener("yp-open-notify-dialog", this._openNotifyDialog, this);
     this.addListener("yp-dialog-closed", this._dialogClosed, this);
     this.addListener("yp-language-name", this._setLanguageName, this);
 
     this.addGlobalListener(
       "yp-language-loaded",
-      this._languageLoaded.bind(this)
+      this._boundLanguageLoaded
     );
 
-    this.addGlobalListener("yp-refresh-domain", this._refreshDomain.bind(this));
+    this.addGlobalListener("yp-refresh-domain", this._boundRefreshDomain);
     this.addGlobalListener(
       "yp-refresh-community",
-      this._refreshCommunity.bind(this)
+      this._boundRefreshCommunity
     );
-    this.addGlobalListener("yp-refresh-group", this._refreshGroup.bind(this));
+    this.addGlobalListener("yp-refresh-group", this._boundRefreshGroup);
 
     this.addListener("yp-close-right-drawer", this._closeUserDrawer, this);
     this.addGlobalListener(
       "yp-close-all-drawers",
-      this._closeNavDrawer.bind(this)
+      this._boundCloseNavDrawer
     );
     this.addListener(
       "yp-set-number-of-un-viewed-notifications",
@@ -407,12 +426,12 @@ export class YpApp extends YpBaseElement {
       this
     );
 
-    window.addEventListener("locationchange", this.updateLocation.bind(this));
-    window.addEventListener("location-changed", this.updateLocation.bind(this));
-    window.addEventListener("popstate", this.updateLocation.bind(this));
+    window.addEventListener("locationchange", this._boundUpdateLocation);
+    window.addEventListener("location-changed", this._boundUpdateLocation);
+    window.addEventListener("popstate", this._boundUpdateLocation);
     this.addGlobalListener(
       "yp-app-dialogs-ready",
-      this._appDialogsReady.bind(this)
+      this._boundAppDialogsReady
     );
     this._setupTouchEvents();
   }
@@ -422,18 +441,18 @@ export class YpApp extends YpBaseElement {
   }
 
   _removeEventListeners() {
-    this.removeGlobalListener("yp-auto-translate", this._autoTranslateEvent);
-    this.removeGlobalListener("yp-change-header", this._onChangeHeader);
-    this.removeGlobalListener("yp-logged-in", this._onUserChanged);
-    this.removeGlobalListener("yp-network-error", this._netWorkError);
-    this.removeGlobalListener("yp-error", this._ypError);
+    this.removeGlobalListener("yp-auto-translate", this._boundAutoTranslateEvent);
+    this.removeGlobalListener("yp-change-header", this._boundOnChangeHeader);
+    this.removeGlobalListener("yp-logged-in", this._boundOnUserChanged);
+    this.removeGlobalListener("yp-network-error", this._boundNetWorkError);
+    this.removeGlobalListener("yp-error", this._boundYpError);
     this.removeGlobalListener(
       "yp-theme-configuration-updated",
       this._themeUpdated
     );
     this.removeGlobalListener(
       "yp-language-loaded",
-      this._languageLoaded.bind(this)
+      this._boundLanguageLoaded
     );
 
     this.removeListener(
@@ -448,17 +467,17 @@ export class YpApp extends YpBaseElement {
     );
     this.removeGlobalListener(
       "yp-close-all-drawers",
-      this._closeNavDrawer.bind(this)
+      this._boundCloseNavDrawer
     );
     this.removeListener("yp-open-login", this._login, this);
     this.removeListener("yp-open-page", this._openPageFromEvent, this);
-    this.removeGlobalListener("yp-open-toast", this._openToast.bind(this));
+    this.removeGlobalListener("yp-open-toast", this._boundOpenToast);
     this.removeListener("yp-open-notify-dialog", this._openNotifyDialog, this);
     this.removeListener("yp-dialog-closed", this._dialogClosed, this);
     this.removeListener("yp-language-name", this._setLanguageName, this);
-    this.removeGlobalListener("yp-refresh-domain", this._refreshDomain);
-    this.removeGlobalListener("yp-refresh-community", this._refreshCommunity);
-    this.removeGlobalListener("yp-refresh-group", this._refreshGroup);
+    this.removeGlobalListener("yp-refresh-domain", this._boundRefreshDomain);
+    this.removeGlobalListener("yp-refresh-community", this._boundRefreshCommunity);
+    this.removeGlobalListener("yp-refresh-group", this._boundRefreshGroup);
     this.removeListener("yp-close-right-drawer", this._closeUserDrawer, this);
     this.removeListener(
       "yp-set-number-of-un-viewed-notifications",
@@ -475,12 +494,12 @@ export class YpApp extends YpBaseElement {
       this
     );
 
-    window.removeEventListener("locationchange", this.updateLocation);
-    window.removeEventListener("location-changed", this.updateLocation);
-    window.removeEventListener("popstate", this.updateLocation);
+    window.removeEventListener("locationchange", this._boundUpdateLocation);
+    window.removeEventListener("location-changed", this._boundUpdateLocation);
+    window.removeEventListener("popstate", this._boundUpdateLocation);
     this.removeGlobalListener(
       "yp-app-dialogs-ready",
-      this._appDialogsReady.bind(this)
+      this._boundAppDialogsReady
     );
     this._removeTouchEvents();
   }
@@ -1888,24 +1907,21 @@ export class YpApp extends YpBaseElement {
   }
 
   _setupTouchEvents() {
-    document.addEventListener("touchstart", this._handleTouchStart.bind(this), {
+    document.addEventListener("touchstart", this._boundTouchStart, {
       passive: true,
     });
-    document.addEventListener("touchmove", this._handleTouchMove.bind(this), {
+    document.addEventListener("touchmove", this._boundTouchMove, {
       passive: true,
     });
-    document.addEventListener("touchend", this._handleTouchEnd.bind(this), {
+    document.addEventListener("touchend", this._boundTouchEnd, {
       passive: true,
     });
   }
 
   _removeTouchEvents() {
-    document.removeEventListener(
-      "touchstart",
-      this._handleTouchStart.bind(this)
-    );
-    document.removeEventListener("touchmove", this._handleTouchMove.bind(this));
-    document.removeEventListener("touchend", this._handleTouchEnd.bind(this));
+    document.removeEventListener("touchstart", this._boundTouchStart);
+    document.removeEventListener("touchmove", this._boundTouchMove);
+    document.removeEventListener("touchend", this._boundTouchEnd);
   }
 
   _handleTouchStart(event: any) {
