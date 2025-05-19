@@ -43,6 +43,18 @@ export class YpThemeSelector extends YpBaseElement {
   fontImports: string | undefined;
 
   @property({ type: String })
+  bodyBackgroundColorLight: string | undefined;
+
+  @property({ type: String })
+  bodyBackgroundColorDark: string | undefined;
+
+  @property({ type: String })
+  allBackgroundColorLight: string | undefined;
+
+  @property({ type: String })
+  allBackgroundColorDark: string | undefined;
+
+  @property({ type: String })
   selectedThemeScheme: string = "tonal";
 
   @property({ type: String })
@@ -172,6 +184,15 @@ export class YpThemeSelector extends YpBaseElement {
       this.useLowestContainerSurface =
         this.themeConfiguration.useLowestContainerSurface || false;
 
+      this.bodyBackgroundColorLight =
+        this.themeConfiguration.bodyBackgroundColorLight;
+      this.bodyBackgroundColorDark =
+        this.themeConfiguration.bodyBackgroundColorDark;
+      this.allBackgroundColorLight =
+        this.themeConfiguration.allBackgroundColorLight;
+      this.allBackgroundColorDark =
+        this.themeConfiguration.allBackgroundColorDark;
+
       this.fontStyles = this.themeConfiguration.fontStyles;
       this.fontImports = this.themeConfiguration.fontImports;
     }
@@ -211,6 +232,10 @@ export class YpThemeSelector extends YpBaseElement {
       "useLowestContainerSurface",
       "fontStyles",
       "fontImports",
+      "bodyBackgroundColorLight",
+      "bodyBackgroundColorDark",
+      "allBackgroundColorLight",
+      "allBackgroundColorDark",
     ].forEach((prop) => {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
@@ -236,6 +261,10 @@ export class YpThemeSelector extends YpBaseElement {
         useLowestContainerSurface: this.useLowestContainerSurface,
         fontStyles: this.fontStyles,
         fontImports: this.fontImports,
+        bodyBackgroundColorLight: this.bodyBackgroundColorLight,
+        bodyBackgroundColorDark: this.bodyBackgroundColorDark,
+        allBackgroundColorLight: this.allBackgroundColorLight,
+        allBackgroundColorDark: this.allBackgroundColorDark,
       };
 
       if (this.themeConfiguration.oneDynamicColor) {
@@ -497,9 +526,46 @@ export class YpThemeSelector extends YpBaseElement {
     --md-sys-typescale-headline-font: "Roboto";
     --md-sys-typescale-title-font: "Roboto";
   }
-</code>
-${this.t("exampleFontStyles")}:
+  </code>
+  ${this.t("exampleFontStyles")}:
             </pre>
+          </div>
+          <div class="customColors">
+            <div class="colorTypeTitle">
+              ${this.t("Background Overrides")}
+            </div>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Body Background Light")}"
+              .color="${this.bodyBackgroundColorLight}"
+              @input="${(e: any) => {
+                this.bodyBackgroundColorLight = e.detail.color;
+              }}"
+            ></yp-theme-color-input>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Body Background Dark")}"
+              .color="${this.bodyBackgroundColorDark}"
+              @input="${(e: any) => {
+                this.bodyBackgroundColorDark = e.detail.color;
+              }}"
+            ></yp-theme-color-input>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("All Background Light")}"
+              .color="${this.allBackgroundColorLight}"
+              @input="${(e: any) => {
+                this.allBackgroundColorLight = e.detail.color;
+              }}"
+            ></yp-theme-color-input>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("All Background Dark")}"
+              .color="${this.allBackgroundColorDark}"
+              @input="${(e: any) => {
+                this.allBackgroundColorDark = e.detail.color;
+              }}"
+            ></yp-theme-color-input>
           </div>
         </div>
         <div class="layout vertical">

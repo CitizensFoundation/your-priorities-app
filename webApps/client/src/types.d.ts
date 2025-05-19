@@ -58,6 +58,10 @@ interface YpThemeConfiguration {
   iconPrompt?: string;
   fontStyles?: string;
   fontImports?: string;
+  bodyBackgroundColorLight?: string;
+  bodyBackgroundColorDark?: string;
+  allBackgroundColorLight?: string;
+  allBackgroundColorDark?: string;
 }
 
 interface YpCollectionConfiguration {

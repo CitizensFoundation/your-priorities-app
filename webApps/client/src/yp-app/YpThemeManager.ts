@@ -27,6 +27,10 @@ export class YpThemeManager {
   themeNeutralColor: string | undefined;
   themeNeutralVariantColor: string | undefined;
   themeVariant: MaterialDynamicVariants | undefined;
+  bodyBackgroundColorLight: string | undefined;
+  bodyBackgroundColorDark: string | undefined;
+  allBackgroundColorLight: string | undefined;
+  allBackgroundColorDark: string | undefined;
   useLowestContainerSurface = false;
   hasStaticTheme = false;
 
@@ -553,21 +557,25 @@ export class YpThemeManager {
   }
 
   updateLiveFromConfiguration(theme: YpThemeConfiguration) {
-    if (theme) {
-      if (theme.oneDynamicColor) {
-        this.themeColor = theme.oneDynamicColor;
-        this.themeScheme = theme.oneColorScheme!;
-      } else {
-        this.themeColor = undefined;
-        this.themePrimaryColor = theme.primaryColor;
-        this.themeSecondaryColor = theme.secondaryColor;
-        this.themeTertiaryColor = theme.tertiaryColor;
-        this.themeNeutralColor = theme.neutralColor;
-        this.themeNeutralVariantColor = theme.neutralVariantColor;
-        this.themeVariant = "fidelity"; //TODO: Look into those how those work, theme.variant || "fidelity";
+      if (theme) {
+        if (theme.oneDynamicColor) {
+          this.themeColor = theme.oneDynamicColor;
+          this.themeScheme = theme.oneColorScheme!;
+        } else {
+          this.themeColor = undefined;
+          this.themePrimaryColor = theme.primaryColor;
+          this.themeSecondaryColor = theme.secondaryColor;
+          this.themeTertiaryColor = theme.tertiaryColor;
+          this.themeNeutralColor = theme.neutralColor;
+          this.themeNeutralVariantColor = theme.neutralVariantColor;
+          this.themeVariant = "fidelity"; //TODO: Look into those how those work, theme.variant || "fidelity";
+        }
+        this.bodyBackgroundColorLight = theme.bodyBackgroundColorLight;
+        this.bodyBackgroundColorDark = theme.bodyBackgroundColorDark;
+        this.allBackgroundColorLight = theme.allBackgroundColorLight;
+        this.allBackgroundColorDark = theme.allBackgroundColorDark;
+        this.themeChanged();
       }
-      this.themeChanged();
-    }
   }
 
   themeChanged(target: HTMLElement | undefined = undefined) {
@@ -577,6 +585,30 @@ export class YpThemeManager {
       this.themeDarkMode === undefined
         ? window.matchMedia("(prefers-color-scheme: dark)").matches
         : this.themeDarkMode;
+
+    if (isDark) {
+      if (this.bodyBackgroundColorDark) {
+        document.body.style.backgroundColor = this.getHexColor(
+          this.bodyBackgroundColorDark
+        );
+      } else {
+        document.body.style.backgroundColor = "";
+      }
+      if (this.allBackgroundColorDark) {
+        this.applyBackgroundOverride(themeCss, this.allBackgroundColorDark);
+      }
+    } else {
+      if (this.bodyBackgroundColorLight) {
+        document.body.style.backgroundColor = this.getHexColor(
+          this.bodyBackgroundColorLight
+        );
+      } else {
+        document.body.style.backgroundColor = "";
+      }
+      if (this.allBackgroundColorLight) {
+        this.applyBackgroundOverride(themeCss, this.allBackgroundColorLight);
+      }
+    }
 
     if (false && this.isAppleDevice) {
       const theme = themeFromSourceColor(
@@ -796,6 +828,24 @@ export class YpThemeManager {
 
     // Return hex color code (with or without alpha)
     return `#${red}${green}${blue}`;
+  }
+
+  applyBackgroundOverride(themeCss: any, color: string) {
+    const hex = this.getHexColor(color);
+    const keys = [
+      "background",
+      "surface",
+      "surface-dim",
+      "surface-bright",
+      "surface-container-lowest",
+      "surface-container-low",
+      "surface-container",
+      "surface-container-high",
+      "surface-container-highest",
+    ];
+    keys.forEach((k) => {
+      themeCss[k] = hex;
+    });
   }
 
   getHexColor(color: string | undefined): string {
