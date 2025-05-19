@@ -1088,7 +1088,13 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
         where: {
             id: req.params.groupId,
         },
-        attributes: ["id", "configuration"],
+        attributes: ["id", "configuration", "community_id"],
+        include: [
+            {
+                model: models.Community,
+                attributes: ["id", "domain_id"],
+            },
+        ],
     })
         .then((group) => {
         var post = models.Post.build({
@@ -1135,7 +1141,9 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
                                 models.AcActivity.createActivity({
                                     type: "activity.post.new",
                                     userId: post.user_id,
-                                    domainId: req.ypDomain.id,
+                                    domainId: group && group.Community
+                                        ? group.Community.domain_id
+                                        : req.ypDomain.id,
                                     groupId: post.group_id,
                                     //                communityId: req.ypCommunity ?  req.ypCommunity.id : null,
                                     postId: post.id,
@@ -1702,7 +1710,9 @@ router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) 
                         });
                         async.series([
                             function (seriesCallback) {
-                                if (post) {
+                                if (post &&
+                                    post.Group &&
+                                    post.Group.Community) {
                                     endorsement.dataValues.Post = post;
                                     seriesCallback();
                                 }
@@ -1710,6 +1720,18 @@ router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) 
                                     models.Post.findOne({
                                         where: { id: endorsement.post_id },
                                         attributes: ["id", "group_id"],
+                                        include: [
+                                            {
+                                                model: models.Group,
+                                                attributes: ["id", "community_id"],
+                                                include: [
+                                                    {
+                                                        model: models.Community,
+                                                        attributes: ["id", "domain_id"],
+                                                    },
+                                                ],
+                                            },
+                                        ],
                                     }).then(function (results) {
                                         if (results) {
                                             post = results;
@@ -1728,7 +1750,11 @@ router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) 
                                         ? "activity.post.endorsement.new"
                                         : "activity.post.opposition.new",
                                     userId: endorsement.user_id,
-                                    domainId: req.ypDomain.id,
+                                    domainId: post &&
+                                        post.Group &&
+                                        post.Group.Community
+                                        ? post.Group.Community.domain_id
+                                        : req.ypDomain.id,
                                     endorsementId: endorsement.id,
                                     //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
                                     groupId: post.group_id,

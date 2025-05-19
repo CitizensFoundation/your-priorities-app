@@ -1089,16 +1089,36 @@ router.post("/:groupId/:userEmail/invite_user", auth.can("edit group"), function
         },
         function (callback) {
             if (!req.query.addToGroupDirectly) {
-                models.AcActivity.inviteCreated({
-                    email: req.params.userEmail,
-                    user_id: user ? user.id : null,
-                    sender_user_id: req.user.id,
-                    sender_name: req.user.name,
-                    group_id: req.params.groupId,
-                    domain_id: req.ypDomain.id,
-                    invite_id: invite.id,
-                    token: token,
-                }, function (error) {
+                models.Group.findOne({
+                    where: {
+                        id: req.params.groupId,
+                    },
+                    attributes: ["id", "community_id"],
+                    include: [
+                        {
+                            model: models.Community,
+                            attributes: ["id", "domain_id"],
+                        },
+                    ],
+                })
+                    .then(function (group) {
+                    const domainId = group && group.Community
+                        ? group.Community.domain_id
+                        : req.ypDomain.id;
+                    models.AcActivity.inviteCreated({
+                        email: req.params.userEmail,
+                        user_id: user ? user.id : null,
+                        sender_user_id: req.user.id,
+                        sender_name: req.user.name,
+                        group_id: req.params.groupId,
+                        domain_id: domainId,
+                        invite_id: invite.id,
+                        token: token,
+                    }, function (error) {
+                        callback(error);
+                    });
+                })
+                    .catch(function (error) {
                     callback(error);
                 });
             }

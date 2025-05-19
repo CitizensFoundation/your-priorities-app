@@ -422,40 +422,53 @@ router.put("/:pointId", auth.can("edit point"), function (req, res) {
                     userId: req.user ? req.user.id : -1,
                 });
                 queue.add("process-similarities", { type: "update-collection", pointId: point.id }, "low");
-                models.AcActivity.createActivity({
-                    type: "activity.point.edited",
-                    userId: point.user_id,
-                    domainId: req.ypDomain.id,
-                    //          communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-                    groupId: point.group_id,
-                    postId: point.post_id,
-                    pointId: point.id,
-                    access: models.AcActivity.ACCESS_PUBLIC,
-                }, function (error) {
-                    loadPointWithAll(point.id, function (error, loadedPoint) {
-                        if (error) {
-                            log.error("Could not reload point point", {
-                                err: error,
-                                context: "createPoint",
-                                user: toJson(req.user.simple()),
-                            });
-                            res.sendStatus(500);
-                        }
-                        else {
-                            if (loadedPoint.PointRevisions &&
-                                loadedPoint.PointRevisions.length > 0 &&
-                                loadedPoint.PointRevisions[loadedPoint.PointRevisions.length - 1].content !== "") {
-                                log.info("process-moderation point toxicity after create point");
-                                queue.add("process-moderation", {
-                                    type: "estimate-point-toxicity",
-                                    pointId: loadedPoint.id,
-                                }, "high");
+                models.Group.findOne({
+                    where: { id: point.group_id },
+                    attributes: ["id", "community_id"],
+                    include: [
+                        {
+                            model: models.Community,
+                            attributes: ["id", "domain_id"],
+                        },
+                    ],
+                }).then(function (group) {
+                    models.AcActivity.createActivity({
+                        type: "activity.point.edited",
+                        userId: point.user_id,
+                        domainId: group && group.Community
+                            ? group.Community.domain_id
+                            : req.ypDomain.id,
+                        //          communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                        groupId: point.group_id,
+                        postId: point.post_id,
+                        pointId: point.id,
+                        access: models.AcActivity.ACCESS_PUBLIC,
+                    }, function (error) {
+                        loadPointWithAll(point.id, function (error, loadedPoint) {
+                            if (error) {
+                                log.error("Could not reload point point", {
+                                    err: error,
+                                    context: "createPoint",
+                                    user: toJson(req.user.simple()),
+                                });
+                                res.sendStatus(500);
                             }
                             else {
-                                log.info("No process-moderation toxicity for empty text on point");
+                                if (loadedPoint.PointRevisions &&
+                                    loadedPoint.PointRevisions.length > 0 &&
+                                    loadedPoint.PointRevisions[loadedPoint.PointRevisions.length - 1].content !== "") {
+                                    log.info("process-moderation point toxicity after create point");
+                                    queue.add("process-moderation", {
+                                        type: "estimate-point-toxicity",
+                                        pointId: loadedPoint.id,
+                                    }, "high");
+                                }
+                                else {
+                                    log.info("No process-moderation toxicity for empty text on point");
+                                }
+                                res.send(loadedPoint);
                             }
-                            res.send(loadedPoint);
-                        }
+                        });
                     });
                 });
             });
@@ -714,17 +727,30 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
                 });
             },
             (parallelCallback) => {
-                models.AcActivity.createActivity({
-                    type: "activity.point.new",
-                    userId: point.user_id,
-                    domainId: req.ypDomain.id,
-                    //        communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-                    groupId: point.group_id,
-                    postId: point.post_id,
-                    pointId: point.id,
-                    access: models.AcActivity.ACCESS_PUBLIC,
-                }, function (error) {
-                    parallelCallback(error);
+                models.Group.findOne({
+                    where: { id: point.group_id },
+                    attributes: ["id", "community_id"],
+                    include: [
+                        {
+                            model: models.Community,
+                            attributes: ["id", "domain_id"],
+                        },
+                    ],
+                }).then(function (group) {
+                    models.AcActivity.createActivity({
+                        type: "activity.point.new",
+                        userId: point.user_id,
+                        domainId: group && group.Community
+                            ? group.Community.domain_id
+                            : req.ypDomain.id,
+                        //        communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                        groupId: point.group_id,
+                        postId: point.post_id,
+                        pointId: point.id,
+                        access: models.AcActivity.ACCESS_PUBLIC,
+                    }, function (error) {
+                        parallelCallback(error);
+                    });
                 });
             },
             (parallelCallback) => {
@@ -950,20 +976,33 @@ router.post("/:id/pointQuality", auth.can("vote on point"), function (req, res) 
                     }
                 },
                 function (seriesCallback) {
-                    models.AcActivity.createActivity({
-                        type: pointQuality.value > 0
-                            ? "activity.point.helpful.new"
-                            : "activity.point.unhelpful.new",
-                        userId: pointQuality.user_id,
-                        domainId: req.ypDomain.id,
-                        //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-                        pointQualityId: pointQuality.id,
-                        groupId: point.group_id,
-                        postId: point.post_id,
-                        pointId: point.id,
-                        access: models.AcActivity.ACCESS_PUBLIC,
-                    }, function (error) {
-                        seriesCallback(error);
+                    models.Group.findOne({
+                        where: { id: point.group_id },
+                        attributes: ["id", "community_id"],
+                        include: [
+                            {
+                                model: models.Community,
+                                attributes: ["id", "domain_id"],
+                            },
+                        ],
+                    }).then(function (group) {
+                        models.AcActivity.createActivity({
+                            type: pointQuality.value > 0
+                                ? "activity.point.helpful.new"
+                                : "activity.point.unhelpful.new",
+                            userId: pointQuality.user_id,
+                            domainId: group && group.Community
+                                ? group.Community.domain_id
+                                : req.ypDomain.id,
+                            //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                            pointQualityId: pointQuality.id,
+                            groupId: point.group_id,
+                            postId: point.post_id,
+                            pointId: point.id,
+                            access: models.AcActivity.ACCESS_PUBLIC,
+                        }, function (error) {
+                            seriesCallback(error);
+                        });
                     });
                 },
                 function (seriesCallback) {

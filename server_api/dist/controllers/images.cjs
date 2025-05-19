@@ -43,17 +43,28 @@ var sendError = function (res, image, context, user, error) {
     res.sendStatus(500);
 };
 var sendPostUserImageActivity = function (req, type, post, image, callback) {
-    models.AcActivity.createActivity({
-        type: type,
-        userId: post.user_id,
-        domainId: req.ypDomain.id,
-        groupId: post.group_id,
-        //    communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-        postId: post.id,
-        imageId: image.id,
-        access: models.AcActivity.ACCESS_PUBLIC,
-    }, function (error) {
-        callback(error);
+    models.Group.findOne({
+        where: { id: post.group_id },
+        attributes: ["id", "community_id"],
+        include: [
+            {
+                model: models.Community,
+                attributes: ["id", "domain_id"],
+            },
+        ],
+    }).then(function (group) {
+        models.AcActivity.createActivity({
+            type: type,
+            userId: post.user_id,
+            domainId: group && group.Community ? group.Community.domain_id : req.ypDomain.id,
+            groupId: post.group_id,
+            //    communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+            postId: post.id,
+            imageId: image.id,
+            access: models.AcActivity.ACCESS_PUBLIC,
+        }, function (error) {
+            callback(error);
+        });
     });
 };
 var addUserImageToPost = function (postId, imageId, callback) {

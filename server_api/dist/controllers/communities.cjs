@@ -813,6 +813,7 @@ const updateCommunityConfigParameters = function (req, community) {
         ? req.body.themeOverrideBackgroundColor
         : null);
     community.set("configuration.sortBySortOrder", truthValueFromBody(req.body.sortBySortOrder));
+    community.set("configuration.sortAlphabetically", truthValueFromBody(req.body.sortAlphabetically));
     community.set("configuration.orderByRandom", truthValueFromBody(req.body.orderByRandom));
     community.set("configuration.enableFraudDetection", truthValueFromBody(req.body.enableFraudDetection));
     community.set("configuration.useZiggeo", truthValueFromBody(req.body.useZiggeo));
@@ -1039,16 +1040,28 @@ router.post("/:communityId/:userEmail/invite_user", auth.can("edit community"), 
         },
         function (callback) {
             if (!req.query.addToCommunityDirectly) {
-                models.AcActivity.inviteCreated({
-                    email: req.params.userEmail,
-                    user_id: user ? user.id : null,
-                    sender_user_id: req.user.id,
-                    community_id: req.params.communityId,
-                    sender_name: req.user.name,
-                    domain_id: req.ypDomain.id,
-                    invite_id: invite.id,
-                    token: token,
-                }, function (error) {
+                models.Community.findOne({
+                    where: {
+                        id: req.params.communityId,
+                    },
+                    attributes: ["id", "domain_id"],
+                })
+                    .then(function (community) {
+                    const domainId = community ? community.domain_id : req.ypDomain.id;
+                    models.AcActivity.inviteCreated({
+                        email: req.params.userEmail,
+                        user_id: user ? user.id : null,
+                        sender_user_id: req.user.id,
+                        community_id: req.params.communityId,
+                        sender_name: req.user.name,
+                        domain_id: domainId,
+                        invite_id: invite.id,
+                        token: token,
+                    }, function (error) {
+                        callback(error);
+                    });
+                })
+                    .catch(function (error) {
                     callback(error);
                 });
             }
