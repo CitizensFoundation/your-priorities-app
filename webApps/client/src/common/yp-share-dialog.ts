@@ -50,6 +50,8 @@ export class YpShareDialog extends YpBaseElement {
 
     this.requestUpdate();
 
-    (this.$$('#shareButton') as any/*ShareMenu*/).share();
+    await this.updateComplete;
+
+    (this.$$('#shareButton') as any /*ShareMenu*/).share();
   }
 }
