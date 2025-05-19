@@ -17,4 +17,4 @@ RUN npm ci
 
 COPY --chown=node:node . .
 
-CMD [ "node --optimize_for_size --max_old_space_size=960 ", "node_modules/@yrpri/api/active-citizen/workers/main.cjs" ]
+CMD [ "node --optimize_for_size --max_old_space_size=960 ", "node_modules/@yrpri/api/services/workers/main.cjs" ]

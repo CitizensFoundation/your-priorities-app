@@ -30,7 +30,7 @@ x-your-priorities-worker-common: &your-priorities-worker-common
     dockerfile: deployment/2024/your-priorities-worker/Dockerfile
   restart: always
   env_file: .env
-  command: node ts-out/active-citizen/workers/main.cjs
+  command: node ts-out/services/workers/main.cjs
   network_mode: host
   logging:
     driver: "json-file"
