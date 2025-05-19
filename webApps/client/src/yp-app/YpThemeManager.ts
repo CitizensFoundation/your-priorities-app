@@ -512,6 +512,10 @@ export class YpThemeManager {
         this.themeSecondaryColor = configuration.theme.secondaryColor;
         this.themeTertiaryColor = configuration.theme.tertiaryColor;
         this.themeNeutralColor = configuration.theme.neutralColor;
+        this.bodyBackgroundColorLight = configuration.theme.bodyBackgroundColorLight;
+        this.bodyBackgroundColorDark = configuration.theme.bodyBackgroundColorDark;
+        this.allBackgroundColorLight = configuration.theme.allBackgroundColorLight;
+        this.allBackgroundColorDark = configuration.theme.allBackgroundColorDark;
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
         this.useLowestContainerSurface =
           configuration.theme.useLowestContainerSurface || false;

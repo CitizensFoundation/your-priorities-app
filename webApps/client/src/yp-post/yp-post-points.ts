@@ -528,6 +528,16 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           margin-bottom: 4px;
         }
 
+        @media (max-width: 600px) {
+          .pointButtons {
+            padding: 8px;
+          }
+
+          label {
+            padding: 8px;
+          }
+        }
+
         .bottomDiv {
           margin-bottom: 32px;
         }
