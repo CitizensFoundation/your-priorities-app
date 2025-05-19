@@ -460,6 +460,12 @@ export class YpPoint extends YpBaseElement {
             margin-top: 4px; /* Adjust top/bottom margin as needed */
             margin-bottom: 4px;
           }
+
+          #pointContent,
+          #pointContentTranscript {
+            width: 100%;
+            box-sizing: border-box;
+          }
         }
       `,
     ];

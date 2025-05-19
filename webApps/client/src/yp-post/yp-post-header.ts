@@ -111,6 +111,13 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             line-height: var(--md-sys-typescale-title-medium-line-height, 32px);
             margin-top: 16px;
             margin-bottom: 16px;
+            padding-left: 16px;
+            padding-right: 16px;
+          }
+
+          .container {
+            padding-left: 16px;
+            padding-right: 16px;
           }
         }
 

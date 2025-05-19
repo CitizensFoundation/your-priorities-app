@@ -539,6 +539,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         div[rtl] {
           direction: rtl;
         }
+
+        .pointMainHeader[hidden] {
+          display: none !important;
+        }
       `,
     ];
   }
