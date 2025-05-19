@@ -1667,7 +1667,7 @@ export class YpApp extends YpBaseElement {
   }
 
   scrollPageToTop() {
-    const mainArea = document.getElementById("#mainArea");
+    const mainArea = document.getElementById("mainArea");
     if (mainArea) {
       mainArea.scrollTop = 0;
     }
