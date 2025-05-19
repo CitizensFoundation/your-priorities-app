@@ -101,6 +101,14 @@ export class YpDomain extends YpCollection {
       this.tabsHidden = true;
     }
 
+    if (domain && domain.configuration) {
+      if (domain.configuration.hideDomainNews === true) {
+        this.hideNewsfeed = true;
+      } else {
+        this.hideNewsfeed = false;
+      }
+    }
+
     window.appGlobals.setAnonymousGroupStatus(undefined);
     window.appGlobals.setRegistrationQuestionGroup(undefined);
     window.appGlobals.disableFacebookLoginForGroup = false;
