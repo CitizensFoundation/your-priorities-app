@@ -74,7 +74,7 @@ export default {
     replace({
       preventAssignment: true,
       __VERSION__: getCustomVersion(pkg.version),
-      __LOCALES_DIR__: `locales-${localesHash}`,
+      __LOCALES_DIR__: `"locales-${localesHash}"`,
     }),
     html({
       minify: true,
