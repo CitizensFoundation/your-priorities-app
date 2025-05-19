@@ -457,6 +457,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           .point {
             padding-left: 0;
             padding-right: 0;
+            width: 100%;
           }
         }
 
@@ -540,9 +541,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           direction: rtl;
         }
 
-        .pointMainHeader[hidden] {
-          display: none !important;
-        }
       `,
     ];
   }
@@ -722,11 +720,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             aria-level="2"
           >
             ${this.renderHeaderIcon(headerTextType)} ${header}
-            ${pointsLengthText}
+            ${pointsLengthText}eskto
           </div>
         `
       : html`
-          <div
+          <div hidden
             class="pointMainHeader layout horizontal"
           >
             ${this.renderHeaderIcon(headerTextType)}
@@ -774,12 +772,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     } else {
       return html`
         <div class="point">
-          ${this.renderPointHeader(
-            header,
-            alternativeHeader,
-            headerTextType,
-            points ? points.length : 0
-          )}
+          ${mobile
+            ? nothing
+            : this.renderPointHeader(
+                header,
+                alternativeHeader,
+                headerTextType,
+                points ? points.length : 0
+              )}
 
           <div
             id="point${type}Material"
