@@ -155,19 +155,19 @@ export class AllOurIdeasController {
     this.router.put(
       "/:communityId/questions/:questionId/choices/:choiceId",
       auth.can("create group"),
-      this.updateCoiceData.bind(this)
+      this.updateChoiceData.bind(this)
     );
 
     this.router.put(
       "/:domainId/questions/:questionId/choices/:choiceId/throughDomain",
       auth.can("create community"),
-      this.updateCoiceData.bind(this)
+      this.updateChoiceData.bind(this)
     );
 
     this.router.put(
       "/:groupId/questions/:questionId/choices/:choiceId/throughGroup",
       auth.can("view group"),
-      this.updateCoiceData.bind(this)
+      this.updateChoiceData.bind(this)
     );
 
     this.router.put(
@@ -643,7 +643,7 @@ export class AllOurIdeasController {
     }
   }
 
-  public async updateCoiceData(req: Request, res: Response) {
+  public async updateChoiceData(req: Request, res: Response) {
     try {
       const response = await fetch(
         `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${req.params.choiceId}.json`,

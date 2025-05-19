@@ -38,9 +38,9 @@ The controller registers the following routes (all prefixed with `/api/allOurIde
 | POST   | `/:groupId/questions/:questionId/prompts/:promptId/skips`                                            | Skip a prompt                                    | `view group`               | `skip`                        |
 | POST   | `/:groupId/questions/:questionId/addIdea`                                                            | Add a new idea                                   | `view group`               | `addIdea`                     |
 | GET    | `/:groupId/questions/:wsClientSocketId/:analysisIndex/:analysisTypeIndex/analysis`                   | Get AI analysis                                  | `view group`               | `analysis`                    |
-| PUT    | `/:communityId/questions/:questionId/choices/:choiceId`                                              | Update choice data (community context)           | `create group`             | `updateCoiceData`             |
-| PUT    | `/:domainId/questions/:questionId/choices/:choiceId/throughDomain`                                   | Update choice data (domain context)              | `create community`         | `updateCoiceData`             |
-| PUT    | `/:groupId/questions/:questionId/choices/:choiceId/throughGroup`                                     | Update choice data (group context)               | `view group`               | `updateCoiceData`             |
+| PUT    | `/:communityId/questions/:questionId/choices/:choiceId`                                              | Update choice data (community context)           | `create group`             | `updateChoiceData`            |
+| PUT    | `/:domainId/questions/:questionId/choices/:choiceId/throughDomain`                                   | Update choice data (domain context)              | `create community`         | `updateChoiceData`            |
+| PUT    | `/:groupId/questions/:questionId/choices/:choiceId/throughGroup`                                     | Update choice data (group context)               | `view group`               | `updateChoiceData`            |
 | PUT    | `/:communityId/questions/:questionId/choices/:choiceId/active`                                       | Update choice active status (community context)  | `create group`             | `updateActive`                |
 | PUT    | `/:domainId/questions/:questionId/choices/:choiceId/active/throughDomain`                            | Update choice active status (domain context)     | `create community`         | `updateActive`                |
 | PUT    | `/:communityId/questions/:questionId/name`                                                           | Update question name (community context)         | `create group`             | `updateQuestionName`          |
@@ -369,7 +369,7 @@ Creates a new AOI question with initial ideas.
 
 ---
 
-### async updateCoiceData(req, res)
+### async updateChoiceData(req, res)
 Updates the data field of a choice.
 
 #### Request
