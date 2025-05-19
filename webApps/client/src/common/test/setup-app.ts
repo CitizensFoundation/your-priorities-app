@@ -6,15 +6,18 @@ import HttpApi from 'i18next-http-backend';
 import { html } from 'lit';
 import fetchMock from 'fetch-mock';
 
+declare let __LOCALES_DIR__: string;
+
 export class YpTestHelpers {
   static async setupApp() {
     window.serverApi = new YpServerApi();
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
+    const localesFolder = typeof __LOCALES_DIR__ !== 'undefined' ? __LOCALES_DIR__ : 'locales';
     await i18next.use(HttpApi).init({
       lng: 'en',
       fallbackLng: 'en',
-      backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
+      backend: { loadPath: `/${localesFolder}/{{lng}}/{{ns}}.json` },
     });
 
     window.appGlobals.locale = 'en';

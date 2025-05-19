@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -32,6 +33,28 @@ function getCustomVersion(version) {
   return `Built on ${formattedDate}`;
 }
 
+function getLocalesHash() {
+  const localesDir = join(__dirname, 'locales');
+  const hash = createHash('md5');
+
+  const walk = (dir) => {
+    for (const file of fs.readdirSync(dir)) {
+      const fullPath = join(dir, file);
+      const stat = fs.statSync(fullPath);
+      if (stat.isDirectory()) {
+        walk(fullPath);
+      } else {
+        hash.update(fs.readFileSync(fullPath));
+      }
+    }
+  };
+
+  walk(localesDir);
+  return hash.digest('hex').slice(0, 8);
+}
+
+const localesHash = getLocalesHash();
+
 export default {
   input: 'index.html',
   output: {
@@ -51,6 +74,7 @@ export default {
     replace({
       preventAssignment: true,
       __VERSION__: getCustomVersion(pkg.version),
+      __LOCALES_DIR__: `locales-${localesHash}`,
     }),
     html({
       minify: true,
@@ -61,7 +85,7 @@ export default {
     }),
     copy({
       targets: [
-        { src: 'locales', dest: 'dist/' },
+        { src: 'locales', dest: `dist/locales-${localesHash}` },
         { src: 'topo', dest: 'dist/' },
         { src: 'images', dest: 'dist/' },
         { src: 'sw.js', dest: 'dist/' },
