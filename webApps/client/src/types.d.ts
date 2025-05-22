@@ -269,6 +269,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   customVoteUpHoverText?: string;
   customVoteDownHoverText?: string;
   hideDebateIcon?: boolean;
+  hideDebate?: boolean;
   originalHideVoteCount?: boolean;
   hideVoteCountUntilVoteCompleted?: boolean;
   endorsementButtons?: string;

@@ -225,6 +225,10 @@ var updateGroupConfigParameters = function (req, group) {
     truthValueFromBody(req.body.disableDebate)
   );
   group.set(
+    "configuration.hideDebate",
+    truthValueFromBody(req.body.hideDebate)
+  );
+  group.set(
     "configuration.locationHidden",
     truthValueFromBody(req.body.locationHidden)
   );
