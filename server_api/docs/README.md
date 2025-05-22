@@ -131,6 +131,7 @@ Key responsibilities of the server include:
   - [setAdminOnAll](scripts/setAdminOnAll.md)
   - [setDomainAdmin](scripts/setDomainAdmin.md)
   - [setEarlQuestionIdOnGroup](scripts/setEarlQuestionIdOnGroup.md)
+  - [userScripts](scripts/userScripts.md)
 - [server](server.md)
 - services
   - controllers

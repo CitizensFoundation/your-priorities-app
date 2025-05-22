@@ -21,9 +21,9 @@ describe('YpSetVideoCover', () => {
     const videoImages = [
       "https://yrpri6-production.s3.amazonaws.com/Bc/6V/M6-retina.png",
       "https://yrpri6-production.s3.amazonaws.com/Bc/6V/M6-retina.png"
-    ],
+    ];
 
-      element = await fixture(html`
+    element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <yp-set-video-cover
           .video="${video}"
