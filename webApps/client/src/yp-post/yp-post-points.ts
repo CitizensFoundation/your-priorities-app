@@ -954,6 +954,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   override render() {
+    if (this.post?.Group?.configuration?.hideDebate) {
+      return nothing;
+    }
     return html`
       <div class="processBar layout horizontal center-center">
         <md-linear-progress
@@ -1377,6 +1380,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
+      this.post.Group.configuration?.hideDebate
+    ) {
+      this.disableDebate = true;
+      return;
+    }
+    if (
+      this.post &&
+      this.post.Group &&
+      this.post.Group.configuration &&
       this.post.Group.configuration?.disableDebate
     ) {
       if (this.isAdmin && this.post.Group.configuration?.allowAdminsToDebate) {
@@ -1390,6 +1402,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   async _getPoints() {
+    if (
+      this.post &&
+      this.post.Group &&
+      this.post.Group.configuration &&
+      this.post.Group.configuration?.hideDebate
+    ) {
+      return;
+    }
     this.fetchActive = true;
     const pointsWithCount = (await window.serverApi.getPoints(
       this.post.id
@@ -1435,6 +1455,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.storedDownPointsCount = 0;
 
     if (this.post) {
+      if (
+        this.post.Group &&
+        this.post.Group.configuration &&
+        this.post.Group.configuration?.hideDebate
+      ) {
+        this.disableDebate = true;
+        return;
+      }
       if (
         this.post.Group &&
         this.post.Group.configuration &&
