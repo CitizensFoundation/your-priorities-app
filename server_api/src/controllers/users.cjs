@@ -1281,6 +1281,15 @@ const setSAMLSettingsOnUser = (req, user, done) => {
         }
       }
 
+      if (
+        !forceSecureSamlLogin &&
+        req.ypDomain &&
+        req.ypDomain.configuration &&
+        req.ypDomain.configuration.forceElectronicIds
+      ) {
+        forceSecureSamlLogin = true;
+      }
+
       if (user.dataValues) {
         user.dataValues.forceSecureSamlLogin = forceSecureSamlLogin;
         user.dataValues.customSamlDeniedMessage = customSamlDeniedMessage;

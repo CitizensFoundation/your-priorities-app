@@ -350,6 +350,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
+          text: "forceElectronicIds",
+          type: "checkbox",
+        },
+        {
           text: "welcomeHtmlInsteadOfCommunitiesList",
           type: "textarea",
           rows: 5,

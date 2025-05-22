@@ -486,6 +486,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   onlyAdminsCanCreateCommunities?: boolean;
   directSamlIntegration?: boolean;
   useLoginOnDomainIfNotLoggedIn?: boolean;
+  forceElectronicIds?: boolean;
   disableArrowBasedTopNavigation?: boolean;
   useFixedTopAppBar?: boolean;
   onlyAllowCreateUserOnInvite?: boolean;

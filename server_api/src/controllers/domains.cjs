@@ -826,6 +826,7 @@ function updateDomainProperties(domain, req) {
   domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken !== "") ? req.body.ziggeoApplicationToken : null);
   domain.set('configuration.ga4Tag', (req.body.ga4Tag && req.body.ga4Tag !== "") ? req.body.ga4Tag : null);
   domain.set('configuration.useLoginOnDomainIfNotLoggedIn', truthValueFromBody(req.body.useLoginOnDomainIfNotLoggedIn));
+  domain.set('configuration.forceElectronicIds', truthValueFromBody(req.body.forceElectronicIds));
 
   if (req.body.google_analytics_code && req.body.google_analytics_code !== "") {
     domain.google_analytics_code = req.body.google_analytics_code;
