@@ -90,7 +90,7 @@ export class YpServerApi extends YpServerApiBase {
 
   public sendAudioView(body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + '/audios/videoView',
+      this.baseUrlPath + '/audios/audioListen',
       {
         method: 'PUT',
         body: JSON.stringify(body),
