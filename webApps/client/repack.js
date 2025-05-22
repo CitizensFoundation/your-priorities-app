@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import tar from 'tar';
+import * as tar from 'tar';
 import os from 'os';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';

@@ -839,6 +839,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "disableDebate",
         },
         {
+          text: "hideDebate",
+          type: "checkbox",
+          value: this.group.configuration.hideDebate,
+          translationToken: "hideDebate",
+        },
+        {
           text: "allowAdminsToDebate",
           type: "checkbox",
           value: this.group.configuration.allowAdminsToDebate,
