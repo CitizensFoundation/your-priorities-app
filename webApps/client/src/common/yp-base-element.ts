@@ -346,7 +346,7 @@ export class YpBaseElement extends LitElement {
               @click="${this.toggleHighContrast}"
               ><md-icon>contrast</md-icon></md-outlined-icon-button
             >
-          </div> `
+          `
           : html`
               <md-outlined-icon-button
                 class="darkModeButton"
