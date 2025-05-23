@@ -274,6 +274,51 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
+  public createCategory(groupId: number, body: Record<string, unknown>) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/categories/${groupId}`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public updateCategory(categoryId: number, body: Record<string, unknown>) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/categories/${categoryId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public deleteCategory(categoryId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/categories/${categoryId}`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public getCategory(categoryId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/categories/${categoryId}`
+    );
+  }
+
+  public getCategoryPostsCount(categoryId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/categories/${categoryId}/getPostsCount`
+    );
+  }
+
   public getAnalyticsData(communityId: number, type: string, params: string) {
     return this.fetchWrapper(
       this.baseUrlPath +
