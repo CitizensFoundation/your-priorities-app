@@ -639,7 +639,8 @@ export class AoiSurveyVoting extends YpBaseElement {
                     <yp-image
                       slot="icon"
                       .src="${this.leftAnswer?.imageUrl}"
-                      alt="Left answer image"
+                      .alt="${this.leftAnswer?.content || this.leftAnswer}"
+                      .title="${this.leftAnswer?.content || this.leftAnswer}"
                       ?rtl="${this.rtl}"
                       class="iconImage"
                     ></yp-image>
@@ -684,7 +685,8 @@ export class AoiSurveyVoting extends YpBaseElement {
                       slot="icon"
                       ?rtl="${this.rtl}"
                       src="${this.rightAnswer?.imageUrl}"
-                      alt="Right answer image"
+                      .alt="${this.rightAnswer?.content || this.rightAnswer}"
+                      .title="${this.rightAnswer?.content || this.rightAnswer}"
                       class="iconImageRight"
                     ></yp-image>
                   `
