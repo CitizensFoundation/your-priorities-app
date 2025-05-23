@@ -103,6 +103,7 @@ export class YpPostUserImageCard extends YpBaseElement {
         class="material layout vertical shadow-elevation-2dp shadow-transition">
         <yp-image
           .alt="${this.image.description}"
+          .title="${this.image.description}"
           sizing="cover"
           src="${this.imageUrl}"></yp-image>
         <div class="description">
