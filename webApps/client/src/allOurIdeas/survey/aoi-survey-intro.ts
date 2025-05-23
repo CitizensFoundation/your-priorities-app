@@ -237,6 +237,7 @@ export class AoiSurveyIntro extends YpBaseElement {
             class="column image"
             sizing="contain"
             .alt="${this.group.name}"
+            .title="${this.group.name}"
             src="${YpMediaHelpers.getImageFormatUrl(
               this.group.GroupLogoImages
             )}"
