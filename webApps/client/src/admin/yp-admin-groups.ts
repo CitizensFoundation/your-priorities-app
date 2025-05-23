@@ -78,6 +78,7 @@ export class YpAdminGroups extends YpBaseElementWithLogin {
           class="mainImage"
           sizing="contain"
           .alt="${group.name}"
+          .title="${group.name}"
           .src="${groupImage}"
         ></yp-image>
         <div class="layout vertical">
