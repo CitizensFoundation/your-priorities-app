@@ -815,6 +815,7 @@ export class YpLogin extends YpBaseElement {
         ?hidden="${this.assistantMode}"
         class="domainImage"
         .alt="${window.appGlobals.domain?.name}"
+        .title="${window.appGlobals.domain?.name}"
         sizing="cover"
         .src="${YpCollectionHelpers.logoImagePath(
           "domain",
