@@ -485,6 +485,7 @@ export class YpCollectionHeader extends YpBaseElement {
           class="image"
           ?hidden="${this.hideImage}"
           .alt="${this.collection.name}"
+          .title="${this.collection.name}"
           sizing="cover"
           .src="${YpCollectionHelpers.logoImagePath(
             this.collectionType,
@@ -563,6 +564,7 @@ export class YpCollectionHeader extends YpBaseElement {
         <yp-image
           class="bannerImage"
           .alt="${this.t("bannerImage")}"
+          .title="${this.t("bannerImage")}"
           sizing="cover"
           .src="${this.collectionHeaderImagePath}"
         ></yp-image>
