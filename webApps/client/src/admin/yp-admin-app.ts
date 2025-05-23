@@ -1240,6 +1240,7 @@ export class YpAdminApp extends YpBaseElement {
               <yp-image
                 class="collectionLogoImage"
                 sizing="contain"
+                .title="${this.collection?.name}"
                 .alt="${this.collection?.name}"
                 .src="${this.collection
                   ? YpCollectionHelpers.logoImagePath(
