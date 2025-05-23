@@ -690,7 +690,9 @@ interface YpAudioData extends YpBaseMedia {
 interface YpCategoryData {
   id: number;
   name: string;
+  description?: string;
   CategoryIconImages?: Array<YpImageData>;
+  CategoryHeaderImages?: Array<YpImageData>;
   count: number;
 }
 
