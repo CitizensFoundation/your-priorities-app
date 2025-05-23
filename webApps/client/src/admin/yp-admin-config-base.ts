@@ -575,6 +575,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             sizing="cover"
             .skipCloudFlare="${true}"
             .alt="${this.collection?.name}"
+            .title="${this.collection?.name}"
             src="${this.imagePreviewUrl}"
           ></yp-image>
           ${this.gettingImageColor
@@ -594,6 +595,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             class="image"
             sizing="cover"
             .alt="${this.collection?.name}"
+            .title="${this.collection?.name}"
             src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
           ></yp-image>
           ${this.gettingImageColor
@@ -612,6 +614,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           class="image"
           sizing="contain"
           .alt="${this.collection?.name}"
+          .title="${this.collection?.name}"
           src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/ypPlaceHolder2.jpg"
         ></yp-image>
       `;
