@@ -51,6 +51,7 @@ import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import "@material/web/list/list.js";
 import "@material/web/list/list-item.js";
 import "@material/web/button/text-button.js";
+import "../yp-category/yp-category-edit.js";
 
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
@@ -1829,7 +1830,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           anchor="menuAnchor"
         >
           <md-menu-item
-            hidden
             @click="${this._menuSelection}"
             id="newCategoryMenuItem"
           >
@@ -1909,6 +1909,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       this._openDelete();
     } else if (id === "cloneMenuItem") {
       this._openClone();
+    } else if (id === "newCategoryMenuItem") {
+      this._newCategory();
     }
 
     /*switch (id) {
@@ -1987,6 +1989,44 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       ...event.detail,
     };
     this.requestUpdate();
+  }
+
+  async _refreshCategories() {
+    const updatedGroup = (await window.serverApi.getGroup(
+      this.group.id
+    )) as YpGroupData;
+    if (updatedGroup && updatedGroup.Categories) {
+      this.group.Categories = updatedGroup.Categories;
+      this.requestUpdate();
+    }
+  }
+
+  _categoryUpdated() {
+    this._refreshCategories();
+  }
+
+  _categoryDeleted() {
+    this._refreshCategories();
+  }
+
+  _openCategoryEdit(category?: YpCategoryData) {
+    window.appDialogs.getDialogAsync(
+      "categoryEdit",
+      (dialog: any) => {
+        (dialog as any).setup(
+          this.group,
+          category ? false : true,
+          this._categoryUpdated.bind(this),
+          this._categoryDeleted.bind(this),
+          category
+        );
+        (dialog as any).open();
+      }
+    );
+  }
+
+  _newCategory() {
+    this._openCategoryEdit();
   }
 
   renderCreateEarl(
@@ -2424,14 +2464,15 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _categorySelected(event: CustomEvent) {
-    const categoryId = event.detail.value;
-    // Handle category selection here, such as opening an edit dialog
+    const categoryId = parseInt(event.detail.value as string);
+    const category = this.group.Categories?.find((c) => c.id === categoryId);
+    if (category) {
+      this._openCategoryEdit(category);
+    }
   }
 
   _categoryImageSrc(category: any) {
-    // Return the image source URL for the category icon
-    // This function needs to be implemented based on how you retrieve the image source
-    return `path/to/category/icons/${category.id}.png`;
+    return YpMediaHelpers.getImageFormatUrl(category.CategoryIconImages, 0);
   }
 
   _welcomePageSelected(event: CustomEvent) {

@@ -21,6 +21,7 @@ import "../yp-user/yp-reset-password.js";
 //import './yp-autotranslate-dialog.js';
 import "../yp-post/yp-post-edit.js";
 import "../yp-page/yp-page-dialog.js";
+import "../yp-category/yp-category-edit.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { YpSnackbar } from '../yp-app/yp-snackbar.js';
 
@@ -149,6 +150,11 @@ export class YpAppDialogs extends YpBaseElement {
       case 'userEdit':
         selectedDialog = html`
           <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+        `;
+        break;
+      case 'categoryEdit':
+        selectedDialog = html`
+          <yp-category-edit id="categoryEdit"></yp-category-edit>
         `;
         break;
       case 'shareDialog':
