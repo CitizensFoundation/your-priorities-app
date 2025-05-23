@@ -749,6 +749,7 @@ export class YpPostEdit extends YpEditBase {
             sizing="cover"
             .skipCloudFlare="${true}"
             .alt="${ifDefined(this.post?.name)}"
+            .title="${ifDefined(this.post?.name)}"
             src="${this.imagePreviewUrl}"
           ></yp-image>
         </div>
@@ -763,6 +764,7 @@ export class YpPostEdit extends YpEditBase {
             class="image"
             sizing="cover"
             .alt="${ifDefined(this.post?.name)}"
+            .title="${ifDefined(this.post?.name)}"
             src="${YpMediaHelpers.getImageFormatUrl(
               this.post?.PostHeaderImages
             )}"
@@ -775,6 +777,7 @@ export class YpPostEdit extends YpEditBase {
           class="image"
           sizing="contain"
           .alt="${ifDefined(this.post?.name)}"
+          .title="${ifDefined(this.post?.name)}"
           src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/ypPlaceHolder2.jpg"
         ></yp-image>
       `;
