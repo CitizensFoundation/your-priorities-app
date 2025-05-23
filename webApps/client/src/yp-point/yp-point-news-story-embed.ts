@@ -69,6 +69,7 @@ export class YpPointNewsStoryEmbed extends YpBaseElement {
                     sizing="contain"
                     src="${this.embedData.thumbnail_url}"
                     .alt="${this.embedData.title}"
+                    .title="${this.embedData.title}"
                     ?hidden="${this.embedData.html != null}"></yp-image>
                   <div id="embedHtml" ?hidden="${!this.embedData.html}">
                     <div .inner-h-t-m-l="${this.embedData}"></div>
