@@ -80,6 +80,7 @@ export class YpAdminCommunities extends YpBaseElementWithLogin {
           class="mainImage"
           sizing="contain"
           .alt="${community.name}"
+          .title="${community.name}"
           .src="${communityImage}"
         ></yp-image>
         <div class="layout vertical">
