@@ -6,6 +6,7 @@ import "../yp-file-upload/yp-file-upload.js";
 
 import { YpEditBase } from "../common/yp-edit-base.js";
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
+import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 
 @customElement("yp-category-edit")
 export class YpCategoryEdit extends YpEditBase {
@@ -18,6 +19,9 @@ export class YpCategoryEdit extends YpEditBase {
   @property({ type: Number })
   uploadedIconImageId: number | undefined;
 
+  @property({ type: Object })
+  deletedFunction: Function | undefined;
+
   @property({ type: String })
   action = "/categories";
 
@@ -27,6 +31,10 @@ export class YpCategoryEdit extends YpEditBase {
       css`
         md-outlined-text-field {
           margin-bottom: 16px;
+        }
+
+        .deleteButton {
+          --md-sys-color-primary: var(--md-sys-color-error);
         }
       `,
     ];
@@ -70,6 +78,15 @@ export class YpCategoryEdit extends YpEditBase {
               .value="${this.uploadedIconImageId}"
             />`
           : nothing}
+
+        ${!this.new
+          ? html`<md-text-button
+              slot="actions"
+              class="deleteButton"
+              @click="${this._deleteCategory}"
+              >${this.t("deleteCategory")}</md-text-button
+            >`
+          : nothing}
       </yp-edit-dialog>
     `;
   }
@@ -78,6 +95,31 @@ export class YpCategoryEdit extends YpEditBase {
     this.category = { id: -1, name: "", count: 0 } as YpCategoryData;
     this.uploadedIconImageId = undefined;
     (this.$$("#iconImageUpload") as YpFileUpload)?.clear();
+  }
+
+  _deleteCategory() {
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("deleteCategory"),
+          this._reallyDeleteCategory.bind(this),
+          false,
+          true
+        );
+      }
+    );
+  }
+
+  async _reallyDeleteCategory() {
+    if (this.category) {
+      await window.adminServerApi.deleteCategory(this.category.id);
+      if (typeof this.deletedFunction === "function") {
+        this.deletedFunction(this.category);
+      }
+      this.close();
+      window.appGlobals.notifyUserViaToast(this.t("categoryDeleted"));
+    }
   }
 
   setup(
@@ -90,6 +132,7 @@ export class YpCategoryEdit extends YpEditBase {
     this.group = group;
     this.new = newNotEdit;
     this.refreshFunction = refreshFunction;
+    this.deletedFunction = deletedFunction;
     this.category = category ? { ...category } : { id: -1, name: "", count: 0 };
     if (category) {
       this.action = `/categories/${category.id}`;
