@@ -239,6 +239,7 @@ export class YpPostsFilter extends YpBaseElement {
                           height="24"
                           width="24"
                           .alt="${category.name}"
+                          .title="${category.name}"
                           src="${this._categoryImageSrc(category)}"
                         ></yp-image>
                         ${category.name} (${category.count})
