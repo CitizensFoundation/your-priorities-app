@@ -343,6 +343,7 @@ export class YpCollectionItemCard extends YpBaseElement {
               sizing="cover"
               ?archived="${this.archived}"
               alt="${this.collection!.name}"
+              .title="${this.collection!.name}"
               ?featured="${this.featured}"
               preload
               .src="${YpCollectionHelpers.logoImagePath(
@@ -357,6 +358,7 @@ export class YpCollectionItemCard extends YpBaseElement {
               ?archived="${this.archived}"
               sizing="cover"
               .alt="${this.collection!.name}"
+              .title="${this.collection!.name}"
               class="main-image withPointer"
               src="https://i.imgur.com/sdsFAoT.png"
             ></yp-image>
