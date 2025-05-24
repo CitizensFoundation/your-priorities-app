@@ -834,6 +834,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
             0
           )}"
           class="agentHeaderImage"
+          alt="${this.group.name}"
         />
         <div class="layout vertical agentHeaderText">${this.group.name}</div>
       </div>
