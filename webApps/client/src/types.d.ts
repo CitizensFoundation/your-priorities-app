@@ -625,6 +625,8 @@ interface YpCommunityData extends YpCollectionData {
   Domain?: YpDomainData;
   CommunityFolder?: YpCommunityData;
   hostnameTaken?: boolean;
+  ip_address?: string;
+  user_agent?: string;
 }
 
 interface YpDomainGetResponse {
@@ -659,6 +661,9 @@ interface YpGroupData extends YpCollectionData {
   CommunityLink?: YpCommunityData;
   GroupAdmins?: Array<YpUserData>;
   GroupUsers?: Array<YpUserData>;
+
+  ip_address?: string;
+  user_agent?: string;
 
   save: () => Promise<YpGroupData>;
 }

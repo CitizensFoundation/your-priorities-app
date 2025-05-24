@@ -1,6 +1,6 @@
 import { initializeModels, PsAgentClass, PsAgent, PsAiModel } from "@policysynth/agents/dbModels/index.js";
-import { PsAiModelType, PsAiModelSize } from "@policysynth/agents/aiModelTypes.js";
-import models from "../../src/models/index.cjs";
+import models from "../../models/index.cjs";
+import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
 
 (async () => {
   const [domainIdArg, agentClassIdArg] = process.argv.slice(2);
@@ -21,7 +21,7 @@ import models from "../../src/models/index.cjs";
   }
 
   try {
-    await initializeModels();
+    await NewAiModelSetup.initializeModels();
 
     const domain = await models.Domain.findByPk(domainId);
     if (!domain) {
@@ -33,7 +33,7 @@ import models from "../../src/models/index.cjs";
       domain_id: domainId,
       name: `Agent Workflow Template ${Date.now()}`,
       hostname: `agent-workflow-${Date.now()}`,
-      access: models.Community.ACCESS_PUBLIC,
+      access: 1,
       ip_address: "127.0.0.1",
       user_agent: "generateAgentWorkflowTemplateFromAgentClass.ts",
       configuration: {},
@@ -43,7 +43,7 @@ import models from "../../src/models/index.cjs";
     const group = await models.Group.create({
       community_id: community.id,
       name: "Agent Workflow",
-      access: models.Group.ACCESS_PUBLIC,
+      access: 0,
       ip_address: "127.0.0.1",
       user_agent: "generateAgentWorkflowTemplateFromAgentClass.ts",
       configuration: { groupType: 3, agents: {} },
@@ -66,49 +66,27 @@ import models from "../../src/models/index.cjs";
     const geminiReasoning = await PsAiModel.findOne({
       where: { name: "Gemini 2.5 Pro Preview 2" },
     });
+
     if (geminiReasoning) {
       await psAgent.addAiModel(geminiReasoning);
     } else {
-      const created = await PsAiModel.create({
-        name: "Gemini 2.5 Pro Preview 2",
-        user_id: agentClass.user_id,
-        organization_id: 1,
-        configuration: {
-          type: PsAiModelType.TextReasoning,
-          modelSize: PsAiModelSize.Medium,
-          provider: "google",
-          model: "gemini-2.5-pro-preview-05-06",
-          active: true,
-        },
-      });
-      await psAgent.addAiModel(created);
+      throw new Error("Gemini 2.5 Pro Preview 2 model not found");
     }
 
     // Add Gemini 2.0 Flash model
     const geminiFlash = await PsAiModel.findOne({
       where: { name: "Gemini 2.0 Flash" },
     });
+
     if (geminiFlash) {
       await psAgent.addAiModel(geminiFlash);
     } else {
-      const created = await PsAiModel.create({
-        name: "Gemini 2.0 Flash",
-        user_id: agentClass.user_id,
-        organization_id: 1,
-        configuration: {
-          type: PsAiModelType.Text,
-          modelSize: PsAiModelSize.Medium,
-          provider: "google",
-          model: "gemini-2.0-flash",
-          active: true,
-        },
-      });
-      await psAgent.addAiModel(created);
+      throw new Error("Gemini 2.0 Flash model not found");
     }
 
     // Update group configuration with top level agent id
     group.configuration.agents = { topLevelAgentId: psAgent.id };
-    (group as any).changed("configuration", true);
+    group.changed("configuration", true);
     await group.save();
 
     console.log(
