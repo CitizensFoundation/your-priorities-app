@@ -827,6 +827,10 @@ function updateDomainProperties(domain, req) {
   domain.set('configuration.ga4Tag', (req.body.ga4Tag && req.body.ga4Tag !== "") ? req.body.ga4Tag : null);
   domain.set('configuration.useLoginOnDomainIfNotLoggedIn', truthValueFromBody(req.body.useLoginOnDomainIfNotLoggedIn));
   domain.set('configuration.forceElectronicIds', truthValueFromBody(req.body.forceElectronicIds));
+  domain.set(
+    'configuration.doNotCreateElectronicIdUsersAutomatically',
+    truthValueFromBody(req.body.doNotCreateElectronicIdUsersAutomatically)
+  );
 
   if (req.body.google_analytics_code && req.body.google_analytics_code !== "") {
     domain.google_analytics_code = req.body.google_analytics_code;
