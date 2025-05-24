@@ -491,6 +491,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   disableArrowBasedTopNavigation?: boolean;
   useFixedTopAppBar?: boolean;
   onlyAllowCreateUserOnInvite?: boolean;
+  customerAiTokenMarkupPercent?: number;
   hideDomainNews?: boolean;
 }
 
