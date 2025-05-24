@@ -487,6 +487,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   directSamlIntegration?: boolean;
   useLoginOnDomainIfNotLoggedIn?: boolean;
   forceElectronicIds?: boolean;
+  doNotCreateElectronicIdUsersAutomatically?: boolean;
   disableArrowBasedTopNavigation?: boolean;
   useFixedTopAppBar?: boolean;
   onlyAllowCreateUserOnInvite?: boolean;

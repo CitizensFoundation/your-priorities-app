@@ -125,7 +125,7 @@ module.exports = (sequelize, DataTypes) => {
   User.serializeSamlUser = (profile, req, callback) => {
     log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
     if (profile.UserSSN) {
-      sequelize.models.User.serializeIslandIsSamlUser(profile, callback);
+      sequelize.models.User.serializeIslandIsSamlUser(profile, req, callback);
     } else if (profile["urn:mynj:userCode"] || profile.issuer === 'https://my.state.nj.us/idp/shibboleth') {
       sequelize.models.User.serializeMyNJSamlUser(profile, req, callback);
     } else {
@@ -194,6 +194,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       (seriesCallback) => {
         if (!user) {
+          if (
+            req.ypDomain.configuration &&
+            req.ypDomain.configuration.doNotCreateElectronicIdUsersAutomatically
+          ) {
+            seriesCallback("customError");
+            return;
+          }
           sequelize.models.User.create(
             {
               ssn: profile["urn:mynj:userCode"],
@@ -232,7 +239,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  User.serializeIslandIsSamlUser = (profile, callback) => {
+  User.serializeIslandIsSamlUser = (profile, req, callback) => {
     log.info("User Serialized In Serialize IslandIs SAML User", { context: 'serializeSamlUser', profile: profile });
     let user;
     async.series([
@@ -256,6 +263,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       (seriesCallback) => {
         if (!user) {
+          if (
+            req.ypDomain.configuration &&
+            req.ypDomain.configuration.doNotCreateElectronicIdUsersAutomatically
+          ) {
+            seriesCallback("customError");
+            return;
+          }
           sequelize.models.User.create(
             {
               ssn: profile.UserSSN,
@@ -311,6 +325,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       (seriesCallback) => {
         if (!user) {
+          if (
+            req.ypDomain.configuration &&
+            req.ypDomain.configuration.doNotCreateElectronicIdUsersAutomatically
+          ) {
+            seriesCallback("customError");
+            return;
+          }
           sequelize.models.User.create({
             ssn: profile.nationalRegisterId,
             name: profile.name,

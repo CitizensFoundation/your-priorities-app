@@ -354,6 +354,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
+          text: "doNotCreateElectronicIdUsersAutomatically",
+          type: "checkbox",
+        },
+        {
           text: "welcomeHtmlInsteadOfCommunitiesList",
           type: "textarea",
           rows: 5,

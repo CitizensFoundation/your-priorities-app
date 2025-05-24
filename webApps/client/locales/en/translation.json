@@ -776,6 +776,7 @@
   "forceSecureSamlLoginInfo": "To access this group you need to login with secure electronic identification to ensure one vote per person. Click below to login.",
   "forceSecureSamlLogin": "Force secure SAML eID login",
   "forceElectronicIds": "Force electronic ID login",
+  "doNotCreateElectronicIdUsersAutomatically": "Do not automatically create electronic ID users",
   "areYouSureYouWantToAnonymizeUser": "Are you sure you want to anonymize your account?",
   "areYouReallySureYouWantToAnonymizeUser": "Are you 100% sure you want to anonymize your account? All your posts, points, comments and endorsements will be anonymized",
   "deleteAccount": "Delete Account",
