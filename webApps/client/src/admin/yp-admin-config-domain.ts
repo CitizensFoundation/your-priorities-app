@@ -171,6 +171,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           useLoginOnDomainIfNotLoggedIn: true,
           disableArrowBasedTopNavigation: true,
           useFixedTopAppBar: true,
+          customerAiTokenMarkupPercent: 0,
         } as YpDomainConfiguration,
       } as YpDomainData;
 
@@ -344,6 +345,15 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
         {
           text: "disableArrowBasedTopNavigation",
           type: "checkbox",
+        },
+        {
+          text: "customerAiTokenMarkupPercent",
+          type: "textfield",
+          maxLength: 4,
+          value:
+            (this.collection?.configuration as YpDomainConfiguration)
+              .customerAiTokenMarkupPercent,
+          translationToken: "customerAiTokenMarkupPercent",
         },
         {
           text: "useLoginOnDomainIfNotLoggedIn",
