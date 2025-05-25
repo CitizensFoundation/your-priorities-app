@@ -25,9 +25,9 @@ import models from '../../models/index.cjs';
       name,
       status: 'active',
       ssn: ssn ? Number(ssn) : undefined,
-      encrypted_password: hashed as any,
-    } as any);
-    await (domain as any).addDomainUsers(user as any);
+      encrypted_password: hashed,
+    });
+    await domain.addDomainUsers!(user);
     console.log(`User ${email} created and added to domain ${domain.name}`);
     process.exit(0);
   } catch (err) {

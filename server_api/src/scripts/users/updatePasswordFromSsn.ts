@@ -14,7 +14,7 @@ import models from '../../models/index.cjs';
       console.error(`User with ssn ${ssn} not found`);
       process.exit(1);
     }
-    (user as any).encrypted_password = await bcrypt.hash(password, 10);
+    user.encrypted_password = await bcrypt.hash(password, 10);
     await user.save();
     console.log(`Updated password for ${user.email}`);
     process.exit(0);

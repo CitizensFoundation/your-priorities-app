@@ -13,7 +13,7 @@ import models from '../../models/index.cjs';
       process.exit(1);
     }
     const ssn = Number(ssnArg);
-    user.ssn = ssn as any;
+    user.ssn = ssn;
     await user.save();
     console.log(`Updated SSN for ${email}`);
     process.exit(0);

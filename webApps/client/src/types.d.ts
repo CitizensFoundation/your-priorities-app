@@ -604,6 +604,13 @@ interface YpDomainData extends YpCollectionData {
   hasLlm?: boolean;
   access?: number;
   googleMapsApiKey?: string;
+  DomainUsers?: Array<YpUserData>;
+  ip_address?: string;
+  user_agent?: string;
+
+  save?: () => Promise<YpDomainData>;
+  addDomainUsers?: (user: YpUserData) => Promise<void>;
+  removeDomainUsers?: (user: YpUserData) => Promise<void>;
 }
 
 interface YpCommunityData extends YpCollectionData {
@@ -874,6 +881,8 @@ interface YpUserData {
   notifications_settings?: AcNotificationSettingsData;
   default_locale?: string;
   hasRegistrationAnswers?: boolean;
+  encrypted_password?: string;
+  status?: string;
 }
 
 declare interface IronListInterface extends HTMLElement {

@@ -18,7 +18,7 @@ import models from '../../models/index.cjs';
       console.error(`User ${email} not found`);
       process.exit(1);
     }
-    await (domain as any).removeDomainUsers(user as any);
+    await domain.removeDomainUsers!(user);
     console.log(`Removed ${email} from domain ${domain.name}`);
     process.exit(0);
   } catch (err) {
