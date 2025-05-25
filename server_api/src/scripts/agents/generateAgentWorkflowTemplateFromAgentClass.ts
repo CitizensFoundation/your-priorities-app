@@ -83,6 +83,8 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
     group.changed("configuration", true);
     await group.save();
 
+    await NewAiModelSetup.setupApiKeysForGroup(group);
+
     // Create working agent from class and attach to top level agent
     const agentClass = await PsAgentClass.findByPk(agentClassId);
     if (!agentClass) {
