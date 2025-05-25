@@ -266,6 +266,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
                       this.collection!
                     )
                   )}"
+                  alt="${this.collection?.name || 'Collection logo'}"
                 />
               </div>
               <div></div>
