@@ -123,6 +123,7 @@ export class YpOrganizationGrid extends YpBaseElement {
               <div class="pageItem">
                 <img
                   src="${this._organizationImageUrl(organization)}"
+                  alt="${organization.name}"
                   class="orgLogo"
                 />
               </div>
