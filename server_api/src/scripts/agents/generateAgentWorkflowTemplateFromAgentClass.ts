@@ -1,4 +1,9 @@
-import { initializeModels, PsAgentClass, PsAgent, PsAiModel } from "@policysynth/agents/dbModels/index.js";
+import {
+  initializeModels,
+  PsAgentClass,
+  PsAgent,
+  PsAiModel,
+} from "@policysynth/agents/dbModels/index.js";
 import models from "../../models/index.cjs";
 import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
 
@@ -21,6 +26,7 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
   }
 
   try {
+    await initializeModels();
     await NewAiModelSetup.seedAiModels(1);
 
     const domain = await models.Domain.findByPk(domainId);
@@ -51,7 +57,33 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
       configuration: { groupType: 3, agents: {} },
     });
 
-    // Create PsAgent from class
+    // Create top level agent for the workflow
+    const topLevelUuid = process.env.CLASS_ID_FOR_TOP_LEVEL_AGENT;
+    if (!topLevelUuid) {
+      throw new Error("CLASS_ID_FOR_TOP_LEVEL_AGENT environment variable not set");
+    }
+
+    const topLevelClass = await PsAgentClass.findOne({
+      where: { class_base_id: topLevelUuid },
+    });
+
+    if (!topLevelClass) {
+      throw new Error("Top level agent class not found");
+    }
+
+    const topLevelAgent = await PsAgent.create({
+      user_id: topLevelClass.user_id,
+      class_id: topLevelClass.id,
+      group_id: group.id,
+      configuration: { name: `${group.name} Top-Level Agent` },
+    });
+
+    // Update group configuration with top level agent id
+    group.configuration.agents = { topLevelAgentId: topLevelAgent.id };
+    group.changed("configuration", true);
+    await group.save();
+
+    // Create working agent from class and attach to top level agent
     const agentClass = await PsAgentClass.findByPk(agentClassId);
     if (!agentClass) {
       throw new Error(`PsAgentClass ${agentClassId} not found`);
@@ -61,6 +93,7 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
       user_id: agentClass.user_id,
       class_id: agentClass.id,
       group_id: group.id,
+      parent_agent_id: topLevelAgent.id,
       configuration: {},
     });
 
@@ -86,13 +119,8 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
       throw new Error("Gemini 2.0 Flash model not found");
     }
 
-    // Update group configuration with top level agent id
-    group.configuration.agents = { topLevelAgentId: psAgent.id };
-    group.changed("configuration", true);
-    await group.save();
-
     console.log(
-      `Created community ${community.id}, group ${group.id}, agent ${psAgent.id}`
+      `Created community ${community.id}, group ${group.id}, top-level agent ${topLevelAgent.id}, working agent ${psAgent.id}`
     );
   } catch (error) {
     console.error(error);
