@@ -561,7 +561,14 @@ export class YourPrioritiesApi {
     this.app.use(requestIp.mw());
     this.app.use(bodyParser.json({ limit: "100mb", strict: false }));
     this.app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
-    this.app.use(cors());
+    if (process.env.ALLOWED_ORIGINS) {
+      this.app.use(cors({
+        origin: process.env.ALLOWED_ORIGINS.split(","),
+        credentials: true,
+      }));
+    } else {
+      this.app.use(cors());
+    }
     this.app.use(compression());
     this.app.set("views", __dirname + "/views");
     this.app.set("view engine", "pug");
@@ -572,13 +579,21 @@ export class YourPrioritiesApi {
       throw new Error("SESSION_SECRET is not set");
     }
 
+    let cookieValues: any =  {
+      autoSubDomain: true,
+    }
+
+    if (process.env.ALLOWED_ORIGINS) {
+      cookieValues.sameSite = "none";
+    }
+
     const sessionConfig = {
       store: store,
       name: "yrpri.sid",
       secret: process.env.SESSION_SECRET,
       resave: false,
       proxy: process.env.USING_NGINX_PROXY ? true : undefined,
-      cookie: { autoSubDomain: true },
+      cookie: cookieValues,
       saveUninitialized: false,
     };
 
