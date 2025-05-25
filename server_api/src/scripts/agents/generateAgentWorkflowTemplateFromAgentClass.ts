@@ -21,7 +21,7 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
   }
 
   try {
-    await NewAiModelSetup.initializeModels();
+    await NewAiModelSetup.seedAiModels(1);
 
     const domain = await models.Domain.findByPk(domainId);
     if (!domain) {
