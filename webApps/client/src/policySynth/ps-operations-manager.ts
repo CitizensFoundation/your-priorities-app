@@ -563,6 +563,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
             0
           )}"
           class="agentHeaderImage"
+          alt="${this.group.name}"
         />
         <div class="layout vertical agentHeaderText">
           <div class="workflowName">${this.t("workflow")}</div>
