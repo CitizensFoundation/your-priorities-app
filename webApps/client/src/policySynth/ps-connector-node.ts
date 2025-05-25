@@ -160,6 +160,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
           class="image"
           ?has-static-theme=${this.hasStaticTheme}
           src="${this.connector.Class?.configuration.imageUrl}"
+          alt="${this.connector.Class?.name}"
         />
       </div>
     `;
