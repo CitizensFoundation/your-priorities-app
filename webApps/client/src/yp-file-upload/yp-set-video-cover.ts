@@ -103,6 +103,7 @@ export class YpSetVideoCover extends YpBaseElement {
                     @click="${this._selectVideoCover}"
                     sizing="cover"
                     class="previewFrame"
+                    alt="Preview frame ${index + 1}"
                     src="${image}" />
                 `
               )}
