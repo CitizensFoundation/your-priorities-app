@@ -32,6 +32,9 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
   @property({ type: String })
   avatarUrl?: string;
 
+  @property({ type: String })
+  avatarAltText = "Voice Assistant";
+
   override firstUpdated(changedProps: Map<string, any>) {
     super.firstUpdated(changedProps);
   }
@@ -122,7 +125,7 @@ export class YpAssistantItemBase extends YpAiChatbotItemBase {
 
   renderAvatar() {
     if (this.avatarUrl) {
-      return html`<img class="avatar" src="${this.avatarUrl}" />`;
+      return html`<img class="avatar" src="${this.avatarUrl}" alt="${this.avatarAltText}" />`;
     } else {
       return this.renderCGImage();
     }
