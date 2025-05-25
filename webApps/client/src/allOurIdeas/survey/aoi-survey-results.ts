@@ -304,6 +304,7 @@ export class AoiSurveyResuls extends YpBaseElement {
                 class="answerImage"
                 ?hidden="${result.data.imageUrl == undefined}"
                 src="${result.data.imageUrl!}"
+                alt="${result.data.content}"
               />
             </div>
             <div
