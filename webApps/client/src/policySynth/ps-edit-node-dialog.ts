@@ -136,6 +136,7 @@ export class PsEditNodeDialog extends YpBaseElement {
         <div>
           <img
             src="${this.nodeToEditInfo.Class.configuration.imageUrl}"
+            alt="${this.nodeToEditInfo.Class.name}"
             class="nodeEditHeadlineImage"
           />
         </div>
