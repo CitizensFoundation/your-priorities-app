@@ -2,9 +2,9 @@ import models from '../../models/index.cjs';
 
 (async () => {
   try {
-    const [domainName, name] = process.argv.slice(2);
+    const [userId, domainName, name] = process.argv.slice(2);
     if (!domainName || !name) {
-      console.log('Usage: node createDomain.js <domain_name> "<name>"');
+      console.log('Usage: node createDomain.js <user_id> <domain_name> "<name>"');
       process.exit(1);
     }
 
@@ -17,7 +17,8 @@ import models from '../../models/index.cjs';
     const domain = await models.Domain.create({
       domain_name: domainName,
       name,
-      access: models.Domain.ACCESS_PUBLIC,
+      access: 1,
+      user_id: parseInt(userId),
       ip_address: '127.0.0.1',
       user_agent: 'cli-script',
       default_locale: 'en',
