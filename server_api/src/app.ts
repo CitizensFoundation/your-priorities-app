@@ -1146,23 +1146,22 @@ export class YourPrioritiesApi {
           });
         }
 
-        log.error("General Error", {
-          context: "generalError",
-          user: req.user ? toJson(req.user) : null,
-          err: err,
-          protocol: req.protocol,
-          host: req.get("host"),
-          originalUrl: req.originalUrl,
-          body,
-          errStack: err.stack,
-          errorStatus: status,
-        });
+        if (status >= 500) {
+          log.error("General Error", {
+            context: "generalError",
+            user: req.user ? toJson(req.user) : null,
+            err: err,
+            protocol: req.protocol,
+            host: req.get("host"),
+            originalUrl: req.originalUrl,
+            body,
+            errStack: err.stack,
+            errorStatus: status,
+          });
 
-        err.url = req.url;
-        err.params = req.params;
+          err.url = req.url;
+          err.params = req.params;
 
-        if (status !== 404 && status !== 401) {
-          // Optionally notify an error tracking service like Airbrake
           if (airbrake) {
             airbrake.notify(err).then((airbrakeErr: any) => {
               if (airbrakeErr.error) {
@@ -1175,6 +1174,17 @@ export class YourPrioritiesApi {
               }
             });
           }
+        } else {
+          log.warn("Client Error", {
+            context: "clientError",
+            user: req.user ? toJson(req.user) : null,
+            err: err.message || err,
+            protocol: req.protocol,
+            host: req.get("host"),
+            originalUrl: req.originalUrl,
+            body,
+            errorStatus: status,
+          });
         }
         res.sendStatus(status);
       }
