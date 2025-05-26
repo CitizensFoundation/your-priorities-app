@@ -47,9 +47,9 @@ export class AllOurIdeasController {
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", auth.can("view group"), this.skip.bind(this));
         this.router.post("/:groupId/questions/:questionId/addIdea", auth.can("view group"), this.addIdea.bind(this));
         this.router.get("/:groupId/questions/:wsClientSocketId/:analysisIndex/:analysisTypeIndex/analysis", auth.can("view group"), this.analysis.bind(this));
-        this.router.put("/:communityId/questions/:questionId/choices/:choiceId", auth.can("create group"), this.updateCoiceData.bind(this));
-        this.router.put("/:domainId/questions/:questionId/choices/:choiceId/throughDomain", auth.can("create community"), this.updateCoiceData.bind(this));
-        this.router.put("/:groupId/questions/:questionId/choices/:choiceId/throughGroup", auth.can("view group"), this.updateCoiceData.bind(this));
+        this.router.put("/:communityId/questions/:questionId/choices/:choiceId", auth.can("create group"), this.updateChoiceData.bind(this));
+        this.router.put("/:domainId/questions/:questionId/choices/:choiceId/throughDomain", auth.can("create community"), this.updateChoiceData.bind(this));
+        this.router.put("/:groupId/questions/:questionId/choices/:choiceId/throughGroup", auth.can("view group"), this.updateChoiceData.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", auth.can("create group"), this.updateActive.bind(this));
         this.router.put("/:domainId/questions/:questionId/choices/:choiceId/active/throughDomain", auth.can("create community"), this.updateActive.bind(this));
         this.router.put("/:communityId/questions/:questionId/name", auth.can("create group"), this.updateQuestionName.bind(this));
@@ -409,7 +409,7 @@ export class AllOurIdeasController {
                 .json({ error: "An error occurred during question creation" });
         }
     }
-    async updateCoiceData(req, res) {
+    async updateChoiceData(req, res) {
         try {
             const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${req.params.choiceId}.json`, {
                 method: "PUT",

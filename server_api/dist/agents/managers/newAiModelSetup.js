@@ -575,7 +575,7 @@ export class NewAiModelSetup {
         });
         const gemini25ProPreview1Config = {
             type: PsAiModelType.TextReasoning,
-            modelSize: PsAiModelSize.Medium,
+            modelSize: PsAiModelSize.Large,
             provider: "google",
             prices: {
                 costInTokensPerMillion: 1.25,
@@ -612,7 +612,7 @@ export class NewAiModelSetup {
         });
         const gemini25ProConfig = {
             type: PsAiModelType.TextReasoning,
-            modelSize: PsAiModelSize.Medium,
+            modelSize: PsAiModelSize.Large,
             provider: "google",
             prices: {
                 costInTokensPerMillion: 1.25,
@@ -642,6 +642,43 @@ export class NewAiModelSetup {
             gemini25ProPreview2.set("configuration", gemini25ProConfig);
             gemini25ProPreview2.changed("configuration", true);
             await gemini25ProPreview2.save();
+            console.log("Google model already exists: Gemini 2.5 Pro");
+        }
+        const gemini25FlashPreview1 = await PsAiModel.findOne({
+            where: { name: "Gemini 2.5 Flash Preview 1" },
+        });
+        const gemini25FlashPreview1Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.15,
+                costOutTokensPerMillion: 0.6,
+                costInCachedContextTokensPerMillion: 0.09,
+                longContextTokenThreshold: 200000,
+                longContextCostInTokensPerMillion: 0.3,
+                longContextCostInCachedContextTokensPerMillion: 0.21,
+                longContextCostOutTokensPerMillion: 2.4,
+                currency: "USD",
+            },
+            model: "gemini-2.5-flash-preview-05-20",
+            active: true,
+            maxTokensOut: 100000,
+            defaultTemperature: 0.0
+        };
+        if (!gemini25FlashPreview1) {
+            await PsAiModel.create({
+                name: "Gemini 2.5 Flash Preview 1",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini25FlashPreview1Config,
+            });
+            console.log("Created Google model: Gemini 2.5 Flash Preview 1");
+        }
+        else {
+            gemini25FlashPreview1.set("configuration", gemini25FlashPreview1Config);
+            gemini25FlashPreview1.changed("configuration", true);
+            await gemini25FlashPreview1.save();
             console.log("Google model already exists: Gemini 2.5 Pro");
         }
     }
@@ -753,6 +790,7 @@ export class NewAiModelSetup {
             { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.5 Pro Preview 1", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.5 Pro Preview 2", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 2.5 Flash Preview 1", envKey: "GEMINI_API_KEY" },
             { name: "o1 24", envKey: "OPENAI_API_KEY" },
             { name: "o3 mini", envKey: "OPENAI_API_KEY" },
             { name: "o4 mini", envKey: "OPENAI_API_KEY" },

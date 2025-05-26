@@ -26,7 +26,7 @@ export declare class AllOurIdeasController {
     showEarl(req: Request, res: Response): Promise<void>;
     vote(req: Request, res: Response): Promise<void>;
     createQuestion(req: Request, res: Response): Promise<void>;
-    updateCoiceData(req: Request, res: Response): Promise<void>;
+    updateChoiceData(req: Request, res: Response): Promise<void>;
     updateActive(req: Request, res: Response): Promise<void>;
     updateQuestionName(req: Request, res: Response): Promise<void>;
     skip(req: Request, res: Response): Promise<void>;
