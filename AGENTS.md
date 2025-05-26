@@ -11,7 +11,7 @@ dist, ts-out, old, land_use_game, deployment, development
 - We use the Policy Synth agent library
 - We use Lit and Web Components on the client side
 - Types *.d.ts are loaded automatically both for server and client code
--- Never change package-lock.json directly
+- Never edit package-lock.json
 - Use npx tsc to test both server_api and webApps/client to make at least they compile after changes
 
 # Usful links
