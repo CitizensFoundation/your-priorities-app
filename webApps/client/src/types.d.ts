@@ -814,7 +814,7 @@ interface YpPointData {
       language?: string;
     };
     agent_data?: {
-      sender: "agent" | "human";
+      sender: "agent" | "user" | "system";
       review?: string;
       summary?: string;
     };
