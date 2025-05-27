@@ -815,6 +815,8 @@ interface YpPointData {
     };
     agent_data?: {
       sender: "agent" | "human";
+      review?: string;
+      summary?: string;
     };
   };
   embed_data?: YpEmbedData;

@@ -22,6 +22,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   disableWelcome = false;
 
+  skipRedirect = false;
+
   activityHost = "";
 
   domain: YpDomainData | undefined;
@@ -120,7 +122,7 @@ export class YpAppGlobals extends YpCodeBase {
     oneColorScheme: "tonal" as MaterialColorScheme,
     secondaryColor: "121212",
     neutralVariantColor: "ffffff",
-    useLowestContainerSurface: true
+    useLowestContainerSurface: true,
   };
 
   constructor(serverApi: YpServerApi, disableInit = false) {
@@ -339,7 +341,6 @@ export class YpAppGlobals extends YpCodeBase {
     this.boot();
   }
 
-
   async _userLoggedIn(event: CustomEvent) {
     const user: YpUserData = event.detail;
     if (user) {
@@ -409,13 +410,16 @@ export class YpAppGlobals extends YpCodeBase {
 
     defaultLocale = defaultLocale.replace("-", "_").toLowerCase();
 
-    const localesFolder = typeof __LOCALES_DIR__ !== 'undefined' ? __LOCALES_DIR__ : 'locales';
+    const localesFolder =
+      typeof __LOCALES_DIR__ !== "undefined" ? __LOCALES_DIR__ : "locales";
 
     i18next.use(HttpApi).init(
       {
         lng: defaultLocale,
         fallbackLng: "en",
-        backend: { loadPath: `${loadPathPrefix}/${localesFolder}/{{lng}}/{{ns}}.json` },
+        backend: {
+          loadPath: `${loadPathPrefix}/${localesFolder}/{{lng}}/{{ns}}.json`,
+        },
       },
       () => {
         window.appGlobals.locale = defaultLocale;
@@ -459,33 +463,40 @@ export class YpAppGlobals extends YpCodeBase {
     if (results) {
       this.domain = results.domain;
       this.googleMapsApiKey = results.domain.googleMapsApiKey;
-      this.hasLlm = results.domain.hasLlm !== undefined ? results.domain.hasLlm : false;
+      this.hasLlm =
+        results.domain.hasLlm !== undefined ? results.domain.hasLlm : false;
       this._domainChanged(this.domain);
       this.setupMyDomains();
-      //this.analytics.setupGoogleAnalytics(this.domain);
 
-      if (window.location.pathname == "/") {
-        if (
-          results.community &&
-          results.community.configuration &&
-          results.community.configuration.redirectToGroupId
-        ) {
-          YpNavHelpers.redirectTo(
-            "/group/" + results.community.configuration.redirectToGroupId
-          );
-        } else if (
-          results.community &&
-          !results.community.is_community_folder
-        ) {
-          YpNavHelpers.redirectTo("/community/" + results.community.id);
-        } else if (results.community && results.community.is_community_folder) {
-          YpNavHelpers.redirectTo("/community_folder/" + results.community.id);
-        } else {
-          YpNavHelpers.redirectTo("/domain/" + this.domain.id);
-          this.fireGlobal("yp-change-header", {
-            headerTitle: this.domain.domain_name,
-            headerDescription: this.domain.description,
-          });
+      if (!this.skipRedirect) {
+        if (window.location.pathname == "/") {
+          if (
+            results.community &&
+            results.community.configuration &&
+            results.community.configuration.redirectToGroupId
+          ) {
+            YpNavHelpers.redirectTo(
+              "/group/" + results.community.configuration.redirectToGroupId
+            );
+          } else if (
+            results.community &&
+            !results.community.is_community_folder
+          ) {
+            YpNavHelpers.redirectTo("/community/" + results.community.id);
+          } else if (
+            results.community &&
+            results.community.is_community_folder
+          ) {
+            YpNavHelpers.redirectTo(
+              "/community_folder/" + results.community.id
+            );
+          } else {
+            YpNavHelpers.redirectTo("/domain/" + this.domain.id);
+            this.fireGlobal("yp-change-header", {
+              headerTitle: this.domain.domain_name,
+              headerDescription: this.domain.description,
+            });
+          }
         }
       }
     }
