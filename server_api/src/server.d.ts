@@ -37,6 +37,7 @@ interface DomainClass extends DbData {
     ltp?: {
       crt?: LtpCurrentRealityTreeData
     }
+    customerAiTokenMarkupPercent?: number;
   };
 }
 
