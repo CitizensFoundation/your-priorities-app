@@ -2258,7 +2258,11 @@ router.get('/auth/oidc/callback', function(req, res) {
       log.error("Error from OIDC login", { err: error });
       res.sendStatus(500);
     } else {
-      res.render('samlLoginComplete', {});
+      if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
+        res.redirect('/');
+      } else {
+        res.render('samlLoginComplete', {});
+      }
     }
   })
 });
