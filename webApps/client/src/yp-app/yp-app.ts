@@ -1488,7 +1488,7 @@ export class YpApp extends YpBaseElement {
               );
             }
           } else if (!skipMasterScroll) {
-            console.error("AppLayout scroll to top");
+            console.info("AppLayout scroll to top");
             setTimeout(() => {
               window.scrollTo(0, 0);
             });
