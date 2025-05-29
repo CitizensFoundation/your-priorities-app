@@ -2256,7 +2256,11 @@ router.get('/auth/oidc/callback', function(req, res) {
   req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
       log.error("Error from OIDC login", { err: error });
-      res.sendStatus(500);
+      if (process.env.REDIRECT_AFTER_OIDC_ERROR_URL) {
+        res.redirect(process.env.REDIRECT_AFTER_OIDC_ERROR_URL);
+      } else {
+        res.sendStatus(500);
+      }
     } else {
       if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
         res.redirect('/');
@@ -2272,9 +2276,17 @@ router.get('/auth/audkenni/callback', async function(req, res) {
   req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
       log.error("Error from Audkenni login", { err: error });
-      res.sendStatus(500);
+      if (process.env.REDIRECT_AFTER_OIDC_ERROR_URL) {
+        res.redirect(process.env.REDIRECT_AFTER_OIDC_ERROR_URL);
+      } else {
+        res.sendStatus(500);
+      }
     } else {
-      res.render('samlLoginComplete', {});
+      if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
+        res.redirect('/');
+      } else {
+        res.render('samlLoginComplete', {});
+      }
     }
   })
 });
