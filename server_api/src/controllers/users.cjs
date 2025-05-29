@@ -17,22 +17,34 @@ const {sendPlausibleFavicon} = require("../services/engine/analytics/plausible/m
 var getAllModeratedItemsByUser = require('../services/engine/moderation/get_moderation_items.cjs').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../services/engine/moderation/process_moderation_items.cjs').performSingleModerationAction;
 
-const logoutFromSession = (req, res, statusCode = 200) => {
+const logoutFromSession = (req, res, statusCode = 200, callback) => {
   if (req.session) {
     req.session.destroy((err) => {
       if (err) {
         log.error("Error on destroying session", { err });
-        return res.sendStatus(500);
+        if (!callback) {
+          return res.sendStatus(500);
+        } else {
+          return callback(err);
+        }
       }
 
       res.clearCookie('yrpri.sid', { path: '/' });
 
       log.info("Session destroyed successfully");
 
-      res.sendStatus(statusCode);
+      if (callback) {
+        callback();
+      } else {
+        res.sendStatus(statusCode);
+      }
     });
   } else {
-    res.sendStatus(statusCode);
+    if (callback) {
+      callback();
+    } else {
+      res.sendStatus(statusCode);
+    }
   }
 }
 
@@ -1464,7 +1476,29 @@ router.post('/logout', function (req, res) {
   } else {
     log.warn('User Logging out but not logged in', { context: 'logout'});
   }
-  logoutFromSession(req, res);
+  const oidcProvider =
+    req.ypDomain &&
+    req.ypDomain.loginProviders &&
+    req.ypDomain.loginProviders.find((p) => p.provider === 'oidc');
+
+  if (req.sso && oidcProvider && oidcProvider.endSessionURL) {
+    logoutFromSession(req, res, 200, () => {
+      req.sso.logout(
+        oidcProvider.name,
+        { postLogoutRedirectUri: '/' },
+        req,
+        res,
+        (error) => {
+          if (error) {
+            log.error('Error logging out from OIDC', { err: error });
+            res.sendStatus(500);
+          }
+        }
+      );
+    });
+  } else {
+    logoutFromSession(req, res);
+  }
 });
 
 // Reset password

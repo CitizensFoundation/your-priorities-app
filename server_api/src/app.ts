@@ -542,6 +542,7 @@ export class YourPrioritiesApi {
         if (
           req.url.indexOf("/auth") > -1 ||
           req.url.indexOf("/login") > -1 ||
+          req.url.indexOf("/logout") > -1 ||
           req.url.indexOf("saml_assertion") > -1
         ) {
           sso.init(req.ypDomain?.loginHosts, req.ypDomain?.loginProviders, {

@@ -387,6 +387,7 @@ module.exports = (sequelize, DataTypes) => {
           if (
             req.url.indexOf("/auth") > -1 ||
             req.url.indexOf("/login") > -1 ||
+            req.url.indexOf("/logout") > -1 ||
             req.url.indexOf("saml_assertion") > -1
           ) {
             sequelize.models.Domain.getLoginProviders(
@@ -417,6 +418,7 @@ module.exports = (sequelize, DataTypes) => {
             if (
               req.url.indexOf("/auth") > -1 ||
               req.url.indexOf("/login") > -1 ||
+              req.url.indexOf("/logout") > -1 ||
               req.url.indexOf("saml_assertion") > -1
             ) {
               sequelize.models.Domain.getLoginProviders(
