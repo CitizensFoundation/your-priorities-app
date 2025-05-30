@@ -2316,7 +2316,9 @@ router.get('/auth/audkenni/callback', async function(req, res) {
         res.sendStatus(500);
       }
     } else {
-      if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
+      if (process.env.REDIRECT_AFTER_AUDKENNI_URL) {
+        res.redirect(process.env.REDIRECT_AFTER_AUDKENNI_URL);
+      } else if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
         res.redirect('/');
       } else {
         res.render('samlLoginComplete', {});
