@@ -11,11 +11,12 @@ import models from '../../models/index.cjs';
       authorizationURL,
       tokenURL,
       userInfoURL,
+      endSessionURL,
     ] = process.argv.slice(2);
 
     if (!xlsPath) {
       console.log(
-        'Usage: node importDomainsFromXls.js <path-to-xls> [clientId clientSecret issuer authorizationURL tokenURL userInfoURL]'
+        'Usage: node importDomainsFromXls.js <path-to-xls> [clientId clientSecret issuer authorizationURL tokenURL userInfoURL endSessionURL]'
       );
       process.exit(1);
     }
@@ -26,7 +27,8 @@ import models from '../../models/index.cjs';
       issuer &&
       authorizationURL &&
       tokenURL &&
-      userInfoURL;
+      userInfoURL &&
+      endSessionURL;
 
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(xlsPath);
@@ -45,6 +47,7 @@ import models from '../../models/index.cjs';
             authorizationURL,
             tokenURL,
             userInfoURL,
+            endSessionURL,
           }
         : null;
 

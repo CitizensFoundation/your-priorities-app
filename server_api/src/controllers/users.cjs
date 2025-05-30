@@ -1470,7 +1470,6 @@ router.delete('/anonymize_current_user', function (req, res) {
 });
 
 router.post('/logout', function (req, res) {
-  log.info("Anon debug logout");
   if (req.isAuthenticated()) {
     log.info('User Logging out', { userId: req.user.id, context: 'logout'});
   } else {
@@ -1481,8 +1480,12 @@ router.post('/logout', function (req, res) {
     req.ypDomain.loginProviders &&
     req.ypDomain.loginProviders.find((p) => p.provider === 'oidc');
 
+  log.info("oidcProvider", { oidcProvider });
+
   if (req.sso && oidcProvider && oidcProvider.endSessionURL) {
+    log.info("Logging out from OIDC");
     logoutFromSession(req, res, 200, () => {
+      log.info("Logging out from OIDC", { oidcProvider });
       req.sso.logout(
         oidcProvider.name,
         { postLogoutRedirectUri: '/' },

@@ -8,6 +8,7 @@ const issuer = process.argv[5];
 const authorizationURL = process.argv[6];
 const tokenURL = process.argv[7];
 const userInfoURL = process.argv[8];
+const endSessionURL = process.argv[9];
 
 console.log(`Updating OIDC keys for domain ${domainId}`);
 
@@ -33,7 +34,8 @@ async.series([
           issuer: issuer,
           authorizationURL: authorizationURL,
           tokenURL: tokenURL,
-          userInfoURL: userInfoURL
+          userInfoURL: userInfoURL,
+          endSessionURL: endSessionURL
         };
 
         console.log("Updated secret_api_keys:", JSON.stringify(domain.secret_api_keys, null, 2));

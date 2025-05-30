@@ -267,6 +267,7 @@ module.exports = (sequelize, DataTypes) => {
             authorizationURL: domain.secret_api_keys.oidc.authorizationURL,
             tokenURL: domain.secret_api_keys.oidc.tokenURL,
             userInfoURL: domain.secret_api_keys.oidc.userInfoURL,
+            endSessionURL: domain.secret_api_keys.oidc.endSessionURL,
             callbackUrl:
               "https://" +
               callbackDomainName +
