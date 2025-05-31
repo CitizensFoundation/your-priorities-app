@@ -601,6 +601,7 @@ interface YpDomainData extends YpCollectionData {
   Communities: Array<YpCommunityData>;
   facebookLoginProvided?: boolean;
   samlLoginProvided?: boolean;
+  audkenniRestLoginProvided?: boolean;
   loginCallbackCustomHostName?: string;
   hasLlm?: boolean;
   access?: number;
