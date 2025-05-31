@@ -3,12 +3,12 @@ import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
-import './yp-post-cover-media.js';
+import './yp-post-gallery-image.js';
 import './yp-post-actions.js';
 import '../yp-magic-text/yp-magic-text.js';
 import '@material/web/iconbutton/icon-button.js';
 
-import { YpPostCoverMedia } from './yp-post-cover-media.js';
+import { YpPostGalleryImage } from './yp-post-gallery-image.js';
 
 @customElement('yp-post-list-gallery-item')
 export class YpPostListGalleryItem extends YpBaseElement {
@@ -143,11 +143,14 @@ export class YpPostListGalleryItem extends YpBaseElement {
     return html`
       <div class="layout vertical mainContainer">
         <div class="layout vertical center-center">
-          <yp-post-cover-media
+          <yp-post-gallery-image
             class="image"
             .post="${this.post}"
-            sizingMode="cover"
-          ></yp-post-cover-media>
+            .imageWidth="${this.post.public_data?.galleryImageData?.width}"
+            .imageHeight="${this.post.public_data?.galleryImageData?.height}"
+            alt-tag="${this.post.name}"
+            sizing-mode="cover"
+          ></yp-post-gallery-image>
           <div class="layout vertical mainDataContainer">
             <div class="layout horizontal">
               <div class="layout vertical">
@@ -259,7 +262,7 @@ export class YpPostListGalleryItem extends YpBaseElement {
         dialog.open(
           this._fullPostUrl,
           this.post.name,
-          (this.$$('yp-post-cover-media') as YpPostCoverMedia).anyImagePath || '',
+          (this.$$('yp-post-gallery-image') as YpPostGalleryImage).anyImagePath || '',
           this._sharedContent
         );
       }
