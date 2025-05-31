@@ -880,7 +880,7 @@ interface YpUserData {
   OrganizationUsers?: Array<YpOrganizationData>;
   UserProfileImages?: Array<YpImageData>;
   facebook_id?: number;
-  ssn?: number;
+  ssn?: string;
   notifications_settings?: AcNotificationSettingsData;
   default_locale?: string;
   hasRegistrationAnswers?: boolean;
