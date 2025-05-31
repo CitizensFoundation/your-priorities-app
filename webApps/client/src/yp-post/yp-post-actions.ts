@@ -460,6 +460,10 @@ export class YpPostActions extends YpBaseElement {
         (this.post &&
           this.post.Group &&
           this.post.Group.configuration &&
+          this.post.Group.configuration.hideDebate) ||
+        (this.post &&
+          this.post.Group &&
+          this.post.Group.configuration &&
           this.post.Group.configuration.hideDebateIcon))
     );
   }
