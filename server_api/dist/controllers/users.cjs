@@ -15,20 +15,35 @@ const randomstring = require('randomstring');
 const { sendPlausibleFavicon } = require("../services/engine/analytics/plausible/manager.cjs");
 var getAllModeratedItemsByUser = require('../services/engine/moderation/get_moderation_items.cjs').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../services/engine/moderation/process_moderation_items.cjs').performSingleModerationAction;
-const logoutFromSession = (req, res, statusCode = 200) => {
+const logoutFromSession = (req, res, statusCode = 200, callback) => {
     if (req.session) {
         req.session.destroy((err) => {
             if (err) {
                 log.error("Error on destroying session", { err });
-                return res.sendStatus(500);
+                if (!callback) {
+                    return res.sendStatus(500);
+                }
+                else {
+                    return callback(err);
+                }
             }
             res.clearCookie('yrpri.sid', { path: '/' });
             log.info("Session destroyed successfully");
-            res.sendStatus(statusCode);
+            if (callback) {
+                callback();
+            }
+            else {
+                res.sendStatus(statusCode);
+            }
         });
     }
     else {
-        res.sendStatus(statusCode);
+        if (callback) {
+            callback();
+        }
+        else {
+            res.sendStatus(statusCode);
+        }
     }
 };
 var sendUserOrError = function (res, user, context, error, errorStatus) {
@@ -1422,14 +1437,31 @@ router.delete('/anonymize_current_user', function (req, res) {
     }
 });
 router.post('/logout', function (req, res) {
-    log.info("Anon debug logout");
     if (req.isAuthenticated()) {
         log.info('User Logging out', { userId: req.user.id, context: 'logout' });
     }
     else {
         log.warn('User Logging out but not logged in', { context: 'logout' });
     }
-    logoutFromSession(req, res);
+    const oidcProvider = req.ypDomain &&
+        req.ypDomain.loginProviders &&
+        req.ypDomain.loginProviders.find((p) => p.provider === 'oidc');
+    log.info("oidcProvider", { oidcProvider });
+    if (req.sso && oidcProvider && oidcProvider.endSessionURL) {
+        log.info("Logging out from OIDC");
+        logoutFromSession(req, res, 200, () => {
+            log.info("Logging out from OIDC", { oidcProvider });
+            req.sso.logout(oidcProvider.name, { postLogoutRedirectUri: '/' }, req, res, (error) => {
+                if (error) {
+                    log.error('Error logging out from OIDC', { err: error });
+                    res.sendStatus(500);
+                }
+            });
+        });
+    }
+    else {
+        logoutFromSession(req, res);
+    }
 });
 // Reset password
 router.post('/forgot_password', function (req, res) {
@@ -2178,6 +2210,103 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function (req, res, next) {
         });
     }
 });
+// Audkenni REST Authentication
+router.post('/auth/audkenni-rest/start', async function (req, res) {
+    try {
+        const { phone, authenticator } = req.body;
+        if (!phone || !authenticator) {
+            res.status(400).send({ error: 'missing_parameters' });
+            return;
+        }
+        const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
+        const service = new AudkenniRestService();
+        const startData = await service.start();
+        const callbacks = (startData.callbacks || []).map((cb) => {
+            if (cb.type === 'NameCallback') {
+                cb.input[0].value = phone;
+            }
+            else if (cb.type === 'ChoiceCallback') {
+                const index = cb.output[1].value.indexOf(authenticator);
+                cb.input[0].value = index >= 0 ? index : 0;
+            }
+            return cb;
+        });
+        await service.continue(startData.authId, callbacks);
+        res.send({ pollId: startData.authId });
+    }
+    catch (error) {
+        log.error('Error starting Audkenni REST login', { error });
+        res.status(500).send({ error: 'audkenni_start_failed' });
+    }
+});
+router.post('/auth/audkenni-rest/continue', async function (req, res) {
+    try {
+        const { authId, callbacks } = req.body;
+        const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
+        const service = new AudkenniRestService();
+        const data = await service.continue(authId, callbacks);
+        res.send({ authId: data.authId, callbacks: data.callbacks, tokenId: data.tokenId });
+    }
+    catch (error) {
+        log.error('Error continuing Audkenni REST login', { error });
+        res.status(500).send({ error: 'audkenni_continue_failed' });
+    }
+});
+router.get('/auth/audkenni-rest/poll/:id', async function (req, res) {
+    try {
+        const authId = req.params.id;
+        const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
+        const service = new AudkenniRestService();
+        const result = await service.poll(authId);
+        if (!result.tokenId) {
+            res.send({ pending: true });
+            return;
+        }
+        const profile = result.profile || { nationalRegisterId: result.nationalId, name: result.name, provider: 'oidc' };
+        models.User.serializeOidcUser(profile, req, function (error, user) {
+            if (error || !user) {
+                log.error('Error serializing Audkenni user', { error });
+                res.status(500).send({ error: 'audkenni_login_failed' });
+            }
+            else {
+                req.logIn(user, async function (err) {
+                    if (err) {
+                        log.error('Error logging in Audkenni user', { err });
+                        res.status(500).send({ error: 'audkenni_login_failed' });
+                    }
+                    else {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        getUserWithAll(user.id, true, function (getErr, fullUser) {
+                            if (getErr || !fullUser) {
+                                res.status(500).send({ error: 'audkenni_user_fetch_failed' });
+                            }
+                            else {
+                                if (fullUser.email) {
+                                    delete fullUser.email;
+                                }
+                                else {
+                                    fullUser.missingEmail = true;
+                                }
+                                if (fullUser.private_profile_data && fullUser.private_profile_data.registration_answers) {
+                                    fullUser.dataValues.hasRegistrationAnswers = true;
+                                }
+                                else {
+                                    fullUser.dataValues.hasRegistrationAnswers = false;
+                                }
+                                delete fullUser.private_profile_data;
+                                res.send(fullUser);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+    catch (error) {
+        log.error('Error polling Audkenni REST login', { error });
+        res.status(500).send({ error: 'audkenni_poll_failed' });
+    }
+});
 // Facebook Authentication
 router.get('/auth/facebook', function (req, res) {
     req.sso.authenticate('facebook-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
@@ -2227,10 +2356,20 @@ router.get('/auth/oidc/callback', function (req, res) {
     req.sso.authenticate('oidc-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
         if (error) {
             log.error("Error from OIDC login", { err: error });
-            res.sendStatus(500);
+            if (process.env.REDIRECT_AFTER_OIDC_ERROR_URL) {
+                res.redirect(process.env.REDIRECT_AFTER_OIDC_ERROR_URL);
+            }
+            else {
+                res.sendStatus(500);
+            }
         }
         else {
-            res.render('samlLoginComplete', {});
+            if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
+                res.redirect('/');
+            }
+            else {
+                res.render('samlLoginComplete', {});
+            }
         }
     });
 });
@@ -2239,10 +2378,23 @@ router.get('/auth/audkenni/callback', async function (req, res) {
     req.sso.authenticate('oidc-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
         if (error) {
             log.error("Error from Audkenni login", { err: error });
-            res.sendStatus(500);
+            if (process.env.REDIRECT_AFTER_OIDC_ERROR_URL) {
+                res.redirect(process.env.REDIRECT_AFTER_OIDC_ERROR_URL);
+            }
+            else {
+                res.sendStatus(500);
+            }
         }
         else {
-            res.render('samlLoginComplete', {});
+            if (process.env.REDIRECT_AFTER_AUDKENNI_URL) {
+                res.redirect(process.env.REDIRECT_AFTER_AUDKENNI_URL);
+            }
+            else if (process.env.REDIRECT_TO_ROOT_AFTER_OIDC) {
+                res.redirect('/');
+            }
+            else {
+                res.render('samlLoginComplete', {});
+            }
         }
     });
 });

@@ -860,6 +860,9 @@ function updateDomainProperties(domain, req) {
     domain.set('configuration.sortAlphabetically', truthValueFromBody(req.body.sortAlphabetically));
     domain.set('configuration.useFixedTopAppBar', truthValueFromBody(req.body.useFixedTopAppBar));
     domain.set('configuration.disableArrowBasedTopNavigation', truthValueFromBody(req.body.disableArrowBasedTopNavigation));
+    domain.set('configuration.customerAiTokenMarkupPercent', req.body.customerAiTokenMarkupPercent && req.body.customerAiTokenMarkupPercent !== ''
+        ? parseInt(req.body.customerAiTokenMarkupPercent)
+        : null);
     domain.set('configuration.onlyAllowCreateUserOnInvite', truthValueFromBody(req.body.onlyAllowCreateUserOnInvite));
     domain.name = req.body.name;
     domain.description = req.body.description;

@@ -23,7 +23,7 @@ import models from '../../models/index.cjs';
             email,
             name,
             status: 'active',
-            ssn: ssn ? Number(ssn) : undefined,
+            ssn: ssn || undefined,
             encrypted_password: hashed,
         });
         await domain.addDomainUsers(user);

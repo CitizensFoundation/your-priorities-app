@@ -2,11 +2,18 @@ import ExcelJS from 'exceljs';
 import models from '../../models/index.cjs';
 (async () => {
     try {
-        const [xlsPath] = process.argv.slice(2);
+        const [xlsPath, clientId, clientSecret, issuer, authorizationURL, tokenURL, userInfoURL, endSessionURL,] = process.argv.slice(2);
         if (!xlsPath) {
-            console.log('Usage: node importDomainsFromXls.js <path-to-xls>');
+            console.log('Usage: node importDomainsFromXls.js <path-to-xls> [clientId clientSecret issuer authorizationURL tokenURL userInfoURL endSessionURL]');
             process.exit(1);
         }
+        const oidcProvided = clientId &&
+            clientSecret &&
+            issuer &&
+            authorizationURL &&
+            tokenURL &&
+            userInfoURL &&
+            endSessionURL;
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(xlsPath);
         const worksheet = workbook.getWorksheet(1);
@@ -15,6 +22,17 @@ import models from '../../models/index.cjs';
             process.exit(1);
         }
         await models.sequelize.transaction(async (t) => {
+            const oidcKeys = oidcProvided
+                ? {
+                    client_id: clientId,
+                    client_secret: clientSecret,
+                    issuer,
+                    authorizationURL,
+                    tokenURL,
+                    userInfoURL,
+                    endSessionURL,
+                }
+                : null;
             for (let i = 2; i <= worksheet.rowCount; i++) {
                 const row = worksheet.getRow(i);
                 const name = String(row.getCell(1).text).trim();
@@ -26,7 +44,16 @@ import models from '../../models/index.cjs';
                     transaction: t
                 });
                 if (existing) {
-                    await existing.update({ description }, { transaction: t });
+                    const updateFields = { description };
+                    if (oidcKeys) {
+                        const e = existing;
+                        const secretKeys = e.secret_api_keys || {};
+                        secretKeys.oidc = oidcKeys;
+                        e.secret_api_keys = secretKeys;
+                        e.changed('secret_api_keys', true);
+                        updateFields.secret_api_keys = secretKeys;
+                    }
+                    await existing.update(updateFields, { transaction: t });
                     console.log(`Updated domain ${existing.domain_name}`);
                 }
                 else {
@@ -41,7 +68,8 @@ import models from '../../models/index.cjs';
                         ip_address: '127.0.0.1',
                         user_agent: 'import-script',
                         default_locale: 'en',
-                        configuration: {}
+                        configuration: {},
+                        ...(oidcKeys ? { secret_api_keys: { oidc: oidcKeys } } : {})
                     }, { transaction: t });
                     console.log(`Created domain ${domainName}`);
                 }

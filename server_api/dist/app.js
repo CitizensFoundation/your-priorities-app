@@ -486,6 +486,7 @@ export class YourPrioritiesApi {
         this.app.use((req, res, next) => {
             if (req.url.indexOf("/auth") > -1 ||
                 req.url.indexOf("/login") > -1 ||
+                req.url.indexOf("/logout") > -1 ||
                 req.url.indexOf("saml_assertion") > -1) {
                 sso.init(req.ypDomain?.loginHosts, req.ypDomain?.loginProviders, {
                     authorize: this.bearerCallback,
@@ -904,21 +905,20 @@ export class YourPrioritiesApi {
                     err: bodyError,
                 });
             }
-            log.error("General Error", {
-                context: "generalError",
-                user: req.user ? toJson(req.user) : null,
-                err: err,
-                protocol: req.protocol,
-                host: req.get("host"),
-                originalUrl: req.originalUrl,
-                body,
-                errStack: err.stack,
-                errorStatus: status,
-            });
-            err.url = req.url;
-            err.params = req.params;
-            if (status !== 404 && status !== 401) {
-                // Optionally notify an error tracking service like Airbrake
+            if (status >= 500) {
+                log.error("General Error", {
+                    context: "generalError",
+                    user: req.user ? toJson(req.user) : null,
+                    err: err,
+                    protocol: req.protocol,
+                    host: req.get("host"),
+                    originalUrl: req.originalUrl,
+                    body,
+                    errStack: err.stack,
+                    errorStatus: status,
+                });
+                err.url = req.url;
+                err.params = req.params;
                 if (airbrake) {
                     airbrake.notify(err).then((airbrakeErr) => {
                         if (airbrakeErr.error) {
@@ -931,6 +931,18 @@ export class YourPrioritiesApi {
                         }
                     });
                 }
+            }
+            else {
+                log.warn("Client Error", {
+                    context: "clientError",
+                    user: req.user ? toJson(req.user) : null,
+                    err: err.message || err,
+                    protocol: req.protocol,
+                    host: req.get("host"),
+                    originalUrl: req.originalUrl,
+                    body,
+                    errorStatus: status,
+                });
             }
             res.sendStatus(status);
         });

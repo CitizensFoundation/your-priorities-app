@@ -237,6 +237,7 @@ module.exports = (sequelize, DataTypes) => {
                     authorizationURL: domain.secret_api_keys.oidc.authorizationURL,
                     tokenURL: domain.secret_api_keys.oidc.tokenURL,
                     userInfoURL: domain.secret_api_keys.oidc.userInfoURL,
+                    endSessionURL: domain.secret_api_keys.oidc.endSessionURL,
                     callbackUrl: "https://" +
                         callbackDomainName +
                         "/api/users/auth/audkenni/callback",
@@ -337,6 +338,7 @@ module.exports = (sequelize, DataTypes) => {
                 req.ypDomain = domain;
                 if (req.url.indexOf("/auth") > -1 ||
                     req.url.indexOf("/login") > -1 ||
+                    req.url.indexOf("/logout") > -1 ||
                     req.url.indexOf("saml_assertion") > -1) {
                     sequelize.models.Domain.getLoginProviders(req, domain, (error, providers) => {
                         req.ypDomain.loginProviders = providers;
@@ -363,6 +365,7 @@ module.exports = (sequelize, DataTypes) => {
                     req.ypDomain = domain;
                     if (req.url.indexOf("/auth") > -1 ||
                         req.url.indexOf("/login") > -1 ||
+                        req.url.indexOf("/logout") > -1 ||
                         req.url.indexOf("saml_assertion") > -1) {
                         sequelize.models.Domain.getLoginProviders(req, domain, (error, providers) => {
                             log.info("Login Providers", { providers });
