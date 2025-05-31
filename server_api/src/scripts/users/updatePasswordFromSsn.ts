@@ -8,7 +8,7 @@ import models from '../../models/index.cjs';
       console.log('Usage: node updatePasswordFromSsn.js <ssn> <newPassword>');
       process.exit(1);
     }
-    const ssn = Number(ssnArg);
+    const ssn = ssnArg;
     const user = await models.User.findOne({ where: { ssn } });
     if (!user) {
       console.error(`User with ssn ${ssn} not found`);
