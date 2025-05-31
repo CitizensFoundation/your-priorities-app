@@ -762,6 +762,16 @@ interface YpPostData extends YpDatabaseItem {
       language: string;
     };
     ratings?: Array<YpPostRatingsData>;
+    galleryMetaData?: {
+      Upphafsar?: string;
+      Haed?: string;
+      Breidd?: string;
+      texti_um_verk_fyrir_vef?: string;
+    };
+    galleryImageData?: {
+      width?: number;
+      height?: number;
+    };
   };
   location: YpLocationData;
   PostVideos?: Array<YpVideoData>;

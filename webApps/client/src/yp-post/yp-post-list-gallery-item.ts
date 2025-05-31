@@ -139,7 +139,7 @@ export class YpPostListGalleryItem extends YpBaseElement {
     `;
   }
 
-  render() {
+  override render() {
     return html`
       <div class="layout vertical mainContainer">
         <div class="layout vertical center-center">
