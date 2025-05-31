@@ -21,7 +21,7 @@ import models from '../../models/index.cjs';
         const fullUserName = String(row.getCell(2).text).trim();
         const userEmail = String(row.getCell(3).text).trim().toLowerCase();
         const userSsn = String(row.getCell(4).text).trim();
-        const userSsnNumber = userSsn ? Number(userSsn) : undefined;
+        const userSsnNumber = userSsn || undefined;
 
         if (!domainName || !fullUserName || !userEmail) {
           throw new Error(`Missing data in row ${i}`);

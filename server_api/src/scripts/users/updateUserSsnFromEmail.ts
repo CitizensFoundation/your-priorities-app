@@ -12,7 +12,7 @@ import models from '../../models/index.cjs';
       console.error(`User ${email} not found`);
       process.exit(1);
     }
-    const ssn = Number(ssnArg);
+    const ssn = ssnArg;
     user.ssn = ssn;
     await user.save();
     console.log(`Updated SSN for ${email}`);
