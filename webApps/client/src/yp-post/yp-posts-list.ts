@@ -11,6 +11,7 @@ import "@material/web/textfield/outlined-text-field.js";
 
 import "./yp-posts-filter.js";
 import "./yp-post-list-item.js";
+import "./yp-post-list-gallery-item.js";
 
 import { ShadowStyles } from "../common/ShadowStyles.js";
 import { YpPostCard } from "./yp-post-card.js";
@@ -367,23 +368,45 @@ export class YpPostsList extends YpBaseElement {
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
     const tabindex = index !== undefined ? index + 1 : 0;
-    return html`
-      <yp-post-list-item
-        aria-label="${post.name}"
-        ?is-last-item="${this._isLastItem(index!)}"
-        @keypress="${this._keypress.bind(this)}"
-        @click="${this._selectedItemChanged.bind(this)}"
-        tabindex="${tabindex}"
-        id="postCard${post.id}"
-        class="csard"
-        .post="${post}"
-      >
-      </yp-post-list-item>
-    `;
+    return this.galleryListFormat
+      ? html`
+          <yp-post-list-gallery-item
+            aria-label="${post.name}"
+            ?is-last-item="${this._isLastItem(index!)}"
+            @keypress="${this._keypress.bind(this)}"
+            @click="${this._selectedItemChanged.bind(this)}"
+            tabindex="${tabindex}"
+            id="postCard${post.id}"
+            class="card"
+            .post="${post}"
+          >
+          </yp-post-list-gallery-item>
+        `
+      : html`
+          <yp-post-list-item
+            aria-label="${post.name}"
+            ?is-last-item="${this._isLastItem(index!)}"
+            @keypress="${this._keypress.bind(this)}"
+            @click="${this._selectedItemChanged.bind(this)}"
+            tabindex="${tabindex}"
+            id="postCard${post.id}"
+            class="csard"
+            .post="${post}"
+          >
+          </yp-post-list-item>
+        `;
   }
 
   get desktopListFormat() {
     return this.wide && this.group != undefined && this.posts != undefined;
+  }
+
+  get galleryListFormat() {
+    return (
+      this.group &&
+      this.group.configuration &&
+      this.group.configuration.galleryMode === true
+    );
   }
 
   get wideNotListFormat() {

@@ -23,6 +23,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpPostCard } from "./yp-post-card.js";
 import { ShadowStyles } from "../common/ShadowStyles.js";
 import "./yp-post-header.js";
+import "./yp-post-list-gallery-item.js";
 import "./yp-post-points.js";
 import "./yp-post-user-images.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -44,6 +45,9 @@ export const PostTabTypes: Record<string, number> = {
 export class YpPost extends YpCollection {
   @property({ type: Boolean })
   isAdmin = false;
+
+  @property({ type: Boolean })
+  isGalleryMode = false;
 
   @property({ type: Boolean })
   disableNewPosts = false;
@@ -350,6 +354,15 @@ export class YpPost extends YpCollection {
     `;
   }
 
+  renderGalleryHeader() {
+    return html`
+      <yp-post-list-gallery-item
+        description-open
+        .post="${this.post!}"
+      ></yp-post-list-gallery-item>
+    `;
+  }
+
   renderPostTabs() {
     if (this.post && !this.post.Group.configuration?.hideAllTabs) {
       return html`
@@ -511,7 +524,10 @@ export class YpPost extends YpCollection {
         <div ?for-agent-bundle="${this.forAgentBundle}" class="layout vertical center-center outerFrameContainer">
           <div class="frameContainer">
             <div class="layout vertical">
-              ${this.renderPostStaticHeader()} ${this.renderPostHeader()}
+              ${this.renderPostStaticHeader()}
+              ${this.isGalleryMode
+                ? this.renderGalleryHeader()
+                : this.renderPostHeader()}
             </div>
             ${this.renderNavigationButtons()}
             <div class="layout vertical center-center">
@@ -746,6 +762,12 @@ export class YpPost extends YpCollection {
       );
 
       this.isAdmin = YpAccessHelpers.checkPostAdminOnlyAccess(this.post);
+      this.isGalleryMode =
+        !!(
+          this.post.Group &&
+          this.post.Group.configuration &&
+          this.post.Group.configuration.galleryMode
+        );
     } else {
       console.error("Trying to refresh without post");
     }
