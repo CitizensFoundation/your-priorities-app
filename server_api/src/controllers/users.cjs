@@ -2243,10 +2243,30 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
 // Audkenni REST Authentication
 router.post('/auth/audkenni-rest/start', async function(req, res) {
   try {
+    const { phone, authenticator } = req.body;
+    if (!phone || !authenticator) {
+      res.status(400).send({ error: 'missing_parameters' });
+      return;
+    }
+
     const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
     const service = new AudkenniRestService();
-    const data = await service.start();
-    res.send({ authId: data.authId, callbacks: data.callbacks });
+
+    const startData = await service.start();
+
+    const callbacks = (startData.callbacks || []).map((cb) => {
+      if (cb.type === 'NameCallback') {
+        cb.input[0].value = phone;
+      } else if (cb.type === 'ChoiceCallback') {
+        const index = cb.output[1].value.indexOf(authenticator);
+        cb.input[0].value = index >= 0 ? index : 0;
+      }
+      return cb;
+    });
+
+    await service.continue(startData.authId, callbacks);
+
+    res.send({ pollId: startData.authId });
   } catch (error) {
     log.error('Error starting Audkenni REST login', { error });
     res.status(500).send({ error: 'audkenni_start_failed' });
@@ -2266,9 +2286,9 @@ router.post('/auth/audkenni-rest/continue', async function(req, res) {
   }
 });
 
-router.post('/auth/audkenni-rest/poll', async function(req, res) {
+router.get('/auth/audkenni-rest/poll/:id', async function(req, res) {
   try {
-    const { authId } = req.body;
+    const authId = req.params.id;
     const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
     const service = new AudkenniRestService();
     const result = await service.poll(authId);

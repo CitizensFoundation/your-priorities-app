@@ -32,11 +32,13 @@ export default class AudkenniRestService {
 
   async poll(
     authId: string,
+    callbacks?: any[],
     interval = 2000,
     maxAttempts = 30
   ): Promise<AudkenniAuthResponse> {
     for (let i = 0; i < maxAttempts; i++) {
-      const { data } = await this.client.post(this.endpoint, { authId });
+      const payload = callbacks ? { authId, callbacks } : { authId };
+      const { data } = await this.client.post(this.endpoint, payload);
       if (data.tokenId) {
         return data;
       }
