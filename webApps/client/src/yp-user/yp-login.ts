@@ -3,6 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 
 import "./yp-registration-questions.js";
 import "./yp-forgot-password.js";
+import "./yp-audkenni-login.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
@@ -735,6 +736,12 @@ export class YpLogin extends YpBaseElement {
             : nothing}
           ${this.hasSamlLogin ? this.renderSamlLogin() : nothing}
         </div>
+        ${this.hasAudkenniRestLogin
+          ? html`<yp-audkenni-login
+              @login-completed="${(e: CustomEvent) =>
+                this._loginCompleted(e.detail)}"
+            ></yp-audkenni-login>`
+          : nothing}
       </div>
     </div>`;
   }
@@ -1437,6 +1444,7 @@ export class YpLogin extends YpBaseElement {
       this.domain &&
       ((this.hasFacebookLogin && !this.disableFacebookLoginForGroup) ||
         this.hasSamlLogin ||
+        this.hasAudkenniRestLogin ||
         this.hasAnonymousLogin ||
         this.hasOneTimeLoginWithName)
     );
@@ -1461,6 +1469,15 @@ export class YpLogin extends YpBaseElement {
   get hasSamlLogin() {
     if (this.domain) {
       return this.domain.samlLoginProvided;
+    } else {
+      return false;
+    }
+  }
+
+  get hasAudkenniRestLogin() {
+    if (this.domain) {
+      // @ts-ignore - older domains might not have this field
+      return (this.domain as any).audkenniRestLoginProvided === true;
     } else {
       return false;
     }
