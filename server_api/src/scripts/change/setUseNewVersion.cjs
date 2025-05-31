@@ -10,6 +10,7 @@ models.Domain.findOne({ where: { id: domainId } }).then(async (domain) => {
         "configuration.useNewVersion",
         useNewVersionStatus === "true" ? true : false
       );
+      domain.changed("configuration", true);
       await domain.save();
       console.log("Set useNewVersionStatus to " + useNewVersionStatus);
     } else {
