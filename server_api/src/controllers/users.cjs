@@ -2240,6 +2240,85 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
   }
 });
 
+// Audkenni REST Authentication
+router.post('/auth/audkenni-rest/start', async function(req, res) {
+  try {
+    const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
+    const service = new AudkenniRestService();
+    const data = await service.start();
+    res.send({ authId: data.authId, callbacks: data.callbacks });
+  } catch (error) {
+    log.error('Error starting Audkenni REST login', { error });
+    res.status(500).send({ error: 'audkenni_start_failed' });
+  }
+});
+
+router.post('/auth/audkenni-rest/continue', async function(req, res) {
+  try {
+    const { authId, callbacks } = req.body;
+    const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
+    const service = new AudkenniRestService();
+    const data = await service.continue(authId, callbacks);
+    res.send({ authId: data.authId, callbacks: data.callbacks, tokenId: data.tokenId });
+  } catch (error) {
+    log.error('Error continuing Audkenni REST login', { error });
+    res.status(500).send({ error: 'audkenni_continue_failed' });
+  }
+});
+
+router.post('/auth/audkenni-rest/poll', async function(req, res) {
+  try {
+    const { authId } = req.body;
+    const { default: AudkenniRestService } = await import('../services/auth/audkenniRestService.js');
+    const service = new AudkenniRestService();
+    const result = await service.poll(authId);
+
+    if (!result.tokenId) {
+      res.send({ pending: true });
+      return;
+    }
+
+    const profile = result.profile || { nationalRegisterId: result.nationalId, name: result.name, provider: 'oidc' };
+
+    models.User.serializeOidcUser(profile, req, function(error, user) {
+      if (error || !user) {
+        log.error('Error serializing Audkenni user', { error });
+        res.status(500).send({ error: 'audkenni_login_failed' });
+      } else {
+        req.logIn(user, async function(err) {
+          if (err) {
+            log.error('Error logging in Audkenni user', { err });
+            res.status(500).send({ error: 'audkenni_login_failed' });
+          } else {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            getUserWithAll(user.id, true, function(getErr, fullUser) {
+              if (getErr || !fullUser) {
+                res.status(500).send({ error: 'audkenni_user_fetch_failed' });
+              } else {
+                if (fullUser.email) {
+                  delete fullUser.email;
+                } else {
+                  fullUser.missingEmail = true;
+                }
+                if (fullUser.private_profile_data && fullUser.private_profile_data.registration_answers) {
+                  fullUser.dataValues.hasRegistrationAnswers = true;
+                } else {
+                  fullUser.dataValues.hasRegistrationAnswers = false;
+                }
+                delete fullUser.private_profile_data;
+                res.send(fullUser);
+              }
+            });
+          }
+        });
+      }
+    });
+  } catch (error) {
+    log.error('Error polling Audkenni REST login', { error });
+    res.status(500).send({ error: 'audkenni_poll_failed' });
+  }
+});
+
 // Facebook Authentication
 router.get('/auth/facebook', function(req, res) {
   req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
