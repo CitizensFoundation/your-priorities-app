@@ -160,10 +160,10 @@ export class YourPrioritiesApi {
     this.addDirnameToRequest();
     this.forceHttps();
     this.initializeMiddlewares();
-    this.setupNewWebAppVersionHandling();
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
+    this.setupNewWebAppVersionHandling();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
     this.addInviteAsAnonMiddleWare();
@@ -179,10 +179,10 @@ export class YourPrioritiesApi {
     this.addDirnameToRequest();
     this.forceHttps();
     this.initializeMiddlewares();
-    this.setupNewWebAppVersionHandling();
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
+    this.setupNewWebAppVersionHandling();
     this.setupSitemapRoute();
     this.initializePassportStrategies();
     this.addInviteAsAnonMiddleWare();
