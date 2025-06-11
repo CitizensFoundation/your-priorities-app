@@ -382,7 +382,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             .post="${this.post}"
           ></yp-post-ratings-info>
         `
-      : html`
+      : !this.hideActions ? html`
           <yp-post-actions
             ?hidden="${this.hideActions}"
             hideDebate
@@ -393,7 +393,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             class="postActions"
             .post="${this.post}"
           ></yp-post-actions>
-        `} `;
+        ` : nothing} `;
   }
 
   renderName() {

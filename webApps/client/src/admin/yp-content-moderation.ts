@@ -8,7 +8,7 @@ import "@material/web/checkbox/checkbox.js";
 import "@material/web/progress/circular-progress.js";
 
 import "@vaadin/vaadin-grid/vaadin-grid.js";
-import type { GridElement } from "@vaadin/vaadin-grid/vaadin-grid.js";
+import type { GridElement, GridItemModel } from "@vaadin/vaadin-grid/vaadin-grid.js";
 
 import { GridColumnElement } from "@vaadin/vaadin-grid/src/vaadin-grid-column";
 
@@ -126,6 +126,14 @@ export class YpContentModeration extends YpBaseElement {
       );
     }
   }
+
+  private _onActiveItemChanged(
+    e: CustomEvent<GridItemModel<YpModerationItem>>
+  ) {
+    //@ts-ignore - investigate why the right type is not working
+    this.activeItem = e.detail.value;
+  }
+
 
   static override get styles() {
     return [
@@ -298,7 +306,7 @@ export class YpContentModeration extends YpBaseElement {
           margin-bottom: 8px;
         }
 
-        yp-header {
+        yp-post-header {
           margin-bottom: 8px;
         }
 
@@ -366,12 +374,14 @@ export class YpContentModeration extends YpBaseElement {
           ${item.is_post
             ? html`
                 <div class="layout vertical center-center">
-                  <yp-header
+                  <yp-post-header
                     hideActions
+                    hideTopActionBar
+                    onlyRenderTopActionBar
                     .post="${item as unknown as YpPostData}"
                     .postName="${item.name}"
                     headerMode
-                  ></yp-header>
+                  ></yp-post-header>
                   <a href="/yp/${item.id}" target="_blank"
                     ><paper-icon-button
                       .ariaLabel="${this.t("linkToContentItem")}"
@@ -404,7 +414,7 @@ export class YpContentModeration extends YpBaseElement {
             : nothing}
         </div>
 
-        ${item.moderation_data
+        ${item.moderation_data && item.moderation_data.moderation && item.moderation_data.moderation.toxicityScore
           ? html`
               <div class="layout horizontal analysis">
                 <div
@@ -645,7 +655,8 @@ export class YpContentModeration extends YpBaseElement {
         multi-sort="${this.multiSortEnabled}"
         .activeItem="${this.activeItem}"
         .ariaLabel="${this.headerText}"
-        .rowDetailsRenderer="${this.renderItemDetail}"
+         @active-item-changed="${this._onActiveItemChanged}"
+        .rowDetailsRenderer="${this.renderItemDetail.bind(this)}"
         .items="${this.items}"
         .selectedItems="${this.selectedItems as Array<unknown>}"
       >
