@@ -693,7 +693,7 @@ export class NewAiModelSetup {
         longContextCostOutTokensPerMillion: 15,
         currency: "USD",
       },
-      model: "gemini-2-5-pro-preview-06-05",
+      model: "gemini-2.5-pro-preview-06-05",
       active: true,
       maxTokensOut: 100000,
       defaultTemperature: 0.0,
@@ -770,7 +770,7 @@ export class NewAiModelSetup {
       },
       maxTokensOut: 8192,
       defaultTemperature: 0.0,
-      model: "gemini-2-5-flash-preview-05-20",
+      model: "gemini-2.5-flash-preview-05-20",
       active: true,
     };
 
