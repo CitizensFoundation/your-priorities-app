@@ -5,6 +5,7 @@ import {
 } from "@policysynth/agents/dbModels/index.js";
 import { PsAiModelSize, PsAiModelType } from "@policysynth/agents/aiModelTypes.js";
 import models from "../../models/index.cjs";
+import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
 
 (async () => {
   const [groupIdArg, sizeArg, typeArg, modelNameArg] = process.argv.slice(2);
@@ -93,6 +94,8 @@ import models from "../../models/index.cjs";
     group.set("private_access_configuration", privateConfig);
     group.changed("private_access_configuration", true);
     await group.save();
+
+    await NewAiModelSetup.setupApiKeysForGroup(group);
 
     console.log(`Group ${groupId} updated successfully`);
   } catch (error) {
