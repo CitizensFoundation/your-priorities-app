@@ -719,7 +719,7 @@ export class NewAiModelSetup {
     });
 
     const gemini25FlashPreview1Config = {
-      type: PsAiModelType.TextReasoning,
+      type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {

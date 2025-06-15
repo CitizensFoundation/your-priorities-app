@@ -3,7 +3,10 @@ import {
   PsAgent,
   PsAiModel,
 } from "@policysynth/agents/dbModels/index.js";
-import { PsAiModelSize, PsAiModelType } from "@policysynth/agents/aiModelTypes.js";
+import {
+  PsAiModelSize,
+  PsAiModelType,
+} from "@policysynth/agents/aiModelTypes.js";
 import models from "../../models/index.cjs";
 import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
 
@@ -72,8 +75,24 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
     });
 
     if (!newModel) {
-      throw new Error(`AI model with configuration.model ${modelNameArg} not found`);
+      throw new Error(
+        `AI model with configuration.model ${modelNameArg} not found`
+      );
     }
+
+    if (
+      newModel.configuration?.type !== modelType ||
+      newModel.configuration?.modelSize !== size
+    ) {
+      throw new Error(
+        `Model '${modelNameArg}' exists, but its configuration is ` +
+          `type=${newModel.configuration?.type ?? "∅"}, ` +
+          `size=${newModel.configuration?.modelSize ?? "∅"} – expected ` +
+          `${modelType}/${size}.`
+      );
+    }
+
+    await NewAiModelSetup.setupApiKeysForGroup(group);
 
     const privateConfig = (group.private_access_configuration ?? []) as any[];
 
@@ -87,17 +106,23 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
           await agent.removeAiModel(current);
           const entry = privateConfig.find((p) => p.aiModelId === current.id);
           if (entry) {
-            console.log(`Updating entry ${entry.id} to use model ${newModel.name}`);
+            console.log(
+              `Updating entry ${entry.id} to use model ${newModel.name}`
+            );
             entry.aiModelId = newModel.id;
           } else {
-            console.log(`Adding entry for agent ${agent.id} to use model ${newModel.name}`);
+            console.log(
+              `Adding entry for agent ${agent.id} to use model ${newModel.name}`
+            );
             privateConfig.push({
               aiModelId: newModel.id,
               agentId: agent.id,
             });
           }
         } else {
-          console.log(`Skipping model ${current.name} for agent ${agent.id} because it does not match size ${size} and type ${modelType}`);
+          console.log(
+            `Skipping model ${current.name} for agent ${agent.id} because it does not match size ${size} and type ${modelType}`
+          );
         }
       }
       await agent.addAiModel(newModel);
@@ -107,8 +132,6 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
     group.set("private_access_configuration", privateConfig);
     group.changed("private_access_configuration", true);
     await group.save();
-
-    await NewAiModelSetup.setupApiKeysForGroup(group);
 
     console.log(`Group ${groupId} updated successfully`);
   } catch (error) {
