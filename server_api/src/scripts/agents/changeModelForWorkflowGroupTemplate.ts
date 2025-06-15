@@ -78,13 +78,26 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
     const privateConfig = (group.private_access_configuration ?? []) as any[];
 
     for (const agent of subAgents) {
+      console.log(`Updating agent ${agent.id} to use model ${newModel.name}`);
       const currentModels: any[] = await agent.getAiModels();
+      console.log(`Current models: ${currentModels.length}`);
       for (const current of currentModels) {
         const cfg = current.configuration || {};
         if (cfg.modelSize === size && cfg.type === modelType) {
           await agent.removeAiModel(current);
           const entry = privateConfig.find((p) => p.aiModelId === current.id);
-          if (entry) entry.aiModelId = newModel.id;
+          if (entry) {
+            console.log(`Updating entry ${entry.id} to use model ${newModel.name}`);
+            entry.aiModelId = newModel.id;
+          } else {
+            console.log(`Adding entry for agent ${agent.id} to use model ${newModel.name}`);
+            privateConfig.push({
+              aiModelId: newModel.id,
+              agentId: agent.id,
+            });
+          }
+        } else {
+          console.log(`Skipping model ${current.name} for agent ${agent.id} because it does not match size ${size} and type ${modelType}`);
         }
       }
       await agent.addAiModel(newModel);
