@@ -424,6 +424,7 @@ export class YpThemeManager {
   sanitizeFontImports(fontImports: string[]) {
     const allowedDomains = [
       "www.parliament.scot",
+      "yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com",
       "fonts.googleapis.com",
       "use.typekit.net", // Adobe Fonts
       "fonts.fontsquirrel.com", // Font Squirrel
@@ -468,25 +469,53 @@ export class YpThemeManager {
     }
   }
 
-  importFonts(fontImportsString: string | null) {
+  async importFonts(fontImportsString: string | null): Promise<void> {
+    // 1. Remove any previously injected <link data-font-import>
     document
-      .querySelectorAll("link[data-font-import]")
-      .forEach((element) => element.remove());
+      .querySelectorAll<HTMLLinkElement>('link[data-font-import]')
+      .forEach(el => el.remove());
 
-    if (fontImportsString) {
-      const fontImports = this.sanitizeFontImports(
-        fontImportsString.split("\n")
+    if (!fontImportsString) return;
+
+    // 2. Sanitize and dedupe
+    const fontImports = Array.from(
+      new Set(this.sanitizeFontImports(fontImportsString.split('\n')))
+    );
+
+    // 3. Create <link> elements for each stylesheet
+    const loadPromises: Promise<void>[] = [];
+
+    fontImports.forEach(url => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      link.dataset.fontImport = 'true';
+
+      // If the CSS is hosted elsewhere, set crossorigin
+      if (!url.startsWith('/') && !url.startsWith(window.location.origin)) {
+        link.crossOrigin = 'anonymous';
+      }
+
+      // Wrap in a Promise so we can await all fonts later
+      loadPromises.push(
+        new Promise<void>((resolve, reject) => {
+          link.addEventListener('load', () => resolve());
+          link.addEventListener('error', () =>
+            reject(new Error(`Failed to load font stylesheet: ${url}`))
+          );
+        })
       );
-      debugger;
-      fontImports.forEach((url) => {
-        const linkElement = document.createElement("link");
-        linkElement.rel = "stylesheet";
-        linkElement.href = url;
-        linkElement.setAttribute("data-font-import", "true");
-        document.head.appendChild(linkElement);
-      });
-    }
+
+      document.head.appendChild(link);
+    });
+
+    // 4. Wait until stylesheets are loaded
+    await Promise.all(loadPromises);
+
+    // 5. Wait until the actual FONTs are ready (optional but nice)
+    await (document as any).fonts?.ready;
   }
+
 
   setTheme(
     number: number | undefined,
@@ -580,16 +609,6 @@ export class YpThemeManager {
         this.bodyBackgroundColorDark = theme.bodyBackgroundColorDark;
         this.allBackgroundColorLight = theme.allBackgroundColorLight;
         this.allBackgroundColorDark = theme.allBackgroundColorDark;
-        if (theme.fontStyles) {
-          this.applyFontStyles(theme.fontStyles);
-        } else {
-          this.applyFontStyles(null);
-        }
-        if (theme.fontImports) {
-          this.importFonts(theme.fontImports);
-        } else {
-          this.importFonts(null);
-        }
         this.themeChanged();
       }
   }
