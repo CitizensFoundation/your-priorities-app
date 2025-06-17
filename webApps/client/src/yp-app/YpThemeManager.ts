@@ -578,6 +578,16 @@ export class YpThemeManager {
         this.bodyBackgroundColorDark = theme.bodyBackgroundColorDark;
         this.allBackgroundColorLight = theme.allBackgroundColorLight;
         this.allBackgroundColorDark = theme.allBackgroundColorDark;
+        if (theme.fontStyles) {
+          this.applyFontStyles(theme.fontStyles);
+        } else {
+          this.applyFontStyles(null);
+        }
+        if (theme.fontImports) {
+          this.importFonts(theme.fontImports);
+        } else {
+          this.importFonts(null);
+        }
         this.themeChanged();
       }
   }
