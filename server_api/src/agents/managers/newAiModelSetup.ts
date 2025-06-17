@@ -389,9 +389,9 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
       prices: {
-        costInTokensPerMillion: 10.0,
-        costOutTokensPerMillion: 40.0,
-        costInCachedContextTokensPerMillion: 2.5,
+        costInTokensPerMillion: 2.0,
+        costOutTokensPerMillion: 8.0,
+        costInCachedContextTokensPerMillion: 0.5,
         currency: "USD",
       },
       maxTokensOut: 100000,
