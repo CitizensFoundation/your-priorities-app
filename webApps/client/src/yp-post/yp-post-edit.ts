@@ -663,6 +663,13 @@ export class YpPostEdit extends YpEditBase {
           margin-top: -8px;
           margin-left: 8px;
         }
+
+        .mobileSaveButton {
+          position: fixed;
+          right: 16px;
+          bottom: 16px;
+          z-index: 100;
+        }
       `,
     ];
   }
@@ -1319,7 +1326,6 @@ export class YpPostEdit extends YpEditBase {
 
   renderSaveButton() {
     return html`
-      <md-circular-progress id="spinner" hidden></md-circular-progress>
       <md-filled-button
         @click="${this.customSubmit}"
         .disabled="${this.submitDisabled}"
@@ -1335,7 +1341,7 @@ export class YpPostEdit extends YpEditBase {
         <div class="flex"></div>
         <md-icon>lightbulb</md-icon>
         <div class="flex"></div>
-        ${this.renderSaveButton()}
+        ${this.wide ? this.renderSaveButton() : nothing}
       </div>
       <div class="topHeader">
         ${this.editHeaderText ? this.editHeaderText : ""}
@@ -1462,6 +1468,10 @@ export class YpPostEdit extends YpEditBase {
         >
         </yp-generate-ai-image>
       </yp-edit-dialog>
+      <div class="mobileSaveButton" ?hidden="${this.wide}">
+        ${this.renderSaveButton()}
+      </div>
+      <md-circular-progress id="spinner" hidden></md-circular-progress>
     `;
   }
 
