@@ -423,6 +423,7 @@ export class YpThemeManager {
 
   sanitizeFontImports(fontImports: string[]) {
     const allowedDomains = [
+      "www.parliament.scot",
       "fonts.googleapis.com",
       "use.typekit.net", // Adobe Fonts
       "fonts.fontsquirrel.com", // Font Squirrel
@@ -476,6 +477,7 @@ export class YpThemeManager {
       const fontImports = this.sanitizeFontImports(
         fontImportsString.split("\n")
       );
+      debugger;
       fontImports.forEach((url) => {
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";

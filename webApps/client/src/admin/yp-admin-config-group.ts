@@ -1727,7 +1727,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           templateData: html`
             <md-outlined-select
               .label="${this.t("welcomeSelectPage")}"
-              @selected="${this._welcomePageSelected}"
+              @change="${this._welcomePageSelected}"
               .value="${ifDefined(this.welcomePageId)}"
             >
               ${this.translatedPages?.map(
@@ -2488,8 +2488,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _welcomePageSelected(event: CustomEvent) {
-    const index = event.detail.index as number;
+    const index = (event.target as MdOutlinedSelect).selectedIndex;
     this.welcomePageId = this.translatedPages![index].id;
+    this._configChanged();
   }
 
   _isDataVisualizationGroupClick(event: CustomEvent) {

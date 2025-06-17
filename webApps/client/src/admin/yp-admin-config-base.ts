@@ -1161,6 +1161,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           ? collectionIdOverride
           : (this.collectionId as number)
       )) as Array<YpHelpPageData> | undefined;
+      this.configTabs = this.setupConfigTabs();
     } else {
       console.error("Collection id setup for get help pages");
     }
