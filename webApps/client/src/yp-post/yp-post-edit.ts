@@ -515,6 +515,7 @@ export class YpPostEdit extends YpEditBase {
           .outerFrameContainer {
             max-width: 100%;
             width: 100%;
+            padding: 0;
           }
 
           .frameContainer {
@@ -665,10 +666,8 @@ export class YpPostEdit extends YpEditBase {
         }
 
         .mobileSaveButton {
-          position: fixed;
-          right: 16px;
-          bottom: 16px;
-          z-index: 100;
+          margin-top: 16px;
+          margin-bottom: 32px;
         }
       `,
     ];
@@ -1371,6 +1370,13 @@ export class YpPostEdit extends YpEditBase {
                           ${this.renderDescriptionInputs()}
                           ${this.renderMediaAndLocation()}
                         </div>
+                        ${this.wide
+                          ? nothing
+                          : html`<div
+                              class="mobileSaveButton layout horizontal center-center"
+                            >
+                              ${this.renderSaveButton()}
+                            </div> `}
                       </div>
                     </div>
                     ${this.renderHiddenInputs()}
@@ -1468,9 +1474,6 @@ export class YpPostEdit extends YpEditBase {
         >
         </yp-generate-ai-image>
       </yp-edit-dialog>
-      <div class="mobileSaveButton" ?hidden="${this.wide}">
-        ${this.renderSaveButton()}
-      </div>
       <md-circular-progress id="spinner" hidden></md-circular-progress>
     `;
   }
@@ -1573,7 +1576,7 @@ export class YpPostEdit extends YpEditBase {
     } else {
       this.submitDisabled = false;
       console.log("Form error: ", event.detail.error);
-      this._showErrorDialog(event.detail.error);
+      this._showErrorDialog(this.t("form.invalid"));
       (this.$$("#spinner") as Progress).hidden = false;
     }
   }
