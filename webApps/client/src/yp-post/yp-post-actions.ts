@@ -350,6 +350,7 @@ export class YpPostActions extends YpBaseElement {
           <div
             id="actionDown"
             class="action-down layout horizontal layout start justified"
+            ?hidden="${this.hideDownVote}"
           >
             <md-filled-icon-button
               toggle
@@ -402,13 +403,19 @@ export class YpPostActions extends YpBaseElement {
 
   get onlyUpVoteShowing() {
     if (this.post && this.post.Group && this.post.Group.configuration) {
-      return (
-        this.post.Group.configuration.hideDownVoteForPost &&
-        this.post.Group.configuration.hideDebateIcon
-      );
+      return this.post.Group.configuration.hideDownVoteForPost;
     } else {
       return false;
     }
+  }
+
+  get hideDownVote() {
+    return (
+      this.post &&
+      this.post.Group &&
+      this.post.Group.configuration &&
+      this.post.Group.configuration.hideDownVoteForPost
+    );
   }
 
   get endorseModeIconUp() {
