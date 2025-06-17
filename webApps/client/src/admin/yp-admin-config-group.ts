@@ -131,7 +131,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   dataForVisualizationJsonError: any;
   groupMoveToOptions: any;
   moveGroupToId: any;
-  pages: any;
   endorsementButtons: string | undefined;
   endorsementButtonsDisabled = false;
   apiEndpoint: unknown;
@@ -366,6 +365,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
       <input type="hidden" name="status" value="${this.status || ""}" />
 
+      ${this.welcomePageId !== undefined
+        ? html`<input
+            type="hidden"
+            name="welcomePageId"
+            value="${ifDefined(this.welcomePageId)}"
+          />`
+        : nothing}
+
       ${this.endorsementButtons
         ? html`
             <input
@@ -461,9 +468,13 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
       this.endorsementButtons = this.group.configuration.endorsementButtons;
 
+      this.welcomePageId = this.group.configuration.welcomePageId;
+
       if ((this.collection as YpGroupData).status) {
         this.status = (this.collection as YpGroupData).status;
       }
+
+      this._getHelpPages("group");
 
       this._setupTranslations();
       //this._updateEmojiBindings();
@@ -1712,11 +1723,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         {
           text: "welcomeSelectPage",
           type: "html",
-          hidden: !this.pages,
+          hidden: !this.translatedPages,
           templateData: html`
             <md-outlined-select
               .label="${this.t("welcomeSelectPage")}"
               @selected="${this._welcomePageSelected}"
+              .value="${ifDefined(this.welcomePageId)}"
             >
               ${this.translatedPages?.map(
                 (page, index) => html`
