@@ -469,19 +469,27 @@ export class YpThemeManager {
 
   importFonts(fontImportsString: string | null) {
     document
-      .querySelectorAll("link[data-font-import]")
+      .querySelectorAll("link[data-font-import], style[data-font-import]")
       .forEach((element) => element.remove());
 
     if (fontImportsString) {
       const fontImports = this.sanitizeFontImports(
         fontImportsString.split("\n")
       );
-      fontImports.forEach((url) => {
-        const linkElement = document.createElement("link");
-        linkElement.rel = "stylesheet";
-        linkElement.href = url;
-        linkElement.setAttribute("data-font-import", "true");
-        document.head.appendChild(linkElement);
+      fontImports.forEach((url, index) => {
+        if (url.toLowerCase().endsWith(".ttf")) {
+          const styleElement = document.createElement("style");
+          styleElement.setAttribute("data-font-import", "true");
+          const fontFamily = `dynamic-font-${index}`;
+          styleElement.textContent = `@font-face { font-family: '${fontFamily}'; src: url('${url}') format('truetype'); }`;
+          document.head.appendChild(styleElement);
+        } else {
+          const linkElement = document.createElement("link");
+          linkElement.rel = "stylesheet";
+          linkElement.href = url;
+          linkElement.setAttribute("data-font-import", "true");
+          document.head.appendChild(linkElement);
+        }
       });
     }
   }
