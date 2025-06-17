@@ -471,18 +471,42 @@ export class YpThemeManager {
     document
       .querySelectorAll("link[data-font-import]")
       .forEach((element) => element.remove());
+    const existingTtfStyle = document.getElementById("custom-ttf-fonts");
+    if (existingTtfStyle) {
+      existingTtfStyle.remove();
+    }
 
     if (fontImportsString) {
       const fontImports = this.sanitizeFontImports(
         fontImportsString.split("\n")
       );
+      const ttfFonts: string[] = [];
       fontImports.forEach((url) => {
-        const linkElement = document.createElement("link");
-        linkElement.rel = "stylesheet";
-        linkElement.href = url;
-        linkElement.setAttribute("data-font-import", "true");
-        document.head.appendChild(linkElement);
+        if (url.trim().toLowerCase().endsWith(".ttf")) {
+          ttfFonts.push(url);
+        } else {
+          const linkElement = document.createElement("link");
+          linkElement.rel = "stylesheet";
+          linkElement.href = url;
+          linkElement.setAttribute("data-font-import", "true");
+          document.head.appendChild(linkElement);
+        }
       });
+
+      if (ttfFonts.length > 0) {
+        const styleElement = document.createElement("style");
+        styleElement.id = "custom-ttf-fonts";
+        styleElement.setAttribute("data-font-import", "true");
+        styleElement.textContent = ttfFonts
+          .map((url, index) => {
+            const fileName = url.split("/").pop() || `Font${index}`;
+            const baseName = fileName.split("?")[0].replace(/\.ttf$/i, "");
+            const fontName = baseName.replace(/[^a-zA-Z0-9_-]/g, "");
+            return `@font-face {\n  font-family: '${fontName}';\n  src: url('${url}') format('truetype');\n}`;
+          })
+          .join("\n");
+        document.head.appendChild(styleElement);
+      }
     }
   }
 
