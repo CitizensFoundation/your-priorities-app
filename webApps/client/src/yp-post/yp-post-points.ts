@@ -1670,51 +1670,32 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _scrollPointIntoView() {
-    if (this.scrollToId) {
+    const scrollId = this.scrollToId;
+    if (scrollId !== undefined) {
       setTimeout(() => {
-        let hasFoundIt = false;
+        let index = -1;
+        let list: LitVirtualizer | undefined;
+
         if (!this.wide && this.points) {
-          this.points.forEach((point) => {
-            if (!hasFoundIt && point.id == this.scrollToId) {
-              //TODO: Fix below
-              //this.$$('#listMobile').scrollToItem(point);
-              hasFoundIt = true;
-            }
-          });
+          index = this.points.findIndex((p) => p.id === scrollId);
+          if (index !== -1) {
+            list = this.$$("#listMobile") as LitVirtualizer;
+          }
         } else if (this.upPoints && this.downPoints) {
-          this.upPoints.forEach((point) => {
-            if (!hasFoundIt && point.id == this.scrollToId) {
-              //TODO: Make this work
-              //this.$$('#listUp').scrollToItem(point);
-              hasFoundIt = true;
+          index = this.upPoints.findIndex((p) => p.id === scrollId);
+          if (index !== -1) {
+            list = this.$$("#listUp") as LitVirtualizer;
+          } else {
+            index = this.downPoints.findIndex((p) => p.id === scrollId);
+            if (index !== -1) {
+              list = this.$$("#listDown") as LitVirtualizer;
             }
-          });
-          if (!hasFoundIt) {
-            this.downPoints.forEach((point) => {
-              if (!hasFoundIt && point.id == this.scrollToId) {
-                //TODO: Make this work
-                //this.$$('#listDown').scrollToItem(point);
-                hasFoundIt = true;
-              }
-            });
           }
         }
 
-        if (hasFoundIt) {
+        if (list && index !== -1) {
+          list.scrollToIndex(index);
           setTimeout(() => {
-            // Change elevation
-            //TODO: Get to work again, use a method to change the shadow-xp class
-            /*const point = this.$$('#point' + this.scrollToId);
-            if (point) {
-              point.elevation = 5;
-              point.elevation = 1;
-              point.elevation = 5;
-              setTimeout(() => {
-                point.elevation = 1;
-              }, 7000);
-            } else {
-              console.warn("Can't find point to elevate");
-            }*/
             this.scrollToId = undefined;
           }, 50);
         }

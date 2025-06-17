@@ -164,3 +164,12 @@ postPoints.addEventListener("yp-debate-info", (e) => {
   console.log("Debate info:", e.detail);
 });
 ```
+
+## Manual Testing
+
+Follow these steps to confirm that points are scrolled into view correctly:
+
+1. Create or open a post that contains several points.
+2. Set the `scrollToId` property on the `<yp-post-points>` element to the ID of a point.
+3. On desktop layouts the corresponding list (`#listUp` or `#listDown`) should scroll so the point becomes visible.
+4. When the window is resized to mobile width the mobile list (`#listMobile`) should scroll to the same point when `scrollToId` is updated.
