@@ -156,6 +156,10 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
       "add-agent",
       this.openAddAgentDialog as EventListenerOrEventListenerObject
     );
+    this.addEventListener(
+      "agent-deleted",
+      this.getAgent as EventListenerOrEventListenerObject
+    );
   }
 
   override async disconnectedCallback() {
@@ -165,6 +169,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     this.removeListener("add-existing-connector", this.addExistingConnector);
     this.removeListener("get-costs", this.fetchAgentCosts);
     this.removeListener("add-agent", this.openAddAgentDialog);
+    this.removeListener("agent-deleted", this.getAgent);
   }
 
   async addExistingConnector(event: CustomEvent) {

@@ -88,6 +88,8 @@
   "workflow": "Workflow",
   "ideas": "Ideas",
   "pairwiseVoting": "Pairwise Voting",
+  "deleteFromWorkflow": "Delete from workflow",
+  "confirmDeleteFromWorkflow": "Are you sure you want to delete this agent from the workflow?",
   "useLowestContainerSurface": "Use lowest container surface",
   "alwaysHideLogoImage": "Hide logo image",
   "hideGroupType": "Hide group type",

@@ -241,6 +241,16 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<void>;
   }
 
+  public async deleteAgent(groupId: number, agentId: number): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}`,
+      {
+        method: "DELETE",
+      },
+      false
+    ) as Promise<void>;
+  }
+
   public async updateNodeConfiguration(
     groupId: number,
     nodeType: "agent" | "connector",

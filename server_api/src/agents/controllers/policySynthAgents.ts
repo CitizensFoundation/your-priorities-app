@@ -162,6 +162,12 @@ export class PolicySynthAgentsController {
       auth.can("edit group"),
       this.addExistingConnector
     );
+
+    this.router.delete(
+      "/:groupId/:agentId",
+      auth.can("edit group"),
+      this.deleteAgent
+    );
   }
 
   replaceAgentMemory = async (req: YpRequest, res: express.Response) => {
@@ -549,6 +555,34 @@ export class PolicySynthAgentsController {
     } catch (error) {
       console.error("Error updating agent status:", error);
       res.status(500).send("Internal Server Error");
+    }
+  };
+
+  private async recursiveDeleteAgent(agentId: number): Promise<void> {
+    const agent = await PsAgent.findByPk(agentId, {
+      include: [{ model: PsAgent, as: "SubAgents" }],
+    });
+    if (!agent) return;
+    if (agent.SubAgents) {
+      for (const sub of agent.SubAgents) {
+        await this.recursiveDeleteAgent(sub.id);
+      }
+    }
+    await agent.destroy();
+  }
+
+  deleteAgent = async (req: YpRequest, res: express.Response) => {
+    try {
+      const agentId = parseInt(req.params.agentId);
+      await this.recursiveDeleteAgent(agentId);
+      res.json({ message: "Agent deleted" });
+    } catch (error) {
+      console.error("Error deleting agent:", error);
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unexpected error occurred" });
+      }
     }
   };
 
