@@ -1179,7 +1179,7 @@ export class YpGroup extends YpCollection {
   get isNewPost() {
     if (this.collection) {
       if (
-        YpAccessHelpers.checkGroupAccess(this.collection as YpGroupData) &&
+    //    YpAccessHelpers.checkGroupAccess(this.collection as YpGroupData) &&
         !this.disableNewPosts
       ) {
         return (
