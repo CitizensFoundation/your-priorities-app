@@ -1,5 +1,6 @@
 import { LitElement, css, html, nothing } from "lit";
-import { property, customElement, query } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { property, customElement } from "lit/decorators.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
 
@@ -35,9 +36,6 @@ export class YpPagesGrid extends YpBaseElement {
 
   @property({ type: String })
   modelType: string | undefined;
-
-  @query("#localeInput")
-  newLocaleInput!: HTMLInputElement;
 
   @property({ type: String })
   currentlyEditingLocale: string | undefined;
@@ -160,7 +158,7 @@ export class YpPagesGrid extends YpBaseElement {
                       <md-text-button
                         class="locale"
                         data-args-page="${JSON.stringify(page)}"
-                        data-args-locale="${item.locale}"
+                        data-args-locale="${ifDefined(item.locale)}"
                         @click="${this._editPageLocale}"
                         >${item.locale}</md-text-button
                       >
@@ -168,30 +166,29 @@ export class YpPagesGrid extends YpBaseElement {
                   )}
                   <md-outlined-text-field
                     class="localeInput"
-                    id="localeInput"
                     length="2"
                     maxlength="2"
                   ></md-outlined-text-field>
                   <md-text-button
-                    data-args="${page.id}"
+                    data-args="${ifDefined(page.id)}"
                     class="addLocaleButton"
                     @click="${this._addLocale}"
                     >${this.t("pages.addLocale")}</md-text-button
                   >
                   <md-text-button
                     ?hidden="${page.published}"
-                    data-args="${page.id}"
+                    data-args="${ifDefined(page.id)}"
                     @click="${this._publishPage}"
                     >${this.t("pages.publish")}</md-text-button
                   >
                   <md-text-button
-                    data-args="${page.id}"
+                    data-args="${ifDefined(page.id)}"
                     ?hidden="${!page.published}"
                     @click="${this._unPublishPage}"
                     >${this.t("pages.unPublish")}</md-text-button
                   >
                   <md-text-button
-                    data-args="${page.id}"
+                    data-args="${ifDefined(page.id)}"
                     @click="${this._deletePage}"
                     >${this.t("pages.deletePage")}</md-text-button
                   >
@@ -387,20 +384,27 @@ export class YpPagesGrid extends YpBaseElement {
   }
 
   async _addLocale(event: Event) {
-    if (this.newLocaleInput && this.newLocaleInput.value.length > 1) {
-      const pageId = (event.target as HTMLElement).getAttribute("data-args");
-      await this._dispatchAdminServerApiRequest(
-        parseInt(pageId!),
-        "update_page_locale",
-        "PUT",
-        {
-          locale: this.newLocaleInput.value.toLowerCase(),
-          content: "",
-          title: "",
-        }
-      );
+    const button = event.target as HTMLElement;
+    const localeInput =
+      (button.previousElementSibling as MdOutlinedTextField) || null;
 
-      this._updateCollection();
+    if (localeInput && localeInput.value && localeInput.value.length > 1) {
+      const pageId = button.getAttribute("data-args");
+      if (pageId) {
+        await this._dispatchAdminServerApiRequest(
+          parseInt(pageId),
+          "update_page_locale",
+          "PUT",
+          {
+            locale: localeInput.value.toLowerCase(),
+            content: "",
+            title: "",
+          }
+        );
+
+        localeInput.value = "";
+        this._updateCollection();
+      }
     }
   }
 
