@@ -705,6 +705,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           text-overflow: ellipsis;
           height: 65px;
           max-height: 65px;
+          max-width: 180px;
         }
 
         md-circular-progress {
