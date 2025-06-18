@@ -231,6 +231,31 @@ export class PsAgentNode extends PsOperationsBaseNode {
     });
   }
 
+  confirmDeleteAgent() {
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmDeleteFromWorkflow"),
+          () => this.deleteAgent(),
+          true,
+          true
+        );
+      }
+    );
+  }
+
+  async deleteAgent() {
+    try {
+      await this.api.deleteAgent(this.groupId, this.agent.id);
+      this.dispatchEvent(
+        new CustomEvent("agent-deleted", { detail: { agentId: this.agent.id } })
+      );
+    } catch (error) {
+      console.error("Error deleting agent:", error);
+    }
+  }
+
   startStatusUpdates() {
     this.statusInterval = window.setInterval(
       () => this.updateAgentStatus(),
@@ -499,6 +524,10 @@ export class PsAgentNode extends PsOperationsBaseNode {
         <md-menu-item @click="${this.openMemoryDialog}">
           <div slot="headline">Explore Memory</div>
         </md-menu-item>
+        <md-divider></md-divider>
+        <md-menu-item class="deleteMenuItem" @click="${this.confirmDeleteAgent}">
+          <div slot="headline">${this.t("deleteFromWorkflow")}</div>
+        </md-menu-item>
       </md-menu>
       <input
         type="file"
@@ -605,6 +634,10 @@ export class PsAgentNode extends PsOperationsBaseNode {
           margin: 16px;
           margin-bottom: 8px;
           margin-top: 8px;
+        }
+
+        .deleteMenuItem {
+          color: var(--md-sys-color-error);
         }
 
         .mainContainer {
