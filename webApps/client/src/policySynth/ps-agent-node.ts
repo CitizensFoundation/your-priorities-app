@@ -664,10 +664,14 @@ export class PsAgentNode extends PsOperationsBaseNode {
         .statusMessage {
           font-size: 11px;
           text-align: center;
-          margin-top: 8px;
+          margin-top: 2px;
           border-radius: 16px;
           flex-grow: 1;
           color: var(--md-sys-color-on-surface-variant);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          height: 65px;
+          max-height: 65px;
         }
 
         md-circular-progress {
