@@ -9,6 +9,7 @@ import { YpSnackbar } from "./yp-snackbar.js";
 import { YpPostActions } from "../yp-post/yp-post-actions.js";
 import { YpPostRatingsInfo } from "../yp-rating/yp-post-ratings-info.js";
 import { YpPointActions } from "../yp-point/yp-point-actions.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
@@ -52,6 +53,8 @@ export class YpAppUser extends YpCodeBase {
   loginFor401refreshFunction: Function | undefined;
 
   loginForNotificationSettingsParams = false;
+
+  loginForNewPostGroupId: number | null = null;
 
   toastLoginTextCombined: string | undefined;
 
@@ -271,6 +274,11 @@ export class YpAppUser extends YpCodeBase {
     this.openUserlogin();
   }
 
+  loginForNewPost(groupId: number, configuration: YpGroupConfiguration | undefined) {
+    this.loginForNewPostGroupId = groupId;
+    this.openUserlogin(undefined, configuration);
+  }
+
   loginForNotificationSettings() {
     this.loginForNotificationSettingsParams = true;
     this.openUserlogin();
@@ -387,6 +395,10 @@ export class YpAppUser extends YpCodeBase {
       const membershipParams = this.loginForMembershipParams;
       //(membershipParams.membershipActionElement as YpMemberships).generateMembershipFromLogin(membershipParams.params.value);
       this.loginForMembershipParams = null;
+    } else if (this.loginForNewPostGroupId) {
+      const groupId = this.loginForNewPostGroupId;
+      this.loginForNewPostGroupId = null;
+      YpNavHelpers.redirectTo(`/group/${groupId}/new_post`);
     } else if (this.loginForAcceptInviteParams) {
       const acceptInviteParams = this.loginForAcceptInviteParams;
       // TODO: Remove any
