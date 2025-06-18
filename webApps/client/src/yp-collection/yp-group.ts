@@ -382,7 +382,14 @@ export class YpGroup extends YpCollection {
 
   _newPost() {
     window.appGlobals.activity("open", "newPost");
-    YpNavHelpers.redirectTo("/group/" + this.collectionId + "/new_post");
+    if (!window.appUser.loggedIn()) {
+      window.appUser.loginForNewPost(
+        this.collectionId!,
+        this.collection?.configuration as YpGroupConfiguration
+      );
+    } else {
+      YpNavHelpers.redirectTo("/group/" + this.collectionId + "/new_post");
+    }
   }
 
   _clearScrollThreshold() {
