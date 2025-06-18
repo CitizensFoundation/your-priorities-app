@@ -99,15 +99,15 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
       configuration: {},
     });
 
-    // Add Gemini 2.5 Pro Preview 2 model
+    // Add Gemini 2.5 Pro model
     const geminiReasoning = await PsAiModel.findOne({
-      where: { name: "Gemini 2.5 Pro Preview 2" },
+      where: { name: "Gemini 2.5 Pro" },
     });
 
     if (geminiReasoning) {
       await psAgent.addAiModel(geminiReasoning);
     } else {
-      throw new Error("Gemini 2.5 Pro Preview 2 model not found");
+      throw new Error("Gemini 2.5 Pro model not found");
     }
 
     // Add Gemini 2.0 Flash model
