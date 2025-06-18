@@ -56,6 +56,8 @@ export class YpAppUser extends YpCodeBase {
 
   loginForNewPostGroupId: number | null = null;
 
+  lastLoginForNewPostGroupId: number | null = null;
+
   toastLoginTextCombined: string | undefined;
 
   toastLogoutTextCombined: string | undefined;
@@ -118,6 +120,10 @@ export class YpAppUser extends YpCodeBase {
         this._resetPassword.bind(this)
       );
       this.addGlobalListener("yp-logged-in", this._onUserChanged.bind(this));
+      this.addGlobalListener(
+        "yp-registration-questions-done",
+        this._registrationQuestionsDone.bind(this)
+      );
     }
   }
 
@@ -276,6 +282,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForNewPost(groupId: number, configuration: YpGroupConfiguration | undefined) {
     this.loginForNewPostGroupId = groupId;
+    this.lastLoginForNewPostGroupId = groupId;
     this.openUserlogin(undefined, configuration);
   }
 
@@ -973,6 +980,13 @@ export class YpAppUser extends YpCodeBase {
     } else if (this.memberships) {
       this.memberships = undefined;
       this.fireGlobal("yp-got-memberships", false);
+    }
+  }
+
+  _registrationQuestionsDone() {
+    if (this.lastLoginForNewPostGroupId) {
+      YpNavHelpers.redirectTo(`/group/${this.lastLoginForNewPostGroupId}/new_post`);
+      this.lastLoginForNewPostGroupId = null;
     }
   }
 }
