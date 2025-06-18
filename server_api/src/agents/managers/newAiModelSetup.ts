@@ -596,47 +596,8 @@ export class NewAiModelSetup {
       console.log("Google model already exists: Gemini 2.0 Flash");
     }
 
-    const gemini25ProPreview1 = await PsAiModel.findOne({
-      where: { name: "Gemini 2.5 Pro Preview 1" },
-    });
-
-    const gemini25ProPreview1Config = {
-      type: PsAiModelType.TextReasoning,
-      modelSize: PsAiModelSize.Large,
-      provider: "google",
-      prices: {
-        costInTokensPerMillion: 1.25,
-        costOutTokensPerMillion: 10,
-        costInCachedContextTokensPerMillion: 0.875,
-        longContextTokenThreshold: 200_000,
-        longContextCostInTokensPerMillion: 2.5,
-        longContextCostInCachedContextTokensPerMillion: 1.75,
-        longContextCostOutTokensPerMillion: 15,
-        currency: "USD",
-      },
-      model: "gemini-2.5-pro-preview-04-17",
-      active: true,
-      maxTokensOut: 100000,
-      defaultTemperature: 0.0
-    };
-
-    if (!gemini25ProPreview1) {
-      await PsAiModel.create({
-        name: "Gemini 2.5 Pro Preview 1",
-        organization_id: 1,
-        user_id: userId,
-        configuration: gemini25ProPreview1Config,
-      });
-      console.log("Created Google model: Gemini 2.5 Pro Preview 1");
-    } else {
-      gemini25ProPreview1.set("configuration", gemini25ProPreview1Config);
-      gemini25ProPreview1.changed("configuration", true);
-      await gemini25ProPreview1.save();
-      console.log("Google model already exists: Gemini 2.5 Pro Preview 1");
-    }
-
-    const gemini25ProPreview2 = await PsAiModel.findOne({
-      where: { name: "Gemini 2.5 Pro Preview 2" },
+    const gemini25Pro = await PsAiModel.findOne({
+      where: { name: "Gemini 2.5 Pro" },
     });
 
     const gemini25ProConfig = {
@@ -653,15 +614,15 @@ export class NewAiModelSetup {
         longContextCostOutTokensPerMillion: 15,
         currency: "USD",
       },
-      model: "gemini-2.5-pro-preview-05-06",
+      model: "gemini-2.5-pro",
       active: true,
       maxTokensOut: 100000,
       defaultTemperature: 0.0
     };
 
-    if (!gemini25ProPreview2) {
+    if (!gemini25Pro) {
       await PsAiModel.create({
-        name: "Gemini 2.5 Pro Preview 2",
+        name: "Gemini 2.5 Pro",
         organization_id: 1,
         user_id: userId,
         configuration: gemini25ProConfig,
@@ -669,49 +630,10 @@ export class NewAiModelSetup {
       });
       console.log("Created Google model: Gemini 2.5 Pro");
     } else {
-      gemini25ProPreview2.set("configuration", gemini25ProConfig);
-      gemini25ProPreview2.changed("configuration", true);
-      await gemini25ProPreview2.save();
+      gemini25Pro.set("configuration", gemini25ProConfig);
+      gemini25Pro.changed("configuration", true);
+      await gemini25Pro.save();
       console.log("Google model already exists: Gemini 2.5 Pro");
-    }
-
-    const gemini25ProFinalPreview = await PsAiModel.findOne({
-      where: { name: "Gemini 2.5 Pro Final Preview" },
-    });
-
-    const gemini25ProFinalConfig = {
-      type: PsAiModelType.TextReasoning,
-      modelSize: PsAiModelSize.Large,
-      provider: "google",
-      prices: {
-        costInTokensPerMillion: 1.25,
-        costOutTokensPerMillion: 10,
-        costInCachedContextTokensPerMillion: 0.875,
-        longContextTokenThreshold: 200_000,
-        longContextCostInTokensPerMillion: 2.5,
-        longContextCostInCachedContextTokensPerMillion: 1.75,
-        longContextCostOutTokensPerMillion: 15,
-        currency: "USD",
-      },
-      model: "gemini-2.5-pro-preview-06-05",
-      active: true,
-      maxTokensOut: 100000,
-      defaultTemperature: 0.0,
-    };
-
-    if (!gemini25ProFinalPreview) {
-      await PsAiModel.create({
-        name: "Gemini 2.5 Pro Final Preview",
-        organization_id: 1,
-        user_id: userId,
-        configuration: gemini25ProFinalConfig,
-      });
-      console.log("Created Google model: Gemini 2.5 Pro Final Preview");
-    } else {
-      gemini25ProFinalPreview.set("configuration", gemini25ProFinalConfig);
-      gemini25ProFinalPreview.changed("configuration", true);
-      await gemini25ProFinalPreview.save();
-      console.log("Google model already exists: Gemini 2.5 Pro Final Preview");
     }
 
     const gemini25FlashPreview1 = await PsAiModel.findOne({
@@ -905,9 +827,7 @@ export class NewAiModelSetup {
       { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
-      { name: "Gemini 2.5 Pro Preview 1", envKey: "GEMINI_API_KEY" },
-      { name: "Gemini 2.5 Pro Preview 2", envKey: "GEMINI_API_KEY" },
-      { name: "Gemini 2.5 Pro Final Preview", envKey: "GEMINI_API_KEY" },
+      { name: "Gemini 2.5 Pro", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.5 Flash Preview 1", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.5 Flash Preview", envKey: "GEMINI_API_KEY" },
       { name: "o1 24", envKey: "OPENAI_API_KEY" },
