@@ -215,6 +215,8 @@ export class YpPostListItem extends YpBaseElement {
           yp-post-cover-media {
             width: 100%;
             height: 230px;
+            margin-right: 0;
+            margin-bottom: 16px;
           }
 
           yp-post-cover-media[mini] {

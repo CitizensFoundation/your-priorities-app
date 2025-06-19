@@ -61,6 +61,10 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
       super.styles,
       ShadowStyles,
       css`
+        .innerMediaContainer {
+          width: 100%;
+        }
+
         :host {
           display: block;
         }
@@ -111,8 +115,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             line-height: var(--md-sys-typescale-title-medium-line-height, 32px);
             margin-top: 16px;
             margin-bottom: 16px;
-            padding-left: 16px;
-            padding-right: 16px;
+            padding-left: 8px;
+            padding-right: 8px;
           }
 
           .container {
@@ -134,6 +138,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
         .mediaContainer {
           align-self: flex-start;
+          width: 100%;
         }
 
         .customRatings {
@@ -201,8 +206,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           }
 
           yp-post-cover-media {
-            height: 169px;
-            width: 300px;
+            height: calc(92vw * 9 / 16);
+            width: 92vw;
           }
 
           .headerTopLevel {
@@ -511,7 +516,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 <div class="layout vertical center-center mediaContainer">
                   ${this.renderCoverMedia()} ${this.renderActions()}
                 </div>
-                <div class="layout vertical">
+                <div class="layout vertical innerMediaContainer">
                   ${this.renderName()} ${this.renderPostInformation()}
                 </div>
               </div>

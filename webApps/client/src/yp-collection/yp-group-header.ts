@@ -63,6 +63,13 @@ export class YpGroupHeader extends YpCollectionHeader {
             width: 100%;
           }
 
+
+        .stats {
+           justify-content: center;
+           margin-top: -32px;
+           margin-bottom: 16px;
+        }
+
           .description {
             width: 90%;
           }
@@ -115,7 +122,7 @@ export class YpGroupHeader extends YpCollectionHeader {
                           : nothing}
                       </div>
                     </div>
-                    <div class="layout horizontal ${!this.wide ? 'wrap' : ''}">
+                    <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
                       <div class="descriptionContainer">
                         ${this.renderDescription()} ${this.renderStats()}
                       </div>
