@@ -133,7 +133,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   moveGroupToId: any;
   endorsementButtons: string | undefined;
   endorsementButtonsDisabled = false;
-  apiEndpoint: unknown;
+  @property({ type: String })
+  apiEndpoint = '/api';
   isGroupFolder: any;
   structuredQuestionsJsonError: any;
   hasSamlLoginProvider: any;
