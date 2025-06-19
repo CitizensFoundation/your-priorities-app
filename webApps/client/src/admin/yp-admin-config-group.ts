@@ -390,6 +390,20 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             value="${this.detectedThemeColor}"
           />`
         : nothing}
+      ${this.group.configuration.defaultDataImageId
+        ? html`<input
+            type="hidden"
+            name="uploadedDefaultDataImageId"
+            value="${this.group.configuration.defaultDataImageId.toString()}"
+          />`
+        : nothing}
+      ${this.group.configuration.uploadedDefaultPostImageId
+        ? html`<input
+            type="hidden"
+            name="uploadedDefaultPostImageId"
+            value="${this.group.configuration.uploadedDefaultPostImageId.toString()}"
+          />`
+        : nothing}
     `;
   }
 
