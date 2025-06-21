@@ -1,5 +1,6 @@
 const models = require('../../models/index.cjs');
 const moment = require('moment');
+const log = require('../../utils/logger.cjs');
 
 const maxNumberFromPath = process.argv[2];
 // Default to 1,000,000 if no command line arg given, adjust as you see fit

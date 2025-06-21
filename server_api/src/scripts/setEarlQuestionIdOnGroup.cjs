@@ -1,4 +1,5 @@
 var models = require("../models/index.cjs");
+const log = require("../utils/logger.cjs");
 
 var questionId = process.argv[2];
 var groupId = process.argv[3];

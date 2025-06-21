@@ -4,6 +4,7 @@ var truncate = require('../../utils/truncate_text.cjs');
 const async = require('async');
 const _ = require('lodash');
 var i18n = require('../../utils/i18n.cjs');
+const log = require("../../../utils/logger.cjs");
 
 var linkTo = function (url) {
   return '<a href="'+url+'">'+url+'</a>';

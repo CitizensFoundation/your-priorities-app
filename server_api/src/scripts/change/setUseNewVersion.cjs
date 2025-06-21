@@ -1,4 +1,5 @@
 const models = require("../../models/index.cjs");
+const log = require("../../utils/logger.cjs");
 const domainId = process.argv[2];
 const useNewVersionStatus = process.argv[3];
 

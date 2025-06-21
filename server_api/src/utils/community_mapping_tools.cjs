@@ -1,4 +1,5 @@
 const models = require('../models/index.cjs');
+const log = require('./logger.cjs');
 
 async function getTranslationForMap(textType, model, targetLanguage) {
   return await new Promise((resolve, reject) => {

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const log = require('./utils/logger.cjs');
 
 const tsOutDir = './ts-out';
 const keepDeclarations = new Set([

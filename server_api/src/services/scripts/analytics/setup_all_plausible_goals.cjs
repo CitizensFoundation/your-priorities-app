@@ -1,4 +1,5 @@
 const { addAllPlausibleGoals } = require("../../engine/analytics/plausible/manager");
+const log = require("../../../utils/logger.cjs");
 
 (async function() {
   try {

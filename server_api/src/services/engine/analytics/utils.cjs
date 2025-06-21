@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const request = require('request');
 const models = require('../../../models/index.cjs');
+const log = require('../../../utils/logger.cjs');
 
 const convertToString = (integer, type) => {
   if (integer) {

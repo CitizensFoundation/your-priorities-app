@@ -2,6 +2,7 @@ const _ = require("lodash");
 
 const FraudGetBase = require('./FraudGetBase.cjs');
 const models = require("../../../../models/index.cjs");
+const log = require("../../../../utils/logger.cjs");
 
 class FraudGetPoints extends FraudGetBase {
   async getAllItems() {

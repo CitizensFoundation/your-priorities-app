@@ -2,6 +2,7 @@ var models = require('../../models/index.cjs');
 var async = require('async');
 var _ = require('lodash');
 var moment = require('moment');
+const log = require('../../utils/logger.cjs');
 
 var id = process.argv[2];
 var userIdToPostNewsStory = process.argv[3];
