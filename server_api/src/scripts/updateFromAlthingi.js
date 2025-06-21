@@ -190,13 +190,13 @@ var saveIssueIfNeeded = function (dbIssue, userId, callback) {
           }
           addPost(dbIssue, userId, defaultImageId, domain, callback);
         } else {
-          console.error("Cant find group id: "+dbIssue.groupId);
+          log.error("Cant find group id: "+dbIssue.groupId);
           callback('Cant find group');
         }
       });
     });
   } else {
-    console.log("Already saved issue id: "+dbIssue.issueId);
+    log.info("Already saved issue id: "+dbIssue.issueId);
     if (post.public_data.law_issue.issueStatus!=dbIssue.issueStatus) {
       post.set('public_data.law_issue.issueStatus', dbIssue.issueStatus);
       setPostOfficialStatus(post, dbIssue);
@@ -243,7 +243,7 @@ groupsConfigString.split(":").forEach(function (pair) {
 
 getIssueList(function (error, issueList) {
   if (error) {
-    console.error(error);
+    log.error(error);
     process.exit();
   } else {
     var issues = [];
@@ -252,7 +252,7 @@ getIssueList(function (error, issueList) {
         var dbIssue = { dataType: 'lawIssue', sessionId: SESSION_ID, issueId: issue.$['málsnúmer'], name: capitalize(issue['málsheiti'][0]),
                         externalHtmlLink: issue['html'][0], xmlLink: issue['xml'][0], issueType: issue['málstegund'][0]['heiti'][0] };
         if (error) {
-          console.error(error);
+          log.error(error);
           callback(error);
         } else {
           var topCategory, subCategory;
@@ -287,17 +287,17 @@ getIssueList(function (error, issueList) {
 
               dbIssue = _.merge(dbIssue, { groupId: topCategoryIdToGroup[dbIssue.topCategoryId], description: description});
               if (capitalize(dbIssue.issueType).indexOf("Fyrirspurn") > -1 || capitalize(dbIssue.issueType).indexOf("Beiðni um skýrslu") > -1) {
-                console.log("Not doing questions or reports for now for "+dbIssue.issueId);
+                log.info("Not doing questions or reports for now for "+dbIssue.issueId);
                 callback()
               } else {
                 saveIssueIfNeeded(dbIssue, CRAWLER_USER_ID, callback);
               }
             } else {
-              console.error("No topCategory");
+              log.error("No topCategory");
               callback();
             }
           } else {
-            console.error("No thingmal field");
+            log.error("No thingmal field");
             callback();
           }
         }
@@ -305,7 +305,7 @@ getIssueList(function (error, issueList) {
 
     }, function (error) {
       if (error)
-        console.error(error);
+        log.error(error);
       process.exit();
     });
   }

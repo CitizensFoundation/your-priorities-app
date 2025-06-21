@@ -3,6 +3,7 @@ import { IncomingMessage } from "http";
 import { RedisClientType } from "@redis/client";
 import { WebSocketServer, WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import log from "./utils/loggerTs.js";
 
 /**
  * WebSocketsManager:
@@ -52,7 +53,7 @@ export class WebSocketsManager {
         (ws as any).isAlive = true;
       });
 
-      console.log(
+      log.info(
         `WebSockets: New WebSocket connection: clientId ${clientId}`
       );
 
@@ -60,14 +61,14 @@ export class WebSocketsManager {
 
       ws.on("close", async () => {
         this.wsClients.delete(clientId);
-        console.log(
+        log.info(
           `WebSockets: WebSocket closed: clientId ${clientId}`
         );
       });
 
       ws.on("error", (err) => {
         this.wsClients.delete(clientId);
-        console.error(
+        log.error(
           `WebSockets: WebSocket error with clientId ${clientId}:`,
           err
         );
@@ -80,14 +81,14 @@ export class WebSocketsManager {
    * we assume it's a stale connection and terminate it.
    */
   private startPingCheck() {
-    console.log("WebSockets: Starting ping check");
+    log.info("WebSockets: Starting ping check");
     this.pingInterval = setInterval(() => {
       if (this.ws.clients.size > 0) {
-        console.log(`WebSockets: Pinging clients ${this.ws.clients.size}`);
+        log.info(`WebSockets: Pinging clients ${this.ws.clients.size}`);
         this.ws.clients.forEach((socket) => {
           const wsAny = socket as any;
         if (wsAny.isAlive === false) {
-          console.log("WebSockets: Terminating unresponsive client");
+          log.info("WebSockets: Terminating unresponsive client");
           return socket.terminate();
         }
         wsAny.isAlive = false;
@@ -98,7 +99,7 @@ export class WebSocketsManager {
 
     // If the server closes the entire WebSocketServer
     this.ws.on("close", () => {
-      console.log("WebSockets: WebSocket closed");
+      log.info("WebSockets: WebSocket closed");
       if (this.pingInterval) {
         clearInterval(this.pingInterval as NodeJS.Timeout);
       }

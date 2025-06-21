@@ -1,6 +1,7 @@
 import AWS from "aws-sdk";
 import fs from "fs";
 import axios from "axios";
+import log from "../../../utils/loggerTs.js";
 
 export class S3Service {
   constructor(private cloudflareApiKey?: string, private cloudflareZoneId?: string) {}
@@ -44,17 +45,17 @@ export class S3Service {
       ACL: "private",
     };
 
-    console.log(`Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
+    log.info(`Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
 
     return new Promise((resolve, reject) => {
       s3.putObjectAcl(params, (err: any, data: any) => {
         if (err) {
-          console.error(`Error deleting image from S3: ${err}`);
+          log.error(`Error deleting image from S3: ${err}`);
           reject(err);
         } else {
-          console.log(`Deleted image from S3: ${imageUrl}`, data);
+          log.info(`Deleted image from S3: ${imageUrl}`, data);
           if (this.cloudflareApiKey && this.cloudflareZoneId) {
-            console.log("Purging Cloudflare cache for image:", imageUrl);
+            log.info("Purging Cloudflare cache for image:", imageUrl);
             axios
               .post(
                 `https://api.cloudflare.com/client/v4/zones/${this.cloudflareZoneId}/purge_cache`,
@@ -67,21 +68,21 @@ export class S3Service {
                 }
               )
               .then((response) => {
-                console.log("Cloudflare cache purged:", response.data);
+                log.info("Cloudflare cache purged:", response.data);
                 resolve(data);
               })
               .catch((error) => {
                 if (error.response) {
-                  console.error(
+                  log.error(
                     "Error purging Cloudflare cache:",
                     error.response.data
                   );
-                  console.error("Status code:", error.response.status);
-                  console.error("Headers:", error.response.headers);
+                  log.error("Status code:", error.response.status);
+                  log.error("Headers:", error.response.headers);
                 } else if (error.request) {
-                  console.error("No response received:", error.request);
+                  log.error("No response received:", error.request);
                 } else {
-                  console.error("Error setting up request:", error.message);
+                  log.error("Error setting up request:", error.message);
                 }
                 resolve(data);
               });
@@ -116,7 +117,7 @@ export class S3Service {
   async deleteMediaFormatsUrls(formats: string[]) {
     for (const url of formats) {
       await this.deleteS3Url(url);
-      console.log(`Deleted image from S3: ${url}`);
+      log.info(`Deleted image from S3: ${url}`);
     }
   }
 }

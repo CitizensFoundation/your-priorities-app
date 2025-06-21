@@ -4,7 +4,7 @@ const useNewVersionStatus = process.argv[3];
 
 models.Domain.findOne({ where: { id: domainId } }).then(async (domain) => {
   if (domain) {
-    console.log("Domain " + domain.domain_name);
+    log.info("Domain " + domain.domain_name);
     if (useNewVersionStatus === "true" || useNewVersionStatus === "false") {
       domain.set(
         "configuration.useNewVersion",
@@ -12,13 +12,13 @@ models.Domain.findOne({ where: { id: domainId } }).then(async (domain) => {
       );
       domain.changed("configuration", true);
       await domain.save();
-      console.log("Set useNewVersionStatus to " + useNewVersionStatus);
+      log.info("Set useNewVersionStatus to " + useNewVersionStatus);
     } else {
-      console.log("Invalid useNewVersionStatus");
+      log.info("Invalid useNewVersionStatus");
     }
     process.exit();
   } else {
-    console.log("Can't find user");
+    log.info("Can't find user");
     process.exit();
   }
 });

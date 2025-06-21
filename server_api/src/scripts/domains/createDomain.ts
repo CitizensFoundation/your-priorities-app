@@ -1,16 +1,17 @@
 import models from '../../models/index.cjs';
+import log from "../../utils/loggerTs.js";
 
 (async () => {
   try {
     const [userId, domainName, name] = process.argv.slice(2);
     if (!domainName || !name) {
-      console.log('Usage: node createDomain.js <user_id> <domain_name> "<name>"');
+      log.info('Usage: node createDomain.js <user_id> <domain_name> "<name>"');
       process.exit(1);
     }
 
     const existing = await models.Domain.findOne({ where: { domain_name: domainName } });
     if (existing) {
-      console.error(`Domain with domain_name ${domainName} already exists`);
+      log.error(`Domain with domain_name ${domainName} already exists`);
       process.exit(1);
     }
 
@@ -25,10 +26,10 @@ import models from '../../models/index.cjs';
       configuration: {}
     });
 
-    console.log(`Created domain ${domain.name} with id ${domain.id}`);
+    log.info(`Created domain ${domain.name} with id ${domain.id}`);
     process.exit(0);
   } catch (err) {
-    console.error(err);
+    log.error(err);
     process.exit(1);
   }
 })();

@@ -6,6 +6,8 @@ import { YpAgentProductRun } from "../../../../models/agentProductRun.js";
 import { YpAgentAssistant } from "../../../agentAssistant.js";
 import { Op } from "sequelize";
 
+import log from "../../../../../utils/loggerTs.js";
+
 export class SubscriptionModels {
   assistant: YpAgentAssistant;
 
@@ -51,7 +53,7 @@ export class SubscriptionModels {
         ],
       });
 
-      console.log(
+      log.info(
         `-----------XXXXXXXXXXXXXXXx----------_> ${JSON.stringify(
           availablePlans,
           null,
@@ -84,7 +86,7 @@ export class SubscriptionModels {
         },
       };
     } catch (error) {
-      console.error("Error loading available subscription plans:", error);
+      log.error("Error loading available subscription plans:", error);
       return {
         availablePlans: [],
         availableBundle: "No bundle available",
@@ -225,7 +227,7 @@ export class SubscriptionModels {
         },
       };
     } catch (error) {
-      console.error("Error loading agent status:", error);
+      log.error("Error loading agent status:", error);
       return {
         availableSubscriptions: [],
         runningAgents: [],
@@ -279,7 +281,7 @@ export class SubscriptionModels {
         error instanceof Error
           ? error.message
           : "Failed to unsubscribe from agent plan";
-      console.error(
+      log.error(
         `Database error in unsubscribeFromAgentPlan: ${errorMessage}`
       );
       return {
@@ -343,7 +345,7 @@ export class SubscriptionModels {
         };
       }
 
-      console.log(`-------> subscribing to agent plan ${subscriptionPlanId} for user ${userId}`);
+      log.info(`-------> subscribing to agent plan ${subscriptionPlanId} for user ${userId}`);
 
       const subscription = await YpSubscription.create({
         subscription_plan_id: subscriptionPlanId,
@@ -366,7 +368,7 @@ export class SubscriptionModels {
         error instanceof Error
           ? error.message
           : "Failed to subscribe to agent plan";
-      console.error(`Database error in subscribeToAgentPlan: ${errorMessage}`);
+      log.error(`Database error in subscribeToAgentPlan: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage,

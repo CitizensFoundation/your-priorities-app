@@ -14,10 +14,10 @@ models.Domain.findOne({
     }
   ]
 }).then(function (domain) {
-  console.log(domain.DomainUsers.length);
-  console.log("email,name,kt");
+  log.info(domain.DomainUsers.length);
+  log.info("email,name,kt");
   async.eachSeries(domain.DomainUsers, function (user, seriesCallback) {
-    console.log('"'+user.email+'","'+user.name+'"'+(user.ssn ? ','+user.ssn :''));
+    log.info('"'+user.email+'","'+user.name+'"'+(user.ssn ? ','+user.ssn :''));
     seriesCallback();
   }, function () {
     process.exit();

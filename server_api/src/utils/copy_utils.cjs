@@ -165,7 +165,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
         }).then(function (postIn) {
           oldPost = postIn;
           if (!postIn) {
-            console.error("No post in");
+            log.error("No post in");
             callback("no post");
           } else {
             var postJson = JSON.parse(JSON.stringify(postIn.toJSON()));
@@ -458,7 +458,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                     },
                   ],
                   function (error) {
-                    console.log("Have copied post to group id");
+                    log.info("Have copied post to group id");
                     callback(error);
                   }
                 );
@@ -646,7 +646,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 newActivity
                                   .save()
                                   .then(function (results) {
-                                    console.log(
+                                    log.info(
                                       "Have changed group and all activity: " +
                                         newActivity.id
                                     );
@@ -673,7 +673,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                 });
               },
               function (error) {
-                console.log("Have changed group and all for point");
+                log.info("Have changed group and all for point");
                 callback();
               }
             );
@@ -707,7 +707,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                   newActivity
                     .save()
                     .then(function (results) {
-                      console.log(
+                      log.info(
                         "Have changed group and all activity: " + newActivity.id
                       );
                       innerSeriesCallback();
@@ -730,8 +730,8 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
       },
     ],
     function (error) {
-      console.log("Done copying post id " + fromPostId);
-      if (error) console.error(error);
+      log.info("Done copying post id " + fromPostId);
+      if (error) log.error(error);
       done(error, newPost);
     }
   );
@@ -1167,7 +1167,7 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                   },
                 ],
                 function (error) {
-                  console.log("Have copied post to group id");
+                  log.info("Have copied post to group id");
                   callback(error);
                 }
               );
@@ -1179,8 +1179,8 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
       },
     ],
     function (error) {
-      console.log("Done copying group");
-      if (error) console.error(error);
+      log.info("Done copying group");
+      if (error) log.error(error);
       done(error, newGroup);
     }
   );
@@ -1490,7 +1490,7 @@ const copyCommunity = (
                   },
                 ],
                 function (error) {
-                  console.log("Have copied community");
+                  log.info("Have copied community");
                   callback(error);
                 }
               );
@@ -1502,9 +1502,9 @@ const copyCommunity = (
       },
     ],
     function (error) {
-      console.log("Done copying community", newCommunity);
+      log.info("Done copying community", newCommunity);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error);
       } else {
         models.Group.count({
@@ -1553,12 +1553,12 @@ const copyCommunityWithEverything = (
     },
     null,
     (error, newCommunity) => {
-      if (newCommunity) console.log(newCommunity.id);
+      if (newCommunity) log.info(newCommunity.id);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error, newCommunity);
       } else {
-        //console.log("Done for new community "+ńewCommunity.id);
+        //log.info("Done for new community "+ńewCommunity.id);
         done(null, newCommunity);
       }
     }
@@ -1586,12 +1586,12 @@ const deepCopyCommunityOnlyStructureWithAdminsAndPosts = (
     },
     null,
     (error, newCommunity) => {
-      if (newCommunity) console.log(newCommunity.id);
+      if (newCommunity) log.info(newCommunity.id);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error, newCommunity);
       } else {
-        //console.log("Done for new community "+ńewCommunity.id);
+        //log.info("Done for new community "+ńewCommunity.id);
         done(null, newCommunity);
       }
     }
@@ -1617,14 +1617,14 @@ const copyCommunityNoUsersNoEndorsementsNoPoints = (
     },
     null,
     (error, newCommunity) => {
-      if (newCommunity) console.log(newCommunity.id);
+      if (newCommunity) log.info(newCommunity.id);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error, newCommunity);
       } else {
         recountCommunity(newCommunity.id, (recountError) => {
           if (recountError) {
-            console.error(error);
+            log.error(error);
             done(recountError, newCommunity);
           } else {
             done(null, newCommunity);
@@ -1650,12 +1650,12 @@ const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
     },
     null,
     (error, newCommunity) => {
-      if (newCommunity) console.log(newCommunity.id);
+      if (newCommunity) log.info(newCommunity.id);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error, newCommunity);
       } else {
-        //console.log("Done for new community "+ńewCommunity.id);
+        //log.info("Done for new community "+ńewCommunity.id);
         done(null, newCommunity);
       }
     }
@@ -1682,12 +1682,12 @@ const copyCommunityNoUsersNoEndorsementsOneGroup = (
     },
     null,
     (error, newCommunity) => {
-      if (newCommunity) console.log(newCommunity.id);
+      if (newCommunity) log.info(newCommunity.id);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error, newCommunity);
       } else {
-        //console.log("Done for new community "+ńewCommunity.id);
+        //log.info("Done for new community "+ńewCommunity.id);
         done(null, newCommunity);
       }
     }
@@ -1710,12 +1710,12 @@ const copyCommunityOnlyGroups = (communityId, toDomainId, done) => {
     },
     null,
     (error, newCommunity) => {
-      if (newCommunity) console.log(newCommunity.id);
+      if (newCommunity) log.info(newCommunity.id);
       if (error) {
-        console.error(error);
+        log.error(error);
         done(error, newCommunity);
       } else {
-        //console.log("Done for new community "+ńewCommunity.id);
+        //log.info("Done for new community "+ńewCommunity.id);
         done(null, newCommunity);
       }
     }

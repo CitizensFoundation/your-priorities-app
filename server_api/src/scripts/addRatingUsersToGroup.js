@@ -46,7 +46,7 @@ models.Rating.findAll({
       callback();
     });
   }, (error) => {
-    error ? console.error(error) : console.log("Done");
+    error ? log.error(error) : log.info("Done");
     process.exit();
   })
 })

@@ -6,6 +6,8 @@ import { YpAgentProduct } from "../../../../models/agentProduct.js";
 import WebSocket from "ws";
 import { YpSubscription } from "../../../../models/subscription.js";
 
+import log from "../../../../../utils/loggerTs.js";
+
 export class AgentModels {
   subscriptionModels: SubscriptionModels;
   assistant: YpAgentAssistant;
@@ -83,7 +85,7 @@ export class AgentModels {
 
       const isLastStep = currentStepIndex >= totalSteps - 1;
 
-      console.log(`oldStep: ${JSON.stringify(currentStep, null, 2)}`);
+      log.info(`oldStep: ${JSON.stringify(currentStep, null, 2)}`);
 
       if (currentStep.type !== "agentOps" && !isLastStep) {
         workflow.currentStepIndex++;
@@ -93,7 +95,7 @@ export class AgentModels {
 
       currentStep.startTime = new Date();
 
-      console.log(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
+      log.info(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
 
       if (currentStepIndex >= totalSteps) {
         throw new Error(
@@ -133,7 +135,7 @@ export class AgentModels {
         message: "Agent workflow started successfully",
       };
     } catch (error) {
-      console.error(error);
+      log.error(error);
       throw new Error("Error starting agent workflow step");
     }
   }
@@ -171,7 +173,7 @@ export class AgentModels {
     run: YpAgentProductRunAttributes;
     message: string;
   }> {
-    console.log("---------------------> stopCurrentWorkflowStep");
+    log.info("---------------------> stopCurrentWorkflowStep");
     const agent = await this.assistant.getCurrentAgentProduct();
 
     const currentRun = (await YpAgentProductRun.findByPk(
@@ -208,7 +210,7 @@ export class AgentModels {
     // Get current status from queue manager
     const queueStatus = await this.queueManager.getAgentStatus(agent.id);
     if (queueStatus) {
-      console.log(`Current queue status for agent ${agent.id}:`, queueStatus);
+      log.info(`Current queue status for agent ${agent.id}:`, queueStatus);
     }
 
     return {

@@ -4,7 +4,7 @@ import WebSocket, { WebSocketServer } from "ws";
 import models from "../models/index.cjs";
 
 import auth from "../authorization.cjs";
-
+import log from "../utils/loggerTs.js";
 import { v4 as uuidv4 } from "uuid";
 import express, { Request, RequestHandler, Response } from "express";
 import crypto from "crypto";
@@ -220,7 +220,7 @@ export class AllOurIdeasController {
       const totalGroupCount = await Group.count();
 
       if (!choiceResponse.ok) {
-        console.error(choiceResponse.statusText);
+        log.error(choiceResponse.statusText);
         throw new Error("Choice creation failed.");
       }
 
@@ -237,7 +237,7 @@ export class AllOurIdeasController {
         res.status(404).send("Not found");
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res
         .status(500)
         .json({ error: "Failed to fetch total vote and questions count" });
@@ -261,7 +261,7 @@ export class AllOurIdeasController {
     //@ts-ignore
     choiceParams["local_identifier"] = req.user ? req.user.id : req.session.id;
 
-    console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
+    log.info(`choiceParams: ${JSON.stringify(choiceParams)}`);
 
     try {
       const group = (await Group.findOne({
@@ -282,7 +282,7 @@ export class AllOurIdeasController {
         );
 
         if (!choiceResponse.ok) {
-          console.error(choiceResponse.statusText);
+          log.error(choiceResponse.statusText);
           throw new Error("Choice creation failed.");
         }
 
@@ -298,11 +298,11 @@ export class AllOurIdeasController {
           flagged = await this.getModerationFlag(newIdea);
           if (flagged) {
             await this.deactivateChoice(req, choice);
-            console.log("----------------------------------");
-            console.log(`Flagged BY OPENAI: ${flagged}`);
-            console.log("----------------------------------");
+            log.info("----------------------------------");
+            log.info(`Flagged BY OPENAI: ${flagged}`);
+            log.info("----------------------------------");
           } else {
-            console.log(`Not flagged BY OPENAI Moderation API: ${flagged}`);
+            log.info(`Not flagged BY OPENAI Moderation API: ${flagged}`);
 
             if (aoiConfig.earl?.configuration?.moderationPrompt) {
               const aiHelper = new AiHelper();
@@ -317,7 +317,7 @@ export class AllOurIdeasController {
             }
           }
         } else {
-          console.log(`Adding idea to moderation queue`);
+          log.info(`Adding idea to moderation queue`);
           await this.deactivateChoice(req, choice);
         }
 
@@ -335,7 +335,7 @@ export class AllOurIdeasController {
         return;
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(500).json({ error: "Addition of new idea failed" });
     }
   }
@@ -377,7 +377,7 @@ export class AllOurIdeasController {
       );
       choice.active = false;
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -389,7 +389,7 @@ export class AllOurIdeasController {
         {},
         function (error: string, translation: string) {
           if (error) {
-            console.error(error);
+            log.error(error);
             res.status(500).send("A getTranslatedText error occurred");
           } else {
             res.send(translation);
@@ -397,14 +397,14 @@ export class AllOurIdeasController {
         }
       );
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(500).send("A getTranslatedText error occurred");
     }
   }
 
   public async generateIdeas(req: Request, res: Response): Promise<void> {
     const { currentIdeas, wsClientSocketId, question } = req.body;
-    console.log(`generateIdeas: ${wsClientSocketId}`);
+    log.info(`generateIdeas: ${wsClientSocketId}`);
     const swClientSocket = this.wsClients.get(wsClientSocketId);
     if (swClientSocket) {
       const aiHelper = new AiHelper(swClientSocket);
@@ -430,7 +430,7 @@ export class AllOurIdeasController {
         res.send(job);
       })
       .catch((error) => {
-        console.error("Could not get backgroundJob", {
+        log.error("Could not get backgroundJob", {
           err: error,
           context: "start_report_creation"
         });
@@ -441,7 +441,7 @@ export class AllOurIdeasController {
   public async exportXls(req: Request, res: Response): Promise<void> {
     AcBackgroundJob.createJob({}, {}, (error: string, jobId: number) => {
       if (error) {
-        console.error("Could not create backgroundJob", {
+        log.error("Could not create backgroundJob", {
           err: error,
           context: "start_report_creation",
         });
@@ -473,7 +473,7 @@ export class AllOurIdeasController {
 
   public async llmAnswerExplain(req: Request, res: Response): Promise<void> {
     const { wsClientId, chatLog, languageName } = req.body;
-    console.log(`explainConversation: ${wsClientId}`);
+    log.info(`explainConversation: ${wsClientId}`);
     const explainer = new ExplainAnswersAssistant(
       wsClientId,
       this.wsClients,
@@ -521,8 +521,8 @@ export class AllOurIdeasController {
         const { picked_prompt_id } = question;
         const question_id = question.id;
 
-        console.log(`picked_prompt_id: ${picked_prompt_id}`);
-        console.log(`question_id: ${question_id}`);
+        log.info(`picked_prompt_id: ${picked_prompt_id}`);
+        log.info(`question_id: ${question_id}`);
 
         const promptResponse = await fetch(
           `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${picked_prompt_id}.json`,
@@ -545,7 +545,7 @@ export class AllOurIdeasController {
         res.status(404).send("Not found");
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(500).send("An error occurred");
     }
   }
@@ -593,7 +593,7 @@ export class AllOurIdeasController {
 
         res.json(result);
       } catch (error) {
-        console.error(error);
+        log.error(error);
         res.status(422).send("Vote unsuccessful.");
       }
     } else {
@@ -604,7 +604,7 @@ export class AllOurIdeasController {
   async createQuestion(req: Request, res: Response) {
     const questionParams = req.body;
 
-    console.log(`in createQuestion: ${JSON.stringify(questionParams.ideas)}`);
+    log.info(`in createQuestion: ${JSON.stringify(questionParams.ideas)}`);
 
     if (questionParams.ideas.length < 4) {
       res.status(400).json({ error: "Invalid input" });
@@ -636,7 +636,7 @@ export class AllOurIdeasController {
 
       res.json({ question_id: question.id });
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res
         .status(500)
         .json({ error: "An error occurred during question creation" });
@@ -660,7 +660,7 @@ export class AllOurIdeasController {
 
       res.status(200).json({ message: "Choice data updated" });
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(422).json({ error: "Choice update failed" });
     }
   }
@@ -682,7 +682,7 @@ export class AllOurIdeasController {
 
       res.status(200).json({ message: "Choice active updated" });
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(422).json({ error: "Choice active failed" });
     }
   }
@@ -704,7 +704,7 @@ export class AllOurIdeasController {
 
       res.status(200).json({ message: "Question name updated" });
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(422).json({ error: "Question update name failed" });
     }
   }
@@ -751,7 +751,7 @@ export class AllOurIdeasController {
 
       res.json(result);
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(422).json({ error: "Skip failed" });
     }
   }
@@ -760,7 +760,7 @@ export class AllOurIdeasController {
     const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } =
       req.params;
 
-    console.log(
+    log.info(
       `--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`
     );
 
@@ -803,33 +803,33 @@ export class AllOurIdeasController {
       const question = (await questionResponse.json()) as AoiQuestionData;
 
       // Additional logic adapted from Ruby for fetching and sorting choices
-      console.log(
+      log.info(
         `@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`
       );
       const analysisConfig =
         group.configuration.allOurIdeas.earl.configuration.analysis_config;
-      console.log(`@analysisConfig is ${analysisConfig}.`);
+      log.info(`@analysisConfig is ${analysisConfig}.`);
       const analysisIdeaConfig =
         analysisConfig.analyses[parseInt(analysisIndex as any)];
-      console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`);
+      log.info(`@analysisIdeaConfig is ${analysisIdeaConfig}.`);
 
       const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
-      console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
+      log.info(`@ideasIdsRange is ${ideasIdsRange}.`);
 
       const analysisType = analysisIdeaConfig.analysisTypes[
         parseInt(analysisTypeIndex, 10)
       ] as AnalysisTypeData;
 
-      console.log(`Analysis Type: ${analysisType}`);
+      log.info(`Analysis Type: ${analysisType}`);
       const perPage = Math.abs(ideasIdsRange);
-      console.log(`Per page: ${perPage}`);
+      log.info(`Per page: ${perPage}`);
 
       const totalActiveChoices =
         question.choices_count - question.inactive_choices_count;
 
       const offset =
         ideasIdsRange < 0 ? Math.max(totalActiveChoices - perPage, 0) : 0;
-      console.log(`Offset: ${offset}`);
+      log.info(`Offset: ${offset}`);
 
       const choicesResponse = await fetch(
         `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json?all=1&show_all=true&limit=${perPage}&offset=${offset}`,
@@ -847,14 +847,14 @@ export class AllOurIdeasController {
             content: choice.data as any,
             choiceId: choice.id,
           }
-          console.warn(error);
+          log.warn(error);
         }
       }
 
-      console.log(`Number of choices fetched: ${choices.length}`);
+      log.info(`Number of choices fetched: ${choices.length}`);
 
       const sortedChoices = choices.sort((a, b) => a.id - b.id);
-      console.log(
+      log.info(
         `Sorted choice IDs: ${sortedChoices.map((choice) => choice.id)}`
       );
 
@@ -869,7 +869,7 @@ export class AllOurIdeasController {
       const usedLanguageName = (req.query.languageName as string) || "English";
 
       const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v14`;
-      console.log(
+      log.info(
         `analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt!.substring(
           0,
           15
@@ -903,7 +903,7 @@ export class AllOurIdeasController {
         cachedAnalysis,
       });
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res
         .status(500)
         .send("An error occurred while processing the analysis request");
@@ -956,13 +956,13 @@ export class AllOurIdeasController {
             content: choice.data as any,
             choiceId: choice.id,
           };
-          console.error(error);
+          log.error(error);
         }
       }
 
       res.json(choices);
     } catch (error) {
-      console.error(error);
+      log.error(error);
       res.status(500).send("An error occurred");
     }
   }
@@ -993,7 +993,7 @@ export class AllOurIdeasController {
     const params = req.query;
     const body = req.body; // Assuming body-parser middleware is used for JSON body parsing
 
-    console.log(
+    log.info(
       `getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`
     );
     const options: any = {
@@ -1025,7 +1025,7 @@ export class AllOurIdeasController {
 
     options.tracking = trackingData;
 
-    console.log(`---------------------- ${JSON.stringify(trackingData)}`)
+    log.info(`---------------------- ${JSON.stringify(trackingData)}`)
 
     switch (requestType) {
       case "vote":

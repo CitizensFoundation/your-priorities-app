@@ -1,4 +1,6 @@
 const redis = require("redis");
+const log = require('../../utils/logger.cjs');
+
 let redisClient;
 if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
@@ -22,14 +24,14 @@ if (process.env.REDIS_URL) {
 }
 
 redisClient.on("error", (err) =>
-  console.error("Backend Redis client error", err)
+  log.error("Backend Redis client error", err)
 );
-redisClient.on("connect", () => console.log("Backend Redis client is connect"));
+redisClient.on("connect", () => log.info("Backend Redis client is connect"));
 redisClient.on("reconnecting", () =>
-  console.log("Backend  Redis client is reconnecting")
+  log.info("Backend  Redis client is reconnecting")
 );
-redisClient.on("ready", () => console.log("Backend Redis client is ready"));
+redisClient.on("ready", () => log.info("Backend Redis client is ready"));
 
-redisClient.connect().catch(console.error);
+redisClient.connect().catch(log.error);
 
 module.exports = redisClient;

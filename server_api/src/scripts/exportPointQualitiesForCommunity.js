@@ -7,10 +7,10 @@ var communityId = process.argv[2];
 var outFile = process.argv[3];
 
 var clean = function (text) {
-  //console.log("Before: "+ text);
+  //log.info("Before: "+ text);
     if (text) {
         var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(',',';').trim();
-        //console.log("After:" + newText);
+        //log.info("After:" + newText);
         return newText.replace(/´/g,'');
     } else {
       return "empty";
@@ -57,7 +57,7 @@ models.PointQuality.findAll({
   ]
 }).then(function (endorsements) {
   var outFileContent = "";
-  console.log(endorsements.length);
+  log.info(endorsements.length);
   outFileContent += "Point qualities for Community Id: "+communityId+"\n";
   outFileContent += "User Id, External User Id, State, Group Id, Post Id, Point Id, Vote Value\n";
   async.eachSeries(endorsements, function (endorsement, seriesCallback) {
@@ -75,9 +75,9 @@ models.PointQuality.findAll({
   }, function (error) {
     fs.writeFile(outFile, outFileContent, function(err) {
       if(err) {
-        console.log(err);
+        log.info(err);
       }
-      console.log("The file was saved!");
+      log.info("The file was saved!");
       process.exit();
     });
   });

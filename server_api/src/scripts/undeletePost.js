@@ -15,7 +15,7 @@ const processPointDependancies = (point, done) => {
         async.forEachSeries(qualities, (quality, forEachCallback) => {
             quality.deleted = false;
             quality.save().then(() => {
-              console.log(`Done undeleting quality ${point.id}`);
+              log.info(`Done undeleting quality ${point.id}`);
               forEachCallback();
             }).catch(error => {
               forEachCallback(error);
@@ -36,7 +36,7 @@ const processPointDependancies = (point, done) => {
         async.forEachSeries(revisions, (revision, forEachCallback) => {
           revision.deleted = false;
           revision.save().then(() => {
-            console.log(`Done undeleting point revision ${point.id}`);
+            log.info(`Done undeleting point revision ${point.id}`);
             forEachCallback();
           }).catch(error => {
             forEachCallback(error);
@@ -64,7 +64,7 @@ const processPostDependancies = (post, done) => {
         async.forEachSeries(endorsements, (endorsement, forEachCallback) => {
             endorsement.deleted = false;
             endorsement.save().then(() => {
-              console.log(`Done undeleting endorsement model ${post.id}`);
+              log.info(`Done undeleting endorsement model ${post.id}`);
               forEachCallback();
             }).catch(error => {
               forEachCallback(error);
@@ -86,7 +86,7 @@ const processPostDependancies = (post, done) => {
         async.forEachSeries(points, (point, forEachCallback) => {
             point.deleted = false;
             point.save().then(() => {
-              console.log(`Done undeleting point model ${point.id}`);
+              log.info(`Done undeleting point model ${point.id}`);
               processPointDependancies(point, forEachCallback);
             }).catch(error => {
               forEachCallback(error);
@@ -114,7 +114,7 @@ async.series([
       async.forEachSeries(posts, (post, forEachCallback) => {
         post.deleted = false;
         post.save().then(() => {
-          console.log(`Done undeleting post model ${post.id}`);
+          log.info(`Done undeleting post model ${post.id}`);
           processPostDependancies(post, forEachCallback);
         }).catch(error => {
           forEachCallback(error);
@@ -128,9 +128,9 @@ async.series([
   }
 ], error=> {
   if (error)
-    console.error(`Error undeleting post ${postId} - ${error}`);
+    log.error(`Error undeleting post ${postId} - ${error}`);
   else
-    console.log(`Done undeleting post ${postId}`);
+    log.info(`Done undeleting post ${postId}`);
   process.exit();
 });
 

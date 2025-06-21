@@ -55,7 +55,7 @@ async.series([
           }
         ]
       }).then(function (posts) {
-      console.log('Found '+posts.length+" posts");
+      log.info('Found '+posts.length+" posts");
       async.eachSeries(posts, function (post, seriesCallback) {
         var newId = replaceBetterReykjavikCategoryId(post.category_id);
         if (newId && newId!=11) {
@@ -73,7 +73,7 @@ async.series([
             categories[newId].push(content);
           }
           async.eachSeries(post.Points, function (point, innerSeriesCallback) {
-            console.log(point.status);
+            log.info(point.status);
             if (point.value!=0) {
               content = '"'+clean(point.content)+'"';
               if (content!="" && content.length>17) {
@@ -92,15 +92,15 @@ async.series([
         }
       }, function () {
         async.eachSeries(categoriesIds, function (category_id, seriesCallback) {
-          console.log(category_id);
-          console.log("-----"+category_id+"---------------------------: "+categories[category_id].length);
+          log.info(category_id);
+          log.info("-----"+category_id+"---------------------------: "+categories[category_id].length);
           if (categories[category_id].length>MAX_CATEGORY_LENGTH) {
             categories[category_id] = categories[category_id].splice(0,MAX_CATEGORY_LENGTH);
-            console.log("-----"+category_id+"---------------------------: "+categories[category_id].length);
+            log.info("-----"+category_id+"---------------------------: "+categories[category_id].length);
           }
           async.eachSeries(categories[category_id], function (post, innerSeriesCallback) {
             categoriesCsvRows.push(category_id+','+post);
-            console.log("Key: "+category_id+" value: "+post);
+            log.info("Key: "+category_id+" value: "+post);
             innerSeriesCallback();
           }, function () {
             seriesCallback();
@@ -112,13 +112,13 @@ async.series([
         });
       });
     }).catch(function(error) {
-      console.log("ERROR: "+error);
+      log.info("ERROR: "+error);
     }) ;
   },
   function(callback) {
     fs.writeFile(trainCategoriesCsvFilename, trainCategoriesCsv.join('\n'), function(err) {
       if(err) {
-         console.log(err);
+         log.info(err);
       }
       callback();
     });
@@ -126,7 +126,7 @@ async.series([
   function(callback) {
     fs.writeFile(testCategoriesCsvFilename, testCategoriesCsv.join('\n'), function(err) {
       if(err) {
-        console.log(err);
+        log.info(err);
       }
       callback();
     });
@@ -147,11 +147,11 @@ async.series([
   function(callback) {
     fs.writeFile(classesCategoriesCsvFilename, classesCategoriesCsv.join('\n'), function(err) {
       if(err) {
-        console.log(err);
+        log.info(err);
       }
       callback();
     });
   }
 ], function (error) {
-  console.log("FINISHED :)");
+  log.info("FINISHED :)");
 });

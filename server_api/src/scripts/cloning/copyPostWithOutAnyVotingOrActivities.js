@@ -10,9 +10,9 @@ var groupId = process.argv[3];
 
 copyPost(postId, groupId, {copyPoints: true, skipEndorsementQualitiesAndRatings: true, skipActivities: true}, (error, post) => {
   if (error) {
-    console.error(error);
+    log.error(error);
   } else {
-    console.log("Done with copyPost. New post id: "+post.id);
+    log.info("Done with copyPost. New post id: "+post.id);
   }
   process.exit();
 });

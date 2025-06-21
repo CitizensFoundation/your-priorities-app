@@ -160,7 +160,7 @@ class FraudGetEndorsements extends FraudGetBase {
       }.bind(this));
       return out;
     } else {
-      console.warn("Wrong type for e fraud check")
+      log.warn("Wrong type for e fraud check")
       return [];
     }
   }

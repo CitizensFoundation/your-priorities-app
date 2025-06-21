@@ -1,11 +1,12 @@
 import ExcelJS from 'exceljs';
 import models from '../../models/index.cjs';
+import log from "../../utils/loggerTs.js";
 
 (async () => {
   try {
     const [filePath] = process.argv.slice(2);
     if (!filePath) {
-      console.log('Usage: node importUsersForDomainsFromXls.js <xlsFilePath>');
+      log.info('Usage: node importUsersForDomainsFromXls.js <xlsFilePath>');
       process.exit(1);
     }
 
@@ -79,14 +80,14 @@ import models from '../../models/index.cjs';
       }
 
       await transaction.commit();
-      console.log('Import completed');
+      log.info('Import completed');
       process.exit(0);
     } catch (error) {
       await transaction.rollback();
       throw error;
     }
   } catch (err) {
-    console.error(err);
+    log.error(err);
     process.exit(1);
   }
 })();

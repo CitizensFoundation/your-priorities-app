@@ -12,21 +12,21 @@ if (objectType==="point") {
     attributes: ['id','language']
   }).then((result) => {
     if (result) {
-      console.log(`Clearing current point language of ${result.language}`);
+      log.info(`Clearing current point language of ${result.language}`);
       result.set('language', null);
       result.save().then(function () {
-        console.log(`Cleared language for point ${result.id}`);
+        log.info(`Cleared language for point ${result.id}`);
         process.exit();
       }).catch((error)=>{
-        console.error(error);
+        log.error(error);
         process.exit();
       });
     } else {
-      console.warn("Not found: "+indexKey);
+      log.warn("Not found: "+indexKey);
       process.exit();
     }
   }).catch((error)=>{
-    console.error(error);
+    log.error(error);
     process.exit();
   });
 } else if (objectType==="group") {
@@ -37,21 +37,21 @@ if (objectType==="point") {
     attributes: ['id','language']
   }).then((result) => {
     if (result) {
-      console.log(`Clearing current group language of ${result.language}`);
+      log.info(`Clearing current group language of ${result.language}`);
       result.set('language', null);
       result.save().then(function () {
-        console.log(`Cleared language for group ${result.id}`);
+        log.info(`Cleared language for group ${result.id}`);
         process.exit();
       }).catch((error)=>{
-        console.error(error);
+        log.error(error);
         process.exit();
       });
     } else {
-      console.warn("Not found: "+indexKey);
+      log.warn("Not found: "+indexKey);
       process.exit();
     }
   }).catch((error)=>{
-    console.error(error);
+    log.error(error);
     process.exit();
   });
 } else if (objectType==="community") {
@@ -62,21 +62,21 @@ if (objectType==="point") {
     attributes: ['id','language']
   }).then((result) => {
     if (result) {
-      console.log(`Clearing current community language of ${result.language}`);
+      log.info(`Clearing current community language of ${result.language}`);
       result.set('language', null);
       result.save().then(function () {
-        console.log(`Cleared language for community ${result.id}`);
+        log.info(`Cleared language for community ${result.id}`);
         process.exit();
       }).catch((error)=>{
-        console.error(error);
+        log.error(error);
         process.exit();
       });
     } else {
-      console.warn("Not found: "+indexKey);
+      log.warn("Not found: "+indexKey);
       process.exit();
     }
   }).catch((error)=>{
-    console.error(error);
+    log.error(error);
     process.exit();
   });
 } else if (objectType==="domain") {
@@ -87,25 +87,25 @@ if (objectType==="point") {
     attributes: ['id','language']
   }).then((result) => {
     if (result) {
-      console.log(`Clearing current domain language of ${result.language}`);
+      log.info(`Clearing current domain language of ${result.language}`);
       result.set('language', null);
       result.save().then(function () {
-        console.log(`Cleared language for domain ${result.id}`);
+        log.info(`Cleared language for domain ${result.id}`);
         process.exit();
       }).catch((error)=>{
-        console.error(error);
+        log.error(error);
         process.exit();
       });
     } else {
-      console.warn("Not found: "+indexKey);
+      log.warn("Not found: "+indexKey);
       process.exit();
     }
   }).catch((error)=>{
-    console.error(error);
+    log.error(error);
     process.exit();
   });
 } else {
-  console.log("No object type selected");
+  log.info("No object type selected");
   process.exit();
 }
 

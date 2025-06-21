@@ -13,12 +13,12 @@ class FraudBase {
   }
 
   getTopItems() {
-    console.error("Should be implemented in a sub class");
+    log.error("Should be implemented in a sub class");
     return null;
   }
 
   async getAllItems() {
-    console.error("Should be implemented in a sub class");
+    log.error("Should be implemented in a sub class");
     return null;
   }
 

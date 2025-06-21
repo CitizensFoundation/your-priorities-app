@@ -229,18 +229,18 @@ async.parallel([
   }
 ], function (error) {
   if (error) {
-    console.error(error);
+    log.error(error);
   } else {
-    console.log("Group id: "+groupId);
-    console.log("Total endorsements: "+totalEndorsements);
-    console.log("Endorsements: "+endorsementsCount);
-    console.log("Oppositions: "+oppositionCount);
-    console.log("Total point qualities: "+totalPointQualities);
-    console.log("Points helpful: "+pointsHelpful);
-    console.log("Points not helpful: "+pointsUnhelpful);
-    console.log("Points count: "+totalPoints);
-    console.log("Points for: "+pointsFor);
-    console.log("Points against: "+pointsAgainst);
+    log.info("Group id: "+groupId);
+    log.info("Total endorsements: "+totalEndorsements);
+    log.info("Endorsements: "+endorsementsCount);
+    log.info("Oppositions: "+oppositionCount);
+    log.info("Total point qualities: "+totalPointQualities);
+    log.info("Points helpful: "+pointsHelpful);
+    log.info("Points not helpful: "+pointsUnhelpful);
+    log.info("Points count: "+totalPoints);
+    log.info("Points for: "+pointsFor);
+    log.info("Points against: "+pointsAgainst);
   }
   process.exit();
 });

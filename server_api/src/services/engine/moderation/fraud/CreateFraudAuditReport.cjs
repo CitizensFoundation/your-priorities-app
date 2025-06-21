@@ -8,6 +8,8 @@ const uploadToS3 = require("../../reports/common_utils.cjs").uploadToS3;
 
 const sanitizeFilename = require("sanitize-filename");
 
+const log = require("../../../../utils/logger.cjs");
+
 const formatWorksheet = (worksheet) => {
   worksheet.getRow(1).font = { bold: true };
   //  worksheet.properties.defaultRowHeight = 20;
@@ -336,7 +338,7 @@ class FraudAuditReport {
           reject(`No fraud audit found for ${this.workPackage.selectedFraudAuditId}`)
         }
       } catch (error) {
-        console.error(error);
+        log.error(error);
         setJobError(
           this.workPackage.jobId,
           "errorFraudAuditReportGeneration",

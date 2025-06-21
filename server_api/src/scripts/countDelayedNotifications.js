@@ -10,9 +10,9 @@ models.AcDelayedNotification.findAll({
   ]
 }).then(function (notifications) {
   async.eachSeries(notifications, function (notification, seriesCallback) {
-    console.log("Notification: "+notification.id);
-    console.log("User id: "+notification.user_id);
-    console.log("Number of delayed notifications:" + notification.AcActivity.length);
+    log.info("Notification: "+notification.id);
+    log.info("User id: "+notification.user_id);
+    log.info("Number of delayed notifications:" + notification.AcActivity.length);
     seriesCallback();
   });
 });

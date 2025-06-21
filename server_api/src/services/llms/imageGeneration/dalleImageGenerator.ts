@@ -1,5 +1,6 @@
 import { AzureOpenAI, OpenAI } from "openai";
 import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import log from "../../../utils/loggerTs.js";
 
 export class DalleImageGenerator implements IImageGenerator {
   private maxRetryCount = 3;
@@ -78,14 +79,14 @@ export class DalleImageGenerator implements IImageGenerator {
         if (result) {
           retrying = false;
         } else {
-          console.debug("Result: NONE");
+          log.debug("Result: NONE");
         }
       } catch (error: any) {
-        console.warn("Error generating image with DALL·E, retrying...");
-        console.warn(error.stack);
+        log.warn("Error generating image with DALL·E, retrying...");
+        log.warn(error.stack);
         retryCount++;
         const sleepingFor = 5000 + retryCount * 10000;
-        console.debug(`Sleeping for ${sleepingFor} milliseconds`);
+        log.debug(`Sleeping for ${sleepingFor} milliseconds`);
         await new Promise((resolve) => setTimeout(resolve, sleepingFor));
       }
     }
@@ -93,7 +94,7 @@ export class DalleImageGenerator implements IImageGenerator {
     if (result && result.data && result.data[0].url) {
       return result.data[0].url;
     } else {
-      console.error(`Error generating image after ${retryCount} retries`);
+      log.error(`Error generating image after ${retryCount} retries`);
       return undefined;
     }
   }

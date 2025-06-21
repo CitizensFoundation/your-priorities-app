@@ -1,7 +1,7 @@
 // https://gist.github.com/mojodna/1251812
 var async = require("async");
 var models = require("../../models/index.cjs");
-var log = require('../utils/logger.cjs');
+var log = require('../../utils/logger.cjs');
 var queue = require('./queue.cjs');
 var i18n = require('../utils/i18n.cjs');
 var toJson = require('../utils/to_json.cjs');

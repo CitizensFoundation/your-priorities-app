@@ -140,7 +140,7 @@ module.exports = (sequelize, DataTypes) => {
   Domain.getLoginProviders = (req, domainIn, callback) => {
     const providers = [];
 
-    console.log(
+    log.info(
       `-------------------> getLoginProviders Checking local keys for domain ${domainIn.id}`
     );
 
@@ -161,7 +161,7 @@ module.exports = (sequelize, DataTypes) => {
     async.eachSeries(
       [domainIn],
       (domain, seriesCallback) => {
-        console.log(
+        log.info(
           `================> Processing domain ${domain.id} ${
             process.env.STAGING_SETUP ? "staging" : "production"
           }`
@@ -199,7 +199,7 @@ module.exports = (sequelize, DataTypes) => {
           } else if (domain.domain_name === "engagebritain.org") {
             callbackDomainName = "socialcare." + domain.domain_name;
           } else if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
-            console.log("Using custom login back name", {
+            log.info("Using custom login back name", {
               custom: process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME,
             });
             callbackDomainName =
@@ -217,7 +217,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
 
-        console.log(`Checking facebook keys for domain ${domain.id}`);
+        log.info(`Checking facebook keys for domain ${domain.id}`);
 
         if (
           domain.secret_api_keys &&
@@ -242,8 +242,8 @@ module.exports = (sequelize, DataTypes) => {
           });
         }
 
-        console.log(`Checking oidc keys for domain ${domain.id}`);
-        //console.log(JSON.stringify(domain.secret_api_keys, null, 2));
+        log.info(`Checking oidc keys for domain ${domain.id}`);
+        //log.info(JSON.stringify(domain.secret_api_keys, null, 2));
 
         //callbackDomainName = "betrireykjavik.is";
 
@@ -252,7 +252,7 @@ module.exports = (sequelize, DataTypes) => {
           domain.secret_api_keys.oidc &&
           checkValidKeys(domain.secret_api_keys.oidc)
         ) {
-          console.log(
+          log.info(
             `---------------------> OIDC keys found for domain ${domain.id}`
           );
           providers.push({

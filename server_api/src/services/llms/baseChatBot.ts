@@ -3,6 +3,7 @@ import { Stream } from "openai/streaming.js";
 import WebSocket from "ws";
 import { v4 as uuidv4 } from "uuid";
 import ioredis from "ioredis";
+import log from "../../utils/loggerTs.js";
 
 const DEBUG = false;
 const url =
@@ -38,17 +39,17 @@ export class YpBaseChatBot {
   loadMemory() {
     return new Promise<PsAgentBaseMemoryData | undefined>(async (resolve, reject) => {
       try {
-        console.log("loadMemoryWithOwnership loadMemory: redisKey: ", this.redisKey);
+        log.info("loadMemoryWithOwnership loadMemory: redisKey: ", this.redisKey);
         const memoryString = await this.redis.get(this.redisKey);
         if (memoryString) {
           const memory = JSON.parse(memoryString);
           resolve(memory);
         } else {
-          console.error("loadMemoryWithOwnership loadMemory: no memory found");
+          log.error("loadMemoryWithOwnership loadMemory: no memory found");
           resolve(undefined);
         }
       } catch (error) {
-        console.error("loadMemoryWithOwnership loadMemory: Can't load memory from redis", error);
+        log.error("loadMemoryWithOwnership loadMemory: Can't load memory from redis", error);
         resolve(undefined);
       }
     });
@@ -68,10 +69,10 @@ export class YpBaseChatBot {
     this.wsClientSocket = wsClients.get(this.wsClientId)!;
     this.wsClients = wsClients;
 
-    console.log(`WebSockets: BaseChatBot constructor for ${this.wsClientId}`);
+    log.info(`WebSockets: BaseChatBot constructor for ${this.wsClientId}`);
 
     if (!this.wsClientSocket) {
-      console.error(
+      log.error(
         `WebSockets: WS Client ${this.wsClientId} not found in streamWebSocketResponses`
       );
     }
@@ -86,12 +87,12 @@ export class YpBaseChatBot {
     if (this.memory) {
       try {
         await this.redis.set(this.redisKey, JSON.stringify(this.memory));
-        console.log(`Saved memory to redis: ${this.redisKey}`);
+        log.info(`Saved memory to redis: ${this.redisKey}`);
       } catch (error) {
-        console.log("Can't save memory to redis", error);
+        log.info("Can't save memory to redis", error);
       }
     } else {
-      console.error("Memory is not initialized");
+      log.error("Memory is not initialized");
     }
   }
 
@@ -151,7 +152,7 @@ export class YpBaseChatBot {
   ) {
     try {
       if (process.env.WS_DEBUG) {
-        console.log(
+        log.info(
           `sendToClient: ${JSON.stringify(
             { sender, type, message, hiddenContextMessage },
             null,
@@ -174,7 +175,7 @@ export class YpBaseChatBot {
       );
       this.lastSentToUserAt = new Date();
     } catch (error) {
-      console.error("Can't send message to client", error);
+      log.error("Can't send message to client", error);
     }
   }
 
@@ -205,7 +206,7 @@ export class YpBaseChatBot {
           }
         }
       } catch (error) {
-        console.error(error);
+        log.error(error);
         this.sendToClient(
           "assistant",
           "There has been an error, please retry",

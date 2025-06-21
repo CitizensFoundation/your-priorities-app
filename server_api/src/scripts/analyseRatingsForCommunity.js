@@ -148,9 +148,9 @@ async.series([
   }*/
 ], function (error) {
     if (error) {
-      console.error(error);
+      log.error(error);
     }
-    console.log(csvOut);
+    log.info(csvOut);
     process.exit();
 });
 

@@ -1,5 +1,5 @@
 // baseAssistantMode.ts
-
+import log from "../../../utils/loggerTs.js";
 import { YpAgentAssistant } from "../agentAssistant.js";
 
 export class BaseAssistantMode {
@@ -40,7 +40,7 @@ export class BaseAssistantMode {
     if (!this.memory.currentMode) {
       return "";
     }
-    console.log(
+    log.info(
       `renderCommon: currentConversationMode ${this.memory.currentMode}`
     );
     let modeInfo = `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>\n`;
@@ -77,6 +77,6 @@ export class BaseAssistantMode {
       }
     }
 
-    console.log(`modeInfo: ${modeInfo}`);
+    log.info(`modeInfo: ${modeInfo}`);
   }
 }

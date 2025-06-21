@@ -5,6 +5,7 @@ import { Group } from '@policysynth/agents/dbModels/ypGroup.js';
 import { YpAgentProduct } from './agentProduct.js';
 import { YpSubscriptionPlan } from './subscriptionPlan.js';
 import { YpDiscount } from './discount.js';
+import log from "../../utils/loggerTs.js";
 
 export class YpAgentProductBoosterPurchase extends Model {
   declare id: number;
@@ -71,7 +72,7 @@ YpAgentProductBoosterPurchase.init(
 
 // Associations
 (YpAgentProductBoosterPurchase as any).associate = (models: any) => {
-  console.log('YpAgentProductBoosterPurchase.associate');
+  log.info('YpAgentProductBoosterPurchase.associate');
 
   YpAgentProductBoosterPurchase.belongsTo(models.YpSubscriptionUser, {
     foreignKey: 'user_id',

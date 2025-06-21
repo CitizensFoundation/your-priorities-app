@@ -12,6 +12,8 @@ import { YpAgentProductRun } from "../models/agentProductRun.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 
+import log from "../../utils/loggerTs.js";
+
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   public availableAgents: PsAgent[] = [];
   public runningAgents: PsAgent[] = [];
@@ -55,7 +57,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
 
   handleMemoryChanged(memory: YpBaseAssistantMemoryData) {
     if (this.DEBUG) {
-      console.log(
+      log.info(
         `Sending memory changed to client: ${JSON.stringify(
           this.simplifiedMemory,
           null,
@@ -76,7 +78,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
 
   get isSubscribedToCurrentAgentProduct(): boolean {
     if (this.DEBUG) {
-      console.log(
+      log.info(
         `-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(
           this.memory.currentAgentStatus,
           null,
@@ -88,7 +90,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
   }
 
   get hasConfiguredcurrentAgentProduct(): boolean {
-    console.log(`configuration: ${this.redisKey}: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+    log.info(`configuration: ${this.redisKey}: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
     return this.memory.currentAgentStatus?.configurationState === "configured";
   }
 

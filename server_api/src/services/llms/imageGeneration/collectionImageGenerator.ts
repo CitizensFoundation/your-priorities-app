@@ -7,6 +7,7 @@ import { FluxImageGenerator } from "./fluxImageGenerator.js";
 import { DalleImageGenerator } from "./dalleImageGenerator.js";
 import { ImageProcessorService } from "./imageProcessorService.js";
 import { S3Service } from "./s3Service.js";
+import log from "../../../utils/loggerTs.js";
 
 // Suppose these come from your codebase
 import models from "../../../models/index.cjs";
@@ -83,16 +84,16 @@ export class CollectionImageGenerator {
         // Decide which generator to use
         if (this.imagenImageGenerator) {
           imageGenerator = this.imagenImageGenerator;
-          console.info("Using ImagenImageGenerator");
+          log.info("Using ImagenImageGenerator");
         } else if (this.fluxImageGenerator) {
           imageGenerator = this.fluxImageGenerator;
-          console.info("Using FluxImageGenerator");
+          log.info("Using FluxImageGenerator");
         } else if (process.env.USE_CHATGPT_IMAGE_GENERATOR) {
           imageGenerator = this.chatGptImageGenerator;
-          console.info("Using ChatGptImageGenerator");
+          log.info("Using ChatGptImageGenerator");
         } else {
           imageGenerator = this.dalleImageGenerator;
-          console.info("Using DalleImageGenerator");
+          log.info("Using DalleImageGenerator");
         }
 
         // 1) Generate image
@@ -116,14 +117,14 @@ export class CollectionImageGenerator {
             }
             const imageBuffer = Buffer.from(base64Data, "base64");
             fs.writeFileSync(imageFilePath, imageBuffer);
-            console.debug("Data URI written to file successfully.");
+            log.debug("Data URI written to file successfully.");
           } else {
             await this.imageProcessorService.downloadImage(
               imageUrl,
               imageFilePath,
               axios
             );
-            console.debug(
+            log.debug(
               fs.existsSync(imageFilePath)
                 ? "File downloaded successfully."
                 : "File download failed."

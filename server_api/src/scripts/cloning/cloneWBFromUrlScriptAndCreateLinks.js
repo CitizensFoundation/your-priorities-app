@@ -87,7 +87,7 @@ async.series([
                       content: russianName,
                       translatedText: kyrgyzName
                     }, (error) => {
-                      console.log(newCommunity.id);
+                      log.info(newCommunity.id);
                       finalOutput+=urlToAddAddFront+"community/"+newCommunity.id+"\n";
                       finalTargetOutput+=urlToAddAddFront+"community/"+linkToCommunityId+"\n";
 
@@ -136,10 +136,10 @@ async.series([
   },
 ], error => {
   if (error)
-    console.error(error);
-  console.log("All done clones");
-  console.log(finalOutput);
-  console.log("All done targets");
-  console.log(finalTargetOutput);
+    log.error(error);
+  log.info("All done clones");
+  log.info(finalOutput);
+  log.info("All done targets");
+  log.info(finalTargetOutput);
   process.exit();
 });

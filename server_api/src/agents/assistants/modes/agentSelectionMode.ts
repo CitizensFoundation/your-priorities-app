@@ -4,6 +4,8 @@ import { SubscriptionTools } from "./tools/subscriptionTools.js";
 import { NavigationTools } from "./tools/navigationTools.js";
 import { LoginAssistantTools } from "./tools/loginTools.js";
 
+import log from "../../../utils/loggerTs.js";
+
 export class AgentSelectionMode extends BaseAssistantMode {
   constructor(assistant: YpAgentAssistant) {
     super(assistant);
@@ -44,7 +46,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
   }
 
   public async getMode(): Promise<AssistantChatbotMode> {
-    console.log("---------------------> getMode AgentSelectionMode");
+    log.info("---------------------> getMode AgentSelectionMode");
     const systemPrompt = await this.getCurrentModeSystemPrompt();
     const tools = await this.getCurrentModeTools();
 

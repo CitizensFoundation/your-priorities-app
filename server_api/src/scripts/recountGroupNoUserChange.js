@@ -142,7 +142,7 @@ const recountOnePost = (postId, done) => {
         post.counter_endorsements_up = endorsementsCount;
         post.counter_endorsements_down = oppositionCount;
         post.save().then(function (results) {
-          console.log(`Recount for post ${post.id} done`);
+          log.info(`Recount for post ${post.id} done`);
           done();
         });
       }).catch(function (error) {
@@ -187,7 +187,7 @@ const recountPostPoints = (postId, done) => {
 
 recountGroupPosts(groupId, error => {
   if (error) {
-    console.error(error);
+    log.error(error);
     process.exit();
   } else {
     models.Group.findOne({
@@ -208,15 +208,15 @@ recountGroupPosts(groupId, error => {
       group.counter_points = masterPointCount;
       //group.counter_users = group.GroupUsers.length;
       group.save().then(()=>{
-        console.log(`Done recounting group ${groupId}`);
+        log.info(`Done recounting group ${groupId}`);
         process.exit();
       }).catch(error=>{
-        console.error(error);
+        log.error(error);
         process.exit();
       });
 
     }).catch(error=>{
-      console.error(error);
+      log.error(error);
       process.exit();
     });
   }

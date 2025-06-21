@@ -5,6 +5,8 @@ import { AgentModels } from "./models/agents.js";
 import { SubscriptionModels } from "./models/subscriptions.js";
 import { BaseAssistantTools } from "./baseTools.js";
 
+import log from "../../../../utils/loggerTs.js";
+
 export class NavigationTools extends BaseAssistantTools {
   protected agentModels: AgentModels;
   protected subscriptionModels: SubscriptionModels;
@@ -50,7 +52,7 @@ export class NavigationTools extends BaseAssistantTools {
     params: YpAgentSelectParams
   ): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as YpAgentSelectParams;
-    console.log(
+    log.info(
       `handler: connect_to_one_of_the_agents: ${JSON.stringify(
         params,
         null,
@@ -86,7 +88,7 @@ export class NavigationTools extends BaseAssistantTools {
       plan = result.plan;
       subscription = result.subscription;
 
-      console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
+      log.info(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
 
       await this.updateCurrentAgentProductPlan(plan, subscription);
 
@@ -129,7 +131,7 @@ export class NavigationTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to select agent";
-      console.error(`Failed to select agent: ${errorMessage}`);
+      log.error(`Failed to select agent: ${errorMessage}`);
       return {
         success: false,
         data: errorMessage,
@@ -156,7 +158,7 @@ export class NavigationTools extends BaseAssistantTools {
   ): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as YpAgentEmptyProperties;
 
-    console.log(
+    log.info(
       `handler: list_all_agents_available_for_connections: ${JSON.stringify(
         params,
         null,
@@ -166,7 +168,7 @@ export class NavigationTools extends BaseAssistantTools {
     try {
       const status = await this.subscriptionModels.loadAgentSubscriptionPlans();
       if (this.assistant.DEBUG) {
-        console.log(
+        log.info(
           `list_all_agents_available_for_purchase: ${JSON.stringify(
             status,
             null,
@@ -231,7 +233,7 @@ export class NavigationTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to load agent status";
-      console.error(`Failed to load agent status: ${errorMessage}`);
+      log.error(`Failed to load agent status: ${errorMessage}`);
       return {
         success: false,
         data: errorMessage,

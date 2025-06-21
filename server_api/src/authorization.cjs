@@ -1606,13 +1606,13 @@ auth.entity("createGroupPoint", function (req, done) {
 // Create group
 
 auth.role("createCommunityGroup.createGroup", function (community, req, done) {
-  console.error(`createCommunityGroup.createGroup`);
+  log.error(`createCommunityGroup.createGroup`);
   models.Community.findOne({
     where: { id: community.id },
   })
     .then(function (community) {
-      console.log(`community`, community);
-      console.log(
+      log.info(`community`, community);
+      log.info(
         `XXX: ${auth.isAuthenticated(req)} ${
           process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY
         }`
@@ -1627,7 +1627,7 @@ auth.role("createCommunityGroup.createGroup", function (community, req, done) {
         !auth.isAuthenticated(req) &&
         process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY
       ) {
-        console.log(`XXXY: ${req.headers["x-api-key"]}`);
+        log.info(`XXXY: ${req.headers["x-api-key"]}`);
         if (
           req.headers["x-api-key"] ===
           process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY

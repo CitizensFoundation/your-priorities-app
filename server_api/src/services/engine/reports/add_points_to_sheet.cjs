@@ -45,7 +45,7 @@ const getPointTextWithEverything = (group, post, point) => {
 
     return outText.trim();
   } else {
-    console.error("getPointTextWithEverything: missing data", group, post, point);
+    log.error("getPointTextWithEverything: missing data", group, post, point);
   }
 };
 
@@ -82,7 +82,7 @@ const addPostPointsToSheet = (worksheet, post, group) => {
       worksheet.addRow(row);
     })
   } else {
-    console.error("addPostPointsToSheet: missing data", worksheet, post, group);
+    log.error("addPostPointsToSheet: missing data", worksheet, post, group);
     return;
   }
 };

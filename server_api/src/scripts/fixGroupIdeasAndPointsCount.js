@@ -34,14 +34,14 @@ async.series([
   }
 ], function (error) {
   if (error) {
-    console.error(error);
+    log.error(error);
     process.exit();
   } else {
     models.Group.findOne({where: {id: groupId}}).then(function(group) {
       group.counter_posts = postsCount;
       group.counter_points = pointsCount;
       group.save().then(function () {
-        console.log("Have updated group");
+        log.info("Have updated group");
         process.exit();
       });
     });

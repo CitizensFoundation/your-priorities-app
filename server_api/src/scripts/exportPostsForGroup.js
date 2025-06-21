@@ -26,9 +26,9 @@ var getUserEmail = function (post) {
 };
 
 var clean = function (text) {
-  //console.log("Before: "+ text);
+  //log.info("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
-  //console.log("After:" + newText);
+  //log.info("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
@@ -48,7 +48,7 @@ var getPoints = function (points) {
     if (content.startsWith(",")) {
       content = content.substr(1);
     }
-    console.log("content: "+content);
+    log.info("content: "+content);
     totalContent += content;
   });
   return totalContent;
@@ -67,7 +67,7 @@ var getPointsUpOrDown = function (post, value) {
   if (pointsText.startsWith(",")) {
     pointsText = pointsText.substr(1);
   }
-  console.log("PointText: "+pointsText);
+  log.info("PointText: "+pointsText);
   return pointsText;
 };
 
@@ -157,7 +157,7 @@ models.Post.unscoped().findAll({
   ]
 }).then(function (posts) {
   var outFileContent = "";
-  console.log(posts.length);
+  log.info(posts.length);
   outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images\n";
   postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
@@ -175,9 +175,9 @@ models.Post.unscoped().findAll({
   }, function (error) {
     fs.writeFile(outFile, outFileContent, function(err) {
       if(err) {
-        console.log(err);
+        log.info(err);
       }
-      console.log("The file was saved!");
+      log.info("The file was saved!");
       process.exit();
     });
   });

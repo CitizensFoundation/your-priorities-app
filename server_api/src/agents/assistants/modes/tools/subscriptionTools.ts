@@ -4,6 +4,8 @@ import { YpAgentAssistant } from "../../agentAssistant.js";
 import { SubscriptionModels } from "./models/subscriptions.js";
 import { BaseAssistantTools } from "./baseTools.js";
 
+import log from "../../../../utils/loggerTs.js";
+
 export class SubscriptionTools extends BaseAssistantTools {
   subscriptionModels: SubscriptionModels;
 
@@ -29,13 +31,13 @@ export class SubscriptionTools extends BaseAssistantTools {
     params: YpAgentEmptyProperties
   ): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as YpAgentEmptyProperties;
-    console.log(
+    log.info(
       `handler: list_my_agent_subscriptions: ${JSON.stringify(params, null, 2)}`
     );
     try {
       const status = await this.subscriptionModels.loadUserAgentSubscriptions();
       if (this.assistant.DEBUG) {
-        console.log(
+        log.info(
           `list_my_agent_subscriptions: ${JSON.stringify(status, null, 2)}`
         );
       }
@@ -80,7 +82,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to load agent status";
-      console.error(`Failed to load agent status: ${errorMessage}`);
+      log.error(`Failed to load agent status: ${errorMessage}`);
       return {
         success: false,
         data: errorMessage,
@@ -107,7 +109,7 @@ export class SubscriptionTools extends BaseAssistantTools {
   ): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as YpAgentEmptyProperties;
 
-    console.log(
+    log.info(
       `handler: list_all_agents_available_for_purchase: ${JSON.stringify(
         params,
         null,
@@ -117,7 +119,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     try {
       const status = await this.subscriptionModels.loadAgentSubscriptionPlans();
       if (this.assistant.DEBUG) {
-        console.log(
+        log.info(
           `list_all_agents_available_for_purchase: ${JSON.stringify(
             status,
             null,
@@ -182,7 +184,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to load agent status";
-      console.error(`Failed to load agent status: ${errorMessage}`);
+      log.error(`Failed to load agent status: ${errorMessage}`);
       return {
         success: false,
         data: errorMessage,
@@ -216,7 +218,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     params: YpAgentSubscribeParams
   ): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as YpAgentSubscribeParams;
-    console.log(
+    log.info(
       `handler: subscribe_to_current_agent_plan: ${JSON.stringify(
         params,
         null,
@@ -232,7 +234,7 @@ export class SubscriptionTools extends BaseAssistantTools {
         };
       }
 
-      console.log(
+      log.info(
         `-------> ${JSON.stringify(
           this.assistant.memory.currentAgentStatus,
           null,
@@ -307,7 +309,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to subscribe to agent";
-      console.error(`Failed to subscribe to agent: ${errorMessage}`);
+      log.error(`Failed to subscribe to agent: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage,
@@ -342,7 +344,7 @@ export class SubscriptionTools extends BaseAssistantTools {
     params = this.assistant.getCleanedParams(
       params
     ) as YpAgentUnsubscribeParams;
-    console.log(
+    log.info(
       `handler: unsubscribe_from_current_agent_subscription: ${JSON.stringify(
         params,
         null,
@@ -431,7 +433,7 @@ export class SubscriptionTools extends BaseAssistantTools {
         error instanceof Error
           ? error.message
           : "Failed to unsubscribe from agent";
-      console.error(`Failed to unsubscribe from agent: ${errorMessage}`);
+      log.error(`Failed to unsubscribe from agent: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage,

@@ -26,12 +26,12 @@ class FraudDeleteBase extends FraudBase {
 
   async getItemsById() {
     // this.job.internal_data.idsToDelete
-    console.error("Should be implemented in a sub class");
+    log.error("Should be implemented in a sub class");
     return null;
   }
 
   async destroyChunkItems(chunks) {
-    console.error("Should be implemented in a sub class");
+    log.error("Should be implemented in a sub class");
   }
 
   getAllItemsExceptOne (items) {
@@ -201,7 +201,7 @@ class FraudDeleteBase extends FraudBase {
 
   async deleteItems() {
     return await new Promise(async (resolve, reject) => {
-      console.log(`Delete data ${JSON.stringify(this.workPackage)}`)
+      log.info(`Delete data ${JSON.stringify(this.workPackage)}`)
 
       try {
         this.job = await models.AcBackgroundJob.findOne({
@@ -231,7 +231,7 @@ class FraudDeleteBase extends FraudBase {
         resolve();
       } catch (error) {
         await models.AcBackgroundJob.updateErrorAsync(this.workPackage.jobId, error.toString());
-        console.error(error);
+        log.error(error);
         reject(error);
       }
     })

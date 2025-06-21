@@ -2,7 +2,7 @@ const queue = require('../../services/workers/queue.cjs');
 const models = require("../../models/index.cjs");
 
 (async () => {
-  console.log("Start")
+  log.info("Start")
   let offset = 0;
   let count= 0;
   let continueFetching = true;
@@ -11,7 +11,7 @@ const models = require("../../models/index.cjs");
   const postsProcessed = {};
 
   while (continueFetching) {
-    console.log(`Fetching posts ${offset} to ${offset + chunkSize - 1}...`)
+    log.info(`Fetching posts ${offset} to ${offset + chunkSize - 1}...`)
     const posts = await models.Post.findAll({
       attributes: [
         "id","name"
@@ -37,12 +37,12 @@ const models = require("../../models/index.cjs");
 
     // Process the posts
     for (let p=0; p<posts.length; p++) {
-      console.log(`${posts[p].id} ${posts[p].name}`);
+      log.info(`${posts[p].id} ${posts[p].name}`);
       queue.add('process-similarities', { type: 'update-collection', postId: posts[p].id }, 'low');
       await new Promise(resolve => setTimeout(resolve, 150));
       count++;
       if (postsProcessed[posts[p].id]) {
-        console.error(`Post ${posts[p].id} already processed!`);
+        log.error(`Post ${posts[p].id} already processed!`);
       } else {
         postsProcessed[posts[p].id] = true;
       }
@@ -56,6 +56,6 @@ const models = require("../../models/index.cjs");
     }
   }
 
-  console.log(`Done. Processed ${count} posts.`)
+  log.info(`Done. Processed ${count} posts.`)
 })();
 

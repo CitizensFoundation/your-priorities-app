@@ -1,5 +1,5 @@
 const models = require("../../../../models/index.cjs");
-const log = require("../../../utils/logger.cjs");
+const log = require("../../../../utils/logger.cjs");
 const request = require("request");
 const moment = require("moment");
 
@@ -264,7 +264,7 @@ async function getPlausibleStats(statsParams) {
           log.error(content);
           reject(content.statusCode);
         } else if (content) {
-          console.log(content.body);
+          log.info(content.body);
           resolve(content.body);
         } else {
           reject("No body for plausible content");
@@ -304,7 +304,7 @@ async function addPlausibleGoal(eventName) {
         method: "PUT",
       };
 
-      console.log(`${JSON.stringify(options)}`);
+      log.info(`${JSON.stringify(options)}`);
 
       request(options, (error, content) => {
         if (content && content.statusCode != 200) {
@@ -312,7 +312,7 @@ async function addPlausibleGoal(eventName) {
           log.error(content);
           reject(content.statusCode);
         } else if (content) {
-          console.log(content.body);
+          log.info(content.body);
           resolve(content.body);
         } else {
           reject("No body for plausible content");

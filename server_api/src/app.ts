@@ -1,7 +1,6 @@
 import express, { NextFunction } from "express";
 import session from "express-session";
 import path from "path";
-import morgan from "morgan";
 import bodyParser from "body-parser";
 import { RedisStore } from "connect-redis";
 import useragent from "express-useragent";
@@ -17,10 +16,10 @@ import models from "./models/index.cjs";
 if (process.env.NEW_RELIC_APP_NAME) {
   import("newrelic")
     .then((newrelic) => {
-      console.log("New Relic imported", newrelic);
+      log.info("New Relic imported", newrelic);
     })
     .catch((err) => {
-      console.error("Failed to import New Relic", err);
+      log.error("Failed to import New Relic", err);
     });
 }
 
@@ -73,10 +72,10 @@ if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
 }
 
 process.on("uncaughtException", (err) => {
-  console.error("There was an uncaught error", err);
+  log.error("There was an uncaught error", err);
   log.error("There was an uncaught error", err);
   if (err.stack) {
-    console.error(err.stack);
+    log.error(err.stack);
     log.error(err.stack);
   }
   if (airbrake) {
@@ -95,10 +94,10 @@ process.on("uncaughtException", (err) => {
 });
 
 process.on("unhandledRejection", (reason: any, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  log.error("Unhandled Rejection at:", promise, "reason:", reason);
   log.error("Unhandled Rejection at:", promise, "reason:", reason);
   if (reason.stack) {
-    console.error(reason.stack);
+    log.error(reason.stack);
     log.error("Unhandled Rejection at:", promise, "reason:", reason);
   }
   if (airbrake) {
@@ -199,7 +198,7 @@ export class YourPrioritiesApi {
         if (req.session) {
           (req.session as any).useNewVersion = req.useNewVersion;
         } else {
-          console.error("Session not found in request");
+          log.error("Session not found in request");
         }
         next();
       }
@@ -228,25 +227,25 @@ export class YourPrioritiesApi {
     }
 
     this.redisClient.on("error", (err) => {
-      console.error("App Redis client error", err);
+      log.error("App Redis client error", err);
     });
 
     this.redisClient.on("connect", () => {
-      console.log("App Redis client is connected");
+      log.info("App Redis client is connected");
     });
 
     this.redisClient.on("reconnecting", () => {
-      console.log("App Redis client is reconnecting");
+      log.info("App Redis client is reconnecting");
     });
 
     this.redisClient.on("ready", () => {
-      console.log("App Redis client is ready");
+      log.info("App Redis client is ready");
     });
 
     try {
       await this.redisClient.connect();
     } catch (err) {
-      console.error("App Failed to connect Redis client", err);
+      log.error("App Failed to connect Redis client", err);
     }
   }
 
@@ -343,17 +342,17 @@ export class YourPrioritiesApi {
               invite.joined_at = new Date();
               await invite.save();
 
-              console.log("Invite joined at", invite.joined_at);
+              log.info("Invite joined at", invite.joined_at);
 
               await new Promise<void>((resolve, reject) => {
                 req.logIn(user, (error) => (error ? reject(error) : resolve()));
               });
 
-              console.log("User logged in for anon invite");
+              log.info("User logged in for anon invite");
 
               return next();
             } else {
-              console.error("Invite not found");
+              log.error("Invite not found");
               return next();
             }
           } catch (err) {
@@ -531,7 +530,7 @@ export class YourPrioritiesApi {
   }
 
   bearerCallback = function () {
-    return console.log(
+    return log.info(
       "The user has tried to authenticate with a bearer token"
     );
   };
@@ -556,17 +555,53 @@ export class YourPrioritiesApi {
     );
   }
 
+  setupExpresLogger = (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const start = Date.now();
+
+    // run after response is finished
+    res.on("finish", () => {
+      const duration = Date.now() - start;
+
+      // Pick level based on status code
+      const level =
+        res.statusCode >= 500
+          ? "error"
+          : res.statusCode >= 400
+          ? "warn"
+          : "info";
+
+      log[level](`${req.method} ${req.originalUrl}`,{
+        component: "express",
+        method: req.method,
+        url: req.originalUrl,
+        status: res.statusCode,
+        bytes: res.get("content-length") || 0,
+        duration,
+        ip: req.ip,
+        ua: req.headers["user-agent"],
+      });
+    });
+
+    next();
+  };
+
   initializeMiddlewares() {
-    this.app.use(morgan("combined"));
+    this.app.use(this.setupExpresLogger);
     this.app.use(useragent.express());
     this.app.use(requestIp.mw());
     this.app.use(bodyParser.json({ limit: "100mb", strict: false }));
     this.app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
     if (process.env.ALLOWED_ORIGINS) {
-      this.app.use(cors({
-        origin: process.env.ALLOWED_ORIGINS.split(","),
-        credentials: true,
-      }));
+      this.app.use(
+        cors({
+          origin: process.env.ALLOWED_ORIGINS.split(","),
+          credentials: true,
+        })
+      );
     } else {
       this.app.use(cors());
     }
@@ -580,9 +615,9 @@ export class YourPrioritiesApi {
       throw new Error("SESSION_SECRET is not set");
     }
 
-    let cookieValues: any =  {
+    let cookieValues: any = {
       autoSubDomain: true,
-    }
+    };
 
     if (process.env.ALLOWED_ORIGINS) {
       cookieValues.sameSite = "none";
@@ -608,14 +643,14 @@ export class YourPrioritiesApi {
   }
 
   async initializeEsControllers() {
-    console.log("Initializing ES controllers");
+    log.info("Initializing ES controllers");
 
     const { AllOurIdeasController } = await import(
       "./controllers/allOurIdeas.js"
     );
-    console.log("Initializing ES controllers 2 " + this.wsClients);
+    log.info("Initializing ES controllers 2 " + this.wsClients);
     const aoiController = new AllOurIdeasController(this.wsClients);
-    console.log(
+    log.info(
       `Controller path: ${aoiController.path} ${aoiController.router}`
     );
     this.app.use(aoiController.path, aoiController.router);
@@ -679,8 +714,14 @@ export class YourPrioritiesApi {
     const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
     this.app.use("/promotion", express.static(promotionAppPath));
     this.app.use("/promotion/domain/*splat", express.static(promotionAppPath));
-    this.app.use("/promotion/organization/*splat", express.static(promotionAppPath));
-    this.app.use("/promotion/community/*splat", express.static(promotionAppPath));
+    this.app.use(
+      "/promotion/organization/*splat",
+      express.static(promotionAppPath)
+    );
+    this.app.use(
+      "/promotion/community/*splat",
+      express.static(promotionAppPath)
+    );
     this.app.use("/promotion/group/*splat", express.static(promotionAppPath));
     this.app.use("/promotion/post/*splat", express.static(promotionAppPath));
     this.app.use(
@@ -741,7 +782,7 @@ export class YourPrioritiesApi {
           ? req.adminAppPath!
           : req.clientAppPath!;
 
-        //console.log("Static path", staticPath);
+        //log.info("Static path", staticPath);
         // Check if the request is for index.html
         if (req.path === "/" || req.path === "/index.html") {
           index(req, res, next); // Use your dynamic handler
@@ -763,7 +804,7 @@ export class YourPrioritiesApi {
     this.app.use("/post", index);
     this.app.use("/user", index);
     this.app.use("/admin", index);
-    this.app.use('/survey*splat', index);
+    this.app.use("/survey*splat", index);
     this.app.use("/api/domains", domains);
     this.app.use("/api/organizations", organizations);
     this.app.use("/api/communities", communities);
@@ -790,27 +831,27 @@ export class YourPrioritiesApi {
     this.app.post(
       "/authenticate_from_island_is",
       (req: YpRequest, res: express.Response) => {
-        console.log("SAML SAML 1", { domainId: req.ypDomain.id });
+        log.info("SAML SAML 1", { domainId: req.ypDomain.id });
         req.sso.authenticate(
           `saml-strategy-${req.ypDomain.id}`,
           {},
           req,
           res,
           (error: any) => {
-            console.log("SAML SAML 2", {
+            log.info("SAML SAML 2", {
               domainId: req.ypDomain.id,
               err: error,
             });
             if (error) {
-              console.error("Error from SAML login", { err: error });
+              log.error("Error from SAML login", { err: error });
               error.url = req.url;
               res.sendStatus(401);
             } else {
               if (req.user.DestinationSSN === "6012101260") {
-                console.log("SAML SAML 3", { domainId: req.ypDomain.id });
+                log.info("SAML SAML 3", { domainId: req.ypDomain.id });
                 res.render("samlLoginComplete", {});
               } else {
-                console.error("Error from SAML login", {
+                log.error("Error from SAML login", {
                   err: "Failed DestinationSSN check",
                 });
                 res.sendStatus(401);
@@ -824,19 +865,19 @@ export class YourPrioritiesApi {
     this.app.post(
       "/saml_assertion",
       (req: YpRequest, res: express.Response) => {
-        console.log("SAML SAML 1 General", { domainId: req.ypDomain.id });
+        log.info("SAML SAML 1 General", { domainId: req.ypDomain.id });
         req.sso.authenticate(
           `saml-strategy-${req.ypDomain.id}`,
           {},
           req,
           res,
           (error: any, user: any) => {
-            console.log("SAML SAML 2 General", {
+            log.info("SAML SAML 2 General", {
               domainId: req.ypDomain.id,
               err: error,
             });
             if (error) {
-              console.error("Error from SAML General login", { err: error });
+              log.error("Error from SAML General login", { err: error });
               if (error === "customError") {
                 res.render("samlCustomError", {
                   customErrorHTML:
@@ -845,11 +886,11 @@ export class YourPrioritiesApi {
                 });
               } else {
                 error.url = req.url;
-                console.error("Error from SAML General login", { err: error });
+                log.error("Error from SAML General login", { err: error });
                 res.sendStatus(500);
               }
             } else {
-              console.log("SAML SAML 3 General", { domainId: req.ypDomain.id });
+              log.info("SAML SAML 3 General", { domainId: req.ypDomain.id });
               res.render("samlLoginComplete", {});
             }
           }
@@ -1220,7 +1261,10 @@ export class YourPrioritiesApi {
         }
       );
     } else {
-      server = this.app.listen(portNumber, function () {
+      server = this.app.listen(portNumber, function (err: any) {
+        if (err) {
+          log.error("Error listening on port", { err });
+        }
         log.info(
           "Your Priorities Platform API Server listening on port " +
             server.address().port +

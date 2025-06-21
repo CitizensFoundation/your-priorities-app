@@ -4,7 +4,7 @@ var _ = require('lodash');
 const moment = require('moment');
 const skipEmail = false;
 const aws = require('aws-sdk');
-const log = require('../../utils/logger.cjs');
+const log = require('../../../utils/logger.cjs');
 const request = require('request');
 const fs = require('fs');
 
@@ -82,7 +82,7 @@ const updateJobStatusIfNeeded = (jobId, totalPosts, processedCount, lastReported
       { where: { id: jobId } }).then(()=>{
       done(null, true);
     }).catch((error)=>{
-      console.log("Error updating job status", {error: error});
+      log.info("Error updating job status", {error: error});
       done(error)
     });
   } else {
@@ -288,16 +288,16 @@ const getUserEmail = function (post) {
 };
 
 const clean = function (text) {
-  //console.log("Before: "+ text);
+  //log.info("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
-  //console.log("After:" + newText);
+  //log.info("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
 const cleanDescription = function (text) {
-  //console.log("Before: "+ text);
+  //log.info("Before: "+ text);
   var newText = text.replace('"',"'").replace(/"/gm,"'").replace(/,/,';').trim();
-  //console.log("After:" + newText);
+  //log.info("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
@@ -317,7 +317,7 @@ const getPoints = function (points) {
     if (content.startsWith(",")) {
       content = content.substr(1);
     }
-    //console.log("content: "+content);
+    //log.info("content: "+content);
     totalContent += content;
   });
   return totalContent;
@@ -643,7 +643,7 @@ var getExportFileDataForGroup = function(group, hostName, callback) {
       if (group.configuration && group.configuration.customRatings) {
         customRatings = group.configuration.customRatings;
       }
-      //console.log(posts.length);
+      //log.info(posts.length);
       outFileContent += "Nr, Post id,email,User Name,Post Name,"+getDescriptionHeaders(group)+",Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript"+getRatingHeaders(customRatings)+"\n";
       let postCounter = 0;
       async.eachSeries(posts, function (post, seriesCallback) {

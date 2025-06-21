@@ -2,6 +2,8 @@
 
 import { YpAgentProduct } from "../agentProduct.js";
 import { YpSubscriptionPlan } from "../subscriptionPlan.js";
+import log from "../../../utils/loggerTs.js";
+
 
 async function setupAgentProductsConfiguration() {
   const CompetitorAgentFreeTrialPlan = await YpSubscriptionPlan.findByPk(1);

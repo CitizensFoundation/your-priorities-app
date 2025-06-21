@@ -41,7 +41,7 @@ async.series([
             community.name = "DEMO: No Planet B - "+configLine;
             community.hostname = "demo-no-planet-b-"+configLine.toLowerCase().replace(/ /g,'-');
             community.save().then( () => {
-              console.log(community.hostname);
+              log.info(community.hostname);
               finalOutput+='https://'+community.hostname+'.yrpri.org\n';
               forEachCallback();
             }).catch(error=>{
@@ -56,8 +56,8 @@ async.series([
   },
 ], error => {
   if (error)
-    console.error(error);
-  console.log("All done");
-  console.log(finalOutput);
+    log.error(error);
+  log.info("All done");
+  log.info(finalOutput);
   process.exit();
 });

@@ -26,9 +26,9 @@ var getUserEmail = function (post) {
 
 var clean = function (text) {
   if (text) {
-    //console.log("Before: "+ text);
+    //log.info("Before: "+ text);
     var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
-    //console.log("After:" + newText);
+    //log.info("After:" + newText);
     return newText.replace(/´/g,'');
   } else {
     return "";
@@ -51,7 +51,7 @@ var getPoints = function (points) {
     if (content.startsWith(",")) {
       content = content.substr(1);
     }
-    console.log("content: "+content);
+    log.info("content: "+content);
     totalContent += content;
   });
   return totalContent;
@@ -70,7 +70,7 @@ var getPointsUpOrDown = function (post, value) {
   if (pointsText.startsWith(",")) {
     pointsText = pointsText.substr(1);
   }
-  console.log("PointText: "+pointsText);
+  log.info("PointText: "+pointsText);
   return pointsText;
 };
 
@@ -181,7 +181,7 @@ models.Post.unscoped().findAll({
   var outFilePostContent = "";
   var outFilePointForContent = "";
   var outFilePointAgainstContent = "";
-  console.log(posts.length);
+  log.info(posts.length);
   var postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
     if (!post.deleted) {
@@ -193,7 +193,7 @@ models.Post.unscoped().findAll({
         var outFileName = outFolderPath+"/posts/"+post.id+"_post_"+(post.language ? post.language : "??")+".txt";
         fs.writeFile(outFileName, "Name: "+clean(post.name)+"\n\n"+clean(post.description), function(err) {
           if(err) {
-            console.log(err);
+            log.info(err);
           }
           innerSeriesCallback();
         });
@@ -201,7 +201,7 @@ models.Post.unscoped().findAll({
        (innerSeriesCallback) => {
         fs.writeFile(outFolderPath+"/points_for/"+post.id+"_post_points_for_"+(post.language ? post.language : "??")+".txt", getPointsUp(post), function(err) {
           if(err) {
-            console.log(err);
+            log.info(err);
           }
           innerSeriesCallback();
         });
@@ -209,7 +209,7 @@ models.Post.unscoped().findAll({
       (innerSeriesCallback) => {
         fs.writeFile(outFolderPath+"/points_against/"+post.id+"_post_points_against_"+(post.language ? post.language : "??")+".txt", getPointsDown(post), function(err) {
           if(err) {
-            console.log(err);
+            log.info(err);
           }
           innerSeriesCallback();
         });
@@ -226,7 +226,7 @@ models.Post.unscoped().findAll({
       (innerSeriesCallback) => {
        fs.writeFile(outFolderPath+"/all/all_posts.txt", outFilePostContent, function(err) {
          if(err) {
-           console.log(err);
+           log.info(err);
          }
          innerSeriesCallback();
        });
@@ -234,7 +234,7 @@ models.Post.unscoped().findAll({
       (innerSeriesCallback) => {
        fs.writeFile(outFolderPath+"/all/all_post_points_for.txt", outFilePointForContent, function(err) {
          if(err) {
-           console.log(err);
+           log.info(err);
          }
          innerSeriesCallback();
        });
@@ -242,13 +242,13 @@ models.Post.unscoped().findAll({
      (innerSeriesCallback) => {
        fs.writeFile(outFolderPath+"/all/all_post_points_against.txt", outFilePointAgainstContent, function(err) {
          if(err) {
-           console.log(err);
+           log.info(err);
          }
          innerSeriesCallback();
        });
      }
      ], () => {
-      console.log("Done");
+      log.info("Done");
       process.exit();
      })
   });

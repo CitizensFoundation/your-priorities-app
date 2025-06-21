@@ -1,6 +1,6 @@
 const models = require("../../../models/index.cjs");
 const async = require("async");
-const log = require("../../utils/logger.cjs");
+const log = require("../../../utils/logger.cjs");
 
 const TOXICITY_THRESHOLD = 0.5;
 const TOXICITY_EMAIL_THRESHOLD = 0.75;

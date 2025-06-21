@@ -226,11 +226,11 @@ module.exports = (sequelize, DataTypes) => {
   Post.addFullTextIndex = () => {
 
     if(sequelize.options.dialect !== 'postgres') {
-      console.log('Not creating search index, must be using POSTGRES to do this');
+      log.info('Not creating search index, must be using POSTGRES to do this');
       return;
     }
 
-    console.log("Adding full text index");
+    log.debug("Adding full text index");
 
     const searchFields = ['name', 'description'];
 
@@ -240,31 +240,31 @@ module.exports = (sequelize, DataTypes) => {
         sequelize
           .query('ALTER TABLE "' + sequelize.models.Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
           .then(() => {
-            console.log("addFullTextIndex: 1");
+            log.info("addFullTextIndex: 1");
             return sequelize
               .query('UPDATE "' + sequelize.models.Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
           }).then(() => {
-            console.log("addFullTextIndex: 2");
+            log.info("addFullTextIndex: 2");
             return sequelize
               .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
         }).then(() => {
-          console.log("addFullTextIndex: 3");
+          log.info("addFullTextIndex: 3");
           return sequelize
             .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + sequelize.models.Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
         }).catch(error=> {
-          console.log(error);
+          log.info(error);
         });
       } else {
-        log.info("PostText search index is already setup");
+        log.debug("PostText search index is already setup");
       }
     });
   };
 
   Post.search = (query, groupId, modelCategory) => {
-    console.log("In search for " + query);
+    log.info("In search for " + query);
 
     if(sequelize.options.dialect !== 'postgres') {
-      console.log('Search is only implemented on POSTGRES database');
+      log.info('Search is only implemented on POSTGRES database');
       return;
     }
 
@@ -274,7 +274,7 @@ module.exports = (sequelize, DataTypes) => {
         return term + ':*';
       }).join(' & ');
 
-      console.log("Using tsQuery: " + tsQuery);
+      log.info("Using tsQuery: " + tsQuery);
       return sequelize.models.Post.findAll({
         order: [
           ["created_at","DESC"],

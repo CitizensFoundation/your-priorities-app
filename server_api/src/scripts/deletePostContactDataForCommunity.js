@@ -3,6 +3,8 @@ var async = require('async');
 
 var communityId = process.argv[2];
 
+const log = require('../utils/logger.cjs');
+
 models.Post.findAll({
   where: {
     data: {
@@ -36,17 +38,17 @@ models.Post.findAll({
       });
     }, (error) => {
       if (error) {
-        console.error(error);
+        log.error(error);
       } else {
-        console.info("Have updated "+posts.length+" posts");
+        log.info("Have updated "+posts.length+" posts");
       }
       process.exit();
     });
   } else {
-    console.log("No posts found for community");
+    log.info("No posts found for community");
     process.exit();
   }
 }).catch((error) => {
-  console.error(error);
+  log.error(error);
   process.exit();
 });

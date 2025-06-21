@@ -1,6 +1,6 @@
 var i18n = require('../utils/i18n.cjs');
 var Backend = require('i18next-fs-backend');
-var log = require('../utils/logger.cjs');
+var log = require('../../utils/logger.cjs');
 var path = require('path');
 var activity = require('./activity.cjs');
 var notification_delivery = require('./notification_delivery.cjs');

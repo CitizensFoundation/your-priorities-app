@@ -459,7 +459,7 @@ async function cacheIndexFile(filePath, versionKey) {
     indexCache[versionKey].lastModified = stats.mtime.toUTCString();
     indexCache[versionKey].data = data;
   } catch (err) {
-    console.error("Error caching index file:", err);
+    log.error("Error caching index file:", err);
   }
 }
 

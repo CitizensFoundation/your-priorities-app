@@ -16,7 +16,7 @@ let deletedEndorsments = 0;
 
 const postsToRecount = [];
 
-console.log("Starting...");
+log.info("Starting...");
 
 function CSVToArray( strData, strDelimiter ){
   // Check to see if the delimiter is defined. If not,
@@ -118,7 +118,7 @@ const processItemsToDestroy = (itemsToDestroy, callback) => {
           forEachItemCallback(error);
         })
       } else {
-        console.warn("Endorsement not found: "+item.endorsementId);
+        log.warn("Endorsement not found: "+item.endorsementId);
         forEachItemCallback();
       }
     }).catch( error => {
@@ -171,7 +171,7 @@ async.series([
       url: urlToConfig,
     };
 
-    console.log(`Get ${urlToConfig}`);
+    log.info(`Get ${urlToConfig}`);
 
     request.get(options, (error, content) => {
       if (content && content.statusCode!=200) {
@@ -179,7 +179,7 @@ async.series([
       } else if (content) {
         config = content.body;
         parsedConfig = CSVToArray(config);
-        console.log("Got content");
+        log.info("Got content");
         seriesCallback();
       } else {
         seriesCallback("No content");
@@ -203,7 +203,7 @@ async.series([
           postName: splitLine[10],
           userAgent: splitLine[11]
         });
-        console.log(`Will delete vote for ${splitLine[10]} from ${splitLine[8]}`)
+        log.info(`Will delete vote for ${splitLine[10]} from ${splitLine[8]}`)
       }
     }
     seriesCallback();
@@ -213,14 +213,14 @@ async.series([
       return endorsement.ipAddress+":"+endorsement.postId+":"+endorsement.userAgent;
     });
 
-    console.log("Processing chunks");
+    log.info("Processing chunks");
 
     async.forEachSeries(chunks, (items, forEachChunkCallback) => {
       const itemsToDestroy = getAllItemsExceptOne(items);
       if (itemsToDestroy.length>0) {
         processItemsToDestroy(itemsToDestroy, forEachChunkCallback);
       } else {
-        console.warn("Items length == 0 and no allowDeletingSingles, skipping");
+        log.warn("Items length == 0 and no allowDeletingSingles, skipping");
         forEachChunkCallback();
       }
     }, error => {
@@ -239,8 +239,8 @@ async.series([
   }
 ], error => {
   if (error)
-    console.error(error);
+    log.error(error);
   else
-    console.log(`Deleted ${deletedEndorsments} endorsements`)
+    log.info(`Deleted ${deletedEndorsments} endorsements`)
   process.exit();
 });

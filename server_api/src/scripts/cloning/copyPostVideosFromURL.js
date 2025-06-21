@@ -225,9 +225,9 @@ async.series([
   },
 ], error => {
   if (error)
-    console.error(error);
-  console.log("All done copying videos to posts");
-  console.log(finalOutput);
+    log.error(error);
+  log.info("All done copying videos to posts");
+  log.info(finalOutput);
   process.exit();
 });
 

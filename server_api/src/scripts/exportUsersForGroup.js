@@ -14,10 +14,10 @@ models.Group.findOne({
     }
   ]
 }).then(function (group) {
-  console.log(group.GroupUsers.length);
-  console.log("email, Name");
+  log.info(group.GroupUsers.length);
+  log.info("email, Name");
   async.eachSeries(group.GroupUsers, function (user, seriesCallback) {
-    console.log('"'+user.email+'","'+user.name+'"');
+    log.info('"'+user.email+'","'+user.name+'"');
     seriesCallback();
   }, function () {
     process.exit();

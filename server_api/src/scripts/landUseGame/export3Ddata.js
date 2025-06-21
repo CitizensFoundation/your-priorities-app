@@ -25,18 +25,18 @@ async function axiosWrapper(url, options = {}) {
     return response.data;
   } catch (error) {
     // For simplicity, the error is logged and then rethrown
-    console.error("Error", error.message);
+    log.error("Error", error.message);
     throw error;
   }
 }
 
 async function getPoints(groupId, parentPointId) {
   const url = `https://betraisland.is/api/groups/${groupId}/${parentPointId}/get_parent_point`;
-  console.log(`Fetching point ${parentPointId} ${url}`);
+  log.info(`Fetching point ${parentPointId} ${url}`);
   try {
     const outPoints = [];
     const point = await axiosWrapper(url);
-    console.log(
+    log.info(
       `Fetched point ${parentPointId}`
     );
     if (point && point.PointRevisions && point.PointRevisions.length > 0) {
@@ -46,10 +46,10 @@ async function getPoints(groupId, parentPointId) {
 
       outPoints.push(point);
       const commentsUrl = `https://betraisland.is/api/points/${parentPointId}/comments`;
-      console.log(`Fetching comments ${commentsUrl}`);
+      log.info(`Fetching comments ${commentsUrl}`);
       const comments = await axiosWrapper(commentsUrl);
 
-      console.error(`Fetched comments ${JSON.stringify(comments, null, 2)}`)
+      log.error(`Fetched comments ${JSON.stringify(comments, null, 2)}`)
 
       for (const comment of comments) {
         comment.latestContent =
@@ -64,7 +64,7 @@ async function getPoints(groupId, parentPointId) {
     }
   } catch (error) {
     // Handle errors specific to getPoints if necessary
-    console.error(`Failed to get points for post ${parentPointId}:`, error);
+    log.error(`Failed to get points for post ${parentPointId}:`, error);
     // Re-throw the error or handle it as per your application's error handling policy
     throw error;
   }
@@ -83,7 +83,7 @@ let newTilesData = [];
 let tilesData = [];
 
 (async () => {
-  console.log("Start export");
+  log.info("Start export");
   let offset = 0;
   let count = 0;
   let continueFetching = true;
@@ -92,7 +92,7 @@ let tilesData = [];
   const postsProcessed = {};
   let outCsvText = "rectangle,groupId,userId,landUseType,comment";
 
-  console.log(`Fetching posts ${offset} to ${offset + chunkSize - 1}...`);
+  log.info(`Fetching posts ${offset} to ${offset + chunkSize - 1}...`);
   const posts = await models.Post.findAll({
     attributes: ["id", "name", "user_id", "group_id", "data"],
     include: [
@@ -108,12 +108,12 @@ let tilesData = [];
     offset: offset,
   });
 
-  console.log(`Post length ${posts.length}`);
+  log.info(`Post length ${posts.length}`);
 
   // Process the posts
   for (let p = 0; p < posts.length; p++) {
     const post = posts[p];
-    console.log(`${post.id} ${post.name}`);
+    log.info(`${post.id} ${post.name}`);
 
     if (
       post.data &&
@@ -133,7 +133,7 @@ let tilesData = [];
         tilesData.push(tileData);
       });
     } else {
-      console.warn(`Post ${post.id} has no publicPrivateData`);
+      log.warn(`Post ${post.id} has no publicPrivateData`);
     }
   }
 
@@ -144,7 +144,7 @@ let tilesData = [];
           tile.post.group_id,
           tile.pointId
         );
-        console.log(
+        log.info(
           `Fetched ${pointsWithComments.length} points for post ${
             tile.pointId
           } ${JSON.stringify(pointsWithComments, null, 2)}`
@@ -160,14 +160,14 @@ let tilesData = [];
             comment: point.content,
           };
 
-          console.log(`New tile data ${JSON.stringify(newTileData, null, 2)}`)
+          log.info(`New tile data ${JSON.stringify(newTileData, null, 2)}`)
 
           newTilesData.push(newTileData);
         }
 
         count += pointsWithComments.length;
       } catch (error) {
-        console.error(`Error fetching points for post ${tile.pointId}:`, error);
+        log.error(`Error fetching points for post ${tile.pointId}:`, error);
         process.exit(1);
       }
     } else {
@@ -186,6 +186,6 @@ let tilesData = [];
 
   fs.writeFileSync(`/tmp/landUseGameGroup${process.argv[2]}.csv`, csvData);
 
-  console.log(`Done. Processed ${count} posts.`);
+  log.info(`Done. Processed ${count} posts.`);
   process.exit(0);
 })();

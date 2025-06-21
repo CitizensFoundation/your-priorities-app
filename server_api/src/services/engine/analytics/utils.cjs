@@ -6,7 +6,7 @@ const convertToString = (integer, type) => {
   if (integer) {
     return integer.toString();
   } else {
-    console.error("Cant find integer to string for: "+type);
+    log.error("Cant find integer to string for: "+type);
   }
 };
 
@@ -129,10 +129,10 @@ const importPost = (post, done) => {
             description += answers[i].value.trim();
           } catch (error) {
             description += `${answers[i].value}`;
-            console.warn(`Error trimming answer to description: ${answers[i].value}`);
+            log.warn(`Error trimming answer to description: ${answers[i].value}`);
           }
         } else {
-          console.error(`No value for answer in adding to description: ${answers[i]}`);
+          log.error(`No value for answer in adding to description: ${answers[i]}`);
         }
       }
     }
@@ -169,7 +169,7 @@ const importPost = (post, done) => {
     audioUrl = _getAudioURL(post.Audios);
   }
 
-  console.log("Image URL before: "+imageUrl);
+  log.info("Image URL before: "+imageUrl);
 
   if (!imageUrl) {
     if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
@@ -181,9 +181,9 @@ const importPost = (post, done) => {
     }
   }
 
-  console.log("Image URL after: "+imageUrl);
-  console.log("Language: "+language);
-  console.log(description);
+  log.info("Image URL after: "+imageUrl);
+  log.info("Language: "+language);
+  log.info(description);
 
   //TODO: Add endorsements up and down for ratings for 3d maps
   //TODO: Add English translation if there and make train english maps for all items
@@ -290,8 +290,8 @@ const importPoint = (point, done) => {
     audioUrl = _getAudioURL(point.PointAudios);
   }
 
-  console.log("Language: "+language);
-  console.log(point.id);
+  log.info("Language: "+language);
+  log.info(point.id);
 
   //TODO: Add endorsements up and down for ratings for 3d maps
   //TODO: Add English translation if there and make train english maps for all items
@@ -397,7 +397,7 @@ const _getImageFormatUrl = function(images, formatId) {
 
 const _hasCoverMediaType = function (post, mediaType) {
   if (!post) {
-    console.info("No post for "+mediaType);
+    log.info("No post for "+mediaType);
     return false;
   } else {
     if (mediaType === 'none') {

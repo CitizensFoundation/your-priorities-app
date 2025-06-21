@@ -1,5 +1,6 @@
 import { YpAgentAssistant } from "../../agentAssistant.js";
 import { BaseAssistantTools } from "./baseTools.js";
+import log from "../../../../utils/loggerTs.js";
 
 export class WorkflowConversationTools extends BaseAssistantTools {
   constructor(assistant: YpAgentAssistant) {
@@ -22,7 +23,7 @@ export class WorkflowConversationTools extends BaseAssistantTools {
 
   public async showRunningWorkflowsHandler(params: {}): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as {};
-    console.log(`handler: show_running_workflows: ${JSON.stringify(params, null, 2)}`);
+    log.info(`handler: show_running_workflows: ${JSON.stringify(params, null, 2)}`);
 
     try {
       const html = `<yp-workflow-widget-small running="true"></yp-workflow-widget-small>`;
@@ -35,7 +36,7 @@ export class WorkflowConversationTools extends BaseAssistantTools {
       };
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : "Error displaying running workflows";
-      console.error(`Error in show_running_workflows: ${errorMessage}`);
+      log.error(`Error in show_running_workflows: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage
@@ -59,7 +60,7 @@ export class WorkflowConversationTools extends BaseAssistantTools {
 
   public async showAllWorkflowsHandler(params: {}): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as {};
-    console.log(`handler: show_all_workflows: ${JSON.stringify(params, null, 2)}`);
+    log.info(`handler: show_all_workflows: ${JSON.stringify(params, null, 2)}`);
 
     try {
       const html = `<yp-workflow-widget-small all="true"></yp-workflow-widget-small>`;
@@ -72,7 +73,7 @@ export class WorkflowConversationTools extends BaseAssistantTools {
       };
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : "Error displaying all workflows";
-      console.error(`Error in show_all_workflows: ${errorMessage}`);
+      log.error(`Error in show_all_workflows: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage
@@ -98,7 +99,7 @@ export class WorkflowConversationTools extends BaseAssistantTools {
 
   public async connectToWorkflowHandler(params: { workflowId: number }): Promise<ToolExecutionResult> {
     params = this.assistant.getCleanedParams(params) as { workflowId: number };
-    console.log(`handler: connect_to_workflow: ${JSON.stringify(params, null, 2)}`);
+    log.info(`handler: connect_to_workflow: ${JSON.stringify(params, null, 2)}`);
 
     try {
       const { workflowId } = params;
@@ -110,7 +111,7 @@ export class WorkflowConversationTools extends BaseAssistantTools {
       };
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : "Error connecting to workflow conversation";
-      console.error(`Error in connect_to_workflow_conversation: ${errorMessage}`);
+      log.error(`Error in connect_to_workflow_conversation: ${errorMessage}`);
       return {
         success: false,
         error: errorMessage

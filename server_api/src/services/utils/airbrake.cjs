@@ -1,3 +1,5 @@
+const log = require('../../utils/logger.cjs');
+
 if(process.env.AIRBRAKE_PROJECT_ID) {
   const Airbrake = require('@airbrake/node');
   let airBrake = null;
@@ -10,7 +12,7 @@ if(process.env.AIRBRAKE_PROJECT_ID) {
     });
   } catch (error) {
     airBrake = null;
-    console.error(error);
+    log.error(error);
   }
 
   module.exports = airBrake;

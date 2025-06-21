@@ -1,4 +1,5 @@
 import { YpAgentAssistant } from "../../agentAssistant.js";
+import log from "../../../../utils/loggerTs.js";
 
 export class BaseAssistantTools {
   protected assistant: YpAgentAssistant;

@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
 import models from '../../models/index.cjs';
+import log from "../../utils/loggerTs.js";
 
 (async () => {
   try {
@@ -15,7 +16,7 @@ import models from '../../models/index.cjs';
     ] = process.argv.slice(2);
 
     if (!xlsPath) {
-      console.log(
+      log.info(
         'Usage: node importDomainsFromXls.js <path-to-xls> [clientId clientSecret issuer authorizationURL tokenURL userInfoURL endSessionURL]'
       );
       process.exit(1);
@@ -34,7 +35,7 @@ import models from '../../models/index.cjs';
     await workbook.xlsx.readFile(xlsPath);
     const worksheet = workbook.getWorksheet(1);
     if (!worksheet) {
-      console.error('No worksheet found in file');
+      log.error('No worksheet found in file');
       process.exit(1);
     }
 
@@ -73,7 +74,7 @@ import models from '../../models/index.cjs';
             updateFields.secret_api_keys = secretKeys;
           }
           await existing.update(updateFields, { transaction: t });
-          console.log(`Updated domain ${existing.domain_name}`);
+          log.info(`Updated domain ${existing.domain_name}`);
         } else {
           const randomPart = Math.random().toString(36).substring(2, 10);
           const domainName = `domain_${randomPart}`;
@@ -92,16 +93,16 @@ import models from '../../models/index.cjs';
             } as any,
             { transaction: t }
           );
-          console.log(`Created domain ${domainName}`);
+          log.info(`Created domain ${domainName}`);
         }
       }
     });
 
     await models.sequelize.close();
-    console.log('Import completed');
+    log.info('Import completed');
     process.exit(0);
   } catch (err) {
-    console.error(err);
+    log.error(err);
     process.exit(1);
   }
 })();

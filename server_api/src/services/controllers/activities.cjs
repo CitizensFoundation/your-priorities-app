@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require("../../models/index.cjs");
 var auth = require('../../authorization.cjs');
-var log = require('../utils/logger.cjs');
+var log = require('../../utils/logger.cjs');
 var async = require('async');
 var _ = require('lodash');
 

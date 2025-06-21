@@ -1,5 +1,5 @@
 const models = require("../../../models/index.cjs");
-const log = require('../../utils/logger.cjs');
+const log = require('../../../utils/logger.cjs');
 const moment = require('moment');
 const _ = require('lodash');
 

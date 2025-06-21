@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require('../utils/logger.cjs');
+const log = require('../../utils/logger.cjs');
 const queue = require('../workers/queue.cjs');
 const toJson = require('../utils/to_json.cjs');
 const commonIndexForActivitiesAndNewsFeeds = require('../engine/news_feeds/activity_and_item_index_definitions.cjs').commonIndexForActivitiesAndNewsFeeds;

@@ -2,6 +2,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 import { YpAgentProduct } from './agentProduct.js';
 import { YpSubscription } from './subscription.js';
+import log from "../../utils/loggerTs.js";
 
 export class YpAgentProductRun extends Model {
   declare id: number;

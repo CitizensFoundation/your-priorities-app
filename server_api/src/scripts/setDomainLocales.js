@@ -1,7 +1,7 @@
 var models = require('../models/index.cjs');
 var async = require('async');
 
-console.log("Setting up locales");
+log.info("Setting up locales");
 
 async.series([
   function(callback) {
@@ -29,6 +29,6 @@ async.series([
     });
   }
 ], function (error) {
-  console.log("Finished");
+  log.info("Finished");
   process.exit();
 });

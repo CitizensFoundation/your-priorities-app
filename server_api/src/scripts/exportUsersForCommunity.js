@@ -14,10 +14,10 @@ models.Community.findOne({
     }
   ]
 }).then(function (community) {
-  console.log(community.CommunityUsers.length);
-  console.log("email, Name");
+  log.info(community.CommunityUsers.length);
+  log.info("email, Name");
   async.eachSeries(community.CommunityUsers, function (user, seriesCallback) {
-    console.log('"'+user.email+'","'+user.name+'"');
+    log.info('"'+user.email+'","'+user.name+'"');
     seriesCallback();
   }, function () {
     process.exit();

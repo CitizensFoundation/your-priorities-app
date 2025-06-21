@@ -40,10 +40,10 @@ const main = async () => {
 
   try {
     await fs.writeFile(outFile, outFileContent);
-    console.log("The file was saved!");
+    log.info("The file was saved!");
     process.exit();
   } catch (err) {
-    console.log(err);
+    log.info(err);
   }
 };
 

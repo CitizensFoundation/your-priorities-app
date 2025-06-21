@@ -28,7 +28,7 @@ const deletePostEndorsements = (postId, callback) => {
       if (error) {
         callback(error);
       } else {
-        console.log('User Endorsements Deleted', { context: 'ac-delete', postId: postId});
+        log.info('User Endorsements Deleted', { context: 'ac-delete', postId: postId});
         callback();
       }
     });
@@ -51,9 +51,9 @@ models.Post.findAll({
     });
   }, (error) => {
     if (error) {
-      console.error(error);
+      log.error(error);
     }
-    console.log("Completed reset of endorsements for group: "+groupId);
+    log.info("Completed reset of endorsements for group: "+groupId);
     process.exit();
   });
 });

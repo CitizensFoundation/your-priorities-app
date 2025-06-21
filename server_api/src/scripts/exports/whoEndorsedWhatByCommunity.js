@@ -49,10 +49,10 @@ models.Endorsement.findAll({
     }
   ]
 }).then((endorsements) => {
-  console.log(`"Up / Down","Email","Name","Post Id","Post name","Group name"\n`)
+  log.info(`"Up / Down","Email","Name","Post Id","Post name","Group name"\n`)
   for (let i=0;i<endorsements.length;i++) {
     const e = endorsements[i];
-    console.log(`${e.value},"${e.User.email}","${e.User.name}","${e.Post.id}","${e.Post.name}","${e.Post.Group.name}"`);
+    log.info(`${e.value},"${e.User.email}","${e.User.name}","${e.Post.id}","${e.Post.name}","${e.Post.Group.name}"`);
   }
   process.exit();
 });

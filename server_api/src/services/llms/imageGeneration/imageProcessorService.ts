@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 import { v4 as uuidv4 } from "uuid";
+import log from "../../../utils/loggerTs.js";
 
 export class ImageProcessorService {
   private validFormats = ["jpeg", "png", "webp", "gif", "tiff", "avif", "svg"];
@@ -67,7 +68,7 @@ export class ImageProcessorService {
 
       return resizedImageFilePath;
     } catch (err) {
-      console.error("Error resizing image:", err);
+      log.error("Error resizing image:", err);
       if (fs.existsSync(resizedImageFilePath)) {
         fs.unlinkSync(resizedImageFilePath);
       }

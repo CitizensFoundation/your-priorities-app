@@ -16,7 +16,7 @@ if (splitStatuses.length>0) {
   }
 }
 
-console.log(statusesToUse);
+log.info(statusesToUse);
 
 const otherIds = [];
 if (alsoDoIds) {
@@ -28,13 +28,13 @@ if (alsoDoIds) {
   }
 }
 
-console.log(otherIds);
+log.info(otherIds);
 
 var getTemplateContent = function (templates, title) {
   var returnContent;
   if (title) {
     _.forEach(templates, function (template) {
-      //  console.log(template);
+      //  log.info(template);
       if (title==template.title) {
         returnContent = template.content;
       }
@@ -48,16 +48,16 @@ models.BulkStatusUpdate.findOne({
     id: id
   }
 }).then(function(update) {
-  console.log("Update: "+update.id + " name: "+update.name);
-  console.log(update.config);
-  console.log(update.templates);
+  log.info("Update: "+update.id + " name: "+update.name);
+  log.info(update.config);
+  log.info(update.templates);
 
   if (update.config.groups) {
     async.eachSeries(update.config.groups,
       function (group, groupCallback) {
         if (group.posts) {
           async.eachSeries(group.posts, function (post, postCallback) {
-//            console.log("New status: "+post.newOfficialStatus+" template: "+post.selectedTemplateName+ " content: "+getTemplateContent(update.templates,post.selectedTemplateName));
+//            log.info("New status: "+post.newOfficialStatus+" template: "+post.selectedTemplateName+ " content: "+getTemplateContent(update.templates,post.selectedTemplateName));
             if (post.newOfficialStatus) {
               var templateContent = getTemplateContent(update.templates,post.selectedTemplateName);
               if (!templateContent && post.uniqueStatusMessage) {
@@ -87,9 +87,9 @@ models.BulkStatusUpdate.findOne({
                       if (postToUpdate) {
                         if (statusesToUse.indexOf(postToUpdate.official_status)>-1 ||
                             otherIds.indexOf(postToUpdate.id)>-1) {
-                          console.log(`Performing for ${postToUpdate.official_status}`);
+                          log.info(`Performing for ${postToUpdate.official_status}`);
                           postToUpdate.official_status = post.newOfficialStatus;
-                          console.log(post.id+": "+templateContent);
+                          log.info(post.id+": "+templateContent);
                           postToUpdate.save().then(function () {
                             models.Point.createNewsStory({
                               useragent: { source: 'performBulkUpdateScript' },
@@ -105,7 +105,7 @@ models.BulkStatusUpdate.findOne({
                             })
                           });
                         } else {
-                          console.error("Not processing post with status: "+postToUpdate.official_status);
+                          log.error("Not processing post with status: "+postToUpdate.official_status);
                           doCallback();
                         }
                       } else {
@@ -117,7 +117,7 @@ models.BulkStatusUpdate.findOne({
                   postCallback(error);
                 });
               } else {
-                console.log("WARNING: No template content for postId: "+post.id);
+                log.info("WARNING: No template content for postId: "+post.id);
                 postCallback();
               }
             } else {
@@ -128,17 +128,17 @@ models.BulkStatusUpdate.findOne({
           });
 
         } else {
-          console.log("Not performing group id: "+group.id);
+          log.info("Not performing group id: "+group.id);
           groupCallback();
         }
     }, function (error) {
       if (error) {
-        console.error(error);
+        log.error(error);
       }
-      console.log("Bulk status update has been applied.");
+      log.info("Bulk status update has been applied.");
       process.exit();
     });
   }
 }).catch(function(error) {
-  console.error(error);
+  log.error(error);
 });

@@ -1,7 +1,7 @@
 const models = require("../../../models/index.cjs");
 const async = require("async");
 const moment = require("moment");
-const log = require("../../utils/logger.cjs");
+const log = require("../../../utils/logger.cjs");
 const _ = require("lodash");
 const Excel = require("exceljs");
 

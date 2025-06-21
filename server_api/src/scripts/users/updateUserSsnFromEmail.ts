@@ -1,24 +1,25 @@
 import models from '../../models/index.cjs';
+import log from "../../utils/loggerTs.js";
 
 (async () => {
   try {
     const [email, ssnArg] = process.argv.slice(2);
     if (!email || !ssnArg) {
-      console.log('Usage: node updateUserSsnFromEmail.js <email> <ssn>');
+      log.info('Usage: node updateUserSsnFromEmail.js <email> <ssn>');
       process.exit(1);
     }
     const user = await models.User.findOne({ where: { email } });
     if (!user) {
-      console.error(`User ${email} not found`);
+      log.error(`User ${email} not found`);
       process.exit(1);
     }
     const ssn = ssnArg;
     user.ssn = ssn;
     await user.save();
-    console.log(`Updated SSN for ${email}`);
+    log.info(`Updated SSN for ${email}`);
     process.exit(0);
   } catch (err) {
-    console.error(err);
+    log.error(err);
     process.exit(1);
   }
 })();

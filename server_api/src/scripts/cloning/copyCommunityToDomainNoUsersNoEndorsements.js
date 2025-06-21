@@ -10,9 +10,9 @@ var domainId = process.argv[3];
 
 copyCommunityNoUsersNoEndorsements(communityId, domainId, (error) => {
   if (error) {
-    console.error(error);
+    log.error(error);
   } else {
-    console.log("Done with copyCommunityNoUsersNoEndorsements")
+    log.info("Done with copyCommunityNoUsersNoEndorsements")
   }
   process.exit();
 });

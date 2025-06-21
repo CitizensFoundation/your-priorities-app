@@ -7,6 +7,7 @@ import { AgentConnectorManager } from "@policysynth/agents/operations/agentConne
 import { AgentRegistryManager } from "@policysynth/agents/operations/agentRegistryManager.js";
 import { PsAiModel } from "@policysynth/agents/dbModels/aiModel.js";
 import auth from "../../authorization.cjs";
+import log from "../../utils/loggerTs.js";
 
 import {
   PsAiModelSize,
@@ -23,7 +24,7 @@ import { PsExternalApi } from "@policysynth/agents/dbModels/externalApis.js";
 import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
 import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
-import { domainIncludes } from "services/engine/moderation/get_moderation_items.cjs";
+import { domainIncludes } from "../../services/engine/moderation/get_moderation_items.cjs";
 
 
 interface YpRequest extends express.Request {
@@ -175,12 +176,12 @@ export class PolicySynthAgentsController {
       const { groupId, agentId } = req.params;
       const memory = req.body;
 
-      console.log(
+      log.info(
         `Attempting to replace memory for agent ${agentId} in group ${groupId}`
       );
 
       if (!memory || Object.keys(memory).length === 0) {
-        console.log(`Received empty memory for agent ${agentId}`);
+        log.info(`Received empty memory for agent ${agentId}`);
         res.status(400).json({ error: "Cannot save empty memory" });
         return;
       }
@@ -188,7 +189,7 @@ export class PolicySynthAgentsController {
       try {
         JSON.parse(JSON.stringify(memory));
       } catch (jsonError) {
-        console.log(`Received invalid JSON for agent ${agentId}`);
+        log.info(`Received invalid JSON for agent ${agentId}`);
         res.status(400).json({ error: "Invalid JSON format for memory" });
         return;
       }
@@ -199,22 +200,22 @@ export class PolicySynthAgentsController {
       );
 
       if (!memoryKey) {
-        console.log(`Memory key not found for agent ${agentId}`);
+        log.info(`Memory key not found for agent ${agentId}`);
         res
           .status(404)
           .json({ error: "Memory key not found for the specified agent" });
         return;
       }
 
-      console.log(`Memory key found: ${memoryKey}`);
+      log.info(`Memory key found: ${memoryKey}`);
 
       await req.redisClient.set(memoryKey, JSON.stringify(memory));
 
-      console.log(`Memory contents replaced successfully`);
+      log.info(`Memory contents replaced successfully`);
 
       res.json({ message: "Memory replaced successfully" });
     } catch (error) {
-      console.error("Error replacing agent memory:", error);
+      log.error("Error replacing agent memory:", error);
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -259,7 +260,7 @@ export class PolicySynthAgentsController {
         message: `Existing ${connectorId} connector added successfully`,
       });
     } catch (error) {
-      console.error(`Error adding existing ${connectorId} connector:`, error);
+      log.error(`Error adding existing ${connectorId} connector:`, error);
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -271,7 +272,7 @@ export class PolicySynthAgentsController {
   getAgentMemory = async (req: YpRequest, res: express.Response) => {
     try {
       const { groupId, agentId } = req.params;
-      console.log(
+      log.info(
         `Attempting to get memory for agent ${agentId} in group ${groupId}`
       );
 
@@ -281,30 +282,30 @@ export class PolicySynthAgentsController {
       );
 
       if (!memoryKey) {
-        console.log(`Memory key not found for agent ${agentId}`);
+        log.info(`Memory key not found for agent ${agentId}`);
         res
           .status(404)
           .json({ error: "Memory key not found for the specified agent" });
         return;
       }
 
-      console.log(`Memory key found: ${memoryKey}`);
+      log.info(`Memory key found: ${memoryKey}`);
 
       const memoryContents = await req.redisClient.get(memoryKey);
 
       if (!memoryContents) {
-        console.log(`Memory contents not found for key ${memoryKey}`);
+        log.info(`Memory contents not found for key ${memoryKey}`);
         res.status(404).json({ error: "Memory contents not found" });
         return;
       }
 
-      console.log(`Memory contents retrieved successfully`);
+      log.info(`Memory contents retrieved successfully`);
 
       const parsedMemoryContents = JSON.parse(memoryContents);
 
       res.json(parsedMemoryContents);
     } catch (error) {
-      console.error("Error retrieving agent memory:", error);
+      log.error("Error retrieving agent memory:", error);
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -319,7 +320,7 @@ export class PolicySynthAgentsController {
       const agent = await this.agentManager.getAgent(req.params.groupId);
       res.json(agent);
     } catch (error) {
-      console.error("Error in getAgent:", error);
+      log.error("Error in getAgent:", error);
       res.status(500).send("Internal Server Error");
       return;
     }
@@ -332,7 +333,7 @@ export class PolicySynthAgentsController {
       );
       res.json(aiModels);
     } catch (error) {
-      console.error("Error fetching agent AI models:", error);
+      log.error("Error fetching agent AI models:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -345,7 +346,7 @@ export class PolicySynthAgentsController {
       );
       res.json({ message: "AI model removed successfully" });
     } catch (error) {
-      console.error("Error removing agent AI model:", error);
+      log.error("Error removing agent AI model:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -360,7 +361,7 @@ export class PolicySynthAgentsController {
       );
       res.status(201).json({ message: "AI model added successfully" });
     } catch (error) {
-      console.error("Error adding agent AI model:", error);
+      log.error("Error adding agent AI model:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -388,7 +389,7 @@ export class PolicySynthAgentsController {
 
       res.json({ message: `${nodeType} configuration updated successfully` });
     } catch (error) {
-      console.error(`Error updating ${nodeType} configuration:`, error);
+      log.error(`Error updating ${nodeType} configuration:`, error);
       res.status(500).send("Internal Server Error");
       return;
     }
@@ -434,7 +435,7 @@ export class PolicySynthAgentsController {
       );
       res.status(201).json(createdConnector);
     } catch (error) {
-      console.error(`Error creating ${type} connector:`, error);
+      log.error(`Error creating ${type} connector:`, error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -447,7 +448,7 @@ export class PolicySynthAgentsController {
 
       res.json(activeAiModels);
     } catch (error) {
-      console.error("Error fetching active AI models:", error);
+      log.error("Error fetching active AI models:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -458,7 +459,7 @@ export class PolicySynthAgentsController {
         await this.agentRegistryManager.getActiveAgentClasses(req.user.id);
       res.json(activeAgentClasses);
     } catch (error) {
-      console.error("Error fetching active agent classes:", error);
+      log.error("Error fetching active agent classes:", error);
       if (error instanceof Error) {
         res.status(500).send(`Internal Server Error: ${error.message}`);
       } else {
@@ -473,7 +474,7 @@ export class PolicySynthAgentsController {
         await this.agentRegistryManager.getActiveConnectorClasses(req.user.id);
       res.json(activeConnectorClasses);
     } catch (error) {
-      console.error("Error fetching active connector classes:", error);
+      log.error("Error fetching active connector classes:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -492,7 +493,7 @@ export class PolicySynthAgentsController {
       );
       res.status(201).json(createdAgent);
     } catch (error) {
-      console.error("Error creating agent:", error);
+      log.error("Error creating agent:", error);
       if (error instanceof Error) {
         res.status(400).send(error.message);
       } else {
@@ -512,7 +513,7 @@ export class PolicySynthAgentsController {
       );
       res.json({ message });
     } catch (error) {
-      console.error(`Error ${action}ing agent:`, error);
+      log.error(`Error ${action}ing agent:`, error);
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -532,7 +533,7 @@ export class PolicySynthAgentsController {
         res.status(404).send("Agent status not found");
       }
     } catch (error) {
-      console.error("Error getting agent status:", error);
+      log.error("Error getting agent status:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -553,7 +554,7 @@ export class PolicySynthAgentsController {
         res.status(404).send("Agent not found");
       }
     } catch (error) {
-      console.error("Error updating agent status:", error);
+      log.error("Error updating agent status:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -577,7 +578,7 @@ export class PolicySynthAgentsController {
       await this.recursiveDeleteAgent(agentId);
       res.json({ message: "Agent deleted" });
     } catch (error) {
-      console.error("Error deleting agent:", error);
+      log.error("Error deleting agent:", error);
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -602,7 +603,7 @@ export class PolicySynthAgentsController {
         res.status(404).send("Agent not found");
       }
     } catch (error) {
-      console.error("Error starting agent processing:", error);
+      log.error("Error starting agent processing:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -623,7 +624,7 @@ export class PolicySynthAgentsController {
         res.status(404).send("Agent not found");
       }
     } catch (error) {
-      console.error("Error pausing agent processing:", error);
+      log.error("Error pausing agent processing:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -634,7 +635,7 @@ export class PolicySynthAgentsController {
       const totalCosts = await this.agentCostManager.getAgentCosts(agentId);
       res.json(totalCosts);
     } catch (error) {
-      console.error("Error calculating agent costs:", error);
+      log.error("Error calculating agent costs:", error);
       res.status(500).send("Internal Server Error");
     }
   };
@@ -647,7 +648,7 @@ export class PolicySynthAgentsController {
       );
       res.json(costRows);
     } catch (error) {
-      console.error("Error calculating agent costs detail:", error);
+      log.error("Error calculating agent costs detail:", error);
       res.status(500).send("Internal Server Error");
     }
   };

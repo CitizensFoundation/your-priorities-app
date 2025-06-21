@@ -184,6 +184,6 @@ async.series([
     })
   }
 ], function () {
-  console.log(csv);
+  log.info(csv);
   process.exit();
 });

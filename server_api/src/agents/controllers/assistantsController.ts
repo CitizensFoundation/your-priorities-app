@@ -2,7 +2,7 @@ import express, { RequestHandler } from "express";
 import WebSocket from "ws";
 import { marked } from "marked";
 import HTMLtoDOCX from "html-to-docx";
-
+import log from "../../utils/loggerTs.js";
 import auth from "../../authorization.cjs";
 import { YpAgentAssistant } from "../assistants/agentAssistant.js";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
@@ -60,7 +60,7 @@ export class AssistantController {
 
   initializeModels = async () => {
     try {
-      console.log(`All Models Loaded Init`);
+      log.info(`All Models Loaded Init`);
 
       // Call associate method to set up associations
       for (const modelName of Object.keys(models)) {
@@ -70,9 +70,9 @@ export class AssistantController {
         }
       }
 
-      console.log("All agentmodels initialized successfully.");
+      log.info("All agentmodels initialized successfully.");
     } catch (error) {
-      console.error("Error initializing models:", error);
+      log.error("Error initializing models:", error);
       process.exit(1);
     }
   };
@@ -189,10 +189,10 @@ export class AssistantController {
       const regex = /<markdownReport>([\s\S]*?)<\/markdownReport>/i;
       const match = lastStatusMessage ? lastStatusMessage.match(regex) : null;
 
-      console.debug(`match: ${JSON.stringify(match, null, 2)}`);
+      log.debug(`match: ${JSON.stringify(match, null, 2)}`);
 
       if (!match || match.length < 2) {
-        console.error("No <markdownReport>...</markdownReport> content found.");
+        log.error("No <markdownReport>...</markdownReport> content found.");
         res
           .status(400)
           .send("No <markdownReport>...</markdownReport> content found.");
@@ -201,7 +201,7 @@ export class AssistantController {
       const markdownContent = match ? match[1] : null ;
 
       if (!markdownContent) {
-        console.error("No markdown content found.");
+        log.error("No markdown content found.");
         res.status(400).send("No markdown content found.");
         return;
       }
@@ -210,7 +210,7 @@ export class AssistantController {
 
       const docxBuffer = (await HTMLtoDOCX(htmlContent)) as Buffer;
 
-      console.debug(`docxBuffer: ${docxBuffer.length}`);
+      log.debug(`docxBuffer: ${docxBuffer.length}`);
 
       res.setHeader(
         "Content-Type",
@@ -223,7 +223,7 @@ export class AssistantController {
 
       res.send(docxBuffer);
     } catch (error) {
-      console.error("Error converting Markdown to DOCX:", error);
+      log.error("Error converting Markdown to DOCX:", error);
       res.status(500).send("Server error");
     }
   };
@@ -247,7 +247,7 @@ export class AssistantController {
       );
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error advancing or stopping workflow:", error);
+      log.error("Error advancing or stopping workflow:", error);
       res.sendStatus(500);
     }
   };
@@ -262,7 +262,7 @@ export class AssistantController {
       //await this.agentQueueManager.startNextWorkflowStep(parseInt(agentId), parseInt(groupId));
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error starting next workflow step:", error);
+      log.error("Error starting next workflow step:", error);
       res.sendStatus(500);
     }
   };
@@ -276,7 +276,7 @@ export class AssistantController {
       //await this.agentQueueManager.stopCurrentWorkflowStep(parseInt(agentId), parseInt(groupId));
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error stopping current workflow step:", error);
+      log.error("Error stopping current workflow step:", error);
       res.sendStatus(500);
     }
   };
@@ -314,7 +314,7 @@ export class AssistantController {
         data: answers,
       });
     } catch (error: any) {
-      console.error(
+      log.error(
         "Error retrieving subscription agent configuration:",
         error
       );
@@ -354,7 +354,7 @@ export class AssistantController {
       });
       res.send({ workflow: agentRun?.workflow, status: agentRun?.status });
     } catch (error) {
-      console.error("Error getting updated workflow:", error);
+      log.error("Error getting updated workflow:", error);
       res.sendStatus(500);
     }
   };
@@ -376,7 +376,7 @@ export class AssistantController {
       );
       res.sendStatus(200);
     } catch (error: any) {
-      console.error("Error starting agent:", error);
+      log.error("Error starting agent:", error);
       res.sendStatus(500);
     }
   };
@@ -385,7 +385,7 @@ export class AssistantController {
     req: YpRequest,
     res: express.Response
   ): Promise<void> => {
-    console.log(
+    log.info(
       `submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`
     );
 
@@ -414,7 +414,7 @@ export class AssistantController {
 
       await subscription.save();
     } catch (error) {
-      console.error("Error saving subscription:", error);
+      log.error("Error saving subscription:", error);
       res.sendStatus(500);
     }
 
@@ -439,7 +439,7 @@ export class AssistantController {
 
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error updating login status:", error);
+      log.error("Error updating login status:", error);
       res.sendStatus(500);
     }
   };
@@ -461,12 +461,12 @@ export class AssistantController {
     const callerLine = stackTrace?.split("\n")[2]; // First line is Error, second is current function, third is caller
     const callerMatch = callerLine?.match(/at\s+(.*)\s+\(/);
     const caller = callerMatch ? callerMatch[1] : "unknown";
-    console.debug(`loadMemoryWithOwnership called by: ${caller}`);
-    console.debug(
+    log.debug(`loadMemoryWithOwnership called by: ${caller}`);
+    log.debug(
       `loadMemoryWithOwnership: ${JSON.stringify(req.body, null, 2)}`
     );
     const redisKey = this.getMemoryRedisKey(req);
-    console.debug(`loadMemoryWithOwnership: redisKey: ${redisKey}`);
+    log.debug(`loadMemoryWithOwnership: redisKey: ${redisKey}`);
 
     try {
       const rawMemory = await req.redisClient.get(redisKey);
@@ -476,7 +476,7 @@ export class AssistantController {
 
       // If no memory, create new
       if (!memory) {
-        console.debug(`loadMemoryWithOwnership: creating new memory`);
+        log.debug(`loadMemoryWithOwnership: creating new memory`);
         memory = {
           redisKey,
           chatLog: [],
@@ -487,48 +487,48 @@ export class AssistantController {
           ownerUserId: null,
         } as YpBaseAssistantMemoryData;
         if (req.user) {
-          console.debug(
+          log.debug(
             `loadMemoryWithOwnership: setting ownerUserId to ${req.user.id}`
           );
           memory.ownerUserId = req.user.id;
         } else {
-          console.debug(`loadMemoryWithOwnership: no user in request`);
+          log.debug(`loadMemoryWithOwnership: no user in request`);
         }
         await req.redisClient.set(redisKey, JSON.stringify(memory));
         const rawAfterSet = await req.redisClient.get(redisKey);
-        console.log(
+        log.info(
           "loadMemoryWithOwnership: After set, raw in Redis is:",
           rawAfterSet
         );
-        console.debug(`loadMemoryWithOwnership: returning new memory`);
+        log.debug(`loadMemoryWithOwnership: returning new memory`);
         return memory;
       } else {
-        console.debug(`loadMemoryWithOwnership: memory already exists`);
-        console.debug(
+        log.debug(`loadMemoryWithOwnership: memory already exists`);
+        log.debug(
           `loadMemoryWithOwnership: memory: ${JSON.stringify(memory, null, 2)}`
         );
       }
 
       // If memory is owned by someone
       if (memory.ownerUserId !== null) {
-        console.debug(
+        log.debug(
           `loadMemoryWithOwnership: memory is owned by ${memory.ownerUserId}`
         );
         if (!req.user) {
-          console.debug(`loadMemoryWithOwnership: no user in request`);
+          log.debug(`loadMemoryWithOwnership: no user in request`);
           res.status(401).json({ error: "Unauthorized" });
           return;
         } else {
-          console.debug(`loadMemoryWithOwnership: user in request`);
+          log.debug(`loadMemoryWithOwnership: user in request`);
         }
         if (memory.ownerUserId !== req.user.id) {
-          console.debug(
+          log.debug(
             `loadMemoryWithOwnership: ownerUserId does not match ${memory.ownerUserId} !== ${req.user.id}`
           );
           res.status(403).json({ error: "Forbidden" });
           return;
         } else {
-          console.debug(
+          log.debug(
             `loadMemoryWithOwnership: ownerUserId matches ${memory.ownerUserId} === ${req.user.id}`
           );
         }
@@ -540,18 +540,18 @@ export class AssistantController {
           // optionally upgrade
           memory.ownerUserId = req.user.id;
           await req.redisClient.set(redisKey, JSON.stringify(memory));
-          console.debug(
+          log.debug(
             `loadMemoryWithOwnership: returning memory with ownerUserId ${memory.ownerUserId}`
           );
         } else {
-          console.debug(
+          log.debug(
             `loadMemoryWithOwnership: returning memory with ownerUserId null`
           );
         }
         return memory;
       }
     } catch (error: any) {
-      console.error("Error loading memory:", error);
+      log.error("Error loading memory:", error);
       res.status(500).json({ error: "Internal server error" });
       return;
     }
@@ -589,12 +589,12 @@ export class AssistantController {
           },
         });
       } else {
-        console.warn("No user found to clear runs for");
+        log.warn("No user found to clear runs for");
       }
 
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error clearing chat log:", error);
+      log.error("Error clearing chat log:", error);
       res.sendStatus(500);
     }
   };
@@ -602,7 +602,7 @@ export class AssistantController {
   private getMemory = async (req: YpRequest, res: express.Response) => {
     const memory = await this.loadMemoryWithOwnership(req, res);
     if (!memory) return;
-    console.log(`Getting memory at key: ${memory.redisKey}`);
+    log.info(`Getting memory at key: ${memory.redisKey}`);
 
     res.json(memory);
   };
@@ -612,7 +612,7 @@ export class AssistantController {
       const { wsClientId, currentMode } = req.body;
       const memory = await this.loadMemoryWithOwnership(req, res);
       if (!memory) return;
-      console.log(`Starting chat session for client: ${wsClientId}`);
+      log.info(`Starting chat session for client: ${wsClientId}`);
 
       let oldVoiceAssistant =
         this.voiceAssistantInstances.get("voiceAssistant");
@@ -647,7 +647,7 @@ export class AssistantController {
         wsClientId,
       });
     } catch (error) {
-      console.error("Error starting voice session:", error);
+      log.error("Error starting voice session:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -692,7 +692,7 @@ export class AssistantController {
         wsClientId,
       });
     } catch (error) {
-      console.error("Error starting chat session:", error);
+      log.error("Error starting chat session:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -718,7 +718,7 @@ export class AssistantController {
         message: "Running workflows retrieved successfully",
       });
     } catch (error: any) {
-      console.error("Error retrieving running workflows:", error);
+      log.error("Error retrieving running workflows:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -742,7 +742,7 @@ export class AssistantController {
         message: "All workflows retrieved successfully",
       });
     } catch (error: any) {
-      console.error("Error retrieving all workflows:", error);
+      log.error("Error retrieving all workflows:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -768,7 +768,7 @@ export class AssistantController {
         message: `Connected to workflow conversation ${workflowConversationId} successfully`,
       });
     } catch (error: any) {
-      console.error("Error connecting to workflow conversation:", error);
+      log.error("Error connecting to workflow conversation:", error);
       res.status(500).json({ error: error.message });
     }
   };

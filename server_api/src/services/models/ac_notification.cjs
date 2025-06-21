@@ -1,7 +1,7 @@
 "use strict";
 
 const async = require("async");
-const log = require('../utils/logger.cjs');
+const log = require('../../utils/logger.cjs');
 const toJson = require('../utils/to_json.cjs');
 const _ = require('lodash');
 const queue = require('../workers/queue.cjs');

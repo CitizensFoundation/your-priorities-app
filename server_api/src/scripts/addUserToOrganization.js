@@ -50,22 +50,22 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
   });
 };
 
-console.log(userIdArg);
-console.log(organizationIdArg);
+log.info(userIdArg);
+log.info(organizationIdArg);
 
 getOrganizationAndUser(organizationIdArg, userIdArg, function (error, organization, user) {
-  console.log(error);
-  console.log(user);
-  console.log(organization);
+  log.info(error);
+  log.info(user);
+  log.info(organization);
   if (error) {
-    console.error(error);
+    log.error(error);
   } else if (user && organization) {
     organization.addOrganizationUsers(user).then(function (results) {
-      console.log("Completed");
+      log.info("Completed");
       process.exit();
     });
   } else {
-    console.error("Not found");
+    log.error("Not found");
     process.exit();
   }
 });

@@ -12,16 +12,16 @@ models.AcTranslationCache.findAll({
 }).then((results) => {
   if (results && results.length>0) {
     results.forEach((item)=>{
-      console.log(`${item.index_key} - ${item.content}`);
-      console.log(`--------------------------------------`);
-      console.log("");
+      log.info(`${item.index_key} - ${item.content}`);
+      log.info(`--------------------------------------`);
+      log.info("");
     });
   } else {
-    console.warn("No results found")
+    log.warn("No results found")
     process.exit();
   }
   process.exit();
 }).catch((error)=>{
-  console.error(error);
+  log.error(error);
   process.exit();
 });

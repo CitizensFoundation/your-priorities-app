@@ -22,7 +22,7 @@ models.Domain.findOne({where: {id: 1}}).then(function(domain) {
         } else if ((user.name.indexOf('sson') > -1) || (user.name.indexOf('son') > -1)) {
           malePostCount += posts.length;
         } else {
-          console.log(user.name);
+          log.info(user.name);
           unknownPostCount += posts.length
         }
         models.Point.findAll({ where: {user_id: user.id}}).then(function (points) {
@@ -46,17 +46,17 @@ models.Domain.findOne({where: {id: 1}}).then(function(domain) {
         });
       });
     }, function done() {
-      console.log("femalePostCount: " + femalePostCount);
-      console.log("malePostCount: " + malePostCount);
-      console.log("unknownPostCount: " + unknownPostCount);
+      log.info("femalePostCount: " + femalePostCount);
+      log.info("malePostCount: " + malePostCount);
+      log.info("unknownPostCount: " + unknownPostCount);
 
-      console.log("femalePointCount: " + femalePointCount);
-      console.log("malePointCount: " + malePointCount);
-      console.log("unknownPointCount: " + unknownPointCount);
+      log.info("femalePointCount: " + femalePointCount);
+      log.info("malePointCount: " + malePointCount);
+      log.info("unknownPointCount: " + unknownPointCount);
 
-      console.log("femaleEndorsementCount: " + femaleEndorsementCount);
-      console.log("maleEndorsementCount: " + maleEndorsementCount);
-      console.log("unknownEndorsementCount: " + unknownEndorsementCount);
+      log.info("femaleEndorsementCount: " + femaleEndorsementCount);
+      log.info("maleEndorsementCount: " + maleEndorsementCount);
+      log.info("unknownEndorsementCount: " + unknownEndorsementCount);
     });
   });
 });

@@ -1,6 +1,6 @@
 var DEBUG_EMAILS_TO_TEMP_FIlE = false;
 
-var log = require("../../utils/logger.cjs");
+var log = require("../../../utils/logger.cjs");
 var async = require("async");
 var path = require("path");
 var nodemailer = require("nodemailer");
@@ -262,7 +262,7 @@ const processNotification = (
       callback();
     }
   } else {
-    console.warn("Can't find email for user");
+    log.warn("Can't find email for user");
     callback();
   }
 };

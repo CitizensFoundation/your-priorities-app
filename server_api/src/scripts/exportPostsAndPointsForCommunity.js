@@ -8,9 +8,9 @@ var outFile = process.argv[3];
 let outFileContent = "";
 
 const clean = (text) => {
-  //console.log("Before: "+ text);
+  //log.info("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
-  //console.log("After:" + newText);
+  //log.info("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
@@ -21,7 +21,7 @@ const getPoints = (points) => {
     if (content.startsWith(",")) {
       content = content.substr(1);
     }
-    console.log("content: "+content);
+    log.info("content: "+content);
     totalContent += content;
   });
   return totalContent;
@@ -40,7 +40,7 @@ const getPointsUpOrDown = (post, value) => {
   if (pointsText.startsWith(",")) {
     pointsText = pointsText.substr(1);
   }
-  console.log("PointText: "+pointsText);
+  log.info("PointText: "+pointsText);
   return pointsText;
 };
 
@@ -97,7 +97,7 @@ models.Post.findAll({
       if (!error && translation) {
         englishTranslation = translation.content;
       } else {
-        console.error(error);
+        log.error(error);
       }
       addCrowdsourcingRow('post', post.Group.name, post.name, post.description, 0, post.counter_endorsements_up, post.counter_endorsements_down, post.id, getToxicityScore(post), englishTranslation);
       models.Point.findAll({
@@ -119,7 +119,7 @@ models.Post.findAll({
             pointTextContent = point.content;
           }
 
-          console.log(pointTextContent);
+          log.info(pointTextContent);
 
           let req = {
             query: {
@@ -133,7 +133,7 @@ models.Post.findAll({
             if (!error && translation) {
               englishTranslation = translation.content;
             } else {
-              console.error(error);
+              log.error(error);
             }
             addCrowdsourcingRow('point', post.Group.name, post.name, pointTextContent, point.value, point.counter_quality_up, point.counter_quality_down, point.id, getToxicityScore(point), englishTranslation);
             pointsCallback();
@@ -144,9 +144,9 @@ models.Post.findAll({
   }, function (error) {
     fs.writeFile(outFile, outFileContent, function(err) {
       if(err) {
-        console.log(err);
+        log.info(err);
       }
-      console.log("The file was saved!");
+      log.info("The file was saved!");
       process.exit();
     });
   });

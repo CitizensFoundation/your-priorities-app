@@ -4,6 +4,7 @@ import { YpAgentProduct } from '../models/agentProduct.js';
 import { YpSubscriptionPlan } from '../models/subscriptionPlan.js';
 import { YpAgentProductRun } from '../models/agentProductRun.js';
 import { sequelize } from '@policysynth/agents/dbModels/sequelize.js';
+import log from "../../utils/loggerTs.js";
 
 export class AgentProductManager {
   constructor() {

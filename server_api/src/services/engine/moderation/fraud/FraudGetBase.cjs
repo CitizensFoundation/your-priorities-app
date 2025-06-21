@@ -135,7 +135,7 @@ class FraudGetBase extends FraudBase {
   async processAndGetFraudItems() {
     return await new Promise(async (resolve, reject) => {
       try {
-        console.log(`Get Fraud ${JSON.stringify(this.workPackage)}`);
+        log.info(`Get Fraud ${JSON.stringify(this.workPackage)}`);
 
         this.items = await this.getAllItems();
 

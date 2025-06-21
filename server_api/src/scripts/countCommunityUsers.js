@@ -143,11 +143,11 @@ async.parallel([
   }
 ], function (error) {
   if (error) {
-    console.error(error);
+    log.error(error);
   } else {
-    console.log("User action count: "+allUserIds.length);
-    console.log(allUserIds);
-    console.log("Community user count: "+_.uniq(allUserIds).length);
+    log.info("User action count: "+allUserIds.length);
+    log.info(allUserIds);
+    log.info("Community user count: "+_.uniq(allUserIds).length);
   }
   process.exit();
 });

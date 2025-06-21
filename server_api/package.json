@@ -138,12 +138,12 @@
     "publish_live": "npm run build:dev;npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server.js",
-    "watch-start": "DEBUG=router:* tsc --project ./src --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",
+    "watch-start": "DEBUG=router:* tsc --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",
     "dev": "nodemon --config nodemon.json ./ts-out/server.js",
     "heroku-postbuild": "echo 'Skipping build'",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk api_app.ts",
-    "build": "tsc --project ./src --outDir ./dist && ncp src/views dist/views && ncp config dist/config && ncp src/services/email_templates dist/services/email_templates && ncp src/services/locales dist/services/locales",
-    "build:dev": "tsc --project ./src --outDir ./ts-out && ncp src/views ts-out/views && ncp config ts-out/config && ncp src/services/email_templates ts-out/services/email_templates && ncp src/services/locales ts-out/services/locales"
+    "build": "tsc --outDir ./dist && ncp src/views dist/views && ncp config dist/config && ncp src/services/email_templates dist/services/email_templates && ncp src/services/locales dist/services/locales",
+    "build:dev": "tsc  --outDir ./ts-out && ncp src/views ts-out/views && ncp config ts-out/config && ncp src/services/email_templates ts-out/services/email_templates && ncp src/services/locales ts-out/services/locales"
   },
   "cacheDirectories": [
     "node_modules"

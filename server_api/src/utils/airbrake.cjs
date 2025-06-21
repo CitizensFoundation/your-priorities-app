@@ -10,7 +10,7 @@ if(process.env.AIRBRAKE_PROJECT_ID) {
     });
   } catch (error) {
     airBrake = null;
-    console.error(error);
+    log.error(error);
   }
 
   module.exports = airBrake;

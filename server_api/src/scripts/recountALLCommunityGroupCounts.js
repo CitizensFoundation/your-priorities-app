@@ -16,7 +16,7 @@ models.Community.findAll({
       community.update({
         counter_groups: count
       }).then(()=>{
-        console.log(`Updated Community ${community.id} to ${count}`);
+        log.info(`Updated Community ${community.id} to ${count}`);
         forEachCallback();
       }).catch( error => {
         forEachCallback(error);
@@ -25,14 +25,14 @@ models.Community.findAll({
       forEachCallback(error);
     })
   }, (error)=>{
-    console.log(error);
+    log.info(error);
     process.exit();
   })
 }).catch( error=>{
   if (error)
-    console.error(error);
+    log.error(error);
   else
-    console.log(done);
+    log.info(done);
   process.exit();
 })
 

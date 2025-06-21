@@ -1,6 +1,6 @@
 var models = require("../../../models/index.cjs");
 var async = require('async');
-var log = require('../../utils/logger.cjs');
+var log = require('../../../utils/logger.cjs');
 var _ = require('lodash');
 var toJson = require('../../utils/to_json.cjs');
 

@@ -15,10 +15,10 @@ const communityId = process.argv[2];
 
 recountCommunity(communityId, error=>{
   if (error) {
-    console.error(error);
+    log.error(error);
   }
 
-  console.log("Done recounting");
+  log.info("Done recounting");
   process.exit();
 })
 

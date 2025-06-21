@@ -1,6 +1,7 @@
 // chatGptImageGenerator.ts
 import { OpenAI } from "openai";
 import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import log from "../../../utils/loggerTs.js";
 
 export class ChatGptImageGenerator implements IImageGenerator {
   private readonly maxRetryCount = 3;
@@ -51,7 +52,7 @@ export class ChatGptImageGenerator implements IImageGenerator {
           size,
         });
 
-        console.log("res", JSON.stringify(res, null, 2));
+        log.info("res", JSON.stringify(res, null, 2));
 
         const b64Json = res?.data?.[0]?.b64_json;
         if (b64Json) {
@@ -62,7 +63,7 @@ export class ChatGptImageGenerator implements IImageGenerator {
       } catch (err) {
         retryCount += 1;
         if (retryCount >= this.maxRetryCount) {
-          console.error(
+          log.error(
             `ChatGptImageGenerator failed after ${retryCount} attempts`,
             err
           );

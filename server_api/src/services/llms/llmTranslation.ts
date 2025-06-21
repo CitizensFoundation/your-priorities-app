@@ -5,6 +5,7 @@ import { parse } from "path";
 import { Translate } from "aws-sdk";
 import * as cheerio from "cheerio";
 import { Cheerio } from "cheerio";
+import log from "../../utils/loggerTs.js";
 
 export class YpLlmTranslation {
   openaiClient: OpenAI;
@@ -305,7 +306,7 @@ export class YpLlmTranslation {
     const moderationResponse = await this.openaiClient.moderations.create({
       input: content,
     });
-    console.log("Moderation response:", moderationResponse);
+    log.info("Moderation response:", moderationResponse);
     const flagged = moderationResponse.results[0].flagged;
     return flagged;
   }
@@ -317,7 +318,7 @@ export class YpLlmTranslation {
     try {
       const originalStrings = this.extractHtmlStrings(htmlToTranslate);
       if (originalStrings.length === 0) {
-        console.warn("No HTML strings to translate");
+        log.warn("No HTML strings to translate");
         return htmlToTranslate;
       }
 
@@ -332,7 +333,7 @@ export class YpLlmTranslation {
         if (translatedBatch) {
           translatedStrings.push(...translatedBatch);
         } else {
-          console.error("Failed to translate batch:", batch);
+          log.error("Failed to translate batch:", batch);
           return undefined;
         }
       }
@@ -345,7 +346,7 @@ export class YpLlmTranslation {
       );
       return translatedHtml;
     } catch (error) {
-      console.error("Error in getHtmlTranslation:", error);
+      log.error("Error in getHtmlTranslation:", error);
       return undefined;
     }
   }
@@ -355,7 +356,7 @@ export class YpLlmTranslation {
     stringToTranslate: string
   ): Promise<string | null | undefined> {
     try {
-      console.log(`getOneTranslation: ${stringToTranslate} ${languageIsoCode}`);
+      log.info(`getOneTranslation: ${stringToTranslate} ${languageIsoCode}`);
       const languageName =
         YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
       return (await this.callSimpleLlm(
@@ -366,7 +367,7 @@ export class YpLlmTranslation {
         this.renderOneTranslationUserMessage
       )) as string | null;
     } catch (error) {
-      console.error("Error in getAnswerIdeas:", error);
+      log.error("Error in getAnswerIdeas:", error);
       return undefined;
     }
   }
@@ -376,11 +377,11 @@ export class YpLlmTranslation {
     stringsToTranslate: string[]
   ): Promise<string[] | null | undefined> {
     try {
-      console.log(`getOneTranslation: ${languageIsoCode}`);
+      log.info(`getOneTranslation: ${languageIsoCode}`);
       const languageName =
         YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
       if (await this.getModerationFlag(stringsToTranslate.join(" "))) {
-        console.error("Flagged:", stringsToTranslate);
+        log.error("Flagged:", stringsToTranslate);
         return null;
       } else {
         return (await this.callSimpleLlm(
@@ -392,7 +393,7 @@ export class YpLlmTranslation {
         )) as string[] | null;
       }
     } catch (error) {
-      console.error("Error in getAnswerIdeas:", error);
+      log.error("Error in getAnswerIdeas:", error);
       return undefined;
     }
   }
@@ -403,11 +404,11 @@ export class YpLlmTranslation {
     maxCharactersInTranslation = 140
   ): Promise<string | null | undefined> {
     try {
-      console.log(`async getChoiceTranslation: ${answerContent}`);
+      log.info(`async getChoiceTranslation: ${answerContent}`);
       const languageName =
         YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
       if (await this.getModerationFlag(answerContent)) {
-        console.error("Flagged:", answerContent);
+        log.error("Flagged:", answerContent);
         return null;
       } else {
         const inAnswer = {
@@ -431,7 +432,7 @@ export class YpLlmTranslation {
         );
       }
     } catch (error) {
-      console.error("Error in getAnswerIdeas:", error);
+      log.error("Error in getAnswerIdeas:", error);
       return undefined;
     }
   }
@@ -442,11 +443,11 @@ export class YpLlmTranslation {
     maxCharactersInTranslation = 300
   ): Promise<string | null | undefined> {
     try {
-      console.log(`getQuestionTranslation: ${question} ${languageIsoCode}`);
+      log.info(`getQuestionTranslation: ${question} ${languageIsoCode}`);
       const languageName =
         YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
       if (await this.getModerationFlag(question)) {
-        console.error("Flagged:", question);
+        log.error("Flagged:", question);
         return null;
       } else {
         const inQuestion = {
@@ -470,7 +471,7 @@ export class YpLlmTranslation {
         );
       }
     } catch (error) {
-      console.error("Error in getAnswerIdeas:", error);
+      log.error("Error in getAnswerIdeas:", error);
       return undefined;
     }
   }
@@ -500,7 +501,7 @@ export class YpLlmTranslation {
 
     while (running) {
       try {
-        console.log(`Messages ${retries}:`, messages);
+        log.info(`Messages ${retries}:`, messages);
         const results = await this.openaiClient.chat.completions.create({
           model: this.modelName,
           messages,
@@ -508,9 +509,9 @@ export class YpLlmTranslation {
           temperature: this.temperature,
         });
 
-        console.log("Results:", results);
+        log.info("Results:", results);
         let llmOutput = results.choices[0].message.content;
-        console.log("Return text:", llmOutput);
+        log.info("Return text:", llmOutput);
         if (parseJson) {
           if (llmOutput) {
             llmOutput = llmOutput.replace(/```json/g, "");
@@ -518,14 +519,14 @@ export class YpLlmTranslation {
             return JSON.parse(jsonrepair(llmOutput!));
           }
           {
-            console.error("No content in response");
+            log.error("No content in response");
             return undefined;
           }
         } else {
           return llmOutput;
         }
       } catch (error) {
-        console.error("Error in getChoiceTranslation:", error);
+        log.error("Error in getChoiceTranslation:", error);
         retries++;
         if (retries > maxRetries) {
           running = false;
@@ -550,7 +551,7 @@ export class YpLlmTranslation {
     systemRenderer: Function,
     userRenderer: Function
   ): Promise<string | null | undefined> {
-    console.log(
+    log.info(
       "Call schema LLM:",
       jsonInSchema,
       jsonOutSchema,
@@ -582,7 +583,7 @@ export class YpLlmTranslation {
 
     while (running) {
       try {
-        console.log(`Messages ${retries}:`, messages);
+        log.info(`Messages ${retries}:`, messages);
         const results = await this.openaiClient.chat.completions.create({
           model: this.modelName,
           messages,
@@ -590,9 +591,9 @@ export class YpLlmTranslation {
           temperature: this.temperature,
         });
 
-        console.log("Results:", results);
+        log.info("Results:", results);
         let textJson = results.choices[0].message.content;
-        console.log("Text JSON:", textJson);
+        log.info("Text JSON:", textJson);
 
         if (textJson) {
           textJson = textJson.replace(/```json/g, "");
@@ -606,7 +607,7 @@ export class YpLlmTranslation {
               translationData.translatedContent.length >
                 maxCharactersInTranslation
             ) {
-              console.log(
+              log.info(
                 "Translation too long retrying:",
                 translationData.translatedContent
               );
@@ -620,24 +621,24 @@ export class YpLlmTranslation {
               throw new Error("Translation too long");
             }
             running = false;
-            console.log("Return text " + translationData.translatedContent);
+            log.info("Return text " + translationData.translatedContent);
             return translationData.translatedContent;
           } else {
             this.temperature = Math.random() * 0.99;
-            console.log(
+            log.info(
               "No content in response. Temperature set to: " + this.temperature
             );
             throw new Error("No content in response");
           }
         } else {
           this.temperature = Math.random() * 0.99;
-          console.log(
+          log.info(
             "No content in response. Temperature set to:" + this.temperature
           );
           throw new Error("No content in response");
         }
       } catch (error) {
-        console.error("Error in callSchemaLlm:", error);
+        log.error("Error in callSchemaLlm:", error);
         retries++;
         if (retries > maxRetries) {
           running = false;

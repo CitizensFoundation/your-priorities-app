@@ -1,5 +1,5 @@
 const models = require("../../../models/index.cjs");
-const log = require('../../utils/logger.cjs');
+const log = require('../../../utils/logger.cjs');
 const async = require('async');
 const getModelAndUsersByType = require('./notifications_utils.cjs').getModelAndUsersByType;
 const addNotificationsForUsers = require('./notifications_utils.cjs').addNotificationsForUsers;

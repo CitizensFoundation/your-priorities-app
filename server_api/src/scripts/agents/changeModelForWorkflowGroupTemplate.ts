@@ -9,12 +9,13 @@ import {
 } from "@policysynth/agents/aiModelTypes.js";
 import models from "../../models/index.cjs";
 import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
+import log from "../../utils/loggerTs.js";
 
 (async () => {
   const [groupIdArg, sizeArg, typeArg, modelNameArg] = process.argv.slice(2);
 
   if (!groupIdArg || !sizeArg || !typeArg || !modelNameArg) {
-    console.error(
+    log.error(
       "Usage: ts-node changeModelForWorkflowGroupTemplate.ts <groupId> <modelSize (small, medium, large)> <modeltype: text, textReasoning> <model_name>"
     );
     process.exit(1);
@@ -22,7 +23,7 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
 
   const groupId = Number(groupIdArg);
   if (isNaN(groupId)) {
-    console.error("groupId must be a number");
+    log.error("groupId must be a number");
     process.exit(1);
   }
 
@@ -40,12 +41,12 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
   const modelType = typeMap[typeArg.toLowerCase()];
 
   if (!size) {
-    console.error("modelSize must be one of small, medium or large");
+    log.error("modelSize must be one of small, medium or large");
     process.exit(1);
   }
 
   if (!modelType) {
-    console.error("modeltype must be text or textReasoning");
+    log.error("modeltype must be text or textReasoning");
     process.exit(1);
   }
 
@@ -97,21 +98,21 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
     const privateConfig = (group.private_access_configuration ?? []) as any[];
 
     for (const agent of subAgents) {
-      console.log(`Updating agent ${agent.id} to use model ${newModel.name}`);
+      log.info(`Updating agent ${agent.id} to use model ${newModel.name}`);
       const currentModels: any[] = await agent.getAiModels();
-      console.log(`Current models: ${currentModels.length}`);
+      log.info(`Current models: ${currentModels.length}`);
       for (const current of currentModels) {
         const cfg = current.configuration || {};
         if (cfg.modelSize === size && cfg.type === modelType) {
           await agent.removeAiModel(current);
           const entry = privateConfig.find((p) => p.aiModelId === current.id);
           if (entry) {
-            console.log(
+            log.info(
               `Updating entry ${entry.id} to use model ${newModel.name}`
             );
             entry.aiModelId = newModel.id;
           } else {
-            console.log(
+            log.info(
               `Adding entry for agent ${agent.id} to use model ${newModel.name}`
             );
             privateConfig.push({
@@ -120,22 +121,22 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
             });
           }
         } else {
-          console.log(
+          log.info(
             `Skipping model ${current.name} for agent ${agent.id} because it does not match size ${size} and type ${modelType}`
           );
         }
       }
       await agent.addAiModel(newModel);
-      console.log(`Updated agent ${agent.id} to use model ${newModel.name}`);
+      log.info(`Updated agent ${agent.id} to use model ${newModel.name}`);
     }
 
     group.set("private_access_configuration", privateConfig);
     group.changed("private_access_configuration", true);
     await group.save();
 
-    console.log(`Group ${groupId} updated successfully`);
+    log.info(`Group ${groupId} updated successfully`);
   } catch (error) {
-    console.error(error);
+    log.error(error);
   } finally {
     await models.sequelize.close();
   }

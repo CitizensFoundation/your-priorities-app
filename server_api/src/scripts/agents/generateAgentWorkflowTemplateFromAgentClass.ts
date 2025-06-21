@@ -6,12 +6,13 @@ import {
 } from "@policysynth/agents/dbModels/index.js";
 import models from "../../models/index.cjs";
 import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
+import log from "../../utils/loggerTs.js";
 
 (async () => {
   const [domainIdArg, agentClassIdArg] = process.argv.slice(2);
 
   if (!domainIdArg || !agentClassIdArg) {
-    console.error(
+    log.error(
       "Usage: ts-node generateAgentWorkflowTemplateFromAgentClass.ts <domainId> <psAgentClassId>"
     );
     process.exit(1);
@@ -21,7 +22,7 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
   const agentClassId = Number(agentClassIdArg);
 
   if (isNaN(domainId) || isNaN(agentClassId)) {
-    console.error("Both domainId and psAgentClassId must be valid numbers");
+    log.error("Both domainId and psAgentClassId must be valid numbers");
     process.exit(1);
   }
 
@@ -121,11 +122,11 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
       throw new Error("Gemini 2.0 Flash model not found");
     }
 
-    console.log(
+    log.info(
       `Created community ${community.id}, group ${group.id}, top-level agent ${topLevelAgent.id}, working agent ${psAgent.id}`
     );
   } catch (error) {
-    console.error(error);
+    log.error(error);
   } finally {
     await models.sequelize.close();
   }

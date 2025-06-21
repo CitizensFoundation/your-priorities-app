@@ -1835,7 +1835,7 @@ router.put("/:id/:groupId/move", auth.can("edit post"), function (req, res) {
             post = postIn;
             post.set("group_id", group.id);
             post.save().then(function (results) {
-              console.log("Have changed group id");
+              log.info("Have changed group id");
               callback();
             });
           })
@@ -1857,7 +1857,7 @@ router.put("/:id/:groupId/move", auth.can("edit post"), function (req, res) {
               point.set("community_id", communityId);
               point.set("domain_id", domainId);
               point.save().then(function () {
-                console.log(
+                log.info(
                   "Have changed group and all for point: " + point.id
                 );
                 innerSeriesCallback();
@@ -1883,7 +1883,7 @@ router.put("/:id/:groupId/move", auth.can("edit post"), function (req, res) {
                 activity.set("community_id", communityId);
                 activity.set("domain_id", domainId);
                 activity.save().then(function (results) {
-                  console.log("Have changed group and all: " + activity.id);
+                  log.info("Have changed group and all: " + activity.id);
                   innerSeriesCallback();
                 });
               },

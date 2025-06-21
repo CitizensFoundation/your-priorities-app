@@ -4,6 +4,7 @@ import { OpenAI } from "openai";
 import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
+import log from "./loggerTs.js";
 
 const readFilePromise = promisify(fs.readFile);
 
@@ -41,10 +42,10 @@ export class YpCjsCodeReview {
   async reviewCjsFiles() {
     const files = await this.readFilesRecursively("./");
     for (const file of files) {
-      console.log(`Reviewing file: ${file}`);
+      log.info(`Reviewing file: ${file}`);
       const content = await readFilePromise(file, "utf8");
       const review = await this.callLlm(content);
-      console.log(
+      log.info(
         `\n-----------------\nReview for file ${file}:\n${review}\n-----------------\n\n`
       );
     }
@@ -82,7 +83,7 @@ Your review results:`;
 
     while (running) {
       try {
-        //console.log(`Messages ${retries}:`, messages);
+        //log.info(`Messages ${retries}:`, messages);
         const results = await this.openaiClient.chat.completions.create({
           model: this.modelName,
           messages,
@@ -90,15 +91,15 @@ Your review results:`;
           temperature: this.temperature,
         });
 
-        //console.log("Results:", results);
+        //log.info("Results:", results);
         const textReview = results.choices[0].message.content;
 
         return textReview;
       } catch (error) {
-        console.error("Error:", error);
+        log.error("Error:", error);
         retries++;
         if (retries > maxRetries) {
-          console.error("Max retries reached");
+          log.error("Max retries reached");
           running = false;
           return undefined;
         }

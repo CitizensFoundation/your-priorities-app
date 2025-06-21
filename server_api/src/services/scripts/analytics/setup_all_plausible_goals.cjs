@@ -3,10 +3,10 @@ const { addAllPlausibleGoals } = require("../../engine/analytics/plausible/manag
 (async function() {
   try {
     await addAllPlausibleGoals();
-    console.log("All done");
+    log.info("All done");
     process.exit();
   } catch (error) {
-    console.error(error);
+    log.error(error);
     process.exit();
   }
 })();

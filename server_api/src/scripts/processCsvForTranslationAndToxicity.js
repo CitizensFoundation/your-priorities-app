@@ -20,20 +20,20 @@ if (process.env.GOOGLE_PERSPECTIVE_API_KEY) {
 }
 
 const getToxicityScoreForText = (text, doNotStore, callback) => {
-  console.log("getToxicityScoreForText starting", { text, doNotStore });
+  log.info("getToxicityScoreForText starting", { text, doNotStore });
   if (text) {
     perspectiveApi.analyze(text, { doNotStore, attributes: [
         'TOXICITY', 'SEVERE_TOXICITY','IDENTITY_ATTACK',
         'THREAT','INSULT','PROFANITY','SEXUALLY_EXPLICIT',
         'FLIRTATION'] }).then( result => {
-      console.log("getToxicityScoreForText results");
+      log.info("getToxicityScoreForText results");
       callback(null, result);
     }).catch( error => {
       if (error && error.stack && error.stack.indexOf("ResponseError: Attribute") > -1) {
-        console.warn("getToxicityScoreForText warning", { error });
+        log.warn("getToxicityScoreForText warning", { error });
         callback(error);
       } else {
-        console.error("getToxicityScoreForText error", { error });
+        log.error("getToxicityScoreForText error", { error });
         callback(error);
       }
     });
@@ -43,9 +43,9 @@ const getToxicityScoreForText = (text, doNotStore, callback) => {
 };
 
 const clean = (text) => {
-  //console.log("Before: "+ text);
+  //log.info("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
-  //console.log("After:" + newText);
+  //log.info("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
@@ -94,7 +94,7 @@ async.forEachSeries(records, (line, eachCallback) => {
     if (translatedString && translatedString.translatedText) {
       getToxicityScoreForText(translatedString.translatedText, true,(error, score) => {
         if (error) {
-          console.error(error);
+          log.error(error);
           addRow(line,translatedString.translatedText,"error");
         } else {
           const toxicityScore = score.attributeScores["TOXICITY"].summaryScore.value;
@@ -117,15 +117,15 @@ async.forEachSeries(records, (line, eachCallback) => {
   });
 }, (error) => {
   if(error) {
-    console.error(error);
+    log.error(error);
     process.exit();
   } else {
     fs.writeFile(outFile, outFileContent, function(error) {
       if(error) {
-        console.error(error);
+        log.error(error);
         process.exit();
       } else {
-        console.log("The file was saved!");
+        log.info("The file was saved!");
         process.exit();
       }
     });

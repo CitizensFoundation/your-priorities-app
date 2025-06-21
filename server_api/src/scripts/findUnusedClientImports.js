@@ -15,7 +15,7 @@ var walkSync = function(dir, filelist) {
         if (!(dir.indexOf("test") > -1) && !(dir.indexOf("demo") > -1) && !(file.indexOf('-container-') > -1)) {
           filelist.push(path.join(dir, file));
         } else {
-          //console.error("SKIP: "+ dir);
+          //log.error("SKIP: "+ dir);
         }
       }
     }
@@ -49,7 +49,7 @@ var checkFile = function (filePath) {
       }
     });
     if (!found) {
-      console.error(filePath+": "+elementObject.element+">");
+      log.error(filePath+": "+elementObject.element+">");
     }
   });
 };

@@ -63,7 +63,7 @@ var recountOnePost = function(postId, done) {
         post.counter_endorsements_up = endorsementsCount;
         post.counter_endorsements_down = oppositionCount;
         post.save().then(function (results) {
-          console.log("Results: "+results);
+          log.info("Results: "+results);
           done();
         });
       }).catch(function (error) {
@@ -90,9 +90,9 @@ async.series([
   }
 ], function (error) {
   if (error) {
-    console.error(error);
+    log.error(error);
   } else {
-    console.log("Done counting all");
+    log.info("Done counting all");
   }
   process.exit();
 });

@@ -16,7 +16,7 @@ models.Post.findAll({}).then(function (posts) {
       });
     });
   }, function (error) {
-    console.log("Done updating posts: "+postsCount);
+    log.info("Done updating posts: "+postsCount);
     process.exit();
   });
 });

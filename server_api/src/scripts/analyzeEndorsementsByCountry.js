@@ -10,7 +10,7 @@ const mmDbPath = process.argv[3];
 const clean = (text) => {
   if (text) {
     var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(',',';').trim();
-    //console.log("After:" + newText);
+    //log.info("After:" + newText);
     return newText.replace(/´/g,'');
   } else {
     return "empty";
@@ -60,19 +60,19 @@ Reader.open(mmDbPath, {}).then(reader => {
       }
     }
 
-    console.log("All count")
+    log.info("All count")
     for (const property in countriesCount) {
-      console.log(`${property},${countriesCount[property]}`);
+      log.info(`${property},${countriesCount[property]}`);
     }
 
-    console.log("\n\nUp votes count")
+    log.info("\n\nUp votes count")
     for (const property in countriesUpCount) {
-      console.log(`${property},${countriesUpCount[property]}`);
+      log.info(`${property},${countriesUpCount[property]}`);
     }
 
-    console.log("\n\nDown votes count")
+    log.info("\n\nDown votes count")
     for (const property in countriesDownCount) {
-      console.log(`${property},${countriesDownCount[property]}`);
+      log.info(`${property},${countriesDownCount[property]}`);
     }
 
     process.exit();

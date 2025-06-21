@@ -65,12 +65,12 @@ models.Rating.findAll({
     }
   ]
 }).then((ratings) => {
-  console.log(`"Vote distribution report for ${ratings[0].Post.Group.Community.name}"`)
-  console.log(`"Rating value","Vote count"`);
-  console.log(`"1+",${countRatings(1,2, ratings)}`);
-  console.log(`"2+",${countRatings(2,3, ratings)}`);
-  console.log(`"3+",${countRatings(3,4, ratings)}`);
-  console.log(`"4+",${countRatings(4,5, ratings)}`);
+  log.info(`"Vote distribution report for ${ratings[0].Post.Group.Community.name}"`)
+  log.info(`"Rating value","Vote count"`);
+  log.info(`"1+",${countRatings(1,2, ratings)}`);
+  log.info(`"2+",${countRatings(2,3, ratings)}`);
+  log.info(`"3+",${countRatings(3,4, ratings)}`);
+  log.info(`"4+",${countRatings(4,5, ratings)}`);
   process.exit();
 });
 

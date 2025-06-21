@@ -1,6 +1,6 @@
 var kue = require('kue')
   , url = require('url')
-var log = require('../utils/logger.cjs');
+var log = require('../../utils/logger.cjs');
 var email = require('./email.js');
 var activity = require('./activity.js');
 var toJson = require('../utils/to_json.cjs');
@@ -21,10 +21,10 @@ var queue = kue.createQueue({
   "socket_keepalive" : true
 });
 
-queue.activeCount(console.log);
-queue.inactiveCount(console.log);
-queue.failedCount(console.log);
-queue.delayedCount(console.log);
-queue.completeCount(console.log);
+queue.activeCount(log.info);
+queue.inactiveCount(log.info);
+queue.failedCount(log.info);
+queue.delayedCount(log.info);
+queue.completeCount(log.info);
 
 module.exports = queue;

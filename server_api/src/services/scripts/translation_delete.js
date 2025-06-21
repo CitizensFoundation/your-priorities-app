@@ -11,17 +11,17 @@ models.AcTranslationCache.findOne({
 }).then((result) => {
   if (result) {
     result.destroy().then(function () {
-      console.log(`Deleted ${result.index_key} to ${result.content}`);
+      log.info(`Deleted ${result.index_key} to ${result.content}`);
       process.exit();
     }).catch((error)=>{
-      console.error(error);
+      log.error(error);
       process.exit();
     });
   } else {
-    console.warn("Not found: "+indexKey);
+    log.warn("Not found: "+indexKey);
     process.exit();
   }
 }).catch((error)=>{
-  console.error(error);
+  log.error(error);
   process.exit();
 });

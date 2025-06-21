@@ -1,6 +1,7 @@
 import { YpLanguages } from "../../utils/ypLanguages.js";
 import fs from "fs/promises";
 import path from "path";
+import log from "../../utils/loggerTs.js";
 
 const ensureAllLocaleFoldersAreCreated = async () => {
   const localesPath = path.join(process.cwd(), "locales");
@@ -16,16 +17,16 @@ const ensureAllLocaleFoldersAreCreated = async () => {
         .then(() => true)
         .catch(() => false);
       if (!pathExists) {
-        console.log("Creating ---->:", localePath);
+        log.info("Creating ---->:", localePath);
         await fs.mkdir(localePath, { recursive: true });
         await fs.writeFile(path.join(localePath, "translation.json"), "{}");
       } else {
-        console.log("Path exists:", localePath);
+        log.info("Path exists:", localePath);
       }
     }
-    console.log("Locale folders and files have been created successfully.");
+    log.info("Locale folders and files have been created successfully.");
   } catch (error) {
-    console.error("Error creating locale folders:", error);
+    log.error("Error creating locale folders:", error);
   }
 }
 
@@ -34,5 +35,5 @@ async function main(): Promise<void> {
 }
 
 main()
-  .then(() => console.log("I have updated the locale folders."))
-  .catch((error) => console.error("Error in main:", error));
+  .then(() => log.info("I have updated the locale folders."))
+  .catch((error) => log.error("Error in main:", error));

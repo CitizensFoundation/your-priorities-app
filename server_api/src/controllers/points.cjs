@@ -1332,7 +1332,7 @@ router.delete(
               }
             );
           } else {
-            console.error("Strange state of pointQualities");
+            log.error("Strange state of pointQualities");
             res.status(200).send({
               pointQuality: pointQuality,
               oldPointQualityValue: oldPointQualityValue,

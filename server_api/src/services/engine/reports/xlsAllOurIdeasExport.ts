@@ -11,6 +11,7 @@ import {
   uploadToS3,
 } from "./commonUtils.js";
 import { AnyLengthString } from "aws-sdk/clients/comprehendmedical.js";
+import log from "../../../utils/loggerTs.js";
 
 const dbModels: Models = models;
 const Image = dbModels.Image as ImageClass;
@@ -36,17 +37,17 @@ async function fetchChoices(
       headers: defaultAuthHeader,
     });
 
-    console.log(url);
+    log.info(url);
 
     if (!response.ok) {
-      console.error(response.statusText);
+      log.error(response.statusText);
       throw new Error("Fetching choices failed.");
     }
 
     const choices = (await response.json()) as AoiChoiceData[];
     return choices;
   } catch (error) {
-    console.error("Error fetching choices:", error);
+    log.error("Error fetching choices:", error);
     throw error;
   }
 }
@@ -68,7 +69,7 @@ async function fetchVotes(
     });
 
     if (!response.ok) {
-      console.error(response.statusText);
+      log.error(response.statusText);
       throw new Error("Fetching votes failed.");
     }
 
@@ -78,7 +79,7 @@ async function fetchVotes(
     };
     return votes;
   } catch (error) {
-    console.error("Error fetching votes:", error);
+    log.error("Error fetching votes:", error);
     throw error;
   }
 }
@@ -99,7 +100,7 @@ export async function exportChoiceVotes(
   try {
     await updateUploadJobStatus(workPackage.jobId, 5);
 
-    console.log(
+    log.info(
       `Exporting choice votes for question ${workPackage.questionId} with utm_source ${workPackage.utmSource}`
     );
 
@@ -107,7 +108,7 @@ export async function exportChoiceVotes(
       workPackage.questionId,
       workPackage.utmSource
     )) as AoiChoiceData[];
-    console.log(`Found ${choices.length} choices`);
+    log.info(`Found ${choices.length} choices`);
 
     const workbook = new ExcelJS.Workbook();
     const choicesSheet = workbook.addWorksheet("Choices");
@@ -187,7 +188,7 @@ export async function exportChoiceVotes(
       ]);
 
       votes.winning_votes.forEach((vote) => {
-        console.log(`${vote.tracking ? JSON.stringify(vote.tracking) : ""}`)
+        log.info(`${vote.tracking ? JSON.stringify(vote.tracking) : ""}`)
         winningVotesSheet.addRow([
           vote.id,
           vote.voter_id,
@@ -268,9 +269,9 @@ export async function exportChoiceVotes(
       // Note: Adjust the cell reference as needed
       if (eloRating) {
         choicesSheet.getCell(`H${i + 2}`).value = Math.round(eloRating);
-        console.log(`Choice ${choice.id} has elo rating ${Math.round(eloRating)}`);
+        log.info(`Choice ${choice.id} has elo rating ${Math.round(eloRating)}`);
       } else {
-        console.error(`Choice ${choice.id} has no elo rating`);
+        log.error(`Choice ${choice.id} has no elo rating`);
       }
     });
 
@@ -278,7 +279,7 @@ export async function exportChoiceVotes(
     const buffer = await workbook.xlsx.writeBuffer();
     const filename = `choice_votes_${uuidv4()}.xlsx`;
 
-    console.log(`Uploading choice votes to S3: ${filename}`);
+    log.info(`Uploading choice votes to S3: ${filename}`);
 
     uploadToS3(
       workPackage.jobId,
@@ -288,10 +289,10 @@ export async function exportChoiceVotes(
       buffer,
       async (error, url) => {
         if (error) {
-          console.error("Error uploading choice votes to S3:", error);
+          log.error("Error uploading choice votes to S3:", error);
           done(error, url);
         } else {
-          console.log(`Uploaded choice votes to S3: ${url}`);
+          log.info(`Uploaded choice votes to S3: ${url}`);
           await updateUploadJobStatus(workPackage.jobId, 100, {
             reportUrl: url,
           });
@@ -300,11 +301,11 @@ export async function exportChoiceVotes(
       }
     );
 
-    console.log(
+    log.info(
       `Successfully exported and uploaded choice votes for question ${workPackage.questionId}`
     );
   } catch (error: any) {
-    console.error("Error exporting choice votes:", error);
+    log.error("Error exporting choice votes:", error);
     await setJobError(workPackage.jobId, "Error exporting choice votes");
     done(error);
   }

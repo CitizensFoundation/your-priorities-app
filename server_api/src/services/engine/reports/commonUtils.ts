@@ -7,6 +7,7 @@ import stream from "stream";
 import { promisify } from "util";
 import models from "../../../models/index.cjs";
 import ExcelJS from "exceljs";
+import log from "../../../utils/loggerTs.js";
 
 const dbModels: Models = models;
 const AcBackgroundJob = dbModels.AcBackgroundJob as AcBackgroundJobClass;
@@ -24,7 +25,7 @@ export const updateUploadJobStatus = async (
       await AcBackgroundJob.update({ progress }, { where: { id: jobId } });
     }
   } catch (error) {
-    console.error("updateUploadJobStatus", { error: error });
+    log.error("updateUploadJobStatus", { error: error });
   }
 };
 
@@ -33,7 +34,7 @@ export const setJobError = async (
   errorToUser: string,
   errorDetail: Error | undefined = undefined
 ): Promise<void> => {
-  console.error("Error in background job", { error: errorDetail });
+  log.error("Error in background job", { error: errorDetail });
   try {
     await AcBackgroundJob.update(
       { error: errorToUser, progress: 0 },

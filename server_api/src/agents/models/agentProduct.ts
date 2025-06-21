@@ -7,6 +7,7 @@ import { YpSubscription } from "./subscription.js";
 import { YpAgentProductRun } from "./agentProductRun.js";
 import { YpSubscriptionPlan } from "./subscriptionPlan.js";
 import { YpAgentProductBundle } from "./agentProductBundle.js";
+import log from "../../utils/loggerTs.js";
 
 export class YpAgentProduct extends Model {
   declare id: number;
@@ -107,7 +108,7 @@ YpAgentProduct.init(
 );
 
 (YpAgentProduct as any).associate = (models: any) => {
-  console.log(`YpAgentProduct.associate`);
+  log.info(`YpAgentProduct.associate`);
 
   YpAgentProduct.belongsTo(models.YpSubscriptionUser, {
     foreignKey: "user_id",

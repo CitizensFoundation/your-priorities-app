@@ -2,6 +2,7 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
 import { YpAgentProduct } from './agentProduct.js';
+import log from "../../utils/loggerTs.js";
 
 // Define the YpAgentProductBundle model
 export class YpAgentProductBundle extends Model {

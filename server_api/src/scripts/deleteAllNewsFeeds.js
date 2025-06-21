@@ -3,9 +3,9 @@ var async = require('async');
 
 
 models.AcNewsFeedItem.destroy({ truncate: true }).then(function(results) {
-  console.log("Have destroyed AcNewsFeedItems");
+  log.info("Have destroyed AcNewsFeedItems");
   models.AcNewsFeedProcessedRange.destroy({ truncate: true }).then(function(results) {
-    console.log("Have destroyed AcNewsFeedProcessedRange");
+    log.info("Have destroyed AcNewsFeedProcessedRange");
     process.exit();
   });
 });

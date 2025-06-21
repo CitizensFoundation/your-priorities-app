@@ -74,7 +74,7 @@ const importAllActionsFor = function (model, where, include, action, done, attri
           processDots();
           seriesCallback();
         } else {
-          console.error("Can't find id for object: " + object);
+          log.error("Can't find id for object: " + object);
           seriesCallback();
         }
     }, error => {
@@ -84,8 +84,8 @@ const importAllActionsFor = function (model, where, include, action, done, attri
           callback(error);}
       });
     }, function (error) {
-      console.log(error);
-      console.log("\n FIN");
+      log.info(error);
+      log.info("\n FIN");
       done();
     });
   });
@@ -137,12 +137,12 @@ var importAll = function(done) {
       }, ['id','user_id','created_at','value','ip_address','user_agent']);
     }
   ], function () {
-    console.log("FIN");
+    log.info("FIN");
     done();
   });
 };
 
 importAll(function () {
-  console.log("Done importing all");
+  log.info("Done importing all");
   process.exit();
 });

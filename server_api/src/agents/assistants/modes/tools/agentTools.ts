@@ -3,6 +3,8 @@ import { YpAgentAssistant } from "../../agentAssistant.js";
 import { BaseAssistantTools } from "./baseTools.js";
 import { AgentModels } from "./models/agents.js";
 
+import log from "../../../../utils/loggerTs.js";
+
 export class AgentTools extends BaseAssistantTools {
   agentModels: AgentModels;
 
@@ -31,7 +33,7 @@ export class AgentTools extends BaseAssistantTools {
       const { agent, run } =
         await this.agentModels.getCurrentAgentAndWorkflow();
 
-      console.log("--------------------> agent", agent);
+      log.info("--------------------> agent", agent);
 
       const workflowJson = JSON.stringify(
         this.getSimpleWorkflow(agent.configuration.workflow)
@@ -74,8 +76,8 @@ export class AgentTools extends BaseAssistantTools {
         error instanceof Error
           ? error.message
           : "Failed to show workflow widget";
-      console.error(errorMessage);
-      console.error("--------------------_> ", error);
+      log.error(errorMessage);
+      log.error("--------------------_> ", error);
       return {
         success: false,
         error: errorMessage,
@@ -133,7 +135,7 @@ export class AgentTools extends BaseAssistantTools {
         error instanceof Error
           ? error.message
           : "Failed to show agent run widget";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,
@@ -217,7 +219,7 @@ export class AgentTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to start run";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,
@@ -339,7 +341,7 @@ export class AgentTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to start workflow";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,
@@ -405,7 +407,7 @@ export class AgentTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to stop workflow";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,
@@ -439,7 +441,7 @@ export class AgentTools extends BaseAssistantTools {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to deactivate agent";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,
@@ -510,7 +512,7 @@ export class AgentTools extends BaseAssistantTools {
         error instanceof Error
           ? error.message
           : "Failed to show configuration widget";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,
@@ -554,7 +556,7 @@ export class AgentTools extends BaseAssistantTools {
         error instanceof Error
           ? error.message
           : "Failed to submit configuration";
-      console.error(errorMessage);
+      log.error(errorMessage);
       return {
         success: false,
         error: errorMessage,

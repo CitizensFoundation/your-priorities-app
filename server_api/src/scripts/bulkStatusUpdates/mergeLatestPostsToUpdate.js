@@ -16,7 +16,7 @@ const getUpdatedPostsForGroup = (groupId) => {
       return updatedConfig.groups[i].posts;
     }
   }
-  console.error("Found no posts for group id: "+groupId);
+  log.error("Found no posts for group id: "+groupId);
   return [];
 }
 
@@ -36,14 +36,14 @@ const getUpdatedPosts = (currentPosts, updatedPosts, currentGroupName) => {
     if (hasPost(updatedPosts, currentPosts[i])) {
       posts.push(currentPosts[i]);
     } else {
-      console.log(`Post removed from ${currentGroupName}: ${currentPosts[i].name}`)
+      log.info(`Post removed from ${currentGroupName}: ${currentPosts[i].name}`)
     }
   }
 
   for (let i = 0; i < updatedPosts.length; i++) {
     if (!hasPost(currentPosts, updatedPosts[i])) {
       posts.push(updatedPosts[i]);
-      console.log(`Post added to ${currentGroupName}: ${updatedPosts[i].name}`)
+      log.info(`Post added to ${currentGroupName}: ${updatedPosts[i].name}`)
     }
   }
 
@@ -115,9 +115,9 @@ async.series([
   },
 ], error => {
   if (error)
-    console.error();
+    log.error();
   else
-    console.log("Completed")
+    log.info("Completed")
   process.exit();
 });
 

@@ -5,15 +5,15 @@ var async = require('async');
 models.Post.findAll().then(function(posts) {
   async.eachSeries(posts, function (post, callback) {
     if (post.official_status!=0) {
-      console.log(post.official_status);
-      console.log(post.group_id);
+      log.info(post.official_status);
+      log.info(post.group_id);
     }
     if (post.status!='published') {
-      console.log(post.status);
+      log.info(post.status);
     }
     callback();
   }, function done() {
-    console.log("DONE");
+    log.info("DONE");
   });
 });
 

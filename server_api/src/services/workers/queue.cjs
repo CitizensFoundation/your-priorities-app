@@ -1,4 +1,4 @@
-const log = require('../utils/logger.cjs');
+const log = require('../../utils/logger.cjs');
 const url = require('url');
 
 var airbrake = null;
@@ -27,7 +27,7 @@ log.info("Starting app access to Bull Queue", {redis_url: redisUrl});
 
 class YpQueue {
   constructor() {
-    console.log("Create YpQueue")
+    log.info("Create YpQueue")
     this.createQueues();
   }
 

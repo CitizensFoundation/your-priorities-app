@@ -2,7 +2,7 @@ const vision = require('@google-cloud/vision');
 const models = require("../../../../models/index.cjs");
 var downloadFile = require('download-file');
 const fs = require("fs");
-const log = require('../../../utils/logger.cjs');
+const log = require('../../../../utils/logger.cjs');
 
 class ImageLabelingBase {
   constructor(workPackage) {

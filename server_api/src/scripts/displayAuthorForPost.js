@@ -12,7 +12,7 @@ models.Post.findOne({
     models.User
   ]
 }).then(function (post) {
-  console.log(post.User.name+" "+post.User.email);
+  log.info(post.User.name+" "+post.User.email);
   process.exit();
 });
 

@@ -325,12 +325,12 @@ module.exports = (sequelize, DataTypes) => {
               await mediaManager.deleteMediaFormatsUrls(
                 image.formats ? JSON.parse(image.formats) : []
               );
-              console.log("Deleted image", { imageId: image.id });
+              log.info("Deleted image", { imageId: image.id });
               res
                 .status(200)
                 .json({ message: "Image removed from collection" });
             } catch (error) {
-              console.error("Could not delete image", { error });
+              log.error("Could not delete image", { error });
               res.sendStatus(500);
             }
           }

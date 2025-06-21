@@ -29,7 +29,7 @@ models.Post.findAll({
       callback();
     });
   }, function (error) {
-    console.log("Done updating official status for posts: "+postsCount);
+    log.info("Done updating official status for posts: "+postsCount);
     process.exit();
   });
 });

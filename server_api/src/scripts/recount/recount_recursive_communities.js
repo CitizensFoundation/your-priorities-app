@@ -48,11 +48,11 @@ const countCommunities = async (communityId, options) => {
           const group = community.Groups[i];
           if (group.configuration.actAsLinkToCommunityId) {
             if (false && processedCommunityIds.indexOf(group.configuration.actAsLinkToCommunityId)>-1) {
-              console.warn(`DUPLICATE LINK Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
+              log.warn(`DUPLICATE LINK Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
             } else {
               processedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
               if (processedGroupIds.indexOf(group.id)>-1) {
-                console.warn(`DUPLICATE GROUP Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
+                log.warn(`DUPLICATE GROUP Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
               } else {
                 processedGroupIds.push(group.id);
                 await countCommunities(group.configuration.actAsLinkToCommunityId, options);
@@ -65,13 +65,13 @@ const countCommunities = async (communityId, options) => {
             groupCount += 1;
             const random = Math.random();
             if (random < 0.05) {
-              //console.log(`Groups ${groupCount} Posts ${postCount} Points ${pointCount} Users ${users.length}`)
+              //log.info(`Groups ${groupCount} Posts ${postCount} Points ${pointCount} Users ${users.length}`)
             }
           }
         }
        resolve();
       } else {
-        console.error("Cant find community "+communityId);
+        log.error("Cant find community "+communityId);
         resolve();
       }
     }).catch(error => {
@@ -95,7 +95,7 @@ const recountCommunityRecursive = async (communityId, options) => {
         community.counter_points = pointCount;
         community.counter_groups = groupCount;
         await community.save();
-        console.log(`Save community ${users.length} ${postCount} ${pointCount}`)
+        log.info(`Save community ${users.length} ${postCount} ${pointCount}`)
         resolve();
       } catch(error) {
         reject(error);
@@ -114,7 +114,7 @@ const recountCommunityRecursive = async (communityId, options) => {
     attributes: ['id','configuration']
   });
   for (let i=0;i<communities.length;i++) {
-    console.log("Processing community: "+communities[i].id);
+    log.info("Processing community: "+communities[i].id);
     users = [];
     postCount = 0;
     pointCount = 0;

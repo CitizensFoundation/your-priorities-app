@@ -3,6 +3,8 @@ import { YpBaseAssistant } from "./baseAssistant.js";
 import { YpBaseChatBotWithVoice } from "./voiceAssistant.js";
 import ioredis from "ioredis";
 
+import log from "../../utils/loggerTs.js";
+
 interface VoiceToolResult extends ToolExecutionResult {
   data?: {
     message?: string;
@@ -102,13 +104,13 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
               break;
           }
         } catch (error) {
-          console.error("Error processing message:", error);
+          log.error("Error processing message:", error);
         }
       }
 
       ws.on("message", this.mainBotWsHandler);
     } else {
-      console.error("No WebSocket found for client: ", this.wsClientId);
+      log.error("No WebSocket found for client: ", this.wsClientId);
     }
   }
 
@@ -155,7 +157,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
           event.type
         );
       } catch (error) {
-        console.error("Error forwarding voice event:", error);
+        log.error("Error forwarding voice event:", error);
       }
     }
 
@@ -192,7 +194,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
         modalities: ["text", "audio"]
       });
 
-      console.log("handleModeSwitch", newMode, params);
+      log.info("handleModeSwitch", newMode, params);
 
       if (newMode === "agent_direct_connection_mode") {
         this.voiceBot?.initializeDirectAgentVoiceConnection();
@@ -205,7 +207,7 @@ export abstract class YpBaseAssistantWithVoice extends YpBaseAssistant {
 
   async conversation(chatLog: YpSimpleChatLog[]) {
     if (this.voiceEnabled) {
-      console.log("voiceEnabled: Updating voice config");
+      log.info("voiceEnabled: Updating voice config");
       await this.voiceBot?.updateVoiceConfig({
         instructions: this.getCurrentSystemPrompt(),
         tools: this.getCurrentModeFunctions(),

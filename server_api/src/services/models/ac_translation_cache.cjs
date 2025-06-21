@@ -2,7 +2,7 @@
 
 const { Translate } = require("@google-cloud/translate").v2;
 const farmhash = require("farmhash");
-const log = require("../utils/logger.cjs");
+const log = require("../../utils/logger.cjs");
 
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
 const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;
@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
         );
 
         if (!choiceResponse.ok) {
-          console.error("Failed to fetch answers");
+          log.error("Failed to fetch answers");
           return null;
         }
 
@@ -90,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
             const data = JSON.parse(choice.data);
             return data["content"];
           } catch (error) {
-            console.error("Failed to parse choice data", error);
+            log.error("Failed to parse choice data", error);
             return null;
           }
         } else {
@@ -106,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
         );
 
         if (!questionResponse.ok) {
-          console.error("Failed to fetch question");
+          log.error("Failed to fetch question");
           return null;
         }
 
@@ -212,12 +212,12 @@ module.exports = (sequelize, DataTypes) => {
               ? modelInstance.public_data.transcript.text
               : null;
           default:
-            console.error("No valid textType for translation");
+            log.error("No valid textType for translation");
             return null;
         }
       }
     } catch (error) {
-      console.error("Failed to get content to translate", error);
+      log.error("Failed to get content to translate", error);
       return null;
     }
   };
@@ -558,7 +558,7 @@ module.exports = (sequelize, DataTypes) => {
             let languageInfo = {};
             for (let i = 0; i < textsToTranslate.length; i += chunkSize) {
               const chunk = textsToTranslate.slice(i, i + chunkSize);
-              console.log("Calling Google Translate...");
+              log.info("Calling Google Translate...");
               const [translatedChunk, info] = await translateAPI.translate(
                 chunk,
                 targetLanguage
@@ -618,7 +618,7 @@ module.exports = (sequelize, DataTypes) => {
             : undefined,
         });
       } catch (error) {
-        console.error("Failed to get translation from Google", error);
+        log.error("Failed to get translation from Google", error);
       }
 
       if (!translateAPI) {
@@ -626,7 +626,7 @@ module.exports = (sequelize, DataTypes) => {
         return;
       }
 
-      console.log("Calling Google Translate...");
+      log.info("Calling Google Translate...");
       translateAPI
         .translate(contentToTranslate, targetLanguage)
         .then((results) => {
@@ -810,7 +810,7 @@ module.exports = (sequelize, DataTypes) => {
           });
       }
     } catch (error) {
-      console.error("Failed to translate with LLM", error);
+      log.error("Failed to translate with LLM", error);
       callback(error);
     }
   };
@@ -828,7 +828,7 @@ module.exports = (sequelize, DataTypes) => {
       return;
     }
 
-    console.log(`contentToTranslate ${contentToTranslate}`);
+    log.info(`contentToTranslate ${contentToTranslate}`);
     if (!AcTranslationCache.llmTranslation) {
       const { YpLlmTranslation } = await import("../llms/llmTranslation.js");
       AcTranslationCache.llmTranslation = new YpLlmTranslation();

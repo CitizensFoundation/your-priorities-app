@@ -192,9 +192,9 @@ async.series([
   },
 ], error => {
   if (error)
-    console.error(error);
-  console.log("All done copying config to groups");
-  console.log(finalOutput);
+    log.error(error);
+  log.info("All done copying config to groups");
+  log.info(finalOutput);
   process.exit();
 });
 

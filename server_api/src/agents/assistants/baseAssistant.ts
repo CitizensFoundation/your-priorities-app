@@ -17,6 +17,8 @@ import { YpSubscription } from "../models/subscription.js";
 import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 import { YpAgentProductRun } from "../models/agentProductRun.js";
 
+import log from "../../utils/loggerTs.js";
+
 /**
  * Common modes that implementations might use
  */
@@ -100,19 +102,19 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
       switch (message.type) {
         case "client_system_message":
-          console.log("WebSockets: Processing client_system_message:", message);
+          log.info("WebSockets: Processing client_system_message:", message);
           this.processClientSystemMessage(message);
           break;
         default:
-        //console.log('Unhandled message type:', message.type);
+        //log.info('Unhandled message type:', message.type);
       }
     } catch (error) {
-      console.error("Error processing message:", error);
+      log.error("Error processing message:", error);
     }
   }
 
   setupClientSystemMessageListener() {
-    console.log(
+    log.info(
       "WebSockets: setupClientSystemMessageListener called for wsClientId:",
       this.wsClientId,
       this.clientSystemMessageListener
@@ -121,7 +123,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     this.wsClientSocket.on("message", this.clientSystemMessageListener);
 
     const listenerCountAfter = this.wsClientSocket.listenerCount("message");
-    console.log(
+    log.info(
       'Number of "message" listeners after adding:',
       listenerCountAfter
     );
@@ -144,7 +146,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       });
       return subscriptionPlan?.AgentProduct;
     } else {
-      console.error("--------------------> No subscription plan found");
+      log.error("--------------------> No subscription plan found");
     }
     return undefined;
   }
@@ -183,34 +185,34 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         where: { id: this.memory.currentAgentStatus.activeAgentRunId },
       })) as YpAgentProductRunAttributes | undefined;
     } else {
-      console.error("No active agent run found");
+      log.error("No active agent run found");
     }
     return undefined;
   }
 
   async updateAiModelSession(message: string) {
-    console.log(`updateAiModelSession: ${message}`);
+    log.info(`updateAiModelSession: ${message}`);
   }
 
   async maybeSendTextResponse(message: string) {
     if (!this.voiceEnabled) {
       this.sendToClient("assistant", message, "message");
       await this.addAssistantMessage(message);
-      console.debug(`Sent text message to client: ${message}`);
+      log.debug(`Sent text message to client: ${message}`);
     }
   }
 
   async processClientSystemMessage(
     clientEvent: YpAssistantClientSystemMessage
   ) {
-    console.log(
+    log.info(
       `processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`
     );
 
     await this.loadMemoryAsync();
 
     if (clientEvent.message === "user_logged_in") {
-      console.log(`user_logged_in emitting`);
+      log.info(`user_logged_in emitting`);
 
       this.emit(
         "update-ai-model-session",
@@ -221,7 +223,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         "Logged in, ready to move on to the next step."
       );
     } else if (clientEvent.message === "agent_configuration_submitted") {
-      console.log(`agent_configuration_submitted emitting`);
+      log.info(`agent_configuration_submitted emitting`);
 
       try {
         if (!this.memory.currentAgentStatus!.subscriptionId) {
@@ -262,7 +264,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           "The agent configuration was submitted successfully and the agent is ready to create its first agent run."
         );
       } catch (error) {
-        console.error(`Error finding subscription: ${error}`);
+        log.error(`Error finding subscription: ${error}`);
         this.emit(
           "update-ai-model-session",
           `Failed to submit agent configuration: ${error}`
@@ -270,7 +272,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       }
     } else if (clientEvent.message === "agent_run_changed") {
       try {
-        console.log(`agent_run_changed`);
+        log.info(`agent_run_changed`);
         if (!this.memory.currentAgentStatus?.activeAgentRunId) {
           throw new Error("No active agent run found");
         }
@@ -285,7 +287,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           throw new Error("No agent run found");
         }
 
-        console.log(`agent_run_changed emitting`);
+        log.info(`agent_run_changed emitting`);
 
         const currentWorkflowStep =
           agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
@@ -301,7 +303,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           )} offer the user assistance with this next step in the workflow`
         );
       } catch (error) {
-        console.error(`Error finding agent run: ${error}`);
+        log.error(`Error finding agent run: ${error}`);
         this.emit(
           "update-ai-model-session",
           `Failed to update agent run status: ${error}`
@@ -360,7 +362,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           : "not_configured",
     };
 
-    console.log(
+    log.info(
       `updateCurrentAgentProductPlan: ${JSON.stringify(
         this.memory.currentAgentStatus,
         null,
@@ -379,7 +381,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     result: ToolExecutionResult
   ): ToolResponseMessage {
     if (this.DEBUG) {
-      console.log(
+      log.info(
         `convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`
       );
     }
@@ -396,7 +398,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    */
   async handleToolCalls(toolCalls: Map<string, ToolCall>): Promise<void> {
     if (this.DEBUG) {
-      console.log(
+      log.info(
         `====================================> handleToolCalls: ${JSON.stringify(
           Array.from(toolCalls.values()),
           null,
@@ -423,7 +425,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
         // Execute the function and get result
         const result = await func.handler(parsedArgs);
         if (this.DEBUG) {
-          console.log(
+          log.info(
             `----------------------------------> Tool execution result:`,
             JSON.stringify(result, null, 2)
           );
@@ -466,7 +468,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
           } as YpSimpleChatLog);
           await this.saveMemoryIfNeeded();
         } else {
-          console.error(
+          log.error(
             `No data returned from tool execution: ${toolCall.name}`
           );
         }
@@ -484,7 +486,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         if (result.clientEvents) {
           if (this.DEBUG) {
-            console.log(
+            log.info(
               `clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`
             );
           }
@@ -500,12 +502,12 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
         // If error, throw it after recording the result
         if (!result.success) {
-          console.error(`Unknown error in tool execution: ${result.error}`);
+          log.error(`Unknown error in tool execution: ${result.error}`);
         }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
-        console.error(`Error executing tool ${toolCall.name}: ${errorMessage}`);
+        log.error(`Error executing tool ${toolCall.name}: ${errorMessage}`);
         throw error;
       }
     }
@@ -523,7 +525,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
     toolResponses: ToolResponseMessage[]
   ): Promise<void> {
     if (this.DEBUG) {
-      console.log(
+      log.info(
         `handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`
       );
     }
@@ -551,7 +553,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
       ...toolResponses,
     ];
 
-    console.log(`handleToolResponses: ${JSON.stringify(messages, null, 2)}`);
+    log.info(`handleToolResponses: ${JSON.stringify(messages, null, 2)}`);
 
     try {
       const stream = await this.openaiClient.chat.completions.create({
@@ -571,7 +573,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
       await this.streamWebSocketResponses(stream);
     } catch (error) {
-      console.error("Error handling tool responses:", error);
+      log.error("Error handling tool responses:", error);
       throw error;
     }
   }
@@ -583,12 +585,12 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
   async setupMemoryAsync() {
     if (!this.memory) {
-      console.log("loadMemoryWithOwnership: loading memory");
+      log.info("loadMemoryWithOwnership: loading memory");
       this.memory = (await this.loadMemory()) as YpBaseAssistantMemoryData;
     }
 
     if (!this.memory) {
-      console.error("loadMemoryWithOwnership: No memory found!!!");
+      log.error("loadMemoryWithOwnership: No memory found!!!");
     }
   }
 
@@ -602,11 +604,11 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
   async setCurrentMode(mode: YpAssistantMode) {
     if (mode) {
-      console.log(
+      log.info(
         `Setting currentMode to ${mode} it was ${this.memory.currentMode}`
       );
     } else {
-      console.log(
+      log.info(
         `No currentMode provided, keeping ${this.memory.currentMode}`
       );
     }
@@ -622,7 +624,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
    * Initialize modes from subclass definitions
    */
   async initializeModes(): Promise<void> {
-    console.log("---------------------> initializeModes");
+    log.info("---------------------> initializeModes");
     await this.setupMemoryAsync();
 
     this.availableTools.clear();
@@ -631,7 +633,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
 
     for (const mode of modes) {
       this.modes.set(mode.name, mode);
-      console.log(`initializeModes: ${mode.name}`);
+      log.info(`initializeModes: ${mode.name}`);
 
       // Register mode's functions
       for (const func of mode.tools) {
@@ -653,7 +655,7 @@ export abstract class YpBaseAssistant extends YpBaseChatBot {
   getCurrentModeFunctions(): AssistantChatbotTool[] {
     const currentMode = this.modes.get(this.memory.currentMode!);
     if (!currentMode) {
-      console.error(`No current mode found: ${this.memory.currentMode}`);
+      log.error(`No current mode found: ${this.memory.currentMode}`);
       return [];
     }
 
@@ -707,7 +709,7 @@ Never engage in off topic conversations, always politely steer the conversation 
   getCurrentSystemPrompt(): string {
     const currentMode = this.modes.get(this.memory.currentMode!);
     if (!currentMode) {
-      console.error(`No current mode found: ${this.memory.currentMode}`);
+      log.error(`No current mode found: ${this.memory.currentMode}`);
       return `${this.defaultSystemPrompt}\n\n${this.renderLoginStatus()}`;
     }
 
@@ -857,17 +859,17 @@ Never engage in off topic conversations, always politely steer the conversation 
         })
       );
 
-      console.log(
+      log.info(
         "======================> conversation currentMode",
         this.memory?.currentMode
       );
       if (this.DEBUG) {
-        console.log(
+        log.info(
           "======================> conversation",
           JSON.stringify(messages, null, 2)
         );
       }
-      console.log(
+      log.info(
         "======================> conversation",
         JSON.stringify(tools, null, 2)
       );
@@ -882,7 +884,7 @@ Never engage in off topic conversations, always politely steer the conversation 
 
       await this.streamWebSocketResponses(stream);
     } catch (error) {
-      console.error("Error in conversation:", error);
+      log.error("Error in conversation:", error);
       this.sendToClient("assistant", "Error processing request", "error");
     }
   }
@@ -894,7 +896,7 @@ Never engage in off topic conversations, always politely steer the conversation 
       const agentProduct = await YpAgentProduct.findByPk(agentProductId);
       return agentProduct;
     } catch (error) {
-      console.error(
+      log.error(
         `Error getting agent product for ${agentProductId}: ${error}`
       );
       return null;
@@ -913,7 +915,7 @@ Never engage in off topic conversations, always politely steer the conversation 
         if (message.message != null) {
           return { role: message.sender, content: message.message };
         } else {
-          console.debug(
+          log.debug(
             "Message content is null, message: " + JSON.stringify(message)
           );
           return null;
@@ -932,7 +934,7 @@ Never engage in off topic conversations, always politely steer the conversation 
   ): Promise<void> {
     await this.loadMemoryAsync();
 
-    console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
+    log.info(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
     const oldMode = this.memory.currentMode;
 
     if (!this.modes.has(newMode)) {
@@ -940,13 +942,13 @@ Never engage in off topic conversations, always politely steer the conversation 
     }
 
     if (oldMode === newMode) {
-      console.error(
+      log.error(
         `Trying to switch to the same mode: ${oldMode} to ${newMode}`
       );
       return;
     }
     if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
-      console.warn(`Invalid mode transition from ${oldMode} to ${newMode}`);
+      log.warn(`Invalid mode transition from ${oldMode} to ${newMode}`);
     }
 
     // Perform cleanup of old mode
@@ -977,7 +979,7 @@ Never engage in off topic conversations, always politely steer the conversation 
 
     await this.saveMemory();
 
-    console.log(
+    log.info(
       "handleModeSwitch: CurrentMode after save",
       this.memory.currentMode
     );
@@ -1028,7 +1030,7 @@ Never engage in off topic conversations, always politely steer the conversation 
     stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {
     return new Promise<void>(async (resolve, reject) => {
-      if (this.DEBUG) console.log("Starting streamWebSocketResponses");
+      if (this.DEBUG) log.info("Starting streamWebSocketResponses");
       this.sendToClient("assistant", "", "start");
 
       try {
@@ -1039,28 +1041,28 @@ Never engage in off topic conversations, always politely steer the conversation 
 
         for await (const part of stream) {
           if (this.DEBUG) {
-            console.log("Received stream part:", JSON.stringify(part, null, 2));
+            log.info("Received stream part:", JSON.stringify(part, null, 2));
           }
 
           if (!part.choices?.[0]?.delta) {
             if (this.DEBUG)
-              console.log("Skipping invalid stream part - no choices or delta");
+              log.info("Skipping invalid stream part - no choices or delta");
             continue;
           }
 
           const delta = part.choices[0].delta;
           if (this.DEBUG) {
-            console.log("Processing delta:", JSON.stringify(delta, null, 2));
+            log.info("Processing delta:", JSON.stringify(delta, null, 2));
           }
 
           if ("tool_calls" in delta && delta.tool_calls) {
-            if (this.DEBUG) console.log("Processing tool calls in delta");
+            if (this.DEBUG) log.info("Processing tool calls in delta");
 
             for (const toolCall of delta.tool_calls) {
               // If we have a new tool call ID, update the current ID
               if (toolCall.id) {
                 if (this.DEBUG)
-                  console.log(
+                  log.info(
                     `Setting current tool call ID to: ${toolCall.id}`
                   );
                 currentToolCallId = toolCall.id;
@@ -1071,7 +1073,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 const now = Date.now();
 
                 if (this.DEBUG) {
-                  console.log(`Processing tool call ${currentToolCallId}:`, {
+                  log.info(`Processing tool call ${currentToolCallId}:`, {
                     name: toolCall.function?.name,
                     newArguments: toolCall.function?.arguments,
                     exists: toolCalls.has(currentToolCallId),
@@ -1081,7 +1083,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 // Initialize tool call if it's new
                 if (!toolCalls.has(currentToolCallId)) {
                   if (this.DEBUG)
-                    console.log(
+                    log.info(
                       `Initializing new tool call ${currentToolCallId}`
                     );
 
@@ -1099,14 +1101,14 @@ Never engage in off topic conversations, always politely steer the conversation 
                 // Check timeout
                 if (now - existingCall.startTime! > this.toolCallTimeout) {
                   if (this.DEBUG)
-                    console.log(`Tool call timeout for ${existingCall.name}`);
+                    log.info(`Tool call timeout for ${existingCall.name}`);
                   throw new Error(`Tool call timeout for ${existingCall.name}`);
                 }
 
                 // Update name if provided
                 if (toolCall.function?.name) {
                   if (this.DEBUG)
-                    console.log(
+                    log.info(
                       `Updating tool call name to ${toolCall.function.name}`
                     );
                   existingCall.name = toolCall.function.name;
@@ -1118,7 +1120,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                     toolCallArguments.get(currentToolCallId) || "";
                   const newArgs = currentArgs + toolCall.function.arguments;
                   if (this.DEBUG) {
-                    console.log(
+                    log.info(
                       `Updating arguments for ${currentToolCallId}:`,
                       {
                         previous: currentArgs,
@@ -1134,7 +1136,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 toolCalls.set(currentToolCallId, existingCall);
 
                 if (this.DEBUG) {
-                  console.log(
+                  log.info(
                     `Current state of tool call ${currentToolCallId}:`,
                     {
                       name: existingCall.name,
@@ -1144,11 +1146,11 @@ Never engage in off topic conversations, always politely steer the conversation 
                 }
               } else {
                 if (this.DEBUG)
-                  console.log("No current tool call ID available");
+                  log.info("No current tool call ID available");
               }
             }
           } else if ("content" in delta && delta.content) {
-            if (this.DEBUG) console.log("Processing content:", delta.content);
+            if (this.DEBUG) log.info("Processing content:", delta.content);
             const content = delta.content;
             this.sendToClient("assistant", content);
             botMessage += content;
@@ -1156,9 +1158,9 @@ Never engage in off topic conversations, always politely steer the conversation 
 
           const finishReason = part.choices[0].finish_reason;
           if (this.DEBUG) {
-            console.log("Finish reason:", finishReason);
+            log.info("Finish reason:", finishReason);
             if (finishReason === "tool_calls") {
-              console.log(
+              log.info(
                 "Final state of all tool calls:",
                 Object.fromEntries(toolCalls.entries())
               );
@@ -1173,7 +1175,7 @@ Never engage in off topic conversations, always politely steer the conversation 
             for (const [id, call] of toolCalls) {
               try {
                 if (this.DEBUG) {
-                  console.log(
+                  log.info(
                     `Validating JSON for tool call ${id}:`,
                     call.arguments
                   );
@@ -1185,8 +1187,8 @@ Never engage in off topic conversations, always politely steer the conversation 
                 JSON.parse(call.arguments); // Validate JSON
               } catch (e) {
                 if (this.DEBUG) {
-                  console.error(`JSON validation failed for ${id}:`, e);
-                  console.log("Invalid arguments:", call.arguments);
+                  log.error(`JSON validation failed for ${id}:`, e);
+                  log.info("Invalid arguments:", call.arguments);
                 }
                 throw new Error(
                   `Invalid JSON in function arguments for ${call.name}: ${call.arguments}`
@@ -1194,15 +1196,15 @@ Never engage in off topic conversations, always politely steer the conversation 
               }
             }
 
-            if (this.DEBUG) console.log("Executing tool calls");
+            if (this.DEBUG) log.info("Executing tool calls");
             await this.handleToolCalls(toolCalls);
 
-            if (this.DEBUG) console.log("Clearing tool calls and arguments");
+            if (this.DEBUG) log.info("Clearing tool calls and arguments");
             toolCalls.clear();
             toolCallArguments.clear();
           } else if (finishReason === "stop") {
             if (botMessage) {
-              if (this.DEBUG) console.log("Saving bot message to chat log");
+              if (this.DEBUG) log.info("Saving bot message to chat log");
               this.memory.chatLog!.push({
                 sender: "assistant",
                 message: botMessage,
@@ -1214,19 +1216,19 @@ Never engage in off topic conversations, always politely steer the conversation 
           }
         }
       } catch (error) {
-        console.error("Stream processing error:", error);
+        log.error("Stream processing error:", error);
 
         // Attempt to switch to error recovery mode
         try {
           if (this.DEBUG)
-            console.log("Attempting to switch to error recovery mode");
+            log.info("Attempting to switch to error recovery mode");
           await this.handleModeSwitch(
             "error_recovery" as YpAssistantMode,
             error instanceof Error ? error.message : "Unknown error",
             {}
           );
         } catch (e) {
-          console.error("Failed to switch to error recovery mode:", e);
+          log.error("Failed to switch to error recovery mode:", e);
         }
 
         this.sendToClient(
@@ -1236,7 +1238,7 @@ Never engage in off topic conversations, always politely steer the conversation 
         );
         reject(error);
       } finally {
-        if (this.DEBUG) console.log("Finalizing stream response");
+        if (this.DEBUG) log.info("Finalizing stream response");
         this.sendToClient("assistant", "", "end");
         resolve();
       }

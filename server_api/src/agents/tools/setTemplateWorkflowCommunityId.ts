@@ -1,6 +1,6 @@
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
-
 import { YpAgentProduct } from "../models/agentProduct.js";
+import log from "../../utils/loggerTs.js";
 
 /**
  * Updates the templateWorkflowCommunityId in the   configuration of a specific agent product.
@@ -17,7 +17,7 @@ async function setTemplateWorkflowCommunityId(
     // Find the Agent Product by ID
     const agentProduct = await YpAgentProduct.findByPk(agentProductId);
     if (!agentProduct) {
-      console.error(`Agent Product with ID ${agentProductId} not found.`);
+      log.error(`Agent Product with ID ${agentProductId} not found.`);
       return;
     }
 
@@ -30,11 +30,11 @@ async function setTemplateWorkflowCommunityId(
     agentProduct.changed('configuration', true);
     await agentProduct.save();
 
-    console.log(
+    log.info(
       `Successfully updated Agent Product ${agentProductId} with templateWorkflowCommunityId = ${templateWorkflowCommunityId}`
     );
   } catch (error) {
-    console.error(
+    log.error(
       `Error updating templateWorkflowCommunityId for Agent Product ${agentProductId}:`,
       error
     );
@@ -47,7 +47,7 @@ async function setTemplateWorkflowCommunityId(
 // --- Parse command line arguments ---
 const args = process.argv.slice(2);
 if (args.length !== 2) {
-  console.error(
+  log.error(
     "Usage: ts-node setTemplateWorkflowCommunityId.ts <agentProductId> <templateWorkflowCommunityId>"
   );
   process.exit(1);
@@ -58,7 +58,7 @@ const [agentProductId, templateWorkflowCommunityId] = args.map((arg) =>
 );
 
 if (isNaN(agentProductId) || isNaN(templateWorkflowCommunityId)) {
-  console.error("Both arguments must be valid numbers.");
+  log.error("Both arguments must be valid numbers.");
   process.exit(1);
 }
 

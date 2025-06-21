@@ -15,7 +15,7 @@ async.series([
   (callback) => {
     fs.readdir(clientAppImportPath, function (err, files) {
       if (err) {
-        console.error("Could not list the directory.", err);
+        log.error("Could not list the directory.", err);
         callback(err);
       }
 
@@ -23,7 +23,7 @@ async.series([
         if (file.indexOf('.json') > -1) {
           var localePath = file.split('client-app_')[1];
           var locale = localePath.split(".json")[0];
-          console.log(locale);
+          log.info(locale);
           var clientApiLocaleFilePath = clientAppLocales+locale+'/translation.json';
           var clientApiLocaleFolderPath = clientAppLocales+locale;
           var fullImportPath = clientAppImportPath+file;
@@ -33,19 +33,19 @@ async.series([
           }
 
           fs.unlink(clientApiLocaleFilePath, (error) => {
-            console.warn(error);
+            log.warn(error);
             fs.copyFile(fullImportPath, clientApiLocaleFilePath, function (error) {
               if (error) {
-                console.error("File moving error.", error);
+                log.error("File moving error.", error);
                 seriesCallback(error);
               } else {
-                console.log("Moved file '%s' to '%s'.", fullImportPath, clientApiLocaleFilePath);
+                log.info("Moved file '%s' to '%s'.", fullImportPath, clientApiLocaleFilePath);
                 seriesCallback();
               }
             });
           });
         } else {
-          console.warn("Skipping: "+file);
+          log.warn("Skipping: "+file);
           seriesCallback();
         }
       }), callback);
@@ -53,7 +53,7 @@ async.series([
   }
 ], (error) => {
   if (error) {
-    console.error(error);
+    log.error(error);
 
   }
 });
