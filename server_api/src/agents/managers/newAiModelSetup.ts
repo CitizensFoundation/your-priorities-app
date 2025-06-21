@@ -465,7 +465,7 @@ export class NewAiModelSetup {
         currency: "USD",
         costInCachedContextTokensPerMillion: 0.5,
       },
-      maxTokensOut: 100000,
+      maxTokensOut: 32768,
       defaultTemperature: 0.7,
       model: "gpt-4.1",
       active: true,
@@ -674,7 +674,7 @@ export class NewAiModelSetup {
       gemini25FlashPreview1.set("configuration", gemini25FlashPreview1Config);
       gemini25FlashPreview1.changed("configuration", true);
       await gemini25FlashPreview1.save();
-      log.debug("Google model already exists: Gemini 2.5 Pro");
+      log.debug("Google model already exists: Gemini 2.5 Flash Preview 1");
     }
 
     const gemini25FlashPreview = await PsAiModel.findOne({
