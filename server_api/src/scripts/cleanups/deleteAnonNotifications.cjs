@@ -1,5 +1,6 @@
 const models = require('../../models/index.cjs');
 const moment = require('moment');
+const log = require('../../utils/logger.cjs');
 
 const maxNumberFromPath = process.argv[2];
 

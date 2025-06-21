@@ -1,5 +1,6 @@
 var models = require("../models/index.cjs");
 var async = require("async");
+const log = require('./logger.cjs');
 const {
   cloneTranslationForGroup,
 } = require("../services/utils/translation_cloning.cjs");

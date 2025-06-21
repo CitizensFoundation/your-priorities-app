@@ -2,6 +2,7 @@ const _ = require("lodash");
 const moment = require("moment");
 const models = require("../../../../models/index.cjs");
 const FraudBase = require('./FraudBase.cjs');
+const log = require("../../../../utils/logger.cjs");
 
 const recountCommunity = require('../../../../utils/recount_utils.cjs').recountCommunity;
 const recountPosts = require('../../../../utils/recount_utils.cjs').recountPosts;

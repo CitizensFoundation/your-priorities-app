@@ -2,6 +2,7 @@ const _ = require("lodash");
 const models = require("../../../../models/index.cjs");
 const i18n = require('../../../utils/i18n.cjs');
 const deepEqual = require('deep-equal');
+const log = require("../../../../utils/logger.cjs");
 
 const FraudGetEndorsements = require("./FraudGetEndorsements");
 const FraudGetPointQualities = require("./FraudGetPointQualities");

@@ -1,6 +1,7 @@
 var models = require("../models/index.cjs");
 var _ = require("lodash");
 var async = require('async');
+const log = require('./logger.cjs');
 
 var setupIconsFromDefault = function(callback) {
   const icons = [

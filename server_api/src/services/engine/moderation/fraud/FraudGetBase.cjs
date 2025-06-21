@@ -4,6 +4,7 @@ const moment = require("moment");
 const FraudBase = require('./FraudBase.cjs');
 const models = require("../../../../models/index.cjs");
 const ColorHash = require('color-hash').default;
+const log = require("../../../../utils/logger.cjs");
 
 class FraudGetBase extends FraudBase {
   constructor(workPackage){

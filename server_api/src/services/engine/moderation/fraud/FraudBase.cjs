@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const moment = require("moment");
+const log = require("../../../../utils/logger.cjs");
 
 class FraudBase {
   constructor(workPackage) {

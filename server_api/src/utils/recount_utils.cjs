@@ -3,6 +3,7 @@ const models = require('../models/index.cjs');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
+const log = require('./logger.cjs');
 
 const recountPosts = (postIds, done) => {
   async.forEachSeries(postIds, (postId, forEachPostCallback) => {

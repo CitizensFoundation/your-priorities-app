@@ -1,5 +1,6 @@
 const moment = require("moment");
 const getMediaTranscripts = require("./common_utils.cjs").getMediaTranscripts;
+const log = require("../../../utils/logger.cjs");
 
 const getPointMediaUrls = require("./common_utils.cjs").getPointMediaUrls;
 
