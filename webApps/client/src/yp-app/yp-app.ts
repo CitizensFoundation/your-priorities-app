@@ -588,6 +588,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _openUserEdit() {
+    this.fireGlobal("yp-close-all-drawers");
     window.appDialogs.getDialogAsync("userEdit", (dialog: YpUserEdit) => {
       dialog.setup(this.user!, false, undefined);
       dialog.open(false, { userId: this.user?.id || -1 });

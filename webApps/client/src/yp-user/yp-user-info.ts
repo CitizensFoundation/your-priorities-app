@@ -134,6 +134,7 @@ export class YpUserInfo extends YpBaseElement {
   }
 
   _openEdit() {
+    this.fireGlobal("yp-close-all-drawers");
     this.fire("open-user-edit");
   }
 
