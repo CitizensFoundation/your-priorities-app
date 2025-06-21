@@ -91,7 +91,7 @@ export class NewAiModelSetup {
       });
       log.info("Created Anthropic model:", createdModel);
     } else {
-      log.info("Anthropic model already exists: Anthropic Sonnet 3.5");
+      log.debug("Anthropic model already exists: Anthropic Sonnet 3.5");
       anthropicSonnet.set("configuration", anthropicSonnetConfig);
       anthropicSonnet.changed("configuration", true);
       await anthropicSonnet.save();
@@ -126,7 +126,7 @@ export class NewAiModelSetup {
       });
       log.info("Created Anthropic model:", createdModel);
     } else {
-      log.info("Anthropic model already exists: Anthropic Sonnet 3.7");
+      log.debug("Anthropic model already exists: Anthropic Sonnet 3.7");
       anthropicSonnet.set("configuration", anthropicSonnetConfig);
       anthropicSonnet.changed("configuration", true);
       await anthropicSonnet.save();
@@ -168,7 +168,7 @@ export class NewAiModelSetup {
       });
       log.info("Created OpenAI model: GPT-4o");
     } else {
-      log.info("OpenAI model already exists: GPT-4o updating");
+      log.debug("OpenAI model already exists: GPT-4o updating");
       openAiGpt4.set("configuration", openAiGpt4oConfig);
       openAiGpt4.changed("configuration", true);
       await openAiGpt4.save();
@@ -205,7 +205,7 @@ export class NewAiModelSetup {
       openAiGpt4Mini.set("configuration", openAiGpt4oMiniConfig);
       openAiGpt4Mini.changed("configuration", true);
       await openAiGpt4Mini.save();
-      log.info("OpenAI model already exists: GPT-4o Mini");
+      log.debug("OpenAI model already exists: GPT-4o Mini");
     }
 
     // o1 Mini
@@ -239,7 +239,7 @@ export class NewAiModelSetup {
       openAio1Mini.set("configuration", openAio1MiniConfig);
       openAio1Mini.changed("configuration", true);
       await openAio1Mini.save();
-      log.info("OpenAI model already exists: o1 Mini");
+      log.debug("OpenAI model already exists: o1 Mini");
     }
 
     // o1 Preview
@@ -273,7 +273,7 @@ export class NewAiModelSetup {
       openAio1Preview.set("configuration", openAio1PreviewConfig);
       openAio1Preview.changed("configuration", true);
       await openAio1Preview.save();
-      log.info("OpenAI model already exists: o1 Preview");
+      log.debug("OpenAI model already exists: o1 Preview");
     }
 
     // o1 24
@@ -306,7 +306,7 @@ export class NewAiModelSetup {
       });
       log.info("Created OpenAI model: o1 24");
     } else {
-      log.info("OpenAI model already exists: o1 24 updating");
+      log.debug("OpenAI model already exists: o1 24 updating");
       openAio11712.set("configuration", openAio11712Config);
       openAio11712.changed("configuration", true);
       await openAio11712.save();
@@ -344,7 +344,7 @@ export class NewAiModelSetup {
       openAio3Mini.set("configuration", openAio3MiniConfig);
       openAio3Mini.changed("configuration", true);
       await openAio3Mini.save();
-      log.info("OpenAI model already exists: o3 mini");
+      log.debug("OpenAI model already exists: o3 mini");
     }
 
     const openAiGpt45 = await PsAiModel.findOne({
@@ -378,7 +378,7 @@ export class NewAiModelSetup {
       openAiGpt45.set("configuration", openAiGpt45Config);
       openAiGpt45.changed("configuration", true);
       await openAiGpt45.save();
-      log.info("OpenAI model already exists: GPT-4.5 Preview");
+      log.debug("OpenAI model already exists: GPT-4.5 Preview");
     }
 
     const openAio3 = await PsAiModel.findOne({
@@ -410,7 +410,7 @@ export class NewAiModelSetup {
       });
       log.info("Created OpenAI model: o3");
     } else {
-      log.info("OpenAI model already exists: o3 updating");
+      log.debug("OpenAI model already exists: o3 updating");
       openAio3.set("configuration", openAio3Config);
       openAio3.changed("configuration", true);
       await openAio3.save();
@@ -448,7 +448,7 @@ export class NewAiModelSetup {
       openAio4mini.set("configuration", openAio4miniConfig);
       openAio4mini.changed("configuration", true);
       await openAio4mini.save();
-      log.info("OpenAI model already exists: o4 mini");
+      log.debug("OpenAI model already exists: o4 mini");
     }
 
     const openAiGpt41 = await PsAiModel.findOne({
@@ -483,7 +483,7 @@ export class NewAiModelSetup {
       openAiGpt41.set("configuration", openAiGpt41Config);
       openAiGpt41.changed("configuration", true);
       await openAiGpt41.save();
-      log.info("OpenAI model already exists: GPT-4.1");
+      log.debug("OpenAI model already exists: GPT-4.1");
     }
   }
 
@@ -524,7 +524,7 @@ export class NewAiModelSetup {
       geminiPro.set("configuration", geminiProConfig);
       geminiPro.changed("configuration", true);
       await geminiPro.save();
-      log.info("Google model already exists: Gemini 1.5 Pro 2");
+      log.debug("Google model already exists: Gemini 1.5 Pro 2");
     }
 
     // Gemini 1.5 Flash 2
@@ -559,7 +559,7 @@ export class NewAiModelSetup {
       geminiPro15Flash.set("configuration", geminiPro15FlashConfig);
       geminiPro15Flash.changed("configuration", true);
       await geminiPro15Flash.save();
-      log.info("Google model already exists: Gemini 1.5 Flash 2");
+      log.debug("Google model already exists: Gemini 1.5 Flash 2");
     }
 
     // Gemini 2.0 Flash
@@ -594,7 +594,7 @@ export class NewAiModelSetup {
       gemini20Flash.set("configuration", gemini20FlashConfig);
       gemini20Flash.changed("configuration", true);
       await gemini20Flash.save();
-      log.info("Google model already exists: Gemini 2.0 Flash");
+      log.debug("Google model already exists: Gemini 2.0 Flash");
     }
 
     const gemini25Pro = await PsAiModel.findOne({
@@ -634,7 +634,7 @@ export class NewAiModelSetup {
       gemini25Pro.set("configuration", gemini25ProConfig);
       gemini25Pro.changed("configuration", true);
       await gemini25Pro.save();
-      log.info("Google model already exists: Gemini 2.5 Pro");
+      log.debug("Google model already exists: Gemini 2.5 Pro");
     }
 
     const gemini25FlashPreview1 = await PsAiModel.findOne({
@@ -674,7 +674,7 @@ export class NewAiModelSetup {
       gemini25FlashPreview1.set("configuration", gemini25FlashPreview1Config);
       gemini25FlashPreview1.changed("configuration", true);
       await gemini25FlashPreview1.save();
-      log.info("Google model already exists: Gemini 2.5 Pro");
+      log.debug("Google model already exists: Gemini 2.5 Pro");
     }
 
     const gemini25FlashPreview = await PsAiModel.findOne({
@@ -709,7 +709,7 @@ export class NewAiModelSetup {
       gemini25FlashPreview.set("configuration", gemini25FlashPreviewConfig);
       gemini25FlashPreview.changed("configuration", true);
       await gemini25FlashPreview.save();
-      log.info("Google model already exists: Gemini 2.5 Flash Preview");
+      log.debug("Google model already exists: Gemini 2.5 Flash Preview");
     }
   }
 
