@@ -44,13 +44,14 @@ export class AgentTaskController {
 
   private startTask = async (req: YpRequest, res: express.Response) => {
     try {
-      const { agentConfiguration, communityIdToCloneFrom, wsClientId } = req.body;
-      const run = await this.taskManager.startTask(
-        agentConfiguration,
-        communityIdToCloneFrom,
-        wsClientId
+      const { communityIdToClone } = req.body;
+      const domainId = parseInt(req.params.domainId);
+      const agentId = await this.taskManager.startTask(
+        communityIdToClone,
+        domainId,
+        req.user
       );
-      res.status(200).json({ run });
+      res.status(200).json({ agentId });
     } catch (error: any) {
       log.error("Error starting task:", error);
       res.status(500).json({ error: error.message });
