@@ -573,7 +573,7 @@ router.get('/{*splat}', function botController(req, res, next) {
       }
     ], error => {
       if (error) {
-        log.error("Id for nonSpa is not a number", { error });
+        log.warn("Id for nonSpa is not a number", { error });
         res.sendStatus(200);
       } else {
         if (req.ypCommunity && req.ypCommunity.id != null) {

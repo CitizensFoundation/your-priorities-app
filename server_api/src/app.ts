@@ -63,10 +63,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let airbrake: any;
 
-if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
+if (process.env.AIRBRAKE_PROJECT_ID && (process.env.AIRBRAKE_API_KEY || process.env.AIRBRAKE_PROJECT_KEY)) {
   airbrake = new Notifier({
     projectId: parseInt(process.env.AIRBRAKE_PROJECT_ID),
-    projectKey: process.env.AIRBRAKE_API_KEY,
+    projectKey: process.env.AIRBRAKE_API_KEY || process.env.AIRBRAKE_PROJECT_KEY || "",
     performanceStats: false,
   });
 }

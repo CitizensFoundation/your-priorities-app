@@ -6,7 +6,7 @@ if(process.env.AIRBRAKE_PROJECT_ID) {
   try {
     airBrake = new Airbrake.Notifier({
       projectId: process.env.AIRBRAKE_PROJECT_ID,
-      projectKey: process.env.AIRBRAKE_API_KEY,
+      projectKey: process.env.AIRBRAKE_API_KEY || process.env.AIRBRAKE_PROJECT_KEY,
       performanceStats: false
     });
   } catch (error) {
