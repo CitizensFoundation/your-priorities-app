@@ -40,7 +40,10 @@ export class PsAddAgentDialog extends YpBaseElement {
 
   async fetchActiveAgentClasses() {
     try {
-      this.activeAgentClasses = await this.api.getActiveAgentClasses(this.groupId);
+      const agentClasses = await this.api.getActiveAgentClasses(this.groupId);
+      this.activeAgentClasses = agentClasses.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
     } catch (error) {
       console.error('Error fetching active agent classes:', error);
     }
