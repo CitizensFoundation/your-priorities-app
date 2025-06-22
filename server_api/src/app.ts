@@ -674,6 +674,12 @@ export class YourPrioritiesApi {
     const assistantController = new AssistantController(this.wsClients);
     this.app.use(assistantController.path, assistantController.router);
 
+    const { AgentTaskController } = await import(
+      "./agents/controllers/agentTaskController.js"
+    );
+    const agentTaskController = new AgentTaskController(this.wsClients);
+    this.app.use(agentTaskController.path, agentTaskController.router);
+
     // Setup those here so they wont override the ES controllers
     this.setupErrorHandler();
   }
