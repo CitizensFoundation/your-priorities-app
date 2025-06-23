@@ -66,7 +66,7 @@ export class NewAiModelSetup {
     const anthropicSonnet = await PsAiModel.findOne({
       where: { name: "Anthropic Sonnet 3.5" },
     });
-    const anthropicSonnetConfig = {
+    const anthropicSonnetConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "anthropic",
@@ -77,6 +77,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 8000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.7,
       model: "claude-3-5-sonnet-20240620",
       active: true,
@@ -102,7 +103,7 @@ export class NewAiModelSetup {
     const anthropicSonnet = await PsAiModel.findOne({
       where: { name: "Anthropic Sonnet 3.7" },
     });
-    const anthropicSonnetConfig = {
+    const anthropicSonnetConfig: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Medium,
       provider: "anthropic",
@@ -113,6 +114,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 8000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.7,
       model: "claude-3-7-sonnet-20250219",
       active: true,
@@ -143,7 +145,7 @@ export class NewAiModelSetup {
     const openAiGpt4 = await PsAiModel.findOne({
       where: { name: "GPT-4o" },
     });
-    const openAiGpt4oConfig = {
+    const openAiGpt4oConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
@@ -154,6 +156,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 16384,
+      maxContextTokens: 128000,
       defaultTemperature: 0.7,
       model: "gpt-4o",
       active: true,
@@ -178,7 +181,7 @@ export class NewAiModelSetup {
     const openAiGpt4Mini = await PsAiModel.findOne({
       where: { name: "GPT-4o Mini" },
     });
-    const openAiGpt4oMiniConfig = {
+    const openAiGpt4oMiniConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Small,
       provider: "openai",
@@ -189,6 +192,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 16384,
+      maxContextTokens: 128000,
       defaultTemperature: 0.0,
       model: "gpt-4o-mini",
       active: true,
@@ -223,6 +227,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 32000,
+      maxContextTokens: 128000,
       defaultTemperature: 0.0,
       model: "o1-mini",
       active: true,
@@ -246,7 +251,7 @@ export class NewAiModelSetup {
     const openAio1Preview = await PsAiModel.findOne({
       where: { name: "o1 Preview" },
     });
-    const openAio1PreviewConfig = {
+    const openAio1PreviewConfig: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
@@ -257,6 +262,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 32000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.0,
       model: "o1-preview",
       active: true,
@@ -292,6 +298,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 100000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.0,
       model: "o1",
       active: true,
@@ -316,7 +323,7 @@ export class NewAiModelSetup {
     const openAio3Mini = await PsAiModel.findOne({
       where: { name: "o3 mini" },
     });
-    const openAio3MiniConfig = {
+    const openAio3MiniConfig: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Small,
       provider: "openai",
@@ -327,6 +334,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 100000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.0,
       model: "o3-mini",
       active: true,
@@ -350,7 +358,7 @@ export class NewAiModelSetup {
     const openAiGpt45 = await PsAiModel.findOne({
       where: { name: "GPT-4.5 Preview" },
     });
-    const openAiGpt45Config = {
+    const openAiGpt45Config: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Large,
       provider: "openai",
@@ -361,6 +369,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 100000,
+      maxContextTokens: 128000,
       defaultTemperature: 0.7,
       model: "gpt-4.5-preview",
       active: true,
@@ -385,7 +394,7 @@ export class NewAiModelSetup {
       where: { name: "o3" },
     });
 
-    const openAio3Config = {
+    const openAio3Config: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
@@ -396,6 +405,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 100000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.0,
       model: "o3",
       active: true,
@@ -420,7 +430,7 @@ export class NewAiModelSetup {
       where: { name: "o4 mini" },
     });
 
-    const openAio4miniConfig = {
+    const openAio4miniConfig: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Small,
       provider: "openai",
@@ -431,6 +441,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 100000,
+      maxContextTokens: 200000,
       defaultTemperature: 0.0,
       model: "o4-mini",
       active: true,
@@ -455,7 +466,7 @@ export class NewAiModelSetup {
       where: { name: "GPT-4.1" },
     });
 
-    const openAiGpt41Config = {
+    const openAiGpt41Config: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
@@ -466,6 +477,7 @@ export class NewAiModelSetup {
         costInCachedContextTokensPerMillion: 0.5,
       },
       maxTokensOut: 32768,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.7,
       model: "gpt-4.1",
       active: true,
@@ -496,7 +508,7 @@ export class NewAiModelSetup {
     const geminiPro = await PsAiModel.findOne({
       where: { name: "Gemini 1.5 Pro 2" },
     });
-    const geminiProConfig = {
+    const geminiProConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "google",
@@ -507,6 +519,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 8192,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.0,
       model: "gemini-1.5-pro-002",
       active: true,
@@ -531,7 +544,7 @@ export class NewAiModelSetup {
     const geminiPro15Flash = await PsAiModel.findOne({
       where: { name: "Gemini 1.5 Flash 2" },
     });
-    const geminiPro15FlashConfig = {
+    const geminiPro15FlashConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Small,
       provider: "google",
@@ -542,6 +555,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 8192,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.0,
       model: "gemini-1.5-flash-002",
       active: true,
@@ -566,7 +580,7 @@ export class NewAiModelSetup {
     const gemini20Flash = await PsAiModel.findOne({
       where: { name: "Gemini 2.0 Flash" },
     });
-    const gemini20FlashConfig = {
+    const gemini20FlashConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "google",
@@ -577,6 +591,7 @@ export class NewAiModelSetup {
         currency: "USD",
       },
       maxTokensOut: 8192,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.0,
       model: "gemini-2.0-flash",
       active: true,
@@ -601,7 +616,7 @@ export class NewAiModelSetup {
       where: { name: "Gemini 2.5 Pro" },
     });
 
-    const gemini25ProConfig = {
+    const gemini25ProConfig: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Large,
       provider: "google",
@@ -618,6 +633,7 @@ export class NewAiModelSetup {
       model: "gemini-2.5-pro",
       active: true,
       maxTokensOut: 100000,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.0
     };
 
@@ -641,7 +657,7 @@ export class NewAiModelSetup {
       where: { name: "Gemini 2.5 Flash Preview 1" },
     });
 
-    const gemini25FlashPreview1Config = {
+    const gemini25FlashPreview1Config: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "google",
@@ -658,6 +674,7 @@ export class NewAiModelSetup {
       model: "gemini-2.5-flash-preview-05-20",
       active: true,
       maxTokensOut: 100000,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.0
     };
 
@@ -681,7 +698,7 @@ export class NewAiModelSetup {
       where: { name: "Gemini 2.5 Flash Preview" },
     });
 
-    const gemini25FlashPreviewConfig = {
+    const gemini25FlashPreviewConfig: PsAiModelConfiguration = {
       type: PsAiModelType.Text,
       modelSize: PsAiModelSize.Medium,
       provider: "google",
@@ -691,7 +708,8 @@ export class NewAiModelSetup {
         costInCachedContextTokensPerMillion: 0.09,
         currency: "USD",
       },
-      maxTokensOut: 8192,
+      maxTokensOut: 32000,
+      maxContextTokens: 1000000,
       defaultTemperature: 0.0,
       model: "gemini-2.5-flash-preview-05-20",
       active: true,

@@ -8,7 +8,10 @@ import "@material/web/checkbox/checkbox.js";
 import "@material/web/progress/circular-progress.js";
 
 import "@vaadin/vaadin-grid/vaadin-grid.js";
-import type { GridElement, GridItemModel } from "@vaadin/vaadin-grid/vaadin-grid.js";
+import type {
+  GridElement,
+  GridItemModel,
+} from "@vaadin/vaadin-grid/vaadin-grid.js";
 
 import { GridColumnElement } from "@vaadin/vaadin-grid/src/vaadin-grid-column";
 
@@ -133,7 +136,6 @@ export class YpContentModeration extends YpBaseElement {
     //@ts-ignore - investigate why the right type is not working
     this.activeItem = e.detail.value;
   }
-
 
   static override get styles() {
     return [
@@ -338,170 +340,180 @@ export class YpContentModeration extends YpBaseElement {
 
   renderContent(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
-    return render(html`
-      <div class="layout horizontal">
-        <yp-magic-text
-          .contentId="${item.id}"
-          .content="${item.pointTextContent}"
-          textType="pointContent"
-        ></yp-magic-text>
-        <yp-magic-text
-          .contentId="${item.id}"
-          .content="${item.postNameContent}"
-          textType="postName"
-        ></yp-magic-text>
-        &nbsp;
-        <yp-magic-text
-          .contentId="${item.id}"
-          .content="${item.postTextContent}"
-          textType="postContent"
-        ></yp-magic-text>
-        &nbsp;
-        <yp-magic-text
-          .contentId="${item.id}"
-          .content="${item.postTranscriptContent}"
-          textType="postTranscriptContent"
-        ></yp-magic-text>
-      </div>
-    `, root);
+    return render(
+      html`
+        <div class="layout horizontal">
+          <yp-magic-text
+            .contentId="${item.id}"
+            .content="${item.pointTextContent}"
+            textType="pointContent"
+          ></yp-magic-text>
+          <yp-magic-text
+            .contentId="${item.id}"
+            .content="${item.postNameContent}"
+            textType="postName"
+          ></yp-magic-text>
+          &nbsp;
+          <yp-magic-text
+            .contentId="${item.id}"
+            .content="${item.postTextContent}"
+            textType="postContent"
+          ></yp-magic-text>
+          &nbsp;
+          <yp-magic-text
+            .contentId="${item.id}"
+            .content="${item.postTranscriptContent}"
+            textType="postTranscriptContent"
+          ></yp-magic-text>
+        </div>
+      `,
+      root
+    );
   }
 
   renderItemDetail(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
-    return render(html`
-      <div class="details layout vertical center-center detailArea">
-        <div class="layout horizontal">
-          ${item.is_post
+    return render(
+      html`
+        <div class="details layout vertical center-center detailArea">
+          <div class="layout horizontal">
+            ${item.is_post
+              ? html`
+                  <div class="layout vertical center-center">
+                    <yp-post-header
+                      hideActions
+                      hideTopActionBar
+                      onlyRenderTopActionBar
+                      .post="${item as unknown as YpPostData}"
+                      .postName="${item.name}"
+                      headerMode
+                    ></yp-post-header>
+                    <a href="/yp/${item.id}" target="_blank"
+                      ><paper-icon-button
+                        .ariaLabel="${this.t("linkToContentItem")}"
+                        class="linkIcon"
+                        icon="link"
+                      ></paper-icon-button
+                    ></a>
+                  </div>
+                `
+              : nothing}
+            ${item.is_point
+              ? html`
+                  <div class="layout vertical center-center">
+                    <yp-point
+                      hideActions
+                      .point="${item as unknown as YpPointData}"
+                    ></yp-point>
+                    <a
+                      ?hidden="${!item.post_id}"
+                      href="/yp/[[item.post_id]]/${item.id}"
+                      target="_blank"
+                      ><md-icon-button
+                        .ariaLabel="${this.t("linkToContentItem")}"
+                        class="linkIcon"
+                        ><md-icon>link</md-icon></md-icon-button
+                      ></a
+                    >
+                  </div>
+                `
+              : nothing}
+          </div>
+
+          ${item.moderation_data &&
+          item.moderation_data.moderation &&
+          item.moderation_data.moderation.toxicityScore
             ? html`
-                <div class="layout vertical center-center">
-                  <yp-post-header
-                    hideActions
-                    hideTopActionBar
-                    onlyRenderTopActionBar
-                    .post="${item as unknown as YpPostData}"
-                    .postName="${item.name}"
-                    headerMode
-                  ></yp-post-header>
-                  <a href="/yp/${item.id}" target="_blank"
-                    ><paper-icon-button
-                      .ariaLabel="${this.t("linkToContentItem")}"
-                      class="linkIcon"
-                      icon="link"
-                    ></paper-icon-button
-                  ></a>
-                </div>
-              `
-            : nothing}
-          ${item.is_point
-            ? html`
-                <div class="layout vertical center-center">
-                  <yp-point
-                    hideActions
-                    .point="${item as unknown as YpPointData}"
-                  ></yp-point>
-                  <a
-                    ?hidden="${!item.post_id}"
-                    href="/yp/[[item.post_id]]/${item.id}"
-                    target="_blank"
-                    ><md-icon-button
-                      .ariaLabel="${this.t("linkToContentItem")}"
-                      class="linkIcon"
-                      ><md-icon>link</md-icon></md-icon-button
-                    ></a
+                <div class="layout horizontal analysis">
+                  <div
+                    class="layout vertical leftColumn"
+                    ?hidden="${this.userId != undefined}"
                   >
+                    <div
+                      class="mainScore"
+                      ?hidden="${!item.moderation_data.moderation
+                        .toxicityScore}"
+                    >
+                      Toxicity Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.toxicityScore
+                      )}
+                    </div>
+                    <div
+                      ?hidden="${!item.moderation_data.moderation
+                        .identityAttackScore}"
+                    >
+                      Identity Attack Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.identityAttackScore
+                      )}
+                    </div>
+                    <div
+                      ?hidden="${!item.moderation_data.moderation.threatScore}"
+                    >
+                      Threat Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.threatScore
+                      )}
+                    </div>
+                    <div
+                      ?hidden="${!item.moderation_data.moderation.insultScore}"
+                    >
+                      Insult Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.insultScore
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    class="layout vertical"
+                    ?hidden="${this.userId != undefined}"
+                  >
+                    <div
+                      class="mainScore"
+                      ?hidden="${!item.moderation_data.moderation
+                        .severeToxicityScore}"
+                    >
+                      Severe Toxicity Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.severeToxicityScore
+                      )}
+                    </div>
+                    <div
+                      ?hidden="${!item.moderation_data.moderation
+                        .profanityScore}"
+                    >
+                      Profanity Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.profanityScore
+                      )}
+                    </div>
+                    <div
+                      ?hidden="${!item.moderation_data.moderation
+                        .sexuallyExplicitScore}"
+                    >
+                      Sexually Excplicit Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.sexuallyExplicitScore
+                      )}
+                    </div>
+                    <div
+                      ?hidden="${!item.moderation_data.moderation
+                        .flirtationScore}"
+                    >
+                      Flirtation Score:
+                      ${this._toPercent(
+                        item.moderation_data.moderation.flirtationScore
+                      )}
+                    </div>
+                  </div>
                 </div>
               `
             : nothing}
         </div>
-
-        ${item.moderation_data && item.moderation_data.moderation && item.moderation_data.moderation.toxicityScore
-          ? html`
-              <div class="layout horizontal analysis">
-                <div
-                  class="layout vertical leftColumn"
-                  ?hidden="${this.userId != undefined}"
-                >
-                  <div
-                    class="mainScore"
-                    ?hidden="${!item.moderation_data.moderation.toxicityScore}"
-                  >
-                    Toxicity Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.toxicityScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!item.moderation_data.moderation
-                      .identityAttackScore}"
-                  >
-                    Identity Attack Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.identityAttackScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!item.moderation_data.moderation.threatScore}"
-                  >
-                    Threat Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.threatScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!item.moderation_data.moderation.insultScore}"
-                  >
-                    Insult Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.insultScore
-                    )}
-                  </div>
-                </div>
-                <div
-                  class="layout vertical"
-                  ?hidden="${this.userId != undefined}"
-                >
-                  <div
-                    class="mainScore"
-                    ?hidden="${!item.moderation_data.moderation
-                      .severeToxicityScore}"
-                  >
-                    Severe Toxicity Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.severeToxicityScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!item.moderation_data.moderation.profanityScore}"
-                  >
-                    Profanity Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.profanityScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!item.moderation_data.moderation
-                      .sexuallyExplicitScore}"
-                  >
-                    Sexually Excplicit Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.sexuallyExplicitScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!item.moderation_data.moderation
-                      .flirtationScore}"
-                  >
-                    Flirtation Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.flirtationScore
-                    )}
-                  </div>
-                </div>
-              </div>
-            `
-          : nothing}
-      </div>
-    `, root);
+      `,
+      root
+    );
   }
 
   renderActionHeader(
@@ -665,7 +677,8 @@ export class YpContentModeration extends YpBaseElement {
             icon="autorenew"
             class="closeButton"
             @click="${this._reload.bind(this)}"
-          ><md-icon>autorenew</md-icon></md-icon-button>
+            ><md-icon>autorenew</md-icon></md-icon-button
+          >
         </div>
       </div>
 
@@ -676,173 +689,173 @@ export class YpContentModeration extends YpBaseElement {
         multi-sort="${this.multiSortEnabled}"
         .activeItem="${this.activeItem}"
         .ariaLabel="${this.headerText}"
-         @active-item-changed="${this._onActiveItemChanged.bind(this)}"
+        @active-item-changed="${this._onActiveItemChanged.bind(this)}"
         .rowDetailsRenderer="${this.renderItemDetail.bind(this)}"
         .items="${this.items}"
         .selectedItems="${this.selectedItems as Array<unknown>}"
       >
+        <vaadin-grid-selection-column> </vaadin-grid-selection-column>
 
-      <vaadin-grid-selection-column> </vaadin-grid-selection-column>
+        <vaadin-grid-sort-column
+          width="130px"
+          flexGrow="0"
+          path="firstReportedDateFormatted"
+          .header="${this.t("firstReported")}"
+          ?hidden="${this.onlyFlaggedItems}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="130px"
-        flexGrow="0"
-        path="firstReportedDateFormatted"
-        .header="${this.t("firstReported")}"
-        ?hidden="${this.onlyFlaggedItems}"
-      >
-      </vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          width="130px"
+          flexGrow="0"
+          path="lastReportedAtDateFormatted"
+          .header="${this.t("lastReported")}"
+          ?hidden="${this.userId != undefined}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="130px"
-        flexGrow="0"
-        path="lastReportedAtDateFormatted"
-        .header="${this.t("lastReported")}"
-        ?hidden="${this.userId != undefined}"
-      >
-      </vaadin-grid-sort-column>
-
-      <vaadin-grid-sort-column
-        width="100px"
-        textAlign="start"
-        flexGrow="0"
-        path="type"
-        .renderer="${(
+        <vaadin-grid-sort-column
+          width="100px"
+          textAlign="start"
+          flexGrow="0"
+          path="type"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = this._getType(rowData.item.type);
           }}"
-        .header="${this.t("type")}"
-      >
-      </vaadin-grid-sort-column>
+          .header="${this.t("type")}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="100px"
-        textAlign="start"
-        flexGrow="0"
-        .renderer="${(
+        <vaadin-grid-sort-column
+          width="100px"
+          textAlign="start"
+          flexGrow="0"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = rowData.item.status || "unknown";
           }}"
-        path="status"
-        .header="${this.t("publishStatus")}"
-      >
-      </vaadin-grid-sort-column>
+          path="status"
+          .header="${this.t("publishStatus")}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="100px"
-        textAlign="center"
-        flexGrow="0"
-        path="counter_flags"
-        .renderer="${(
+        <vaadin-grid-sort-column
+          width="100px"
+          textAlign="center"
+          flexGrow="0"
+          path="counter_flags"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = `${rowData.item.counter_flags}`;
           }}"
-        .header="${this.t("flags")}"
-        ?hidden="${this.userId != undefined}"
-      >
-      </vaadin-grid-sort-column>
+          .header="${this.t("flags")}"
+          ?hidden="${this.userId != undefined}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="130px"
-        textAlign="start"
-        flexGrow="0"
-        path="source"
-        .renderer="${(
+        <vaadin-grid-sort-column
+          width="130px"
+          textAlign="start"
+          flexGrow="0"
+          path="source"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = rowData.item.source || "n/a";
           }}"
-        .header="${this.t("source")}"
-        ?hidden="${!this.onlyFlaggedItems}"
-      >
-      </vaadin-grid-sort-column>
+          .header="${this.t("source")}"
+          ?hidden="${!this.onlyFlaggedItems}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="105px"
-        textAlign="center"
-        flexGrow="0"
-        path="toxicityScoreRaw"
-        .renderer="${(
+        <vaadin-grid-sort-column
+          width="105px"
+          textAlign="center"
+          flexGrow="0"
+          path="toxicityScoreRaw"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = `${rowData.item.toxicityScore || "n/a"}`;
           }}"
-        .header="${this.t("toxicityScore")}?"
-        ?hidden="${this.userId != undefined}"
-      >
-      </vaadin-grid-sort-column>
+          .header="${this.t("toxicityScore")}?"
+          ?hidden="${this.userId != undefined}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-sort-column
-        width="150px"
-        textAlign="start"
-        flexGrow="1"
-        path="groupName"
-        .renderer="${(
+        <vaadin-grid-sort-column
+          width="150px"
+          textAlign="start"
+          flexGrow="1"
+          path="groupName"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = `${rowData.item.groupName}`;
           }}"
-        .header="${this.t("groupName")}"
-        ?hidden="${!this.userId}"
-      >
-      </vaadin-grid-sort-column>
+          .header="${this.t("groupName")}"
+          ?hidden="${!this.userId}"
+        >
+        </vaadin-grid-sort-column>
 
-      <vaadin-grid-filter-column
-        width="200px"
-        flexGrow="4"
-        path="content"
-        .renderer="${this.renderContent.bind(this)}"
-        .header="${this.t("content")}"
-        ?hidden="${!this.wide}"
-      >
-      </vaadin-grid-filter-column>
+        <vaadin-grid-filter-column
+          width="200px"
+          flexGrow="4"
+          path="content"
+          .renderer="${this.renderContent.bind(this)}"
+          .header="${this.t("content")}"
+          ?hidden="${!this.wide}"
+        >
+        </vaadin-grid-filter-column>
 
-      <vaadin-grid-filter-column
-        flexGrow="1"
-        path="user_email"
-        width="150px"
-        .renderer="${(
+        <vaadin-grid-filter-column
+          flexGrow="1"
+          path="user_email"
+          width="150px"
+          .renderer="${(
             root: HTMLElement,
             _column: unknown,
             rowData: { item: YpModerationItem }
           ) => {
             root.textContent = `${rowData.item.user_email || "n/a"}`;
           }}"
-        .header="${this.t("creator")}"
-        ?hidden="${this.userId != undefined}"
-      >
-      </vaadin-grid-filter-column>
+          .header="${this.t("creator")}"
+          ?hidden="${this.userId != undefined}"
+        >
+        </vaadin-grid-filter-column>
 
-      <vaadin-grid-filter-column
-        flexGrow="0"
-        path="lastReportedByEmail"
-        width="150px"
-        .header="${this.t("flaggedBy")}"
-        ?hidden="${!this.onlyFlaggedItems}"
-      >
-      </vaadin-grid-filter-column>
+        <vaadin-grid-filter-column
+          flexGrow="0"
+          path="lastReportedByEmail"
+          width="150px"
+          .header="${this.t("flaggedBy")}"
+          ?hidden="${!this.onlyFlaggedItems}"
+        >
+        </vaadin-grid-filter-column>
 
-      <vaadin-grid-column
-        width="70px"
-        flexGrow="0"
-        .headerRenderer="${this.renderActionHeader.bind(this)}"
-        .renderer="${this.renderAction.bind(this)}"
-      >
+        <vaadin-grid-column
+          width="70px"
+          flexGrow="0"
+          .headerRenderer="${this.renderActionHeader.bind(this)}"
+          .renderer="${this.renderAction.bind(this)}"
+        >
+        </vaadin-grid-column>
       </vaadin-grid>
     `;
   }
