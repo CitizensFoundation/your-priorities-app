@@ -1,7 +1,7 @@
 import { LitElement, PropertyValueMap, css, html, nothing, render } from "lit";
 import { property, customElement } from "lit/decorators.js";
 
-import "@material/web/menu/menu.js";
+import { Corner, MdMenu } from "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/checkbox/checkbox.js";
@@ -508,101 +508,122 @@ export class YpContentModeration extends YpBaseElement {
     root: HTMLElement,
     column?: GridColumnElement | undefined
   ) {
-    return render(html`
-      <md-menu
-        class="helpButton"
-        ?disabled="${this.selectedItemsEmpty}"
-        @opened="${this._refreshGridAsyncDelay}"
-      >
-        <md-icon-button
-          .ariaLabel="${this.t("openSelectedItemsMenu")}"
-          icon="more_vert"
-          slot="trigger"
-          @click="${this._menuOpened}"
-        ></md-icon-button>
-        <md-menu-item
-          ?hidden="${this.userId != undefined}"
-          @click="${this._approveSelected}"
-        >
-          ${this.t("approveSelectedContent")} ${this.selectedItemsCount}
-        </md-menu-item>
-        <md-menu-item
-          ?hidden="${!this.onlyFlaggedItems}"
-          @click="${this._clearSelectedFlags}"
-        >
-          ${this.t("clearSelectedFlags")} ${this.selectedItemsCount}
-        </md-menu-item>
-        <md-menu-item
-          ?hidden="${this.userId != undefined}"
-          @click="${this._blockSelected}"
-        >
-          ${this.t("blockSelectedContent")} ${this.selectedItemsCount}
-        </md-menu-item>
-        <md-menu-item
-          ?hidden="${!this.userId}"
-          @click="${this._anonymizeSelected}"
-        >
-          ${this.t("anonymizeSelectedContent")} ${this.selectedItemsCount}
-        </md-menu-item>
-        <md-menu-item @click="${this._deleteSelected}">
-          ${this.t("deleteSelectedContent")} ${this.selectedItemsCount}
-        </md-menu-item>
-      </md-menu>
-    `,root);
+    return render(
+      html`
+        <div style="position: relative;">
+          <md-icon-button
+            id="selected-items-anchor"
+            .ariaLabel="${this.t("openSelectedItemsMenu")}"
+            icon="more_vert"
+            @click="${this._openSelectedMenu}"
+          ></md-icon-button>
+          <md-menu
+            id="selectedItemsMenu"
+            class="helpButton"
+            positioning="popover"
+            .menuCorner="${Corner.START_END}"
+            anchor="selected-items-anchor"
+            ?disabled="${this.selectedItemsEmpty}"
+            @opened="${this._refreshGridAsyncDelay}"
+          >
+            <md-menu-item
+              ?hidden="${this.userId != undefined}"
+              @click="${this._approveSelected}"
+            >
+              ${this.t("approveSelectedContent")} ${this.selectedItemsCount}
+            </md-menu-item>
+            <md-menu-item
+              ?hidden="${!this.onlyFlaggedItems}"
+              @click="${this._clearSelectedFlags}"
+            >
+              ${this.t("clearSelectedFlags")} ${this.selectedItemsCount}
+            </md-menu-item>
+            <md-menu-item
+              ?hidden="${this.userId != undefined}"
+              @click="${this._blockSelected}"
+            >
+              ${this.t("blockSelectedContent")} ${this.selectedItemsCount}
+            </md-menu-item>
+            <md-menu-item
+              ?hidden="${!this.userId}"
+              @click="${this._anonymizeSelected}"
+            >
+              ${this.t("anonymizeSelectedContent")} ${this.selectedItemsCount}
+            </md-menu-item>
+            <md-menu-item @click="${this._deleteSelected}">
+              ${this.t("deleteSelectedContent")} ${this.selectedItemsCount}
+            </md-menu-item>
+          </md-menu>
+        </div>
+      `,
+      root
+    );
   }
 
   renderAction(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
-    return render(html`
-      <md-menu class="helpButton" @opened="${this._refreshGridAsyncDelay}">
-        <md-icon-button
-          .ariaLabel="${this.t("openOneItemMenu")}"
-          icon="more_vert"
-          data-args="${item.id}"
-          @click="${this._setSelected}"
-          slot="trigger"
-        ></md-icon-button>
-        <md-menu-item
-          data-args="${item.id}"
-          data-model-class="${item.type}"
-          ?hidden="${this.userId != undefined}"
-          @click="${this._approve}"
-        >
-          ${this.t("approveContent")}
-        </md-menu-item>
-        <md-menu-item
-          data-args="${item.id}"
-          data-model-class="${item.type}"
-          ?hidden="${!this.onlyFlaggedItems}"
-          @click="${this._clearFlags}"
-        >
-          ${this.t("clearFlags")}
-        </md-menu-item>
-        <md-menu-item
-          data-args="${item.id}"
-          data-model-class="${item.type}"
-          ?hidden="${this.userId != undefined}"
-          @click="${this._block}"
-        >
-          ${this.t("blockContent")}
-        </md-menu-item>
-        <md-menu-item
-          data-args="${item.id}"
-          data-model-class="${item.type}"
-          ?hidden="${!this.userId}"
-          @click="${this._anonymize}"
-        >
-          ${this.t("anonymizeContent")}
-        </md-menu-item>
-        <md-menu-item
-          data-args="${item.id}"
-          data-model-class="${item.type}"
-          @click="${this._delete}"
-        >
-          ${this.t("deleteContent")}
-        </md-menu-item>
-      </md-menu>
-    `, root);
+    return render(
+      html`
+        <div style="position: relative;">
+          <md-icon-button
+            .ariaLabel="${this.t("openOneItemMenu")}"
+            icon="more_vert"
+            id="item-${item.id}-anchor"
+            data-args="${item.id}"
+            @click="${this._setSelected}"
+          ></md-icon-button>
+          <md-menu
+            id="itemMenu${item.id}"
+            class="helpButton"
+            positioning="popover"
+            .menuCorner="${Corner.START_END}"
+            anchor="item-${item.id}-anchor"
+            @opened="${this._refreshGridAsyncDelay}"
+          >
+            <md-menu-item
+              data-args="${item.id}"
+              data-model-class="${item.type}"
+              ?hidden="${this.userId != undefined}"
+              @click="${this._approve}"
+            >
+              ${this.t("approveContent")}
+            </md-menu-item>
+            <md-menu-item
+              data-args="${item.id}"
+              data-model-class="${item.type}"
+              ?hidden="${!this.onlyFlaggedItems}"
+              @click="${this._clearFlags}"
+            >
+              ${this.t("clearFlags")}
+            </md-menu-item>
+            <md-menu-item
+              data-args="${item.id}"
+              data-model-class="${item.type}"
+              ?hidden="${this.userId != undefined}"
+              @click="${this._block}"
+            >
+              ${this.t("blockContent")}
+            </md-menu-item>
+            <md-menu-item
+              data-args="${item.id}"
+              data-model-class="${item.type}"
+              ?hidden="${!this.userId}"
+              @click="${this._anonymize}"
+            >
+              ${this.t("anonymizeContent")}
+            </md-menu-item>
+            <md-menu-item
+              data-args="${item.id}"
+              data-model-class="${item.type}"
+              @click="${this._delete}"
+            >
+              ${this.t("deleteContent")}
+            </md-menu-item>
+          </md-menu>
+        </div>
+      `,
+      root
+    );
   }
 
   override render() {
@@ -1190,6 +1211,10 @@ export class YpContentModeration extends YpBaseElement {
     );
   }
 
+  _openSelectedMenu(_event: CustomEvent) {
+    (this.$$("#selectedItemsMenu") as MdMenu).open = true;
+  }
+
   _menuOpened() {
     this.allowGridEventsAfterMenuOpen = true;
   }
@@ -1204,6 +1229,9 @@ export class YpContentModeration extends YpBaseElement {
         (this.$$("#grid") as GridElement).selectItem(item);
       }
       this.allowGridEventsAfterMenuOpen = true;
+      setTimeout(() => {
+        (this.$$(`#itemMenu${itemFromEvent}`) as MdMenu).open = true;
+      });
       this._refreshGridAsync();
     }
   }
