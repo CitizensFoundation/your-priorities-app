@@ -515,7 +515,7 @@ export class YpContentModeration extends YpBaseElement {
             id="selected-items-anchor"
             .ariaLabel="${this.t("openSelectedItemsMenu")}"
             icon="more_vert"
-            @click="${this._openSelectedMenu}"
+            @click="${this._openSelectedMenu.bind(this)}"
           ></md-icon-button>
           <md-menu
             id="selectedItemsMenu"
@@ -524,33 +524,33 @@ export class YpContentModeration extends YpBaseElement {
             .menuCorner="${Corner.START_END}"
             anchor="selected-items-anchor"
             ?disabled="${this.selectedItemsEmpty}"
-            @opened="${this._refreshGridAsyncDelay}"
+            @opened="${this._refreshGridAsyncDelay.bind(this)}"
           >
             <md-menu-item
               ?hidden="${this.userId != undefined}"
-              @click="${this._approveSelected}"
+              @click="${this._approveSelected.bind(this)}"
             >
               ${this.t("approveSelectedContent")} ${this.selectedItemsCount}
             </md-menu-item>
             <md-menu-item
               ?hidden="${!this.onlyFlaggedItems}"
-              @click="${this._clearSelectedFlags}"
+              @click="${this._clearSelectedFlags.bind(this)}"
             >
               ${this.t("clearSelectedFlags")} ${this.selectedItemsCount}
             </md-menu-item>
             <md-menu-item
               ?hidden="${this.userId != undefined}"
-              @click="${this._blockSelected}"
+              @click="${this._blockSelected.bind(this)}"
             >
               ${this.t("blockSelectedContent")} ${this.selectedItemsCount}
             </md-menu-item>
             <md-menu-item
               ?hidden="${!this.userId}"
-              @click="${this._anonymizeSelected}"
+              @click="${this._anonymizeSelected.bind(this)}"
             >
               ${this.t("anonymizeSelectedContent")} ${this.selectedItemsCount}
             </md-menu-item>
-            <md-menu-item @click="${this._deleteSelected}">
+            <md-menu-item @click="${this._deleteSelected.bind(this)}">
               ${this.t("deleteSelectedContent")} ${this.selectedItemsCount}
             </md-menu-item>
           </md-menu>
@@ -570,7 +570,7 @@ export class YpContentModeration extends YpBaseElement {
             icon="more_vert"
             id="item-${item.id}-anchor"
             data-args="${item.id}"
-            @click="${this._setSelected}"
+            @click="${this._setSelected.bind(this)}"
           ></md-icon-button>
           <md-menu
             id="itemMenu${item.id}"
@@ -578,13 +578,13 @@ export class YpContentModeration extends YpBaseElement {
             positioning="popover"
             .menuCorner="${Corner.START_END}"
             anchor="item-${item.id}-anchor"
-            @opened="${this._refreshGridAsyncDelay}"
+            @opened="${this._refreshGridAsyncDelay.bind(this)}"
           >
             <md-menu-item
               data-args="${item.id}"
               data-model-class="${item.type}"
               ?hidden="${this.userId != undefined}"
-              @click="${this._approve}"
+              @click="${this._approve.bind(this)}"
             >
               ${this.t("approveContent")}
             </md-menu-item>
@@ -592,7 +592,7 @@ export class YpContentModeration extends YpBaseElement {
               data-args="${item.id}"
               data-model-class="${item.type}"
               ?hidden="${!this.onlyFlaggedItems}"
-              @click="${this._clearFlags}"
+              @click="${this._clearFlags.bind(this)}"
             >
               ${this.t("clearFlags")}
             </md-menu-item>
@@ -600,7 +600,7 @@ export class YpContentModeration extends YpBaseElement {
               data-args="${item.id}"
               data-model-class="${item.type}"
               ?hidden="${this.userId != undefined}"
-              @click="${this._block}"
+              @click="${this._block.bind(this)}"
             >
               ${this.t("blockContent")}
             </md-menu-item>
@@ -608,14 +608,14 @@ export class YpContentModeration extends YpBaseElement {
               data-args="${item.id}"
               data-model-class="${item.type}"
               ?hidden="${!this.userId}"
-              @click="${this._anonymize}"
+              @click="${this._anonymize.bind(this)}"
             >
               ${this.t("anonymizeContent")}
             </md-menu-item>
             <md-menu-item
               data-args="${item.id}"
               data-model-class="${item.type}"
-              @click="${this._delete}"
+              @click="${this._delete.bind(this)}"
             >
               ${this.t("deleteContent")}
             </md-menu-item>
@@ -664,7 +664,7 @@ export class YpContentModeration extends YpBaseElement {
             .ariaLabel="${this.t("reload")}"
             icon="autorenew"
             class="closeButton"
-            @click="${this._reload}"
+            @click="${this._reload.bind(this)}"
           ><md-icon>autorenew</md-icon></md-icon-button>
         </div>
       </div>
@@ -676,7 +676,7 @@ export class YpContentModeration extends YpBaseElement {
         multi-sort="${this.multiSortEnabled}"
         .activeItem="${this.activeItem}"
         .ariaLabel="${this.headerText}"
-         @active-item-changed="${this._onActiveItemChanged}"
+         @active-item-changed="${this._onActiveItemChanged.bind(this)}"
         .rowDetailsRenderer="${this.renderItemDetail.bind(this)}"
         .items="${this.items}"
         .selectedItems="${this.selectedItems as Array<unknown>}"
