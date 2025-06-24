@@ -122,7 +122,7 @@ export class YpAppUser extends YpCodeBase {
   }
 
   getBrowserId() {
-    var currentId = localStorage.getItem("aoi-brid");
+    var currentId = localStorage.getItem("yp-brid");
 
     if (!currentId) {
       currentId = this._generateRandomString(32);
