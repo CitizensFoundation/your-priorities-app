@@ -26,7 +26,6 @@ import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
 import { domainIncludes } from "../../services/engine/moderation/get_moderation_items.cjs";
 
-
 interface YpRequest extends express.Request {
   ypDomain?: any;
   ypCommunity?: any;
@@ -511,6 +510,10 @@ export class PolicySynthAgentsController {
         agentId,
         action
       );
+      if (action === "start") {
+        await this.agentQueueManager.clearAgentStatusMessages(agentId);
+        log.debug(`Cleared status messages for agent ${agentId}`);
+      }
       res.json({ message });
     } catch (error) {
       log.error(`Error ${action}ing agent:`, error);

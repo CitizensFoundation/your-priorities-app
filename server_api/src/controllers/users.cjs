@@ -2408,7 +2408,7 @@ router.get('/auth/oidc/callback', function(req, res) {
 });
 
 router.get('/auth/audkenni/callback', async function(req, res) {
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 200));
   req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
       log.error("Error from Audkenni login", { err: error });
