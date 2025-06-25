@@ -13,18 +13,18 @@ if (postId && officialStatus) {
         if (post) {
             post.official_status = officialStatus;
             post.save().then(() => {
-                console.log("Done changing status: " + officialStatus);
+                log.info("Done changing status: " + officialStatus);
                 process.exit();
             });
         }
         else {
-            console.error("No post");
+            log.error("No post");
             process.exit();
         }
     });
 }
 else {
-    console.error("Nothing is done!");
+    log.error("Nothing is done!");
     process.exit();
 }
 export {};

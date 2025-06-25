@@ -4,6 +4,7 @@ import { Headers } from "node-fetch";
 import { v4 as uuidv4 } from "uuid";
 import models from "../../../models/index.cjs";
 import { setJobError, updateUploadJobStatus, uploadToS3, } from "./commonUtils.js";
+import log from "../../../utils/loggerTs.js";
 const dbModels = models;
 const Image = dbModels.Image;
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST; // Your API host
@@ -18,16 +19,16 @@ async function fetchChoices(questionId, utmSource) {
             method: "GET",
             headers: defaultAuthHeader,
         });
-        console.log(url);
+        log.info(url);
         if (!response.ok) {
-            console.error(response.statusText);
+            log.error(response.statusText);
             throw new Error("Fetching choices failed.");
         }
         const choices = (await response.json());
         return choices;
     }
     catch (error) {
-        console.error("Error fetching choices:", error);
+        log.error("Error fetching choices:", error);
         throw error;
     }
 }
@@ -42,14 +43,14 @@ async function fetchVotes(questionId, choiceId, utmSource) {
             headers: defaultAuthHeader,
         });
         if (!response.ok) {
-            console.error(response.statusText);
+            log.error(response.statusText);
             throw new Error("Fetching votes failed.");
         }
         const votes = (await response.json());
         return votes;
     }
     catch (error) {
-        console.error("Error fetching votes:", error);
+        log.error("Error fetching votes:", error);
         throw error;
     }
 }
@@ -64,9 +65,9 @@ function calculateElo(rating1, rating2, score1, score2) {
 export async function exportChoiceVotes(workPackage, done) {
     try {
         await updateUploadJobStatus(workPackage.jobId, 5);
-        console.log(`Exporting choice votes for question ${workPackage.questionId} with utm_source ${workPackage.utmSource}`);
+        log.info(`Exporting choice votes for question ${workPackage.questionId} with utm_source ${workPackage.utmSource}`);
         const choices = (await fetchChoices(workPackage.questionId, workPackage.utmSource));
-        console.log(`Found ${choices.length} choices`);
+        log.info(`Found ${choices.length} choices`);
         const workbook = new ExcelJS.Workbook();
         const choicesSheet = workbook.addWorksheet("Choices");
         const winningVotesSheet = workbook.addWorksheet("Winning Votes");
@@ -129,7 +130,7 @@ export async function exportChoiceVotes(workPackage, done) {
                 choice.user_created ? "User" : "Seed",
             ]);
             votes.winning_votes.forEach((vote) => {
-                console.log(`${vote.tracking ? JSON.stringify(vote.tracking) : ""}`);
+                log.info(`${vote.tracking ? JSON.stringify(vote.tracking) : ""}`);
                 winningVotesSheet.addRow([
                     vote.id,
                     vote.voter_id,
@@ -199,33 +200,33 @@ export async function exportChoiceVotes(workPackage, done) {
             // Note: Adjust the cell reference as needed
             if (eloRating) {
                 choicesSheet.getCell(`H${i + 2}`).value = Math.round(eloRating);
-                console.log(`Choice ${choice.id} has elo rating ${Math.round(eloRating)}`);
+                log.info(`Choice ${choice.id} has elo rating ${Math.round(eloRating)}`);
             }
             else {
-                console.error(`Choice ${choice.id} has no elo rating`);
+                log.error(`Choice ${choice.id} has no elo rating`);
             }
         });
         // Generate and upload the workbook to S3
         const buffer = await workbook.xlsx.writeBuffer();
         const filename = `choice_votes_${uuidv4()}.xlsx`;
-        console.log(`Uploading choice votes to S3: ${filename}`);
+        log.info(`Uploading choice votes to S3: ${filename}`);
         uploadToS3(workPackage.jobId, `${workPackage.userId}`, filename, workPackage.exportType, buffer, async (error, url) => {
             if (error) {
-                console.error("Error uploading choice votes to S3:", error);
+                log.error("Error uploading choice votes to S3:", error);
                 done(error, url);
             }
             else {
-                console.log(`Uploaded choice votes to S3: ${url}`);
+                log.info(`Uploaded choice votes to S3: ${url}`);
                 await updateUploadJobStatus(workPackage.jobId, 100, {
                     reportUrl: url,
                 });
                 done(undefined, url);
             }
         });
-        console.log(`Successfully exported and uploaded choice votes for question ${workPackage.questionId}`);
+        log.info(`Successfully exported and uploaded choice votes for question ${workPackage.questionId}`);
     }
     catch (error) {
-        console.error("Error exporting choice votes:", error);
+        log.error("Error exporting choice votes:", error);
         await setJobError(workPackage.jobId, "Error exporting choice votes");
         done(error);
     }

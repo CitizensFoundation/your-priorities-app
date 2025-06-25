@@ -37,7 +37,7 @@ const searchAndReplaceTranslation = (textType, id, content, done) => {
             if (newContent !== result.content) {
                 result.set('content', newContent);
                 result.save().then(() => {
-                    console.log(`Updated ${result.index_key} to ${result.content}`);
+                    log.info(`Updated ${result.index_key} to ${result.content}`);
                     done();
                 }).catch(error => {
                     done(error);
@@ -48,7 +48,7 @@ const searchAndReplaceTranslation = (textType, id, content, done) => {
             }
         }
         else {
-            console.warn("Not found: " + indexKey);
+            log.warn("Not found: " + indexKey);
             done();
         }
     }).catch((error) => {
@@ -173,8 +173,8 @@ async.series([
     },
 ], error => {
     if (error)
-        console.error(error);
-    console.log(`All done with ${changeCount} changes`);
+        log.error(error);
+    log.info(`All done with ${changeCount} changes`);
     process.exit();
 });
 export {};

@@ -4,6 +4,7 @@ import { YpAgentProduct } from "../../../../models/agentProduct.js";
 import { YpAgentProductBundle } from "../../../../models/agentProductBundle.js";
 import { YpAgentProductRun } from "../../../../models/agentProductRun.js";
 import { Op } from "sequelize";
+import log from "../../../../../utils/loggerTs.js";
 export class SubscriptionModels {
     constructor(assistant) {
         this.assistant = assistant;
@@ -45,7 +46,7 @@ export class SubscriptionModels {
                     },
                 ],
             });
-            console.log(`-----------XXXXXXXXXXXXXXXx----------_> ${JSON.stringify(availablePlans, null, 2)}`);
+            log.info(`-----------XXXXXXXXXXXXXXXx----------_> ${JSON.stringify(availablePlans, null, 2)}`);
             return {
                 availablePlans: availablePlans.map((plan) => ({
                     subscriptionPlanId: plan.id,
@@ -72,7 +73,7 @@ export class SubscriptionModels {
             };
         }
         catch (error) {
-            console.error("Error loading available subscription plans:", error);
+            log.error("Error loading available subscription plans:", error);
             return {
                 availablePlans: [],
                 availableBundle: "No bundle available",
@@ -203,7 +204,7 @@ export class SubscriptionModels {
             };
         }
         catch (error) {
-            console.error("Error loading agent status:", error);
+            log.error("Error loading agent status:", error);
             return {
                 availableSubscriptions: [],
                 runningAgents: [],
@@ -249,7 +250,7 @@ export class SubscriptionModels {
             const errorMessage = error instanceof Error
                 ? error.message
                 : "Failed to unsubscribe from agent plan";
-            console.error(`Database error in unsubscribeFromAgentPlan: ${errorMessage}`);
+            log.error(`Database error in unsubscribeFromAgentPlan: ${errorMessage}`);
             return {
                 success: false,
                 error: errorMessage,
@@ -301,7 +302,7 @@ export class SubscriptionModels {
                     error: "User already subscribed to this plan",
                 };
             }
-            console.log(`-------> subscribing to agent plan ${subscriptionPlanId} for user ${userId}`);
+            log.info(`-------> subscribing to agent plan ${subscriptionPlanId} for user ${userId}`);
             const subscription = await YpSubscription.create({
                 subscription_plan_id: subscriptionPlanId,
                 agent_product_id: agentProductId,
@@ -322,7 +323,7 @@ export class SubscriptionModels {
             const errorMessage = error instanceof Error
                 ? error.message
                 : "Failed to subscribe to agent plan";
-            console.error(`Database error in subscribeToAgentPlan: ${errorMessage}`);
+            log.error(`Database error in subscribeToAgentPlan: ${errorMessage}`);
             return {
                 success: false,
                 error: errorMessage,

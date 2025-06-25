@@ -2,6 +2,7 @@ import { jsonrepair } from "jsonrepair";
 import { OpenAI } from "openai";
 import { YpLanguages } from "../../utils/ypLanguages.js";
 import * as cheerio from "cheerio";
+import log from "../../utils/loggerTs.js";
 export class YpLlmTranslation {
     constructor() {
         this.modelName = "gpt-4o";
@@ -246,7 +247,7 @@ export class YpLlmTranslation {
         const moderationResponse = await this.openaiClient.moderations.create({
             input: content,
         });
-        console.log("Moderation response:", moderationResponse);
+        log.info("Moderation response:", moderationResponse);
         const flagged = moderationResponse.results[0].flagged;
         return flagged;
     }
@@ -254,7 +255,7 @@ export class YpLlmTranslation {
         try {
             const originalStrings = this.extractHtmlStrings(htmlToTranslate);
             if (originalStrings.length === 0) {
-                console.warn("No HTML strings to translate");
+                log.warn("No HTML strings to translate");
                 return htmlToTranslate;
             }
             const batchSize = 10;
@@ -266,7 +267,7 @@ export class YpLlmTranslation {
                     translatedStrings.push(...translatedBatch);
                 }
                 else {
-                    console.error("Failed to translate batch:", batch);
+                    log.error("Failed to translate batch:", batch);
                     return undefined;
                 }
             }
@@ -275,27 +276,27 @@ export class YpLlmTranslation {
             return translatedHtml;
         }
         catch (error) {
-            console.error("Error in getHtmlTranslation:", error);
+            log.error("Error in getHtmlTranslation:", error);
             return undefined;
         }
     }
     async getOneTranslation(languageIsoCode, stringToTranslate) {
         try {
-            console.log(`getOneTranslation: ${stringToTranslate} ${languageIsoCode}`);
+            log.info(`getOneTranslation: ${stringToTranslate} ${languageIsoCode}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             return (await this.callSimpleLlm(languageName, stringToTranslate, false, this.renderOneTranslationSystemMessage, this.renderOneTranslationUserMessage));
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            log.error("Error in getAnswerIdeas:", error);
             return undefined;
         }
     }
     async getListTranslation(languageIsoCode, stringsToTranslate) {
         try {
-            console.log(`getOneTranslation: ${languageIsoCode}`);
+            log.info(`getOneTranslation: ${languageIsoCode}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             if (await this.getModerationFlag(stringsToTranslate.join(" "))) {
-                console.error("Flagged:", stringsToTranslate);
+                log.error("Flagged:", stringsToTranslate);
                 return null;
             }
             else {
@@ -303,16 +304,16 @@ export class YpLlmTranslation {
             }
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            log.error("Error in getAnswerIdeas:", error);
             return undefined;
         }
     }
     async getChoiceTranslation(languageIsoCode, answerContent, maxCharactersInTranslation = 140) {
         try {
-            console.log(`async getChoiceTranslation: ${answerContent}`);
+            log.info(`async getChoiceTranslation: ${answerContent}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             if (await this.getModerationFlag(answerContent)) {
-                console.error("Flagged:", answerContent);
+                log.error("Flagged:", answerContent);
                 return null;
             }
             else {
@@ -326,16 +327,16 @@ export class YpLlmTranslation {
             }
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            log.error("Error in getAnswerIdeas:", error);
             return undefined;
         }
     }
     async getQuestionTranslation(languageIsoCode, question, maxCharactersInTranslation = 300) {
         try {
-            console.log(`getQuestionTranslation: ${question} ${languageIsoCode}`);
+            log.info(`getQuestionTranslation: ${question} ${languageIsoCode}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             if (await this.getModerationFlag(question)) {
-                console.error("Flagged:", question);
+                log.error("Flagged:", question);
                 return null;
             }
             else {
@@ -349,7 +350,7 @@ export class YpLlmTranslation {
             }
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            log.error("Error in getAnswerIdeas:", error);
             return undefined;
         }
     }
@@ -369,16 +370,16 @@ export class YpLlmTranslation {
         let running = true;
         while (running) {
             try {
-                console.log(`Messages ${retries}:`, messages);
+                log.info(`Messages ${retries}:`, messages);
                 const results = await this.openaiClient.chat.completions.create({
                     model: this.modelName,
                     messages,
                     max_tokens: this.maxTokens,
                     temperature: this.temperature,
                 });
-                console.log("Results:", results);
+                log.info("Results:", results);
                 let llmOutput = results.choices[0].message.content;
-                console.log("Return text:", llmOutput);
+                log.info("Return text:", llmOutput);
                 if (parseJson) {
                     if (llmOutput) {
                         llmOutput = llmOutput.replace(/```json/g, "");
@@ -386,7 +387,7 @@ export class YpLlmTranslation {
                         return JSON.parse(jsonrepair(llmOutput));
                     }
                     {
-                        console.error("No content in response");
+                        log.error("No content in response");
                         return undefined;
                     }
                 }
@@ -395,7 +396,7 @@ export class YpLlmTranslation {
                 }
             }
             catch (error) {
-                console.error("Error in getChoiceTranslation:", error);
+                log.error("Error in getChoiceTranslation:", error);
                 retries++;
                 if (retries > maxRetries) {
                     running = false;
@@ -405,7 +406,7 @@ export class YpLlmTranslation {
         }
     }
     async callSchemaLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, toTranslate, maxCharactersInTranslation, systemRenderer, userRenderer) {
-        console.log("Call schema LLM:", jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, toTranslate, maxCharactersInTranslation);
+        log.info("Call schema LLM:", jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, toTranslate, maxCharactersInTranslation);
         const messages = [
             {
                 role: "system",
@@ -421,16 +422,16 @@ export class YpLlmTranslation {
         let running = true;
         while (running) {
             try {
-                console.log(`Messages ${retries}:`, messages);
+                log.info(`Messages ${retries}:`, messages);
                 const results = await this.openaiClient.chat.completions.create({
                     model: this.modelName,
                     messages,
                     max_tokens: this.maxTokens,
                     temperature: this.temperature,
                 });
-                console.log("Results:", results);
+                log.info("Results:", results);
                 let textJson = results.choices[0].message.content;
-                console.log("Text JSON:", textJson);
+                log.info("Text JSON:", textJson);
                 if (textJson) {
                     textJson = textJson.replace(/```json/g, "");
                     textJson = textJson.replace(/```/g, "");
@@ -439,28 +440,28 @@ export class YpLlmTranslation {
                         if (maxCharactersInTranslation &&
                             translationData.translatedContent.length >
                                 maxCharactersInTranslation) {
-                            console.log("Translation too long retrying:", translationData.translatedContent);
+                            log.info("Translation too long retrying:", translationData.translatedContent);
                             messages[0].content = this.renderSchemaTryAgainSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo, translationData.translatedContent);
                             throw new Error("Translation too long");
                         }
                         running = false;
-                        console.log("Return text " + translationData.translatedContent);
+                        log.info("Return text " + translationData.translatedContent);
                         return translationData.translatedContent;
                     }
                     else {
                         this.temperature = Math.random() * 0.99;
-                        console.log("No content in response. Temperature set to: " + this.temperature);
+                        log.info("No content in response. Temperature set to: " + this.temperature);
                         throw new Error("No content in response");
                     }
                 }
                 else {
                     this.temperature = Math.random() * 0.99;
-                    console.log("No content in response. Temperature set to:" + this.temperature);
+                    log.info("No content in response. Temperature set to:" + this.temperature);
                     throw new Error("No content in response");
                 }
             }
             catch (error) {
-                console.error("Error in callSchemaLlm:", error);
+                log.error("Error in callSchemaLlm:", error);
                 retries++;
                 if (retries > maxRetries) {
                     running = false;

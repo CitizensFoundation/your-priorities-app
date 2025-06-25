@@ -1,6 +1,7 @@
 "use strict";
 var models = require("../models/index.cjs");
 var async = require("async");
+const log = require('./logger.cjs');
 const { cloneTranslationForGroup, } = require("../services/utils/translation_cloning.cjs");
 const { cloneTranslationForCommunity, } = require("../services/utils/translation_cloning.cjs");
 const { cloneTranslationForPoint, } = require("../services/utils/translation_cloning.cjs");
@@ -132,7 +133,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             }).then(function (postIn) {
                 oldPost = postIn;
                 if (!postIn) {
-                    console.error("No post in");
+                    log.error("No post in");
                     callback("no post");
                 }
                 else {
@@ -371,7 +372,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                 }
                             },
                         ], function (error) {
-                            console.log("Have copied post to group id");
+                            log.info("Have copied post to group id");
                             callback(error);
                         });
                     })
@@ -527,7 +528,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                                 newActivity
                                                     .save()
                                                     .then(function (results) {
-                                                    console.log("Have changed group and all activity: " +
+                                                    log.info("Have changed group and all activity: " +
                                                         newActivity.id);
                                                     activitesSeriesCallback();
                                                 })
@@ -548,7 +549,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                             });
                         });
                     }, function (error) {
-                        console.log("Have changed group and all for point");
+                        log.info("Have changed group and all for point");
                         callback();
                     });
                 });
@@ -578,7 +579,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                         newActivity
                             .save()
                             .then(function (results) {
-                            console.log("Have changed group and all activity: " + newActivity.id);
+                            log.info("Have changed group and all activity: " + newActivity.id);
                             innerSeriesCallback();
                         })
                             .catch((error) => {
@@ -597,9 +598,9 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             }
         },
     ], function (error) {
-        console.log("Done copying post id " + fromPostId);
+        log.info("Done copying post id " + fromPostId);
         if (error)
-            console.error(error);
+            log.error(error);
         done(error, newPost);
     });
 };
@@ -959,7 +960,7 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                             }
                         },
                     ], function (error) {
-                        console.log("Have copied post to group id");
+                        log.info("Have copied post to group id");
                         callback(error);
                     });
                 });
@@ -969,9 +970,9 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
             });
         },
     ], function (error) {
-        console.log("Done copying group");
+        log.info("Done copying group");
         if (error)
-            console.error(error);
+            log.error(error);
         done(error, newGroup);
     });
 };
@@ -1206,7 +1207,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                             }
                         },
                     ], function (error) {
-                        console.log("Have copied community");
+                        log.info("Have copied community");
                         callback(error);
                     });
                 });
@@ -1216,9 +1217,9 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
             });
         },
     ], function (error) {
-        console.log("Done copying community", newCommunity);
+        log.info("Done copying community", newCommunity);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error);
         }
         else {
@@ -1253,13 +1254,13 @@ const copyCommunityWithEverything = (communityId, toDomainId, options, done) => 
         copyPoints: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
-            console.log(newCommunity.id);
+            log.info(newCommunity.id);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error, newCommunity);
         }
         else {
-            //console.log("Done for new community "+ńewCommunity.id);
+            //log.info("Done for new community "+ńewCommunity.id);
             done(null, newCommunity);
         }
     });
@@ -1277,13 +1278,13 @@ const deepCopyCommunityOnlyStructureWithAdminsAndPosts = (communityId, toDomainI
         skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
-            console.log(newCommunity.id);
+            log.info(newCommunity.id);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error, newCommunity);
         }
         else {
-            //console.log("Done for new community "+ńewCommunity.id);
+            //log.info("Done for new community "+ńewCommunity.id);
             done(null, newCommunity);
         }
     });
@@ -1299,15 +1300,15 @@ const copyCommunityNoUsersNoEndorsementsNoPoints = (communityId, toDomainId, don
         skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
-            console.log(newCommunity.id);
+            log.info(newCommunity.id);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error, newCommunity);
         }
         else {
             recountCommunity(newCommunity.id, (recountError) => {
                 if (recountError) {
-                    console.error(error);
+                    log.error(error);
                     done(recountError, newCommunity);
                 }
                 else {
@@ -1328,13 +1329,13 @@ const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
         skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
-            console.log(newCommunity.id);
+            log.info(newCommunity.id);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error, newCommunity);
         }
         else {
-            //console.log("Done for new community "+ńewCommunity.id);
+            //log.info("Done for new community "+ńewCommunity.id);
             done(null, newCommunity);
         }
     });
@@ -1350,13 +1351,13 @@ const copyCommunityNoUsersNoEndorsementsOneGroup = (communityId, groupId, toDoma
         skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
-            console.log(newCommunity.id);
+            log.info(newCommunity.id);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error, newCommunity);
         }
         else {
-            //console.log("Done for new community "+ńewCommunity.id);
+            //log.info("Done for new community "+ńewCommunity.id);
             done(null, newCommunity);
         }
     });
@@ -1373,13 +1374,13 @@ const copyCommunityOnlyGroups = (communityId, toDomainId, done) => {
         skipActivities: true,
     }, null, (error, newCommunity) => {
         if (newCommunity)
-            console.log(newCommunity.id);
+            log.info(newCommunity.id);
         if (error) {
-            console.error(error);
+            log.error(error);
             done(error, newCommunity);
         }
         else {
-            //console.log("Done for new community "+ńewCommunity.id);
+            //log.info("Done for new community "+ńewCommunity.id);
             done(null, newCommunity);
         }
     });

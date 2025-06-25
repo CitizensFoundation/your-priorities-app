@@ -6,6 +6,7 @@ const Excel = require("exceljs");
 const setJobError = require("../../reports/common_utils.cjs").setJobError;
 const uploadToS3 = require("../../reports/common_utils.cjs").uploadToS3;
 const sanitizeFilename = require("sanitize-filename");
+const log = require("../../../../utils/logger.cjs");
 const formatWorksheet = (worksheet) => {
     worksheet.getRow(1).font = { bold: true };
     //  worksheet.properties.defaultRowHeight = 20;
@@ -288,7 +289,7 @@ class FraudAuditReport {
                 }
             }
             catch (error) {
-                console.error(error);
+                log.error(error);
                 setJobError(this.workPackage.jobId, "errorFraudAuditReportGeneration", error, (dbError) => {
                     reject(dbError || error);
                 });

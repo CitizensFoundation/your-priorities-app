@@ -1,5 +1,6 @@
 import { YpAgentProduct } from "../../agentProduct.js";
 import { YpSubscriptionPlan } from "../../subscriptionPlan.js";
+import log from "../../../../utils/loggerTs.js";
 async function setupAgentProductsConfiguration() {
     const competitionAgentWorkflow = {
         currentStepIndex: 0,
@@ -69,7 +70,7 @@ async function setupAgentProductsConfiguration() {
         await competitorAgentFreeTrial.save();
     }
     else {
-        console.log("CompetitorAgentFreeTrial not found");
+        log.info("CompetitorAgentFreeTrial not found");
     }
     const competitorAgentPaid = await YpAgentProduct.findByPk(2);
     if (competitorAgentPaid) {
@@ -186,7 +187,7 @@ async function setupAgentProductsConfiguration() {
         await fundingSubscriptionPlan.save();
     }
     else {
-        console.log("FundingSubscriptionPlan not found");
+        log.info("FundingSubscriptionPlan not found");
     }
     // Update subscription plans 2-5 to coming_soon
     for (let planId = 2; planId <= 5; planId++) {
@@ -200,7 +201,7 @@ async function setupAgentProductsConfiguration() {
             await subscriptionPlan.save();
         }
         else {
-            console.log(`SubscriptionPlan ${planId} not found`);
+            log.info(`SubscriptionPlan ${planId} not found`);
         }
     }
     for (let planId = 1; planId <= 2; planId++) {
@@ -223,7 +224,7 @@ async function setupAgentProductsConfiguration() {
             await subscriptionPlan.save();
         }
         else {
-            console.log(`SubscriptionPlan ${planId} not found`);
+            log.info(`SubscriptionPlan ${planId} not found`);
         }
     }
 }

@@ -1,7 +1,7 @@
 "use strict";
 var models = require("../../../models/index.cjs");
 var async = require('async');
-var log = require('../../utils/logger.cjs');
+var log = require('../../../utils/logger.cjs');
 var _ = require('lodash');
 var getRecommendationFor = require('../recommendations/events_manager.cjs').getRecommendationFor;
 var getProcessedRange = require('./news_feeds_utils.cjs').getProcessedRange;

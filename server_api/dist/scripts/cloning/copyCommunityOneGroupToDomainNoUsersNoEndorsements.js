@@ -8,10 +8,10 @@ const groupId = process.argv[3];
 var domainId = process.argv[4];
 copyCommunityNoUsersNoEndorsementsOneGroup(communityId, groupId, domainId, (error) => {
     if (error) {
-        console.error(error);
+        log.error(error);
     }
     else {
-        console.log("Done with copyCommunityNoUsersNoEndorsementsOneGroup");
+        log.info("Done with copyCommunityNoUsersNoEndorsementsOneGroup");
     }
     process.exit();
 });

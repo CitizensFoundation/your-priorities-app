@@ -14,12 +14,12 @@ if (modelType === "post") {
         if (post) {
             post.language = language;
             post.save().then(() => {
-                console.log("Done");
+                log.info("Done");
                 process.exit();
             });
         }
         else {
-            console.error("No post");
+            log.error("No post");
             process.exit();
         }
     });
@@ -34,12 +34,12 @@ else if (modelType === "point") {
         if (point) {
             point.language = language;
             point.save().then(() => {
-                console.log("Done");
+                log.info("Done");
                 process.exit();
             });
         }
         else {
-            console.error("No point");
+            log.error("No point");
             process.exit();
         }
     });

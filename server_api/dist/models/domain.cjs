@@ -121,7 +121,7 @@ module.exports = (sequelize, DataTypes) => {
     ];
     Domain.getLoginProviders = (req, domainIn, callback) => {
         const providers = [];
-        console.log(`-------------------> getLoginProviders Checking local keys for domain ${domainIn.id}`);
+        log.info(`-------------------> getLoginProviders Checking local keys for domain ${domainIn.id}`);
         providers.push({
             name: "local-strategy",
             provider: "local",
@@ -135,7 +135,7 @@ module.exports = (sequelize, DataTypes) => {
             urlCallback: "http://localhost/callback/users/auth/local-strategy-1/callback",
         });
         async.eachSeries([domainIn], (domain, seriesCallback) => {
-            console.log(`================> Processing domain ${domain.id} ${process.env.STAGING_SETUP ? "staging" : "production"}`);
+            log.info(`================> Processing domain ${domain.id} ${process.env.STAGING_SETUP ? "staging" : "production"}`);
             let callbackDomainName;
             if (process.env.STAGING_SETUP) {
                 if (domain.domain_name === "betrireykjavik.is") {
@@ -178,7 +178,7 @@ module.exports = (sequelize, DataTypes) => {
                     callbackDomainName = "socialcare." + domain.domain_name;
                 }
                 else if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
-                    console.log("Using custom login back name", {
+                    log.info("Using custom login back name", {
                         custom: process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME,
                     });
                     callbackDomainName =
@@ -198,7 +198,7 @@ module.exports = (sequelize, DataTypes) => {
                     }
                 }
             }
-            console.log(`Checking facebook keys for domain ${domain.id}`);
+            log.info(`Checking facebook keys for domain ${domain.id}`);
             if (domain.secret_api_keys &&
                 domain.secret_api_keys.facebook &&
                 checkValidKeys(domain.secret_api_keys.facebook)) {
@@ -218,13 +218,13 @@ module.exports = (sequelize, DataTypes) => {
                         "/api/users/auth/facebook/callback",
                 });
             }
-            console.log(`Checking oidc keys for domain ${domain.id}`);
-            //console.log(JSON.stringify(domain.secret_api_keys, null, 2));
+            log.info(`Checking oidc keys for domain ${domain.id}`);
+            //log.info(JSON.stringify(domain.secret_api_keys, null, 2));
             //callbackDomainName = "betrireykjavik.is";
             if (domain.secret_api_keys &&
                 domain.secret_api_keys.oidc &&
                 checkValidKeys(domain.secret_api_keys.oidc)) {
-                console.log(`---------------------> OIDC keys found for domain ${domain.id}`);
+                log.info(`---------------------> OIDC keys found for domain ${domain.id}`);
                 providers.push({
                     name: "oidc-strategy-" + domain.id,
                     provider: "oidc",

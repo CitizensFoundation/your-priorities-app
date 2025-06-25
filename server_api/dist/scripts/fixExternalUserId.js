@@ -14,9 +14,9 @@ models.User.findAll({
             callback();
         }
     }, (error) => {
-        console.log("Done");
+        log.info("Done");
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 });

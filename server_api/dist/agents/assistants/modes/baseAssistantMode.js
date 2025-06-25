@@ -1,4 +1,5 @@
 // baseAssistantMode.ts
+import log from "../../../utils/loggerTs.js";
 export class BaseAssistantMode {
     constructor(assistant) {
         this.assistant = assistant;
@@ -30,7 +31,7 @@ export class BaseAssistantMode {
         if (!this.memory.currentMode) {
             return "";
         }
-        console.log(`renderCommon: currentConversationMode ${this.memory.currentMode}`);
+        log.info(`renderCommon: currentConversationMode ${this.memory.currentMode}`);
         let modeInfo = `<currentConversationMode>${this.memory.currentMode}</currentConversationMode>\n`;
         const currentAgentProduct = await this.assistant.getCurrentAgentProduct();
         const currentAgentWorkflow = await this.assistant.getCurrentAgentWorkflow();
@@ -49,6 +50,6 @@ export class BaseAssistantMode {
                 modeInfo += `<nextWorkflowStep>none</nextWorkflowStep>\n`;
             }
         }
-        console.log(`modeInfo: ${modeInfo}`);
+        log.info(`modeInfo: ${modeInfo}`);
     }
 }

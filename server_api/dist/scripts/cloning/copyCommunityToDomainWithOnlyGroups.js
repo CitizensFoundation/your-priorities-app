@@ -8,16 +8,16 @@ const communityId = process.argv[2];
 var domainId = process.argv[3];
 copyCommunityOnlyGroups(communityId, domainId, (error, newCommunityId) => {
     if (error) {
-        console.error(error);
+        log.error(error);
         process.exit();
     }
     else {
         recountCommunity(newCommunityId.id, (error) => {
             if (error) {
-                console.error(error);
+                log.error(error);
             }
             else {
-                console.log("Done with copyCommunityOnlyGroups new community " + newCommunityId.id);
+                log.info("Done with copyCommunityOnlyGroups new community " + newCommunityId.id);
             }
             process.exit();
         });

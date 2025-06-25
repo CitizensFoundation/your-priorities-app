@@ -2,6 +2,7 @@
 const _ = require("lodash");
 const FraudGetEndorsements = require('./FraudGetEndorsements.cjs');
 const models = require("../../../../models/index.cjs");
+const log = require("../../../../utils/logger.cjs");
 class FraudGetRatings extends FraudGetEndorsements {
     constructor(workPackage) {
         super(workPackage);
@@ -132,7 +133,7 @@ class FraudGetRatings extends FraudGetEndorsements {
             return out;
         }
         else {
-            console.warn("Wrong type for e fraud check");
+            log.warn("Wrong type for e fraud check");
             return [];
         }
     }

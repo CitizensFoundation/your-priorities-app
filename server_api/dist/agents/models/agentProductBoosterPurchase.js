@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
+import log from "../../utils/loggerTs.js";
 export class YpAgentProductBoosterPurchase extends Model {
 }
 YpAgentProductBoosterPurchase.init({
@@ -38,7 +39,7 @@ YpAgentProductBoosterPurchase.init({
 });
 // Associations
 YpAgentProductBoosterPurchase.associate = (models) => {
-    console.log('YpAgentProductBoosterPurchase.associate');
+    log.info('YpAgentProductBoosterPurchase.associate');
     YpAgentProductBoosterPurchase.belongsTo(models.YpSubscriptionUser, {
         foreignKey: 'user_id',
         as: 'User'

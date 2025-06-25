@@ -164,26 +164,26 @@ if (newUserId && newUserId.length > 1) {
                 }
             ], (error) => {
                 if (error)
-                    console.error(error);
-                console.log("Done updating owners");
-                console.log("Posts: " + postsCount);
-                console.log("PostRevisions: " + postRevisionCount);
-                console.log("Points: " + pointsCount);
-                console.log("PointRevisions: " + pointRevisionCount);
+                    log.error(error);
+                log.info("Done updating owners");
+                log.info("Posts: " + postsCount);
+                log.info("PostRevisions: " + postRevisionCount);
+                log.info("Points: " + pointsCount);
+                log.info("PointRevisions: " + pointRevisionCount);
                 process.exit();
             });
         }
         else {
-            console.error("User not found");
+            log.error("User not found");
             process.exit();
         }
     }).catch(error => {
-        console.error(error);
+        log.error(error);
         process.exit();
     });
 }
 else {
-    console.error("No new user id provided");
+    log.error("No new user id provided");
     process.exit();
 }
 export {};

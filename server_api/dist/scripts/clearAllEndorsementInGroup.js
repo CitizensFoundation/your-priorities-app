@@ -22,13 +22,13 @@ models.Post.unscoped().findAll({
             async.eachSeries(post.Endorsements, (endorsement, innerCallback) => {
                 endorsement.deleted = true;
                 endorsement.save().then(() => {
-                    console.log(`Deleted endorsement for id ${endorsement.id}`);
+                    log.info(`Deleted endorsement for id ${endorsement.id}`);
                     innerCallback();
                 }).catch(error => {
                     innerCallback(error);
                 });
             }, (error) => {
-                console.log(`Cleared endorsement for post id ${post.id}`);
+                log.info(`Cleared endorsement for post id ${post.id}`);
                 callback(error);
             });
         }).catch(error => {
@@ -36,15 +36,15 @@ models.Post.unscoped().findAll({
         });
     }, (error) => {
         if (error) {
-            console.error(error);
+            log.error(error);
         }
         else {
-            console.log("Done clearing");
+            log.info("Done clearing");
         }
         process.exit();
     });
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

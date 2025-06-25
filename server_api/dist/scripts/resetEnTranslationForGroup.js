@@ -12,12 +12,12 @@ models.Post.findAll({
     async.forEachSeries(posts, (post, callback) => {
         post.language = null;
         post.save().then(() => {
-            console.log("Saving post id: " + post.id);
+            log.info("Saving post id: " + post.id);
             callback();
         });
     }, (error) => {
         if (error) {
-            console.error(error);
+            log.error(error);
         }
         else {
             models.Point.findAll({
@@ -29,13 +29,13 @@ models.Post.findAll({
                 async.forEachSeries(points, (point, callback) => {
                     point.language = null;
                     point.save().then(() => {
-                        console.log("Saving point id: " + point.id);
+                        log.info("Saving point id: " + point.id);
                         callback();
                     });
                 }, (error) => {
                     if (error)
-                        console.error(error);
-                    console.log("Done");
+                        log.error(error);
+                    log.info("Done");
                     process.exit();
                 });
             });

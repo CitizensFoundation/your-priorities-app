@@ -1,4 +1,5 @@
 import { OpenAI } from "openai";
+import log from "../../utils/loggerTs.js";
 const DEBUG = false;
 const url = process.env.REDIS_MEMORY_URL ||
     process.env.REDIS_URL ||
@@ -13,19 +14,19 @@ export class YpBaseChatBot {
     loadMemory() {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log("loadMemoryWithOwnership loadMemory: redisKey: ", this.redisKey);
+                log.info("loadMemoryWithOwnership loadMemory: redisKey: ", this.redisKey);
                 const memoryString = await this.redis.get(this.redisKey);
                 if (memoryString) {
                     const memory = JSON.parse(memoryString);
                     resolve(memory);
                 }
                 else {
-                    console.error("loadMemoryWithOwnership loadMemory: no memory found");
+                    log.error("loadMemoryWithOwnership loadMemory: no memory found");
                     resolve(undefined);
                 }
             }
             catch (error) {
-                console.error("loadMemoryWithOwnership loadMemory: Can't load memory from redis", error);
+                log.error("loadMemoryWithOwnership loadMemory: Can't load memory from redis", error);
                 resolve(undefined);
             }
         });
@@ -40,9 +41,9 @@ export class YpBaseChatBot {
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
         this.wsClients = wsClients;
-        console.log(`WebSockets: BaseChatBot constructor for ${this.wsClientId}`);
+        log.info(`WebSockets: BaseChatBot constructor for ${this.wsClientId}`);
         if (!this.wsClientSocket) {
-            console.error(`WebSockets: WS Client ${this.wsClientId} not found in streamWebSocketResponses`);
+            log.error(`WebSockets: WS Client ${this.wsClientId} not found in streamWebSocketResponses`);
         }
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
@@ -52,14 +53,14 @@ export class YpBaseChatBot {
         if (this.memory) {
             try {
                 await this.redis.set(this.redisKey, JSON.stringify(this.memory));
-                console.log(`Saved memory to redis: ${this.redisKey}`);
+                log.info(`Saved memory to redis: ${this.redisKey}`);
             }
             catch (error) {
-                console.log("Can't save memory to redis", error);
+                log.info("Can't save memory to redis", error);
             }
         }
         else {
-            console.error("Memory is not initialized");
+            log.error("Memory is not initialized");
         }
     }
     renderSystemPrompt() {
@@ -102,7 +103,7 @@ export class YpBaseChatBot {
     sendToClient(sender, message, type = "stream", uniqueToken = undefined, hiddenContextMessage = false) {
         try {
             if (process.env.WS_DEBUG) {
-                console.log(`sendToClient: ${JSON.stringify({ sender, type, message, hiddenContextMessage }, null, 2)}`);
+                log.info(`sendToClient: ${JSON.stringify({ sender, type, message, hiddenContextMessage }, null, 2)}`);
             }
             this.wsClientSocket.send(JSON.stringify({
                 sender,
@@ -116,7 +117,7 @@ export class YpBaseChatBot {
             this.lastSentToUserAt = new Date();
         }
         catch (error) {
-            console.error("Can't send message to client", error);
+            log.error("Can't send message to client", error);
         }
     }
     async streamWebSocketResponses(stream) {
@@ -138,7 +139,7 @@ export class YpBaseChatBot {
                 }
             }
             catch (error) {
-                console.error(error);
+                log.error(error);
                 this.sendToClient("assistant", "There has been an error, please retry", "error");
                 reject();
             }

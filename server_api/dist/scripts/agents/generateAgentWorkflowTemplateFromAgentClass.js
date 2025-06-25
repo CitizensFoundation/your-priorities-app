@@ -1,16 +1,17 @@
 import { initializeModels, PsAgentClass, PsAgent, PsAiModel, } from "@policysynth/agents/dbModels/index.js";
 import models from "../../models/index.cjs";
 import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
+import log from "../../utils/loggerTs.js";
 (async () => {
     const [domainIdArg, agentClassIdArg] = process.argv.slice(2);
     if (!domainIdArg || !agentClassIdArg) {
-        console.error("Usage: ts-node generateAgentWorkflowTemplateFromAgentClass.ts <domainId> <psAgentClassId>");
+        log.error("Usage: ts-node generateAgentWorkflowTemplateFromAgentClass.ts <domainId> <psAgentClassId>");
         process.exit(1);
     }
     const domainId = Number(domainIdArg);
     const agentClassId = Number(agentClassIdArg);
     if (isNaN(domainId) || isNaN(agentClassId)) {
-        console.error("Both domainId and psAgentClassId must be valid numbers");
+        log.error("Both domainId and psAgentClassId must be valid numbers");
         process.exit(1);
     }
     try {
@@ -75,15 +76,15 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
             parent_agent_id: topLevelAgent.id,
             configuration: {},
         });
-        // Add Gemini 2.5 Pro Preview 2 model
+        // Add Gemini 2.5 Pro model
         const geminiReasoning = await PsAiModel.findOne({
-            where: { name: "Gemini 2.5 Pro Preview 2" },
+            where: { name: "Gemini 2.5 Pro" },
         });
         if (geminiReasoning) {
             await psAgent.addAiModel(geminiReasoning);
         }
         else {
-            throw new Error("Gemini 2.5 Pro Preview 2 model not found");
+            throw new Error("Gemini 2.5 Pro model not found");
         }
         // Add Gemini 2.0 Flash model
         const geminiFlash = await PsAiModel.findOne({
@@ -95,10 +96,10 @@ import { NewAiModelSetup } from "../../agents/managers/newAiModelSetup.js";
         else {
             throw new Error("Gemini 2.0 Flash model not found");
         }
-        console.log(`Created community ${community.id}, group ${group.id}, top-level agent ${topLevelAgent.id}, working agent ${psAgent.id}`);
+        log.info(`Created community ${community.id}, group ${group.id}, top-level agent ${topLevelAgent.id}, working agent ${psAgent.id}`);
     }
     catch (error) {
-        console.error(error);
+        log.error(error);
     }
     finally {
         await models.sequelize.close();

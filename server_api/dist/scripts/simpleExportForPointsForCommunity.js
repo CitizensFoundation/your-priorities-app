@@ -5,10 +5,10 @@ var fs = require('fs');
 var communityId = process.argv[2];
 var outFile = process.argv[3];
 var clean = function (text) {
-    //console.log("Before: "+ text);
+    //log.info("Before: "+ text);
     if (text) {
         var newText = text.replace('"', "'").replace('\n', '').replace('\r', '').replace(/(\r\n|\n|\r)/gm, "").replace(/"/gm, "'").replace(',', ';').trim();
-        //console.log("After:" + newText);
+        //log.info("After:" + newText);
         return newText.replace(/´/g, '');
     }
     else {
@@ -51,7 +51,7 @@ models.Point.findAll({
     ]
 }).then(function (points) {
     var outFileContent = "";
-    console.log(points.length);
+    log.info(points.length);
     outFileContent += "group id,post id,point id,point type,author id,text,helpful votes,unhelpful votes,external user id,state\n";
     pointCounter = 0;
     async.eachSeries(points, function (point, seriesCallback) {
@@ -72,9 +72,9 @@ models.Point.findAll({
     }, function (error) {
         fs.writeFile(outFile, outFileContent, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
-            console.log("The file was saved!");
+            log.info("The file was saved!");
             process.exit();
         });
     });

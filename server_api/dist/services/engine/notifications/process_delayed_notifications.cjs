@@ -1,46 +1,46 @@
 "use strict";
 var models = require('../../../models/index.cjs');
 var async = require('async');
-var log = require('../../utils/logger.cjs');
+var log = require('../../../utils/logger.cjs');
 var _ = require('lodash');
 var moment = require('moment');
 var i18n = require('../../utils/i18n.cjs');
 var Backend = require('i18next-fs-backend');
 var sendOneEmail = require('./emails_utils.cjs').sendOneEmail;
 var sendPostNew = function (delayedNotification, callback) {
-    console.log("sendPostNew");
-    console.log("User email: " + delayedNotification.User.email);
+    log.info("sendPostNew");
+    log.info("User email: " + delayedNotification.User.email);
     async.forEach(delayedNotification.AcNotifications, function (notification, seriesCallback) {
-        console.log("Type: " + notification.AcActivities[0].type);
-        console.log("Post name: " + notification.AcActivities[0].Post.name);
-        console.log("Domain name: " + notification.AcActivities[0].Domain.name);
-        console.log("User name: " + notification.AcActivities[0].User.name);
+        log.info("Type: " + notification.AcActivities[0].type);
+        log.info("Post name: " + notification.AcActivities[0].Post.name);
+        log.info("Domain name: " + notification.AcActivities[0].Domain.name);
+        log.info("User name: " + notification.AcActivities[0].User.name);
         seriesCallback();
     }, function (error) {
         callback();
     });
 };
 var sendPostEndorsement = function (delayedNotification, callback) {
-    console.log("sendPostEndorsement");
-    console.log("User email: " + delayedNotification.User.email);
+    log.info("sendPostEndorsement");
+    log.info("User email: " + delayedNotification.User.email);
     async.forEach(delayedNotification.AcNotifications, function (notification, seriesCallback) {
-        console.log("Type: " + notification.AcActivities[0].type);
-        console.log("Post name: " + notification.AcActivities[0].Post.name);
-        console.log("Domain name: " + notification.AcActivities[0].Domain.name);
-        console.log("User name: " + notification.AcActivities[0].User.name);
+        log.info("Type: " + notification.AcActivities[0].type);
+        log.info("Post name: " + notification.AcActivities[0].Post.name);
+        log.info("Domain name: " + notification.AcActivities[0].Domain.name);
+        log.info("User name: " + notification.AcActivities[0].User.name);
         seriesCallback();
     }, function (error) {
         callback();
     });
 };
 var sendPointNew = function (delayedNotification, callback) {
-    console.log("sendPointNew");
-    console.log("User email: " + delayedNotification.User.email);
+    log.info("sendPointNew");
+    log.info("User email: " + delayedNotification.User.email);
     async.forEach(delayedNotification.AcNotifications, function (notification, seriesCallback) {
-        console.log("Type: " + notification.AcActivities[0].type);
-        console.log("Post name: " + notification.AcActivities[0].Post.name);
-        console.log("Domain name: " + notification.AcActivities[0].Domain.name);
-        console.log("User name: " + notification.AcActivities[0].User.name);
+        log.info("Type: " + notification.AcActivities[0].type);
+        log.info("Post name: " + notification.AcActivities[0].Post.name);
+        log.info("Domain name: " + notification.AcActivities[0].Domain.name);
+        log.info("User name: " + notification.AcActivities[0].User.name);
         seriesCallback();
     }, function (error) {
         callback();
@@ -198,7 +198,7 @@ var processNewNewsStories = function (email, groupItems) {
     });
 };
 var sendNotificationEmail = function (delayedNotification, callback) {
-    console.log("sendNotificationEmail User email: " + delayedNotification.User.email);
+    log.info("sendNotificationEmail User email: " + delayedNotification.User.email);
     var emailUser = delayedNotification.User;
     var notifications = [];
     var email;
@@ -287,7 +287,7 @@ var sendNotificationEmail = function (delayedNotification, callback) {
                 seriesCallback();
             }
             else {
-                console.error("No notification");
+                log.error("No notification");
                 seriesCallback();
             }
         }).catch(function (error) {
@@ -338,32 +338,32 @@ var sendNotificationEmail = function (delayedNotification, callback) {
             });
         }
         else {
-            console.error("No items");
+            log.error("No items");
             callback();
         }
     });
 };
 var sendPointNewsStory = function (delayedNotification, callback) {
-    console.log("sendPointNewsStory");
-    console.log("User email: " + delayedNotification.User.email);
+    log.info("sendPointNewsStory");
+    log.info("User email: " + delayedNotification.User.email);
     async.forEach(delayedNotification.AcNotifications, function (notification, seriesCallback) {
-        console.log("Type: " + notification.AcActivities[0].type);
-        console.log("Post name: " + notification.AcActivities[0].Post.name);
-        console.log("Domain name: " + notification.AcActivities[0].Domain.name);
-        console.log("User name: " + notification.AcActivities[0].User.name);
+        log.info("Type: " + notification.AcActivities[0].type);
+        log.info("Post name: " + notification.AcActivities[0].Post.name);
+        log.info("Domain name: " + notification.AcActivities[0].Domain.name);
+        log.info("User name: " + notification.AcActivities[0].User.name);
         seriesCallback();
     }, function (error) {
         callback();
     });
 };
 var sendPointComment = function (delayedNotification, callback) {
-    console.log("sendPointComment");
-    console.log("User email: " + delayedNotification.User.email);
+    log.info("sendPointComment");
+    log.info("User email: " + delayedNotification.User.email);
     async.forEach(delayedNotification.AcNotifications, function (notification, seriesCallback) {
-        console.log("Type: " + notification.AcActivities[0].type);
-        console.log("Post name: " + notification.AcActivities[0].Post.name);
-        console.log("Domain name: " + notification.AcActivities[0].Domain.name);
-        console.log("User name: " + notification.AcActivities[0].User.name);
+        log.info("Type: " + notification.AcActivities[0].type);
+        log.info("Post name: " + notification.AcActivities[0].Post.name);
+        log.info("Domain name: " + notification.AcActivities[0].Domain.name);
+        log.info("User name: " + notification.AcActivities[0].User.name);
         seriesCallback();
     }, function (error) {
         callback();
@@ -397,19 +397,19 @@ var sendNotification = function (notification, callback) {
 var getDelayedNotificationToProcess = function (frequency, callback) {
     var beforeDate;
     if (frequency == 1) {
-        console.log("Processing hourly");
+        log.info("Processing hourly");
         beforeDate = { name: "date", after: moment().add(-1, 'hours').toDate() };
     }
     else if (frequency == 2) {
-        console.log("Processing daily");
+        log.info("Processing daily");
         beforeDate = { name: "date", after: moment().add(-1, 'days').toDate() };
     }
     else if (frequency == 3) {
-        console.log("Processing weekly");
+        log.info("Processing weekly");
         beforeDate = { name: "date", after: moment().add(-7, 'days').toDate() };
     }
     else if (frequency == 4) {
-        console.log("Processing monthly");
+        log.info("Processing monthly");
         beforeDate = { name: "date", after: moment().add(-1, 'months').toDate() };
     }
     if (beforeDate) {

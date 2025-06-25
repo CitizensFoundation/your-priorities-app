@@ -1,5 +1,6 @@
 "use strict";
 const models = require('../models/index.cjs');
+const log = require('./logger.cjs');
 async function getTranslationForMap(textType, model, targetLanguage) {
     return await new Promise((resolve, reject) => {
         models.AcTranslationCache.getTranslation({ query: { textType, targetLanguage } }, model, async (error, translation) => {
@@ -8,7 +9,7 @@ async function getTranslationForMap(textType, model, targetLanguage) {
             }
             else {
                 resolve();
-                console.log("No translation");
+                log.info("No translation");
             }
         });
     });
@@ -89,7 +90,7 @@ const getCommunityMap = async (communityId, map, options) => {
                 resolve();
             }
             else {
-                console.error("Cant find community " + communityId);
+                log.error("Cant find community " + communityId);
                 map.children.push({ name: "Not found community id " + communityId, children: [] });
                 resolve();
             }

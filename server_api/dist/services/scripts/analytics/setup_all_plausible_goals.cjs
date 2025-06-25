@@ -1,13 +1,14 @@
 "use strict";
 const { addAllPlausibleGoals } = require("../../engine/analytics/plausible/manager");
+const log = require("../../../utils/logger.cjs");
 (async function () {
     try {
         await addAllPlausibleGoals();
-        console.log("All done");
+        log.info("All done");
         process.exit();
     }
     catch (error) {
-        console.error(error);
+        log.error(error);
         process.exit();
     }
 })();

@@ -1,2 +1,2 @@
 export = logger;
-declare var logger: any;
+declare const logger: import("winston").Logger;

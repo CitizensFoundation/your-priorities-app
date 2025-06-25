@@ -1,5 +1,5 @@
 var kue = require('kue'), url = require('url');
-var log = require('../utils/logger.cjs');
+var log = require('../../utils/logger.cjs');
 var toJson = require('../utils/to_json.cjs');
 var airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
@@ -14,16 +14,16 @@ var queue = kue.createQueue({
     "socket_keepalive": true
 });
 queue.watchStuckJobs(1000);
-console.log("active");
-queue.activeCount(console.log);
-console.log("inactiveCount");
-queue.inactiveCount(console.log);
-console.log("failedCount");
-queue.failedCount(console.log);
-console.log("delayedCount");
-queue.delayedCount(console.log);
-console.log("completeCount");
-queue.completeCount(console.log);
+log.info("active");
+queue.activeCount(log.info);
+log.info("inactiveCount");
+queue.inactiveCount(log.info);
+log.info("failedCount");
+queue.failedCount(log.info);
+log.info("delayedCount");
+queue.delayedCount(log.info);
+log.info("completeCount");
+queue.completeCount(log.info);
 setTimeout(function () {
     process.exit();
 }, 5000);

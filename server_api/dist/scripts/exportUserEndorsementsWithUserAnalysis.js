@@ -51,7 +51,7 @@ models.Group.findOne({
         ]
     }).then(function (endorsements) {
         var outFileContent = "";
-        console.log(endorsements.length);
+        log.info(endorsements.length);
         outFileContent += "Post endorsements for Group Id: " + groupId + "\n";
         outFileContent += "Post Id,Post Name,Value,Category Id,Category Name,User Id";
         if (registrationQuestions) {
@@ -107,17 +107,17 @@ models.Group.findOne({
         }, function (error) {
             fs.writeFile(outFile, outFileContent, function (err) {
                 if (err) {
-                    console.log(err);
+                    log.info(err);
                 }
-                console.log("The file was saved!");
-                console.log(`${notValidCounter} not valid entries ${notValidUserCounter} not valid users ${nullValueCounter} 0 values`);
-                console.log(`${validUsersCount} valid users`);
+                log.info("The file was saved!");
+                log.info(`${notValidCounter} not valid entries ${notValidUserCounter} not valid users ${nullValueCounter} 0 values`);
+                log.info(`${validUsersCount} valid users`);
                 process.exit();
             });
         });
     });
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

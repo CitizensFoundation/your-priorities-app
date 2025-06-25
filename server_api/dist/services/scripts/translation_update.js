@@ -10,19 +10,19 @@ models.AcTranslationCache.findOne({
     if (result) {
         result.set('content', textToReplace);
         result.save().then(function () {
-            console.log(`Updated ${result.index_key} to ${result.content}`);
+            log.info(`Updated ${result.index_key} to ${result.content}`);
             process.exit();
         }).catch((error) => {
-            console.error(error);
+            log.error(error);
             process.exit();
         });
     }
     else {
-        console.warn("Not found: " + indexKey);
+        log.warn("Not found: " + indexKey);
         process.exit();
     }
 }).catch((error) => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

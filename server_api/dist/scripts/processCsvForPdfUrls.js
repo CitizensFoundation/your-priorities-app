@@ -26,11 +26,11 @@ for (let i = 0; i < records.length; i++) {
 }
 fs.writeFile(outFilePath, outFileContent, function (error) {
     if (error) {
-        console.error(error);
+        log.error(error);
         process.exit();
     }
     else {
-        console.log("The file was saved!");
+        log.info("The file was saved!");
         process.exit();
     }
 });

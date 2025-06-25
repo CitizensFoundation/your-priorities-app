@@ -165,7 +165,7 @@ const moveOnePost = (postId, groupId, done) => {
                 oldGroupId = post.group_id;
                 post.set('group_id', group.id);
                 post.save().then(function (results) {
-                    console.log("Have changed group id");
+                    log.info("Have changed group id");
                     callback();
                 });
             }).catch(function (error) {
@@ -184,7 +184,7 @@ const moveOnePost = (postId, groupId, done) => {
                     point.set('community_id', communityId);
                     point.set('domain_id', domainId);
                     point.save().then(function () {
-                        console.log("Have changed group and all for point: " + point.id);
+                        log.info("Have changed group and all for point: " + point.id);
                         innerSeriesCallback();
                     });
                 }, function (error) {
@@ -203,7 +203,7 @@ const moveOnePost = (postId, groupId, done) => {
                     activity.set('community_id', communityId);
                     activity.set('domain_id', domainId);
                     activity.save().then(function (results) {
-                        console.log("Have changed group and all: " + activity.id);
+                        log.info("Have changed group and all: " + activity.id);
                         innerSeriesCallback();
                     });
                 }, function (error) {
@@ -289,9 +289,9 @@ async.series([
     },
 ], error => {
     if (error)
-        console.error(error);
-    console.log("All done move");
-    console.log(finalTargetOutput);
+        log.error(error);
+    log.info("All done move");
+    log.info(finalTargetOutput);
     process.exit();
 });
 export {};

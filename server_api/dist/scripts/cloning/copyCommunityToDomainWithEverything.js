@@ -7,10 +7,10 @@ const communityId = process.argv[2];
 var domainId = process.argv[3];
 copyCommunityWithEverything(communityId, domainId, {}, (error) => {
     if (error) {
-        console.error(error);
+        log.error(error);
     }
     else {
-        console.log("Done with copyCommunityWithEverything");
+        log.info("Done with copyCommunityWithEverything");
     }
     process.exit();
 });

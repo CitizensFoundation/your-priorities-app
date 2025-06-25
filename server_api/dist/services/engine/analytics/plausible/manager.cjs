@@ -1,6 +1,6 @@
 "use strict";
 const models = require("../../../../models/index.cjs");
-const log = require("../../../utils/logger.cjs");
+const log = require("../../../../utils/logger.cjs");
 const request = require("request");
 const moment = require("moment");
 // This SQL is needed to allow the site API
@@ -255,7 +255,7 @@ async function getPlausibleStats(statsParams) {
                     reject(content.statusCode);
                 }
                 else if (content) {
-                    console.log(content.body);
+                    log.info(content.body);
                     resolve(content.body);
                 }
                 else {
@@ -294,7 +294,7 @@ async function addPlausibleGoal(eventName) {
                 },
                 method: "PUT",
             };
-            console.log(`${JSON.stringify(options)}`);
+            log.info(`${JSON.stringify(options)}`);
             request(options, (error, content) => {
                 if (content && content.statusCode != 200) {
                     log.error(error);
@@ -302,7 +302,7 @@ async function addPlausibleGoal(eventName) {
                     reject(content.statusCode);
                 }
                 else if (content) {
-                    console.log(content.body);
+                    log.info(content.body);
                     resolve(content.body);
                 }
                 else {

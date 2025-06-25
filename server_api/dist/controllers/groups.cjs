@@ -2153,7 +2153,7 @@ const copyThemeAndLogoFromAgentFabricGroup = async (newGroup, agentFabricGroup) 
     }
 };
 const createGroup = async (req, res) => {
-    console.log("Creating group with community id: " + req.params.communityId);
+    log.info("Creating group with community id: " + req.params.communityId);
     if (!req.user) {
         try {
             await addAgentFabricUserToSessionIfNeeded(req);
@@ -2945,7 +2945,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
         },
         (parallelCallback) => {
             models.Post.getVideosForPosts(collectedIds, (error, videosIn) => {
-                log.info("GOT VIDEOS 1");
                 if (error) {
                     parallelCallback(error);
                 }
@@ -3062,7 +3061,7 @@ router.get("/:id/posts/:filter/:categoryId{/:status}", auth.can("view group"), f
                 if (req.params.categoryId != "null") {
                     where["category_id"] = req.params.categoryId;
                 }
-                log.info("Posts", {
+                log.debug("Posts", {
                     gId: req.params.id,
                     f: req.params.filter,
                     cId: req.params.categoryId,
@@ -3080,7 +3079,6 @@ router.get("/:id/posts/:filter/:categoryId{/:status}", auth.can("view group"), f
                         offset: offset,
                     })
                         .then(function (postResults) {
-                        log.info("Posts 2");
                         const posts = postResults.rows;
                         var totalPostsCount = postResults.count;
                         var postRows = posts;
@@ -3122,9 +3120,7 @@ router.get("/:id/posts/:filter/:categoryId{/:status}", auth.can("view group"), f
                             }
                             totalPostsCount = postResults.rows.length;
                         }
-                        log.info("Posts 3");
                         getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
-                            log.info("Posts 4");
                             if (error) {
                                 log.error("Error getting group", { err: error });
                                 res.sendStatus(500);
@@ -3144,7 +3140,6 @@ router.get("/:id/posts/:filter/:categoryId{/:status}", auth.can("view group"), f
                                     ], ["desc"]);
                                 }
                                 models.Post.setOrganizationUsersForPosts(finalRows, (error) => {
-                                    log.info("Posts 2");
                                     if (error) {
                                         log.error("Error getting group", {
                                             err: error,
@@ -3403,7 +3398,7 @@ router.put("/:id/:groupId/mergeWithGroup", auth.can("edit post"), function (req,
                         async.eachSeries(posts, function (post, seriesCallback) {
                             post.set("group_id", outGroup.id);
                             post.save().then(function (results) {
-                                console.log("Have changed group id");
+                                log.info("Have changed group id");
                                 models.AcActivity.findAll({
                                     where: {
                                         post_id: post.id,
@@ -3415,7 +3410,7 @@ router.put("/:id/:groupId/mergeWithGroup", auth.can("edit post"), function (req,
                                         activity.set("community_id", outCommunityId);
                                         activity.set("domain_id", outDomainId);
                                         activity.save().then(function (results) {
-                                            console.log("Have changed group and all: " +
+                                            log.info("Have changed group and all: " +
                                                 activity.id);
                                             innerSeriesCallback();
                                         });

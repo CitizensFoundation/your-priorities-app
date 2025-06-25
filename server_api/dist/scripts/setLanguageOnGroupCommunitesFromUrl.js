@@ -78,9 +78,9 @@ async.series([
     },
 ], error => {
     if (error)
-        console.error(error);
-    console.log("All done set to " + toLanguage);
-    console.log(finalTargetOutput);
+        log.error(error);
+    log.info("All done set to " + toLanguage);
+    log.info(finalTargetOutput);
     process.exit();
 });
 export {};

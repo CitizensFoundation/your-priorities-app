@@ -1,6 +1,7 @@
 "use strict";
 const models = require('../../models/index.cjs');
 const moment = require('moment');
+const log = require('../../utils/logger.cjs');
 const maxNumberFromPath = process.argv[2];
 // Default to 1,000,000 if no command line arg given, adjust as you see fit
 const maxNumberOfNotificationsToDelete = maxNumberFromPath ? parseInt(maxNumberFromPath) : 1000000;
@@ -32,7 +33,7 @@ function chunk(arr, size) {
                 attributes: ['id'],
             });
             if (notifications.length > 0) {
-                console.log(`${notifications.length} notifications found at offset ${offset}`);
+                log.info(`${notifications.length} notifications found at offset ${offset}`);
                 offset += 1000;
                 // Extract IDs and chunk them to avoid huge deletions in one query
                 const notificationIds = notifications.map(n => n.id);
@@ -47,7 +48,7 @@ function chunk(arr, size) {
                         },
                     });
                     numberOfDeletedNotifications += destroyInfo;
-                    console.log(`Total deleted so far: ${numberOfDeletedNotifications}`);
+                    log.info(`Total deleted so far: ${numberOfDeletedNotifications}`);
                     await sleep(10); // short pause
                     // Stop if we’ve hit our daily (or run) limit
                     if (numberOfDeletedNotifications >= maxNumberOfNotificationsToDelete) {
@@ -62,11 +63,11 @@ function chunk(arr, size) {
             await sleep(25); // short pause between big fetches
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             haveNotificationsToDelete = false;
         }
     }
-    console.log(`${numberOfDeletedNotifications} old notifications deleted`);
-    console.log(`Duration: ${moment(moment() - startTime).format('HH:mm:ss.SSS')}`);
+    log.info(`${numberOfDeletedNotifications} old notifications deleted`);
+    log.info(`Duration: ${moment(moment() - startTime).format('HH:mm:ss.SSS')}`);
     process.exit();
 })();

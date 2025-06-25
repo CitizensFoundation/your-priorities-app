@@ -7,7 +7,7 @@ models.Category.findOne({
 }).then(category => {
     category.deleted = true;
     category.save().then(() => {
-        console.log("Done");
+        log.info("Done");
     });
 });
 export {};

@@ -5,12 +5,13 @@ import { YpSubscriptionPlan } from "../subscriptionPlan.js";
 import { YpSubscriptionUser } from "../subscriptionUser.js";
 import { YpSubscription } from "../subscription.js";
 import { YpAgentProductBundle } from "../agentProductBundle.js";
+import log from "../../../utils/loggerTs.js";
 async function createAgentProductsAndPlans() {
     let transaction;
     try {
         // Connect to the database
         await sequelize.authenticate();
-        console.log("Connection has been established successfully.");
+        log.info("Connection has been established successfully.");
         // Start transaction
         transaction = await sequelize.transaction();
         // Define the user and domain (assuming they exist or create them)
@@ -428,7 +429,7 @@ async function createAgentProductsAndPlans() {
                 runs_used: 0,
                 extra_runs_purchased: 0,
             }, { transaction });
-            console.log(`Created Agent Product: ${agentData.name} (ID: ${agentProduct.id})`);
+            log.info(`Created Agent Product: ${agentData.name} (ID: ${agentProduct.id})`);
             // Create the Subscription Plan associated with this Agent Product
             const planData = agentData.subscriptionPlan;
             const subscriptionPlan = await YpSubscriptionPlan.create({
@@ -454,19 +455,19 @@ async function createAgentProductsAndPlans() {
                         runs_remaining: planData.configuration.max_runs_per_cycle,
                     },
                 }, { transaction });
-                console.log(`Created Free Trial Subscription (ID: ${subscription.id})`);
+                log.info(`Created Free Trial Subscription (ID: ${subscription.id})`);
             }
-            console.log(`Created Subscription Plan: ${planData.name} (ID: ${subscriptionPlan.id})`);
+            log.info(`Created Subscription Plan: ${planData.name} (ID: ${subscriptionPlan.id})`);
         }
         // Commit the transaction
         await transaction.commit();
-        console.log("All Agent Products and Subscription Plans have been created.");
+        log.info("All Agent Products and Subscription Plans have been created.");
     }
     catch (error) {
         // Rollback the transaction if there's an error
         if (transaction)
             await transaction.rollback();
-        console.error("Error creating Agent Products and Subscription Plans:", error);
+        log.error("Error creating Agent Products and Subscription Plans:", error);
         throw error; // Re-throw the error to handle it at a higher level if needed
     }
     finally {

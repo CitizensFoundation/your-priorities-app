@@ -1,6 +1,7 @@
 "use strict";
 const moment = require("moment");
 const getMediaTranscripts = require("./common_utils.cjs").getMediaTranscripts;
+const log = require("../../../utils/logger.cjs");
 const getPointMediaUrls = require("./common_utils.cjs").getPointMediaUrls;
 const getPointTextWithEverything = (group, post, point) => {
     if (group && post && point && point.PointRevisions && point.PointRevisions.length === 0) {
@@ -37,7 +38,7 @@ const getPointTextWithEverything = (group, post, point) => {
         return outText.trim();
     }
     else {
-        console.error("getPointTextWithEverything: missing data", group, post, point);
+        log.error("getPointTextWithEverything: missing data", group, post, point);
     }
 };
 const getPointValueText = (value) => {
@@ -74,7 +75,7 @@ const addPostPointsToSheet = (worksheet, post, group) => {
         });
     }
     else {
-        console.error("addPostPointsToSheet: missing data", worksheet, post, group);
+        log.error("addPostPointsToSheet: missing data", worksheet, post, group);
         return;
     }
 };

@@ -13,9 +13,9 @@ models.User.findOne({
         }
     ]
 }).then(function (user) {
-    console.log(user.email);
-    console.log(user.facebook_id);
-    console.log(_.map(user.Endorsements, function (e) { return e.post_id + " " + e.created_at; }));
-    console.log(user.Endorsements);
+    log.info(user.email);
+    log.info(user.facebook_id);
+    log.info(_.map(user.Endorsements, function (e) { return e.post_id + " " + e.created_at; }));
+    log.info(user.Endorsements);
 });
 export {};

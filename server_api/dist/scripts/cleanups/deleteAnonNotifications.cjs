@@ -1,6 +1,7 @@
 "use strict";
 const models = require('../../models/index.cjs');
 const moment = require('moment');
+const log = require('../../utils/logger.cjs');
 const maxNumberFromPath = process.argv[2];
 const maxNumberOfNotificationsToDelete = maxNumberFromPath ? maxNumberFromPath : 1000;
 let numberOfDeletedNotifications = 0;
@@ -31,7 +32,7 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
                 limit: 500
             });
             if (users.length > 0) {
-                console.log(`${users.length} users offset ${userOffset}`);
+                log.info(`${users.length} users offset ${userOffset}`);
                 userOffset += 500;
                 const userIds = users.map(n => { return n.id; });
                 let haveNotificationsLeftToProcess = true;
@@ -48,7 +49,7 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
                         order: ['user_id'],
                         attributes: ['id'],
                     });
-                    console.log(`${notifications.length} notifications offset ${notificationsOffset}`);
+                    log.info(`${notifications.length} notifications offset ${notificationsOffset}`);
                     if (notifications.length > 0) {
                         notificationsOffset += 1000;
                         const notificationIds = notifications.map(n => { return n.id; });
@@ -62,7 +63,7 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
                                 }
                             });
                             numberOfDeletedNotifications += destroyInfo;
-                            console.log(`${numberOfDeletedNotifications}`);
+                            log.info(`${numberOfDeletedNotifications}`);
                             await sleep(50);
                             if (numberOfDeletedNotifications >= maxNumberOfNotificationsToDelete) {
                                 break;
@@ -71,7 +72,7 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
                     }
                     else {
                         haveNotificationsLeftToProcess = false;
-                        console.log("No more notifications left to process from user");
+                        log.info("No more notifications left to process from user");
                     }
                     await sleep(100);
                 }
@@ -81,11 +82,11 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
             }
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             haveNotificationsToDelete = false;
         }
     }
-    console.log(`${numberOfDeletedNotifications} old anon notifications deleted`);
-    console.log(`Duration ${moment(moment() - startTime).format("HH:mm:ss.SSS")}`);
+    log.info(`${numberOfDeletedNotifications} old anon notifications deleted`);
+    log.info(`Duration ${moment(moment() - startTime).format("HH:mm:ss.SSS")}`);
     process.exit();
 })();

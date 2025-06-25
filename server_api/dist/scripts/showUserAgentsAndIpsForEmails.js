@@ -8,7 +8,7 @@ async.eachSeries(emails, (email, eachOfCallback) => {
         }
     }).then((user) => {
         if (user) {
-            console.log("\n\n\nemail: " + user.email) + "\n";
+            log.info("\n\n\nemail: " + user.email) + "\n";
             let userAgent = null;
             let ipAddress = null;
             async.series([
@@ -52,13 +52,13 @@ async.eachSeries(emails, (email, eachOfCallback) => {
                     });
                 },
             ], (error) => {
-                console.log(ipAddress);
-                console.log(userAgent);
+                log.info(ipAddress);
+                log.info(userAgent);
                 eachOfCallback();
             });
         }
         else {
-            console.error("NOT FOUND: " + email);
+            log.error("NOT FOUND: " + email);
             eachOfCallback();
         }
     });

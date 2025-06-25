@@ -12,7 +12,7 @@ models.Category.findAll({
         json += '"' + category.name + '":' + category.id + ', \n';
     });
     json += "}";
-    console.log(json.toLowerCase());
+    log.info(json.toLowerCase());
     process.exit();
 });
 export {};

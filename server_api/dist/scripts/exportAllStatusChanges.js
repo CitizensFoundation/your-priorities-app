@@ -22,15 +22,15 @@ models.PostStatusChange.findAll({
 }).then(function (updates) {
     async.eachSeries(updates, function (update, seriesCallback) {
         if (update.content) {
-            console.log("------------------------------------------ STATUS CHANGE ID " + update.id + " ------------------------------------------");
-            console.log("\n");
-            console.log(update.content);
-            console.log("\n");
+            log.info("------------------------------------------ STATUS CHANGE ID " + update.id + " ------------------------------------------");
+            log.info("\n");
+            log.info(update.content);
+            log.info("\n");
         }
         seriesCallback();
     }, function () {
         process.exit();
-        console.log("Done");
+        log.info("Done");
     });
 });
 export {};

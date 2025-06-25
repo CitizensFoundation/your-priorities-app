@@ -9,14 +9,14 @@ models.Community.findOne({
 }).then(community => {
     community.domain_id = domainId;
     community.save().then(() => {
-        console.log(`Done changing community ${community.id} to domain ${community.domain_id}`);
+        log.info(`Done changing community ${community.id} to domain ${community.domain_id}`);
         process.exit();
     }).catch(error => {
-        console.error(error);
+        log.error(error);
         process.exit();
     });
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

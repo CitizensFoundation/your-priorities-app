@@ -8,6 +8,7 @@ const Group = dbModels.Group;
 const User = dbModels.User;
 const Community = dbModels.Community;
 const Domain = dbModels.Domain;
+import log from "../../utils/loggerTs.js";
 export class AgentInviteManager {
     /**
      * Send a notification email to group admins about the current workflow step or completion.
@@ -16,7 +17,7 @@ export class AgentInviteManager {
         try {
             const agentRun = await NotificationAgentQueueManager.getAgentRun(agentRunId);
             if (!agentRun) {
-                console.error("Agent run not found");
+                log.error("Agent run not found");
                 return;
             }
             const subject = `${agentRun?.Subscription?.Plan?.AgentProduct?.name} - ${agentRun?.workflow?.steps[agentRun?.workflow?.currentStepIndex]?.shortName} invite`;
@@ -45,10 +46,10 @@ export class AgentInviteManager {
                 link: link,
                 skipHeaderAndFooter: true,
             }, { priority: "high" });
-            console.log("AgentInviteManager: Email enqueued successfully");
+            log.info("AgentInviteManager: Email enqueued successfully");
         }
         catch (error) {
-            console.error("AgentInviteManager: Error sending notification email", error);
+            log.error("AgentInviteManager: Error sending notification email", error);
             throw error;
         }
     }

@@ -3,6 +3,7 @@ const _ = require("lodash");
 const moment = require("moment");
 const models = require("../../../../models/index.cjs");
 const FraudBase = require('./FraudBase.cjs');
+const log = require("../../../../utils/logger.cjs");
 const recountCommunity = require('../../../../utils/recount_utils.cjs').recountCommunity;
 const recountPosts = require('../../../../utils/recount_utils.cjs').recountPosts;
 const recountPoints = require('../../../../utils/recount_utils.cjs').recountPoints;
@@ -23,11 +24,11 @@ class FraudDeleteBase extends FraudBase {
     }
     async getItemsById() {
         // this.job.internal_data.idsToDelete
-        console.error("Should be implemented in a sub class");
+        log.error("Should be implemented in a sub class");
         return null;
     }
     async destroyChunkItems(chunks) {
-        console.error("Should be implemented in a sub class");
+        log.error("Should be implemented in a sub class");
     }
     getAllItemsExceptOne(items) {
         if (items.length === 1 && this.getAllowedSingleDelete()) {
@@ -179,7 +180,7 @@ class FraudDeleteBase extends FraudBase {
     }
     async deleteItems() {
         return await new Promise(async (resolve, reject) => {
-            console.log(`Delete data ${JSON.stringify(this.workPackage)}`);
+            log.info(`Delete data ${JSON.stringify(this.workPackage)}`);
             try {
                 this.job = await models.AcBackgroundJob.findOne({
                     where: {
@@ -202,7 +203,7 @@ class FraudDeleteBase extends FraudBase {
             }
             catch (error) {
                 await models.AcBackgroundJob.updateErrorAsync(this.workPackage.jobId, error.toString());
-                console.error(error);
+                log.error(error);
                 reject(error);
             }
         });

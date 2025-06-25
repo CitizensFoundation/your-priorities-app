@@ -2,6 +2,7 @@
 const _ = require("lodash");
 const FraudGetBase = require('./FraudGetBase.cjs');
 const models = require("../../../../models/index.cjs");
+const log = require("../../../../utils/logger.cjs");
 class FraudGetPoints extends FraudGetBase {
     async getAllItems() {
         return await new Promise(async (resolve, reject) => {
@@ -101,7 +102,7 @@ class FraudGetPoints extends FraudGetBase {
             return out;
         }
         else {
-            console.warn("Wrong type for e fraud check");
+            log.warn("Wrong type for e fraud check");
             return [];
         }
     }

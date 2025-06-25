@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
 import { YpLanguages } from "../../utils/ypLanguages.js";
+import log from "../../utils/loggerTs.js";
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 export class YpLocaleTranslation {
@@ -39,17 +40,17 @@ export class YpLocaleTranslation {
         for (const localeDir of localeDirs) {
             if (localeDir === "en")
                 continue; // Skip English since it's the base
-            console.log(`Processing locale: ${localeDir}`);
+            log.info(`Processing locale: ${localeDir}`);
             const translationFilePath = path.join(localesDir, localeDir, "translation.json");
             let translation = await this.loadJsonFile(translationFilePath);
             translation = this.updateWithMissingKeys(baseTranslation, translation);
-            console.log(`Updated translation for ${localeDir}:`);
+            log.info(`Updated translation for ${localeDir}:`);
             const missingTranslations = this.extractMissingTranslations(baseTranslation, translation);
             // Chunk the missing translations
             const chunks = this.chunkArray(missingTranslations, 15);
-            console.log(`Missing translations for ${localeDir}:`, missingTranslations, chunks);
+            log.info(`Missing translations for ${localeDir}:`, missingTranslations, chunks);
             for (const chunk of chunks) {
-                //console.log(`Translating chunk: ${JSON.stringify(chunk)}`); // Log the chunk before translation
+                //log.info(`Translating chunk: ${JSON.stringify(chunk)}`); // Log the chunk before translation
                 // Prepare the texts for translation
                 const textsToTranslate = chunk.map((key) => this.getValueByPath(translation, key));
                 // Call your translateUITexts method
@@ -60,14 +61,14 @@ export class YpLocaleTranslation {
                         this.setValueAtPath(translation, key, translations[index]);
                     }
                 });
-                //console.log(`Chunk after translation: ${JSON.stringify(chunk)}`); // Log the chunk after translation
-                console.log(`Updated translation for ${localeDir}:`);
+                //log.info(`Chunk after translation: ${JSON.stringify(chunk)}`); // Log the chunk after translation
+                log.info(`Updated translation for ${localeDir}:`);
                 await writeFilePromise(translationFilePath, JSON.stringify(translation, null, 2));
             }
         }
     }
     setValueAtPath(obj, path, value) {
-        //console.log(`Setting value at path: ${path} to '${value}'`); // Debugging log
+        //log.info(`Setting value at path: ${path} to '${value}'`); // Debugging log
         const keys = path.split(".");
         let current = obj;
         for (let i = 0; i < keys.length - 1; i++) {
@@ -91,14 +92,14 @@ export class YpLocaleTranslation {
                 if (typeof base[key] === "object" && base[key] !== null) {
                     // If the base key is an object, ensure the target has a corresponding object
                     if (!target.hasOwnProperty(key) || typeof target[key] !== "object" || target[key] === null) {
-                        console.log(`Creating missing object at path: ${newPath.join(".")}`);
+                        log.info(`Creating missing object at path: ${newPath.join(".")}`);
                         target[key] = {}; // Initialize missing object
                     }
                     updateRecursively(base[key], target[key], newPath); // Recurse into objects
                 }
                 else if (!target.hasOwnProperty(key) || target[key] === "" || target[key] === null) {
                     // If the key is missing or empty in the target, update it from the base
-                    console.log(`Updating missing or empty key at path: ${newPath.join(".")}`);
+                    log.info(`Updating missing or empty key at path: ${newPath.join(".")}`);
                     target[key] = base[key];
                 }
                 // No action needed for non-empty, non-object fields; they're already present and not empty
@@ -174,14 +175,14 @@ Your ${language} website backend texts JSON output:`;
     }
     async translateUITexts(languageIsoCode, textsToTranslate) {
         try {
-            console.log(`translateTexts: ${JSON.stringify(textsToTranslate)} ${languageIsoCode}`);
+            log.info(`translateTexts: ${JSON.stringify(textsToTranslate)} ${languageIsoCode}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
                 languageIsoCode;
-            console.log("LANGUAGE NAME:", languageName);
+            log.info("LANGUAGE NAME:", languageName);
             return await this.callLlm(languageName, textsToTranslate);
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            log.error("Error in getAnswerIdeas:", error);
             return undefined;
         }
     }
@@ -201,16 +202,16 @@ Your ${language} website backend texts JSON output:`;
         let running = true;
         while (running) {
             try {
-                console.log(`Messages ${retries}:`, messages);
+                log.info(`Messages ${retries}:`, messages);
                 const results = await this.openaiClient.chat.completions.create({
                     model: this.modelName,
                     messages,
                     max_tokens: this.maxTokens,
                     temperature: this.temperature,
                 });
-                console.log("Results:", results);
+                log.info("Results:", results);
                 const textJson = results.choices[0].message.content;
-                console.log("Text JSON:", textJson);
+                log.info("Text JSON:", textJson);
                 if (textJson) {
                     let cleanText = textJson;
                     // Detect and remove markdown code block syntax if present
@@ -220,10 +221,10 @@ Your ${language} website backend texts JSON output:`;
                     let translationData = [];
                     try {
                         translationData = JSON.parse(jsonrepair(cleanText));
-                        console.log("Parsed Translation Data:", translationData);
+                        log.info("Parsed Translation Data:", translationData);
                     }
                     catch (error) {
-                        console.error("Error parsing cleaned text as JSON:", error);
+                        log.error("Error parsing cleaned text as JSON:", error);
                     }
                     if (translationData) {
                         running = false;
@@ -235,10 +236,10 @@ Your ${language} website backend texts JSON output:`;
                 }
             }
             catch (error) {
-                console.error("Error:", error);
+                log.error("Error:", error);
                 retries++;
                 if (retries > maxRetries) {
-                    console.error("Max retries reached");
+                    log.error("Max retries reached");
                     running = false;
                     return undefined;
                 }

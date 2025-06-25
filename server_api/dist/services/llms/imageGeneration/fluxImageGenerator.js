@@ -1,4 +1,5 @@
 import Replicate from "replicate";
+import log from "../../../utils/loggerTs.js";
 export class FluxImageGenerator {
     constructor(replicateApiKey, fluxProModelName) {
         this.replicateApiKey = replicateApiKey;
@@ -33,16 +34,16 @@ export class FluxImageGenerator {
                 }
             }
             catch (error) {
-                console.warn("Error generating image with Flux, retrying...");
-                console.warn(error.stack);
+                log.warn("Error generating image with Flux, retrying...");
+                log.warn(error.stack);
                 retryCount++;
                 const sleepingFor = 5000 + retryCount * 10000;
-                console.debug(`Sleeping for ${sleepingFor} milliseconds`);
+                log.debug(`Sleeping for ${sleepingFor} milliseconds`);
                 await new Promise((resolve) => setTimeout(resolve, sleepingFor));
             }
         }
         if (!result) {
-            console.error(`Error generating image after ${retryCount} retries`);
+            log.error(`Error generating image after ${retryCount} retries`);
         }
         return undefined;
     }

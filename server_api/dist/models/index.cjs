@@ -1,4 +1,8 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+const logger_cjs_1 = __importDefault(require("../utils/logger.cjs"));
 const fs = require("fs");
 const path = require("path");
 const env = process.env.NODE_ENV || "development";
@@ -60,7 +64,7 @@ else {
         });
     }
     catch (error) {
-        console.error("Error configuring Sequelize:", error);
+        logger_cjs_1.default.error("Error configuring Sequelize:", error);
         process.exit(1);
     }
 }
@@ -72,15 +76,15 @@ async function createCompoundIndexes(indexCommands) {
     for (const command of indexCommands) {
         try {
             await sequelize.query(command);
-            console.log(`Successfully created index with command: ${command}`);
+            logger_cjs_1.default.info(`Successfully created index with command: ${command}`);
         }
         catch (error) {
             if (error.message.includes("already exists")) {
                 /* ignore duplicate index */
             }
             else {
-                console.error(`Error creating index with command: ${command}`);
-                console.error(error.message);
+                logger_cjs_1.default.error(`Error creating index with command: ${command}`);
+                logger_cjs_1.default.error(error.message);
             }
         }
     }

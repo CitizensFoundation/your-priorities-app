@@ -23,26 +23,26 @@ async function axiosWrapper(url, options = {}) {
     }
     catch (error) {
         // For simplicity, the error is logged and then rethrown
-        console.error("Error", error.message);
+        log.error("Error", error.message);
         throw error;
     }
 }
 async function getPoints(groupId, parentPointId) {
     const url = `https://betraisland.is/api/groups/${groupId}/${parentPointId}/get_parent_point`;
-    console.log(`Fetching point ${parentPointId} ${url}`);
+    log.info(`Fetching point ${parentPointId} ${url}`);
     try {
         const outPoints = [];
         const point = await axiosWrapper(url);
-        console.log(`Fetched point ${parentPointId}`);
+        log.info(`Fetched point ${parentPointId}`);
         if (point && point.PointRevisions && point.PointRevisions.length > 0) {
             point.latestContent =
                 point.PointRevisions[point.PointRevisions.length - 1].content;
             point.content = point.latestContent;
             outPoints.push(point);
             const commentsUrl = `https://betraisland.is/api/points/${parentPointId}/comments`;
-            console.log(`Fetching comments ${commentsUrl}`);
+            log.info(`Fetching comments ${commentsUrl}`);
             const comments = await axiosWrapper(commentsUrl);
-            console.error(`Fetched comments ${JSON.stringify(comments, null, 2)}`);
+            log.error(`Fetched comments ${JSON.stringify(comments, null, 2)}`);
             for (const comment of comments) {
                 comment.latestContent =
                     comment.PointRevisions[comment.PointRevisions.length - 1].content;
@@ -57,7 +57,7 @@ async function getPoints(groupId, parentPointId) {
     }
     catch (error) {
         // Handle errors specific to getPoints if necessary
-        console.error(`Failed to get points for post ${parentPointId}:`, error);
+        log.error(`Failed to get points for post ${parentPointId}:`, error);
         // Re-throw the error or handle it as per your application's error handling policy
         throw error;
     }
@@ -73,7 +73,7 @@ function convertToCsv(dataArray) {
 let newTilesData = [];
 let tilesData = [];
 (async () => {
-    console.log("Start export");
+    log.info("Start export");
     let offset = 0;
     let count = 0;
     let continueFetching = true;
@@ -81,7 +81,7 @@ let tilesData = [];
     const communityId = process.argv[2];
     const postsProcessed = {};
     let outCsvText = "rectangle,groupId,userId,landUseType,comment";
-    console.log(`Fetching posts ${offset} to ${offset + chunkSize - 1}...`);
+    log.info(`Fetching posts ${offset} to ${offset + chunkSize - 1}...`);
     const posts = await models.Post.findAll({
         attributes: ["id", "name", "user_id", "group_id", "data"],
         include: [
@@ -96,11 +96,11 @@ let tilesData = [];
         limit: chunkSize,
         offset: offset,
     });
-    console.log(`Post length ${posts.length}`);
+    log.info(`Post length ${posts.length}`);
     // Process the posts
     for (let p = 0; p < posts.length; p++) {
         const post = posts[p];
-        console.log(`${post.id} ${post.name}`);
+        log.info(`${post.id} ${post.name}`);
         if (post.data &&
             post.data.publicPrivateData &&
             post.data.publicPrivateData.length) {
@@ -116,14 +116,14 @@ let tilesData = [];
             });
         }
         else {
-            console.warn(`Post ${post.id} has no publicPrivateData`);
+            log.warn(`Post ${post.id} has no publicPrivateData`);
         }
     }
     for (const tile of tilesData) {
         if (tile.pointId) {
             try {
                 const pointsWithComments = await getPoints(tile.post.group_id, tile.pointId);
-                console.log(`Fetched ${pointsWithComments.length} points for post ${tile.pointId} ${JSON.stringify(pointsWithComments, null, 2)}`);
+                log.info(`Fetched ${pointsWithComments.length} points for post ${tile.pointId} ${JSON.stringify(pointsWithComments, null, 2)}`);
                 for (const point of pointsWithComments) {
                     let newTileData = {
                         rectangle: tile.rectangleIndex,
@@ -133,13 +133,13 @@ let tilesData = [];
                         postId: tile.post.id,
                         comment: point.content,
                     };
-                    console.log(`New tile data ${JSON.stringify(newTileData, null, 2)}`);
+                    log.info(`New tile data ${JSON.stringify(newTileData, null, 2)}`);
                     newTilesData.push(newTileData);
                 }
                 count += pointsWithComments.length;
             }
             catch (error) {
-                console.error(`Error fetching points for post ${tile.pointId}:`, error);
+                log.error(`Error fetching points for post ${tile.pointId}:`, error);
                 process.exit(1);
             }
         }
@@ -156,7 +156,7 @@ let tilesData = [];
     }
     const csvData = convertToCsv(newTilesData);
     fs.writeFileSync(`/tmp/landUseGameGroup${process.argv[2]}.csv`, csvData);
-    console.log(`Done. Processed ${count} posts.`);
+    log.info(`Done. Processed ${count} posts.`);
     process.exit(0);
 })();
 export {};

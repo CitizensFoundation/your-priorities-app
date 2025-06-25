@@ -1,6 +1,7 @@
 "use strict";
 const models = require("../../../models/index.cjs");
 const async = require('async');
+const log = require("../../../utils/logger.cjs");
 const sendSmsToUser = (twilioClient, listUser, campaign, configuration, done) => {
     /*const body = campaign.message + " "+ campaign.data.baseUrl+"?yu="+listUser.id+"&yc="+campaign.id;
     twilioClient.messages.create({

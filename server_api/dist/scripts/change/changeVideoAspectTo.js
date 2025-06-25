@@ -19,16 +19,16 @@ models.Video.findOne({
             video.set('public_meta.aspect', "landscape");
         }
         video.save().then(() => {
-            console.log(`Video ${videoId} set to ${aspect}`);
+            log.info(`Video ${videoId} set to ${aspect}`);
             process.exit();
         });
     }
     else {
-        console.warn(`Video not found for ${videoId} ${aspect}`);
+        log.warn(`Video not found for ${videoId} ${aspect}`);
         process.exit();
     }
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

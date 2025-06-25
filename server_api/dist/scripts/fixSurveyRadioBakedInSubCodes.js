@@ -1,13 +1,13 @@
 var models = require("../models/index.cjs");
 var async = require("async");
-console.log("Fix group");
+log.info("Fix group");
 const groupId = process.argv[2];
 const getSubCodeFromRadio = (radios, answer) => {
     let subCode;
     if (radios) {
         for (let i = 0; i < radios.length; i++) {
-            //console.log(answer);
-            //console.log(`${radios[i].subCode.trim()} !`)
+            //log.info(answer);
+            //log.info(`${radios[i].subCode.trim()} !`)
             if (answer.startsWith(`${radios[i].subCode.trim()} `)) {
                 subCode = radios[i].subCode;
                 break;
@@ -18,11 +18,11 @@ const getSubCodeFromRadio = (radios, answer) => {
 };
 const fixRadioDescriptionIfNeeded = (answers, questionsById, i) => {
     let currentValue = answers[i].value;
-    console.log(currentValue);
+    log.info(currentValue);
     const subCode = getSubCodeFromRadio(questionsById[answers[i].uniqueId].radioButtons, answers[i].value);
     if (subCode) {
         currentValue = currentValue.replace(`${subCode} `, '');
-        console.log(currentValue);
+        log.info(currentValue);
     }
     return currentValue;
 };
@@ -56,7 +56,7 @@ models.Group.findOne({ where: { id: groupId } }).then((group) => {
         async.eachSeries(posts, (post, seriesCallback) => {
             processPost(group, post, seriesCallback);
         }, function (error) {
-            console.log("Finished");
+            log.info("Finished");
             process.exit();
         });
     });

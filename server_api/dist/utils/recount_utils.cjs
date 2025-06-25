@@ -4,6 +4,7 @@ const models = require('../models/index.cjs');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
+const log = require('./logger.cjs');
 const recountPosts = (postIds, done) => {
     async.forEachSeries(postIds, (postId, forEachPostCallback) => {
         recountPost(postId, forEachPostCallback);
@@ -80,7 +81,7 @@ const recountPost = (postId, done) => {
                 post.counter_endorsements_up = endorsementsCount;
                 post.counter_endorsements_down = oppositionCount;
                 post.save().then((results) => {
-                    console.log(`Recount for post ${post.id} done`);
+                    log.info(`Recount for post ${post.id} done`);
                     done();
                 });
             }).catch((error) => {
@@ -134,7 +135,7 @@ const recountPoint = (pointId, done) => {
                 point.counter_quality_up = counter_quality_up;
                 point.counter_quality_down = counter_quality_down;
                 point.save().then((results) => {
-                    console.log(`Recount for point ${point.id} done`);
+                    log.info(`Recount for point ${point.id} done`);
                     done();
                 });
             }).catch((error) => {
@@ -332,7 +333,7 @@ const recountGroup = (groupId, callback) => {
                     group.set('counter_users', Math.max(userCount, 1));
                     group.set('counter_posts', postCount);
                     group.save().then(() => {
-                        console.log(`Recount Group ${group.id} users: ${Math.max(userCount, 1)} posts: ${postCount} points: ${pointCount}`);
+                        log.info(`Recount Group ${group.id} users: ${Math.max(userCount, 1)} posts: ${postCount} points: ${pointCount}`);
                         callback(null, { postCount, pointCount, userCount, allUsers });
                     }).catch(error => {
                         callback(error);
@@ -388,7 +389,7 @@ const recountCommunity = (communityId, callback) => {
                     community.set('counter_users', Math.max(_.uniq(allUsers).length, 1));
                     community.set('counter_posts', postCount);
                     community.save().then(() => {
-                        console.log(`Recount Community ${community.id} users: ${Math.max(_.uniq(allUsers).length, 1)} posts: ${postCount} points: ${pointCount}`);
+                        log.info(`Recount Community ${community.id} users: ${Math.max(_.uniq(allUsers).length, 1)} posts: ${postCount} points: ${pointCount}`);
                         callback();
                     }).catch(error => {
                         callback(error);
@@ -397,7 +398,7 @@ const recountCommunity = (communityId, callback) => {
             });
         }
         else {
-            console.error(`Community ${communityId} found`);
+            log.error(`Community ${communityId} found`);
             callback();
         }
     }).catch(error => {

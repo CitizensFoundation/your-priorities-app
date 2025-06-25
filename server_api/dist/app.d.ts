@@ -35,8 +35,9 @@ export declare class YourPrioritiesApi {
     setupDomainAndCommunity(): void;
     initializeRateLimiting(): Promise<void>;
     setupSitemapRoute(): void;
-    bearerCallback: () => void;
+    bearerCallback: () => import("winston").Logger;
     checkAuthForSsoInit(): void;
+    setupExpresLogger: (req: express.Request, res: express.Response, next: express.NextFunction) => void;
     initializeMiddlewares(): void;
     initializeEsControllers(): Promise<void>;
     setupStaticFileServing(): void;

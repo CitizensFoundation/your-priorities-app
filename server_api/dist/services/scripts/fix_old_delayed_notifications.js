@@ -1,6 +1,6 @@
 var models = require('../../models/index.cjs');
 var async = require('async');
-var log = require('../utils/logger.cjs');
+var log = require('../../utils/logger.cjs');
 var _ = require('lodash');
 var moment = require('moment');
 var i18n = require('../utils/i18n.cjs');
@@ -31,12 +31,12 @@ models.User.findAll({
                 }).then(function (newDelayedNotification) {
                     async.eachSeries(delayedNotifications, function (delayedNotification, delayedNotificationSeriesCallback) {
                         async.eachSeries(delayedNotification.AcNotifications, function (notification, notificationSeriesCallback) {
-                            console.error("NOTID:" + notification.id);
+                            log.error("NOTID:" + notification.id);
                             latestNotification = notification;
                             newDelayedNotification.addAcNotification(notification).then(function () {
                                 notificationSeriesCallback();
                             }).catch(function (error) {
-                                console.error("COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION");
+                                log.error("COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION - COULD NOT SAVE NOTIFICATION");
                                 notificationSeriesCallback();
                             });
                         }, function (error) {

@@ -12,6 +12,7 @@ import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass, PsAiModel } from "@policysynth/agents/dbModels/index.js";
 import { NotificationAgentQueueManager } from "./notificationAgentQueueManager.js";
 import models from "../../models/index.cjs";
+import log from "../../utils/loggerTs.js";
 const dbModels = models;
 const YpGroup = dbModels.Group;
 export class SubscriptionManager {
@@ -51,7 +52,7 @@ export class SubscriptionManager {
         }
     }
     async cloneCommunityTemplate(communityTemplateId, toDomainId) {
-        console.log("cloneCommunityTemplate", communityTemplateId, toDomainId);
+        log.info("cloneCommunityTemplate", communityTemplateId, toDomainId);
         return new Promise((resolve, reject) => {
             copyCommunity(communityTemplateId, toDomainId, {
                 copyGroups: true,
@@ -73,15 +74,15 @@ export class SubscriptionManager {
         });
     }
     async cloneCommunityWorkflowTemplate(agentProduct, domainId, currentUser) {
-        console.log("cloneCommunityWorkflowTemplate", agentProduct, domainId);
+        log.info("cloneCommunityWorkflowTemplate", agentProduct, domainId);
         let newCommunity = await this.cloneCommunityTemplate(agentProduct.configuration.templateWorkflowCommunityId, domainId);
-        console.log("newCommunity", newCommunity);
+        log.info("newCommunity", newCommunity);
         const groups = await YpGroup.findAll({
             where: {
                 community_id: newCommunity.id
             }
         });
-        console.log("groups", groups);
+        log.info("groups", groups);
         // Find the workflow group
         const workflowGroup = groups.find((group) => group.configuration.groupType == 3);
         if (!workflowGroup) {
@@ -101,32 +102,32 @@ export class SubscriptionManager {
         const hasCommunityUser = await newCommunity.hasCommunityUsers(userInstance);
         if (!hasCommunityUser) {
             await newCommunity.addCommunityUsers(userInstance);
-            console.log("Added current user as community user", userInstance.id);
+            log.info("Added current user as community user", userInstance.id);
         }
         else {
-            console.log("Community already has the user as user", userInstance.id);
+            log.info("Community already has the user as user", userInstance.id);
         }
         for (const group of groups) {
             const hasGroupAdmin = await group.hasGroupAdmins(userInstance);
             if (!hasGroupAdmin) {
                 await group.addGroupAdmins(userInstance);
-                console.log("Added current user as group admin", userInstance.id);
+                log.info("Added current user as group admin", userInstance.id);
             }
             else {
-                console.log("Group already has the user as admin", userInstance.id);
+                log.info("Group already has the user as admin", userInstance.id);
             }
             const hasGroupUser = await group.hasGroupUsers(userInstance);
             if (!hasGroupUser) {
                 await group.addGroupUsers(userInstance);
-                console.log("Added current user as group user", userInstance.id);
+                log.info("Added current user as group user", userInstance.id);
             }
             else {
-                console.log("Group already has the user as user", userInstance.id);
+                log.info("Group already has the user as user", userInstance.id);
             }
         }
         // Create a map of old group IDs to new group IDs
         const groupIdMap = newCommunity.groupMapping;
-        console.log("groupIdMap", groupIdMap);
+        log.info("groupIdMap", groupIdMap);
         // Get the original top level agent and all its sub-agents
         const originalTopLevelAgent = await PsAgent.findByPk(topLevelAgentId, {
             include: [
@@ -178,9 +179,9 @@ export class SubscriptionManager {
             group_id: workflowGroup.id,
             parent_agent_id: undefined
         });
-        console.log("clonedTopLevelAgent", clonedTopLevelAgent);
+        log.info("clonedTopLevelAgent", clonedTopLevelAgent);
         if (originalTopLevelAgent.Class?.class_base_id) {
-            console.log("Setting agentUuidMap", originalTopLevelAgent.Class.class_base_id, clonedTopLevelAgent.id);
+            log.info("Setting agentUuidMap", originalTopLevelAgent.Class.class_base_id, clonedTopLevelAgent.id);
             agentUuidMap.set(originalTopLevelAgent.Class.class_base_id, clonedTopLevelAgent.id);
         }
         const agentInputConnectorGroupsIds = new Map();
@@ -199,7 +200,7 @@ export class SubscriptionManager {
             if (subAgent.Class?.class_base_id) {
                 agentUuidMap.set(subAgent.Class.class_base_id, clonedSubAgent.id);
             }
-            console.log("agentUuidMap", agentUuidMap);
+            log.info("agentUuidMap", agentUuidMap);
             const subAgentAiModels = await subAgent.getAiModels();
             if (subAgentAiModels && subAgentAiModels.length > 0) {
                 await clonedSubAgent.setAiModels(subAgentAiModels);
@@ -208,7 +209,7 @@ export class SubscriptionManager {
             for (const connector of (subAgent.InputConnectors ??
                 [])) {
                 const connectorConfig = { ...connector.configuration };
-                console.log("connectorConfig", connectorConfig);
+                log.info("connectorConfig", connectorConfig);
                 // Update the group ID if it exists in the map
                 if (connectorConfig.groupId &&
                     groupIdMap.has(connectorConfig.groupId)) {
@@ -231,7 +232,7 @@ export class SubscriptionManager {
             for (const connector of (subAgent.OutputConnectors ??
                 [])) {
                 const connectorConfig = { ...connector.configuration };
-                console.log("connectorConfig", connectorConfig);
+                log.info("connectorConfig", connectorConfig);
                 // Update the group ID if it exists in the map
                 if (connectorConfig.groupId &&
                     groupIdMap.has(connectorConfig.groupId)) {
@@ -253,7 +254,7 @@ export class SubscriptionManager {
         }
         // Update the workflow group configuration
         workflowGroup.configuration.agents.topLevelAgentId = clonedTopLevelAgent.id;
-        console.log(`Set top level agent id to ${clonedTopLevelAgent.id} for workflow group ${workflowGroup.id}`);
+        log.info(`Set top level agent id to ${clonedTopLevelAgent.id} for workflow group ${workflowGroup.id}`);
         workflowGroup.changed('configuration', true);
         await workflowGroup.save();
         if (agentProduct.configuration.structuredAnswersOverride) {
@@ -264,11 +265,11 @@ export class SubscriptionManager {
                     ...(originalTopLevelAgent.SubAgents ?? []),
                     originalTopLevelAgent,
                 ]) {
-                    console.log("update answers for agent", agent);
+                    log.info("update answers for agent", agent);
                     if (agent.configuration?.answers) {
                         const answerIndex = agent.configuration.answers.findIndex((a) => a.uniqueId === override.uniqueId);
                         if (answerIndex !== -1) {
-                            console.log("update answers for agent", agent.configuration.answers[answerIndex], override);
+                            log.info("update answers for agent", agent.configuration.answers[answerIndex], override);
                             agent.configuration.answers[answerIndex] = {
                                 ...agent.configuration.answers[answerIndex],
                                 ...override,
@@ -286,7 +287,7 @@ export class SubscriptionManager {
                 newStep.agentId = agentUuidMap.get(step.agentClassUuid);
             }
             else if (step.agentClassUuid) {
-                console.error("agentClassUuid not found in agentUuidMap", step.agentClassUuid);
+                log.error("agentClassUuid not found in agentUuidMap", step.agentClassUuid);
             }
             if (newStep.type === "engagmentFromInputConnector" && newStep.agentId) {
                 newStep.groupId = agentInputConnectorGroupsIds.get(newStep.agentId);
@@ -297,7 +298,7 @@ export class SubscriptionManager {
             return newStep;
         });
         updatedWorkflow.workflowGroupId = workflowGroup.id;
-        console.log("updatedWorkflow", updatedWorkflow);
+        log.info("updatedWorkflow", updatedWorkflow);
         return {
             workflow: updatedWorkflow,
             requiredQuestions: agentProduct.configuration.requiredStructuredQuestions,
@@ -460,7 +461,7 @@ export class SubscriptionManager {
             }
         }
         catch (error) {
-            console.error("Error starting agent processing:", error);
+            log.error("Error starting agent processing:", error);
             return false;
         }
     }
@@ -515,7 +516,7 @@ export class SubscriptionManager {
         let runsUsed = subscription.metadata?.runs_used || 0;
         runsUsed += 1;
         if (runsUsed > plan.configuration.max_runs_per_cycle) {
-            console.error("Maximum runs per cycle exceeded");
+            log.error("Maximum runs per cycle exceeded");
             //TODO: Look into activating this again !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             //throw new Error("Maximum runs per cycle exceeded");
         }

@@ -11,6 +11,7 @@ import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js
 import { PsAgentConnectorClass } from "@policysynth/agents/dbModels/agentConnectorClass.js";
 import { PsAgentRegistry } from "@policysynth/agents/dbModels/agentRegistry.js";
 import { PsAiModelSize, PsAiModelType, } from "@policysynth/agents/aiModelTypes.js";
+import log from "../../utils/loggerTs.js";
 // List of models that need to be initialized/associated
 const psModels = {
     PsAgentClass,
@@ -33,16 +34,16 @@ export class NewAiModelSetup {
             if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
                 await psSequelize.sync();
             }
-            console.log("All Models Loaded Init");
+            log.info("All Models Loaded Init");
             for (const modelName of Object.keys(psModels)) {
                 if (typeof psModels[modelName].associate === "function") {
                     await psModels[modelName].associate(psSequelize.models);
                 }
             }
-            console.log("All models initialized successfully.");
+            log.info("All models initialized successfully.");
         }
         catch (error) {
-            console.error("Error initializing models:", error);
+            log.error("Error initializing models:", error);
             process.exit(1);
         }
     }
@@ -65,6 +66,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 8000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.7,
             model: "claude-3-5-sonnet-20240620",
             active: true,
@@ -76,10 +78,10 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: anthropicSonnetConfig,
             });
-            console.log("Created Anthropic model:", createdModel);
+            log.info("Created Anthropic model:", createdModel);
         }
         else {
-            console.log("Anthropic model already exists: Anthropic Sonnet 3.5");
+            log.debug("Anthropic model already exists: Anthropic Sonnet 3.5");
             anthropicSonnet.set("configuration", anthropicSonnetConfig);
             anthropicSonnet.changed("configuration", true);
             await anthropicSonnet.save();
@@ -100,6 +102,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 8000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.7,
             model: "claude-3-7-sonnet-20250219",
             active: true,
@@ -111,10 +114,10 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: anthropicSonnetConfig,
             });
-            console.log("Created Anthropic model:", createdModel);
+            log.info("Created Anthropic model:", createdModel);
         }
         else {
-            console.log("Anthropic model already exists: Anthropic Sonnet 3.7");
+            log.debug("Anthropic model already exists: Anthropic Sonnet 3.7");
             anthropicSonnet.set("configuration", anthropicSonnetConfig);
             anthropicSonnet.changed("configuration", true);
             await anthropicSonnet.save();
@@ -141,6 +144,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 16384,
+            maxContextTokens: 128000,
             defaultTemperature: 0.7,
             model: "gpt-4o",
             active: true,
@@ -152,10 +156,10 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAiGpt4oConfig,
             });
-            console.log("Created OpenAI model: GPT-4o");
+            log.info("Created OpenAI model: GPT-4o");
         }
         else {
-            console.log("OpenAI model already exists: GPT-4o updating");
+            log.debug("OpenAI model already exists: GPT-4o updating");
             openAiGpt4.set("configuration", openAiGpt4oConfig);
             openAiGpt4.changed("configuration", true);
             await openAiGpt4.save();
@@ -175,6 +179,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 16384,
+            maxContextTokens: 128000,
             defaultTemperature: 0.0,
             model: "gpt-4o-mini",
             active: true,
@@ -186,13 +191,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAiGpt4oMiniConfig,
             });
-            console.log("Created OpenAI model: GPT-4o Mini");
+            log.info("Created OpenAI model: GPT-4o Mini");
         }
         else {
             openAiGpt4Mini.set("configuration", openAiGpt4oMiniConfig);
             openAiGpt4Mini.changed("configuration", true);
             await openAiGpt4Mini.save();
-            console.log("OpenAI model already exists: GPT-4o Mini");
+            log.debug("OpenAI model already exists: GPT-4o Mini");
         }
         // o1 Mini
         const openAio1Mini = await PsAiModel.findOne({
@@ -209,6 +214,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 32000,
+            maxContextTokens: 128000,
             defaultTemperature: 0.0,
             model: "o1-mini",
             active: true,
@@ -220,13 +226,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAio1MiniConfig,
             });
-            console.log("Created OpenAI model: o1 Mini");
+            log.info("Created OpenAI model: o1 Mini");
         }
         else {
             openAio1Mini.set("configuration", openAio1MiniConfig);
             openAio1Mini.changed("configuration", true);
             await openAio1Mini.save();
-            console.log("OpenAI model already exists: o1 Mini");
+            log.debug("OpenAI model already exists: o1 Mini");
         }
         // o1 Preview
         const openAio1Preview = await PsAiModel.findOne({
@@ -243,6 +249,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 32000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.0,
             model: "o1-preview",
             active: true,
@@ -254,13 +261,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAio1PreviewConfig,
             });
-            console.log("Created OpenAI model: o1 Preview");
+            log.info("Created OpenAI model: o1 Preview");
         }
         else {
             openAio1Preview.set("configuration", openAio1PreviewConfig);
             openAio1Preview.changed("configuration", true);
             await openAio1Preview.save();
-            console.log("OpenAI model already exists: o1 Preview");
+            log.debug("OpenAI model already exists: o1 Preview");
         }
         // o1 24
         const openAio11712 = await PsAiModel.findOne({
@@ -277,6 +284,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 100000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.0,
             model: "o1",
             active: true,
@@ -288,10 +296,10 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAio11712Config,
             });
-            console.log("Created OpenAI model: o1 24");
+            log.info("Created OpenAI model: o1 24");
         }
         else {
-            console.log("OpenAI model already exists: o1 24 updating");
+            log.debug("OpenAI model already exists: o1 24 updating");
             openAio11712.set("configuration", openAio11712Config);
             openAio11712.changed("configuration", true);
             await openAio11712.save();
@@ -311,6 +319,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 100000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.0,
             model: "o3-mini",
             active: true,
@@ -322,13 +331,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAio3MiniConfig,
             });
-            console.log("Created OpenAI model: o3 mini");
+            log.info("Created OpenAI model: o3 mini");
         }
         else {
             openAio3Mini.set("configuration", openAio3MiniConfig);
             openAio3Mini.changed("configuration", true);
             await openAio3Mini.save();
-            console.log("OpenAI model already exists: o3 mini");
+            log.debug("OpenAI model already exists: o3 mini");
         }
         const openAiGpt45 = await PsAiModel.findOne({
             where: { name: "GPT-4.5 Preview" },
@@ -344,6 +353,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 100000,
+            maxContextTokens: 128000,
             defaultTemperature: 0.7,
             model: "gpt-4.5-preview",
             active: true,
@@ -355,13 +365,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAiGpt45Config,
             });
-            console.log("Created OpenAI model: GPT-4.5 Preview");
+            log.info("Created OpenAI model: GPT-4.5 Preview");
         }
         else {
             openAiGpt45.set("configuration", openAiGpt45Config);
             openAiGpt45.changed("configuration", true);
             await openAiGpt45.save();
-            console.log("OpenAI model already exists: GPT-4.5 Preview");
+            log.debug("OpenAI model already exists: GPT-4.5 Preview");
         }
         const openAio3 = await PsAiModel.findOne({
             where: { name: "o3" },
@@ -371,12 +381,13 @@ export class NewAiModelSetup {
             modelSize: PsAiModelSize.Medium,
             provider: "openai",
             prices: {
-                costInTokensPerMillion: 10.0,
-                costOutTokensPerMillion: 40.0,
-                costInCachedContextTokensPerMillion: 2.5,
+                costInTokensPerMillion: 2.0,
+                costOutTokensPerMillion: 8.0,
+                costInCachedContextTokensPerMillion: 0.5,
                 currency: "USD",
             },
             maxTokensOut: 100000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.0,
             model: "o3",
             active: true,
@@ -388,10 +399,10 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAio3Config,
             });
-            console.log("Created OpenAI model: o3");
+            log.info("Created OpenAI model: o3");
         }
         else {
-            console.log("OpenAI model already exists: o3 updating");
+            log.debug("OpenAI model already exists: o3 updating");
             openAio3.set("configuration", openAio3Config);
             openAio3.changed("configuration", true);
             await openAio3.save();
@@ -410,6 +421,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 100000,
+            maxContextTokens: 200000,
             defaultTemperature: 0.0,
             model: "o4-mini",
             active: true,
@@ -421,13 +433,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAio4miniConfig,
             });
-            console.log("Created OpenAI model: o4 mini");
+            log.info("Created OpenAI model: o4 mini");
         }
         else {
             openAio4mini.set("configuration", openAio4miniConfig);
             openAio4mini.changed("configuration", true);
             await openAio4mini.save();
-            console.log("OpenAI model already exists: o4 mini");
+            log.debug("OpenAI model already exists: o4 mini");
         }
         const openAiGpt41 = await PsAiModel.findOne({
             where: { name: "GPT-4.1" },
@@ -442,7 +454,8 @@ export class NewAiModelSetup {
                 currency: "USD",
                 costInCachedContextTokensPerMillion: 0.5,
             },
-            maxTokensOut: 100000,
+            maxTokensOut: 32768,
+            maxContextTokens: 1000000,
             defaultTemperature: 0.7,
             model: "gpt-4.1",
             active: true,
@@ -454,13 +467,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: openAiGpt41Config,
             });
-            console.log("Created OpenAI model: GPT-4.1");
+            log.info("Created OpenAI model: GPT-4.1");
         }
         else {
             openAiGpt41.set("configuration", openAiGpt41Config);
             openAiGpt41.changed("configuration", true);
             await openAiGpt41.save();
-            console.log("OpenAI model already exists: GPT-4.1");
+            log.debug("OpenAI model already exists: GPT-4.1");
         }
     }
     /**
@@ -483,6 +496,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 8192,
+            maxContextTokens: 1000000,
             defaultTemperature: 0.0,
             model: "gemini-1.5-pro-002",
             active: true,
@@ -494,13 +508,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: geminiProConfig,
             });
-            console.log("Created Google model: Gemini 1.5 Pro 2");
+            log.info("Created Google model: Gemini 1.5 Pro 2");
         }
         else {
             geminiPro.set("configuration", geminiProConfig);
             geminiPro.changed("configuration", true);
             await geminiPro.save();
-            console.log("Google model already exists: Gemini 1.5 Pro 2");
+            log.debug("Google model already exists: Gemini 1.5 Pro 2");
         }
         // Gemini 1.5 Flash 2
         const geminiPro15Flash = await PsAiModel.findOne({
@@ -517,6 +531,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 8192,
+            maxContextTokens: 1000000,
             defaultTemperature: 0.0,
             model: "gemini-1.5-flash-002",
             active: true,
@@ -528,13 +543,13 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: geminiPro15FlashConfig,
             });
-            console.log("Created Google model: Gemini 1.5 Flash 2");
+            log.info("Created Google model: Gemini 1.5 Flash 2");
         }
         else {
             geminiPro15Flash.set("configuration", geminiPro15FlashConfig);
             geminiPro15Flash.changed("configuration", true);
             await geminiPro15Flash.save();
-            console.log("Google model already exists: Gemini 1.5 Flash 2");
+            log.debug("Google model already exists: Gemini 1.5 Flash 2");
         }
         // Gemini 2.0 Flash
         const gemini20Flash = await PsAiModel.findOne({
@@ -551,6 +566,7 @@ export class NewAiModelSetup {
                 currency: "USD",
             },
             maxTokensOut: 8192,
+            maxContextTokens: 1000000,
             defaultTemperature: 0.0,
             model: "gemini-2.0-flash",
             active: true,
@@ -562,53 +578,16 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: gemini20FlashConfig,
             });
-            console.log("Created Google model: Gemini 2.0 Flash");
+            log.info("Created Google model: Gemini 2.0 Flash");
         }
         else {
             gemini20Flash.set("configuration", gemini20FlashConfig);
             gemini20Flash.changed("configuration", true);
             await gemini20Flash.save();
-            console.log("Google model already exists: Gemini 2.0 Flash");
+            log.debug("Google model already exists: Gemini 2.0 Flash");
         }
-        const gemini25ProPreview1 = await PsAiModel.findOne({
-            where: { name: "Gemini 2.5 Pro Preview 1" },
-        });
-        const gemini25ProPreview1Config = {
-            type: PsAiModelType.TextReasoning,
-            modelSize: PsAiModelSize.Large,
-            provider: "google",
-            prices: {
-                costInTokensPerMillion: 1.25,
-                costOutTokensPerMillion: 10,
-                costInCachedContextTokensPerMillion: 0.875,
-                longContextTokenThreshold: 200000,
-                longContextCostInTokensPerMillion: 2.5,
-                longContextCostInCachedContextTokensPerMillion: 1.75,
-                longContextCostOutTokensPerMillion: 15,
-                currency: "USD",
-            },
-            model: "gemini-2.5-pro-preview-04-17",
-            active: true,
-            maxTokensOut: 100000,
-            defaultTemperature: 0.0
-        };
-        if (!gemini25ProPreview1) {
-            await PsAiModel.create({
-                name: "Gemini 2.5 Pro Preview 1",
-                organization_id: 1,
-                user_id: userId,
-                configuration: gemini25ProPreview1Config,
-            });
-            console.log("Created Google model: Gemini 2.5 Pro Preview 1");
-        }
-        else {
-            gemini25ProPreview1.set("configuration", gemini25ProPreview1Config);
-            gemini25ProPreview1.changed("configuration", true);
-            await gemini25ProPreview1.save();
-            console.log("Google model already exists: Gemini 2.5 Pro Preview 1");
-        }
-        const gemini25ProPreview2 = await PsAiModel.findOne({
-            where: { name: "Gemini 2.5 Pro Preview 2" },
+        const gemini25Pro = await PsAiModel.findOne({
+            where: { name: "Gemini 2.5 Pro" },
         });
         const gemini25ProConfig = {
             type: PsAiModelType.TextReasoning,
@@ -624,31 +603,32 @@ export class NewAiModelSetup {
                 longContextCostOutTokensPerMillion: 15,
                 currency: "USD",
             },
-            model: "gemini-2.5-pro-preview-05-06",
+            model: "gemini-2.5-pro",
             active: true,
             maxTokensOut: 100000,
+            maxContextTokens: 1000000,
             defaultTemperature: 0.0
         };
-        if (!gemini25ProPreview2) {
+        if (!gemini25Pro) {
             await PsAiModel.create({
-                name: "Gemini 2.5 Pro Preview 2",
+                name: "Gemini 2.5 Pro",
                 organization_id: 1,
                 user_id: userId,
                 configuration: gemini25ProConfig,
             });
-            console.log("Created Google model: Gemini 2.5 Pro");
+            log.info("Created Google model: Gemini 2.5 Pro");
         }
         else {
-            gemini25ProPreview2.set("configuration", gemini25ProConfig);
-            gemini25ProPreview2.changed("configuration", true);
-            await gemini25ProPreview2.save();
-            console.log("Google model already exists: Gemini 2.5 Pro");
+            gemini25Pro.set("configuration", gemini25ProConfig);
+            gemini25Pro.changed("configuration", true);
+            await gemini25Pro.save();
+            log.debug("Google model already exists: Gemini 2.5 Pro");
         }
         const gemini25FlashPreview1 = await PsAiModel.findOne({
             where: { name: "Gemini 2.5 Flash Preview 1" },
         });
         const gemini25FlashPreview1Config = {
-            type: PsAiModelType.TextReasoning,
+            type: PsAiModelType.Text,
             modelSize: PsAiModelSize.Medium,
             provider: "google",
             prices: {
@@ -664,6 +644,7 @@ export class NewAiModelSetup {
             model: "gemini-2.5-flash-preview-05-20",
             active: true,
             maxTokensOut: 100000,
+            maxContextTokens: 1000000,
             defaultTemperature: 0.0
         };
         if (!gemini25FlashPreview1) {
@@ -673,13 +654,47 @@ export class NewAiModelSetup {
                 user_id: userId,
                 configuration: gemini25FlashPreview1Config,
             });
-            console.log("Created Google model: Gemini 2.5 Flash Preview 1");
+            log.info("Created Google model: Gemini 2.5 Flash Preview 1");
         }
         else {
             gemini25FlashPreview1.set("configuration", gemini25FlashPreview1Config);
             gemini25FlashPreview1.changed("configuration", true);
             await gemini25FlashPreview1.save();
-            console.log("Google model already exists: Gemini 2.5 Pro");
+            log.debug("Google model already exists: Gemini 2.5 Flash Preview 1");
+        }
+        const gemini25FlashPreview = await PsAiModel.findOne({
+            where: { name: "Gemini 2.5 Flash Preview" },
+        });
+        const gemini25FlashPreviewConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.15,
+                costOutTokensPerMillion: 0.6,
+                costInCachedContextTokensPerMillion: 0.09,
+                currency: "USD",
+            },
+            maxTokensOut: 32000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+            model: "gemini-2.5-flash-preview-05-20",
+            active: true,
+        };
+        if (!gemini25FlashPreview) {
+            await PsAiModel.create({
+                name: "Gemini 2.5 Flash Preview",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini25FlashPreviewConfig,
+            });
+            log.info("Created Google model: Gemini 2.5 Flash Preview");
+        }
+        else {
+            gemini25FlashPreview.set("configuration", gemini25FlashPreviewConfig);
+            gemini25FlashPreview.changed("configuration", true);
+            await gemini25FlashPreview.save();
+            log.debug("Google model already exists: Gemini 2.5 Flash Preview");
         }
     }
     /**
@@ -726,14 +741,14 @@ export class NewAiModelSetup {
                     configuration: topLevelAgentClassConfig,
                     user_id: userId,
                 });
-                console.log("Created top-level agent class: Operations");
+                log.info("Created top-level agent class: Operations");
             }
             else {
-                console.log("Top-level agent class: Operations already exists");
+                log.info("Top-level agent class: Operations already exists");
             }
         }
         catch (error) {
-            console.error("Error seeding AI models:", error);
+            log.error("Error seeding AI models:", error);
             process.exit(1);
         }
     }
@@ -742,13 +757,13 @@ export class NewAiModelSetup {
      */
     static setupAiModels(userId) {
         setTimeout(async () => {
-            console.log("Seeding AI models");
+            log.info("Seeding AI models");
             const user = await User.findOne({
                 attributes: ["id"],
                 where: { id: userId },
             });
             if (!user) {
-                console.error("User not found");
+                log.error("User not found");
                 return;
             }
             await NewAiModelSetup.seedAiModels(user.id);
@@ -788,9 +803,9 @@ export class NewAiModelSetup {
             { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
-            { name: "Gemini 2.5 Pro Preview 1", envKey: "GEMINI_API_KEY" },
-            { name: "Gemini 2.5 Pro Preview 2", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 2.5 Pro", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.5 Flash Preview 1", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 2.5 Flash Preview", envKey: "GEMINI_API_KEY" },
             { name: "o1 24", envKey: "OPENAI_API_KEY" },
             { name: "o3 mini", envKey: "OPENAI_API_KEY" },
             { name: "o4 mini", envKey: "OPENAI_API_KEY" },

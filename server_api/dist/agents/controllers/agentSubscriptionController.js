@@ -4,6 +4,7 @@ import { SubscriptionManager } from "../managers/subscriptionManager.js";
 import auth from "../../authorization.cjs";
 import { YpSubscription } from "../models/subscription.js";
 import Stripe from "stripe";
+import log from "../../utils/loggerTs.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export class AgentSubscriptionController {
     constructor(wsClients) {
@@ -38,7 +39,7 @@ export class AgentSubscriptionController {
                 }
             }
             catch (error) {
-                console.error("Error retrieving subscription agent configuration:", error);
+                log.error("Error retrieving subscription agent configuration:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -63,7 +64,7 @@ export class AgentSubscriptionController {
                 res.status(200);
             }
             catch (error) {
-                console.error("Error updating agent configuration:", error);
+                log.error("Error updating agent configuration:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -73,7 +74,7 @@ export class AgentSubscriptionController {
                 res.json(plans);
             }
             catch (error) {
-                console.error("Error fetching plans:", error);
+                log.error("Error fetching plans:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -101,7 +102,7 @@ export class AgentSubscriptionController {
                 });
             }
             catch (error) {
-                console.error("Error creating free trial subscription:", error);
+                log.error("Error creating free trial subscription:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -114,7 +115,7 @@ export class AgentSubscriptionController {
                 res.status(201).json({ agentRun, subscription });
             }
             catch (error) {
-                console.error("Error starting agent run:", error);
+                log.error("Error starting agent run:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -125,7 +126,7 @@ export class AgentSubscriptionController {
                 res.status(200).json({ message: "Agent run stopped successfully" });
             }
             catch (error) {
-                console.error("Error stopping agent run:", error);
+                log.error("Error stopping agent run:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -139,7 +140,7 @@ export class AgentSubscriptionController {
                 res.json(subscriptions);
             }
             catch (error) {
-                console.error("Error fetching subscriptions:", error);
+                log.error("Error fetching subscriptions:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -159,7 +160,7 @@ export class AgentSubscriptionController {
                 res.status(200).json({ message: "Subscription cancelled successfully" });
             }
             catch (error) {
-                console.error("Error cancelling subscription:", error);
+                log.error("Error cancelling subscription:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -181,7 +182,7 @@ export class AgentSubscriptionController {
                 res.status(200).json(subscription);
             }
             catch (error) {
-                console.error("Error updating subscription:", error);
+                log.error("Error updating subscription:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -203,7 +204,7 @@ export class AgentSubscriptionController {
                 return;
             }
             catch (error) {
-                console.error("Error creating payment intent:", error);
+                log.error("Error creating payment intent:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -222,14 +223,14 @@ export class AgentSubscriptionController {
                     case "payment_intent.payment_failed":
                         const failedPayment = event.data.object;
                         // You might want to implement handling failed payments
-                        console.error("Payment failed:", failedPayment.id);
+                        log.error("Payment failed:", failedPayment.id);
                         break;
                     // Add other event types as needed
                 }
                 res.json({ received: true });
             }
             catch (error) {
-                console.error("Webhook error:", error);
+                log.error("Webhook error:", error);
                 res.status(400).json({ error: error.message });
             }
         };

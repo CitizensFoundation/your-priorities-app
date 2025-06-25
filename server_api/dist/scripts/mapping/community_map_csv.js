@@ -11,7 +11,7 @@ async function getTranslationForMap(textType, model, targetLanguage) {
             }
             else {
                 resolve();
-                console.log("No translation");
+                log.info("No translation");
             }
         });
     });
@@ -97,7 +97,7 @@ const getCommunityMap = async (communityId, map, options) => {
                 resolve();
             }
             else {
-                console.error("Cant find community " + communityId);
+                log.error("Cant find community " + communityId);
                 map.children.push({ name: "Not found community id " + communityId, children: [] });
                 resolve();
             }
@@ -130,15 +130,15 @@ const getMapForCommunity = async (communityId, options) => {
 };
 (async () => {
     await getMapForCommunity(communityId, {});
-    console.log("Groups");
+    log.info("Groups");
     groupsInCommunity = _.orderBy(groupsInCommunity, group => {
         return group.id;
     });
     groupsInCommunity.forEach(group => {
-        console.log(`${group.id},"${group.realGroupName}",${group.communityId}`);
+        log.info(`${group.id},"${group.realGroupName}",${group.communityId}`);
     });
     communities.forEach(community => {
-        console.log(`${community.id},"${community.name}"`);
+        log.info(`${community.id},"${community.name}"`);
     });
     process.exit();
 })();

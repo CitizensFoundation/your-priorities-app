@@ -2,6 +2,7 @@
 const _ = require("lodash");
 const FraudGetBase = require('./FraudGetBase.cjs');
 const models = require("../../../../models/index.cjs");
+const log = require("../../../../utils/logger.cjs");
 //TODO: Change to native JS instead of lodash
 class FraudGetEndorsements extends FraudGetBase {
     async getAllModelItems(model, getGroup) {
@@ -177,7 +178,7 @@ class FraudGetEndorsements extends FraudGetBase {
             return out;
         }
         else {
-            console.warn("Wrong type for e fraud check");
+            log.warn("Wrong type for e fraud check");
             return [];
         }
     }

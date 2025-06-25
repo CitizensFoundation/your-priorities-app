@@ -15,7 +15,7 @@ var walkSync = function (dir, filelist) {
                     filelist.push(path.join(dir, file));
                 }
                 else {
-                    //console.error("SKIP: "+ dir);
+                    //log.error("SKIP: "+ dir);
                 }
             }
         }
@@ -45,7 +45,7 @@ var checkFile = function (filePath) {
             }
         });
         if (!found) {
-            console.error(filePath + ": " + elementObject.element + ">");
+            log.error(filePath + ": " + elementObject.element + ">");
         }
     });
 };

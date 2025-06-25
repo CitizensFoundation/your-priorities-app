@@ -26,7 +26,7 @@ models.User.findAll({
         }
         if (changed) {
             user.save().then(() => {
-                console.log(`Saved ${user.email}`);
+                log.info(`Saved ${user.email}`);
                 callback();
             }).catch((error) => {
                 callback(error);
@@ -37,12 +37,12 @@ models.User.findAll({
         }
     }, (error) => {
         if (error)
-            console.error(error);
-        console.log(`groupChangeCount ${groupChangeCount}`);
-        console.log(`communityChangeCount ${communityChangeCount}`);
+            log.error(error);
+        log.info(`groupChangeCount ${groupChangeCount}`);
+        log.info(`communityChangeCount ${communityChangeCount}`);
         process.exit();
     });
 }).catch(error => {
-    console.error(error);
+    log.error(error);
 });
 export {};

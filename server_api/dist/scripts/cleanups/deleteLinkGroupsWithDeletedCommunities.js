@@ -20,7 +20,7 @@ function sleep(ms) {
                 order: ['id'],
                 attributes: ['id', 'configuration', 'name', 'deleted'],
             });
-            console.log(`${groups.length} groups offset ${groupsOffset}`);
+            log.info(`${groups.length} groups offset ${groupsOffset}`);
             if (groups.length > 0) {
                 groupsOffset += 100;
                 for (let i = 0; i < groups.length; i++) {
@@ -34,7 +34,7 @@ function sleep(ms) {
                         });
                         if (!community) {
                             const deleteText = `Deleting groupLink id ${groups[i].id} - name ${groups[i].name} - community id ${groups[i].configuration.actAsLinkToCommunityId}`;
-                            console.log(deleteText);
+                            log.info(deleteText);
                             allDeletions += `${deleteText}\n`;
                             groups[i].deleted = true;
                             await groups[i].save();
@@ -44,19 +44,19 @@ function sleep(ms) {
             }
             else {
                 haveGroupsLeftToProcess = false;
-                console.log("No more groups left to process from user");
+                log.info("No more groups left to process from user");
             }
             await sleep(100);
         }
     }
     catch (error) {
-        console.error(error);
+        log.error(error);
         haveGroupsToDelete = false;
     }
-    console.log(`${numberOfDeletedGroups} old anon groups deleted`);
-    console.log(`Duration ${moment(moment() - startTime).format("HH:mm:ss.SSS")}`);
-    console.log("ALL DELETIONS");
-    console.log(allDeletions);
+    log.info(`${numberOfDeletedGroups} old anon groups deleted`);
+    log.info(`Duration ${moment(moment() - startTime).format("HH:mm:ss.SSS")}`);
+    log.info("ALL DELETIONS");
+    log.info(allDeletions);
     process.exit();
 })();
 export {};

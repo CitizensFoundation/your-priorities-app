@@ -13,11 +13,11 @@ var size = function (obj) {
 };
 models.Domain.findOne({ where: { id: 1 } }).then(function (domain) {
     domain.getDomainUsers().then(function (users) {
-        console.log(users.length);
+        log.info(users.length);
         users.map(function (user) {
             allUsers[user.email] = 1;
         });
-        console.log(size(allUsers));
+        log.info(size(allUsers));
     });
 });
 var grouped = {};
@@ -59,7 +59,7 @@ models.Group.findAll({
         len = keys.length;
         for (i = 0; i < len; i++) {
             k = keys[i];
-            console.log(k + ',' + grouped[k]);
+            log.info(k + ',' + grouped[k]);
         }
         process.exit();
     });

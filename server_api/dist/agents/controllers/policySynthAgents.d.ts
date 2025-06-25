@@ -41,6 +41,8 @@ export declare class PolicySynthAgentsController {
     controlAgent: (req: express.Request, res: express.Response) => Promise<void>;
     getAgentStatus: (req: express.Request, res: express.Response) => Promise<void>;
     updateAgentStatus: (req: express.Request, res: express.Response) => Promise<void>;
+    private recursiveDeleteAgent;
+    deleteAgent: (req: YpRequest, res: express.Response) => Promise<void>;
     startAgentProcessing: (req: express.Request, res: express.Response) => Promise<void>;
     pauseAgentProcessing: (req: express.Request, res: express.Response) => Promise<void>;
     getAgentCosts: (req: express.Request, res: express.Response) => Promise<void>;

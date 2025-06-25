@@ -374,7 +374,7 @@ async function cacheIndexFile(filePath, versionKey) {
         indexCache[versionKey].data = data;
     }
     catch (err) {
-        console.error("Error caching index file:", err);
+        log.error("Error caching index file:", err);
     }
 }
 let sendIndex = async (req, res) => {

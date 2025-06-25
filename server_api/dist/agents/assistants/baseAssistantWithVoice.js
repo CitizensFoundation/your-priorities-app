@@ -1,5 +1,6 @@
 import { YpBaseAssistant } from "./baseAssistant.js";
 import { YpBaseChatBotWithVoice } from "./voiceAssistant.js";
+import log from "../../utils/loggerTs.js";
 export class YpBaseAssistantWithVoice extends YpBaseAssistant {
     constructor(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId) {
         super(wsClientId, wsClients, redis, redisKey, domainId);
@@ -59,13 +60,13 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
                     }
                 }
                 catch (error) {
-                    console.error("Error processing message:", error);
+                    log.error("Error processing message:", error);
                 }
             };
             ws.on("message", this.mainBotWsHandler);
         }
         else {
-            console.error("No WebSocket found for client: ", this.wsClientId);
+            log.error("No WebSocket found for client: ", this.wsClientId);
         }
     }
     destroyVoiceBot() {
@@ -102,7 +103,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
                 this.sendToClient(event.sender || "bot", event.message || "", event.type);
             }
             catch (error) {
-                console.error("Error forwarding voice event:", error);
+                log.error("Error forwarding voice event:", error);
             }
         };
         this.voiceBot?.wsClientSocket?.on("message", this.forwardEventHandler);
@@ -125,7 +126,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
                 tools: this.getCurrentModeFunctions(),
                 modalities: ["text", "audio"]
             });
-            console.log("handleModeSwitch", newMode, params);
+            log.info("handleModeSwitch", newMode, params);
             if (newMode === "agent_direct_connection_mode") {
                 this.voiceBot?.initializeDirectAgentVoiceConnection();
             }
@@ -137,7 +138,7 @@ export class YpBaseAssistantWithVoice extends YpBaseAssistant {
     }
     async conversation(chatLog) {
         if (this.voiceEnabled) {
-            console.log("voiceEnabled: Updating voice config");
+            log.info("voiceEnabled: Updating voice config");
             await this.voiceBot?.updateVoiceConfig({
                 instructions: this.getCurrentSystemPrompt(),
                 tools: this.getCurrentModeFunctions(),

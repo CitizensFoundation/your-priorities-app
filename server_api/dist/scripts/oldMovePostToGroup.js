@@ -59,7 +59,7 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
                     post.set('category_id', categoryId);
                 }
                 post.save().then(function () {
-                    console.log("Have changed group id for post");
+                    log.info("Have changed group id for post");
                     callback();
                 });
             });
@@ -75,7 +75,7 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
                     point.set('community_id', communityId);
                     point.set('domain_id', domainId);
                     point.save().then(function () {
-                        console.log("Have changed group and all for point: " + point.id);
+                        log.info("Have changed group and all for point: " + point.id);
                         innerSeriesCallback();
                     });
                 }, function (error) {
@@ -94,7 +94,7 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
                     activity.set('community_id', communityId);
                     activity.set('domain_id', domainId);
                     activity.save().then(function (results) {
-                        console.log("Have changed group and all activity: " + activity.id);
+                        log.info("Have changed group and all activity: " + activity.id);
                         innerSeriesCallback();
                     });
                 }, function (error) {
@@ -103,9 +103,9 @@ var moveOnePost = function (groupId, postId, categoryId, done) {
             });
         }
     ], function (error) {
-        console.log("Done");
+        log.info("Done");
         if (error)
-            console.error(error);
+            log.error(error);
         done(error);
     });
 };
@@ -115,7 +115,7 @@ var getPostIdFromUrl = function (url) {
 };
 var moveManyFromCsv = function (csvFileName, done) {
     fs.readFile(csvFileName, 'utf8', function (error, contents) {
-        console.log(contents);
+        log.info(contents);
         if (!error) {
             csvParser(contents, {}, function (err, allPosts) {
                 async.forEach(allPosts, function (post, seriesCallback) {
@@ -135,19 +135,19 @@ var moveManyFromCsv = function (csvFileName, done) {
 if (onePostId != 'null') {
     moveOnePost(oneGroupId, onePostId, null, function (error) {
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 }
 else if (csvFileName) {
     moveManyFromCsv(csvFileName, function (error) {
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 }
 else {
-    console.error("Invalid start state");
+    log.error("Invalid start state");
     process.exit();
 }
 export {};

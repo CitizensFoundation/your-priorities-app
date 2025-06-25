@@ -10,14 +10,14 @@ models.Group.findOne({
 }).then(group => {
     group.community_id = communityId;
     group.save().then(() => {
-        console.log(`Done changing group ${group.id} to community ${group.community_id}`);
+        log.info(`Done changing group ${group.id} to community ${group.community_id}`);
         process.exit();
     }).catch(error => {
-        console.error(error);
+        log.error(error);
         process.exit();
     });
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

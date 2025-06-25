@@ -1092,7 +1092,7 @@ router.delete("/:id/pointQuality", auth.can("vote on point"), function (req, res
                     });
                 }
                 else {
-                    console.error("Strange state of pointQualities");
+                    log.error("Strange state of pointQualities");
                     res.status(200).send({
                         pointQuality: pointQuality,
                         oldPointQualityValue: oldPointQualityValue,

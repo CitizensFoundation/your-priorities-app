@@ -1,5 +1,6 @@
 import { YpBaseChatBot } from "../../services/llms/baseChatBot.js";
 import WebSocket from "ws";
+import log from "../../utils/loggerTs.js";
 // Extend the base class with voice capabilities
 export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     constructor(wsClientId, wsClients, redisKey, redisConnection, voiceEnabled = false, parentAssistant) {
@@ -27,8 +28,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         this.parentAssistant.on("update-ai-model-session", this.updateAiModelSession.bind(this));
     }
     async updateAiModelSession(message) {
-        console.log(`voiceAssistant: updateAiModelSession: ${message}`);
-        console.log(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser
+        log.info(`voiceAssistant: updateAiModelSession: ${message}`);
+        log.info(`--------------------> Logged in memory user: ${this.parentAssistant.memory.currentUser
             ?.name}`);
         await new Promise((resolve) => setTimeout(resolve, 150));
         await this.initializeVoiceSession(message);
@@ -36,7 +37,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     async initializeMainAssistantVoiceConnection() {
         if (!this.voiceEnabled)
             return;
-        console.log("initializeVoiceConnection");
+        log.info("initializeVoiceConnection");
         const url = "wss://api.openai.com/v1/realtime";
         const wsConfig = {
             headers: {
@@ -47,7 +48,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         try {
             const ws = new WebSocket(`${url}?model=${this.voiceConfig.model}`, wsConfig);
             ws.on("open", () => {
-                console.log("Voice connection established");
+                log.info("Voice connection established");
                 this.assistantVoiceConnection = {
                     ws,
                     connected: true,
@@ -57,17 +58,17 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 this.initializeVoiceSession();
             });
             ws.on("close", () => {
-                console.log("Voice connection to OpenAI closed");
+                log.info("Voice connection to OpenAI closed");
                 this.assistantVoiceConnection = undefined;
             });
             ws.on("error", (error) => {
-                console.error("Voice connection error:", error);
+                log.error("Voice connection error:", error);
                 this.assistantVoiceConnection = undefined;
             });
             this.setupVoiceMessageHandlers(ws, true);
         }
         catch (error) {
-            console.error("Failed to initialize voice connection:", error);
+            log.error("Failed to initialize voice connection:", error);
             throw error;
         }
     }
@@ -86,10 +87,10 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }
         this.sendToClient("assistant", "", "clear_audio_buffer");
         if (this.directAgentVoiceConnection) {
-            console.log("Direct agent voice connection already initialized, closing");
+            log.info("Direct agent voice connection already initialized, closing");
             this.destroyDirectAgentVoiceConnection();
         }
-        console.log("initializeDirectAgentVoiceConnection");
+        log.info("initializeDirectAgentVoiceConnection");
         const url = "wss://api.openai.com/v1/realtime";
         const wsConfig = {
             headers: {
@@ -100,7 +101,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         try {
             const ws = new WebSocket(`${url}?model=${this.voiceConfig.model}`, wsConfig);
             ws.on("open", () => {
-                console.log("Agent voice connection established");
+                log.info("Agent voice connection established");
                 this.directAgentVoiceConnection = {
                     ws,
                     connected: true,
@@ -110,17 +111,17 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                 this.initializeVoiceSession("Say hi and welcome the user, offer to explain and show the user a workflow overview with the 'show_agent_workflow_overview_widget' function/tool you have access to call");
             });
             ws.on("close", () => {
-                console.log("Agent voice connection to OpenAI closed");
+                log.info("Agent voice connection to OpenAI closed");
                 this.directAgentVoiceConnection = undefined;
             });
             ws.on("error", (error) => {
-                console.error("Agent voice connection error:", error);
+                log.error("Agent voice connection error:", error);
                 this.directAgentVoiceConnection = undefined;
             });
             this.setupVoiceMessageHandlers(ws, false);
         }
         catch (error) {
-            console.error("Failed to initialize voice connection:", error);
+            log.error("Failed to initialize voice connection:", error);
             throw error;
         }
     }
@@ -161,11 +162,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             try {
                 const event = JSON.parse(data.toString());
                 if (disableWhenAgentIsSpeaking && this.directAgentVoiceConnection) {
-                    console.log("Voice message received but agent is speaking, ignoring", event.type);
+                    log.info("Voice message received but agent is speaking, ignoring", event.type);
                     return;
                 }
                 if (this.DEBUG) {
-                    console.log("voiceMessage: ", event.type);
+                    log.info("voiceMessage: ", event.type);
                 }
                 switch (event.type) {
                     case "session.created":
@@ -189,7 +190,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                         await this.handleSpeechStopped();
                         break;
                     case "response.cancelled":
-                        console.log("response.cancelled");
+                        log.info("response.cancelled");
                         this.isWaitingOnCancelResponseCompleted = false;
                         break;
                     case "conversation.item.input_audio_transcription.completed":
@@ -212,16 +213,16 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
                         break;
                     default:
                         if (this.DEBUG) {
-                            console.log("Unhandled voice event type:", event.type);
+                            log.info("Unhandled voice event type:", event.type);
                         }
                         if (event.type === "error") {
-                            console.log(JSON.stringify(event, null, 2));
+                            log.info(JSON.stringify(event, null, 2));
                         }
                         break;
                 }
             }
             catch (error) {
-                console.error("Error handling voice message:", error);
+                log.error("Error handling voice message:", error);
             }
         };
         // Attach it
@@ -259,7 +260,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             this.parentAssistant.addAssistantMessage(event.item.content[0].transcript);
         }
         else {
-            console.error("No text in response.done event");
+            log.error("No text in response.done event");
         }
     }
     async handleAudioTranscriptDone(event) {
@@ -275,14 +276,14 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         const tools = this.parentAssistant.getCurrentModeFunctions();
         if (!tools)
             return;
-        //console.log("callFunctionHandler event: ", JSON.stringify(event, null, 2));
+        //log.info("callFunctionHandler event: ", JSON.stringify(event, null, 2));
         const tool = tools.find((t) => t.name === event.name);
         if (!tool) {
-            console.log("Tool not found: ", event.name);
+            log.info("Tool not found: ", event.name);
             return;
         }
         const toolName = tool.name;
-        console.log("Calling tool handler: ", toolName);
+        log.info("Calling tool handler: ", toolName);
         const result = await tool.handler(event.arguments);
         // Store the result in memory for context
         if (result.success && result.data) {
@@ -313,21 +314,21 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             await this.saveMemoryIfNeeded();*/
         }
         else {
-            console.error(`No data returned from tool execution: ${event.name}`);
+            log.error(`No data returned from tool execution: ${event.name}`);
         }
         if (result.html) {
-            console.log("--------------------------------============================>  handleResponseDone result.html with token: ", result.uniqueToken);
+            log.info("--------------------------------============================>  handleResponseDone result.html with token: ", result.uniqueToken);
             this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
             this.parentAssistant.addAssistantHtmlMessage(result.html, result.uniqueToken);
         }
         if (result.clientEvents) {
-            console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
+            log.info(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
             for (const clientEvent of result.clientEvents) {
                 this.sendToClient("assistant", clientEvent.details, clientEvent.name);
             }
         }
         if (!result.success) {
-            console.error(`Tool execution failed: ${event.name} ${result.error}`);
+            log.error(`Tool execution failed: ${event.name} ${result.error}`);
         }
         const responseEvent = {
             type: "conversation.item.create",
@@ -358,8 +359,8 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             .join("");
     }
     async proxyToClient(event) {
-        console.log("proxyToClient: ", event.type);
-        console.log(JSON.stringify(event, null, 2));
+        log.info("proxyToClient: ", event.type);
+        log.info(JSON.stringify(event, null, 2));
         const proxyMessage = {
             sender: "assistant",
             type: event.type,
@@ -369,7 +370,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     // Handle incoming audio from client
     async handleIncomingAudio(audioData) {
-        //console.log(`handleIncomingAudio: ${audioData.length} ${this.voiceEnabled} ${this.assistantVoiceConnection?.ws}`);
+        //log.info(`handleIncomingAudio: ${audioData.length} ${this.voiceEnabled} ${this.assistantVoiceConnection?.ws}`);
         if (!this.assistantVoiceConnection?.ws || !this.voiceEnabled)
             return;
         this.voiceState.lastAudioTimestamp = Date.now();
@@ -387,7 +388,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             event_id: `bufferAppend_${this.getRandomStringAscii(10)}`,
             audio: Buffer.from(audioData).toString("base64"),
         };
-        //console.log("Sending audio message to server:");
+        //log.info("Sending audio message to server:");
         this.sendToVoiceConnection(audioMessage);
     }
     // Handle Voice Activity Detection silence
@@ -457,7 +458,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             new Promise((resolve) => {
                 const checkFlag = () => {
                     if (!this.isWaitingOnCancelResponseCompleted) {
-                        console.log("Cancel response completed from event");
+                        log.info("Cancel response completed from event");
                         resolve(true);
                     }
                     else {
@@ -468,7 +469,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             }),
             new Promise((resolve) => setTimeout(resolve, 75)),
         ]);
-        console.log("Cancel response completed from timeout");
+        log.info("Cancel response completed from timeout");
     }
     async sendCancelResponse() {
         const cancelResponse = {
@@ -476,18 +477,18 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             event_id: `sendCancelResponse_${this.getRandomStringAscii(10)}`,
         };
         this.sendToVoiceConnection(cancelResponse);
-        console.log("Have sent cancel response");
+        log.info("Have sent cancel response");
         await this.waitForCancelResponseCompleted();
     }
     async initializeVoiceSession(customResponseMessage) {
         if (!this.assistantVoiceConnection?.ws) {
-            console.error("No voice connection");
+            log.error("No voice connection");
             return;
         }
         await this.parentAssistant.initializeModes();
-        console.log("======================> initializeVoiceSession current mode", this.parentAssistant.memory.currentMode);
-        console.log("======================> initializeVoiceSession system prompt", this.parentAssistant.getCurrentSystemPrompt());
-        console.log("======================> initializeVoiceSession functions", this.parentAssistant.getCurrentModeFunctions());
+        log.info("======================> initializeVoiceSession current mode", this.parentAssistant.memory.currentMode);
+        log.info("======================> initializeVoiceSession system prompt", this.parentAssistant.getCurrentSystemPrompt());
+        log.info("======================> initializeVoiceSession functions", this.parentAssistant.getCurrentModeFunctions());
         let chatHistory;
         if (this.parentAssistant.memory &&
             this.parentAssistant.memory.chatLog &&
@@ -501,7 +502,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             })));
         }
         let instructions = this.parentAssistant.getCurrentSystemPrompt() || "";
-        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< initializeVoiceSession current mode", JSON.stringify(this.parentAssistant.memory, null, 2));
+        //log.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< initializeVoiceSession current mode", JSON.stringify(this.parentAssistant.memory, null, 2));
         let voiceName = this.voiceConfig.voice;
         const subscriptionPlan = await this.parentAssistant.getCurrentSubscriptionPlan();
         if (this.parentAssistant.memory.currentMode ===
@@ -518,7 +519,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             instructions += `\n\n<ImportantPreviousChatHistory>\n${chatHistory}\n</ImportantPreviousChatHistory>`;
         }
         if (this.DEBUG) {
-            console.log("initializeVoiceSession final instructions", instructions);
+            log.info("initializeVoiceSession final instructions", instructions);
         }
         // Then update the session with full configuration
         const sessionConfig = {
@@ -544,7 +545,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
             },
         };
         if (this.DEBUG) {
-            console.log("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
+            log.info("Sending session config to server:", JSON.stringify(sessionConfig, null, 2));
         }
         this.sendToVoiceConnection(sessionConfig);
         setTimeout(() => {
@@ -567,7 +568,7 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
         }, 200);
     }
     async triggerResponse(message, cancelResponse = true) {
-        console.log("triggerResponse: ", message);
+        log.info("triggerResponse: ", message);
         const createResponse = {
             type: "response.create",
             event_id: `triggerResponse_${this.getRandomStringAscii(10)}`,
@@ -583,11 +584,11 @@ export class YpBaseChatBotWithVoice extends YpBaseChatBot {
     }
     // Handle voice-specific events
     async handleVoiceSessionCreated(event) {
-        console.log("Voice session created:", event.session.id);
+        log.info("Voice session created:", event.session.id);
         // Additional session initialization if needed
     }
     async handleVoiceSessionError(event) {
-        console.error("Voice session error:", event.error);
+        log.error("Voice session error:", event.error);
         this.sendToClient("system", "Voice processing error occurred", "error");
     }
     async handleVoiceResponseStatus(event) {

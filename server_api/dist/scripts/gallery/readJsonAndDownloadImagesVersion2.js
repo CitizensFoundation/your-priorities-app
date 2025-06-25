@@ -21,18 +21,18 @@ async function downloadImages(obj) {
         const imageUrl = theData[i].fieldData.Mynd;
         if (imageUrl && imageUrl.startsWith("https://")) {
             // Get the image name
-            //console.log(theData[i])
-            //console.log(imageUrl);
+            //log.info(theData[i])
+            //log.info(imageUrl);
             let imageName = imageUrl.split("/").pop().split("?")[0];
             imageName = imageName.split("/").pop();
             imageName = imageName.replace(/'/g, "");
-            //console.log(imageName);
+            //log.info(imageName);
             // Download the image
             await download(imageUrl, imageName);
-            console.log(`"${imageName}",`);
+            log.info(`"${imageName}",`);
         }
         else {
-            console.error("No valid image found for: " + JSON.stringify(theData[i].fieldData));
+            log.error("No valid image found for: " + JSON.stringify(theData[i].fieldData));
         }
     }
 }
@@ -46,7 +46,7 @@ async function download(url, imageName) {
             // after download completed close filestream
             file.on("finish", () => {
                 file.close();
-                //console.log(`${imageName} downloaded`);
+                //log.info(`${imageName} downloaded`);
                 resolve();
             });
         });

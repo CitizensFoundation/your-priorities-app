@@ -3,6 +3,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { PredictionServiceClient } from "@google-cloud/aiplatform";
 import { helpers } from "@google-cloud/aiplatform";
+import log from "../../../utils/loggerTs.js";
 export class ImagenImageGenerator {
     constructor(s3Service) {
         this.s3Service = s3Service;
@@ -14,10 +15,10 @@ export class ImagenImageGenerator {
         this.endpoint = `projects/${this.projectId}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-002`;
         this.s3Bucket = process.env.S3_BUCKET || "";
         if (!this.projectId) {
-            console.warn("Warning: GOOGLE_CLOUD_PROJECT_ID is not set. Vertex AI calls may fail.");
+            log.warn("Warning: GOOGLE_CLOUD_PROJECT_ID is not set. Vertex AI calls may fail.");
         }
         if (!this.s3Bucket) {
-            console.warn("Warning: S3_BUCKET is not set. Image upload may fail.");
+            log.warn("Warning: S3_BUCKET is not set. Image upload may fail.");
         }
     }
     /**
@@ -61,7 +62,7 @@ export class ImagenImageGenerator {
                 const [response] = await predictionServiceClient.predict(request);
                 const predictions = response.predictions;
                 if (!predictions || predictions.length === 0) {
-                    console.warn("No image was generated. Check the request parameters and prompt.");
+                    log.warn("No image was generated. Check the request parameters and prompt.");
                 }
                 else {
                     // 4) Extract base64 data from the first prediction
@@ -87,19 +88,19 @@ export class ImagenImageGenerator {
                 }
             }
             catch (error) {
-                console.warn("Error generating image with Vertex AI Imagen. Will retry...");
-                console.warn(error?.message || error);
+                log.warn("Error generating image with Vertex AI Imagen. Will retry...");
+                log.warn(error?.message || error);
             }
             // Retry logic
             if (!finalUrl) {
                 retryCount++;
                 const sleepingFor = 5000 + retryCount * 10000;
-                console.debug(`Sleeping for ${sleepingFor} ms before retry #${retryCount}...`);
+                log.debug(`Sleeping for ${sleepingFor} ms before retry #${retryCount}...`);
                 await new Promise((resolve) => setTimeout(resolve, sleepingFor));
             }
         }
         if (!finalUrl) {
-            console.error(`Failed to generate Imagen after ${retryCount} retries.`);
+            log.error(`Failed to generate Imagen after ${retryCount} retries.`);
             return undefined;
         }
         return finalUrl;

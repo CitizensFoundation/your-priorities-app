@@ -1,3 +1,4 @@
+import log from "./loggerTs.js";
 const systemPromptServerApi = `
 You are a meticulous API documentation generator. Your output should be in standard Markdown API documentation format. Focus on documenting key components of an Express.js application, including routes, middleware, controllers, services, models, and important utility functions/modules.
 
@@ -138,7 +139,7 @@ function buildDirectoryTree(dir, basePath = '', isSrc = false) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     entries.forEach((entry) => {
         if (IGNORED_PATTERNS.some(pattern => entry.name.includes(pattern) || entry.name.startsWith('.'))) {
-            console.log(`Skipping ${entry.name} in buildDirectoryTree`);
+            log.info(`Skipping ${entry.name} in buildDirectoryTree`);
             return;
         }
         const relativePath = isSrc ? entry.name : path.join(basePath, entry.name);
@@ -183,7 +184,7 @@ function generateMarkdownFromTree(tree, depth = 0) {
 }
 function generateDocsReadme() {
     const tree = buildDirectoryTree(docsDir);
-    console.log(JSON.stringify(tree, null, 2));
+    log.info(JSON.stringify(tree, null, 2));
     const markdown = generateMarkdownFromTree(tree);
     const readmePath = path.join(docsDir, 'README.md');
     const apiHeader = '## API Documentation';
@@ -212,7 +213,7 @@ function findSourceFiles(dir, fileList = []) {
     for (const entry of entries) {
         if (IGNORED_PATTERNS.some(pattern => entry.name.includes(pattern) || entry.name.startsWith('.'))) {
             if (entry.name !== ".env") { // Explicitly allow .env if it's not otherwise ignored by a broader pattern
-                console.log(`Skipping ${path.join(dir, entry.name)} due to ignore patterns.`);
+                log.info(`Skipping ${path.join(dir, entry.name)} due to ignore patterns.`);
                 continue;
             }
         }
@@ -244,7 +245,7 @@ async function generateDocumentation(fileList, systemPrompt) {
         }
         if (checksum !== existingChecksum) {
             try {
-                console.log(`${file}:`);
+                log.info(`${file}:`);
                 const completion = await openaiClient.chat.completions.create({
                     model: 'gpt-4.1',
                     temperature: 0.0,
@@ -255,7 +256,7 @@ async function generateDocumentation(fileList, systemPrompt) {
                     ],
                 });
                 let docContent = completion.choices[0].message.content;
-                console.log(docContent);
+                log.info(docContent);
                 docContent = docContent.replace(/```markdown\s+/g, '');
                 const sourceDir = path.join(rootDir, 'src');
                 const relativePathInSrc = path.relative(sourceDir, file);
@@ -266,15 +267,15 @@ async function generateDocumentation(fileList, systemPrompt) {
                 }
                 fs.writeFileSync(docFilePath, docContent);
                 fs.writeFileSync(checksumFile, checksum); // Save the new checksum
-                console.log(`Documentation generated for ${file}`);
+                log.info(`Documentation generated for ${file}`);
             }
             catch (error) {
-                console.error(`Error generating documentation for ${file}:`, error);
+                log.error(`Error generating documentation for ${file}:`, error);
                 process.exit(1);
             }
         }
         else {
-            console.log(`Skipping documentation generation for ${file}, no changes detected.`);
+            log.info(`Skipping documentation generation for ${file}, no changes detected.`);
         }
     }
 }
@@ -284,4 +285,4 @@ async function main() {
     await generateDocumentation(sourceFiles, systemPromptServerApi);
     generateDocsReadme();
 }
-main().then(() => console.log('Documentation generation complete.'));
+main().then(() => log.info('Documentation generation complete.'));

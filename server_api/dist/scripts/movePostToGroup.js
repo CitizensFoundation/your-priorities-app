@@ -41,7 +41,7 @@ async.series([
             post = postIn;
             post.set('group_id', group.id);
             post.save().then(function (results) {
-                console.log("Have changed group id");
+                log.info("Have changed group id");
                 callback();
             });
         }).catch(function (error) {
@@ -60,7 +60,7 @@ async.series([
                 point.set('community_id', communityId);
                 point.set('domain_id', domainId);
                 point.save().then(function () {
-                    console.log("Have changed group and all for point: " + point.id);
+                    log.info("Have changed group and all for point: " + point.id);
                     innerSeriesCallback();
                 });
             }, function (error) {
@@ -79,7 +79,7 @@ async.series([
                 activity.set('community_id', communityId);
                 activity.set('domain_id', domainId);
                 activity.save().then(function (results) {
-                    console.log("Have changed group and all: " + activity.id);
+                    log.info("Have changed group and all: " + activity.id);
                     innerSeriesCallback();
                 });
             }, function (error) {
@@ -91,10 +91,10 @@ async.series([
     }
 ], function (error) {
     if (error) {
-        console.error(error);
+        log.error(error);
     }
     else {
-        console.log("Moved post to group", { postId: post.id, groupId: group.id });
+        log.info("Moved post to group", { postId: post.id, groupId: group.id });
     }
     process.exit();
 });

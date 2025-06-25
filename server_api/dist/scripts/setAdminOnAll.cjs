@@ -1,19 +1,20 @@
 "use strict";
 var models = require('../models/index.cjs');
 var async = require('async');
+const log = require('../utils/logger.cjs');
 var userEmail = process.argv[2];
 var user;
-console.log("Adding " + userEmail + " as admin to all public communities and groups + domains");
+log.info("Adding " + userEmail + " as admin to all public communities and groups + domains");
 async.series([
     function (callback) {
         models.User.findOne({ where: { email: userEmail } }).then(function (incomingUser) {
             if (incomingUser) {
                 user = incomingUser;
-                console.log("Found user " + user.name);
+                log.info("Found user " + user.name);
                 callback();
             }
             else {
-                console.log("Can't find user");
+                log.info("Can't find user");
             }
         });
     },
@@ -24,11 +25,11 @@ async.series([
             async.eachSeries(models, function (model, seriesCallback) {
                 model.hasDomainAdmins(user).then(function (results) {
                     if (!results) {
-                        console.log("Adding admin user for: " + model.name);
+                        log.info("Adding admin user for: " + model.name);
                         model.addDomainAdmins(user).then(seriesCallback);
                     }
                     else {
-                        console.log("Already admin for for: " + model.name);
+                        log.info("Already admin for for: " + model.name);
                         seriesCallback();
                     }
                 });
@@ -42,11 +43,11 @@ async.series([
             async.eachSeries(models, function (model, seriesCallback) {
                 model.hasOrganizationAdmins(user).then(function (results) {
                     if (!results) {
-                        console.log("Adding admin user for: " + model.name);
+                        log.info("Adding admin user for: " + model.name);
                         model.addOrganizationAdmins(user).then(seriesCallback);
                     }
                     else {
-                        console.log("Already admin for for: " + model.name);
+                        log.info("Already admin for for: " + model.name);
                         seriesCallback();
                     }
                 });
@@ -62,14 +63,14 @@ async.series([
             async.eachSeries(models, function (model, seriesCallback) {
                 model.hasCommunityAdmins(user).then(function (results) {
                     if (!results) {
-                        console.log("Adding admin user for community: " + model.name);
+                        log.info("Adding admin user for community: " + model.name);
                         model.addCommunityAdmins(user).then(function () {
-                            console.log("Im back");
+                            log.info("Im back");
                             seriesCallback();
                         });
                     }
                     else {
-                        console.log("Already admin for for: " + model.name);
+                        log.info("Already admin for for: " + model.name);
                         seriesCallback();
                     }
                 });
@@ -85,14 +86,14 @@ async.series([
             async.eachSeries(models, function (model, seriesCallback) {
                 model.hasGroupAdmins(user).then(function (results) {
                     if (!results) {
-                        console.log("Adding admin user for group: " + model.name);
+                        log.info("Adding admin user for group: " + model.name);
                         model.addGroupAdmins(user).then(function () {
-                            console.log("Im back");
+                            log.info("Im back");
                             seriesCallback();
                         });
                     }
                     else {
-                        console.log("Already admin for for: " + model.name);
+                        log.info("Already admin for for: " + model.name);
                         seriesCallback();
                     }
                 });
@@ -102,6 +103,6 @@ async.series([
         });
     }
 ], function (error) {
-    console.log("Finished");
+    log.info("Finished");
     process.exit();
 });

@@ -1,3 +1,2 @@
-import * as bunyan from 'bunyan';
-declare let logger: bunyan;
+export declare const logger: import("winston").Logger;
 export default logger;

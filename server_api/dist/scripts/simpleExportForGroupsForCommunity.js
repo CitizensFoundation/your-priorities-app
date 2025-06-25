@@ -5,9 +5,9 @@ var fs = require('fs');
 var communityId = process.argv[2];
 var outFile = process.argv[3];
 var clean = function (text) {
-    //console.log("Before: "+ text);
+    //log.info("Before: "+ text);
     var newText = text.replace('"', "'").replace('\n', '').replace('\r', '').replace(/(\r\n|\n|\r)/gm, "").replace(/"/gm, "'").replace(',', ';').trim();
-    //console.log("After:" + newText);
+    //log.info("After:" + newText);
     return newText.replace(/´/g, '');
 };
 models.Group.findAll({
@@ -24,7 +24,7 @@ models.Group.findAll({
     ]
 }).then(function (groups) {
     var outFileContent = "";
-    console.log(groups.length);
+    log.info(groups.length);
     outFileContent += "group id, author id, title, text\n";
     groupCounter = 0;
     async.eachSeries(groups, function (group, seriesCallback) {
@@ -36,9 +36,9 @@ models.Group.findAll({
     }, function (error) {
         fs.writeFile(outFile, outFileContent, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
-            console.log("The file was saved!");
+            log.info("The file was saved!");
             process.exit();
         });
     });

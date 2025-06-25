@@ -1,6 +1,6 @@
 "use strict";
 const models = require("../../models/index.cjs");
-const log = require('../utils/logger.cjs');
+const log = require('../../utils/logger.cjs');
 const _ = require("lodash");
 const recountGroupFolder = async (workPackage, callback) => {
     try {

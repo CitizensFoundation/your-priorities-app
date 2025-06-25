@@ -5,6 +5,7 @@ import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";
 import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 import { YpAgentProductRun } from "../models/agentProductRun.js";
+import log from "../../utils/loggerTs.js";
 /**
  * Common modes that implementations might use
  */
@@ -76,22 +77,22 @@ Never engage in off topic conversations, always politely steer the conversation 
             const message = JSON.parse(data.toString());
             switch (message.type) {
                 case "client_system_message":
-                    console.log("WebSockets: Processing client_system_message:", message);
+                    log.info("WebSockets: Processing client_system_message:", message);
                     this.processClientSystemMessage(message);
                     break;
                 default:
-                //console.log('Unhandled message type:', message.type);
+                //log.info('Unhandled message type:', message.type);
             }
         }
         catch (error) {
-            console.error("Error processing message:", error);
+            log.error("Error processing message:", error);
         }
     }
     setupClientSystemMessageListener() {
-        console.log("WebSockets: setupClientSystemMessageListener called for wsClientId:", this.wsClientId, this.clientSystemMessageListener);
+        log.info("WebSockets: setupClientSystemMessageListener called for wsClientId:", this.wsClientId, this.clientSystemMessageListener);
         this.wsClientSocket.on("message", this.clientSystemMessageListener);
         const listenerCountAfter = this.wsClientSocket.listenerCount("message");
-        console.log('Number of "message" listeners after adding:', listenerCountAfter);
+        log.info('Number of "message" listeners after adding:', listenerCountAfter);
     }
     async getCurrentAgentProduct() {
         if (this.memory.currentAgentStatus?.subscriptionPlanId) {
@@ -109,7 +110,7 @@ Never engage in off topic conversations, always politely steer the conversation 
             return subscriptionPlan?.AgentProduct;
         }
         else {
-            console.error("--------------------> No subscription plan found");
+            log.error("--------------------> No subscription plan found");
         }
         return undefined;
     }
@@ -142,30 +143,30 @@ Never engage in off topic conversations, always politely steer the conversation 
             }));
         }
         else {
-            console.error("No active agent run found");
+            log.error("No active agent run found");
         }
         return undefined;
     }
     async updateAiModelSession(message) {
-        console.log(`updateAiModelSession: ${message}`);
+        log.info(`updateAiModelSession: ${message}`);
     }
     async maybeSendTextResponse(message) {
         if (!this.voiceEnabled) {
             this.sendToClient("assistant", message, "message");
             await this.addAssistantMessage(message);
-            console.debug(`Sent text message to client: ${message}`);
+            log.debug(`Sent text message to client: ${message}`);
         }
     }
     async processClientSystemMessage(clientEvent) {
-        console.log(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
+        log.info(`processClientSystemMessage: ${JSON.stringify(clientEvent, null, 2)}`);
         await this.loadMemoryAsync();
         if (clientEvent.message === "user_logged_in") {
-            console.log(`user_logged_in emitting`);
+            log.info(`user_logged_in emitting`);
             this.emit("update-ai-model-session", "User is logged in, lets move to the next step");
             await this.maybeSendTextResponse("Logged in, ready to move on to the next step.");
         }
         else if (clientEvent.message === "agent_configuration_submitted") {
-            console.log(`agent_configuration_submitted emitting`);
+            log.info(`agent_configuration_submitted emitting`);
             try {
                 if (!this.memory.currentAgentStatus.subscriptionId) {
                     throw new Error("No subscription found");
@@ -190,13 +191,13 @@ Never engage in off topic conversations, always politely steer the conversation 
                 await this.maybeSendTextResponse("The agent configuration was submitted successfully and the agent is ready to create its first agent run.");
             }
             catch (error) {
-                console.error(`Error finding subscription: ${error}`);
+                log.error(`Error finding subscription: ${error}`);
                 this.emit("update-ai-model-session", `Failed to submit agent configuration: ${error}`);
             }
         }
         else if (clientEvent.message === "agent_run_changed") {
             try {
-                console.log(`agent_run_changed`);
+                log.info(`agent_run_changed`);
                 if (!this.memory.currentAgentStatus?.activeAgentRunId) {
                     throw new Error("No active agent run found");
                 }
@@ -208,12 +209,12 @@ Never engage in off topic conversations, always politely steer the conversation 
                 if (!agentRun) {
                     throw new Error("No agent run found");
                 }
-                console.log(`agent_run_changed emitting`);
+                log.info(`agent_run_changed emitting`);
                 const currentWorkflowStep = agentRun.workflow?.steps[agentRun.workflow?.currentStepIndex];
                 this.emit("update-ai-model-session", `The agent run status has been updated to ${agentRun.status} ${JSON.stringify({ workflow: agentRun.workflow, currentWorkflowStep }, null, 2)} offer the user assistance with this next step in the workflow`);
             }
             catch (error) {
-                console.error(`Error finding agent run: ${error}`);
+                log.error(`Error finding agent run: ${error}`);
                 this.emit("update-ai-model-session", `Failed to update agent run status: ${error}`);
             }
         }
@@ -254,7 +255,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 ? "configured"
                 : "not_configured",
         };
-        console.log(`updateCurrentAgentProductPlan: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+        log.info(`updateCurrentAgentProductPlan: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
         await this.saveMemory();
     }
     /**
@@ -262,7 +263,7 @@ Never engage in off topic conversations, always politely steer the conversation 
      */
     convertToolResultToMessage(toolCall, result) {
         if (this.DEBUG) {
-            console.log(`convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`);
+            log.info(`convertToolResultToMessage: ${JSON.stringify(toolCall, null, 2)}`);
         }
         return {
             role: "tool",
@@ -276,7 +277,7 @@ Never engage in off topic conversations, always politely steer the conversation 
      */
     async handleToolCalls(toolCalls) {
         if (this.DEBUG) {
-            console.log(`====================================> handleToolCalls: ${JSON.stringify(Array.from(toolCalls.values()), null, 2)}`);
+            log.info(`====================================> handleToolCalls: ${JSON.stringify(Array.from(toolCalls.values()), null, 2)}`);
         }
         const toolResponses = [];
         for (const toolCall of toolCalls.values()) {
@@ -295,7 +296,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 // Execute the function and get result
                 const result = await func.handler(parsedArgs);
                 if (this.DEBUG) {
-                    console.log(`----------------------------------> Tool execution result:`, JSON.stringify(result, null, 2));
+                    log.info(`----------------------------------> Tool execution result:`, JSON.stringify(result, null, 2));
                 }
                 // Store the result in memory for context
                 if (result.success && result.data) {
@@ -319,7 +320,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                     await this.saveMemoryIfNeeded();
                 }
                 else {
-                    console.error(`No data returned from tool execution: ${toolCall.name}`);
+                    log.error(`No data returned from tool execution: ${toolCall.name}`);
                 }
                 if (result.html) {
                     this.sendToClient("assistant", result.html, "html", result.uniqueToken, true);
@@ -327,7 +328,7 @@ Never engage in off topic conversations, always politely steer the conversation 
                 }
                 if (result.clientEvents) {
                     if (this.DEBUG) {
-                        console.log(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
+                        log.info(`clientEvents: ${JSON.stringify(result.clientEvents, null, 2)}`);
                     }
                     for (const clientEvent of result.clientEvents) {
                         this.sendToClient("assistant", clientEvent.details, clientEvent.name);
@@ -335,12 +336,12 @@ Never engage in off topic conversations, always politely steer the conversation 
                 }
                 // If error, throw it after recording the result
                 if (!result.success) {
-                    console.error(`Unknown error in tool execution: ${result.error}`);
+                    log.error(`Unknown error in tool execution: ${result.error}`);
                 }
             }
             catch (error) {
                 const errorMessage = error instanceof Error ? error.message : "Unknown error";
-                console.error(`Error executing tool ${toolCall.name}: ${errorMessage}`);
+                log.error(`Error executing tool ${toolCall.name}: ${errorMessage}`);
                 throw error;
             }
         }
@@ -354,7 +355,7 @@ Never engage in off topic conversations, always politely steer the conversation 
      */
     async handleToolResponses(toolResponses) {
         if (this.DEBUG) {
-            console.log(`handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`);
+            log.info(`handleToolResponses: ${JSON.stringify(toolResponses, null, 2)}`);
         }
         // Get existing chat messages
         const messages = [
@@ -378,7 +379,7 @@ Never engage in off topic conversations, always politely steer the conversation 
             },
             ...toolResponses,
         ];
-        console.log(`handleToolResponses: ${JSON.stringify(messages, null, 2)}`);
+        log.info(`handleToolResponses: ${JSON.stringify(messages, null, 2)}`);
         try {
             const stream = await this.openaiClient.chat.completions.create({
                 model: this.modelName,
@@ -397,17 +398,17 @@ Never engage in off topic conversations, always politely steer the conversation 
             await this.streamWebSocketResponses(stream);
         }
         catch (error) {
-            console.error("Error handling tool responses:", error);
+            log.error("Error handling tool responses:", error);
             throw error;
         }
     }
     async setupMemoryAsync() {
         if (!this.memory) {
-            console.log("loadMemoryWithOwnership: loading memory");
+            log.info("loadMemoryWithOwnership: loading memory");
             this.memory = (await this.loadMemory());
         }
         if (!this.memory) {
-            console.error("loadMemoryWithOwnership: No memory found!!!");
+            log.error("loadMemoryWithOwnership: No memory found!!!");
         }
     }
     async loadMemoryAsync() {
@@ -418,10 +419,10 @@ Never engage in off topic conversations, always politely steer the conversation 
     }
     async setCurrentMode(mode) {
         if (mode) {
-            console.log(`Setting currentMode to ${mode} it was ${this.memory.currentMode}`);
+            log.info(`Setting currentMode to ${mode} it was ${this.memory.currentMode}`);
         }
         else {
-            console.log(`No currentMode provided, keeping ${this.memory.currentMode}`);
+            log.info(`No currentMode provided, keeping ${this.memory.currentMode}`);
         }
         await this.loadMemoryAsync();
         this.memory.currentMode = mode;
@@ -431,13 +432,13 @@ Never engage in off topic conversations, always politely steer the conversation 
      * Initialize modes from subclass definitions
      */
     async initializeModes() {
-        console.log("---------------------> initializeModes");
+        log.info("---------------------> initializeModes");
         await this.setupMemoryAsync();
         this.availableTools.clear();
         const modes = await this.defineAvailableModes();
         for (const mode of modes) {
             this.modes.set(mode.name, mode);
-            console.log(`initializeModes: ${mode.name}`);
+            log.info(`initializeModes: ${mode.name}`);
             // Register mode's functions
             for (const func of mode.tools) {
                 this.availableTools.set(func.name, func);
@@ -455,7 +456,7 @@ Never engage in off topic conversations, always politely steer the conversation 
     getCurrentModeFunctions() {
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode) {
-            console.error(`No current mode found: ${this.memory.currentMode}`);
+            log.error(`No current mode found: ${this.memory.currentMode}`);
             return [];
         }
         // Combine mode-specific functions with core functions
@@ -480,7 +481,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
     getCurrentSystemPrompt() {
         const currentMode = this.modes.get(this.memory.currentMode);
         if (!currentMode) {
-            console.error(`No current mode found: ${this.memory.currentMode}`);
+            log.error(`No current mode found: ${this.memory.currentMode}`);
             return `${this.defaultSystemPrompt}\n\n${this.renderLoginStatus()}`;
         }
         return `${this.defaultSystemPrompt}\n\n${this.renderLoginStatus()}\n\n<furtherAgentInstructions>\n${currentMode.systemPrompt}\n</furtherAgentInstructions>`;
@@ -587,11 +588,11 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                     parameters: f.parameters,
                 },
             }));
-            console.log("======================> conversation currentMode", this.memory?.currentMode);
+            log.info("======================> conversation currentMode", this.memory?.currentMode);
             if (this.DEBUG) {
-                console.log("======================> conversation", JSON.stringify(messages, null, 2));
+                log.info("======================> conversation", JSON.stringify(messages, null, 2));
             }
-            console.log("======================> conversation", JSON.stringify(tools, null, 2));
+            log.info("======================> conversation", JSON.stringify(tools, null, 2));
             const stream = await this.openaiClient.chat.completions.create({
                 model: this.modelName,
                 messages,
@@ -602,7 +603,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
             await this.streamWebSocketResponses(stream);
         }
         catch (error) {
-            console.error("Error in conversation:", error);
+            log.error("Error in conversation:", error);
             this.sendToClient("assistant", "Error processing request", "error");
         }
     }
@@ -612,7 +613,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
             return agentProduct;
         }
         catch (error) {
-            console.error(`Error getting agent product for ${agentProductId}: ${error}`);
+            log.error(`Error getting agent product for ${agentProductId}: ${error}`);
             return null;
         }
     }
@@ -627,7 +628,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                 return { role: message.sender, content: message.message };
             }
             else {
-                console.debug("Message content is null, message: " + JSON.stringify(message));
+                log.debug("Message content is null, message: " + JSON.stringify(message));
                 return null;
             }
         })
@@ -638,17 +639,17 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
      */
     async handleModeSwitch(newMode, reason, params) {
         await this.loadMemoryAsync();
-        console.log(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
+        log.info(`handleModeSwitch: ${newMode}${reason ? ": " + reason : ""}`);
         const oldMode = this.memory.currentMode;
         if (!this.modes.has(newMode)) {
             throw new Error(`Invalid mode: ${newMode}`);
         }
         if (oldMode === newMode) {
-            console.error(`Trying to switch to the same mode: ${oldMode} to ${newMode}`);
+            log.error(`Trying to switch to the same mode: ${oldMode} to ${newMode}`);
             return;
         }
         if (oldMode && !this.validateModeTransition(oldMode, newMode)) {
-            console.warn(`Invalid mode transition from ${oldMode} to ${newMode}`);
+            log.warn(`Invalid mode transition from ${oldMode} to ${newMode}`);
         }
         // Perform cleanup of old mode
         if (oldMode) {
@@ -671,7 +672,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
             mode: this.memory.currentMode,
         }));
         await this.saveMemory();
-        console.log("handleModeSwitch: CurrentMode after save", this.memory.currentMode);
+        log.info("handleModeSwitch: CurrentMode after save", this.memory.currentMode);
         this.sendToClient("system", newMode, "modeChange", undefined, true);
     }
     async addUserMessage(message) {
@@ -710,7 +711,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
     async streamWebSocketResponses(stream) {
         return new Promise(async (resolve, reject) => {
             if (this.DEBUG)
-                console.log("Starting streamWebSocketResponses");
+                log.info("Starting streamWebSocketResponses");
             this.sendToClient("assistant", "", "start");
             try {
                 let botMessage = "";
@@ -719,32 +720,32 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                 let currentToolCallId = null;
                 for await (const part of stream) {
                     if (this.DEBUG) {
-                        console.log("Received stream part:", JSON.stringify(part, null, 2));
+                        log.info("Received stream part:", JSON.stringify(part, null, 2));
                     }
                     if (!part.choices?.[0]?.delta) {
                         if (this.DEBUG)
-                            console.log("Skipping invalid stream part - no choices or delta");
+                            log.info("Skipping invalid stream part - no choices or delta");
                         continue;
                     }
                     const delta = part.choices[0].delta;
                     if (this.DEBUG) {
-                        console.log("Processing delta:", JSON.stringify(delta, null, 2));
+                        log.info("Processing delta:", JSON.stringify(delta, null, 2));
                     }
                     if ("tool_calls" in delta && delta.tool_calls) {
                         if (this.DEBUG)
-                            console.log("Processing tool calls in delta");
+                            log.info("Processing tool calls in delta");
                         for (const toolCall of delta.tool_calls) {
                             // If we have a new tool call ID, update the current ID
                             if (toolCall.id) {
                                 if (this.DEBUG)
-                                    console.log(`Setting current tool call ID to: ${toolCall.id}`);
+                                    log.info(`Setting current tool call ID to: ${toolCall.id}`);
                                 currentToolCallId = toolCall.id;
                             }
                             // Always use the currentToolCallId for processing
                             if (currentToolCallId) {
                                 const now = Date.now();
                                 if (this.DEBUG) {
-                                    console.log(`Processing tool call ${currentToolCallId}:`, {
+                                    log.info(`Processing tool call ${currentToolCallId}:`, {
                                         name: toolCall.function?.name,
                                         newArguments: toolCall.function?.arguments,
                                         exists: toolCalls.has(currentToolCallId),
@@ -753,7 +754,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                                 // Initialize tool call if it's new
                                 if (!toolCalls.has(currentToolCallId)) {
                                     if (this.DEBUG)
-                                        console.log(`Initializing new tool call ${currentToolCallId}`);
+                                        log.info(`Initializing new tool call ${currentToolCallId}`);
                                     toolCalls.set(currentToolCallId, {
                                         id: currentToolCallId,
                                         name: toolCall.function?.name ?? "",
@@ -766,13 +767,13 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                                 // Check timeout
                                 if (now - existingCall.startTime > this.toolCallTimeout) {
                                     if (this.DEBUG)
-                                        console.log(`Tool call timeout for ${existingCall.name}`);
+                                        log.info(`Tool call timeout for ${existingCall.name}`);
                                     throw new Error(`Tool call timeout for ${existingCall.name}`);
                                 }
                                 // Update name if provided
                                 if (toolCall.function?.name) {
                                     if (this.DEBUG)
-                                        console.log(`Updating tool call name to ${toolCall.function.name}`);
+                                        log.info(`Updating tool call name to ${toolCall.function.name}`);
                                     existingCall.name = toolCall.function.name;
                                 }
                                 // Concatenate arguments if provided
@@ -780,7 +781,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                                     const currentArgs = toolCallArguments.get(currentToolCallId) || "";
                                     const newArgs = currentArgs + toolCall.function.arguments;
                                     if (this.DEBUG) {
-                                        console.log(`Updating arguments for ${currentToolCallId}:`, {
+                                        log.info(`Updating arguments for ${currentToolCallId}:`, {
                                             previous: currentArgs,
                                             new: toolCall.function.arguments,
                                             combined: newArgs,
@@ -791,7 +792,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                                 }
                                 toolCalls.set(currentToolCallId, existingCall);
                                 if (this.DEBUG) {
-                                    console.log(`Current state of tool call ${currentToolCallId}:`, {
+                                    log.info(`Current state of tool call ${currentToolCallId}:`, {
                                         name: existingCall.name,
                                         arguments: existingCall.arguments,
                                     });
@@ -799,22 +800,22 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                             }
                             else {
                                 if (this.DEBUG)
-                                    console.log("No current tool call ID available");
+                                    log.info("No current tool call ID available");
                             }
                         }
                     }
                     else if ("content" in delta && delta.content) {
                         if (this.DEBUG)
-                            console.log("Processing content:", delta.content);
+                            log.info("Processing content:", delta.content);
                         const content = delta.content;
                         this.sendToClient("assistant", content);
                         botMessage += content;
                     }
                     const finishReason = part.choices[0].finish_reason;
                     if (this.DEBUG) {
-                        console.log("Finish reason:", finishReason);
+                        log.info("Finish reason:", finishReason);
                         if (finishReason === "tool_calls") {
-                            console.log("Final state of all tool calls:", Object.fromEntries(toolCalls.entries()));
+                            log.info("Final state of all tool calls:", Object.fromEntries(toolCalls.entries()));
                         }
                     }
                     if (finishReason === "tool_calls") {
@@ -824,7 +825,7 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                         for (const [id, call] of toolCalls) {
                             try {
                                 if (this.DEBUG) {
-                                    console.log(`Validating JSON for tool call ${id}:`, call.arguments);
+                                    log.info(`Validating JSON for tool call ${id}:`, call.arguments);
                                 }
                                 // Handle empty arguments case
                                 if (!call.arguments.trim()) {
@@ -834,24 +835,24 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                             }
                             catch (e) {
                                 if (this.DEBUG) {
-                                    console.error(`JSON validation failed for ${id}:`, e);
-                                    console.log("Invalid arguments:", call.arguments);
+                                    log.error(`JSON validation failed for ${id}:`, e);
+                                    log.info("Invalid arguments:", call.arguments);
                                 }
                                 throw new Error(`Invalid JSON in function arguments for ${call.name}: ${call.arguments}`);
                             }
                         }
                         if (this.DEBUG)
-                            console.log("Executing tool calls");
+                            log.info("Executing tool calls");
                         await this.handleToolCalls(toolCalls);
                         if (this.DEBUG)
-                            console.log("Clearing tool calls and arguments");
+                            log.info("Clearing tool calls and arguments");
                         toolCalls.clear();
                         toolCallArguments.clear();
                     }
                     else if (finishReason === "stop") {
                         if (botMessage) {
                             if (this.DEBUG)
-                                console.log("Saving bot message to chat log");
+                                log.info("Saving bot message to chat log");
                             this.memory.chatLog.push({
                                 sender: "assistant",
                                 message: botMessage,
@@ -864,22 +865,22 @@ ${this.isLoggedIn ? "The user is logged in." : "The user is not logged in."}
                 }
             }
             catch (error) {
-                console.error("Stream processing error:", error);
+                log.error("Stream processing error:", error);
                 // Attempt to switch to error recovery mode
                 try {
                     if (this.DEBUG)
-                        console.log("Attempting to switch to error recovery mode");
+                        log.info("Attempting to switch to error recovery mode");
                     await this.handleModeSwitch("error_recovery", error instanceof Error ? error.message : "Unknown error", {});
                 }
                 catch (e) {
-                    console.error("Failed to switch to error recovery mode:", e);
+                    log.error("Failed to switch to error recovery mode:", e);
                 }
                 this.sendToClient("assistant", "There has been an error, please retry", "error");
                 reject(error);
             }
             finally {
                 if (this.DEBUG)
-                    console.log("Finalizing stream response");
+                    log.info("Finalizing stream response");
                 this.sendToClient("assistant", "", "end");
                 resolve();
             }

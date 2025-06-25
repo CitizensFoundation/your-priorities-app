@@ -32,23 +32,23 @@ async.series([
     },
 ], (error) => {
     if (error) {
-        console.error(error);
+        log.error(error);
     }
     else {
         if (posts) {
-            console.log("Posts");
+            log.info("Posts");
             posts.forEach((post) => {
-                console.log(post.id + " - " + post.language);
+                log.info(post.id + " - " + post.language);
             });
         }
         if (points) {
-            console.log("Points");
+            log.info("Points");
             points.forEach((point) => {
-                console.log(point.id + " - " + point.language);
+                log.info(point.id + " - " + point.language);
             });
         }
     }
-    console.log("Done");
+    log.info("Done");
     process.exit();
 });
 export {};

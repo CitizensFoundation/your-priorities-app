@@ -50,9 +50,9 @@ async.series([
     },
 ], error => {
     if (error)
-        console.error(error);
-    console.log("All done recounting");
-    console.log(finalTargetOutput);
+        log.error(error);
+    log.info("All done recounting");
+    log.info(finalTargetOutput);
     process.exit();
 });
 export {};

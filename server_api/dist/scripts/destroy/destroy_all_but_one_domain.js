@@ -24,15 +24,15 @@ const addUsers = (users) => {
     const userIds = users.map(u => u.id);
     userIdsToKeep = userIdsToKeep.concat(userIds);
     userIdsToKeep = _.uniq(userIdsToKeep);
-    //console.log(userIdsToKeep.length);
+    //log.info(userIdsToKeep.length);
 };
 const addUsersIds = (userIds) => {
     if (userIds.indexOf(56884) > -1) {
-        console.log("adding 56884");
+        log.info("adding 56884");
     }
     userIdsToKeep = userIdsToKeep.concat(userIds);
     userIdsToKeep = _.uniq(userIdsToKeep);
-    //console.log(userIdsToKeep.length);
+    //log.info(userIdsToKeep.length);
 };
 const addImages = (images) => {
     const imageIds = images.map(i => i.id);
@@ -408,14 +408,14 @@ async function getActivities() {
 async function setupIdsToKeep() {
     return await new Promise(async (resolve, reject) => {
         try {
-            console.log("Setup domain");
+            log.info("Setup domain");
             const domain = await getDomain();
             addUsers(domain.DomainUsers);
             addUsers(domain.DomainAdmins);
             addImages(domain.DomainLogoImages);
             addImages(domain.DomainHeaderImages);
             addVideos(domain.DomainLogoVideos);
-            console.log("Setup community");
+            log.info("Setup community");
             const communities = await getCommunities();
             communityIdsToKeep = communities.map(c => c.id);
             for (let i = 0; i < communities.length; i++) {
@@ -426,7 +426,7 @@ async function setupIdsToKeep() {
                 addImages(communities[i].CommunityHeaderImages);
                 addVideos(communities[i].CommunityLogoVideos);
             }
-            console.log("Setup group");
+            log.info("Setup group");
             const groups = await getGroups();
             groupIdsToKeep = groups.map(c => c.id);
             for (let i = 0; i < groups.length; i++) {
@@ -441,12 +441,12 @@ async function setupIdsToKeep() {
             categoryIdsToKeep = categories.map(c => c.id);
             const pages = await getPages();
             pageIdsToKeep = pages.map(p => p.id);
-            console.log("Setup posts");
+            log.info("Setup posts");
             const posts = await getPosts();
             postIdsToKeep = posts.map(p => p.id);
             for (let i = 0; i < posts.length; i++) {
                 if (posts[i].user_id == null) {
-                    console.error(`User id null for ${posts[i].id}`);
+                    log.error(`User id null for ${posts[i].id}`);
                 }
                 else {
                     addUsersIds([posts[i].user_id]);
@@ -456,7 +456,7 @@ async function setupIdsToKeep() {
                     addAudios(posts[i].PostAudios);
                 }
             }
-            console.log("Setup points");
+            log.info("Setup points");
             const points = await getPoints();
             pointIdsToKeep = points.map(p => p.id);
             for (let i = 0; i < points.length; i++) {
@@ -476,14 +476,14 @@ async function setupIdsToKeep() {
             }
             const pointRevisions = await getPointRevisions();
             pointRevisionIdsToKeep = pointRevisions.map(p => p.id);
-            console.log("Setup activities");
+            log.info("Setup activities");
             const activities = await getActivities();
             activityIdsToKeep = activities.map(a => a.id);
             for (let i = 0; i < activities.length; i++) {
                 if (activities[i].user_id)
                     addUsersIds([activities[i].user_id]);
                 else
-                    console.warn(`No user_id for activity ${activities[i].id}`);
+                    log.warn(`No user_id for activity ${activities[i].id}`);
             }
             const users = await getUsers();
             for (let i = 0; i < users.length; i++) {
@@ -503,7 +503,7 @@ async function setupIdsToKeep() {
 }
 async function deleteVideos() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying videos images");
+        log.info("Destroying videos images");
         const videos = await models.Video.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -515,7 +515,7 @@ async function deleteVideos() {
         for (let i = 0; i < videos.length; i++) {
             await videos[i].setVideoImages([]);
         }
-        console.log("Destroying videos");
+        log.info("Destroying videos");
         await models.Video.unscoped().destroy({ where: {
                 id: {
                     [models.Sequelize.Op.notIn]: videoIdsToKeep
@@ -526,7 +526,7 @@ async function deleteVideos() {
 }
 async function deletePointAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying PointAssociations ");
+        log.info("Destroying PointAssociations ");
         const points = await models.Point.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -544,7 +544,7 @@ async function deletePointAssociations() {
 }
 async function deletePostAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying PostAssociations ");
+        log.info("Destroying PostAssociations ");
         const posts = await models.Post.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -564,7 +564,7 @@ async function deletePostAssociations() {
 }
 async function deleteUserAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying UserAssociations ");
+        log.info("Destroying UserAssociations ");
         const users = await models.User.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -589,7 +589,7 @@ async function deleteUserAssociations() {
 }
 async function deleteGroupAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying GroupAssociations ");
+        log.info("Destroying GroupAssociations ");
         const groups = await models.Group.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -610,7 +610,7 @@ async function deleteGroupAssociations() {
 }
 async function deleteCommunityAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying CommunityAssociations ");
+        log.info("Destroying CommunityAssociations ");
         const communities = await models.Community.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -631,7 +631,7 @@ async function deleteCommunityAssociations() {
 }
 async function deleteDomainAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying DomainAssociations ");
+        log.info("Destroying DomainAssociations ");
         const domains = await models.Domain.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -652,7 +652,7 @@ async function deleteDomainAssociations() {
 }
 async function deleteActivityAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying ActivitiesAssociations ");
+        log.info("Destroying ActivitiesAssociations ");
         const activities = await models.AcActivity.unscoped().findAll({
             attributes: ['id']
         });
@@ -665,7 +665,7 @@ async function deleteActivityAssociations() {
 }
 async function deleteNotificationAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying NoitficationAssociations ");
+        log.info("Destroying NoitficationAssociations ");
         const notifications = await models.AcNotification.unscoped().findAll({
             attributes: ['id'],
         });
@@ -679,7 +679,7 @@ async function deleteNotificationAssociations() {
 }
 async function deleteImageAssociations() {
     return await new Promise(async (resolve, reject) => {
-        console.log("Destroying ImageAssociations ");
+        log.info("Destroying ImageAssociations ");
         const images = await models.Image.unscoped().findAll({
             attributes: ['id'],
             where: {
@@ -710,7 +710,7 @@ async function deleteInChunks(model, where) {
                 if (items.length > 0) {
                     const modelIds = items.map(n => { return n.id; });
                     offset += 2500;
-                    console.log(`offset: ${offset}`);
+                    log.info(`offset: ${offset}`);
                     const destroyResults = await model.unscoped().destroy({
                         where: {
                             id: {
@@ -747,117 +747,117 @@ async function deleteAll() {
             //await deleteActivityAssociations();
             //await deleteNotificationAssociations();
             //await deleteImageAssociations();
-            console.log("Destroying points");
+            log.info("Destroying points");
             await deleteInChunks(models.Point.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: pointIdsToKeep
                 }
             });
-            console.log("Destroying point qualities");
+            log.info("Destroying point qualities");
             await deleteInChunks(models.PointQuality.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: qualityIdsToKeep
                 }
             });
-            console.log("Destroying point revision");
+            log.info("Destroying point revision");
             await deleteInChunks(models.PointRevision.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: pointRevisionIdsToKeep
                 }
             });
-            console.log("Destroying post revision");
+            log.info("Destroying post revision");
             await deleteInChunks(models.PostRevision.unscoped(), {
                 post_id: null
             });
-            console.log("Destroying temp data and not used 1");
+            log.info("Destroying temp data and not used 1");
             //await models.AcNewsFeedItem.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 2");
+            log.info("Destroying temp data and not used 2");
             //await models.AcNewsFeedProcessedRange.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 3");
+            log.info("Destroying temp data and not used 3");
             //await models.AcDelayedNotification.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 4");
+            log.info("Destroying temp data and not used 4");
             // You will need to temporarily disable some foreign key constraints
             //await models.AcNotification.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 5");
+            log.info("Destroying temp data and not used 5");
             // You will need to temporarily disable some foreign key constraints
             //await models.AcActivity.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 6");
+            log.info("Destroying temp data and not used 6");
             //await models.AcBackgroundJob.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 7");
+            log.info("Destroying temp data and not used 7");
             //await models.AcClientActivity.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 8");
+            log.info("Destroying temp data and not used 8");
             //await models.AcTranslationCache.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 9");
+            log.info("Destroying temp data and not used 9");
             //await models.GeneralDataStore.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 10");
+            log.info("Destroying temp data and not used 10");
             await deleteInChunks(models.Invite.unscoped(), {});
-            console.log("Destroying temp data and not used 11");
+            log.info("Destroying temp data and not used 11");
             await deleteInChunks(models.PostStatusChange.unscoped(), {});
             await deleteInChunks(models.BulkStatusUpdate.unscoped(), {});
-            console.log("Destroying temp data and not used 12");
+            log.info("Destroying temp data and not used 12");
             //await deleteInChunks(models.PostRevision.unscoped(), {
             //});
-            console.log("Destroying temp data and not used 13");
+            log.info("Destroying temp data and not used 13");
             //await models.Rating.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 14");
+            log.info("Destroying temp data and not used 14");
             await models.UserLegacyPassword.unscoped().destroy({ truncate: true });
-            console.log("Destroying temp data and not used 15");
-            console.log("Destroying posts");
+            log.info("Destroying temp data and not used 15");
+            log.info("Destroying posts");
             await deleteInChunks(models.Post.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: postIdsToKeep
                 }
             });
-            console.log("Destroying endorsements");
+            log.info("Destroying endorsements");
             await deleteInChunks(models.Endorsement.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: endorsementIdsToKeep
                 }
             });
-            console.log("Destroying pages");
+            log.info("Destroying pages");
             await deleteInChunks(models.Page.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: pageIdsToKeep
                 }
             });
-            console.log("Destroying categories");
+            log.info("Destroying categories");
             await deleteInChunks(models.Category.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: categoryIdsToKeep
                 }
             });
-            console.log("Destroying groups");
+            log.info("Destroying groups");
             await deleteInChunks(models.Group.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: groupIdsToKeep
                 }
             });
-            console.log("Destroying communities");
+            log.info("Destroying communities");
             await deleteInChunks(models.Community.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: communityIdsToKeep
                 }
             });
-            console.log("Destroying domains");
+            log.info("Destroying domains");
             await deleteInChunks(models.Domain.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: [domainIdToKeep]
                 }
             });
             await deleteVideos();
-            console.log("Destroying audios");
+            log.info("Destroying audios");
             await deleteInChunks(models.Audio.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: audioIdsToKeep
                 }
             });
-            console.log("Destroying images");
+            log.info("Destroying images");
             await deleteInChunks(models.Image.unscoped(), {
                 id: {
                     [models.Sequelize.Op.notIn]: imageIdsToKeep
                 }
             });
-            console.log("Destroying users");
+            log.info("Destroying users");
             let haveItemsToDelete = true;
             let offset = 0;
             let deletedItems = 0;
@@ -872,7 +872,7 @@ async function deleteAll() {
                     return userIdsToKeep.indexOf(uid) === -1;
                 });
                 if (userIdsToDelete.indexOf(56884) > -1) {
-                    console.log("DELETING 56884");
+                    log.info("DELETING 56884");
                 }
                 if (userIdsToDelete.length > 0) {
                     deletedItems += userIdsToDelete.length;
@@ -884,7 +884,7 @@ async function deleteAll() {
                         }
                     });
                     offset += 2500;
-                    console.log(offset);
+                    log.info(offset);
                 }
                 else {
                     haveItemsToDelete = false;
@@ -910,7 +910,7 @@ async function copyVideosToMinio() {
                 for (let f = 0; f < formats.length; f++) {
                     const newUrl = await copyFileFromS3ToMinio("minio-video-public", formats[f]);
                     formats[f] = newUrl;
-                    console.log(newUrl);
+                    log.info(newUrl);
                 }
                 videos[i].formats = formats;
                 videos[i].changed('formats', true);
@@ -956,7 +956,7 @@ async function copyAudiosToMinio() {
                 for (let f = 0; f < formats.length; f++) {
                     const newUrl = await copyFileFromS3ToMinio("minio-audio-public", formats[f]);
                     formats[f] = newUrl;
-                    console.log(`New ${newUrl}`);
+                    log.info(`New ${newUrl}`);
                 }
                 audios[i].formats = formats;
                 audios[i].changed('formats', true);
@@ -999,7 +999,7 @@ async function copyFileFromS3ToMinio(bucket, url) {
                         stream.close(() => {
                             fs.mkdirSync(minioMetaDataFolderPath, { recursive: true });
                             fs.writeFileSync(`${minioMetaDataFolderPath}/fs.json`, fsFileContent);
-                            console.log(`Copy completed for ${url}`);
+                            log.info(`Copy completed for ${url}`);
                             const newUrlPath = `${minioBaseUrlPath}/${bucket}/${filename}`;
                             resolve(newUrlPath);
                         });
@@ -1016,11 +1016,11 @@ async function copyFileFromS3ToMinio(bucket, url) {
     });
 }
 (async () => {
-    console.log("Setup ids to keep");
+    log.info("Setup ids to keep");
     await setupIdsToKeep();
     //await deleteAll();
     await copyAllToMinio();
-    console.log(`Destroying all except domain id ${domainIdToKeep} completed`);
+    log.info(`Destroying all except domain id ${domainIdToKeep} completed`);
     process.exit();
 })();
 export {};

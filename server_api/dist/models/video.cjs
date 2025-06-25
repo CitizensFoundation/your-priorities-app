@@ -580,7 +580,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
             else {
-                console.error("Can't find collection for Ziggeo video");
+                log.error("Can't find collection for Ziggeo video");
             }
             resolve();
         });
@@ -606,7 +606,7 @@ module.exports = (sequelize, DataTypes) => {
                 resolve();
             }
             catch (error) {
-                console.error(error);
+                log.error(error);
                 res.sendStatus(500);
                 reject();
             }
@@ -830,11 +830,11 @@ module.exports = (sequelize, DataTypes) => {
                             }
                             log.info("foramts", { formats });
                             await mediaManager.deleteMediaFormatsUrls(formats);
-                            console.log("Deleted video", { videoId: req.params.videoId });
+                            log.info("Deleted video", { videoId: req.params.videoId });
                             res.sendStatus(200);
                         }
                         catch (error) {
-                            console.error("Could not delete video", { error, video });
+                            log.error("Could not delete video", { error, video });
                             res.sendStatus(500);
                         }
                     });

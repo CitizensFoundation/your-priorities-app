@@ -46,16 +46,16 @@ models.Endorsement.findAll({
         }
     ]
 }).then((endorsements) => {
-    console.log(`Votes: ${endorsements.length}`);
+    log.info(`Votes: ${endorsements.length}`);
     endorsements.forEach(e => {
         if (!allUsers[e.User.ssn]) {
             allUsers[e.User.ssn] = 1;
             uniqueSsns.push(e.User.ssn);
-            console.log(`${e.User.ssn} - ${e.User.name}`);
+            log.info(`${e.User.ssn} - ${e.User.name}`);
         }
     });
-    console.log(`Voters: ${size(allUsers)}`);
-    console.log(`Average votes per user: ${parseInt(endorsements.length / size(allUsers))}`);
+    log.info(`Voters: ${size(allUsers)}`);
+    log.info(`Average votes per user: ${parseInt(endorsements.length / size(allUsers))}`);
     process.exit();
 });
 export {};

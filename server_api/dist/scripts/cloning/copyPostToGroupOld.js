@@ -43,7 +43,7 @@ var getCategoryIdForPost = function (categoryName) {
     }
     var id = reykjavikThinRoddCategoryLookup[categoryName];
     if (!id) {
-        console.error("Can't find category");
+        log.error("Can't find category");
     }
     return id;
 };
@@ -117,7 +117,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
             }).then(function (postIn) {
                 oldPost = postIn;
                 if (!postIn) {
-                    console.error("No post in");
+                    log.error("No post in");
                     callback("no post");
                 }
                 else {
@@ -195,7 +195,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
                                     }
                                 }
                             ], function (error) {
-                                console.log("Have copied post to group id");
+                                log.info("Have copied post to group id");
                                 callback(error);
                             });
                         });
@@ -275,7 +275,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
                                             newActivity.set('domain_id', domainId);
                                             newActivity.set('point_id', newPoint.id);
                                             newActivity.save().then(function (results) {
-                                                console.log("Have changed group and all activity: " + newActivity.id);
+                                                log.info("Have changed group and all activity: " + newActivity.id);
                                                 activitesSeriesCallback();
                                             });
                                         }, function (error) {
@@ -289,7 +289,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
                         });
                     });
                 }, function (error) {
-                    console.log("Have changed group and all for point");
+                    log.info("Have changed group and all for point");
                     callback();
                 });
             });
@@ -312,7 +312,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
                     newActivity.set('domain_id', domainId);
                     newActivity.set('post_id', newPost.id);
                     newActivity.save().then(function (results) {
-                        console.log("Have changed group and all activity: " + newActivity.id);
+                        log.info("Have changed group and all activity: " + newActivity.id);
                         innerSeriesCallback();
                     });
                 }, function (error) {
@@ -349,15 +349,15 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
             });
         }
     ], function (error) {
-        console.log("Done");
+        log.info("Done");
         if (error)
-            console.error(error);
+            log.error(error);
         done(error);
     });
 };
 var parsePosts = function (allPosts, done) {
     async.eachSeries(allPosts, function (post, seriesCallback) {
-        console.log("Post: " + post[0]);
+        log.info("Post: " + post[0]);
         copyOnePost(toGroupId, getPostIdFromUrl(post[6]), getCategoryIdForPost(post[5]), function (error) {
             seriesCallback(error);
         });
@@ -379,19 +379,19 @@ var copyManyFromCsv = function (csvUrl, done) {
 if (onePostId != 'null') {
     copyOnePost(toGroupId, onePostId, null, function (error) {
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 }
 else if (csvFileName && userIdToPostNewsStory) {
     copyManyFromCsv(csvFileName, function (error) {
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 }
 else {
-    console.error("Invalid start state");
+    log.error("Invalid start state");
     process.exit();
 }
 export {};

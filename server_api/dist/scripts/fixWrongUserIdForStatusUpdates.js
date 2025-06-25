@@ -5,9 +5,10 @@ const domainId = process.argv[2];
 const oldUserId = process.argv[3];
 const newUserId = process.argv[4];
 const beforeDate = process.argv[5];
-console.log("Fix wrong user id on status updated");
+const log = require('../utils/logger.cjs');
+log.info("Fix wrong user id on status updated");
 if (!domainId || !oldUserId || !newUserId || !beforeDate) {
-    console.error("Missing parameters");
+    log.error("Missing parameters");
     process.exit();
 }
 else {
@@ -31,17 +32,17 @@ else {
                 async.eachSeries(activities, function (activity, innerCallback) {
                     activity.user_id = newUser.id;
                     activity.save().then(function (results) {
-                        console.log('Adding admin user to missing status updates for activities ' + newUser.email);
+                        log.info('Adding admin user to missing status updates for activities ' + newUser.email);
                         innerCallback();
                     });
                 }, function (error) {
-                    console.info("Completed");
+                    log.info("Completed");
                     process.exit();
                 });
             });
         }
         else {
-            console.error("Missing user");
+            log.error("Missing user");
             process.exit();
         }
     });

@@ -13,18 +13,18 @@ if (communityId && groupCount) {
         if (community) {
             community.counter_groups = groupCount;
             community.save().then(() => {
-                console.log("Done");
+                log.info("Done");
                 process.exit();
             });
         }
         else {
-            console.error("No community");
+            log.error("No community");
             process.exit();
         }
     });
 }
 else {
-    console.error("Nothing is done!");
+    log.error("Nothing is done!");
     process.exit();
 }
 export {};

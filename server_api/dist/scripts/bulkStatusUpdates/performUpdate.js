@@ -8,7 +8,7 @@ var getTemplate = function (templates, title) {
     var returnTemplate;
     if (title) {
         _.forEach(templates, function (template) {
-            //  console.log(template);
+            //  log.info(template);
             if (title == template.title) {
                 returnTemplate = template;
             }
@@ -21,14 +21,14 @@ models.BulkStatusUpdate.findOne({
         id: id
     }
 }).then(function (update) {
-    console.log("Update: " + update.id + " name: " + update.name);
-    console.log(update.config);
-    console.log(update.templates);
+    log.info("Update: " + update.id + " name: " + update.name);
+    log.info(update.config);
+    log.info(update.templates);
     if (update.config.groups) {
         async.eachSeries(update.config.groups, function (group, groupCallback) {
             if (group.posts) {
                 async.eachSeries(group.posts, function (post, postCallback) {
-                    //            console.log("New status: "+post.newOfficialStatus+" template: "+post.selectedTemplateName+ " content: "+getTemplateContent(update.templates,post.selectedTemplateName));
+                    //            log.info("New status: "+post.newOfficialStatus+" template: "+post.selectedTemplateName+ " content: "+getTemplateContent(update.templates,post.selectedTemplateName));
                     if (post.newOfficialStatus) {
                         var template = getTemplate(update.templates, post.selectedTemplateName);
                         var templateContent = template ? template.content : null;
@@ -36,7 +36,7 @@ models.BulkStatusUpdate.findOne({
                             templateContent = post.uniqueStatusMessage;
                         }
                         if (templateContent) {
-                            console.log(post.id + ": " + templateContent);
+                            log.info(post.id + ": " + templateContent);
                             async.series([
                                 function (doCallback) {
                                     models.User.findOne({
@@ -104,13 +104,13 @@ models.BulkStatusUpdate.findOne({
             }
         }, function (error) {
             if (error) {
-                console.error(error);
+                log.error(error);
             }
-            console.log("Bulk status update has been applied.");
+            log.info("Bulk status update has been applied.");
             process.exit();
         });
     }
 }).catch(function (error) {
-    console.error(error);
+    log.error(error);
 });
 export {};

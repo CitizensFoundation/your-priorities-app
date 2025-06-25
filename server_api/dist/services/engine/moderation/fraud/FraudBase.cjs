@@ -1,6 +1,7 @@
 "use strict";
 const _ = require("lodash");
 const moment = require("moment");
+const log = require("../../../../utils/logger.cjs");
 class FraudBase {
     constructor(workPackage) {
         this.workPackage = workPackage;
@@ -12,11 +13,11 @@ class FraudBase {
         ;
     }
     getTopItems() {
-        console.error("Should be implemented in a sub class");
+        log.error("Should be implemented in a sub class");
         return null;
     }
     async getAllItems() {
-        console.error("Should be implemented in a sub class");
+        log.error("Should be implemented in a sub class");
         return null;
     }
     getPostIdsFromItems(topItems) {

@@ -1,6 +1,7 @@
 import { BaseAssistantMode } from "./baseAssistantMode.js";
 import { NavigationTools } from "./tools/navigationTools.js";
 import { LoginAssistantTools } from "./tools/loginTools.js";
+import log from "../../../utils/loggerTs.js";
 export class AgentSelectionMode extends BaseAssistantMode {
     constructor(assistant) {
         super(assistant);
@@ -30,7 +31,7 @@ export class AgentSelectionMode extends BaseAssistantMode {
         return tools;
     }
     async getMode() {
-        console.log("---------------------> getMode AgentSelectionMode");
+        log.info("---------------------> getMode AgentSelectionMode");
         const systemPrompt = await this.getCurrentModeSystemPrompt();
         const tools = await this.getCurrentModeTools();
         return {

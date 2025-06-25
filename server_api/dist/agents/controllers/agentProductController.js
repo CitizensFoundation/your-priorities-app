@@ -2,6 +2,7 @@
 import express from 'express';
 import { AgentProductManager } from '../managers/agentProductManager.js';
 import auth from '../../authorization.cjs';
+import log from "../../utils/loggerTs.js";
 export class AgentProductController {
     constructor() {
         this.path = '/api/agent-products';
@@ -13,7 +14,7 @@ export class AgentProductController {
                 res.json(agentProducts);
             }
             catch (error) {
-                console.error('Error fetching agent products:', error);
+                log.error('Error fetching agent products:', error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -28,7 +29,7 @@ export class AgentProductController {
                 res.json(agentProduct);
             }
             catch (error) {
-                console.error('Error fetching agent product:', error);
+                log.error('Error fetching agent product:', error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -40,7 +41,7 @@ export class AgentProductController {
                 res.status(201).json(agentProduct);
             }
             catch (error) {
-                console.error('Error creating agent product:', error);
+                log.error('Error creating agent product:', error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -52,7 +53,7 @@ export class AgentProductController {
                 res.json(agentProduct);
             }
             catch (error) {
-                console.error('Error updating agent product:', error);
+                log.error('Error updating agent product:', error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -63,7 +64,7 @@ export class AgentProductController {
                 res.status(200).json({ message: 'Agent product deleted successfully' });
             }
             catch (error) {
-                console.error('Error deleting agent product:', error);
+                log.error('Error deleting agent product:', error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -74,7 +75,7 @@ export class AgentProductController {
                 res.json(runs);
             }
             catch (error) {
-                console.error('Error fetching agent product runs:', error);
+                log.error('Error fetching agent product runs:', error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -85,7 +86,7 @@ export class AgentProductController {
                 res.json(status);
             }
             catch (error) {
-                console.error('Error fetching agent product status:', error);
+                log.error('Error fetching agent product status:', error);
                 res.status(500).json({ error: error.message });
             }
         };

@@ -31,7 +31,7 @@ const importAllDomains = (done) => {
         async.eachOfLimit(domains, updateAsyncLimit, (domain, index, callback) => {
             importDomain(domain, callback);
         }, () => {
-            console.log("Finished updating domains");
+            log.info("Finished updating domains");
             done();
         });
     }).catch(function (error) {
@@ -57,7 +57,7 @@ const importAllCommunities = (done) => {
         async.eachOfLimit(communities, updateAsyncLimit, (community, index, callback) => {
             importCommunity(community, callback);
         }, () => {
-            console.log("Finished updating communities");
+            log.info("Finished updating communities");
             done();
         });
     }).catch(function (error) {
@@ -90,7 +90,7 @@ const importAllGroups = (done) => {
         async.eachOfLimit(groups, updateAsyncLimit, (group, index, callback) => {
             importGroup(group, callback);
         }, () => {
-            console.log("Finished updating communities");
+            log.info("Finished updating communities");
             done();
         });
     }).catch(function (error) {
@@ -177,7 +177,7 @@ const importAllPosts = (done) => {
         async.eachOfLimit(posts, updateAsyncLimit, (post, index, callback) => {
             importPost(post, callback);
         }, () => {
-            console.log("Finished updating posts");
+            log.info("Finished updating posts");
             done();
         });
     }).catch(function (error) {
@@ -244,7 +244,7 @@ const importAllPoints = (done) => {
         async.eachOfLimit(points, updateAsyncLimit, (point, index, callback) => {
             importPoint(point, callback);
         }, () => {
-            console.log("Finished updating posts");
+            log.info("Finished updating posts");
             done();
         });
     }).catch(function (error) {
@@ -279,9 +279,9 @@ const importAll = (done) => {
             });
         }
     ], (error) => {
-        console.log("Finished importing all");
+        log.info("Finished importing all");
         if (error)
-            console.error(error);
+            log.error(error);
         done();
     });
 };
@@ -290,19 +290,19 @@ if (process.env["AC_ANALYTICS_KEY"] && process.env["AC_ANALYTICS_BASE_URL"]) {
     if (process.argv[2] && process.argv[2] === "onlyUpdatePosts") {
         updateAsyncLimit = 5;
         importAllPosts(() => {
-            console.log("Done updating posts");
+            log.info("Done updating posts");
             process.exit();
         });
     }
     else {
         importAll(() => {
-            console.log("Done importing all");
+            log.info("Done importing all");
             process.exit();
         });
     }
 }
 else {
-    console.error("NO AC_ANALYTICS_KEY");
+    log.error("NO AC_ANALYTICS_KEY");
     process.exit();
 }
 export {};

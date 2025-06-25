@@ -2,7 +2,7 @@
 const models = require("../../../models/index.cjs");
 const async = require("async");
 const moment = require("moment");
-const log = require("../../utils/logger.cjs");
+const log = require("../../../utils/logger.cjs");
 const _ = require("lodash");
 const Excel = require("exceljs");
 const getGroupPosts = require("./common_utils.cjs").getGroupPosts;
@@ -243,7 +243,7 @@ const createXlsCommunityUsersReport = (workPackage, callback) => {
                     seriesCallback(error);
                 }
                 else {
-                    console.log(`Updating job 100 with DATA`);
+                    log.info(`Updating job 100 with DATA`);
                     models.AcBackgroundJob.update({
                         progress: 100,
                         data: { reportUrl },

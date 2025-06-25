@@ -1,9 +1,10 @@
 import models from '../../models/index.cjs';
+import log from "../../utils/loggerTs.js";
 (async () => {
     try {
         const [domainIdArg] = process.argv.slice(2);
         if (!domainIdArg) {
-            console.log('Usage: node listDomainUsersWithSsn.js <domainId>');
+            log.info('Usage: node listDomainUsersWithSsn.js <domainId>');
             process.exit(1);
         }
         const domainId = Number(domainIdArg);
@@ -12,19 +13,19 @@ import models from '../../models/index.cjs';
             include: [{ model: models.User, as: 'DomainUsers' }],
         });
         if (!domain) {
-            console.error(`Domain ${domainId} not found`);
+            log.error(`Domain ${domainId} not found`);
             process.exit(1);
         }
-        console.log('email,name,ssn');
+        log.info('email,name,ssn');
         for (const user of domain.DomainUsers) {
             if (user.ssn) {
-                console.log(`${user.email},${user.name},${user.ssn}`);
+                log.info(`${user.email},${user.name},${user.ssn}`);
             }
         }
         process.exit(0);
     }
     catch (err) {
-        console.error(err);
+        log.error(err);
         process.exit(1);
     }
 })();

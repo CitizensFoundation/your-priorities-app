@@ -29,7 +29,7 @@ const createPost = async (groupId, groupName, name, description, imageFileName, 
             if (LOCAL_TEST) {
                 try {
                     imageDimensions = sizeOf(imageFilePath);
-                    console.log(imageDimensions.width, imageDimensions.height);
+                    log.info(imageDimensions.width, imageDimensions.height);
                 }
                 catch (error) {
                     resolve();
@@ -39,7 +39,7 @@ const createPost = async (groupId, groupName, name, description, imageFileName, 
             else {
                 imageDimensions = { width: 1000, height: 1000 };
             }
-            console.error(imageUrl);
+            log.error(imageUrl);
             const formats = JSON.stringify([imageUrl, imageUrl, imageUrl]);
             const image = models.Image.build({
                 user_id: userId,
@@ -69,7 +69,7 @@ const createPost = async (groupId, groupName, name, description, imageFileName, 
                 },
             });
             await post.save();
-            console.log(JSON.stringify(post));
+            log.info(JSON.stringify(post));
             await post.addPostHeaderImage(image);
             resolve();
         }
@@ -131,27 +131,27 @@ async function downloadImages(obj) {
         }
         const groupId = groupIds[groupName];
         if (!groupId) {
-            console.error("No group found for: " + JSON.stringify(theData[i].fieldData));
+            log.error("No group found for: " + JSON.stringify(theData[i].fieldData));
         }
         else {
             const metaData = theData[i].fieldData;
-            //console.log(imageUrl);
+            //log.info(imageUrl);
             if (imageUrl && imageUrl.startsWith("https://")) {
                 // Get the image name
-                //console.log(theData[i])
-                //console.log(imageUrl);
+                //log.info(theData[i])
+                //log.info(imageUrl);
                 let imageName = imageUrl.split("/").pop().split("?")[0];
                 imageName = imageName.split("/").pop();
                 imageName = imageName.replace(/'/g, "");
-                //console.log(imageName);
+                //log.info(imageName);
                 // Download the image
-                //console.log(imageName, postName, postDescription, metaData)
+                //log.info(imageName, postName, postDescription, metaData)
                 //await download(imageUrl, imageName);
                 if (imageName.indexOf(".jpg") == -1) {
-                    console.log("--------------------------------------");
-                    console.log(postName);
-                    console.log(postDescription);
-                    console.error(imageName);
+                    log.info("--------------------------------------");
+                    log.info(postName);
+                    log.info(postDescription);
+                    log.error(imageName);
                 }
                 else {
                     await createPost(groupId, groupName, postName, postDescription, imageName, `${imageFolderPath}${imageName}`, metaData);
@@ -160,7 +160,7 @@ async function downloadImages(obj) {
                 //imageName = randomImages[Math.floor(Math.random() * randomImages.length)];
             }
             else {
-                console.error("No valid image found for: " + JSON.stringify(theData[i].fieldData));
+                log.error("No valid image found for: " + JSON.stringify(theData[i].fieldData));
             }
         }
     }

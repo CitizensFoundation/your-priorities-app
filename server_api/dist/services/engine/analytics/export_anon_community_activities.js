@@ -7,14 +7,14 @@ const fs = require('fs');
 //const request = require('request');
 const request = {
     post: (data, done) => {
-        console.log(JSON.stringify(data, null, 4));
+        log.info(JSON.stringify(data, null, 4));
         done();
     }
 };
 const clean = (text) => {
-    //console.log("Before: "+ text);
+    //log.info("Before: "+ text);
     var newText = text.replace('"', "'").replace('\n', '').replace('\r', '').replace(/(\r\n|\n|\r)/gm, "").replace(/"/gm, "'").replace(/,/, ';').trim();
-    //console.log("After:" + newText);
+    //log.info("After:" + newText);
     return newText.replace(/´/g, '');
 };
 const getEncryptedId = (id, key, iv) => {

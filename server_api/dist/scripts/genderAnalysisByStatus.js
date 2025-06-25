@@ -47,10 +47,10 @@ models.Domain.findOne({ where: { id: 1 } }).then(function (domain) {
                     callback();
                 });
             }, function () {
-                console.log("Ideas " + translateOfficialStatus(officialStatus));
-                console.log("femalePostCount: " + femalePostCount);
-                console.log("malePostCount: " + malePostCount);
-                console.log("unknownPostCount: " + unknownPostCount);
+                log.info("Ideas " + translateOfficialStatus(officialStatus));
+                log.info("femalePostCount: " + femalePostCount);
+                log.info("malePostCount: " + malePostCount);
+                log.info("unknownPostCount: " + unknownPostCount);
                 femalePostCount = 0;
                 malePostCount = 0;
                 unknownPostCount = 0;

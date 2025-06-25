@@ -8,9 +8,9 @@ models.Post.findAll({
         category_id: null
     }
 }).then(function (posts) {
-    console.log("Found " + posts.length + " post without category");
+    log.info("Found " + posts.length + " post without category");
     _.each(posts, function (post) {
-        console.log(post.id);
+        log.info(post.id);
     });
     process.exit();
 });

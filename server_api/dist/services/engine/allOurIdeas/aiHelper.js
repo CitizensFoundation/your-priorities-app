@@ -1,4 +1,5 @@
 import { OpenAI } from "openai";
+import log from "../../../utils/loggerTs.js";
 export class AiHelper {
     constructor(wsClientSocket = undefined) {
         this.modelName = "gpt-4o";
@@ -26,7 +27,7 @@ Only output: PASSES or FAILS`;
                     content: this.moderationUserPrompt(question, answerToModerate),
                 },
             ];
-            console.log(JSON.stringify(messages, null, 2));
+            log.info(JSON.stringify(messages, null, 2));
             const response = await this.openaiClient.chat.completions.create({
                 model: this.modelName,
                 messages,
@@ -38,7 +39,7 @@ Only output: PASSES or FAILS`;
                 response.choices[0] &&
                 response.choices[0].message &&
                 response.choices[0].message.content) {
-                console.log("Moderation response:", response.choices[0].message.content);
+                log.info("Moderation response:", response.choices[0].message.content);
                 return ["PASSES", "PASS"].includes(response.choices[0].message.content.toUpperCase())
                     ? true
                     : false;
@@ -83,7 +84,7 @@ Only output: PASSES or FAILS`;
                 }
             }
             catch (error) {
-                console.error(error);
+                log.error(error);
                 this.sendToClient("bot", "There has been an error, please retry", "error");
                 reject();
             }
@@ -98,11 +99,11 @@ Only output: PASSES or FAILS`;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: question,
             });
-            console.log("Moderation response:", moderationResponse);
+            log.info("Moderation response:", moderationResponse);
             const flagged = moderationResponse.results[0].flagged;
-            console.log("Flagged:", flagged);
+            log.info("Flagged:", flagged);
             if (flagged) {
-                console.error("Flagged:", question);
+                log.error("Flagged:", question);
                 return null;
             }
             else {
@@ -135,7 +136,7 @@ Only output: PASSES or FAILS`;
             }
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            log.error("Error in getAnswerIdeas:", error);
             this.sendToClient("bot", "There has been an error, please retry", "error");
             return null;
         }
@@ -175,7 +176,7 @@ Only output: PASSES or FAILS`;
             });
             const flagged = moderationResponse.results[0].flagged;
             if (flagged) {
-                console.error("Flagged:", answersText);
+                log.error("Flagged:", answersText);
                 return;
             }
             else {
@@ -197,7 +198,7 @@ Only output: PASSES or FAILS`;
             }
         }
         catch (error) {
-            console.error("Error in getAiAnalysis:", error);
+            log.error("Error in getAiAnalysis:", error);
             this.sendToClient("bot", "There has been an error, please retry", "error");
         }
     }

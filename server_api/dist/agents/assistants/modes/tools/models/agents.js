@@ -1,6 +1,7 @@
 import { NotificationAgentQueueManager } from "../../../../managers/notificationAgentQueueManager.js";
 import { YpAgentProductRun } from "../../../../models/agentProductRun.js";
 import { SubscriptionModels } from "./subscriptions.js";
+import log from "../../../../../utils/loggerTs.js";
 export class AgentModels {
     constructor(assistant) {
         this.assistant = assistant;
@@ -50,14 +51,14 @@ export class AgentModels {
             let currentStepIndex = workflow.currentStepIndex;
             let currentStep = workflow.steps[currentStepIndex];
             const isLastStep = currentStepIndex >= totalSteps - 1;
-            console.log(`oldStep: ${JSON.stringify(currentStep, null, 2)}`);
+            log.info(`oldStep: ${JSON.stringify(currentStep, null, 2)}`);
             if (currentStep.type !== "agentOps" && !isLastStep) {
                 workflow.currentStepIndex++;
                 currentStepIndex = workflow.currentStepIndex;
                 currentStep = workflow.steps[currentStepIndex];
             }
             currentStep.startTime = new Date();
-            console.log(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
+            log.info(`newStep: ${JSON.stringify(currentStep, null, 2)}`);
             if (currentStepIndex >= totalSteps) {
                 throw new Error(`Agent run ${agentRunId} is already at the last step of the workflow`);
             }
@@ -82,7 +83,7 @@ export class AgentModels {
             };
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             throw new Error("Error starting agent workflow step");
         }
     }
@@ -106,7 +107,7 @@ export class AgentModels {
         return agentRun.run.workflow.steps[agentRun.run.workflow.currentStepIndex + 1];
     }
     async stopCurrentWorkflowStep() {
-        console.log("---------------------> stopCurrentWorkflowStep");
+        log.info("---------------------> stopCurrentWorkflowStep");
         const agent = await this.assistant.getCurrentAgentProduct();
         const currentRun = (await YpAgentProductRun.findByPk(this.assistant.memory.currentAgentStatus?.activeAgentRunId));
         if (!currentRun) {
@@ -128,7 +129,7 @@ export class AgentModels {
         // Get current status from queue manager
         const queueStatus = await this.queueManager.getAgentStatus(agent.id);
         if (queueStatus) {
-            console.log(`Current queue status for agent ${agent.id}:`, queueStatus);
+            log.info(`Current queue status for agent ${agent.id}:`, queueStatus);
         }
         return {
             agent,

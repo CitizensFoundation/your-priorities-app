@@ -1,6 +1,7 @@
 import express from "express";
 import { marked } from "marked";
 import HTMLtoDOCX from "html-to-docx";
+import log from "../../utils/loggerTs.js";
 import auth from "../../authorization.cjs";
 import { YpAgentAssistant } from "../assistants/agentAssistant.js";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
@@ -33,7 +34,7 @@ export class AssistantController {
         this.voiceAssistantInstances = new Map();
         this.initializeModels = async () => {
             try {
-                console.log(`All Models Loaded Init`);
+                log.info(`All Models Loaded Init`);
                 // Call associate method to set up associations
                 for (const modelName of Object.keys(models)) {
                     if (models[modelName].associate) {
@@ -41,10 +42,10 @@ export class AssistantController {
                         //await models[modelName].associate(models);
                     }
                 }
-                console.log("All agentmodels initialized successfully.");
+                log.info("All agentmodels initialized successfully.");
             }
             catch (error) {
-                console.error("Error initializing models:", error);
+                log.error("Error initializing models:", error);
                 process.exit(1);
             }
         };
@@ -57,28 +58,28 @@ export class AssistantController {
                 }
                 const regex = /<markdownReport>([\s\S]*?)<\/markdownReport>/i;
                 const match = lastStatusMessage ? lastStatusMessage.match(regex) : null;
-                console.debug(`match: ${JSON.stringify(match, null, 2)}`);
+                log.debug(`match: ${JSON.stringify(match, null, 2)}`);
                 if (!match || match.length < 2) {
-                    console.error("No <markdownReport>...</markdownReport> content found.");
+                    log.error("No <markdownReport>...</markdownReport> content found.");
                     res
                         .status(400)
                         .send("No <markdownReport>...</markdownReport> content found.");
                 }
                 const markdownContent = match ? match[1] : null;
                 if (!markdownContent) {
-                    console.error("No markdown content found.");
+                    log.error("No markdown content found.");
                     res.status(400).send("No markdown content found.");
                     return;
                 }
                 const htmlContent = await marked(markdownContent);
                 const docxBuffer = (await HTMLtoDOCX(htmlContent));
-                console.debug(`docxBuffer: ${docxBuffer.length}`);
+                log.debug(`docxBuffer: ${docxBuffer.length}`);
                 res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                 res.setHeader("Content-disposition", 'attachment; filename="converted.docx"');
                 res.send(docxBuffer);
             }
             catch (error) {
-                console.error("Error converting Markdown to DOCX:", error);
+                log.error("Error converting Markdown to DOCX:", error);
                 res.status(500).send("Server error");
             }
         };
@@ -91,7 +92,7 @@ export class AssistantController {
                 res.sendStatus(200);
             }
             catch (error) {
-                console.error("Error advancing or stopping workflow:", error);
+                log.error("Error advancing or stopping workflow:", error);
                 res.sendStatus(500);
             }
         };
@@ -102,7 +103,7 @@ export class AssistantController {
                 res.sendStatus(200);
             }
             catch (error) {
-                console.error("Error starting next workflow step:", error);
+                log.error("Error starting next workflow step:", error);
                 res.sendStatus(500);
             }
         };
@@ -113,7 +114,7 @@ export class AssistantController {
                 res.sendStatus(200);
             }
             catch (error) {
-                console.error("Error stopping current workflow step:", error);
+                log.error("Error stopping current workflow step:", error);
                 res.sendStatus(500);
             }
         };
@@ -142,7 +143,7 @@ export class AssistantController {
                 });
             }
             catch (error) {
-                console.error("Error retrieving subscription agent configuration:", error);
+                log.error("Error retrieving subscription agent configuration:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -174,7 +175,7 @@ export class AssistantController {
                 res.send({ workflow: agentRun?.workflow, status: agentRun?.status });
             }
             catch (error) {
-                console.error("Error getting updated workflow:", error);
+                log.error("Error getting updated workflow:", error);
                 res.sendStatus(500);
             }
         };
@@ -186,12 +187,12 @@ export class AssistantController {
                 res.sendStatus(200);
             }
             catch (error) {
-                console.error("Error starting agent:", error);
+                log.error("Error starting agent:", error);
                 res.sendStatus(500);
             }
         };
         this.submitAgentConfiguration = async (req, res) => {
-            console.log(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
+            log.info(`submitAgentConfiguration: ${JSON.stringify(req.body, null, 2)}`);
             const { requiredQuestionsAnswers } = req.body;
             const subscriptionId = parseInt(req.params.subscriptionId);
             try {
@@ -213,7 +214,7 @@ export class AssistantController {
                 await subscription.save();
             }
             catch (error) {
-                console.error("Error saving subscription:", error);
+                log.error("Error saving subscription:", error);
                 res.sendStatus(500);
             }
             res.sendStatus(200);
@@ -233,7 +234,7 @@ export class AssistantController {
                 res.sendStatus(200);
             }
             catch (error) {
-                console.error("Error updating login status:", error);
+                log.error("Error updating login status:", error);
                 res.sendStatus(500);
             }
         };
@@ -268,12 +269,12 @@ export class AssistantController {
                     });
                 }
                 else {
-                    console.warn("No user found to clear runs for");
+                    log.warn("No user found to clear runs for");
                 }
                 res.sendStatus(200);
             }
             catch (error) {
-                console.error("Error clearing chat log:", error);
+                log.error("Error clearing chat log:", error);
                 res.sendStatus(500);
             }
         };
@@ -281,7 +282,7 @@ export class AssistantController {
             const memory = await this.loadMemoryWithOwnership(req, res);
             if (!memory)
                 return;
-            console.log(`Getting memory at key: ${memory.redisKey}`);
+            log.info(`Getting memory at key: ${memory.redisKey}`);
             res.json(memory);
         };
         // New API endpoints for workflow management
@@ -299,7 +300,7 @@ export class AssistantController {
                 });
             }
             catch (error) {
-                console.error("Error retrieving running workflows:", error);
+                log.error("Error retrieving running workflows:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -317,7 +318,7 @@ export class AssistantController {
                 });
             }
             catch (error) {
-                console.error("Error retrieving all workflows:", error);
+                log.error("Error retrieving all workflows:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -336,7 +337,7 @@ export class AssistantController {
                 });
             }
             catch (error) {
-                console.error("Error connecting to workflow conversation:", error);
+                log.error("Error connecting to workflow conversation:", error);
                 res.status(500).json({ error: error.message });
             }
         };
@@ -379,10 +380,10 @@ export class AssistantController {
         const callerLine = stackTrace?.split("\n")[2]; // First line is Error, second is current function, third is caller
         const callerMatch = callerLine?.match(/at\s+(.*)\s+\(/);
         const caller = callerMatch ? callerMatch[1] : "unknown";
-        console.debug(`loadMemoryWithOwnership called by: ${caller}`);
-        console.debug(`loadMemoryWithOwnership: ${JSON.stringify(req.body, null, 2)}`);
+        log.debug(`loadMemoryWithOwnership called by: ${caller}`);
+        log.debug(`loadMemoryWithOwnership: ${JSON.stringify(req.body, null, 2)}`);
         const redisKey = this.getMemoryRedisKey(req);
-        console.debug(`loadMemoryWithOwnership: redisKey: ${redisKey}`);
+        log.debug(`loadMemoryWithOwnership: redisKey: ${redisKey}`);
         try {
             const rawMemory = await req.redisClient.get(redisKey);
             let memory = rawMemory
@@ -390,7 +391,7 @@ export class AssistantController {
                 : null;
             // If no memory, create new
             if (!memory) {
-                console.debug(`loadMemoryWithOwnership: creating new memory`);
+                log.debug(`loadMemoryWithOwnership: creating new memory`);
                 memory = {
                     redisKey,
                     chatLog: [],
@@ -401,40 +402,40 @@ export class AssistantController {
                     ownerUserId: null,
                 };
                 if (req.user) {
-                    console.debug(`loadMemoryWithOwnership: setting ownerUserId to ${req.user.id}`);
+                    log.debug(`loadMemoryWithOwnership: setting ownerUserId to ${req.user.id}`);
                     memory.ownerUserId = req.user.id;
                 }
                 else {
-                    console.debug(`loadMemoryWithOwnership: no user in request`);
+                    log.debug(`loadMemoryWithOwnership: no user in request`);
                 }
                 await req.redisClient.set(redisKey, JSON.stringify(memory));
                 const rawAfterSet = await req.redisClient.get(redisKey);
-                console.log("loadMemoryWithOwnership: After set, raw in Redis is:", rawAfterSet);
-                console.debug(`loadMemoryWithOwnership: returning new memory`);
+                log.info("loadMemoryWithOwnership: After set, raw in Redis is:", rawAfterSet);
+                log.debug(`loadMemoryWithOwnership: returning new memory`);
                 return memory;
             }
             else {
-                console.debug(`loadMemoryWithOwnership: memory already exists`);
-                console.debug(`loadMemoryWithOwnership: memory: ${JSON.stringify(memory, null, 2)}`);
+                log.debug(`loadMemoryWithOwnership: memory already exists`);
+                log.debug(`loadMemoryWithOwnership: memory: ${JSON.stringify(memory, null, 2)}`);
             }
             // If memory is owned by someone
             if (memory.ownerUserId !== null) {
-                console.debug(`loadMemoryWithOwnership: memory is owned by ${memory.ownerUserId}`);
+                log.debug(`loadMemoryWithOwnership: memory is owned by ${memory.ownerUserId}`);
                 if (!req.user) {
-                    console.debug(`loadMemoryWithOwnership: no user in request`);
+                    log.debug(`loadMemoryWithOwnership: no user in request`);
                     res.status(401).json({ error: "Unauthorized" });
                     return;
                 }
                 else {
-                    console.debug(`loadMemoryWithOwnership: user in request`);
+                    log.debug(`loadMemoryWithOwnership: user in request`);
                 }
                 if (memory.ownerUserId !== req.user.id) {
-                    console.debug(`loadMemoryWithOwnership: ownerUserId does not match ${memory.ownerUserId} !== ${req.user.id}`);
+                    log.debug(`loadMemoryWithOwnership: ownerUserId does not match ${memory.ownerUserId} !== ${req.user.id}`);
                     res.status(403).json({ error: "Forbidden" });
                     return;
                 }
                 else {
-                    console.debug(`loadMemoryWithOwnership: ownerUserId matches ${memory.ownerUserId} === ${req.user.id}`);
+                    log.debug(`loadMemoryWithOwnership: ownerUserId matches ${memory.ownerUserId} === ${req.user.id}`);
                 }
                 // Same user => fine
                 return memory;
@@ -445,16 +446,16 @@ export class AssistantController {
                     // optionally upgrade
                     memory.ownerUserId = req.user.id;
                     await req.redisClient.set(redisKey, JSON.stringify(memory));
-                    console.debug(`loadMemoryWithOwnership: returning memory with ownerUserId ${memory.ownerUserId}`);
+                    log.debug(`loadMemoryWithOwnership: returning memory with ownerUserId ${memory.ownerUserId}`);
                 }
                 else {
-                    console.debug(`loadMemoryWithOwnership: returning memory with ownerUserId null`);
+                    log.debug(`loadMemoryWithOwnership: returning memory with ownerUserId null`);
                 }
                 return memory;
             }
         }
         catch (error) {
-            console.error("Error loading memory:", error);
+            log.error("Error loading memory:", error);
             res.status(500).json({ error: "Internal server error" });
             return;
         }
@@ -465,7 +466,7 @@ export class AssistantController {
             const memory = await this.loadMemoryWithOwnership(req, res);
             if (!memory)
                 return;
-            console.log(`Starting chat session for client: ${wsClientId}`);
+            log.info(`Starting chat session for client: ${wsClientId}`);
             let oldVoiceAssistant = this.voiceAssistantInstances.get("voiceAssistant");
             if (oldVoiceAssistant) {
                 oldVoiceAssistant.destroy();
@@ -485,7 +486,7 @@ export class AssistantController {
             });
         }
         catch (error) {
-            console.error("Error starting voice session:", error);
+            log.error("Error starting voice session:", error);
             res.status(500).json({ error: "Internal server error" });
         }
     }
@@ -514,7 +515,7 @@ export class AssistantController {
             });
         }
         catch (error) {
-            console.error("Error starting chat session:", error);
+            log.error("Error starting chat session:", error);
             res.status(500).json({ error: "Internal server error" });
         }
     }

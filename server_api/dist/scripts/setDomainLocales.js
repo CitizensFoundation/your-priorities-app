@@ -1,6 +1,6 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-console.log("Setting up locales");
+log.info("Setting up locales");
 async.series([
     function (callback) {
         models.Domain.findOne({ where: { domain_name: 'betrireykjavik.is' } }).then(function (domain) {
@@ -27,7 +27,7 @@ async.series([
         });
     }
 ], function (error) {
-    console.log("Finished");
+    log.info("Finished");
     process.exit();
 });
 export {};

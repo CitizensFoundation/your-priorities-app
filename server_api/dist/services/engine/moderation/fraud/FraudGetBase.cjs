@@ -4,6 +4,7 @@ const moment = require("moment");
 const FraudBase = require('./FraudBase.cjs');
 const models = require("../../../../models/index.cjs");
 const ColorHash = require('color-hash').default;
+const log = require("../../../../utils/logger.cjs");
 class FraudGetBase extends FraudBase {
     constructor(workPackage) {
         super(workPackage);
@@ -114,7 +115,7 @@ class FraudGetBase extends FraudBase {
     async processAndGetFraudItems() {
         return await new Promise(async (resolve, reject) => {
             try {
-                console.log(`Get Fraud ${JSON.stringify(this.workPackage)}`);
+                log.info(`Get Fraud ${JSON.stringify(this.workPackage)}`);
                 this.items = await this.getAllItems();
                 this.setupDataToProcess();
                 this.setBackgroundColorsFromKey();

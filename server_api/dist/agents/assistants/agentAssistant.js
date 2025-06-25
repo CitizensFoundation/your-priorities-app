@@ -3,6 +3,7 @@ import { YpBaseAssistantWithVoice } from "./baseAssistantWithVoice.js";
 import { AgentSelectionMode } from "./modes/agentSelectionMode.js";
 import { DirectConversationMode } from "./modes/agentDirectConnection.js";
 import { SubscriptionManager } from "../managers/subscriptionManager.js";
+import log from "../../utils/loggerTs.js";
 export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     constructor(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId) {
         super(wsClientId, wsClients, redis, voiceEnabled, redisKey, domainId);
@@ -30,7 +31,7 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     }
     handleMemoryChanged(memory) {
         if (this.DEBUG) {
-            console.log(`Sending memory changed to client: ${JSON.stringify(this.simplifiedMemory, null, 2)}`);
+            log.info(`Sending memory changed to client: ${JSON.stringify(this.simplifiedMemory, null, 2)}`);
         }
         this.sendToClient("system", JSON.stringify(this.simplifiedMemory), "memory-changed");
     }
@@ -39,12 +40,12 @@ export class YpAgentAssistant extends YpBaseAssistantWithVoice {
     }
     get isSubscribedToCurrentAgentProduct() {
         if (this.DEBUG) {
-            console.log(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+            log.info(`-------------------------------------------> isSubscribedToCurrentAgent: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
         }
         return this.memory.currentAgentStatus?.subscriptionId != undefined;
     }
     get hasConfiguredcurrentAgentProduct() {
-        console.log(`configuration: ${this.redisKey}: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
+        log.info(`configuration: ${this.redisKey}: ${JSON.stringify(this.memory.currentAgentStatus, null, 2)}`);
         return this.memory.currentAgentStatus?.configurationState === "configured";
     }
     async isCurrentAgentRunning() {

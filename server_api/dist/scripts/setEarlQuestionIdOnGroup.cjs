@@ -1,8 +1,9 @@
 "use strict";
 var models = require("../models/index.cjs");
+const log = require("../utils/logger.cjs");
 var questionId = process.argv[2];
 var groupId = process.argv[3];
-console.log("Adding pariwise question id " + questionId + " to group " + groupId);
+log.info("Adding pariwise question id " + questionId + " to group " + groupId);
 models.Group.findOne({
     where: {
         id: groupId,
@@ -14,16 +15,16 @@ models.Group.findOne({
         group.set("configuration.allOurIdeas.earl.question_id", questionId);
         group.set("configuration.allOurIdeas.earl.question.id", questionId);
         group.save().then(() => {
-            console.log("Finished");
+            log.info("Finished");
             process.exit();
         });
     }
     else {
-        console.log("Group does not have allOurIdeas configuration");
+        log.info("Group does not have allOurIdeas configuration");
         process.exit();
     }
 })
     .catch((error) => {
-    console.log("Error: ", error);
+    log.info("Error: ", error);
     process.exit();
 });

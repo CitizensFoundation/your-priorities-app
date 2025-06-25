@@ -4,6 +4,7 @@ import fs from "fs";
 import stream from "stream";
 import { promisify } from "util";
 import models from "../../../models/index.cjs";
+import log from "../../../utils/loggerTs.js";
 const dbModels = models;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 export const updateUploadJobStatus = async (jobId, uploadProgress, data = undefined) => {
@@ -17,11 +18,11 @@ export const updateUploadJobStatus = async (jobId, uploadProgress, data = undefi
         }
     }
     catch (error) {
-        console.error("updateUploadJobStatus", { error: error });
+        log.error("updateUploadJobStatus", { error: error });
     }
 };
 export const setJobError = async (jobId, errorToUser, errorDetail = undefined) => {
-    console.error("Error in background job", { error: errorDetail });
+    log.error("Error in background job", { error: errorDetail });
     try {
         await AcBackgroundJob.update({ error: errorToUser, progress: 0 }, { where: { id: jobId } });
     }

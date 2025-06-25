@@ -124,7 +124,7 @@ async.series([
                     innerSeriesCallback => {
                         toCommunity.addCommunityAdmins(adminUserToAdd).then((results => {
                             if (results) {
-                                console.log(`Have added ${adminUserToAdd.email} to community ${toCommunity.name}`);
+                                log.info(`Have added ${adminUserToAdd.email} to community ${toCommunity.name}`);
                                 finalOutput += urlToAddAddFront + "community/" + toCommunity.id + "\n";
                                 innerSeriesCallback();
                             }
@@ -138,7 +138,7 @@ async.series([
                     innerSeriesCallback => {
                         async.forEachSeries(toCommunity.Groups, (group, forEachCallback) => {
                             group.addGroupAdmins(adminUserToAdd).then(results => {
-                                console.log(`Have added ${adminUserToAdd.email} to group ${group.name}`);
+                                log.info(`Have added ${adminUserToAdd.email} to group ${group.name}`);
                                 forEachCallback();
                             });
                         }, innerSeriesCallback);
@@ -153,9 +153,9 @@ async.series([
     },
 ], error => {
     if (error)
-        console.error(error);
-    console.log("All done copying admins to communities");
-    console.log(finalOutput);
+        log.error(error);
+    log.info("All done copying admins to communities");
+    log.info(finalOutput);
     process.exit();
 });
 export {};

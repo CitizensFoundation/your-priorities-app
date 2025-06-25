@@ -63,11 +63,11 @@ const generateInvites = async () => {
             }
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
         }
     }
     urls.forEach((url) => {
-        console.log(url);
+        log.info(url);
     });
     process.exit();
 };

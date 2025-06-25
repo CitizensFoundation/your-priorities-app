@@ -23,12 +23,12 @@ var size = function (obj) {
     }
   }
 ]}).then(function(notifications) {
-  console.log("Hello: "+notifications.length);
+  log.info("Hello: "+notifications.length);
   _.forEach(notifications, function (notification) {
     if (true || notification.AcActivities.length>1 && notification.type=="notification.post.endorsement") {
-      console.log("================================================");
+      log.info("================================================");
       _.forEach(notification.AcActivities, function (activity) {
-        console.log("Activity: "+notification.type+" id: "+notification.id+" activity: "+activity.type+" userId: "+activity.user_id+" postId: "+activity.post_id+" pointId: "+activity.point_id);
+        log.info("Activity: "+notification.type+" id: "+notification.id+" activity: "+activity.type+" userId: "+activity.user_id+" postId: "+activity.post_id+" pointId: "+activity.point_id);
       });
     }
   });
@@ -49,9 +49,9 @@ models.AcNotification.findOne({
 }).then(function (notification) {
     debugger;
     if (true || notification.AcActivities.length > 1 && notification.type == "notification.post.endorsement") {
-        console.log(notification.type + " ================================================ " + notification.AcActivities.length);
+        log.info(notification.type + " ================================================ " + notification.AcActivities.length);
         _.forEach(notification.AcActivities, function (activity) {
-            console.log("Activity: " + notification.type + " id: " + notification.id + " activity: " + activity.type + " userId: " + activity.user_id + " postId: " + activity.post_id + " pointId: " + activity.point_id);
+            log.info("Activity: " + notification.type + " id: " + notification.id + " activity: " + activity.type + " userId: " + activity.user_id + " postId: " + activity.post_id + " pointId: " + activity.point_id);
         });
     }
 });

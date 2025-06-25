@@ -37,12 +37,12 @@ models.Endorsement.findAll({
         }
     ]
 }).then((endorsements) => {
-    console.log(`Votes: ${endorsements.length}`);
+    log.info(`Votes: ${endorsements.length}`);
     endorsements.forEach(e => {
         allUsers[e.user_id] = 1;
     });
-    console.log(`Voters: ${size(allUsers)}`);
-    console.log(`Average votes per user: ${parseInt(endorsements.length / size(allUsers))}`);
+    log.info(`Voters: ${size(allUsers)}`);
+    log.info(`Average votes per user: ${parseInt(endorsements.length / size(allUsers))}`);
     process.exit();
 });
 export {};

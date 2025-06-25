@@ -1,5 +1,6 @@
 // commonTools.ts
 import { BaseAssistantTools } from "./baseTools.js";
+import log from "../../../../utils/loggerTs.js";
 export class LoginAssistantTools extends BaseAssistantTools {
     constructor(assistant) {
         super(assistant);
@@ -19,7 +20,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     }
     async showLoginHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        console.log(`handler: showLogin: ${JSON.stringify(params, null, 2)}`);
+        log.info(`handler: showLogin: ${JSON.stringify(params, null, 2)}`);
         try {
             await this.updateHaveShownLoginWidget();
             const html = `<yp-login-widget
@@ -39,7 +40,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Failed to login";
-            console.error(`Failed to login: ${errorMessage}`);
+            log.error(`Failed to login: ${errorMessage}`);
             return {
                 success: false,
                 error: errorMessage,
@@ -60,7 +61,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     }
     async clickMainLoginButtonHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        console.log(`handler: clickMainLoginButton: ${JSON.stringify(params, null, 2)}`);
+        log.info(`handler: clickMainLoginButton: ${JSON.stringify(params, null, 2)}`);
         const clientEvent = {
             name: "ui_click",
             details: "login-button-main",
@@ -88,7 +89,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     }
     async clickGoogleLoginButtonHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        console.log(`handler: clickGoogleLoginButton: ${JSON.stringify(params, null, 2)}`);
+        log.info(`handler: clickGoogleLoginButton: ${JSON.stringify(params, null, 2)}`);
         const clientEvent = {
             name: "ui_click",
             details: "login-button-google",
@@ -121,7 +122,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
     }
     async logoutHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        console.log(`handler: logout: ${JSON.stringify(params, null, 2)}`);
+        log.info(`handler: logout: ${JSON.stringify(params, null, 2)}`);
         const clientEvent = {
             name: "ui_click",
             details: {
@@ -146,7 +147,7 @@ export class LoginAssistantTools extends BaseAssistantTools {
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Failed to logout";
-            console.error(`Failed to logout: ${errorMessage}`);
+            log.error(`Failed to logout: ${errorMessage}`);
             return {
                 success: false,
                 error: errorMessage,

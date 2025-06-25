@@ -3,6 +3,7 @@ const _ = require("lodash");
 const models = require("../../../../models/index.cjs");
 const i18n = require('../../../utils/i18n.cjs');
 const deepEqual = require('deep-equal');
+const log = require("../../../../utils/logger.cjs");
 const FraudGetEndorsements = require("./FraudGetEndorsements");
 const FraudGetPointQualities = require("./FraudGetPointQualities");
 const FraudGetRatings = require("./FraudGetRatings");
@@ -51,7 +52,7 @@ class FraudScannerNotifier {
             }
         }
         else {
-            console.error("No domain name for community");
+            log.error("No domain name for community");
             return "";
         }
     }
@@ -70,7 +71,7 @@ class FraudScannerNotifier {
             }
         }
         else {
-            console.error(`No job data for ${collectionType}`);
+            log.error(`No job data for ${collectionType}`);
         }
     }
     capitalizeFirstLetter(string) {
@@ -127,7 +128,7 @@ class FraudScannerNotifier {
             }
         }
         else {
-            console.error("No community admins found");
+            log.error("No community admins found");
             return;
         }
     }
@@ -176,7 +177,7 @@ class FraudScannerNotifier {
                 await this.currentCommunity.save();
             }
             else {
-                console.log("Not resending same numbers");
+                log.info("Not resending same numbers");
             }
         }
     }
@@ -227,15 +228,15 @@ class FraudScannerNotifier {
                     ]
                 });
                 for (let i = 0; i < communities.length; i++) {
-                    console.log("Processing community: " + communities[i].name);
+                    log.info("Processing community: " + communities[i].name);
                     this.currentCommunity = communities[i];
                     try {
                         await this.scan();
                         await this.notify();
                     }
                     catch (error) {
-                        console.error("Error processing community: " + communities[i].name);
-                        console.error(error);
+                        log.error("Error processing community: " + communities[i].name);
+                        log.error(error);
                         reject(error);
                         return;
                     }
@@ -268,11 +269,11 @@ i18n
         try {
             const scanner = new FraudScannerNotifier();
             await scanner.scanAndNotify();
-            console.log("Fraud Scanning Complete");
+            log.info("Fraud Scanning Complete");
             process.exit();
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             process.exit();
         }
     })();

@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "@policysynth/agents/dbModels/sequelize.js";
+import log from "../../utils/loggerTs.js";
 export class YpAgentProduct extends Model {
 }
 YpAgentProduct.init({
@@ -70,7 +71,7 @@ YpAgentProduct.init({
     underscored: true,
 });
 YpAgentProduct.associate = (models) => {
-    console.log(`YpAgentProduct.associate`);
+    log.info(`YpAgentProduct.associate`);
     YpAgentProduct.belongsTo(models.YpSubscriptionUser, {
         foreignKey: "user_id",
         as: "User",

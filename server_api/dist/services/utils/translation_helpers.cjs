@@ -5,6 +5,7 @@ const _ = require("lodash");
 const fs = require("fs");
 const request = require("request");
 const farmhash = require("farmhash");
+const log = require('../../utils/logger.cjs');
 const fixTargetLocale = (itemTargetLocale) => {
     let targetLocale = itemTargetLocale.replace("_", "-");
     if (targetLocale !== "sr-latin" &&
@@ -19,7 +20,7 @@ const fixTargetLocale = (itemTargetLocale) => {
 };
 const addItem = (targetLocale, items, textType, id, content, done) => {
     if (!content) {
-        console.log(`No content for ${textType} ${id}`);
+        log.info(`No content for ${textType} ${id}`);
         done();
     }
     else {
@@ -42,7 +43,7 @@ const addItem = (targetLocale, items, textType, id, content, done) => {
             done();
         })
             .catch((error) => {
-            console.error(error);
+            log.error(error);
             done(error);
         });
     }

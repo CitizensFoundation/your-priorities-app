@@ -77,7 +77,7 @@ var fixOnePost = function (groupId, postId, done) {
             }).then(function (postIn) {
                 oldPost = postIn;
                 if (!postIn) {
-                    console.error("No post in");
+                    log.error("No post in");
                     callback("no post");
                 }
                 else {
@@ -108,7 +108,7 @@ var fixOnePost = function (groupId, postId, done) {
                                                 }
                                             }).then(function (alreadyUpdatedEndorsement) {
                                                 if (alreadyUpdatedEndorsement) {
-                                                    console.warn("Already updated endorsement");
+                                                    log.warn("Already updated endorsement");
                                                     endorsementCallback();
                                                 }
                                                 else {
@@ -127,12 +127,12 @@ var fixOnePost = function (groupId, postId, done) {
                                     });
                                 }
                             ], function (error) {
-                                console.log("Have fixed post to group id");
+                                log.info("Have fixed post to group id");
                                 callback(error);
                             });
                         }
                         else {
-                            console.error("Did not find post");
+                            log.error("Did not find post");
                             callback();
                         }
                     }).catch(function (error) {
@@ -142,15 +142,15 @@ var fixOnePost = function (groupId, postId, done) {
             });
         }
     ], function (error) {
-        console.log("Done");
+        log.info("Done");
         if (error)
-            console.error(error);
+            log.error(error);
         done(error);
     });
 };
 var parsePosts = function (allPosts, done) {
     async.eachSeries(allPosts, function (post, seriesCallback) {
-        console.log("Post: " + post[0]);
+        log.info("Post: " + post[0]);
         fixOnePost(toGroupId, getPostIdFromUrl(post[6]), function (error) {
             seriesCallback(error);
         });
@@ -172,19 +172,19 @@ var copyManyFromCsv = function (csvUrl, done) {
 if (onePostId != 'null') {
     copyOnePost(toGroupId, onePostId, null, function (error) {
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 }
 else if (csvFileName && userIdToPostNewsStory) {
     copyManyFromCsv(csvFileName, function (error) {
         if (error)
-            console.error(error);
+            log.error(error);
         process.exit();
     });
 }
 else {
-    console.error("Invalid start state");
+    log.error("Invalid start state");
     process.exit();
 }
 export {};

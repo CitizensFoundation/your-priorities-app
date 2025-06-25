@@ -4,6 +4,7 @@ import { SubscriptionTools } from "./tools/subscriptionTools.js";
 import { NavigationTools } from "./tools/navigationTools.js";
 import { LoginAssistantTools } from "./tools/loginTools.js";
 import { AgentTools } from "./tools/agentTools.js";
+import log from "../../../utils/loggerTs.js";
 export class DirectConversationMode extends BaseAssistantMode {
     constructor(assistant) {
         super(assistant);
@@ -22,13 +23,13 @@ export class DirectConversationMode extends BaseAssistantMode {
         try {
             if (this.assistant.isLoggedIn) {
                 // User logged in
-                console.log("Mode: agent_direct_connection_mode, User logged in");
+                log.info("Mode: agent_direct_connection_mode, User logged in");
                 tools.push(this.loginTools.logout);
                 tools.push(this.agentTools.showAgentWorkflowOverviewWidget);
                 if (this.assistant.isSubscribedToCurrentAgentProduct) {
                     if (this.assistant.hasConfiguredcurrentAgentProduct) {
                         // User has configured the current agent
-                        console.log("Mode: agent_direct_connection_mode, User has configured the current agent");
+                        log.info("Mode: agent_direct_connection_mode, User has configured the current agent");
                         if (await this.assistant.isCurrentAgentRunning()) {
                             tools.push(this.agentTools.stopCurrentAgentWorkflow);
                             tools.push(this.agentTools.deactivateAgent);
@@ -49,28 +50,28 @@ export class DirectConversationMode extends BaseAssistantMode {
                     }
                     else {
                         // User has not configured the current agent
-                        console.log("Mode: agent_direct_connection_mode, User has not configured the current agent");
+                        log.info("Mode: agent_direct_connection_mode, User has not configured the current agent");
                         tools.push(this.agentTools.showConfigurationWidget);
                         if (this.assistant.haveShownConfigurationWidget) {
-                            console.log("Mode: agent_direct_connection_mode, User has shown the configuration widget");
+                            log.info("Mode: agent_direct_connection_mode, User has shown the configuration widget");
                             tools.push(this.agentTools.submitConfiguration);
                         }
                     }
                 }
                 else {
                     // User is not subscribed to the current agent
-                    console.error("Mode: agent_direct_connection_mode, User is not subscribed to the current agent should not happen");
+                    log.error("Mode: agent_direct_connection_mode, User is not subscribed to the current agent should not happen");
                 }
             }
             return tools;
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             return [];
         }
     }
     async getMode() {
-        console.log("---------------------> getMode DirectConversationMode");
+        log.info("---------------------> getMode DirectConversationMode");
         const systemPrompt = await this.getCurrentModeSystemPrompt();
         const tools = await this.getCurrentModeTools();
         return {

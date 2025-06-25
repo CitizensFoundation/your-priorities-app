@@ -17,11 +17,11 @@ async.doUntil((innerCallback) => {
         ip_address: ip.address()
     }).then((post) => {
         addedPosts += 1;
-        console.log("Added post id: " + post.id);
+        log.info("Added post id: " + post.id);
         innerCallback();
     });
 }, () => addedPosts > 5000, (error) => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

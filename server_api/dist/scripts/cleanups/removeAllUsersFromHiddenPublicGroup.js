@@ -18,26 +18,26 @@ models.Group.findOne({
     if (group && group.GroupUsers.length > 0) {
         async.forEachSeries(group.GroupUsers, (user, forEachSeriesCallback) => {
             group.removeGroupUser(user).then(() => {
-                console.log(`Removed ${user.email}`);
+                log.info(`Removed ${user.email}`);
                 forEachSeriesCallback();
             });
         }, error => {
             if (error) {
-                console.error(error);
+                log.error(error);
                 process.exit();
             }
             else {
-                console.log("Finished");
+                log.info("Finished");
                 process.exit();
             }
         });
     }
     else {
-        console.warn(`Group not found or empty`);
+        log.warn(`Group not found or empty`);
         process.exit();
     }
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

@@ -236,8 +236,8 @@ router.post("/", isAuthenticated, async function (req, res) {
         // 1) Check if the file name ends with ".gif"
         const isGifFilename = (filename) => {
             const lowerCaseFilename = filename.toLowerCase();
-            console.log("filename===========>", filename);
-            console.log("lowerCaseFilename===========>", lowerCaseFilename);
+            log.info("filename===========>", filename);
+            log.info("lowerCaseFilename===========>", lowerCaseFilename);
             return lowerCaseFilename.endsWith(".gif");
         };
         // 2) Create the storage with a Key callback that uses 'isGifFilename'
@@ -247,9 +247,9 @@ router.post("/", isAuthenticated, async function (req, res) {
                     if (err)
                         return cb(err);
                     const rawHex = raw.toString("hex");
-                    console.log("file.originalname", file.originalname);
+                    log.info("file.originalname", file.originalname);
                     const isGif = isGifFilename(file.originalname);
-                    console.log("gif===========>", isGif);
+                    log.info("gif===========>", isGif);
                     file.outputFormat = isGif ? "gif" : "png";
                     cb(null, `${rawHex}.${isGif ? "gif" : "png"}`);
                 });
@@ -273,7 +273,7 @@ router.post("/", isAuthenticated, async function (req, res) {
         ];
         // 4) A fileFilter to reject non-image or invalid Sharp formats
         const fileFilter = (req, file, cb) => {
-            console.log("file------------>", file);
+            log.info("file------------>", file);
             // Check that it's an image and specifically in our allowed list
             if (!allowedMimeTypes.includes(file.mimetype.toLowerCase())) {
                 return cb(new Error(`Unsupported file type: ${file.mimetype}. Allowed: ${allowedMimeTypes.join(", ")}`));
@@ -293,7 +293,7 @@ router.post("/", isAuthenticated, async function (req, res) {
         upload.single("file")(req, res, async function (error) {
             if (error) {
                 // Multer will throw if file is too large or invalid
-                console.error("File upload error:", error);
+                log.error("File upload error:", error);
                 return res.status(400).json({ error: error.message });
             }
             // Continue if there's a valid image file
@@ -316,13 +316,13 @@ router.post("/", isAuthenticated, async function (req, res) {
                 return res.send(image);
             }
             catch (err) {
-                console.error("Error saving image record:", err);
+                log.error("Error saving image record:", err);
                 return res.status(500).json({ error: "Failed to save image record" });
             }
         });
     }
     catch (err) {
-        console.error("Unexpected error:", err);
+        log.error("Unexpected error:", err);
         // If req.file exists, use its data; otherwise fallback
         const fileName = req.file ? req.file.originalname : "unknown filename";
         return res.status(500).json({

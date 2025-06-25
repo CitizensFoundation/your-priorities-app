@@ -1,6 +1,7 @@
 "use strict";
 const fs = require('fs');
 const path = require('path');
+const log = require('./utils/logger.cjs');
 const tsOutDir = './ts-out';
 const keepDeclarations = new Set([
     "app.d.ts",
@@ -30,23 +31,23 @@ function deleteDtsFiles(dir) {
             // Delete the file if it ends with .d.ts and not in the keep list
             if (file.endsWith('.d.ts') && !keepDeclarations.has(relativePath)) {
                 fs.unlinkSync(filePath);
-                console.log(`Deleted: ${filePath}`);
+                log.info(`Deleted: ${filePath}`);
             }
             if (file.endsWith('.d.cts') && !keepDeclarations.has(relativePath)) {
                 fs.unlinkSync(filePath);
-                console.log(`Deleted: ${filePath}`);
+                log.info(`Deleted: ${filePath}`);
             }
             if (file.endsWith('.js.map') && !keepDeclarations.has(relativePath)) {
                 fs.unlinkSync(filePath);
-                console.log(`Deleted: ${filePath}`);
+                log.info(`Deleted: ${filePath}`);
             }
             if (file.endsWith('.cjs.map') && !keepDeclarations.has(relativePath)) {
                 fs.unlinkSync(filePath);
-                console.log(`Deleted: ${filePath}`);
+                log.info(`Deleted: ${filePath}`);
             }
             if (file.endsWith('.cts.map') && !keepDeclarations.has(relativePath)) {
                 fs.unlinkSync(filePath);
-                console.log(`Deleted: ${filePath}`);
+                log.info(`Deleted: ${filePath}`);
             }
         }
     });

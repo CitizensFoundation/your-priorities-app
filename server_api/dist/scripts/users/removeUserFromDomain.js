@@ -1,28 +1,29 @@
 import models from '../../models/index.cjs';
+import log from "../../utils/loggerTs.js";
 (async () => {
     try {
         const [domainIdArg, email] = process.argv.slice(2);
         if (!domainIdArg || !email) {
-            console.log('Usage: node removeUserFromDomain.js <domainId> <email>');
+            log.info('Usage: node removeUserFromDomain.js <domainId> <email>');
             process.exit(1);
         }
         const domainId = Number(domainIdArg);
         const domain = await models.Domain.findOne({ where: { id: domainId } });
         if (!domain) {
-            console.error(`Domain ${domainId} not found`);
+            log.error(`Domain ${domainId} not found`);
             process.exit(1);
         }
         const user = await models.User.findOne({ where: { email } });
         if (!user) {
-            console.error(`User ${email} not found`);
+            log.error(`User ${email} not found`);
             process.exit(1);
         }
         await domain.removeDomainUsers(user);
-        console.log(`Removed ${email} from domain ${domain.name}`);
+        log.info(`Removed ${email} from domain ${domain.name}`);
         process.exit(0);
     }
     catch (err) {
-        console.error(err);
+        log.error(err);
         process.exit(1);
     }
 })();

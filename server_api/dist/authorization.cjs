@@ -935,6 +935,8 @@ auth.entity("group", function (req, done) {
     if (!match)
         match = req.originalUrl.match(/pdf_processing\/(\w+)/);
     if (!match)
+        match = req.originalUrl.match(/docx_processing\/(\w+)/);
+    if (!match)
         match = req.originalUrl.match(/feedback\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/assistants\/(\w+)/);
@@ -1645,13 +1647,13 @@ auth.entity("createGroupPoint", function (req, done) {
 });
 // Create group
 auth.role("createCommunityGroup.createGroup", function (community, req, done) {
-    console.error(`createCommunityGroup.createGroup`);
+    log.error(`createCommunityGroup.createGroup`);
     models.Community.findOne({
         where: { id: community.id },
     })
         .then(function (community) {
-        console.log(`community`, community);
-        console.log(`XXX: ${auth.isAuthenticated(req)} ${process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY}`);
+        log.info(`community`, community);
+        log.info(`XXX: ${auth.isAuthenticated(req)} ${process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY}`);
         if (!auth.isAuthenticated(req) &&
             //TODO: Come up with a better way to handle this than a master API key
             !process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
@@ -1659,7 +1661,7 @@ auth.role("createCommunityGroup.createGroup", function (community, req, done) {
         }
         else if (!auth.isAuthenticated(req) &&
             process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
-            console.log(`XXXY: ${req.headers["x-api-key"]}`);
+            log.info(`XXXY: ${req.headers["x-api-key"]}`);
             if (req.headers["x-api-key"] ===
                 process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
                 done(null, true);

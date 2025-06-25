@@ -2,6 +2,7 @@
 import { AgentModels } from "./models/agents.js";
 import { SubscriptionModels } from "./models/subscriptions.js";
 import { BaseAssistantTools } from "./baseTools.js";
+import log from "../../../../utils/loggerTs.js";
 export class NavigationTools extends BaseAssistantTools {
     constructor(assistant) {
         super(assistant);
@@ -34,7 +35,7 @@ export class NavigationTools extends BaseAssistantTools {
     }
     async connectToOneOfTheAgentsHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        console.log(`handler: connect_to_one_of_the_agents: ${JSON.stringify(params, null, 2)}`);
+        log.info(`handler: connect_to_one_of_the_agents: ${JSON.stringify(params, null, 2)}`);
         try {
             let { plan, subscription } = await this.subscriptionModels.loadAgentProductPlanAndSubscription(params.subscriptionPlanId);
             if (!plan?.AgentProduct) {
@@ -49,7 +50,7 @@ export class NavigationTools extends BaseAssistantTools {
             }
             plan = result.plan;
             subscription = result.subscription;
-            console.log(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
+            log.info(`Loading: ${plan?.AgentProduct?.name} ${subscription?.id}`);
             await this.updateCurrentAgentProductPlan(plan, subscription);
             await this.assistant.handleModeSwitch("agent_direct_connection_mode", `Directly connected to agent: ${plan?.AgentProduct?.name}`, params);
             const html = `<div class="agent-chips"><yp-agent-chip-simple
@@ -75,7 +76,7 @@ export class NavigationTools extends BaseAssistantTools {
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Failed to select agent";
-            console.error(`Failed to select agent: ${errorMessage}`);
+            log.error(`Failed to select agent: ${errorMessage}`);
             return {
                 success: false,
                 data: errorMessage,
@@ -97,11 +98,11 @@ export class NavigationTools extends BaseAssistantTools {
     }
     async listAllAgentsAvailableForConnectionsHandler(params) {
         params = this.assistant.getCleanedParams(params);
-        console.log(`handler: list_all_agents_available_for_connections: ${JSON.stringify(params, null, 2)}`);
+        log.info(`handler: list_all_agents_available_for_connections: ${JSON.stringify(params, null, 2)}`);
         try {
             const status = await this.subscriptionModels.loadAgentSubscriptionPlans();
             if (this.assistant.DEBUG) {
-                console.log(`list_all_agents_available_for_purchase: ${JSON.stringify(status, null, 2)}`);
+                log.info(`list_all_agents_available_for_purchase: ${JSON.stringify(status, null, 2)}`);
             }
             let agentChips = "";
             function planTypePriority(type) {
@@ -155,7 +156,7 @@ export class NavigationTools extends BaseAssistantTools {
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Failed to load agent status";
-            console.error(`Failed to load agent status: ${errorMessage}`);
+            log.error(`Failed to load agent status: ${errorMessage}`);
             return {
                 success: false,
                 data: errorMessage,

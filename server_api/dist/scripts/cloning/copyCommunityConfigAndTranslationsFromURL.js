@@ -165,9 +165,9 @@ async.series([
     },
 ], error => {
     if (error)
-        console.error(error);
-    console.log("All done copying config to communities");
-    console.log(finalOutput);
+        log.error(error);
+    log.info("All done copying config to communities");
+    log.info(finalOutput);
     process.exit();
 });
 export {};

@@ -2,13 +2,13 @@ var models = require('../models/index.cjs');
 var async = require('async');
 var allActivities = {};
 models.AcActivity.findAll({ attributes: [[models.Sequelize.literal("DISTINCT 'type'"), 'type'], 'type'] }).then(function (activityTypes) {
-    console.log(activityTypes.length);
+    log.info(activityTypes.length);
     async.eachSeries(activityTypes, function (activityType, callback) {
-        console.log(activityType.type);
+        log.info(activityType.type);
         allActivities[activityType.type] = activityType.type;
         callback();
     }, function done() {
-        console.log(allActivities);
+        log.info(allActivities);
     });
 });
 export {};

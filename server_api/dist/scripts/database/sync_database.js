@@ -3,12 +3,12 @@ models.sequelize.sync({}).then(() => {
     setTimeout(() => {
         models.Post.addFullTextIndex();
         setTimeout(() => {
-            console.log("Time has passed");
+            log.info("Time has passed");
             process.exit();
         }, 15000);
     }, 1000);
 }).catch(error => {
-    console.error(error);
+    log.error(error);
     process.exit();
 });
 export {};

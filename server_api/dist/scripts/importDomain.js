@@ -15,7 +15,7 @@ var randomstring = require("randomstring");
 var filename = process.argv[2];
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
-console.log(filename);
+log.info(filename);
 var json = JSON.parse(require('fs').readFileSync(filename, 'utf8'));
 var domain = json['domain'];
 var users = json['users'];
@@ -233,7 +233,7 @@ var changePostCounter = function (req, postId, column, upDown, next) {
             });
         }
         else {
-            console.warn("POST NOT FOUND FOR ENDORSEMENT");
+            log.warn("POST NOT FOUND FOR ENDORSEMENT");
             next();
         }
     });
@@ -241,13 +241,13 @@ var changePostCounter = function (req, postId, column, upDown, next) {
 var s3Upload = function (filePath, itemType, userId, callback) {
     var s3UploadClient = models.Image.getUploadClient(itemType);
     s3UploadClient.upload(filePath, {}, function (error, versions, meta) {
-        console.log("Uploading tried: " + error + " " + versions);
+        log.info("Uploading tried: " + error + " " + versions);
         if (error) {
-            console.log(error);
+            log.info(error);
             callback(error);
         }
         else {
-            console.log('Uploading Image Complete');
+            log.info('Uploading Image Complete');
             var image = models.Image.build({
                 user_id: userId,
                 s3_bucket_name: process.env.S3_BUCKET,
@@ -257,10 +257,10 @@ var s3Upload = function (filePath, itemType, userId, callback) {
                 ip_address: '127.0.0.1'
             });
             image.save().then(function () {
-                console.log('Uploading Image Saved');
+                log.info('Uploading Image Saved');
                 callback(null, image);
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }
     });
@@ -273,18 +273,18 @@ var uploadImage = function (fileUrl, itemType, userId, callback) {
         fileUrl = masterImageDownloadUrl + fileUrl;
         var timeout;
         if (errorUrls[fileUrl] == null) {
-            console.log("Uploading: " + fileUrl + " - " + itemType);
+            log.info("Uploading: " + fileUrl + " - " + itemType);
             if (cacheUrls[fileUrl]) {
-                console.log('Uploading FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE');
+                log.info('Uploading FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE FROM CACHE');
                 s3Upload(cacheUrls[fileUrl], itemType, userId, callback);
             }
             else {
                 var filePath = '/media/Data/yrpriCache/uploadTest_' + randomstring.generate(10) + '.png';
                 // compose the wget command
                 var wget = 'wget -O ' + filePath + ' ' + '"' + fileUrl + '"';
-                console.log('Uploading Starting ' + wget);
+                log.info('Uploading Starting ' + wget);
                 timeout = setTimeout(function () {
-                    console.log("Uploading timeout triggered");
+                    log.info("Uploading timeout triggered");
                     clearTimeout(timeout);
                     timeout = null;
                     callback();
@@ -294,14 +294,14 @@ var uploadImage = function (fileUrl, itemType, userId, callback) {
                         clearTimeout(timeout);
                         timeout = null;
                         if (err) {
-                            console.log('Uploading Failed: ' + err);
+                            log.info('Uploading Failed: ' + err);
                             errorUrls[fileUrl] = true;
                             saveErrorUrls(function () {
                                 callback("Upload failed");
                             });
                         }
                         else {
-                            console.log('Uploading File Saved');
+                            log.info('Uploading File Saved');
                             cacheUrls[fileUrl] = filePath;
                             saveCacheUrls(function () {
                                 s3Upload(filePath, itemType, userId, callback);
@@ -312,18 +312,18 @@ var uploadImage = function (fileUrl, itemType, userId, callback) {
             }
         }
         else {
-            console.log('Uploading ON ERROR LIST  ON ERROR LIST  ON ERROR LIST  ON ERROR LISTON ERROR LIST  ON ERROR LIST  ON ERROR LIST  ON ERROR LIST');
+            log.info('Uploading ON ERROR LIST  ON ERROR LIST  ON ERROR LIST  ON ERROR LISTON ERROR LIST  ON ERROR LIST  ON ERROR LIST  ON ERROR LIST');
             callback('Uploading Not really uploading images');
         }
     }
     else {
-        console.log('Uploading Not Uploading');
+        log.info('Uploading Not Uploading');
         callback('Uploading Not really uploading images');
     }
 };
 async.series([
     function (seriesCallback) {
-        console.log('Processing domain ' + domain);
+        log.info('Processing domain ' + domain);
         domain['ip_address'] = ip.address();
         domain['user_agent'] = 'yrpri script';
         if (!domain.default_locate) {
@@ -349,34 +349,34 @@ async.series([
                 seriesCallback('no domain created');
             }
         }).catch(function (error) {
-            console.error(error);
+            log.error(error);
         });
     },
     function (seriesCallback) {
-        console.log('Loading error urls');
+        log.info('Loading error urls');
         loadErrorUrls(function () {
             loadCacheUrls(seriesCallback);
         });
     },
     function (seriesCallback) {
-        console.log('Setting up old users');
+        log.info('Setting up old users');
         models.User.findAll().then(function (users) {
             async.eachSeries(users, function iteratee(user, callback) {
                 allUsersIdsByEmail[user.email] = user.id;
                 allUsersModelByNewIds[user.id] = user;
                 allUsersModelByEmail[user.email] = user;
-                console.log("Adding user: " + user.email);
+                log.info("Adding user: " + user.email);
                 callback();
             }, function done() {
                 seriesCallback();
             });
         }).catch(function (error) {
-            console.log(error);
+            log.info(error);
             seriesCallback(error);
         });
     },
     function (seriesCallback) {
-        console.log('Setting up better reykjavik if needed');
+        log.info('Setting up better reykjavik if needed');
         if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
             async.series([
                 function (callback) {
@@ -399,7 +399,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 },
@@ -423,7 +423,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 },
@@ -447,7 +447,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 },
@@ -471,7 +471,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 },
@@ -495,7 +495,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 }
@@ -508,7 +508,7 @@ async.series([
         }
     },
     function (seriesCallback) {
-        console.log('Setting up Your Priorities if needed');
+        log.info('Setting up Your Priorities if needed');
         if (currentDomain.domain_name.indexOf("yrpri.org") > -1) {
             async.series([
                 function (callback) {
@@ -531,7 +531,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 },
@@ -555,7 +555,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 },
@@ -579,7 +579,7 @@ async.series([
                             callback('no community created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                         callback(error);
                     });
                 }
@@ -593,14 +593,14 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(users, function (incoming, callback) {
-            console.log('Processing user ' + incoming.email);
+            log.info('Processing user ' + incoming.email);
             var oldId = incoming['id'];
             incoming['id'] = null;
             incoming['legacy_user_id'] = oldId;
             incoming['legacy_new_domain_id'] = currentDomain.id;
             incoming['notifications_settings'] = defaultNotificationsSettings(incoming.email);
             var buddyIconUrl = incoming['buddy_icon'];
-            console.log("Uploading Buddy Icon " + buddyIconUrl);
+            log.info("Uploading Buddy Icon " + buddyIconUrl);
             incoming['buddy_icon'] = null;
             if (incoming['group_id']) {
                 needsGroupUserPermissions.push({ group_id: incoming['group_id'], user_id: oldId });
@@ -616,7 +616,7 @@ async.series([
                 }
             }
             if (allUsersIdsByEmail[incoming.email]) {
-                console.log("Duplicate email: " + incoming.email);
+                log.info("Duplicate email: " + incoming.email);
                 var masterUser = allUsersModelByEmail[incoming.email];
                 allUsersByOldIds[oldId] = masterUser.id;
                 allUserModelsByOldIds[oldId] = masterUser;
@@ -637,12 +637,12 @@ async.series([
                                     }).save().then(function () {
                                         innerSeriesCallback();
                                     }).catch(function (error) {
-                                        console.log(error);
+                                        log.info(error);
                                         innerSeriesCallback(error);
                                     });
                                 }
                             }).catch(function (error) {
-                                console.log(error);
+                                log.info(error);
                                 innerSeriesCallback(error);
                             });
                         }
@@ -657,7 +657,7 @@ async.series([
                                 allUsersModelByEmail[incoming.email] = newUser;
                                 innerSeriesCallback();
                             }).catch(function (error) {
-                                console.log(error);
+                                log.info(error);
                                 innerSeriesCallback(error);
                             });
                         }
@@ -668,14 +668,14 @@ async.series([
                     function (innerSeriesCallback) {
                         if (buddyIconUrl && buddyIconUrl != '') {
                             uploadImage(buddyIconUrl, 'user-profile', masterUser.id, function (error, image) {
-                                console.log("Uploading buddy icon has been completed innerSeries");
+                                log.info("Uploading buddy icon has been completed innerSeries");
                                 if (error) {
-                                    console.log(error);
+                                    log.info(error);
                                     innerSeriesCallback();
                                 }
                                 else {
                                     masterUser.addUserProfileImage(image).then(function () {
-                                        console.log("Uploading buddy header Image has been added innerSeries");
+                                        log.info("Uploading buddy header Image has been added innerSeries");
                                         innerSeriesCallback();
                                     });
                                 }
@@ -705,14 +705,14 @@ async.series([
                         allUsersModelByEmail[incoming.email] = user;
                         if (buddyIconUrl && buddyIconUrl != '') {
                             uploadImage(buddyIconUrl, 'user-profile', user.id, function (error, image) {
-                                console.log("Uploading buddy icon has been completed");
+                                log.info("Uploading buddy icon has been completed");
                                 if (error) {
-                                    console.log(error);
+                                    log.info(error);
                                     callback();
                                 }
                                 else {
                                     user.addUserProfileImage(image).then(function () {
-                                        console.log("Uploading buddy header Image has been added");
+                                        log.info("Uploading buddy header Image has been added");
                                         callback();
                                     });
                                 }
@@ -726,14 +726,14 @@ async.series([
                         callback('no user created');
                     }
                 }).catch(function (error) {
-                    console.log("6");
-                    console.error(error);
+                    log.info("6");
+                    log.error(error);
                 });
             }
         }, function (err) {
-            console.log("User done");
+            log.info("User done");
             if (err) {
-                console.error(err);
+                log.error(err);
             }
             else {
                 seriesCallback();
@@ -742,7 +742,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(groups, function (incoming, callback) {
-            console.log('Processing group ' + JSON.stringify(incoming));
+            log.info('Processing group ' + JSON.stringify(incoming));
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -750,7 +750,7 @@ async.series([
             incoming['id'] = null;
             var logoUrl = incoming['logo_url'];
             var headerUrl = incoming['header_url'];
-            console.log("Uploading Header " + headerUrl);
+            log.info("Uploading Header " + headerUrl);
             incoming['logo_url'] = null;
             incoming['header_url'] = null;
             if (currentDomain.domain_name.indexOf("betrireykjavik") > -1) {
@@ -790,7 +790,7 @@ async.series([
                         callback('no group created');
                     }
                 }).catch(function (error) {
-                    console.error(error);
+                    log.error(error);
                 });
             }
             else if (currentDomain.domain_name.indexOf("yrpri.org") > -1 &&
@@ -824,14 +824,14 @@ async.series([
                             allGroupsModelByOldIds[oldId] = group;
                             if (headerUrl && headerUrl != '') {
                                 uploadImage(headerUrl, 'group-logo', group.user_id, function (error, image) {
-                                    console.log("Uploading header has been completed");
+                                    log.info("Uploading header has been completed");
                                     if (error) {
-                                        console.log(error);
+                                        log.info(error);
                                         callback();
                                     }
                                     else {
                                         group.addGroupLogoImage(image).then(function () {
-                                            console.log("Uploading Group header Image has been added");
+                                            log.info("Uploading Group header Image has been added");
                                             callback();
                                         });
                                     }
@@ -846,7 +846,7 @@ async.series([
                         callback('no group created');
                     }
                 }).catch(function (error) {
-                    console.log(error);
+                    log.info(error);
                 });
             }
             else {
@@ -857,7 +857,7 @@ async.series([
                 models.Community.build(incoming).save().then(function (community) {
                     if (community) {
                         allCommunitiesByOldGroupIds[oldId] = community.id;
-                        console.log("ACTV DEBUG: oldId: " + oldId + " newCommunityId: " + community.id);
+                        log.info("ACTV DEBUG: oldId: " + oldId + " newCommunityId: " + community.id);
                         community.updateAllExternalCounters(fakeReq, 'up', 'counter_communities', function () {
                             incoming['community_id'] = community.id;
                             incoming['domain_id'] = null;
@@ -872,20 +872,20 @@ async.series([
                                 if (group) {
                                     group.updateAllExternalCounters(fakeReq, 'up', 'counter_groups', function () {
                                         allGroupsByOldIds[oldId] = group.id;
-                                        console.log("ACTV DEBUG: oldId: " + oldId + " newCommunityId: " + community.id + " newGroupId: " + group.id);
+                                        log.info("ACTV DEBUG: oldId: " + oldId + " newCommunityId: " + community.id + " newGroupId: " + group.id);
                                         allGroupsModelByOldIds[oldId] = group;
                                         if (headerUrl && headerUrl != '') {
                                             uploadImage(headerUrl, 'group-logo', group.user_id, function (error, image) {
-                                                console.log("Uploading header has been completed");
+                                                log.info("Uploading header has been completed");
                                                 if (error) {
-                                                    console.log(error);
+                                                    log.info(error);
                                                     callback();
                                                 }
                                                 else {
                                                     group.addGroupLogoImage(image).then(function () {
-                                                        console.log("Uploading Group header Image has been added");
+                                                        log.info("Uploading Group header Image has been added");
                                                         community.addCommunityLogoImage(image).then(function () {
-                                                            console.log("Uploading Community header Image has been added");
+                                                            log.info("Uploading Community header Image has been added");
                                                             callback();
                                                         });
                                                     });
@@ -901,7 +901,7 @@ async.series([
                                     callback('no group created');
                                 }
                             }).catch(function (error) {
-                                console.error(error);
+                                log.error(error);
                             });
                         });
                     }
@@ -909,12 +909,12 @@ async.series([
                         callback('no community nor group created');
                     }
                 }).catch(function (error) {
-                    console.error(error);
+                    log.error(error);
                 });
             }
         }, function (err) {
             if (err) {
-                console.error(err);
+                log.error(err);
             }
             else {
                 seriesCallback();
@@ -923,7 +923,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(categories, function (incoming, callback) {
-            console.log('Uploading Processing category ' + incoming);
+            log.info('Uploading Processing category ' + incoming);
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -935,17 +935,17 @@ async.series([
             models.Category.build(incoming).save().then(function (category) {
                 if (category) {
                     allCategoriesByOldIds[oldId] = category.id;
-                    console.log("Uploading " + iconUrl);
+                    log.info("Uploading " + iconUrl);
                     if (iconUrl && iconUrl != '') {
                         uploadImage(iconUrl, 'category-icon', category.user_id, function (error, image) {
-                            console.log("Uploading has been completed");
+                            log.info("Uploading has been completed");
                             if (error) {
-                                console.log(error);
+                                log.info(error);
                                 callback();
                             }
                             else {
                                 category.addCategoryIconImage(image).then(function () {
-                                    console.log("Uploading Category Image has been added");
+                                    log.info("Uploading Category Image has been added");
                                     callback();
                                 });
                             }
@@ -959,11 +959,11 @@ async.series([
                     callback('no category created');
                 }
             }).catch(function (error) {
-                console.error(error);
+                log.error(error);
             });
         }, function (err) {
             if (err) {
-                console.error(err);
+                log.error(err);
             }
             else {
                 seriesCallback();
@@ -972,7 +972,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(posts, function (incoming, callback) {
-            console.log('Processing post ' + incoming);
+            log.info('Processing post ' + incoming);
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -996,11 +996,11 @@ async.series([
                     callback('no post created');
                 }
             }).catch(function (error) {
-                console.error(error);
+                log.error(error);
             });
         }, function (err) {
             if (err) {
-                console.error(err);
+                log.error(err);
             }
             else {
                 seriesCallback();
@@ -1009,7 +1009,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(post_revisions, function (incoming, callback) {
-            console.log('Processing post revision ' + incoming);
+            log.info('Processing post revision ' + incoming);
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -1032,11 +1032,11 @@ async.series([
                     callback('no post created');
                 }
             }).catch(function (error) {
-                console.error(error);
+                log.error(error);
             });
         }, function (err) {
             if (err) {
-                console.error(err);
+                log.error(err);
             }
             else {
                 seriesCallback();
@@ -1045,7 +1045,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(post_status_changes, function (incoming, callback) {
-            console.log('Processing post status change ' + incoming);
+            log.info('Processing post status change ' + incoming);
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -1068,12 +1068,12 @@ async.series([
                     callback('no post status change created');
                 }
             }).catch(function (error) {
-                console.log("5 " + error);
-                console.error(error);
+                log.info("5 " + error);
+                log.error(error);
             });
         }, function (err) {
             if (err) {
-                console.error(err);
+                log.error(err);
             }
             else {
                 seriesCallback();
@@ -1082,7 +1082,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(endorsements, function (incoming, callback) {
-            console.log('Processing endorsement' + incoming);
+            log.info('Processing endorsement' + incoming);
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
             incoming['post_id'] = allPostsByOldIds[incoming['post_id']];
             var oldId = incoming['id'];
@@ -1111,11 +1111,11 @@ async.series([
                     callback('no post status change created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1124,7 +1124,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(points, function (incoming, callback) {
-            console.log('Processing point ' + JSON.stringify(incoming));
+            log.info('Processing point ' + JSON.stringify(incoming));
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -1159,11 +1159,11 @@ async.series([
                     callback('no point created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1172,7 +1172,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(point_revisions, function (incoming, callback) {
-            console.log('Processing point revision ' + incoming);
+            log.info('Processing point revision ' + incoming);
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -1192,11 +1192,11 @@ async.series([
                     callback('no point revision created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1205,7 +1205,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(point_qualities, function (incoming, callback) {
-            console.log('Processing point quality ' + incoming);
+            log.info('Processing point quality ' + incoming);
             incoming['ip_address'] = ip.address();
             incoming['user_agent'] = 'yrpri script';
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
@@ -1235,7 +1235,7 @@ async.series([
                         });
                     }
                     else {
-                        console.log('PointQuality Error');
+                        log.info('PointQuality Error');
                         callback("PointQuality Error");
                     }
                 }
@@ -1243,11 +1243,11 @@ async.series([
                     callback('no point quality created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1256,7 +1256,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(comments, function (incoming, callback) {
-            console.log('Processing comments ' + incoming);
+            log.info('Processing comments ' + incoming);
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
             incoming['post_id'] = allPostsByOldIds[incoming['post_id']];
             incoming['ip_address'] = ip.address();
@@ -1283,7 +1283,7 @@ async.series([
                                     });
                                 }
                                 else {
-                                    console.log("Error Can't find post for comment: " + point.content);
+                                    log.info("Error Can't find post for comment: " + point.content);
                                     callback();
                                 }
                             });
@@ -1292,18 +1292,18 @@ async.series([
                             callback('no point revision created');
                         }
                     }).catch(function (error) {
-                        console.log(error);
+                        log.info(error);
                     });
                 }
                 else {
                     callback('no point from comment created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1312,7 +1312,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(promotions, function (incoming, callback) {
-            console.log('Processing promotion ' + incoming);
+            log.info('Processing promotion ' + incoming);
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
             incoming['post_id'] = allPostsByOldIds[incoming['post_id']];
             var oldId = incoming['id'];
@@ -1327,11 +1327,11 @@ async.series([
                     callback('no promotions created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1340,7 +1340,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(pages, function (incoming, callback) {
-            console.log('Processing page ' + incoming);
+            log.info('Processing page ' + incoming);
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
             if (incoming['group_id'] == '45' && parseInt(currentDomain.id) == 1) {
                 incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
@@ -1366,11 +1366,11 @@ async.series([
                     callback('no page created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1379,7 +1379,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(followings, function (incoming, callback) {
-            console.log('Processing following ' + incoming);
+            log.info('Processing following ' + incoming);
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
             incoming['other_user_id'] = allUsersByOldIds[incoming['other_user_id']];
             var oldId = incoming['id'];
@@ -1392,11 +1392,11 @@ async.series([
                     callback('no following created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1405,7 +1405,7 @@ async.series([
     },
     function (seriesCallback) {
         async.eachSeries(activities, function (incoming, callback) {
-            console.log('Processing activity ' + incoming);
+            log.info('Processing activity ' + incoming);
             incoming['user_id'] = allUsersByOldIds[incoming['user_id']];
             incoming['domain_id'] = currentDomain.id;
             if (incoming['post_id']) {
@@ -1414,10 +1414,10 @@ async.series([
             if (incoming['group_id']) {
                 incoming['community_id'] = allCommunitiesByOldGroupIds[incoming['group_id']];
                 incoming['group_id'] = allGroupsByOldIds[incoming['group_id']];
-                console.log("ACTV DEBUG: newCommunityId: " + incoming['community_id'] + " newGroupId: " + incoming['group_id']);
+                log.info("ACTV DEBUG: newCommunityId: " + incoming['community_id'] + " newGroupId: " + incoming['group_id']);
             }
             else {
-                console.log("ACTV DEBUG: NO GROUP ID");
+                log.info("ACTV DEBUG: NO GROUP ID");
             }
             if (incoming['point_id']) {
                 incoming['point_id'] = allPointsByOldIds[incoming['point_id']];
@@ -1445,11 +1445,11 @@ async.series([
                     callback('no activity created');
                 }
             }).catch(function (error) {
-                console.log(error);
+                log.info(error);
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1461,7 +1461,7 @@ async.series([
         async.eachSeries(needsGroupAdminPermissions, function (incoming, outerCallback) {
             var user = allUserModelsByOldIds[incoming.user_id];
             var group = allGroupsModelByOldIds[incoming.group_id];
-            console.log('Adding admin user starting ' + user.email + ' for group ' + group.name);
+            log.info('Adding admin user starting ' + user.email + ' for group ' + group.name);
             if ((currentDomain.id == 1 && _.includes(_.lowerCase(user.name), 'unnur')) ||
                 (!_.includes(_.lowerCase(user.email), 'deleted') && !_.includes(_.lowerCase(user.name), 'robert') && !_.includes(_.lowerCase(user.name), 'gunnar'))) {
                 models.AcActivity.findAll({
@@ -1473,7 +1473,7 @@ async.series([
                     async.eachSeries(activities, function (activity, innerCallback) {
                         activity.user_id = user.id;
                         activity.save().then(function (results) {
-                            console.log('Adding admin user to missing status updates for activities ' + user.email + ' for group ' + group.name);
+                            log.info('Adding admin user to missing status updates for activities ' + user.email + ' for group ' + group.name);
                             innerCallback();
                         });
                     }, function (error) {
@@ -1492,15 +1492,15 @@ async.series([
         async.eachSeries(needsGroupUserPermissions, function (incoming, callback) {
             var user = allUserModelsByOldIds[incoming['user_id']];
             var group = allGroupsModelByOldIds[incoming['group_id']];
-            console.log(incoming['user_id']);
-            console.log(incoming['group_id']);
-            console.log('Processing user in group user ' + user.email + ' for group ' + group.name);
+            log.info(incoming['user_id']);
+            log.info(incoming['group_id']);
+            log.info('Processing user in group user ' + user.email + ' for group ' + group.name);
             models.Group.addUserToGroupIfNeeded(group.id, { user: user, ypDomain: currentDomain }, function () {
                 callback();
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1511,23 +1511,23 @@ async.series([
         async.eachSeries(needsGroupAdminPermissions, function (incoming, callback) {
             var user = allUserModelsByOldIds[incoming.user_id];
             var group = allGroupsModelByOldIds[incoming.group_id];
-            console.log('Processing admin user in group user ' + user.email + ' for group ' + group.name);
+            log.info('Processing admin user in group user ' + user.email + ' for group ' + group.name);
             group.hasGroupAdmins(user).then(function (results) {
-                console.log('Has user results: ' + results);
+                log.info('Has user results: ' + results);
                 if (!results) {
-                    console.log('Adding user to group');
+                    log.info('Adding user to group');
                     group.addGroupAdmins(user).then(function () {
                         callback();
                     });
                 }
                 else {
-                    console.log('User already in group');
+                    log.info('User already in group');
                     callback();
                 }
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1538,26 +1538,26 @@ async.series([
         async.eachSeries(needsGroupAdminPermissions, function (incoming, callback) {
             var user = allUserModelsByOldIds[incoming.user_id];
             var group = allGroupsModelByOldIds[incoming.group_id];
-            console.log('Processing admin user in community user ' + user.email + ' for community ' + group.name);
+            log.info('Processing admin user in community user ' + user.email + ' for community ' + group.name);
             models.Community.findOne({
                 where: { id: group.community_id }
             }).then(function (community) {
                 community.hasCommunityAdmins(user).then(function (results) {
                     if (!results) {
-                        console.log('Adding user to community');
+                        log.info('Adding user to community');
                         community.addCommunityAdmins(user).then(function () {
                             callback();
                         });
                     }
                     else {
-                        console.log('User already in community');
+                        log.info('User already in community');
                         callback();
                     }
                 });
             });
         }, function (err) {
             if (err) {
-                console.log(err);
+                log.info(err);
             }
             else {
                 seriesCallback();
@@ -1582,10 +1582,10 @@ async.series([
         }).then(function (activities) {
             async.eachSeries(activities, function (activity, innerCallback) {
                 if (activity.Post.deleted != true) {
-                    console.log("POST DELETED NOT TRUE");
+                    log.info("POST DELETED NOT TRUE");
                 }
                 else {
-                    console.log("DELETING: " + activity.Post.name);
+                    log.info("DELETING: " + activity.Post.name);
                 }
                 activity.deleted = true;
                 activity.save().then(function () {
@@ -1613,7 +1613,7 @@ async.series([
         }).then(function (activities) {
             async.eachSeries(activities, function (activity, innerCallback) {
                 activity.deleted = true;
-                console.log("DELETING: " + activity.PostStatusChange.content);
+                log.info("DELETING: " + activity.PostStatusChange.content);
                 activity.save().then(function () {
                     innerCallback();
                 });
@@ -1639,7 +1639,7 @@ async.series([
         }).then(function (activities) {
             async.eachSeries(activities, function (activity, innerCallback) {
                 activity.deleted = true;
-                console.log("DELETING: " + activity.Point.name);
+                log.info("DELETING: " + activity.Point.name);
                 activity.save().then(function () {
                     innerCallback();
                 });

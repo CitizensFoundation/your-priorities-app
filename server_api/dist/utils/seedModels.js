@@ -5,6 +5,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { Sequelize, DataTypes, Op } from "sequelize";
 import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
+import log from "./loggerTs.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // PolicySynth Models
@@ -53,7 +54,7 @@ const mainOperatorsAliases = {
 };
 if (env === "production") {
     if (!process.env.DATABASE_URL) {
-        console.error("DATABASE_URL environment variable is not set for production.");
+        log.error("DATABASE_URL environment variable is not set for production.");
         process.exit(1);
     }
     if (process.env.DISABLE_PG_SSL) {
@@ -84,7 +85,7 @@ else {
         !process.env.YP_DEV_DATABASE_PASSWORD ||
         !process.env.YP_DEV_DATABASE_HOST ||
         !process.env.YP_DEV_DATABASE_PORT) {
-        console.error("One or more YP_DEV_DATABASE environment variables are not set for development.");
+        log.error("One or more YP_DEV_DATABASE environment variables are not set for development.");
         process.exit(1);
     }
     try {
@@ -98,12 +99,12 @@ else {
                 ssl: false,
                 rejectUnauthorized: false,
             },
-            logging: false, // Set to console.log for verbose output during seeding
+            logging: false, // Set to log.info for verbose output during seeding
             operatorsAliases: mainOperatorsAliases,
         });
     }
     catch (error) {
-        console.error("Error initializing Sequelize for development:", error);
+        log.error("Error initializing Sequelize for development:", error);
         process.exit(1);
     }
 }
@@ -174,21 +175,21 @@ async function createMainCompoundIndexes(sequelizeInstance, indexCommands) {
     for (const command of indexCommands) {
         try {
             await sequelizeInstance.query(command);
-            console.log(`Successfully created main index: ${command.substring(0, 100)}...`);
+            log.info(`Successfully created main index: ${command.substring(0, 100)}...`);
         }
         catch (error) {
             if (error.message && error.message.indexOf("already exists") > -1) {
-                // console.log(`Main index already exists: ${command.substring(0,100)}...`);
+                // log.info(`Main index already exists: ${command.substring(0,100)}...`);
             }
             else {
-                console.error(`Error creating main index with command: ${command}`);
-                console.error(error.message);
+                log.error(`Error creating main index with command: ${command}`);
+                log.error(error.message);
             }
         }
     }
 }
 async function syncMainDatabase() {
-    console.log("Starting main database synchronization...");
+    log.info("Starting main database synchronization...");
     const modelsPath = path.join(__dirname, "../models");
     const modelFiles = fs
         .readdirSync(modelsPath)
@@ -207,7 +208,7 @@ async function syncMainDatabase() {
             mainDb[model.name] = model;
         }
         catch (err) {
-            console.error(`Error importing model ${file}:`, err);
+            log.error(`Error importing model ${file}:`, err);
             throw err; // Re-throw to stop the process if a model fails to load
         }
     }
@@ -229,13 +230,13 @@ async function syncMainDatabase() {
                 mainDb[model.name] = model;
             }
             catch (err) {
-                console.error(`Error importing services model ${file}:`, err);
+                log.error(`Error importing services model ${file}:`, err);
                 throw err; // Re-throw to stop the process if a model fails to load
             }
         }
     }
     else {
-        console.warn(`Directory not found, skipping services models: ${acModelsPath}`);
+        log.warn(`Directory not found, skipping services models: ${acModelsPath}`);
     }
     Object.keys(mainDb).forEach((modelName) => {
         if (mainDb[modelName] &&
@@ -245,50 +246,50 @@ async function syncMainDatabase() {
     });
     // This script is intended for creating a new database, so always force sync.
     await mainSequelize.sync({ force: true });
-    console.log("Main database schema forcefully synchronized (tables dropped and recreated).");
+    log.info("Main database schema forcefully synchronized (tables dropped and recreated).");
     await createMainCompoundIndexes(mainSequelize, mainCompoundIndexCommands);
     if (mainDb.Post && typeof mainDb.Post.addFullTextIndex === "function") {
-        console.log("Adding full text index for Post model...");
+        log.info("Adding full text index for Post model...");
         await mainDb.Post.addFullTextIndex();
-        console.log("Full text index for Post model added.");
+        log.info("Full text index for Post model added.");
     }
     else {
-        console.warn("Post model or addFullTextIndex method not found in mainDb. Skipping full text index.");
+        log.warn("Post model or addFullTextIndex method not found in mainDb. Skipping full text index.");
     }
-    console.log("Main database synchronization finished.");
+    log.info("Main database synchronization finished.");
 }
 async function syncPolicySynthDatabase() {
-    console.log("Starting PolicySynth database synchronization...");
+    log.info("Starting PolicySynth database synchronization...");
     try {
         // This script is intended for creating a new database, so always force sync.
         await psSequelize.sync({ force: false });
-        console.log("PolicySynth database schema forcefully synchronized (tables dropped and recreated).");
-        console.log("Associating PolicySynth models...");
+        log.info("PolicySynth database schema forcefully synchronized (tables dropped and recreated).");
+        log.info("Associating PolicySynth models...");
         for (const modelName of Object.keys(psModels)) {
             const model = psModels[modelName];
             if (model && typeof model.associate === "function") {
                 model.associate(psSequelize.models);
             }
         }
-        console.log("PolicySynth models associated successfully.");
+        log.info("PolicySynth models associated successfully.");
     }
     catch (error) {
-        console.error("Error during PolicySynth database synchronization:", error);
+        log.error("Error during PolicySynth database synchronization:", error);
         process.exit(1);
     }
-    console.log("PolicySynth database synchronization finished.");
+    log.info("PolicySynth database synchronization finished.");
 }
 async function seedAllModels() {
-    console.log("--- Starting Database Seeding and Synchronization ---");
-    console.log("NOTE: This script will forcefully synchronize the database (drop and recreate tables).");
-    console.log("NODE_ENV:", env);
+    log.info("--- Starting Database Seeding and Synchronization ---");
+    log.info("NOTE: This script will forcefully synchronize the database (drop and recreate tables).");
+    log.info("NODE_ENV:", env);
     // The following environment variables are logged for informational purposes,
     // but this script will always force database synchronization.
-    console.log("FORCE_DB_SYNC (ignored, always true for this script):", process.env.FORCE_DB_SYNC);
-    console.log("FORCE_DB_INDEX_SYNC (ignored, indexes created after forced sync):", process.env.FORCE_DB_INDEX_SYNC);
+    log.info("FORCE_DB_SYNC (ignored, always true for this script):", process.env.FORCE_DB_SYNC);
+    log.info("FORCE_DB_INDEX_SYNC (ignored, indexes created after forced sync):", process.env.FORCE_DB_INDEX_SYNC);
     const args = process.argv.slice(2);
     if (args.length < 2) {
-        console.error("Usage: node <script_path> <username/email> <password>");
+        log.error("Usage: node <script_path> <username/email> <password>");
         process.exit(1);
     }
     const userEmail = args[0].toLowerCase();
@@ -301,31 +302,31 @@ async function seedAllModels() {
             !process.env.YP_DEV_DATABASE_PASSWORD ||
             !process.env.YP_DEV_DATABASE_HOST ||
             !process.env.YP_DEV_DATABASE_PORT) {
-            console.error("Missing YP_DEV_DATABASE environment variables for main database in non-production.");
+            log.error("Missing YP_DEV_DATABASE environment variables for main database in non-production.");
             process.exit(1);
         }
     }
     else {
         if (!process.env.DATABASE_URL) {
-            console.error("Missing DATABASE_URL for production environment.");
+            log.error("Missing DATABASE_URL for production environment.");
             process.exit(1);
         }
     }
     try {
         await syncMainDatabase();
         await syncPolicySynthDatabase();
-        console.log("--- Databases Synchronized ---");
-        console.log("--- Creating User and Domain ---");
+        log.info("--- Databases Synchronized ---");
+        log.info("--- Creating User and Domain ---");
         if (!mainDb.User) {
-            console.error("User model (mainDb.User) not found after sync.");
+            log.error("User model (mainDb.User) not found after sync.");
             process.exit(1);
         }
         if (!mainDb.Domain) {
-            console.error("Domain model (mainDb.Domain) not found after sync.");
+            log.error("Domain model (mainDb.Domain) not found after sync.");
             process.exit(1);
         }
         // Create User
-        console.log(`Attempting to create user: ${userEmail}`);
+        log.info(`Attempting to create user: ${userEmail}`);
         const newUser = mainDb.User.build({
             email: userEmail,
             name: userName, // Or a dedicated name argument if preferred
@@ -339,10 +340,10 @@ async function seedAllModels() {
         const salt = bcrypt.genSaltSync(10);
         newUser.encrypted_password = bcrypt.hashSync(userPassword, salt);
         await newUser.save();
-        console.log(`User ${newUser.email} created with ID: ${newUser.id}`);
+        log.info(`User ${newUser.email} created with ID: ${newUser.id}`);
         // Create Domain
         const randomDomainName = crypto.randomBytes(8).toString("hex") + ".seed.local"; // Shorter and identifiable
-        console.log(`Attempting to create domain: ${randomDomainName} for user ${newUser.id}`);
+        log.info(`Attempting to create domain: ${randomDomainName} for user ${newUser.id}`);
         const newDomain = mainDb.Domain.build({
             name: `Default Domain for ${userName}`,
             domain_name: randomDomainName,
@@ -363,39 +364,39 @@ async function seedAllModels() {
             // deleted: false, (already defaults to false)
         });
         await newDomain.save();
-        console.log(`Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`);
+        log.info(`Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`);
         // Associate User with Domain
         if (typeof newDomain.addDomainUsers === "function") {
             await newDomain.addDomainUsers(newUser);
-            console.log(`User ${newUser.email} added to domain ${newDomain.domain_name} as a user.`);
+            log.info(`User ${newUser.email} added to domain ${newDomain.domain_name} as a user.`);
         }
         else {
-            console.warn(`newDomain.addDomainUsers is not a function. Skipping adding user to domain users.`);
+            log.warn(`newDomain.addDomainUsers is not a function. Skipping adding user to domain users.`);
         }
         if (typeof newDomain.addDomainAdmins === "function") {
             await newDomain.addDomainAdmins(newUser);
-            console.log(`User ${newUser.email} added to domain ${newDomain.domain_name} as an admin.`);
+            log.info(`User ${newUser.email} added to domain ${newDomain.domain_name} as an admin.`);
         }
         else {
-            console.warn(`newDomain.addDomainAdmins is not a function. Skipping adding user to domain admins.`);
+            log.warn(`newDomain.addDomainAdmins is not a function. Skipping adding user to domain admins.`);
         }
-        console.log("--- User and Domain Creation Complete ---");
-        console.log("--- All model seeding and synchronization complete. ---");
+        log.info("--- User and Domain Creation Complete ---");
+        log.info("--- All model seeding and synchronization complete. ---");
         process.exit(0);
     }
     catch (error) {
-        console.error("Unhandled error during seeding process:", error);
+        log.error("Unhandled error during seeding process:", error);
         process.exit(1);
     }
     finally {
-        console.log("Closing database connections...");
+        log.info("Closing database connections...");
         await mainSequelize.close();
         await psSequelize.close();
-        console.log("Database connections closed.");
+        log.info("Database connections closed.");
     }
 }
 seedAllModels().catch((error) => {
-    console.error("Fatal error running seedAllModels:", error);
+    log.error("Fatal error running seedAllModels:", error);
     process.exit(1);
 });
 export { seedAllModels }; // Export if you plan to import and run this elsewhere

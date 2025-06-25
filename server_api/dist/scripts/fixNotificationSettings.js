@@ -1,6 +1,6 @@
 var models = require('../models/index.cjs');
 var async = require('async');
-console.log("Fixing Notifications Settings");
+log.info("Fixing Notifications Settings");
 var loopyloop = true;
 var numberOfRows = 25000;
 var offset = 0;
@@ -12,7 +12,7 @@ async.whilst(function () { return loopyloop; }, function (whilstCallback) {
         if (users && users.length > 0) {
             offset += numberOfRows;
             async.eachSeries(users, function (user, seriesCallback) {
-                //          console.log(user.email);
+                //          log.info(user.email);
                 if (user.notifications_settings) {
                     user.set('notifications_settings.all_group.method', 0);
                     user.set('notifications_settings.all_community.method', 0);
@@ -24,12 +24,12 @@ async.whilst(function () { return loopyloop; }, function (whilstCallback) {
                     seriesCallback();
                 });
             }, function (error) {
-                console.log("Finished with rows continue");
+                log.info("Finished with rows continue");
                 whilstCallback();
             });
         }
         else {
-            console.log("Finished with rows ENDING");
+            log.info("Finished with rows ENDING");
             loopyloop = false;
             whilstCallback();
         }

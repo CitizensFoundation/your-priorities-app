@@ -20,7 +20,7 @@ models.Domain.findOne({ where: { id: 1 } }).then(function (domain) {
                     malePostCount += posts.length;
                 }
                 else {
-                    console.log(user.name);
+                    log.info(user.name);
                     unknownPostCount += posts.length;
                 }
                 models.Point.findAll({ where: { user_id: user.id } }).then(function (points) {
@@ -48,15 +48,15 @@ models.Domain.findOne({ where: { id: 1 } }).then(function (domain) {
                 });
             });
         }, function done() {
-            console.log("femalePostCount: " + femalePostCount);
-            console.log("malePostCount: " + malePostCount);
-            console.log("unknownPostCount: " + unknownPostCount);
-            console.log("femalePointCount: " + femalePointCount);
-            console.log("malePointCount: " + malePointCount);
-            console.log("unknownPointCount: " + unknownPointCount);
-            console.log("femaleEndorsementCount: " + femaleEndorsementCount);
-            console.log("maleEndorsementCount: " + maleEndorsementCount);
-            console.log("unknownEndorsementCount: " + unknownEndorsementCount);
+            log.info("femalePostCount: " + femalePostCount);
+            log.info("malePostCount: " + malePostCount);
+            log.info("unknownPostCount: " + unknownPostCount);
+            log.info("femalePointCount: " + femalePointCount);
+            log.info("malePointCount: " + malePointCount);
+            log.info("unknownPointCount: " + unknownPointCount);
+            log.info("femaleEndorsementCount: " + femaleEndorsementCount);
+            log.info("maleEndorsementCount: " + maleEndorsementCount);
+            log.info("unknownEndorsementCount: " + unknownEndorsementCount);
         });
     });
 });
