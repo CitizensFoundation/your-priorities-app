@@ -2,6 +2,11 @@ import Transport from "winston-transport";
 import { Notifier } from "@airbrake/node";
 import { LogEntry } from "winston";
 
+const IGNORED_ERRORS = (process.env.AIRBRAKE_IGNORED_ERRORS ?? "")
+  .split(",")
+  .map((e) => e.trim())
+  .filter((e) => e.length > 0);
+
 export interface AirbrakeTransportOptions
   extends Transport.TransportStreamOptions {
   projectId: number;
@@ -34,7 +39,11 @@ export class AirbrakeTransport extends Transport {
         ? Object.assign(new Error(message), { stack: info.stack })
         : new Error(message);
 
-    if (process.env.AIRBRAKE_PROJECT_ID) {
+    const shouldNotify =
+      process.env.AIRBRAKE_PROJECT_ID &&
+      !IGNORED_ERRORS.some((p) => err.message.includes(p));
+
+    if (shouldNotify) {
       this.notifier
         .notify({
           error: err,

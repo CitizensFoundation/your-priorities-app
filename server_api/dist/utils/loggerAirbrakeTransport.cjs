@@ -6,6 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AirbrakeTransport = void 0;
 const winston_transport_1 = __importDefault(require("winston-transport"));
 const node_1 = require("@airbrake/node");
+const IGNORED_ERRORS = (process.env.AIRBRAKE_IGNORED_ERRORS ?? "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter((e) => e.length > 0);
 class AirbrakeTransport extends winston_transport_1.default {
     constructor(opts) {
         super(opts);
@@ -24,7 +28,9 @@ class AirbrakeTransport extends winston_transport_1.default {
             : info.stack
                 ? Object.assign(new Error(message), { stack: info.stack })
                 : new Error(message);
-        if (process.env.AIRBRAKE_PROJECT_ID) {
+        const shouldNotify = process.env.AIRBRAKE_PROJECT_ID &&
+            !IGNORED_ERRORS.some((p) => err.message.includes(p));
+        if (shouldNotify) {
             this.notifier
                 .notify({
                 error: err,
