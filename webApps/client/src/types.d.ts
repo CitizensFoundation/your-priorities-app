@@ -799,6 +799,18 @@ interface YpEmbedData {
   description: string;
 }
 
+interface YpPointPublicData {
+  admin_comment?: {
+    text: string;
+    language?: string;
+  };
+  agent_data?: {
+    sender: "agent" | "user" | "system";
+    review?: string;
+    summary?: string;
+  };
+}
+
 interface YpPointData {
   id: number;
   content: string;
@@ -820,17 +832,7 @@ interface YpPointData {
   PointRevisions?: Array<YpPointRevision>;
   PointVideos?: Array<YpVideoData>;
   PointAudios?: Array<YpAudioData>;
-  public_data: {
-    admin_comment?: {
-      text: string;
-      language?: string;
-    };
-    agent_data?: {
-      sender: "agent" | "user" | "system";
-      review?: string;
-      summary?: string;
-    };
-  };
+  public_data: YpPointPublicData;
   embed_data?: YpEmbedData;
   isLastPointInList?: boolean;
   user_agent?: string;
