@@ -687,7 +687,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           font-size: 14px;
           text-align: left;
           font-weight: 700;
-          margin: 8px;
+          margin: 0px;
           margin-top: 0;
           margin-bottom: 0;
           line-height: 22px;
@@ -698,7 +698,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           font-size: 11px;
           text-align: center;
           margin-top: 2px;
-          border-radius: 16px;
+          //border-radius: 16px;
           flex-grow: 1;
           color: var(--md-sys-color-on-surface-variant);
           overflow: hidden;
