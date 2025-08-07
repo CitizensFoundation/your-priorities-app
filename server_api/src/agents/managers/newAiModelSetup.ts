@@ -569,6 +569,42 @@ export class NewAiModelSetup {
       await openAiGpt41Nano.save();
       log.debug("OpenAI model already exists: GPT-4.1 nano");
     }
+
+    const openAiGpt5 = await PsAiModel.findOne({
+      where: { name: "GPT-5" },
+    });
+
+    const openAiGpt5Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 1.25,
+        costOutTokensPerMillion: 10.0,
+        costInCachedContextTokensPerMillion: 0.125,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 400000,
+      defaultTemperature: 0.7,
+      model: "gpt-5",
+      active: true,
+    };
+
+    if (!openAiGpt5) {
+      await PsAiModel.create({
+        name: "GPT-5",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt5Config,
+      });
+      log.info("Created OpenAI model: GPT-5");
+    } else {
+      openAiGpt5.set("configuration", openAiGpt5Config);
+      openAiGpt5.changed("configuration", true);
+      await openAiGpt5.save();
+      log.debug("OpenAI model already exists: GPT-5");
+    }
   }
 
   /**
