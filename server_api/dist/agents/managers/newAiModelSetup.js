@@ -475,6 +475,108 @@ export class NewAiModelSetup {
             await openAiGpt41.save();
             log.debug("OpenAI model already exists: GPT-4.1");
         }
+        const openAiGpt41Mini = await PsAiModel.findOne({
+            where: { name: "GPT-4.1 mini" },
+        });
+        const openAiGpt41MiniConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Small,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 0.4,
+                costOutTokensPerMillion: 1.6,
+                costInCachedContextTokensPerMillion: 0.10,
+                currency: "USD",
+            },
+            maxTokensOut: 32768,
+            maxContextTokens: 1047576,
+            defaultTemperature: 0.7,
+            model: "gpt-4.1-mini",
+            active: true,
+        };
+        if (!openAiGpt41Mini) {
+            await PsAiModel.create({
+                name: "GPT-4.1 mini",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt41MiniConfig,
+            });
+            log.info("Created OpenAI model: GPT-4.1 mini");
+        }
+        else {
+            openAiGpt41Mini.set("configuration", openAiGpt41MiniConfig);
+            openAiGpt41Mini.changed("configuration", true);
+            await openAiGpt41Mini.save();
+            log.debug("OpenAI model already exists: GPT-4.1 mini");
+        }
+        const openAiGpt41Nano = await PsAiModel.findOne({
+            where: { name: "GPT-4.1 nano" },
+        });
+        const openAiGpt41NanoConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Small,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 0.1,
+                costOutTokensPerMillion: 0.4,
+                costInCachedContextTokensPerMillion: 0.025,
+                currency: "USD",
+            },
+            maxTokensOut: 32768,
+            maxContextTokens: 1047576,
+            defaultTemperature: 0.7,
+            model: "gpt-4.1-nano",
+            active: true,
+        };
+        if (!openAiGpt41Nano) {
+            await PsAiModel.create({
+                name: "GPT-4.1 nano",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt41NanoConfig,
+            });
+            log.info("Created OpenAI model: GPT-4.1 nano");
+        }
+        else {
+            openAiGpt41Nano.set("configuration", openAiGpt41NanoConfig);
+            openAiGpt41Nano.changed("configuration", true);
+            await openAiGpt41Nano.save();
+            log.debug("OpenAI model already exists: GPT-4.1 nano");
+        }
+        const openAiGpt5 = await PsAiModel.findOne({
+            where: { name: "GPT-5" },
+        });
+        const openAiGpt5Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 1.25,
+                costOutTokensPerMillion: 10.0,
+                costInCachedContextTokensPerMillion: 0.125,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 400000,
+            defaultTemperature: 0.7,
+            model: "gpt-5",
+            active: true,
+        };
+        if (!openAiGpt5) {
+            await PsAiModel.create({
+                name: "GPT-5",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt5Config,
+            });
+            log.info("Created OpenAI model: GPT-5");
+        }
+        else {
+            openAiGpt5.set("configuration", openAiGpt5Config);
+            openAiGpt5.changed("configuration", true);
+            await openAiGpt5.save();
+            log.debug("OpenAI model already exists: GPT-5");
+        }
     }
     /**
      * Seeds Google models.
@@ -810,6 +912,8 @@ export class NewAiModelSetup {
             { name: "o3 mini", envKey: "OPENAI_API_KEY" },
             { name: "o4 mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.1", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-4.1 mini", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-4.1 nano", envKey: "OPENAI_API_KEY" },
             { name: "o3", envKey: "OPENAI_API_KEY" },
         ];
         const groupAccessConfig = [];

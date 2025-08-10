@@ -55,7 +55,8 @@ import { Notifier } from "@airbrake/node";
 import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let airbrake;
-if (process.env.AIRBRAKE_PROJECT_ID && (process.env.AIRBRAKE_API_KEY || process.env.AIRBRAKE_PROJECT_KEY)) {
+if (process.env.AIRBRAKE_PROJECT_ID &&
+    (process.env.AIRBRAKE_API_KEY || process.env.AIRBRAKE_PROJECT_KEY)) {
     airbrake = new Notifier({
         projectId: parseInt(process.env.AIRBRAKE_PROJECT_ID),
         projectKey: process.env.AIRBRAKE_API_KEY || process.env.AIRBRAKE_PROJECT_KEY || "",
@@ -895,7 +896,8 @@ export class YourPrioritiesApi {
                 log.error("User Unauthorized", {
                     context: "unauthorizedError",
                     user: toJson(req.user),
-                    err: "Unauthorized",
+                    url: req.originalUrl,
+                    err: err ? (err.message ? err.message : err) : "Unauthorized",
                     errorStatus: 401,
                 });
                 res.sendStatus(401);
