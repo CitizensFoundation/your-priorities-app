@@ -1259,7 +1259,10 @@ export class YourPrioritiesApi {
       server = this.app.listen(
         portNumber,
         process.env.YOUR_PRIORITIES_LISTEN_HOST,
-        () => {
+        (err: any) => {
+          if (err) {
+            log.error("Error listening on port", { err });
+          }
           log.info(
             `Your Priorities Platform API Server listening on port ${
               process.env.YOUR_PRIORITIES_LISTEN_HOST
