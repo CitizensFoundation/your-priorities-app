@@ -12,6 +12,8 @@ import rateLimit from "express-rate-limit";
 import { RedisStore as RedisLimitStore } from "rate-limit-redis";
 import passport from "passport";
 import models from "./models/index.cjs";
+import type { Server as HttpServer } from "http";
+import type { AddressInfo } from "net";
 
 if (process.env.NEW_RELIC_APP_NAME) {
   import("newrelic")
@@ -1148,7 +1150,7 @@ export class YourPrioritiesApi {
     this.app.use(
       (err: any, req: YpRequest, res: express.Response, next: NextFunction) => {
         if (err instanceof auth.UnauthorizedError) {
-          log.info("Anon debug UnauthorizedError", { user: req.user });
+          log.debug("UnauthorizedError debug", { user: req.user });
           log.error("User Unauthorized", {
             context: "unauthorizedError",
             user: toJson(req.user),
@@ -1240,49 +1242,58 @@ export class YourPrioritiesApi {
     );
   }
 
-  async listen() {
-    const server = await this.setupHttpsServer();
-    this.webSocketsManager = new WebSocketsManager(
-      this.wsClients,
-      this.redisClient,
-      server
-    );
-    await this.webSocketsManager.listen();
+  public async listen(): Promise<void> {
+    try {
+      log.info("Starting Your Priorities Platform API Server");
+      const server = await this.setupHttpsServer();
+      log.debug("Server created");
+      this.webSocketsManager = new WebSocketsManager(
+        this.wsClients,
+        this.redisClient,
+        server
+      );
+      log.debug("WebSocketsManager created");
+      await this.webSocketsManager.listen();
+    } catch (err: any) {
+      log.error("Server failed to start", { err: err?.message || err });
+      process.exit(1);
+    }
   }
 
-  setupHttpsServer() {
-    let server: any;
+  async setupHttpsServer(): Promise<HttpServer> {
+    const port = Number(process.env.PORT) || 4242;
+    const host = process.env.YOUR_PRIORITIES_LISTEN_HOST || "0.0.0.0";
+    this.app.set("port", port);
 
-    const portNumber = process.env.PORT ? parseInt(process.env.PORT) : 4242;
+    return await new Promise<HttpServer>((resolve, reject) => {
+      const server = this.app.listen(port, host);
 
-    if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
-      server = this.app.listen(
-        portNumber,
-        process.env.YOUR_PRIORITIES_LISTEN_HOST,
-        (err: any) => {
-          if (err) {
-            log.error("Error listening on port", { err });
-          }
-          log.info(
-            `Your Priorities Platform API Server listening on port ${
-              process.env.YOUR_PRIORITIES_LISTEN_HOST
-            }:${this.app.get("port")} on ${process.env.NODE_ENV}`
-          );
-        }
-      );
-    } else {
-      server = this.app.listen(portNumber, function (err: any) {
-        if (err) {
-          log.error("Error listening on port", { err });
-        }
+      const onError = (err: any) => {
+        server.removeListener("listening", onListening);
+        log.error("HTTP server listen error", {
+          code: err?.code,
+          message: err?.message,
+          host,
+          port,
+        });
+        reject(err);
+      };
+
+      const onListening = () => {
+        server.removeListener("error", onError);
+        const addr = server.address();
+        const rendered =
+          typeof addr === "string"
+            ? addr
+            : `${(addr as AddressInfo).address}:${(addr as AddressInfo).port}`;
         log.info(
-          "Your Priorities Platform API Server listening on port " +
-            server.address().port +
-            ` on ${process.env.NODE_ENV}`
+          `Your Priorities Platform API Server listening on ${rendered} (env=${process.env.NODE_ENV})`
         );
-      });
-    }
+        resolve(server);
+      };
 
-    return server;
+      server.once("error", onError);
+      server.once("listening", onListening);
+    });
   }
 }

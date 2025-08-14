@@ -1,5 +1,5 @@
 import { Server } from "https";
-import { IncomingMessage } from "http";
+import { IncomingMessage, Server as HttpServer } from "http";
 import { RedisClientType } from "@redis/client";
 import { WebSocketServer, WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
@@ -22,7 +22,7 @@ export class WebSocketsManager {
   constructor(
     wsClients: Map<string, WebSocket>,
     redisClient: RedisClientType,
-    server: Server
+    server: HttpServer
   ) {
     this.wsClients = wsClients;
     this.redisClient = redisClient;
