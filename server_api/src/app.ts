@@ -157,44 +157,79 @@ export class YourPrioritiesApi {
   public webSocketsManager!: WebSocketsManager;
 
   constructor(port: number | undefined = undefined) {
+    log.debug("YourPrioritiesApi constructor");
     this.app = express();
+    log.debug("Have setup express app");
     this.port = port || (process.env.PORT ? parseInt(process.env.PORT) : 4242);
     this.wsClients = new Map();
     this.initializeRedis();
+    log.debug("Have initialized redis");
     this.addRedisToRequest();
+    log.debug("Have added redis to request");
     this.addDirnameToRequest();
+    log.debug("Have added dirname to request");
     this.forceHttps();
+    log.debug("Have forced https");
     this.initializeMiddlewares();
+    log.debug("Have initialized middlewares");
     this.handleShortenedRedirects();
+    log.debug("Have handled shortened redirects");
     this.initializeRateLimiting();
+    log.debug("Have initialized rate limiting");
     this.setupDomainAndCommunity();
+    log.debug("Have setup domain and community");
     this.setupNewWebAppVersionHandling();
+    log.debug("Have setup new web app version handling");
     this.setupSitemapRoute();
+    log.debug("Have setup sitemap route");
     this.initializePassportStrategies();
+    log.debug("Have initialized passport strategies");
     this.addInviteAsAnonMiddleWare();
+    log.debug("Have added invite as anon middle ware");
     this.setupStaticFileServing();
+    log.debug("Have setup static file serving");
     this.checkAuthForSsoInit();
+    log.debug("Have checked auth for sso init");
     this.initializeRoutes();
+    log.debug("Have initialized routes");
     this.initializeEsControllers();
+    log.debug("Have initialized es controllers");
   }
 
   async initialize() {
+    log.debug("YourPrioritiesApi initialize");
     await this.initializeRedis();
+    log.debug("Have initialized redis");
     this.addRedisToRequest();
+    log.debug("Have added redis to request");
     this.addDirnameToRequest();
+    log.debug("Have added dirname to request");
     this.forceHttps();
+    log.debug("Have forced https");
     this.initializeMiddlewares();
+    log.debug("Have initialized middlewares");
     this.handleShortenedRedirects();
+    log.debug("Have handled shortened redirects");
     this.initializeRateLimiting();
+    log.debug("Have initialized rate limiting");
     this.setupDomainAndCommunity();
+    log.debug("Have setup domain and community");
     this.setupNewWebAppVersionHandling();
+    log.debug("Have setup new web app version handling");
     this.setupSitemapRoute();
+    log.debug("Have setup sitemap route");
     this.initializePassportStrategies();
+    log.debug("Have initialized passport strategies");
     this.addInviteAsAnonMiddleWare();
+    log.debug("Have added invite as anon middle ware");
     this.setupStaticFileServing();
+    log.debug("Have setup static file serving");
     this.checkAuthForSsoInit();
+    log.debug("Have checked auth for sso init");
     this.initializeRoutes();
+    log.debug("Have initialized routes");
     this.initializeEsControllers();
+    log.debug("Have initialized es controllers");
   }
 
   setupNewWebAppVersionHandling() {

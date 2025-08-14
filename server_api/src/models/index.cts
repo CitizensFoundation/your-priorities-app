@@ -112,6 +112,7 @@ const operatorsAliases = {
 
 if (process.env.NODE_ENV === "production") {
   if (process.env.DISABLE_PG_SSL) {
+    log.debug("Creating Sequelize instance with DISABLE_PG_SSL");
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect: "postgres",
       minifyAliases: true,
@@ -119,6 +120,7 @@ if (process.env.NODE_ENV === "production") {
       operatorsAliases,
     });
   } else {
+    log.debug("Creating Sequelize instance with ENABLE_PG_SSL");
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect: "postgres",
       dialectOptions: { ssl: { rejectUnauthorized: false } },
@@ -129,6 +131,7 @@ if (process.env.NODE_ENV === "production") {
   }
 } else {
   try {
+    log.debug("Creating Sequelize instance with YP_DEV_DATABASE_NAME");
     sequelize = new Sequelize(
       process.env.YP_DEV_DATABASE_NAME,
       process.env.YP_DEV_DATABASE_USERNAME,
