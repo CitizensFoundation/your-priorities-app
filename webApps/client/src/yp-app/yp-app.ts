@@ -136,6 +136,9 @@ export class YpApp extends YpBaseElement {
   hideHelpIcon = false;
 
   @property({ type: Boolean })
+  useInfoIconInsteadOfHelpIcon = false;
+
+  @property({ type: Boolean })
   autoTranslate = false;
 
   @property({ type: String })
@@ -712,8 +715,10 @@ export class YpApp extends YpBaseElement {
             id="helpIconButton"
             class="topActionItem"
             @click="${this._openHelpMenu}"
-            title="${this.t("menu.help")}"
-            ><md-icon>help_outline</md-icon>
+            title="${this.t("menu.help")}" 
+            ><md-icon>${this.useInfoIconInsteadOfHelpIcon
+              ? "info"
+              : "help_outline"}</md-icon>
           </md-filled-tonal-icon-button>
           <md-menu
             id="helpMenu"
@@ -1797,6 +1802,12 @@ export class YpApp extends YpBaseElement {
       this.hideHelpIcon = true;
     } else {
       this.hideHelpIcon = false;
+    }
+
+    if (header.useInfoIconInsteadOfHelpIcon) {
+      this.useInfoIconInsteadOfHelpIcon = true;
+    } else {
+      this.useInfoIconInsteadOfHelpIcon = false;
     }
 
     if (header.keepOpenForGroup) {

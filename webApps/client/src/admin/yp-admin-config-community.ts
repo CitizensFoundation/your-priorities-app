@@ -1038,6 +1038,12 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
+          text: "useInfoIconInsteadOfHelpIcon",
+          type: "checkbox",
+          value: this.collection?.configuration.useInfoIconInsteadOfHelpIcon,
+          translationToken: "useInfoIconInsteadOfHelpIcon",
+        },
+        {
           text: "welcomeHTML",
           type: "textarea",
           rows: 2,

@@ -953,6 +953,11 @@ export class YpPost extends YpCollection {
           this.post.Group.configuration?.hideHelpIcon
             ? true
             : null,
+        useInfoIconInsteadOfHelpIcon:
+          this.post.Group.configuration &&
+          this.post.Group.configuration?.useInfoIconInsteadOfHelpIcon
+            ? true
+            : null,
       });
 
       if (

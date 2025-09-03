@@ -1608,6 +1608,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "hideHelpIcon",
         },
         {
+          text: "useInfoIconInsteadOfHelpIcon",
+          type: "checkbox",
+          value: this.group.configuration.useInfoIconInsteadOfHelpIcon,
+          translationToken: "useInfoIconInsteadOfHelpIcon",
+        },
+        {
           text: "useCommunityTopBanner",
           type: "checkbox",
           value: this.group.configuration.useCommunityTopBanner,

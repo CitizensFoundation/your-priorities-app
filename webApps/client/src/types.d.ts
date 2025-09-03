@@ -241,6 +241,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   anonymousAskRegistrationQuestions?: boolean;
   disableMachineTranscripts?: boolean;
   hideHelpIcon?: boolean;
+  useInfoIconInsteadOfHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;
   hideNewPost?: boolean;
   canAddNewPosts?: boolean;
@@ -464,6 +465,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   alwaysShowOnDomainPage?: boolean;
   alwaysHideLogoImage?: boolean;
   useAsTemplate?: boolean;
+  useInfoIconInsteadOfHelpIcon?: boolean;
 }
 
 interface YpPromoterRights {

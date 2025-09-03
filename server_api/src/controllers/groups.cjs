@@ -265,6 +265,10 @@ var updateGroupConfigParameters = function (req, group) {
     "configuration.hideHelpIcon",
     truthValueFromBody(req.body.hideHelpIcon)
   );
+  group.set(
+    "configuration.useInfoIconInsteadOfHelpIcon",
+    truthValueFromBody(req.body.useInfoIconInsteadOfHelpIcon)
+  );
   group.set("configuration.hideEmoji", truthValueFromBody(req.body.hideEmoji));
   group.set(
     "configuration.hideGroupHeader",

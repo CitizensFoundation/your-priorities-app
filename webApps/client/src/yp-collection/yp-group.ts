@@ -748,6 +748,8 @@ export class YpGroup extends YpCollection {
           group.configuration &&
           group.configuration.disableCollectionUpLink === true,
         hideHelpIcon: group.configuration.hideHelpIcon ? true : null,
+        useInfoIconInsteadOfHelpIcon:
+          group.configuration.useInfoIconInsteadOfHelpIcon ? true : null,
         useHardBack: this._useHardBack(group.configuration),
         backPath: backPath,
       });
