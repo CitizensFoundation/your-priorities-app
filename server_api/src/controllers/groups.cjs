@@ -3524,6 +3524,105 @@ router.post("/:id/clone", auth.can("edit group"), function (req, res) {
     });
 });
 
+router.post(
+  "/:id/cloneToCommunity/:communityId",
+  auth.can("edit group"),
+  auth.can("edit community"),
+  function (req, res) {
+    models.Group.findOne({
+      attributes: ["id"],
+      where: { id: req.params.id },
+    })
+      .then(function (group) {
+        if (group) {
+          models.Community.findOne({
+            where: { id: req.params.communityId },
+            attributes: ["id", "domain_id"],
+            include: [
+              {
+                model: models.Domain,
+                attributes: ["id"],
+              },
+            ],
+          })
+            .then(function (community) {
+              if (community) {
+                community.hasCommunityAdmins(req.user).then(function (isAdmin) {
+                  if (isAdmin) {
+                    copyGroup(
+                      group.id,
+                      community,
+                      community.domain_id,
+                      { skipUsers: true, skipActivities: true },
+                      (error, newGroup) => {
+                        if (error) {
+                          log.error("Group Clone To Community Failed", {
+                            error,
+                            groupId: req.params.id,
+                            communityId: req.params.communityId,
+                          });
+                          res.sendStatus(500);
+                        } else if (newGroup) {
+                          log.info("Group Cloned To Community", {
+                            groupId: req.params.id,
+                            newGroupId: newGroup.id,
+                            communityId: req.params.communityId,
+                          });
+                          res.send({ id: newGroup.id });
+                        } else {
+                          log.error(
+                            "Group Clone To Community succeeded but newGroup is missing",
+                            {
+                              groupId: req.params.id,
+                              communityId: req.params.communityId,
+                            }
+                          );
+                          res.sendStatus(500);
+                        }
+                      }
+                    );
+                  } else {
+                    sendGroupOrError(
+                      res,
+                      null,
+                      "cloneToCommunity",
+                      req.user,
+                      "Not community admin",
+                      401
+                    );
+                  }
+                });
+              } else {
+                sendGroupOrError(
+                  res,
+                  req.params.communityId,
+                  "cloneToCommunity",
+                  req.user,
+                  "Not found",
+                  404
+                );
+              }
+            })
+            .catch(function (error) {
+              sendGroupOrError(res, null, "cloneToCommunity", req.user, error);
+            });
+        } else {
+          sendGroupOrError(
+            res,
+            req.params.id,
+            "cloneToCommunity",
+            req.user,
+            "Not found",
+            404
+          );
+        }
+      })
+      .catch(function (error) {
+        sendGroupOrError(res, null, "cloneToCommunity", req.user, error);
+      });
+  }
+);
+
 router.get("/:id/checkNonOpenPosts", auth.can("view group"), (req, res) => {
   var PostsByNotOpen = models.Post.scope("not_open");
   PostsByNotOpen.count({ where: { group_id: req.params.id } })

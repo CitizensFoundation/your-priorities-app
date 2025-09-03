@@ -22,6 +22,7 @@ import "../yp-user/yp-reset-password.js";
 import "../yp-post/yp-post-edit.js";
 import "../yp-page/yp-page-dialog.js";
 import "../yp-category/yp-category-edit.js";
+import "../admin/yp-group-clone-dialog.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { YpSnackbar } from '../yp-app/yp-snackbar.js';
 
@@ -166,6 +167,11 @@ export class YpAppDialogs extends YpBaseElement {
         selectedDialog = html`
           <yp-user-delete-or-anonymize
             id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
+        `;
+        break;
+      case 'groupCloneDialog':
+        selectedDialog = html`
+          <yp-group-clone-dialog id="groupCloneDialog"></yp-group-clone-dialog>
         `;
         break;
     }
