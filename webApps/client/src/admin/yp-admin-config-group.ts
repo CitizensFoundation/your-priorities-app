@@ -1972,26 +1972,28 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   async _openClone() {
-    console.log("_openClone started");
-    this.cloning = true;
     window.appGlobals.activity("open", "group.clone");
 
-    try {
-      const newGroup = (await window.serverApi.apiAction(
-        `/api/groups/${this.collection!.id}/clone`,
-        "POST",
-        {}
-      )) as YpGroupData;
+    const adminRights = await window.serverApi.getAdminRightsWithNames();
+    const communities =
+      (adminRights?.CommunityAdmins as YpCommunityData[]) || [];
 
-      window.appGlobals.activity("completed", "cloneGroup");
-      window.location.href = `/group/${newGroup.id}`;
-    } catch (err) {
-      console.error("Clone failed", err);
-      // optionally show error toast or dialog here
-    } finally {
-      console.log("_openClone finished");
-      this.cloning = false;
+    if (!communities.length) {
+      console.warn("No target communities for cloning");
+      return;
     }
+
+    window.appDialogs.getDialogAsync(
+      "groupCloneDialog",
+      (dialog: any) => {
+        dialog.setup(
+          this.collection!.id,
+          communities,
+          this.group.community_id
+        );
+        dialog.open();
+      }
+    );
   }
 
   earlConfigChanged(event: CustomEvent) {
