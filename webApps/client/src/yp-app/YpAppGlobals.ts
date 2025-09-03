@@ -536,6 +536,9 @@ export class YpAppGlobals extends YpCodeBase {
       if (override["hh"]) {
         configuration["hideHelpIcon"] = Boolean(override["hh"]);
       }
+      if (override["ih"]) {
+        configuration["useInfoIconInsteadOfHelpIcon"] = Boolean(override["ih"]);
+      }
       if (override["rn"]) {
         configuration["customBackName"] = override["rn"] as string;
       }

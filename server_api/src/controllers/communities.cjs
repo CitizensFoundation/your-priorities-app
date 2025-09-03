@@ -995,6 +995,10 @@ const updateCommunityConfigParameters = function (req, community) {
     "configuration.useTextOnlyInfoBox",
     truthValueFromBody(req.body.useTextOnlyInfoBox)
   );
+  community.set(
+    "configuration.useInfoIconInsteadOfHelpIcon",
+    truthValueFromBody(req.body.useInfoIconInsteadOfHelpIcon)
+  );
 
   const ltpConfigText =
     req.body.ltp && req.body.ltp != "" ? req.body.ltp : null;

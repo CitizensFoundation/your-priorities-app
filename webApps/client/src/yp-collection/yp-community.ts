@@ -208,6 +208,8 @@ export class YpCommunity extends YpCollection {
         disableCollectionUpLink:
           community.configuration &&
           community.configuration.disableCollectionUpLink === true,
+        useInfoIconInsteadOfHelpIcon:
+          community.configuration?.useInfoIconInsteadOfHelpIcon ? true : null,
         documentTitle: community.name,
         backPath:
           community.configuration && community.configuration.customBackURL
