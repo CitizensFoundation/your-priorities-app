@@ -783,6 +783,7 @@ const updateCommunityConfigParameters = function (req, community) {
     community.set("configuration.hideLogoBoxShadow", truthValueFromBody(req.body.hideLogoBoxShadow));
     community.set("configuration.muteNotificationsForEndorsements", truthValueFromBody(req.body.muteNotificationsForEndorsements));
     community.set("configuration.useTextOnlyInfoBox", truthValueFromBody(req.body.useTextOnlyInfoBox));
+    community.set("configuration.useInfoIconInsteadOfHelpIcon", truthValueFromBody(req.body.useInfoIconInsteadOfHelpIcon));
     const ltpConfigText = req.body.ltp && req.body.ltp != "" ? req.body.ltp : null;
     if (ltpConfigText) {
         try {

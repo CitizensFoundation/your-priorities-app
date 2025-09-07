@@ -191,6 +191,7 @@ var updateGroupConfigParameters = function (req, group) {
     group.set("configuration.hideNewPostOnPostPage", truthValueFromBody(req.body.hideNewPostOnPostPage));
     group.set("configuration.newPointOptional", truthValueFromBody(req.body.newPointOptional));
     group.set("configuration.hideHelpIcon", truthValueFromBody(req.body.hideHelpIcon));
+    group.set("configuration.useInfoIconInsteadOfHelpIcon", truthValueFromBody(req.body.useInfoIconInsteadOfHelpIcon));
     group.set("configuration.hideEmoji", truthValueFromBody(req.body.hideEmoji));
     group.set("configuration.hideGroupHeader", truthValueFromBody(req.body.hideGroupHeader));
     group.set("configuration.hidePointAuthor", truthValueFromBody(req.body.hidePointAuthor));
@@ -994,9 +995,7 @@ router.post("/:groupId/sendEmailInvitesForAnons", auth.can("edit group"), async 
             });
             return;
         }
-        const emailArray = emails
-            .split("\n")
-            .map((email) => email.trim());
+        const emailArray = emails.split("\n").map((email) => email.trim());
         // Validate each email
         const validEmails = emailArray.filter((email) => {
             // Basic email validation regex
@@ -2517,7 +2516,9 @@ router.post("/:id/clone", auth.can("edit group"), function (req, res) {
                     res.send({ id: newGroup.id });
                 }
                 else {
-                    log.error("Group Cloned succeeded but newGroup is missing", { groupId: req.params.id });
+                    log.error("Group Cloned succeeded but newGroup is missing", {
+                        groupId: req.params.id,
+                    });
                     res.sendStatus(500);
                 }
             });
@@ -2525,6 +2526,97 @@ router.post("/:id/clone", auth.can("edit group"), function (req, res) {
         else {
             sendGroupOrError(res, req.params.id, "delete", req.user, "Not found", 404);
         }
+    })
+        .catch(function (error) {
+        sendGroupOrError(res, null, "delete", req.user, error);
+    });
+});
+router.post("/:id/cloneToCommunity/:communityId", auth.can("edit group"), function (req, res) {
+    models.Community.findOne({
+        attributes: ["id"],
+        where: { id: req.params.communityId },
+    })
+        .then(function (community) {
+        community
+            .hasCommunityAdmins(req.user)
+            .then(function (isAdmin) {
+            if (isAdmin) {
+                models.Group.findOne({
+                    attributes: ["id"],
+                    where: { id: req.params.id },
+                })
+                    .then(function (group) {
+                    if (group) {
+                        models.Community.findOne({
+                            where: { id: req.params.communityId },
+                            attributes: ["id", "domain_id"],
+                            include: [
+                                {
+                                    model: models.Domain,
+                                    attributes: ["id"],
+                                },
+                            ],
+                        })
+                            .then(function (community) {
+                            if (community) {
+                                community
+                                    .hasCommunityAdmins(req.user)
+                                    .then(function (isAdmin) {
+                                    if (isAdmin) {
+                                        copyGroup(group.id, community, community.domain_id, { skipUsers: true, skipActivities: true }, (error, newGroup) => {
+                                            if (error) {
+                                                log.error("Group Clone To Community Failed", {
+                                                    error,
+                                                    groupId: req.params.id,
+                                                    communityId: req.params.communityId,
+                                                });
+                                                res.sendStatus(500);
+                                            }
+                                            else if (newGroup) {
+                                                log.info("Group Cloned To Community", {
+                                                    groupId: req.params.id,
+                                                    newGroupId: newGroup.id,
+                                                    communityId: req.params.communityId,
+                                                });
+                                                res.send({ id: newGroup.id });
+                                            }
+                                            else {
+                                                log.error("Group Clone To Community succeeded but newGroup is missing", {
+                                                    groupId: req.params.id,
+                                                    communityId: req.params.communityId,
+                                                });
+                                                res.sendStatus(500);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        sendGroupOrError(res, null, "cloneToCommunity", req.user, "Not community admin", 401);
+                                    }
+                                });
+                            }
+                            else {
+                                sendGroupOrError(res, req.params.communityId, "cloneToCommunity", req.user, "Not found", 404);
+                            }
+                        })
+                            .catch(function (error) {
+                            sendGroupOrError(res, null, "cloneToCommunity", req.user, error);
+                        });
+                    }
+                    else {
+                        sendGroupOrError(res, req.params.id, "cloneToCommunity", req.user, "Not found", 404);
+                    }
+                })
+                    .catch(function (error) {
+                    sendGroupOrError(res, null, "cloneToCommunity", req.user, error);
+                });
+            }
+            else {
+                sendGroupOrError(res, null, "delete", req.user, "Not authorized");
+            }
+        })
+            .catch(function (error) {
+            sendGroupOrError(res, null, "delete", req.user, error);
+        });
     })
         .catch(function (error) {
         sendGroupOrError(res, null, "delete", req.user, error);
@@ -4095,10 +4187,10 @@ router.get("/:domainId/getTemplates", auth.can("view domain"), async (req, res) 
                             // public templates
                             { access: models.Group.ACCESS_PUBLIC },
                             // templates where user is an admin
-                            literal(`"GroupAdmins"."id" IS NOT NULL`)
-                        ]
-                    }
-                ]
+                            literal(`"GroupAdmins"."id" IS NOT NULL`),
+                        ],
+                    },
+                ],
             },
             include: [
                 {
@@ -4119,14 +4211,14 @@ router.get("/:domainId/getTemplates", auth.can("view domain"), async (req, res) 
                             model: models.Domain,
                             attributes: ["id", "name"],
                             required: true,
-                            where: { id: domainId }
+                            where: { id: domainId },
                         },
                     ],
-                }
+                },
             ],
             attributes: ["id", "name"],
             distinct: true,
-            order: [["name", "ASC"]]
+            order: [["name", "ASC"]],
         });
         res.send(templateGroups || []);
     }

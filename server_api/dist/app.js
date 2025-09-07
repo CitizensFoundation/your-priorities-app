@@ -214,43 +214,78 @@ export class YourPrioritiesApi {
                 });
             }
         };
+        log.debug("YourPrioritiesApi constructor");
         this.app = express();
+        log.debug("Have setup express app");
         this.port = port || (process.env.PORT ? parseInt(process.env.PORT) : 4242);
         this.wsClients = new Map();
         this.initializeRedis();
+        log.debug("Have initialized redis");
         this.addRedisToRequest();
+        log.debug("Have added redis to request");
         this.addDirnameToRequest();
+        log.debug("Have added dirname to request");
         this.forceHttps();
+        log.debug("Have forced https");
         this.initializeMiddlewares();
+        log.debug("Have initialized middlewares");
         this.handleShortenedRedirects();
+        log.debug("Have handled shortened redirects");
         this.initializeRateLimiting();
+        log.debug("Have initialized rate limiting");
         this.setupDomainAndCommunity();
+        log.debug("Have setup domain and community");
         this.setupNewWebAppVersionHandling();
+        log.debug("Have setup new web app version handling");
         this.setupSitemapRoute();
+        log.debug("Have setup sitemap route");
         this.initializePassportStrategies();
+        log.debug("Have initialized passport strategies");
         this.addInviteAsAnonMiddleWare();
+        log.debug("Have added invite as anon middle ware");
         this.setupStaticFileServing();
+        log.debug("Have setup static file serving");
         this.checkAuthForSsoInit();
+        log.debug("Have checked auth for sso init");
         this.initializeRoutes();
+        log.debug("Have initialized routes");
         this.initializeEsControllers();
+        log.debug("Have initialized es controllers");
     }
     async initialize() {
+        log.debug("YourPrioritiesApi initialize");
         await this.initializeRedis();
+        log.debug("Have initialized redis");
         this.addRedisToRequest();
+        log.debug("Have added redis to request");
         this.addDirnameToRequest();
+        log.debug("Have added dirname to request");
         this.forceHttps();
+        log.debug("Have forced https");
         this.initializeMiddlewares();
+        log.debug("Have initialized middlewares");
         this.handleShortenedRedirects();
+        log.debug("Have handled shortened redirects");
         this.initializeRateLimiting();
+        log.debug("Have initialized rate limiting");
         this.setupDomainAndCommunity();
+        log.debug("Have setup domain and community");
         this.setupNewWebAppVersionHandling();
+        log.debug("Have setup new web app version handling");
         this.setupSitemapRoute();
+        log.debug("Have setup sitemap route");
         this.initializePassportStrategies();
+        log.debug("Have initialized passport strategies");
         this.addInviteAsAnonMiddleWare();
+        log.debug("Have added invite as anon middle ware");
         this.setupStaticFileServing();
+        log.debug("Have setup static file serving");
         this.checkAuthForSsoInit();
+        log.debug("Have checked auth for sso init");
         this.initializeRoutes();
+        log.debug("Have initialized routes");
         this.initializeEsControllers();
+        log.debug("Have initialized es controllers");
     }
     setupNewWebAppVersionHandling() {
         this.app.use((req, res, next) => {
@@ -525,8 +560,8 @@ export class YourPrioritiesApi {
         this.app.use(this.setupExpresLogger);
         this.app.use(useragent.express());
         this.app.use(requestIp.mw());
-        this.app.use(bodyParser.json({ limit: "100mb", strict: false }));
-        this.app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
+        this.app.use(bodyParser.json({ limit: "150mb", strict: false }));
+        this.app.use(bodyParser.urlencoded({ limit: "150mb", extended: true }));
         if (process.env.ALLOWED_ORIGINS) {
             this.app.use(cors({
                 origin: process.env.ALLOWED_ORIGINS.split(","),
@@ -892,7 +927,7 @@ export class YourPrioritiesApi {
     setupErrorHandler() {
         this.app.use((err, req, res, next) => {
             if (err instanceof auth.UnauthorizedError) {
-                log.info("Anon debug UnauthorizedError", { user: req.user });
+                log.debug("UnauthorizedError debug", { user: req.user });
                 log.error("User Unauthorized", {
                     context: "unauthorizedError",
                     user: toJson(req.user),
@@ -976,28 +1011,46 @@ export class YourPrioritiesApi {
         });
     }
     async listen() {
-        const server = await this.setupHttpsServer();
-        this.webSocketsManager = new WebSocketsManager(this.wsClients, this.redisClient, server);
-        await this.webSocketsManager.listen();
+        try {
+            log.info("Starting Your Priorities Platform API Server");
+            const server = await this.setupHttpsServer();
+            log.debug("Server created");
+            this.webSocketsManager = new WebSocketsManager(this.wsClients, this.redisClient, server);
+            log.debug("WebSocketsManager created");
+            await this.webSocketsManager.listen();
+        }
+        catch (err) {
+            log.error("Server failed to start", { err: err?.message || err });
+            process.exit(1);
+        }
     }
-    setupHttpsServer() {
-        let server;
-        const portNumber = process.env.PORT ? parseInt(process.env.PORT) : 4242;
-        if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
-            server = this.app.listen(portNumber, process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
-                log.info(`Your Priorities Platform API Server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${this.app.get("port")} on ${process.env.NODE_ENV}`);
-            });
-        }
-        else {
-            server = this.app.listen(portNumber, function (err) {
-                if (err) {
-                    log.error("Error listening on port", { err });
-                }
-                log.info("Your Priorities Platform API Server listening on port " +
-                    server.address().port +
-                    ` on ${process.env.NODE_ENV}`);
-            });
-        }
-        return server;
+    async setupHttpsServer() {
+        const port = Number(process.env.PORT) || 4242;
+        const host = process.env.YOUR_PRIORITIES_LISTEN_HOST || "0.0.0.0";
+        this.app.set("port", port);
+        return await new Promise((resolve, reject) => {
+            const server = this.app.listen(port, host);
+            const onError = (err) => {
+                server.removeListener("listening", onListening);
+                log.error("HTTP server listen error", {
+                    code: err?.code,
+                    message: err?.message,
+                    host,
+                    port,
+                });
+                reject(err);
+            };
+            const onListening = () => {
+                server.removeListener("error", onError);
+                const addr = server.address();
+                const rendered = typeof addr === "string"
+                    ? addr
+                    : `${addr.address}:${addr.port}`;
+                log.info(`Your Priorities Platform API Server listening on ${rendered} (env=${process.env.NODE_ENV})`);
+                resolve(server);
+            };
+            server.once("error", onError);
+            server.once("listening", onListening);
+        });
     }
 }

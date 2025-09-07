@@ -1,4 +1,4 @@
-import { Server } from "https";
+import { Server as HttpServer } from "http";
 import { RedisClientType } from "@redis/client";
 import { WebSocketServer, WebSocket } from "ws";
 /**
@@ -12,7 +12,7 @@ export declare class WebSocketsManager {
     ws: WebSocketServer;
     redisClient: RedisClientType;
     private pingInterval;
-    constructor(wsClients: Map<string, WebSocket>, redisClient: RedisClientType, server: Server);
+    constructor(wsClients: Map<string, WebSocket>, redisClient: RedisClientType, server: HttpServer);
     /**
      * Main entry point to start listening for connections
      * and initialize Redis pub/sub, heartbeat, etc.

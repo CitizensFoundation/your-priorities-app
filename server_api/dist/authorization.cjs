@@ -937,6 +937,10 @@ auth.entity("group", function (req, done) {
     if (!match)
         match = req.originalUrl.match(/docx_processing\/(\w+)/);
     if (!match)
+        match = req.originalUrl.match(/xls_processing\/(\w+)/);
+    if (!match)
+        match = req.originalUrl.match(/ppt_processing\/(\w+)/);
+    if (!match)
         match = req.originalUrl.match(/feedback\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/assistants\/(\w+)/);

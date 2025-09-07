@@ -1,4 +1,5 @@
 import express from "express";
+import type { Server as HttpServer } from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import { RedisClientType } from "@redis/client";
 import { WebSocketsManager } from "./webSockets.js";
@@ -49,6 +50,6 @@ export declare class YourPrioritiesApi {
     registerUserLogin: (user: any | null, userId: number, loginProvider: string, req: YpRequest, done: () => void) => void;
     setupErrorHandler(): void;
     listen(): Promise<void>;
-    setupHttpsServer(): any;
+    setupHttpsServer(): Promise<HttpServer>;
 }
 export {};
