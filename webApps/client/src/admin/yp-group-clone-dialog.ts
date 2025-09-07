@@ -54,7 +54,7 @@ export class YpGroupCloneDialog extends YpBaseElement {
 
   private _onSelected(e: CustomEvent) {
     const index = (e.target as any).selectedIndex;
-    if (this.communities) {
+    if (this.communities && index !== undefined && index >= 0) {
       this.selectedCommunityId = this.communities[index].id;
     }
   }
@@ -83,7 +83,7 @@ export class YpGroupCloneDialog extends YpBaseElement {
         <div slot="content">
           <md-outlined-select
             .label="${this.t("selectCommunity")}"
-            @selected="${this._onSelected}"
+            @change="${this._onSelected}"
           >
             ${this.communities?.map(
               (c) => html`<md-select-option

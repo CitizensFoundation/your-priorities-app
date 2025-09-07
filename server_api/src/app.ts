@@ -632,8 +632,8 @@ export class YourPrioritiesApi {
     this.app.use(this.setupExpresLogger);
     this.app.use(useragent.express());
     this.app.use(requestIp.mw());
-    this.app.use(bodyParser.json({ limit: "100mb", strict: false }));
-    this.app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
+    this.app.use(bodyParser.json({ limit: "150mb", strict: false }));
+    this.app.use(bodyParser.urlencoded({ limit: "150mb", extended: true }));
     if (process.env.ALLOWED_ORIGINS) {
       this.app.use(
         cors({
