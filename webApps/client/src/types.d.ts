@@ -82,6 +82,7 @@ interface YpCollectionConfiguration {
   hideAllTabs?: boolean;
   hideItemCount?: boolean;
   highlightedLanguages?: string;
+  useInfoIconInsteadOfHelpIcon?: boolean;
 }
 
 type YpGroupAccessTypes = "open_to_community" | "closed" | "secret" | "public";
@@ -241,7 +242,6 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   anonymousAskRegistrationQuestions?: boolean;
   disableMachineTranscripts?: boolean;
   hideHelpIcon?: boolean;
-  useInfoIconInsteadOfHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;
   hideNewPost?: boolean;
   canAddNewPosts?: boolean;
