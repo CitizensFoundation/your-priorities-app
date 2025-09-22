@@ -556,7 +556,7 @@ export class NewAiModelSetup {
                 costInCachedContextTokensPerMillion: 0.125,
                 currency: "USD",
             },
-            maxTokensOut: 16000,
+            maxTokensOut: 128000,
             maxContextTokens: 400000,
             defaultTemperature: 0.7,
             model: "gpt-5",

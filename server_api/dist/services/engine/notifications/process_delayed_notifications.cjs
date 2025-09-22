@@ -456,7 +456,7 @@ i18n
     // this is the defaults
     backend: {
         // path where resources get loaded from
-        loadPath: i18n.buildLoadPath,
+        loadPath: localesPath + '/{{lng}}/translation.json',
         // path to post missing resources
         addPath: localesPath + '/{{lng}}/translation.missing.json',
         // jsonIndent to use when storing json files
