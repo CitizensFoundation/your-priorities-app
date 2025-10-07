@@ -67,7 +67,7 @@
     "multer-s3": "^3.0.1",
     "multer-sharp-s3": "^0.2.5",
     "newrelic": "^12.18.2",
-    "nodemailer": "^7.0.2",
+    "nodemailer": "^7.0.7",
     "open-graph-scraper": "^6.10.0",
     "openai": "^4.97.0",
     "passport": "^0.6.0",
