@@ -4,7 +4,7 @@ import { property, customElement } from "lit/decorators.js";
 //import { YpBaseWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
 import { YpAdminPage } from "./yp-admin-page.js";
 import "@material/web/radio/radio.js";
-import "@material/web/select/outlined-select.js";
+import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import "@material/web/dialog/dialog.js";
 import "@material/web/list/list.js";
@@ -892,20 +892,29 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           text: "inCommunityFolder",
           type: "html",
           templateData: html`
-            <md-select
+            <md-outlined-select
               .label="${this.t("inCommunityFolder")}"
-              @selected="${this._communityFolderSelected}"
+              @change="${this._communityFolderSelected}"
+              .value="${ifDefined(
+                this.inCommunityFolderId != null
+                  ? String(this.inCommunityFolderId)
+                  : ""
+              )}"
             >
+              <md-select-option value="">
+                ${this.t("none")}
+              </md-select-option>
               ${this.availableCommunityFolders?.map(
                 (communityFolder, index) => html`
                   <md-select-option
+                    value="${communityFolder.id}"
                     ?selected="${this.inCommunityFolderId ==
                     communityFolder.id}"
                     >${communityFolder.name}</md-select-option
                   >
                 `
               )}
-            </md-select>
+            </md-outlined-select>
           `,
           hidden: !this.availableCommunityFolders,
         },
@@ -913,19 +922,28 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           text: "signupTermsSelectPage",
           type: "html",
           templateData: html`
-            <md-select
-              .label="${this.t("welcomeSelectPage")}"
-              @selected="${this._signupTermsPageSelected}"
+            <md-outlined-select
+              .label="${this.t("signupTermsSelectPage")}"
+              @change="${this._signupTermsPageSelected}"
+              .value="${ifDefined(
+                this.signupTermsPageId != null
+                  ? String(this.signupTermsPageId)
+                  : ""
+              )}"
             >
+              <md-select-option value="">
+                ${this.t("none")}
+              </md-select-option>
               ${this.translatedPages?.map(
                 (page, index) => html`
                   <md-select-option
+                    value="${page.id}"
                     ?selected="${this.signupTermsPageId == page.id}"
                     >${this._getLocalizePageTitle(page)}</md-select-option
                   >
                 `
               )}
-            </md-select>
+            </md-outlined-select>
           `,
           hidden: !this.translatedPages,
         },
@@ -933,18 +951,26 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           text: "welcomePageSelect",
           type: "html",
           templateData: html`
-            <md-select
+            <md-outlined-select
               .label="${this.t("welcomeSelectPage")}"
-              @selected="${this._welcomePageSelected}"
+              @change="${this._welcomePageSelected}"
+              .value="${ifDefined(
+                this.welcomePageId != null ? String(this.welcomePageId) : ""
+              )}"
             >
+              <md-select-option value="">
+                ${this.t("none")}
+              </md-select-option>
               ${this.translatedPages?.map(
                 (page, index) => html`
-                  <md-select-option ?selected="${this.welcomePageId == page.id}"
+                  <md-select-option
+                    value="${page.id}"
+                    ?selected="${this.welcomePageId == page.id}"
                     >${this._getLocalizePageTitle(page)}</md-select-option
                   >
                 `
               )}
-            </md-select>
+            </md-outlined-select>
           `,
           hidden: !this.translatedPages,
         },
@@ -952,53 +978,25 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     } as YpConfigTabData;
   }
 
-  _welcomePageSelected(event: CustomEvent) {
-    const index = event.detail.index as number;
-    this.welcomePageId = this.translatedPages![index].id;
+  _welcomePageSelected(event: Event) {
+    const select = event.target as MdOutlinedSelect;
+    const value = select.value;
+    this.welcomePageId = value ? Number(value) : undefined;
+    this._configChanged();
   }
 
-  get welcomePageIndex() {
-    if (this.translatedPages) {
-      for (let i = 0; i < this.translatedPages.length; i++) {
-        if (this.translatedPages[i].id == this.welcomePageId) return i;
-      }
-      return -1;
-    } else {
-      return -1;
-    }
+  _signupTermsPageSelected(event: Event) {
+    const select = event.target as MdOutlinedSelect;
+    const value = select.value;
+    this.signupTermsPageId = value ? Number(value) : undefined;
+    this._configChanged();
   }
 
-  _signupTermsPageSelected(event: CustomEvent) {
-    const index = event.detail.index as number;
-    this.signupTermsPageId = this.translatedPages![index].id;
-  }
-
-  get signupTermsPageIndex() {
-    if (this.translatedPages) {
-      for (let i = 0; i < this.translatedPages.length; i++) {
-        if (this.translatedPages[i].id == this.signupTermsPageId) return i;
-      }
-      return -1;
-    } else {
-      return -1;
-    }
-  }
-
-  _communityFolderSelected(event: CustomEvent) {
-    const index = event.detail.index as number;
-    this.inCommunityFolderId = this.availableCommunityFolders![index].id;
-  }
-
-  get communityFolderIndex() {
-    if (this.availableCommunityFolders) {
-      for (let i = 0; i < this.availableCommunityFolders.length; i++) {
-        if (this.availableCommunityFolders[i].id == this.inCommunityFolderId)
-          return i;
-      }
-      return -1;
-    } else {
-      return -1;
-    }
+  _communityFolderSelected(event: Event) {
+    const select = event.target as MdOutlinedSelect;
+    const value = select.value;
+    this.inCommunityFolderId = value ? Number(value) : undefined;
+    this._configChanged();
   }
 
   _getLookAndFeelTab() {
