@@ -740,7 +740,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             {
               videoId: this.uploadedVideoId,
             },
-            "completeAndAddToCommunity"
+            "community"
           );
           this._finishRedirect(community);
         } else {
