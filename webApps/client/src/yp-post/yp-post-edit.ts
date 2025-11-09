@@ -665,9 +665,14 @@ export class YpPostEdit extends YpEditBase {
           margin-left: 8px;
         }
 
-        .mobileSaveButton {
+        .primarySaveButton {
           margin-top: 16px;
           margin-bottom: 32px;
+          justify-content: center;
+        }
+
+        .primarySaveButton[desktop] {
+          justify-content: flex-end;
         }
       `,
     ];
@@ -1323,11 +1328,13 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  renderSaveButton() {
+  renderSaveButton(skipFromTabOrder = false) {
     return html`
       <md-filled-button
         @click="${this.customSubmit}"
         .disabled="${this.submitDisabled}"
+        .tabIndex=${skipFromTabOrder ? -1 : 0}
+        aria-hidden="${ifDefined(skipFromTabOrder ? "true" : undefined)}"
         >${this.saveText || this.t("save")}</md-filled-button
       >
     `;
@@ -1340,7 +1347,7 @@ export class YpPostEdit extends YpEditBase {
         <div class="flex"></div>
         <md-icon>lightbulb</md-icon>
         <div class="flex"></div>
-        ${this.wide ? this.renderSaveButton() : nothing}
+        ${this.wide ? this.renderSaveButton(true) : nothing}
       </div>
       <div class="topHeader">
         ${this.editHeaderText ? this.editHeaderText : ""}
@@ -1370,13 +1377,12 @@ export class YpPostEdit extends YpEditBase {
                           ${this.renderDescriptionInputs()}
                           ${this.renderMediaAndLocation()}
                         </div>
-                        ${this.wide
-                          ? nothing
-                          : html`<div
-                              class="mobileSaveButton layout horizontal center-center"
-                            >
-                              ${this.renderSaveButton()}
-                            </div> `}
+                        <div
+                          class="primarySaveButton layout horizontal center-center"
+                          ?desktop="${this.wide}"
+                        >
+                          ${this.renderSaveButton()}
+                        </div>
                       </div>
                     </div>
                     ${this.renderHiddenInputs()}

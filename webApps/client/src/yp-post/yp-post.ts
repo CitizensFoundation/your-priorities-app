@@ -493,6 +493,8 @@ export class YpPost extends YpCollection {
           ?disabled="${this.leftArrowDisabled}"
           @click="${this.goToPreviousPost}"
           class="arrowNavigation leftArrowNavigationButton"
+          title="${this.t("previousPost")}"
+          aria-label="${this.t("previousPost")}"
         >
           <md-icon>keyboard_arrow_left</md-icon>
         </md-filled-tonal-icon-button>
@@ -500,6 +502,8 @@ export class YpPost extends YpCollection {
           ?disabled="${this.rightArrowDisabled}"
           @click="${this.goToNextPost}"
           class="arrowNavigation rightArrowNavigationButton"
+          title="${this.t("nextPost")}"
+          aria-label="${this.t("nextPost")}"
         >
           <md-icon>keyboard_arrow_right</md-icon>
         </md-filled-tonal-icon-button>

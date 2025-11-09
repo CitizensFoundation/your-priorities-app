@@ -537,7 +537,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
             <yp-collection-header
               .collection="${this.collection}"
               .collectionType="${this.collectionType}"
-              aria-label="${this.collectionType}"
+              aria-label="${this.collection?.name || this.collectionType}"
               role="banner"
             ></yp-collection-header>
           </div>

@@ -149,6 +149,18 @@ export class YpCollectionHeader extends YpBaseElement {
     }
   }
 
+  get createFolderButtonLabel(): string {
+    return this.t("collectionCreateFolderLabel");
+  }
+
+  get analyticsButtonLabel(): string {
+    return this.t("collectionAnalyticsLabel");
+  }
+
+  get adminButtonLabel(): string {
+    return this.t("collectionAdminLabel");
+  }
+
   get collectionHeaderImages(): Array<YpImageData> | undefined {
     switch (this.collectionType) {
       case "domain":
@@ -511,17 +523,20 @@ export class YpCollectionHeader extends YpBaseElement {
           hidden
           ?hiddenTemp="${this.collectionType === "domain" || this.collectionType === "group"}"
             @click="${this._openCreateGroupFolder}"
-            title="${this.openMenuLabel}"
+            title="${this.createFolderButtonLabel}"
+            aria-label="${this.createFolderButtonLabel}"
             ><md-icon>create_new_folder</md-icon>
           </md-filled-tonal-icon-button>
           <md-filled-tonal-icon-button
             @click="${this._openAnalyticsAndPromotions}"
-            title="${this.openMenuLabel}"
+            title="${this.analyticsButtonLabel}"
+            aria-label="${this.analyticsButtonLabel}"
             ><md-icon>monitoring</md-icon>
           </md-filled-tonal-icon-button>
           <md-filled-tonal-icon-button
             @click="${this._openAdmin}"
-            title="${this.openMenuLabel}"
+            title="${this.adminButtonLabel}"
+            aria-label="${this.adminButtonLabel}"
             ><md-icon>settings</md-icon>
           </md-filled-tonal-icon-button>
         </div>

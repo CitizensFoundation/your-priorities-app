@@ -479,7 +479,11 @@ export class YpEditDialog extends YpBaseElement {
           with-backdrop="${!this.wide}"
         >
           <span slot="headline">
-            <md-icon-button @click="${this.close}"
+            <md-icon-button
+              @click="${this.close}"
+              .label="${this.t("close")}"
+              aria-label="${this.t("close")}"
+              title="${this.t("close")}"
               ><md-icon>close</md-icon></md-icon-button
             >
             <span>${this.heading}</span></span

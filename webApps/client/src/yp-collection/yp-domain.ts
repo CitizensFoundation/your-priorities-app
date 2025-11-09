@@ -214,7 +214,7 @@ export class YpDomain extends YpCollection {
             <yp-domain-header
               .collection="${this.collection}"
               .collectionType="${this.collectionType}"
-              aria-label="${this.collectionType}"
+              aria-label="${this.collection?.name || this.collectionType}"
               role="banner"
             ></yp-domain-header>
           </div>

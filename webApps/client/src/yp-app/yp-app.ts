@@ -8,7 +8,7 @@ import '../yp-app-globals/yp-sw-update-toast.js';
 import "../ac-notifications/ac-notification-list.js";
 
 import { html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 import { cache } from "lit/directives/cache.js";
 
@@ -185,6 +185,9 @@ export class YpApp extends YpBaseElement {
 
   @property({ type: Boolean })
   notificationDrawerOpened = false;
+
+  @state()
+  private helpMenuOpen = false;
 
   @property({ type: Object })
   currentTheme?: YpThemeConfiguration;
@@ -618,6 +621,8 @@ export class YpApp extends YpBaseElement {
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("navigationMenu")}"
+        aria-label="${this.t("navigationMenu")}"
+        aria-haspopup="true"
         ><md-icon>apps</md-icon></md-filled-tonal-icon-button
       >
     `;
@@ -639,6 +644,7 @@ export class YpApp extends YpBaseElement {
     if (this.closePostHeader) {
       icons = html`<md-icon-button
         title="${this.t("close")}"
+        aria-label="${this.t("close")}"
         class="closeButton ${closeButtonVisible ? "visible" : ""}"
         @click="${this._closePost}"
         ><md-icon>close</md-icon></md-icon-button
@@ -646,6 +652,7 @@ export class YpApp extends YpBaseElement {
     } else if (this.keepOpenForGroup) {
       icons = html`<md-icon-button
         title="${this.t("close")}"
+        aria-label="${this.t("close")}"
         @click="${this._closeForGroup}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
@@ -653,6 +660,7 @@ export class YpApp extends YpBaseElement {
     } else if (this.showBack && this.breadcrumbs.length > 1) {
       icons = html`<md-icon-button
         title="${this.t("goBack")}"
+        aria-label="${this.t("goBack")}"
         slot="actionItems"
         ?hidden="${!this.backPath}"
         @click="${this.goBack}"
@@ -661,6 +669,7 @@ export class YpApp extends YpBaseElement {
     } else if (this.showBack) {
       icons = html`<md-icon-button
         title="${this.t("goBack")}"
+        aria-label="${this.t("goBack")}"
         slot="actionItems"
         class="closeButton ${closeButtonVisible ? "visible" : ""}"
         ?hidden="${!this.backPath}"
@@ -674,6 +683,7 @@ export class YpApp extends YpBaseElement {
       ? html`
           <md-icon-button
             title="${this.t("forwardToPost")}"
+            aria-label="${this.t("forwardToPost")}"
             @click="${this._goToNextPost}"
             ><md-icon>fast_forward</md-icon></md-icon-button
           >
@@ -683,6 +693,11 @@ export class YpApp extends YpBaseElement {
 
   _openHelpMenu() {
     (this.$$("#helpMenu") as Menu).open = true;
+    this.helpMenuOpen = true;
+  }
+
+  _onHelpMenuClosed() {
+    this.helpMenuOpen = false;
   }
 
   renderNonArrowNavigation() {
@@ -711,11 +726,21 @@ export class YpApp extends YpBaseElement {
         slot="actionItems"
       >
         <span style="position: relative">
+          <span
+            id="helpButtonDescription"
+            class="visuallyHidden"
+            >${this.t("helpMenuDescription")}</span
+          >
           <md-filled-tonal-icon-button
             id="helpIconButton"
             class="topActionItem"
             @click="${this._openHelpMenu}"
-            title="${this.t("menu.help")}" 
+            title="${this.t("menu.helpDetailed")}"
+            aria-label="${this.t("menu.helpDetailed")}"
+            aria-describedby="helpButtonDescription"
+            aria-haspopup="menu"
+            aria-expanded="${this.helpMenuOpen ? "true" : "false"}"
+            aria-controls="helpMenu"
             ><md-icon>${this.useInfoIconInsteadOfHelpIcon
               ? "info"
               : "help_outline"}</md-icon>
@@ -725,6 +750,7 @@ export class YpApp extends YpBaseElement {
             positioning="popover"
             .menuCorner="${Corner.START_START}"
             anchor="helpIconButton"
+            @closed="${this._onHelpMenuClosed}"
           >
             ${this.translatedPages(this.pages).map(
               (page: YpHelpPageData, index) => html`
@@ -747,6 +773,8 @@ export class YpApp extends YpBaseElement {
                 class="layout horizontal topActionItem"
                 @click="${this._openNotificationDrawer}"
                 slot="actionItems"
+                title="${this.t("notifications")}"
+                aria-label="${this.t("notifications")}"
               >
                 <md-icon>notifications</md-icon>
               </md-filled-tonal-icon-button>
@@ -763,6 +791,8 @@ export class YpApp extends YpBaseElement {
               class="userIcon"
               @click="${this._openUserDrawer}"
               slot="actionItems"
+              title="${this.t("userMenuLabel")}"
+              aria-label="${this.t("userMenuLabel")}"
             >
               <yp-user-image id="userImage" small .user="${this.user}">
               </yp-user-image>
@@ -1001,7 +1031,12 @@ export class YpApp extends YpBaseElement {
       </md-dialog>
 
       <yp-snackbar id="toast">
-        <md-icon-button icon="close" slot="dismiss"></md-icon-button>
+        <md-icon-button
+          icon="close"
+          slot="dismiss"
+          aria-label="${this.t("close")}"
+          title="${this.t("close")}"
+        ></md-icon-button>
       </yp-snackbar>
     `;
   }

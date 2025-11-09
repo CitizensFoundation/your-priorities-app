@@ -258,6 +258,57 @@ export class YpRegistrationQuestions extends YpBaseElement {
     this._getTranslationsIfNeeded();
   }
 
+  async focusFirstQuestion(): Promise<boolean> {
+    await this.updateComplete;
+    const firstQuestion =
+      this.renderRoot.querySelector<YpStructuredQuestionEdit>(
+        "yp-structured-question-edit"
+      );
+    if (firstQuestion) {
+      await firstQuestion.updateComplete;
+      const questionRoot =
+        (firstQuestion as unknown as { renderRoot?: ShadowRoot }).renderRoot ||
+        firstQuestion.shadowRoot;
+      let focused = false;
+
+      if (firstQuestion.isInputField) {
+        firstQuestion.focus();
+        focused = firstQuestion.matches(":focus-within");
+      }
+
+      if (!focused) {
+        const focusTarget = questionRoot?.querySelector<HTMLElement>(
+          "[tabindex]:not([tabindex='-1']), input, textarea, select, button, md-radio, md-checkbox"
+        );
+        if (focusTarget) {
+          focusTarget.focus();
+          const activeInQuestion =
+            (questionRoot as ShadowRoot | null)?.activeElement === focusTarget;
+          const activeInDocument = this.ownerDocument.activeElement === focusTarget;
+          focused =
+            activeInQuestion ||
+            activeInDocument ||
+            focusTarget.matches(":focus") ||
+            focusTarget.matches(":focus-visible");
+        }
+      }
+
+      if (focused) {
+        return true;
+      }
+    }
+
+    const fallback = this.renderRoot.querySelector<HTMLElement>(
+      "[tabindex]:not([tabindex='-1']), md-outlined-text-field, input, textarea, select, button"
+    );
+    if (fallback) {
+      fallback.focus();
+      return true;
+    }
+
+    return false;
+  }
+
   async _getTranslationsIfNeeded() {
     this.translatedQuestions = undefined;
     if (

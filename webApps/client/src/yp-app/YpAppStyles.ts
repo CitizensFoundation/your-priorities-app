@@ -178,6 +178,18 @@ export const YpAppStyles = css`
     visibility: visible;
   }
 
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   yp-top-app-bar {
     max-width: 1048px;
     margin: 0 auto;

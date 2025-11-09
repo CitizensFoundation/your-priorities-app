@@ -72,7 +72,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
           <md-text-button @click="${this.logout}"
             ><span class="upper">${this.t("user.logout")}</span></md-text-button
           >
-          <md-text-button @click="${this._validateAndSend}" autofocus
+          <md-text-button @click="${this._validateAndSend}"
             ><span class="upper"
               >${this.t("completeLogin")}</span
             ></md-text-button
@@ -93,6 +93,19 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     setTimeout(() => {
       //this.$$("#scrollable").fire('iron-resize');
     }, 100);
+  }
+
+  private async _focusFirstQuestion() {
+    const registrationQuestions = this.$$(
+      "#registrationQuestions"
+    ) as YpRegistrationQuestions | undefined;
+    if (registrationQuestions) {
+      await registrationQuestions.updateComplete;
+      const focused = await registrationQuestions.focusFirstQuestion();
+      if (!focused) {
+        (this.$$("#dialog") as Dialog).focus();
+      }
+    }
   }
 
   async _validateAndSend() {
@@ -121,7 +134,11 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
 
     await this.updateComplete;
 
-    (this.$$("#dialog") as Dialog).show();
+    const dialog = this.$$("#dialog") as Dialog;
+    dialog.show();
+    setTimeout(() => {
+      void this._focusFirstQuestion();
+    }, 0);
   }
 
   close() {

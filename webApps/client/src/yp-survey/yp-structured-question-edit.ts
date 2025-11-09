@@ -336,6 +336,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   renderTextField(skipLabel = false) {
+    const questionIntroId = skipLabel
+      ? `structuredQuestionIntro_${this.index}`
+      : undefined;
+    const subtitleId = this.question.subTitle
+      ? `structuredQuestionSubtitle_${this.index}`
+      : undefined;
     return html`
       <md-outlined-text-field
         id="structuredQuestion_${this.index}"
@@ -355,10 +361,18 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }}"
         ?required="${this.question.required}"
         maxlength="${ifDefined(this.question.maxLength || undefined)}"
+        aria-labelledby="${ifDefined(questionIntroId)}"
+        aria-describedby="${ifDefined(subtitleId)}"
       >
       </md-outlined-text-field>
       ${this.question.subTitle
-        ? html`<div class="subTitle" ?use-small-font="${this.useSmallFont}">${this.question.subTitle}</div>`
+        ? html`<div
+            class="subTitle"
+            id="structuredQuestionSubtitle_${this.index}"
+            ?use-small-font="${this.useSmallFont}"
+          >
+            ${this.question.subTitle}
+          </div>`
         : nothing}
     `;
   }
@@ -387,6 +401,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       >
       </yp-simple-html-editor>`;
     } else {
+      const questionIntroId = skipLabel
+        ? `structuredQuestionIntro_${this.index}`
+        : undefined;
       return html`
         <md-outlined-text-field
           id="structuredQuestion_${this.index}"
@@ -412,6 +429,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           maxrows="7"
           ?required="${this.question.required}"
           maxlength="${ifDefined(this.question.maxLength || undefined)}"
+          aria-labelledby="${ifDefined(questionIntroId)}"
         >
         </md-outlined-text-field>
       `;
