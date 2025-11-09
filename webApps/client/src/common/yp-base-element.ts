@@ -322,6 +322,7 @@ export class YpBaseElement extends LitElement {
               <md-outlined-icon-button
                 class="darkModeButton"
                 @click="${this.toggleDarkMode}"
+                aria-label="${this.t("Light/Dark")}"
                 ><md-icon>dark_mode</md-icon></md-outlined-icon-button
               >
             `
@@ -329,6 +330,7 @@ export class YpBaseElement extends LitElement {
               <md-outlined-icon-button
                 class="darkModeButton"
                 @click="${this.toggleDarkMode}"
+                aria-label="${this.t("Light/Dark")}"
                 ><md-icon>light_mode</md-icon></md-outlined-icon-button
               >
             `}
@@ -344,6 +346,7 @@ export class YpBaseElement extends LitElement {
             <md-outlined-icon-button
               class="darkModeButton"
               @click="${this.toggleHighContrast}"
+              aria-label="${this.t("Contrast")}"
               ><md-icon>contrast</md-icon></md-outlined-icon-button
             >
           `
@@ -351,6 +354,7 @@ export class YpBaseElement extends LitElement {
               <md-outlined-icon-button
                 class="darkModeButton"
                 @click="${this.toggleHighContrast}"
+                aria-label="${this.t("Contrast")}"
                 ><md-icon>contrast_rtl_off</md-icon></md-outlined-icon-button
               >
             `}

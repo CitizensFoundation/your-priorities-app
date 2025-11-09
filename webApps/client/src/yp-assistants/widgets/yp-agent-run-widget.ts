@@ -531,6 +531,7 @@ export class YpAgentRunWidget extends YpBaseElement {
                 ? html`
                     <md-filled-tonal-icon-button
                       @click=${() => this.openGroup(step.groupId!)}
+                      aria-label="${this.t("openGroupMenu")}"
                     >
                       <span class="step-icon-button">${this.renderIcon("users")}</span>
                     </md-filled-tonal-icon-button>

@@ -110,6 +110,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
                       ?hidsddden="${!this.loggedInUser}"
                       hidden
                       .label="${this.t("point.report")}"
+                      aria-label="${this.t("point.report")}"
                       id="reportPointIconButton"
                       @click="${this._reportPoint}"
                       ><md-icon>warning</md-icon></md-icon-button
@@ -121,6 +122,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
                             <md-icon-button
                               id="deleteButton"
                               .label="${this.t("delete")}"
+                              aria-label="${this.t("delete")}"
                               @click="${this._deletePoint}"
                               ><md-icon>clear</md-icon></md-icon-button
                             >

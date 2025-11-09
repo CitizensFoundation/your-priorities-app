@@ -315,6 +315,7 @@ export class YpFileUpload extends YpBaseElement {
                   <md-filled-icon-button
                     id="button"
                     class="blue"
+                    aria-label="${this.buttonText}"
                     @click="${this._fileClick}"
                     ><md-icon
                       >${this.buttonIcon}</md-icon
@@ -333,6 +334,7 @@ export class YpFileUpload extends YpBaseElement {
                 `}
             <md-outlined-icon-button
               .ariaLabel="${this.t("deleteFile")}"
+              aria-label="${this.t("deleteFile")}"
               class="removeButton layout self-start"
               @click="${this.clear}"
               ?hidden="${!this.currentFile || this.currentVideoId}"

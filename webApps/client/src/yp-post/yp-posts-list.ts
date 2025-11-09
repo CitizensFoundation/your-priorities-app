@@ -323,6 +323,7 @@ export class YpPostsList extends YpBaseElement {
                     <md-icon-button
                       slot="trailing-icon"
                       .label="${this.t("startSearch")}"
+                      aria-label="${this.t("startSearch")}"
                       @click="${this._search}"
                       ?hiddsen="${!this.showSearchIcon}"
                       ><md-icon>search</md-icon></md-icon-button

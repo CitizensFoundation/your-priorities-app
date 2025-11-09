@@ -117,11 +117,13 @@ export class YpPostUserImageCard extends YpBaseElement {
             class="editMenu layout horizontal flex end-justified"
             ?hidden="${!YpAccessHelpers.hasImageAccess(this.image, this.post)}">
             <md-outlined-icon-button
-              .abel="${this.t('edit')}"
+              .label="${this.t('edit')}"
+              aria-label="${this.t('edit')}"
               icon="create"
               @click="${this._openEdit}"></md-outlined-icon-button>
             <md-outlined-icon-button
               .label="${this.t('delete')}"
+              aria-label="${this.t('delete')}"
               icon="clear"
               @click="${this._openDelete}"></md-outlined-icon-button>
           </div>

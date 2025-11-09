@@ -70,12 +70,14 @@ export class AoiSurveyIntro extends YpBaseElement {
           id="menuButton"
           @click="${this._openAnalyticsAndPromotions}"
           title="${this.t("Analytics")}"
+          aria-label="${this.t("Analytics")}"
           ><md-icon>analytics</md-icon>
         </md-icon-button>
         <md-icon-button
           id="menuButton"
           @click="${this._openAdmin}"
           title="${this.t("Admin")}"
+          aria-label="${this.t("Admin")}"
           ><md-icon>settings</md-icon>
         </md-icon-button>
       </div>

@@ -280,12 +280,13 @@ export class YpDomain extends YpCollection {
               this.collection as YpDomainData
             )}"
           >
-            <md-icon-button
-              id="menuButton"
-              @click="${this._openAdmin}"
-              title="${this.t("domain.edit")}"
-              ><md-icon>settings</md-icon>
-            </md-icon-button>
+          <md-icon-button
+            id="menuButton"
+            @click="${this._openAdmin}"
+            title="${this.t("domain.edit")}"
+            aria-label="${this.t("domain.edit")}"
+            ><md-icon>settings</md-icon>
+          </md-icon-button>
           </div>
         `;
       } else {

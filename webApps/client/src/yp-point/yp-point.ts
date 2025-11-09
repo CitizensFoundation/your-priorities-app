@@ -712,18 +712,21 @@ export class YpPoint extends YpBaseElement {
       <div class="layout horizontal self-end" hidden>
         <md-icon-button
           .label="${this.t("editAdminComment")}"
+          aria-label="${this.t("editAdminComment")}"
           ?hidden="${!this.hasAdminCommentAccess}"
           icon="comment"
           @click="${this._editAdminComment}"
         ></md-icon-button>
         <md-icon-button
           .label="${this.t("edit")}"
+          aria-label="${this.t("edit")}"
           ?hidden="${!this.canEditPoint}"
           icon="create"
           @click="${this._editPoint}"
         ></md-icon-button>
         <md-icon-button
           .label="${this.t("delete")}"
+          aria-label="${this.t("delete")}"
           icon="clear"
           @click="${this._deletePoint}"
         ></md-icon-button>
@@ -761,6 +764,7 @@ export class YpPoint extends YpBaseElement {
             <div class="flex"></div>
             <md-icon-button
               .label="${this.t("point.report")}"
+              aria-label="${this.t("point.report")}"
               id="reportPointIconButton"
               @click="${this._reportPoint}"
             ><md-icon>warning</md-icon></md-icon-button>

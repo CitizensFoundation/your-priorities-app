@@ -179,6 +179,7 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
               class="layout horizontal"
               @click="${() => this.fire("open-notification-drawer")}"
               slot="actionItems"
+              aria-label="${this.t("notifications")}"
             >
               <md-icon>notifications</md-icon>
             </md-filled-tonal-icon-button>
@@ -195,6 +196,7 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
             class="layout horizontal loginOrUserButton"
             @click="${() => this.fire("open-user-drawer")}"
             slot="actionItems"
+            aria-label="${this.t("user.info")}"
           >
             <yp-user-image id="userImage" useImageBorder medium .user="${this.loggedInUser}">
             </yp-user-image>

@@ -336,7 +336,7 @@ export class YpPostListItem extends YpBaseElement {
                       .post="${this.post}"
                       ?hidden="${this.post.Group.configuration?.hidePostCover}"
                     ></yp-post-cover-media>
-                    <div class="postNameContainer">
+                    <div class="postNameContainer" role="heading" aria-level="2" aria-label="${this.post.name}">
                       <div
                         class="post-name  layout horizontal"
                         ?mini="${this.mini}"
@@ -389,6 +389,7 @@ export class YpPostListItem extends YpBaseElement {
             <div class="share">
               <md-filled-tonal-icon-button
                 .label="${this.t("post.shareInfo")}"
+                aria-label="${this.t("post.shareInfo")}"
                 @click="${this._shareTap}"
                 ><md-icon>share</md-icon></md-filled-tonal-icon-button
               >

@@ -175,6 +175,7 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
                       ></yp-point-news-story-embed>
                       <md-icon-button
                         .label="${this.t("clearEmbededMedia")}"
+                        aria-label="${this.t("clearEmbededMedia")}"
                         icon="clear"
                         @click="${this._clearEmbed}"
                       ></md-icon-button>

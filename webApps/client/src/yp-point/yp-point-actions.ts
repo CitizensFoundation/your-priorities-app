@@ -121,6 +121,7 @@ export class YpPointActions extends YpBaseElement {
                   ? this.pointQualityValue > 0
                   : false}"
                 .label="${this.t("point.helpful")}"
+                aria-label="${this.t("point.helpful")}"
                 ?disabled="${this.allDisabled}"
                 up-voted="${this.isUpVoted}"
                 icon="arrow_upward"
@@ -139,6 +140,7 @@ export class YpPointActions extends YpBaseElement {
                   ? this.pointQualityValue < 0
                   : false}"
                 .label="${this.t("point.not_helpful")}"
+                aria-label="${this.t("point.not_helpful")}"
                 down-voted="${this.isDownVoted}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"

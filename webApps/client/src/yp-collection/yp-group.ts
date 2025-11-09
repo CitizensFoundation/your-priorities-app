@@ -1047,6 +1047,7 @@ export class YpGroup extends YpCollection {
             id="menuButton"
             @click="${this._openAdmin}"
             title="${this.t("group.edit")}"
+            aria-label="${this.t("group.edit")}"
             ><md-icon>settings</md-icon>
           </md-icon-button>
         </div>

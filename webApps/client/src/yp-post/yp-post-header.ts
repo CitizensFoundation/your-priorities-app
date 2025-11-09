@@ -320,6 +320,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             class="topActionButton"
             @click="${this._openPostMenu}"
             title="${this.t("openPostMenu")}"
+            aria-label="${this.t("openPostMenu")}"
             ><md-icon>more_vert</md-icon>
           </md-filled-tonal-icon-button>
           <md-menu
@@ -442,10 +443,11 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   renderClose() {
-    return html`<md-filled-tonal-icon-button
-      ?hidden="${!this.wide}"
-      @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
-      title="${this.t("close")}"
+      return html`<md-filled-tonal-icon-button
+        ?hidden="${!this.wide}"
+        @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
+        title="${this.t("close")}"
+        aria-label="${this.t("close")}"
       ><md-icon
         >${this.hasNoLeftRightButtons ? "arrow_upward" : "close"}</md-icon
       >
@@ -461,6 +463,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               class="topActionButton"
               @click="${this._openEdit}"
               title="${this.t("openEdit")}"
+              aria-label="${this.t("openEdit")}"
               ><md-icon>edit</md-icon>
             </md-filled-tonal-icon-button>
           `
@@ -470,6 +473,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         class="topActionButton"
         @click="${this._openReport}"
         title="${this.t("openReportPost")}"
+        aria-label="${this.t("openReportPost")}"
         ><md-icon>report</md-icon>
       </md-filled-tonal-icon-button>
       <md-filled-tonal-icon-button
@@ -478,6 +482,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         class="topActionButton"
         @click="${this._shareTap}"
         title="${this.t("openShare")}"
+        aria-label="${this.t("openShare")}"
         ><md-icon>share</md-icon>
       </md-filled-tonal-icon-button>
     `;
@@ -488,7 +493,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
       <div
         class="layout vertical"
         role="heading"
-        aria-level="1"
+        aria-level="2"
         aria-label="${this.post.name}"
       >
         ${!this.hideTopActionBar

@@ -159,6 +159,7 @@ export class YpPointNewsStory extends YpBaseElement {
             <div class="layout horizontal">
               <md-icon-button
                 .label="${this.t("toggleOpenClose")}"
+                aria-label="${this.t("toggleOpenClose")}"
                 class="openCloseButton"
                 @click="${this._setOpen}"
                 ?hidden="${this.open}"
@@ -166,6 +167,7 @@ export class YpPointNewsStory extends YpBaseElement {
               </md-icon-button>
               <md-icon-button
                 .label="${this.t("toggleOpenClose")}"
+                aria-label="${this.t("toggleOpenClose")}"
                 class="openCloseButton"
                 @click="${this._setClosed}"
                 ?hidden="${!this.open}"

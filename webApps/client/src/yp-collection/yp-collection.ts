@@ -662,6 +662,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
                       hidden
                       class="filterButton"
                       .label="${this.t("filter")}"
+                      aria-label="${this.t("filter")}"
                       ><md-icon>tune</md-icon></md-icon-button
                     >
                     <md-fab

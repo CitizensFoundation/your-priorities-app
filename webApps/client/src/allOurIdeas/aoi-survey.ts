@@ -679,7 +679,10 @@ export class AoiSurvey extends YpBaseElement {
                 timeoutMs="-1"
                 .labelText="${this.t("Target votes reached!")}"
               >
-                <md-icon-button slot="dismiss">
+                <md-icon-button
+                  slot="dismiss"
+                  aria-label="${this.t("close")}"
+                >
                   <md-icon>close</md-icon>
                 </md-icon-button>
                 <md-text-button

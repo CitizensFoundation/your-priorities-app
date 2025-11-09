@@ -401,13 +401,17 @@ export class YpMediaRecorder extends YpBaseElement {
             : nothing}
 
           <div class="layout horizontal mainbuttons">
-            <md-icon-button @click="${this._close}">
+            <md-icon-button
+              @click="${this._close}"
+              aria-label="${this.t("close")}"
+            >
               <md-icon>clear</md-icon>
             </md-icon-button>
             <div class="layout horizontal" ?hidden="${!this.recorder}">
               <md-icon-button
                 @click="${this._deleteRecording}"
                 ?hidden="${!this.recordedData}"
+                aria-label="${this.t("delete")}"
               >
                 <md-icon>delete</md-icon>
               </md-icon-button>

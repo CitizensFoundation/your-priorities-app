@@ -203,7 +203,11 @@ export class YpThemeColorInput extends YpBaseElement {
           @keydown="${this.handleKeyDown}"
           class="mainInput"
         >
-          <md-icon-button @click="${this.openPalette}" slot="trailing-icon">
+          <md-icon-button
+            @click="${this.openPalette}"
+            slot="trailing-icon"
+            aria-label="${this.label}"
+          >
             <md-icon>palette</md-icon>
           </md-icon-button>
         </md-outlined-text-field>
@@ -212,6 +216,7 @@ export class YpThemeColorInput extends YpBaseElement {
           ?hidden="${!this.color}"
           @click="${this.clearColor}"
           class="clearButton"
+          aria-label="${this.t("clear")}"
         >
           <md-icon>delete</md-icon>
         </md-icon-button>

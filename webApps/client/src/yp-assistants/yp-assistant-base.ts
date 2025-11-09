@@ -536,6 +536,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
           <md-filled-tonal-icon-button
             class="closeMarkdownReportButton"
             @click=${this.closeMarkdownReport}
+            aria-label="${this.t("close")}"
             ><md-icon>close</md-icon></md-filled-tonal-icon-button
           >
           <div class="flex"></div>
@@ -1419,18 +1420,20 @@ export abstract class YpAssistantBase extends YpChatbotBase {
             <md-outlined-icon-button
               class="restartButton"
               @click="${() => this.fire("reset-chat")}"
+              aria-label="${this.t("resetChat")}"
               ><md-icon>refresh</md-icon></md-outlined-icon-button
-            >
-          `
+          >
+        `
         : nothing}
       ${this.showCloseButton
         ? html`
             <md-outlined-icon-button
               class="closeButton"
               @click="${() => this.fire("chatbot-close")}"
+              aria-label="${this.t("close")}"
               ><md-icon>close</md-icon></md-outlined-icon-button
-            >
-          `
+          >
+        `
         : nothing}
 
       <md-filled-text-field
@@ -1508,6 +1511,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
               class="voice-mode-toggle"
               @click="${this.stopVoiceButtonClick}"
               .label="${!this.voiceEnabled
+                ? this.t("voiceAssistant")
+                : this.t("closeAssistant")}"
+              aria-label="${!this.voiceEnabled
                 ? this.t("voiceAssistant")
                 : this.t("closeAssistant")}"
             >

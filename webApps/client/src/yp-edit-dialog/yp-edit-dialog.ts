@@ -321,6 +321,7 @@ export class YpEditDialog extends YpBaseElement {
             icon="close"
             class="closeIconNarrow"
             dialog-dismiss
+            aria-label="${this.t("close")}"
           ></md-icon-button>
           <md-icon class="smallIcon">${this.icon}</md-icon>
           <div class="flex"></div>

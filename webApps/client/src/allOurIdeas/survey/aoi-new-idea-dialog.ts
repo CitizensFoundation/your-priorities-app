@@ -452,6 +452,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
             ?hidden="${!this.choice.data.imageUrl}"
             @click="${this.regenerateIcon}"
             class="deleteIcon"
+            aria-label="${this.t("regenerateIcon")}"
             ><md-icon class="closeIcon"
               >cycle</md-icon
             ></md-filled-tonal-icon-button

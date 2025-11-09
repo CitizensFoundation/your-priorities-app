@@ -1263,6 +1263,7 @@ export class YpPostEdit extends YpEditBase {
     return html`<md-filled-tonal-icon-button
       @click="${() => YpNavHelpers.redirectTo(pathBack)}"
       title="${this.t("close")}"
+      aria-label="${this.t("close")}"
       ><md-icon>close</md-icon>
     </md-filled-tonal-icon-button>`;
   }

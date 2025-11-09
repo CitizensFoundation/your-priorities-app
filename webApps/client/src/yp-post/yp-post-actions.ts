@@ -292,7 +292,9 @@ export class YpPostActions extends YpBaseElement {
         class="action-debate layout horizontal"
         ?hidden="${this.hideDebate || this.forceHideDebate}"
       >
-        <md-filled-tonal-icon-button>
+        <md-filled-tonal-icon-button
+          aria-label="${this.t("debate")}"
+        >
           <md-icon>chat_bubble_outline</md-icon>
         </md-filled-tonal-icon-button>
         <md-badge
@@ -327,6 +329,7 @@ export class YpPostActions extends YpBaseElement {
               .smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
               .title="${this.customVoteUpHoverText}"
+              aria-label="${this.customVoteUpHoverText}"
               class="action-icon up-vote-icon mainIcons ${this
                 .endorsementButtons == "thumbsWithColor"
                 ? "thumbs-with-color-up"
@@ -359,6 +362,7 @@ export class YpPostActions extends YpBaseElement {
               smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
               title="${this.customVoteDownHoverText}"
+              aria-label="${this.customVoteDownHoverText}"
               class="action-icon down-vote-icon mainIcons ${this
                 .endorsementButtons == "thumbsWithColor"
                 ? "thumbs-with-color-down"

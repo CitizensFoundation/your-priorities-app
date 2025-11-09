@@ -63,7 +63,10 @@ export class YpCollectionHeader extends YpBaseElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate.bind(this));
+    this.removeGlobalListener(
+      "yp-got-admin-rights",
+      this.requestUpdate.bind(this)
+    );
     this.removeGlobalListener(
       "yp-pause-media-playback",
       this._pauseMediaPlayback.bind(this)
@@ -438,7 +441,6 @@ export class YpCollectionHeader extends YpBaseElement {
           .image {
             height: 200px;
             width: 356px;
-
           }
 
           .imageCard {
@@ -520,8 +522,9 @@ export class YpCollectionHeader extends YpBaseElement {
       <div class="menuButton">
         <div class="layout horizontal">
           <md-filled-tonal-icon-button
-          hidden
-          ?hiddenTemp="${this.collectionType === "domain" || this.collectionType === "group"}"
+            hidden
+            ?hiddenTemp="${this.collectionType === "domain" ||
+            this.collectionType === "group"}"
             @click="${this._openCreateGroupFolder}"
             title="${this.createFolderButtonLabel}"
             aria-label="${this.createFolderButtonLabel}"
@@ -591,11 +594,9 @@ export class YpCollectionHeader extends YpBaseElement {
 
   renderName() {
     return html`
-      <div class="nameText">
+      <div class="nameText" role="heading" aria-level="1" aria-label="${this.collection!.name}">
         <yp-magic-text
           class="collection-name"
-          role="heading"
-          aria-level="1"
           aria-label="${this.collection!.name}"
           .textType="${YpCollectionHelpers.nameTextType(this.collectionType)}"
           .contentLanguage="${this.collection!.language}"

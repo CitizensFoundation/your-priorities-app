@@ -496,6 +496,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
         <md-outlined-icon-button
           class="restartButton"
           @click="${() => this.fire('reset-chat')}"
+          aria-label="${this.t('resetChat')}"
         ><md-icon>refresh</md-icon></md-icon></md-outlined-icon-button>
       `
         : nothing}
@@ -504,6 +505,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
         <md-outlined-icon-button
           class="closeButton"
           @click="${()=>this.fire('chatbot-close')}"
+          aria-label="${this.t('close')}"
         ><md-icon>close</md-icon></md-icon></md-outlined-icon-button>
       `
         : nothing}

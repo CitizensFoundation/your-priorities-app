@@ -26,6 +26,7 @@ export class YpFileUploadIcon extends YpFileUpload {
               class="blue"
               ?raised="${this.raised}"
               .label="${this.buttonText}"
+              aria-label="${this.buttonText}"
               @click="${this._fileClick}"
             ><md-icon>${this.buttonIcon}</md-icon>
             </md-icon-button>
@@ -36,6 +37,7 @@ export class YpFileUploadIcon extends YpFileUpload {
               class="blue"
               ?raised="${this.raised}"
               .label="${this.buttonText}"
+              aria-label="${this.buttonText}"
               @click="${this._fileClick}"
             ><md-icon>${this.buttonIcon}</md-icon>
             </md-outlined-icon-button>

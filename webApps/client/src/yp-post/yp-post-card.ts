@@ -396,6 +396,7 @@ export class YpPostCard extends YpBaseElement {
                                 <div class="share">
                                   <md-icon-button
                                     .label="${this.t("post.shareInfo")}"
+                                    aria-label="${this.t("post.shareInfo")}"
                                     @click="${this._shareTap}"
                                     ><md-icon
                                       >share</md-icon

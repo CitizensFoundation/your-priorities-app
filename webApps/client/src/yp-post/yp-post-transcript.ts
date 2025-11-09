@@ -146,6 +146,7 @@ export class YpPostTranscript extends YpBaseElement {
                         <md-outlined-icon-button
                           class="editIcon"
                           .title="${this.t('edit')}"
+                          aria-label="${this.t('edit')}"
                           icon="create"
                           @click="${this._editPostTranscript}"></md-outlined-icon-button>
                       </div>

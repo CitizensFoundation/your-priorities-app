@@ -392,7 +392,7 @@ export class YpCollectionItemCard extends YpBaseElement {
 
   renderCollectionName() {
     return html`
-      <div class="layout horizontal">
+      <div class="layout horizontal" role="heading" aria-level="2" aria-label="${this.contentName}">
         <yp-magic-text
           id="collectionName"
           class="collection-name"

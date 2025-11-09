@@ -559,7 +559,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         div[rtl] {
           direction: rtl;
         }
-
       `,
     ];
   }
@@ -600,6 +599,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadAudioPointHeader}"
+                aria-label="${uploadAudioPointHeader}"
                 ><md-icon>keyboard_voice</md-icon>
               </md-icon-button>
             </div>
@@ -654,6 +654,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadVideoHeader}"
+                aria-label="${uploadVideoHeader}"
                 ><md-icon>videocam</md-icon>
               </md-icon-button>
             </div>
@@ -736,14 +737,17 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           <div
             class="pointMainHeader layout horizontal"
             role="heading"
-            aria-level="2"
+            aria-level="3"
           >
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
           </div>
         `
       : html`
-          <div hidden
+          <div
+            hidden
+            role="heading"
+            aria-level="3"
             class="pointMainHeader layout horizontal"
           >
             ${this.renderHeaderIcon(headerTextType)}
@@ -752,8 +756,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               textOnly
               .content="${alternativeHeader}"
               .contentLanguage="${this.post.Group.language}"
-              role="heading"
-              aria-level="2"
               class="ratingName"
               .postfixText=${` ${pointsLengthText}`}
               textType="${headerTextType}"
@@ -907,7 +909,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
-            aria-level="2"
+            aria-level="3"
             textType="alternativePointForLabel"
           >
           </yp-magic-text>
@@ -925,7 +927,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
-            aria-level="2"
+            aria-level="3"
             textType="alternativePointAgainstLabel"
           >
           </yp-magic-text>
