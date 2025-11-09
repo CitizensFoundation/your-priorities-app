@@ -734,7 +734,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
     return !alternativeHeader
       ? html`
-          <h3 class="pointMainHeader layout horizontal">
+          <h3 class="pointMainHeader layout horizontal" ?hidden="${this.post.Group.configuration?.disableDebate}">
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
           </h3>

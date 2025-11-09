@@ -342,6 +342,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     const subtitleId = this.question.subTitle
       ? `structuredQuestionSubtitle_${this.index}`
       : undefined;
+    const ariaLabel = skipLabel ? this.questionAriaLabel : undefined;
     return html`
       <md-outlined-text-field
         id="structuredQuestion_${this.index}"
@@ -355,6 +356,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         type="text"
         .allowedPattern="${this.isNumberSubType ? "[0-9.]" : ""}"
         ?half-width-desktop="${this.question.halfWidthDesktop}"
+        @input="${this._onInput}"
         @change="${(e: any) => {
           e.detail = { value: e.currentTarget.value };
           this._debounceChangeEvent(e);
@@ -363,6 +365,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         maxlength="${ifDefined(this.question.maxLength || undefined)}"
         aria-labelledby="${ifDefined(questionIntroId)}"
         aria-describedby="${ifDefined(subtitleId)}"
+        aria-label="${ifDefined(ariaLabel)}"
       >
       </md-outlined-text-field>
       ${this.question.subTitle
@@ -404,6 +407,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       const questionIntroId = skipLabel
         ? `structuredQuestionIntro_${this.index}`
         : undefined;
+      const ariaLabel = skipLabel ? this.questionAriaLabel : undefined;
       return html`
         <md-outlined-text-field
           id="structuredQuestion_${this.index}"
@@ -418,6 +422,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           .pattern="${this.question.pattern || ""}"
           @focus="${this.setLongFocus}"
           @blur="${this.setLongUnFocus}"
+          @input="${this._onInput}"
           ?use-small-font="${this.useSmallFont}"
           @change="${(e: any) => {
             e.detail = { value: e.currentTarget.value };
@@ -430,6 +435,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           ?required="${this.question.required}"
           maxlength="${ifDefined(this.question.maxLength || undefined)}"
           aria-labelledby="${ifDefined(questionIntroId)}"
+          aria-label="${ifDefined(ariaLabel)}"
         >
         </md-outlined-text-field>
       `;
@@ -693,19 +699,31 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   _sendDebouncedChange(event: CustomEvent) {
-    this.fire("yp-answer-content-changed", event.detail);
-    if (!this.debunceChangeEventTimer) {
-      this.debunceChangeEventTimer = setTimeout(() => {
-        this.debunceChangeEventTimer = undefined;
-        this.fire("yp-answer-content-changed-debounced", event.detail);
-        this._resizeScrollerIfNeeded();
-      }, this.debounceTimeMs);
+    if (event?.detail && this.question) {
+      this.question.value = event.detail.value;
     }
+    this.fire("yp-answer-content-changed", event.detail);
+    if (this.debunceChangeEventTimer) {
+      clearTimeout(this.debunceChangeEventTimer);
+    }
+    this.debunceChangeEventTimer = setTimeout(() => {
+      this.debunceChangeEventTimer = undefined;
+      this.fire("yp-answer-content-changed-debounced", event.detail);
+      this._resizeScrollerIfNeeded();
+    }, this.debounceTimeMs);
   }
 
   _debounceChangeEvent(event: any) {
     event.stopPropagation();
     this._sendDebouncedChange(event);
+  }
+
+  _onInput(event: Event) {
+    event.stopPropagation();
+    const value = (event.currentTarget as HTMLInputElement).value;
+    this._sendDebouncedChange({
+      detail: { value },
+    } as CustomEvent);
   }
 
   get textWithIndex() {
@@ -716,6 +734,19 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     } else {
       return question.text
     }*/
+  }
+
+  get questionAriaLabel() {
+    return this._stripHtml(this.textWithIndex);
+  }
+
+  _stripHtml(value?: string) {
+    if (!value) {
+      return undefined;
+    }
+    const withoutTags = value.replace(/<[^>]*>/g, " ");
+    const normalized = withoutTags.replace(/\s+/g, " ").trim();
+    return normalized || undefined;
   }
 
   _getRadioClass() {
@@ -742,37 +773,35 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     this.fire("resize-scroller");
   }
 
-  //TODO: Finish this
   checkValidity() {
-    const liveQuestion = this.$$("#structuredQuestion_" + this.index) as
-      | HTMLInputElement
-      | TextField;
-    console.log(`liveQuestion: ${liveQuestion}`);
-    if (liveQuestion) {
-      if (liveQuestion.dataset.type === "dropdown") {
-        return true; // DO something if required
-      } else if (
-        liveQuestion.name &&
-        liveQuestion.name.indexOf("RadioGroup") > -1
-      ) {
-        return this.checkRadioButtonValidity();
-      } else if (liveQuestion.dataset.type === "checkboxes") {
-        return true; // DO something if required
-      } else {
-        if (
-          (liveQuestion as TextField).value &&
-          (liveQuestion as TextField).value.length > 0
-        ) {
-          console.log(`liveQuestion: textfield has length`);
-          return true;
-        } else {
-          console.log(`liveQuestion: textfield has no length`);
-          return false;
-        }
-      }
-    } else {
+    if (!this.question.required) {
       return true;
     }
+
+    const answer = this.getAnswer(true);
+    if (answer == null) {
+      return false;
+    }
+
+    const value = answer.value;
+
+    if (typeof value === "string") {
+      return value.trim().length > 0;
+    }
+
+    if (typeof value === "number") {
+      return !isNaN(value);
+    }
+
+    if (typeof value === "boolean") {
+      return value;
+    }
+
+    if (Array.isArray(value as unknown[])) {
+      return (value as unknown[]).length > 0;
+    }
+
+    return value !== undefined && value !== null;
   }
 
   get isInputField() {

@@ -36,7 +36,6 @@ import { MdTabs } from "@material/web/tabs/tabs.js";
 import { cache } from "lit/directives/cache.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 import { Progress } from "@material/web/progress/internal/progress.js";
-import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -101,9 +100,6 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: Object })
   response: object | undefined;
 
-  @property({ type: String })
-  errorText: string | undefined;
-
   @property({ type: Number })
   currentVideoId: number | undefined;
 
@@ -139,6 +135,9 @@ export class YpPostEdit extends YpEditBase {
 
   @property({ type: Boolean })
   submitDisabled = false;
+
+  @property({ type: String })
+  validationErrorMessage: string | undefined;
 
   @property({ type: String })
   uploadedDocumentUrl: string | undefined;
@@ -240,21 +239,37 @@ export class YpPostEdit extends YpEditBase {
   customValidation() {
     let valid = true;
     let hasFoundOne = false;
+    let firstInvalidQuestion: string | undefined;
     this.liveQuestionIds.forEach((liveIndex) => {
       const questionElement = this.$$(
         "#structuredQuestionContainer_" + liveIndex
-      ) as YpStructuredQuestionEdit;
+      ) as YpStructuredQuestionEdit | null;
+      if (!questionElement) {
+        return;
+      }
       questionElement.classList.remove("error");
-      if (questionElement && !questionElement.checkValidity()) {
+      const isRequired = questionElement.question?.required === true;
+      if (isRequired && !questionElement.checkValidity()) {
         valid = false;
         if (!hasFoundOne) {
           questionElement.scrollIntoView();
+          questionElement.focus();
           hasFoundOne = true;
+        }
+        if (!firstInvalidQuestion && questionElement.question?.text) {
+          firstInvalidQuestion = questionElement.question.text;
         }
         questionElement.classList.add("error");
       }
       questionElement.requestUpdate();
     });
+    if (valid) {
+      this.validationErrorMessage = undefined;
+    } else {
+      this.validationErrorMessage = firstInvalidQuestion
+        ? `${this.t("form.invalid")} – ${firstInvalidQuestion}`
+        : this.t("form.invalid");
+    }
     return valid;
   }
 
@@ -392,6 +407,13 @@ export class YpPostEdit extends YpEditBase {
           font-family: var(--md-ref-typeface-brand);
           margin-bottom: 32px;
           margin-top: 32px;
+        }
+
+        @media (max-width: 960px) {
+          .topHeader {
+            margin-left: 8px;
+            margin-right: 8px;
+          }
         }
 
         .outerFrameContainer {
@@ -674,6 +696,12 @@ export class YpPostEdit extends YpEditBase {
 
         .primarySaveButton[desktop] {
           justify-content: flex-end;
+        }
+
+        .validationMessage {
+          color: var(--md-sys-color-error);
+          font-size: 14px;
+          margin: 4px 0 24px;
         }
       `,
     ];
@@ -1384,6 +1412,11 @@ export class YpPostEdit extends YpEditBase {
                         >
                           ${this.renderSaveButton()}
                         </div>
+                        ${this.validationErrorMessage
+                          ? html`<div class="validationMessage" role="alert">
+                              ${this.validationErrorMessage}
+                            </div>`
+                          : nothing}
                       </div>
                     </div>
                     ${this.renderHiddenInputs()}
@@ -1392,15 +1425,6 @@ export class YpPostEdit extends YpEditBase {
             }
           </form>
         </yp-form>
-        <md-dialog id="formErrorDialog" modal>
-          <div slot="headline">${this.t("error")}</div>
-          <div slot="content" id="errorText">${this.errorText}</div>
-          <div class="buttons" slot="actions">
-            <md-text-button autofocus @click="${this._clearErrorText}"
-              >${this.t("ok")}</md-text-button
-            >
-          </div>
-        </md-dialog>
         ${
           this.group &&
           this.group.configuration.alternativeTextForNewIdeaButtonHeader
@@ -1516,6 +1540,10 @@ export class YpPostEdit extends YpEditBase {
   override connectedCallback() {
     super.connectedCallback();
     this.addListener("yp-form-invalid", this._formInvalid);
+    this.addListener(
+      "yp-answer-content-changed-debounced",
+      this._structuredAnswersChanged
+    );
     //this.addListener("yp-custom-form-submit", this._customSubmit);
     this.addListener("yp-open-to-unique-id", this._openToId);
     this.addListener("yp-skip-to-unique-id", this._skipToId);
@@ -1543,6 +1571,10 @@ export class YpPostEdit extends YpEditBase {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener("yp-form-invalid", this._formInvalid);
+    this.removeListener(
+      "yp-answer-content-changed-debounced",
+      this._structuredAnswersChanged
+    );
     //this.removeListener("yp-custom-form-submit", this._customSubmit);
     this.removeListener("yp-skip-to-unique-id", this._skipToId);
     this.removeListener("yp-open-to-unique-id", this._openToId);
@@ -1589,13 +1621,7 @@ export class YpPostEdit extends YpEditBase {
     }
   }
   _showErrorDialog(errorText: string) {
-    this.errorText = errorText;
-    (this.$$("#formErrorDialog") as Dialog).show();
-  }
-
-  _clearErrorText() {
-    (this.$$("#formErrorDialog") as Dialog).close();
-    this.errorText = undefined;
+    this.validationErrorMessage = errorText;
   }
   hasLongSaveText() {
     return this.saveText && this.saveText.length > 9;
@@ -1766,26 +1792,49 @@ export class YpPostEdit extends YpEditBase {
     return this.newPost && !hideNewPoint;
   }
 
-  _submitWithStructuredQuestionsJson() {
+  async _collectStructuredAnswers(
+    suppressNotFoundError = false
+  ): Promise<Array<YpStructuredAnswer>> {
     const answers: Array<YpStructuredAnswer> = [];
-    this.liveQuestionIds.forEach((liveIndex) => {
+    for (const liveIndex of this.liveQuestionIds) {
       const questionElement = this.$$(
         "#structuredQuestionContainer_" + liveIndex
-      ) as YpStructuredQuestionEdit;
+      ) as YpStructuredQuestionEdit | null;
       if (questionElement) {
-        const answer = questionElement.getAnswer();
+        await questionElement.updateComplete;
+        const answer = questionElement.getAnswer(suppressNotFoundError);
         if (answer) {
           answers.push(answer);
-        } else {
-          console.error("Can't find answer to question");
         }
+      } else if (!suppressNotFoundError) {
+        console.error("Can't find answer to question index", liveIndex);
       }
-    });
+    }
+    return answers;
+  }
+
+  async _updateStructuredAnswersJsonFromInputs() {
+    if (
+      !(
+        this.group &&
+        this.group.configuration &&
+        this.group.configuration.structuredQuestionsJson
+      )
+    ) {
+      return;
+    }
+    const answers = await this._collectStructuredAnswers(true);
     this.structuredAnswersJson = JSON.stringify(answers);
+  }
+
+  async _submitWithStructuredQuestionsJson() {
+    const answers = await this._collectStructuredAnswers();
+    this.structuredAnswersJson = JSON.stringify(answers);
+    await this.updateComplete;
     this.submit();
   }
 
-  _submitWithStructuredQuestionsString() {
+  async _submitWithStructuredQuestionsString() {
     let description = "";
     let answers = "";
 
@@ -1808,24 +1857,40 @@ export class YpPostEdit extends YpEditBase {
     }
     if (this.post) this.post.description = description;
     this.structuredAnswersString = answers;
+    await this.updateComplete;
     this.submit();
   }
 
-  customSubmit() {
+  async customSubmit() {
+    const hasStructuredQuestions =
+      (this.group &&
+        this.group.configuration &&
+        this.group.configuration.structuredQuestionsJson &&
+        this.group.configuration.structuredQuestionsJson.length > 0) ||
+      (this.structuredQuestions && this.structuredQuestions.length > 0);
+
+    if (hasStructuredQuestions && !this.customValidation()) {
+      this.submitDisabled = false;
+      this.fire("yp-form-invalid");
+      return;
+    }
+
     if (
       this.group &&
       this.group.configuration &&
       this.group.configuration.structuredQuestionsJson
     ) {
-      this._submitWithStructuredQuestionsJson();
-    } else if (
-      this.structuredQuestions &&
-      this.structuredQuestions.length > 0
-    ) {
-      this._submitWithStructuredQuestionsString();
-    } else {
-      this.submit();
+      await this._submitWithStructuredQuestionsJson();
+      return;
     }
+
+    if (this.structuredQuestions && this.structuredQuestions.length > 0) {
+      await this._submitWithStructuredQuestionsString();
+      return;
+    }
+
+    this.validationErrorMessage = undefined;
+    this.submit();
   }
 
   _resizeScrollerIfNeeded() {
@@ -1971,6 +2036,10 @@ export class YpPostEdit extends YpEditBase {
     //    if (this.newPointShown) {
     //      (this.$$("#pointFor") as TextField).autoValidate = true;
     //    }
+  }
+
+  _structuredAnswersChanged() {
+    void this._updateStructuredAnswersJsonFromInputs();
   }
 
   _locationChanged() {
@@ -2158,7 +2227,14 @@ export class YpPostEdit extends YpEditBase {
       if (answersText) {
         const jsonAnswers = JSON.parse(answersText);
         this.structuredAnswersJson = jsonAnswers;
-        (this.$$("#editDialog") as YpEditDialog)._reallySubmit(false);
+        const editDialog = this.$$("#editDialog") as YpEditDialog | null;
+        if (editDialog && typeof editDialog._reallySubmit === "function") {
+          editDialog._reallySubmit(false);
+        } else {
+          console.warn(
+            "Edit dialog not ready for resubmission of structured answers"
+          );
+        }
       }
     }, 10);
   }
@@ -2347,6 +2423,7 @@ export class YpPostEdit extends YpEditBase {
       setTimeout(() => {
         if (this.structuredQuestions) {
           this.postDescriptionLimit = 9999;
+          void this._updateStructuredAnswersJsonFromInputs();
         }
       }, 50);
     }
