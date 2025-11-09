@@ -534,8 +534,7 @@ export class YpPoint extends YpBaseElement {
             class="userWithOrganization"
           ></yp-user-with-organization>
           <div class="flex"></div>
-          <md-icon-button
-            ?hidden="${this.masterHideSharing}"
+          <md-icon-button hidden
             class="shareIcon"
             aria-label="${this.t("sharePoint")}"
             title="${this.t("sharePoint")}"

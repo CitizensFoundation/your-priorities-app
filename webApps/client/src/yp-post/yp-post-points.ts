@@ -307,7 +307,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         .pointInfo {
-          opacity: 0.5;
+          opacity: 0.7;
           font-size: 17px;
           font-weight: 400;
           margin-top: 48px;
@@ -463,6 +463,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             width: 100%;
             margin-left: 0;
             margin-right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 32px;
           }
 
           .item {
@@ -697,8 +702,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     return html`<div
       class="item layout-horizontal"
       tabindex="0"
-      role="listitem"
-      aria-level="3"
     >
       <div
         id="point${point.id}"
@@ -734,10 +737,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
     return !alternativeHeader
       ? html`
-          <h3 class="pointMainHeader layout horizontal" ?hidden="${this.post.Group.configuration?.disableDebate}">
+          <h2 class="pointMainHeader layout horizontal" ?hidden="${this.post.Group.configuration?.disableDebate}">
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
-          </h3>
+          </h2>
         `
       : html`
           <h3 hidden class="pointMainHeader layout horizontal">

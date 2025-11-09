@@ -111,7 +111,6 @@ export class YpCollectionItemsList extends YpBaseElement {
           .index="${index}"
           ?useEvenOddItemLayout="${this.useEvenOddItemLayout && this.wide}"
           aria-label="${item.name}"
-          ariarole="listitem"
           .item="${item}"
           @keypress="${this._keypress.bind(this)}"
           @click="${this._selectedItemChanged.bind(this)}"

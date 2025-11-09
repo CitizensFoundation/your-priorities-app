@@ -797,7 +797,11 @@ export class YpPostEdit extends YpEditBase {
           playsinline
         ></video>
       `;
-    } else if (this.imagePreviewUrl) {
+    }
+
+    const imageCoverSelected = this.selectedCoverMediaType === "image";
+
+    if (imageCoverSelected && this.imagePreviewUrl) {
       return html`
         <div class="coverImageWrapper">
           ${this.renderDeleteCoverImageButton()}
@@ -811,10 +815,7 @@ export class YpPostEdit extends YpEditBase {
           ></yp-image>
         </div>
       `;
-    } else if (
-      this.post?.PostHeaderImages &&
-      this.post?.PostHeaderImages.length > 0
-    ) {
+    } else if (imageCoverSelected && this._hasPersistedCoverImage) {
       return html`
         <div class="coverImageWrapper">
           ${this.renderDeleteCoverImageButton()}
@@ -859,9 +860,9 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get _canDeleteCoverImage() {
-    return !!(
-      this.imagePreviewUrl ||
-      (this.post?.PostHeaderImages && this.post.PostHeaderImages.length > 0)
+    return (
+      this.selectedCoverMediaType === "image" &&
+      (this.imagePreviewUrl || this._hasPersistedCoverImage)
     );
   }
 
@@ -2232,14 +2233,18 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _postChanged() {
-    if (this.newPost && this.post) {
-      if (this.post.location) {
-        this.location = this.post.location;
-        this.encodedLocation = JSON.stringify(this.location);
-      }
-      if (this.post.cover_media_type)
-        this.selectedCoverMediaType = this.post.cover_media_type;
+    if (this.post?.location) {
+      this.location = this.post.location;
+      this.encodedLocation = JSON.stringify(this.location);
+    } else if (!this.newPost) {
+      this.location = undefined;
+      this.encodedLocation = undefined;
     }
+
+    if (this.post?.cover_media_type) {
+      this.selectedCoverMediaType = this.post.cover_media_type;
+    }
+
     this._updateEmojiBindings();
   }
 
@@ -2327,10 +2332,17 @@ export class YpPostEdit extends YpEditBase {
     if (this.post) {
       this.post = {
         ...this.post,
+        cover_media_type: "none",
         PostHeaderImages: [],
       };
     }
     this._resetCoverMediaTypeIfImage();
+  }
+
+  get _hasPersistedCoverImage() {
+    return !!(
+      this.post?.PostHeaderImages && this.post.PostHeaderImages.length > 0
+    );
   }
 
   _resetCoverMediaTypeIfImage() {

@@ -74,7 +74,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           font-weight: 400;
           line-height: 33px;
           margin-top: 2px;
-          opacity: 0.5;
+          opacity: 0.7;
         }
 
         .category-icon {
