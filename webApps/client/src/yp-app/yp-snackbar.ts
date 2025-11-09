@@ -103,8 +103,15 @@ export class YpSnackbar extends YpBaseElement {
   }
 
   override render() {
+    const ariaHidden = this.open ? "false" : "true";
     return html`
-      <div class="snackbar" style="${this.open ? "" : "display: none;"}">
+      <div
+        class="snackbar"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-hidden="${ariaHidden}"
+      >
         <span class="message">${this.labelText}</span>
         <slot name="dismiss" @click="${this.closeSnackbar}"></slot>
         <slot name="action"></slot>

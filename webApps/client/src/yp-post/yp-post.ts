@@ -76,6 +76,9 @@ export class YpPost extends YpCollection {
   @property({ type: String })
   postPositionCounter = "";
 
+  private readonly _boundDocumentKeydown = (event: KeyboardEvent) =>
+    this.handleKeydown(event);
+
   override scrollToCollectionItemSubClass(): void {
     this.scrollToPointId = undefined;
   }
@@ -319,17 +322,63 @@ export class YpPost extends YpCollection {
   }
 
   handleKeydown(event: KeyboardEvent) {
+    if (!this.post || this.isEditingPost || event.defaultPrevented) {
+      return;
+    }
+
+    if (!this.isPostPage) {
+      return;
+    }
+
+    const eventPath = event.composedPath();
+
+    if (this._isInteractiveKeyTarget(eventPath)) {
+      return;
+    }
+
     if (event.key === "ArrowLeft" && !this.leftArrowDisabled) {
       this.goToPreviousPost();
     } else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
       this.goToNextPost();
     } else if (event.key === "Escape") {
-      if (this.post && window.location.pathname.indexOf("/edit") === -1) {
+      if (window.location.pathname.indexOf("/edit") === -1) {
         event.preventDefault();
         event.stopPropagation();
         YpNavHelpers.redirectTo("/group/" + this.post.group_id);
       }
     }
+  }
+
+  private _isInteractiveKeyTarget(path: EventTarget[]): boolean {
+    const interactiveRoles = new Set(["textbox", "combobox", "spinbutton"]);
+    const interactiveTags = new Set([
+      "INPUT",
+      "TEXTAREA",
+      "SELECT",
+      "MD-OUTLINED-TEXT-FIELD",
+      "MD-FILLED-TEXT-FIELD",
+      "MD-TEXT-FIELD",
+      "MD-SELECT",
+      "MD-COMBOBOX",
+      "MD-AUTOCOMPLETE",
+    ]);
+
+    return path.some((node) => {
+      if (!(node instanceof HTMLElement)) {
+        return false;
+      }
+
+      if (node.isContentEditable) {
+        return true;
+      }
+
+      if (interactiveTags.has(node.tagName)) {
+        return true;
+      }
+
+      const role = node.getAttribute("role");
+      return !!(role && interactiveRoles.has(role.toLowerCase()));
+    });
   }
 
   renderPostStaticHeader() {
@@ -641,7 +690,7 @@ export class YpPost extends YpCollection {
   override connectedCallback() {
     super.connectedCallback();
     this.addListener("yp-post-image-count", this._updatePostImageCount);
-    document.addEventListener("keydown", this.handleKeydown.bind(this));
+    document.addEventListener("keydown", this._boundDocumentKeydown);
     this.addGlobalListener("yp-go-to-next-post", this.goToNextPost.bind(this));
     this.addGlobalListener("yp-go-to-previous-post", this.goToPreviousPost.bind(this));
   }
@@ -650,7 +699,7 @@ export class YpPost extends YpCollection {
     super.disconnectedCallback();
     this.removeListener("yp-debate-info", this._updateDebateInfo);
     this.removeListener("yp-post-image-count", this._updatePostImageCount);
-    document.removeEventListener("keydown", this.handleKeydown.bind(this));
+    document.removeEventListener("keydown", this._boundDocumentKeydown);
     this.removeGlobalListener("yp-go-to-next-post", this.goToNextPost.bind(this));
     this.removeGlobalListener("yp-go-to-previous-post", this.goToPreviousPost.bind(this));
   }

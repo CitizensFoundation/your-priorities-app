@@ -65,6 +65,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   disabled = false;
 
   radioKeypress = false;
+  radioKeypressResetTimer: ReturnType<typeof setTimeout> | undefined;
 
   debunceChangeEventTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -494,7 +495,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       <label class="layout horizontal center-center">
         <md-radio
           ?use-small-font="${this.useSmallFont}"
-          @keypress="${this.setRadioEventType}"
+          @keydown="${this.setRadioEventType}"
           @change="${this._radioChanged}"
           .value="${radioButton.text}"
           id="structuredQuestionRadioGroup_${this.index}_${buttonIndex}"
@@ -694,8 +695,35 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  setRadioEventType() {
-    this.radioKeypress = true;
+  setRadioEventType(event: KeyboardEvent) {
+    if (this._isRadioKeyboardNavigation(event)) {
+      this.radioKeypress = true;
+      if (this.radioKeypressResetTimer) {
+        clearTimeout(this.radioKeypressResetTimer);
+      }
+      this.radioKeypressResetTimer = setTimeout(() => {
+        this.radioKeypressResetTimer = undefined;
+        this.radioKeypress = false;
+      }, 1000);
+    }
+  }
+
+  private _isRadioKeyboardNavigation(event: KeyboardEvent) {
+    return (
+      event.key === "Enter" ||
+      event.key === " " ||
+      event.key === "Space" ||
+      event.key === "Spacebar" ||
+      event.key.startsWith("Arrow")
+    );
+  }
+
+  private _clearRadioKeyboardIntent() {
+    if (this.radioKeypressResetTimer) {
+      clearTimeout(this.radioKeypressResetTimer);
+      this.radioKeypressResetTimer = undefined;
+    }
+    this.radioKeypress = false;
   }
 
   _sendDebouncedChange(event: CustomEvent) {
@@ -1169,6 +1197,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   _radioChanged(event: CustomEvent) {
     event.stopPropagation();
+    const triggeredFromKeyboard = this.radioKeypress;
     if (this.question.radioButtons) {
       let selectedRadio;
 
@@ -1199,7 +1228,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             }
           } else {
             setTimeout(() => {
-              if (!this.radioKeypress) {
+              if (!triggeredFromKeyboard) {
                 this.fire("yp-goto-next-index", { currentIndex: this.index });
               }
             });
@@ -1222,6 +1251,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
       });
     }
+    this._clearRadioKeyboardIntent();
   }
 
   _structuredAnsweredChanged() {

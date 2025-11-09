@@ -191,8 +191,8 @@ export class AcNotificationSelection extends YpBaseElement {
     }
   }
 
-  _isDelayed(item: AcNotificationSettingMethod) {
-    return item.enumValue > 0;
+  _isDelayed(item: AcNotificationSettingFrequency) {
+    return this.method !== 2 && item.enumValue > 0;
   }
 
   get availableFrequencies() {

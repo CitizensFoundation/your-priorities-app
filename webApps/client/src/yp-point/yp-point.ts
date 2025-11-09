@@ -557,6 +557,9 @@ export class YpPoint extends YpBaseElement {
           .linkPoint="${this.linkPoint}"
           ?hidden="${this.isEditingSomething}"
           @click="${this._linkIfNeeded}"
+          role="${this.linkPoint ? "link" : nothing}"
+          tabindex="${this.linkPoint ? "0" : nothing}"
+          @keydown="${this._linkIfNeededKeyDown}"
         >
           <yp-magic-text
             simpleFormat
@@ -864,6 +867,20 @@ export class YpPoint extends YpBaseElement {
     if (this.linkPoint && this.post) {
       YpNavHelpers.goToPost(this.post.id, this.point.id);
     }
+  }
+
+  _linkIfNeededKeyDown(event: KeyboardEvent) {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+    if (
+      !this.linkPoint ||
+      (event.key !== "Enter" && event.key !== " ")
+    ) {
+      return;
+    }
+    event.preventDefault();
+    this._linkIfNeeded();
   }
 
   _updateEmojiBindings() {

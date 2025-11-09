@@ -1401,11 +1401,15 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  renderSaveButton() {
+  renderSaveButton(skipKeyboardFocus = false) {
+    const tabIndexValue = skipKeyboardFocus ? "-1" : undefined;
+    const ariaHidden = skipKeyboardFocus ? "true" : undefined;
     return html`
       <md-filled-button
         @click="${this.customSubmit}"
         .disabled="${this.submitDisabled}"
+        tabindex="${ifDefined(tabIndexValue)}"
+        aria-hidden="${ifDefined(ariaHidden)}"
         >${this.saveText || this.t("save")}</md-filled-button
       >
     `;
@@ -1418,7 +1422,7 @@ export class YpPostEdit extends YpEditBase {
         <div class="flex"></div>
         <md-icon>lightbulb</md-icon>
         <div class="flex"></div>
-        ${this.wide ? this.renderSaveButton() : nothing}
+        ${this.wide ? this.renderSaveButton(true) : nothing}
       </div>
       <div class="topHeader">
         ${this.editHeaderText ? this.editHeaderText : ""}
