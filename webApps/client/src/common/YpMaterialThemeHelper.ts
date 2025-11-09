@@ -199,7 +199,6 @@ export function themeFromSourceColorWithContrast(
       contrast
     );
   } else if (scheme === 'dynamic' && typeof color === 'object') {
-    console.log(color);
     const primary = Hct.fromInt(argbFromHex(color.primary));
     const secondary = Hct.fromInt(argbFromHex(color.secondary));
     const tertiary = Hct.fromInt(argbFromHex(color.tertiary));

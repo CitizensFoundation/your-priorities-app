@@ -76,21 +76,17 @@ export class YpPostCoverMedia extends YpBaseElement {
   audioPlayListener: Function | undefined;
   audioPauseListener: Function | undefined;
   audioEndedListener: Function | undefined;
+  private pauseMediaPlaybackHandler?: EventListener;
+  private mediaListenersAttached = false;
 
   override connectedCallback() {
     super.connectedCallback();
-    if (this.headerMode) {
-      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-      this.addGlobalListener('yp-pause-media-playback', YpMediaHelpers.pauseMediaPlayback.bind(this));
-    }
+    this.updateHeaderModePlaybackState(this.headerMode);
   }
 
   override disconnectedCallback() {
-    super.connectedCallback();
-    if (this.headerMode) {
-      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-      this.removeGlobalListener('yp-pause-media-playback', YpMediaHelpers.pauseMediaPlayback.bind(this));
-    }
+    super.disconnectedCallback();
+    this.updateHeaderModePlaybackState(false);
   }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -116,6 +112,32 @@ export class YpPostCoverMedia extends YpBaseElement {
       this.mapActivated = true;
       this.streetViewActivated = true;
     }
+
+    if (changedProperties.has('headerMode')) {
+      this.updateHeaderModePlaybackState(this.headerMode);
+    }
+  }
+
+  private updateHeaderModePlaybackState(shouldAttach: boolean) {
+    if (shouldAttach && !this.mediaListenersAttached) {
+      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+      if (!this.pauseMediaPlaybackHandler) {
+        this.pauseMediaPlaybackHandler = () => this._pauseMediaPlayback();
+      }
+      this.addGlobalListener('yp-pause-media-playback', this.pauseMediaPlaybackHandler);
+      this.mediaListenersAttached = true;
+    } else if (!shouldAttach && this.mediaListenersAttached) {
+      YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+      if (this.pauseMediaPlaybackHandler) {
+        this.removeGlobalListener('yp-pause-media-playback', this.pauseMediaPlaybackHandler);
+      }
+      this.pauseMediaPlaybackHandler = undefined;
+      this.mediaListenersAttached = false;
+    }
+  }
+
+  private _pauseMediaPlayback() {
+    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
   }
 
   static override get styles() {

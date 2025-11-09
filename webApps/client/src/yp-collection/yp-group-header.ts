@@ -122,7 +122,7 @@ export class YpGroupHeader extends YpCollectionHeader {
                           : nothing}
                       </div>
                     </div>
-                    <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
+                    <div class="layout horizontal center-center${!this.wide ? " wrap" : ""}">
                       <div class="descriptionContainer">
                         ${this.renderDescription()} ${this.renderStats()}
                       </div>

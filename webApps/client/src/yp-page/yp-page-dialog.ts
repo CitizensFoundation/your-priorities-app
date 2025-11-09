@@ -128,6 +128,7 @@ export class YpPageDialog extends YpBaseElement {
         class="dialog"
         ?is-safari="${this.isSafari}"
         ?rtl="${this.rtl}"
+        lang="${this.language || 'en'}"
       >
         <md-icon slot="icon">help</md-icon>
         <span slot="headline" class="headline">${this.pageTitle}</span>
@@ -135,6 +136,8 @@ export class YpPageDialog extends YpBaseElement {
           id="content"
           slot="content"
           style="text-align: left;line-height: 1.5;"
+          lang="${this.language || 'en'}"
+          role="document"
           class="layout vertical center-center"
         ></div>
 

@@ -608,7 +608,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               " - " + this.post.public_data.law_issue.issueStatus;
           }
         } else {
-          console.error("Can't find description element");
+          console.debug("Can't find description element");
         }
       });
 

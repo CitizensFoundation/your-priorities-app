@@ -17,8 +17,6 @@ export class YpFormattingHelpers {
         }
       }
       element.className = newClassName;
-    } else {
-      console.warn("Trying to remove class from a non exisisting element: "+classToRemove);
     }
   }
 

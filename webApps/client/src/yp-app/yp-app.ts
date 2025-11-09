@@ -767,13 +767,13 @@ export class YpApp extends YpBaseElement {
             .menuCorner="${Corner.START_START}"
             anchor="helpIconButton"
             @closed="${this._onHelpMenuClosed}"
+            @close-menu="${this._handleHelpMenuSelection}"
             aria-labelledby="helpButtonDescription"
           >
             ${this.translatedPages(this.pages).map(
               (page: YpHelpPageData, index) => html`
                 <md-menu-item
                   data-args="${index}"
-                  @click="${this._openPageFromMenu}"
                 >
                   <div slot="headline">${this._getLocalizePageTitle(page)}</div>
                 </md-menu-item>
@@ -1170,15 +1170,25 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _openPageFromMenu(event: Event) {
-    const element = event.currentTarget as HTMLInputElement;
+  _openPageFromMenuElement(element: Element | null) {
+    if (!element) {
+      return;
+    }
     const value = element.getAttribute("data-args");
-    if (value) {
-      const index = JSON.parse(value);
-      const page = this.pages[index];
+    if (!value) {
+      return;
+    }
+    const index = Number(value);
+    if (Number.isNaN(index)) {
+      return;
+    }
+    this._openPageByIndex(index);
+  }
+
+  _openPageByIndex(index: number) {
+    const page = this.pages[index];
+    if (page) {
       this._openPage(page);
-      //TODO: Make sure to reset menu here
-      //this.$$("paper-listbox")?.select(null);
     }
   }
 
@@ -1213,6 +1223,25 @@ export class YpApp extends YpBaseElement {
 
   _setPages(event: CustomEvent) {
     this.pages = event.detail;
+  }
+
+  _handleHelpMenuSelection(event: CustomEvent<any>) {
+    const detail = event.detail;
+    if (!detail || !detail.reason || !detail.initiator) {
+      return;
+    }
+
+    const kind = detail.reason.kind;
+    const key = detail.reason.key as string | undefined;
+    const isClickSelection = kind === "click-selection";
+    const isKeyboardSelection =
+      kind === "keydown" && (key === "Enter" || key === "Space");
+
+    if (!isClickSelection && !isKeyboardSelection) {
+      return;
+    }
+
+    this._openPageFromMenuElement(detail.initiator as Element);
   }
 
   _addBackCommunityOverride(event: CustomEvent) {
@@ -1572,7 +1601,6 @@ export class YpApp extends YpBaseElement {
               );
             }
           } else if (!skipMasterScroll) {
-            console.info("AppLayout scroll to top");
             setTimeout(() => {
               window.scrollTo(0, 0);
             });

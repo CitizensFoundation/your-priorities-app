@@ -600,7 +600,7 @@ export class YpPost extends YpCollection {
         });
       }
     } else {
-      console.error("No selected tab");
+      console.debug("No selected tab");
     }
   }
 
@@ -893,7 +893,7 @@ export class YpPost extends YpCollection {
         goForwardToPostId: null,
         goForwardPostName: null,
       });
-      console.log("Not recommended post");
+      //console.log("Not recommended post");
     }
   }
 

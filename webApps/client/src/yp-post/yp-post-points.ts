@@ -1520,7 +1520,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _processStoredPoints() {
-    console.info("_processStoredPoints");
     if (this.storedPoints && this.storedPoints.length > 0) {
       const upPoints = [];
       const downPoints = [];
