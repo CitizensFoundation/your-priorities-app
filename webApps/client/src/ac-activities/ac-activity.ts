@@ -169,9 +169,10 @@ export class AcActivity extends YpBaseElementWithLogin {
           <div
             .loggedInUser="${this.isLoggedIn}"
             class="layout vertical activity" style="position: relative;"
-            tabindex="${this.tabIndex}">
+            tabindex="0">
             <md-icon-button
-              .label="${this.t('deleteActivity')}"
+              aria-label="${this.t('deleteActivity')}"
+              title="${this.t('deleteActivity')}"
               ?hidden="${!this.hasActivityAccess}"
               data-args="${this.activity.id}"
               class="deleteIcon"

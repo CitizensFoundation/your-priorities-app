@@ -134,7 +134,8 @@ export class YpAssistantWelcome extends YpBaseElementWithLogin {
       ?has-static-theme="${this.hasStaticTheme}"
       class="voice-mode-toggle"
       @click="${this.startInVoiceMode}"
-      .label="${this.t("voiceAssistant")}"
+      aria-label="${this.t("voiceAssistant")}"
+      title="${this.t("voiceAssistant")}"
     >
       <md-icon class="voiceModeToggleIcon">
         ${this.renderVoiceStartIcon()}</md-icon

@@ -695,7 +695,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   renderPointItem(point: YpPointData, index: number): TemplateResult {
     return html`<div
       class="item layout-horizontal"
-      tabindex="${index}"
+      tabindex="0"
       role="listitem"
       aria-level="3"
     >

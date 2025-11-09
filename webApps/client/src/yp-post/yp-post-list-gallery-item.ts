@@ -129,7 +129,8 @@ export class YpPostListGalleryItem extends YpBaseElement {
       <div class="share" ?hidden="${this.post.Group.configuration?.hideSharing}">
         <md-icon-button
           class="shareIcon"
-          .label="${this.t('share')}"
+          aria-label="${this.t('share')}"
+          title="${this.t('share')}"
           @click="${this._shareTap}"
         >
           <md-icon>share</md-icon>
@@ -172,7 +173,10 @@ export class YpPostListGalleryItem extends YpBaseElement {
                         id="mainA"
                         @click="${this._savePostToBackCache}"
                       >
-                        <md-icon-button class="openCloseButton"
+                        <md-icon-button
+                          class="openCloseButton"
+                          aria-label="${this.t('openPostDetails')}"
+                          title="${this.t('openPostDetails')}"
                           ><md-icon>keyboard-arrow-right</md-icon></md-icon-button
                         >
                       </a>
@@ -269,4 +273,3 @@ export class YpPostListGalleryItem extends YpBaseElement {
     );
   }
 }
-

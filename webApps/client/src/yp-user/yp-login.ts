@@ -914,6 +914,8 @@ export class YpLogin extends YpBaseElement {
           <div class="loginInfoOptions layout horizontal center-center wrap">
             <md-icon-button
               class="closeLoginDialog"
+              aria-label="${this.t("close")}"
+              title="${this.t("close")}"
               @click="${this._logingDialogClose}"
               ><md-icon>close</md-icon></md-icon-button
             >

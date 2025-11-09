@@ -26,6 +26,8 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 
 @customElement("yp-point")
 export class YpPoint extends YpBaseElement {
+  private static transcriptRegionCounter = 0;
+
   @property({ type: Object })
   point!: YpPointData;
 
@@ -111,6 +113,14 @@ export class YpPoint extends YpBaseElement {
   audioPlayListener: Function | undefined;
   audioPauseListener: Function | undefined;
   audioEndedListener: Function | undefined;
+
+  private readonly fallbackTranscriptRegionId = `pointContentTranscript-${YpPoint.transcriptRegionCounter++}`;
+
+  private get transcriptRegionId() {
+    return this.point?.id
+      ? `pointContentTranscript-${this.point.id}`
+      : this.fallbackTranscriptRegionId;
+  }
 
   renderMobileMoodIcon() {
     if (!this.point || this.point.value === 0) return nothing; // No icon for neutral points
@@ -514,25 +524,26 @@ export class YpPoint extends YpBaseElement {
           class="userInfoContainer layout horizontal"
           ?hidden="${this.hideUser}"
         >
-          <div class="layout horizontal" style="width: 100%">
-            <yp-user-with-organization
-              .titleDate="${this.point.created_at}"
-              inverted
-              mediumImage
-              ?hidden="${this.group.configuration?.hidePointAuthor}"
-              .user="${this.user}"
-              class="userWithOrganization"
-            ></yp-user-with-organization>
-            <div class="flex"></div>
-            <md-icon-button
-              ?hidden="${this.masterHideSharing}"
-              class="shareIcon"
-              .label="${this.t("sharePoint")}"
-              @click="${this._shareTap}"
-              ><md-icon>share</md-icon></md-icon-button
-            >
-          </div>
-        </div>`
+        <div class="layout horizontal" style="width: 100%">
+          <yp-user-with-organization
+            .titleDate="${this.point.created_at}"
+            inverted
+            mediumImage
+            ?hidden="${this.group.configuration?.hidePointAuthor}"
+            .user="${this.user}"
+            class="userWithOrganization"
+          ></yp-user-with-organization>
+          <div class="flex"></div>
+          <md-icon-button
+            ?hidden="${this.masterHideSharing}"
+            class="shareIcon"
+            aria-label="${this.t("sharePoint")}"
+            title="${this.t("sharePoint")}"
+            @click="${this._shareTap}"
+            ><md-icon>share</md-icon></md-icon-button
+          >
+        </div>
+      </div>`
       : nothing;
   }
 
@@ -627,14 +638,20 @@ export class YpPoint extends YpBaseElement {
                   ?hidden="${!this.group.configuration.collapsableTranscripts}"
                 >
                   <md-icon-button
-                    .label="${this.t("openComments")}"
+                    aria-label="${this.t("showTranscript")}"
+                    title="${this.t("showTranscript")}"
+                    aria-controls="${this.transcriptRegionId}"
+                    aria-expanded="${this.openTranscript ? "true" : "false"}"
                     class="openCloseButton"
                     icon="keyboard_arrow_right"
                     @click="${this._setOpen}"
                     ?hidden="${this.openTranscript}"
                   ></md-icon-button>
                   <md-icon-button
-                    .label="${this.t("closeComments")}"
+                    aria-label="${this.t("hideTranscript")}"
+                    title="${this.t("hideTranscript")}"
+                    aria-controls="${this.transcriptRegionId}"
+                    aria-expanded="${this.openTranscript ? "true" : "false"}"
                     class="openCloseButton"
                     icon="keyboard_arrow_down"
                     @click="${this._setClosed}"
@@ -643,7 +660,7 @@ export class YpPoint extends YpBaseElement {
                 </div>
               </div>
               <div
-                id="pointContentTranscript"
+                id="${this.transcriptRegionId}"
                 .linkPoint="${this.linkPoint}"
                 ?hidden="${this.isEditing}"
                 @click="${this._linkIfNeeded}"

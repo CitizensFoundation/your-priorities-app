@@ -16,6 +16,8 @@ import './yp-point-comment-edit.js';
 
 @customElement('yp-point-comment-list')
 export class YpPointCommentList extends YpBaseElement {
+  private static regionIdCounter = 0;
+
   @property({ type: Array })
   comments: Array<YpPointData> | undefined;
 
@@ -39,6 +41,13 @@ export class YpPointCommentList extends YpBaseElement {
 
   @property({ type: String })
   commentType: 'points' | 'images' | undefined;
+
+  private readonly commentsRegionId: string;
+
+  constructor() {
+    super();
+    this.commentsRegionId = `pointCommentsRegion-${YpPointCommentList.regionIdCounter++}`;
+  }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -136,7 +145,7 @@ export class YpPointCommentList extends YpBaseElement {
   renderComment(comment: YpPointData, index: number) {
     return html` <yp-point-comment
       .point="${comment}"
-      .tabindex="${index}"></yp-point-comment>`;
+      .tabindex="0"></yp-point-comment>`;
   }
 
   override render() {
@@ -158,12 +167,18 @@ export class YpPointCommentList extends YpBaseElement {
           </div>
           <div class="layout horizontal">
             <md-icon-button
-              .label="${this.t('openComments')}"
+              aria-label="${this.t('openComments')}"
+              title="${this.t('openComments')}"
+              aria-controls="${this.open ? this.commentsRegionId : nothing}"
+              aria-expanded="${this.open ? "true" : "false"}"
               class="openCloseButton"
               @click="${this.setOpen}"
               ?hidden="${this.open}"><md-icon>keyboard_arrow_right</md-icon></md-icon-button>
             <md-icon-button
-              .label="${this.t('closeComments')}"
+              aria-label="${this.t('closeComments')}"
+              title="${this.t('closeComments')}"
+              aria-controls="${this.open ? this.commentsRegionId : nothing}"
+              aria-expanded="${this.open ? "true" : "false"}"
               class="openCloseButton"
               icon="keyboard_arrow_down"
               @click="${this.setClosed}"
@@ -174,7 +189,12 @@ export class YpPointCommentList extends YpBaseElement {
         ${
           this.open && this.comments
             ? html`
-              <div class="layout vertical listContainer">
+              <div
+                id="${this.commentsRegionId}"
+                class="layout vertical listContainer"
+                role="region"
+                aria-live="polite"
+              >
                 <lit-virtualizer
                   .items=${this.comments}
                   .scrollTarget="${window}"

@@ -258,7 +258,7 @@ export class AcActivities extends YpBaseElementWithLogin {
     return html`
       <div class="layout vertical center-center" style="width: 100%;">
         <ac-activity
-          tabindex="${index}"
+          tabindex="0"
           .hasLoggedInUser="${this.isLoggedIn}"
           class="activityContainer"
           .activity="${activity}"
