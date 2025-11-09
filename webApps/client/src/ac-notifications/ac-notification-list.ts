@@ -223,8 +223,8 @@ export class AcNotificationList extends YpBaseElementWithLogin {
                 <div>${this.unViewedCount} ${this.t("unviewed")}</div>
                 <md-text-button
                   @click="${this._markAllAsViewed}"
-                  .label="${this.t("notificationMarkAllViewed")}"
-                ></md-text-button>
+                  aria-label="${this.t("notificationMarkAllViewed")}"
+                >${this.t("notificationMarkAllViewed")}</md-text-button>
               </div>
 
               ${this.notifications

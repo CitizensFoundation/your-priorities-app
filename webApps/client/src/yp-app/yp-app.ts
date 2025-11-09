@@ -633,7 +633,6 @@ export class YpApp extends YpBaseElement {
         this.page === "agent_bundle"}"
         class="topActionItem"
         @click="${this._openNavDrawer}"
-        title="${this.t("navigationMenu")}"
         aria-label="${this.t("navigationMenu")}"
         aria-haspopup="dialog"
         aria-controls="leftDrawer"
@@ -658,7 +657,6 @@ export class YpApp extends YpBaseElement {
 
     if (this.closePostHeader) {
       icons = html`<md-icon-button
-        title="${this.t("close")}"
         aria-label="${this.t("close")}"
         class="closeButton ${closeButtonVisible ? "visible" : ""}"
         @click="${this._closePost}"
@@ -666,7 +664,6 @@ export class YpApp extends YpBaseElement {
       >`;
     } else if (this.keepOpenForGroup) {
       icons = html`<md-icon-button
-        title="${this.t("close")}"
         aria-label="${this.t("close")}"
         @click="${this._closeForGroup}"
         ><md-icon>close</md-icon></md-icon-button
@@ -674,7 +671,7 @@ export class YpApp extends YpBaseElement {
       //TODO: Fix this it should show arrow up when landing on the site for the first time not going back
     } else if (this.showBack && this.breadcrumbs.length > 1) {
       icons = html`<md-icon-button
-        title="${this.t("goBack")}"
+        id="goBackButton"
         aria-label="${this.t("goBack")}"
         slot="actionItems"
         ?hidden="${!this.backPath}"
@@ -683,7 +680,7 @@ export class YpApp extends YpBaseElement {
       </md-icon-button>`;
     } else if (this.showBack) {
       icons = html`<md-icon-button
-        title="${this.t("goBack")}"
+        id="goBackButton"
         aria-label="${this.t("goBack")}"
         slot="actionItems"
         class="closeButton ${closeButtonVisible ? "visible" : ""}"
@@ -694,15 +691,14 @@ export class YpApp extends YpBaseElement {
     }
 
     return html`${icons}
-    ${this.goForwardToPostId
-      ? html`
-          <md-icon-button
-            title="${this.t("forwardToPost")}"
-            aria-label="${this.t("forwardToPost")}"
-            @click="${this._goToNextPost}"
-            ><md-icon>fast_forward</md-icon></md-icon-button
-          >
-        `
+      ${this.goForwardToPostId
+        ? html`
+            <md-icon-button
+              aria-label="${this.t("forwardToPost")}"
+              @click="${this._goToNextPost}"
+              ><md-icon>fast_forward</md-icon></md-icon-button
+            >
+          `
       : nothing}`;
   }
 
@@ -734,7 +730,6 @@ export class YpApp extends YpBaseElement {
         ?hidden="${!this.autoTranslate}"
         @click="${window.appGlobals.stopTranslation}"
         aria-label="${this.t("stopAutoTranslate")}"
-        title="${this.t("stopAutoTranslate")}"
         ><md-icon>translate</md-icon>
       </md-icon-button>
 
@@ -753,9 +748,7 @@ export class YpApp extends YpBaseElement {
             id="helpIconButton"
             class="topActionItem"
             @click="${this._openHelpMenu}"
-            title="${this.t("menu.helpDetailed")}"
             aria-label="${this.t("menu.helpDetailed")}"
-            aria-describedby="helpButtonDescription"
             aria-haspopup="menu"
             aria-expanded="${hasHelpPages && this.helpMenuOpen ? "true" : "false"}"
             aria-controls="helpMenu"
@@ -772,7 +765,7 @@ export class YpApp extends YpBaseElement {
             anchor="helpIconButton"
             @closed="${this._onHelpMenuClosed}"
             @close-menu="${this._handleHelpMenuSelection}"
-            aria-labelledby="helpButtonDescription"
+            aria-labelledby="helpIconButton"
             ?hidden="${!hasHelpPages}"
           >
             ${helpPages.map(
@@ -796,7 +789,6 @@ export class YpApp extends YpBaseElement {
                 class="layout horizontal topActionItem"
                 @click="${this._openNotificationDrawer}"
                 slot="actionItems"
-                title="${this.t("notifications")}"
                 aria-label="${this.t("notifications")}"
                 aria-haspopup="dialog"
                 aria-controls="notificationDrawer"
@@ -818,7 +810,6 @@ export class YpApp extends YpBaseElement {
               class="userIcon"
               @click="${this._openUserDrawer}"
               slot="actionItems"
-              title="${this.t("userMenuLabel")}"
               aria-label="${this.t("userMenuLabel")}"
               aria-haspopup="dialog"
               aria-controls="userDrawer"
@@ -835,7 +826,6 @@ export class YpApp extends YpBaseElement {
               this.isOnAgentBundleLoginPageAndNotLoggedIn}"
               class="topActionItem userImageNotificationContainer"
               @click="${this._login}"
-              title="${this.t("user.login")}"
               >${this.t("user.login")}
             </md-text-button>
           `}
@@ -1071,7 +1061,6 @@ export class YpApp extends YpBaseElement {
           icon="close"
           slot="dismiss"
           aria-label="${this.t("close")}"
-          title="${this.t("close")}"
         ></md-icon-button>
       </yp-snackbar>
     `;
