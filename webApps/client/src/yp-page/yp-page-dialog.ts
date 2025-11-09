@@ -42,7 +42,7 @@ export class YpPageDialog extends YpBaseElement {
           text-align: center;
         }
 
-        #content {
+        #pageDialogContent {
           padding: 16px;
         }
 
@@ -75,7 +75,7 @@ export class YpPageDialog extends YpBaseElement {
         }
 
         @media (max-width: 600px) {
-          #content {
+          #pageDialogContent {
             padding: 8px;
           }
 
@@ -122,18 +122,19 @@ export class YpPageDialog extends YpBaseElement {
 
   override render() {
     return html`
-      <md-dialog
-        @cancel="${this.scrimDisableAction}"
-        id="dialog"
-        class="dialog"
-        ?is-safari="${this.isSafari}"
-        ?rtl="${this.rtl}"
-        lang="${this.language || 'en'}"
-      >
-        <md-icon slot="icon">help</md-icon>
-        <span slot="headline" class="headline">${this.pageTitle}</span>
-        <div
-          id="content"
+        <md-dialog
+          @cancel="${this.scrimDisableAction}"
+          id="dialog"
+          class="dialog"
+          ?is-safari="${this.isSafari}"
+          ?rtl="${this.rtl}"
+          lang="${this.language || 'en'}"
+          aria-describedby="pageDialogContent"
+        >
+          <md-icon slot="icon">help</md-icon>
+          <span slot="headline" class="headline">${this.pageTitle}</span>
+          <div
+          id="pageDialogContent"
           slot="content"
           style="text-align: left;line-height: 1.5;"
           lang="${this.language || 'en'}"
@@ -209,14 +210,14 @@ export class YpPageDialog extends YpBaseElement {
     this.page = page;
     this.language = language;
     await this.updateComplete;
-    const contentEl = this.$$("#content") as HTMLElement;
+    const contentEl = this.$$("#pageDialogContent") as HTMLElement;
     contentEl.innerHTML = this.page.content[this.language];
     (this.$$("#dialog") as Dialog).show();
   }
 
   _close() {
     (this.$$("#dialog") as Dialog).close();
-    (this.$$("#content") as HTMLElement).innerHTML = "";
+    (this.$$("#pageDialogContent") as HTMLElement).innerHTML = "";
     window.appGlobals.activity("close", "pages");
     if (this.closeFunction) {
       this.closeFunction();

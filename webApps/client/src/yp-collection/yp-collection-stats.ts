@@ -63,88 +63,121 @@ export class YpCollectionStats extends YpBaseElement {
   }
 
   override render() {
-    return this.collection
-      ? html`
-          <div class="stats layout horizontal end-justified">
-            <div class="layout horizontal">
-              <md-icon
-                ?hidden="${this.collectionType === "group"}"
-                title="${this.t("stats.posts")}"
-                class="stats-icon bulb"
-                >lightbulb_outline</md-icon
-              >
-              <div
-                title="${this.t("stats.posts")}"
-                class="stats-text"
-                ?hidden="${this.collectionType === "group"}"
-              >
-                ${YpFormattingHelpers.number(this.collection.counter_posts)}
-              </div>
+    const collection = this.collection;
 
-              ${this.collectionType === "community"
-                ? html`
-                    <md-icon
-                      hidden
-                      title="${this.t("stats.groups")}"
-                      class="stats-icon"
-                      >groups</md-icon
-                    >
-                    <div
-                      hidden
-                      title="${this.t("stats.groups")}"
-                      class="stats-text"
-                    >
-                      ${YpFormattingHelpers.number(
-                        this.collection.counter_groups
-                      )}
-                    </div>
-                  `
-                : nothing}
-              ${this.collectionType === "domain"
-                ? html`
-                    <md-icon hidden
-                      title="${this.t("stats.communities")}"
-                      class="stats-icon"
-                      >groups</md-icon
-                    >
-                    <div hidden
-                      title="${this.t("stats.communities")}"
-                      class="stats-text"
-                    >
-                      ${YpFormattingHelpers.number(
-                        this.collection.counter_communities
-                      )}
-                    </div>
-                  `
-                : nothing}
+    if (!collection) {
+      return nothing;
+    }
 
-              <md-icon
-                ?hidden="${this.collectionType === "community"}"
-                title="${this.t("statsPoints")}"
-                icon="people"
-                class="stats-icon"
-                >comment</md-icon
-              >
-              <div
-                ?hidden="${this.collectionType === "community"}"
-                title="${this.t("statsPoints")}"
-                class="stats-text"
-              >
-                ${YpFormattingHelpers.number(this.collection.counter_points)}
-              </div>
+    const collectionType = this.collectionType;
+    const isGroup = collectionType === "group";
+    const isCommunity = collectionType === "community";
+    const isDomain = collectionType === "domain";
 
-              <md-icon
-                title="${this.t("stats.users")}"
-                icon="face"
-                class="stats-icon"
-                >person</md-icon
-              >
-              <div title="${this.t("stats.users")}" class="stats-text">
-                ${YpFormattingHelpers.number(this.collection.counter_users)}
-              </div>
-            </div>
+    const postsCount = YpFormattingHelpers.number(collection.counter_posts);
+    const groupsCount = YpFormattingHelpers.number(collection.counter_groups);
+    const communitiesCount = YpFormattingHelpers.number(
+      collection.counter_communities
+    );
+    const pointsCount = YpFormattingHelpers.number(collection.counter_points);
+    const usersCount = YpFormattingHelpers.number(collection.counter_users);
+
+    return html`
+      <div class="stats layout horizontal end-justified">
+        <div class="layout horizontal">
+          <md-icon
+            aria-hidden="true"
+            ?hidden="${isGroup}"
+            title="${this.t("stats.posts")}"
+            class="stats-icon bulb"
+            >lightbulb_outline</md-icon
+          >
+          <div
+            title="${this.t("stats.posts")}"
+            class="stats-text"
+            ?hidden="${isGroup}"
+            role="text"
+            aria-label="${this.t("stats.posts")}: ${postsCount}"
+          >
+            <span aria-hidden="true">${postsCount}</span>
           </div>
-        `
-      : nothing;
+
+          ${collectionType === "community"
+            ? html`
+                <md-icon
+                  hidden
+                  aria-hidden="true"
+                  title="${this.t("stats.groups")}"
+                  class="stats-icon"
+                  >groups</md-icon
+                >
+                <div
+                  hidden
+                  title="${this.t("stats.groups")}"
+                  class="stats-text"
+                  role="text"
+                  aria-label="${this.t("stats.groups")}: ${groupsCount}"
+                >
+                  <span aria-hidden="true">${groupsCount}</span>
+                </div>
+              `
+            : nothing}
+          ${isDomain
+            ? html`
+                <md-icon
+                  hidden
+                  aria-hidden="true"
+                  title="${this.t("stats.communities")}"
+                  class="stats-icon"
+                  >groups</md-icon
+                >
+                <div
+                  hidden
+                  title="${this.t("stats.communities")}"
+                  class="stats-text"
+                  role="text"
+                  aria-label="${this.t("stats.communities")}: ${communitiesCount}"
+                >
+                  <span aria-hidden="true">${communitiesCount}</span>
+                </div>
+              `
+            : nothing}
+
+          <md-icon
+            aria-hidden="true"
+            ?hidden="${isCommunity}"
+            title="${this.t("statsPoints")}"
+            icon="people"
+            class="stats-icon"
+            >comment</md-icon
+          >
+          <div
+            ?hidden="${isCommunity}"
+            title="${this.t("statsPoints")}"
+            class="stats-text"
+            role="text"
+            aria-label="${this.t("statsPoints")}: ${pointsCount}"
+          >
+            <span aria-hidden="true">${pointsCount}</span>
+          </div>
+
+          <md-icon
+            aria-hidden="true"
+            title="${this.t("stats.users")}"
+            icon="face"
+            class="stats-icon"
+            >person</md-icon
+          >
+          <div
+            title="${this.t("stats.users")}"
+            class="stats-text"
+            role="text"
+            aria-label="${this.t("stats.users")}: ${usersCount}"
+          >
+            <span aria-hidden="true">${usersCount}</span>
+          </div>
+        </div>
+      </div>
+    `;
   }
 }

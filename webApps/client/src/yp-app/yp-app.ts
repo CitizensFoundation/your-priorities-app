@@ -707,6 +707,9 @@ export class YpApp extends YpBaseElement {
   }
 
   _openHelpMenu() {
+    if (!this.pages || this.pages.length === 0) {
+      return;
+    }
     (this.$$("#helpMenu") as Menu).open = true;
     this.helpMenuOpen = true;
   }
@@ -720,6 +723,9 @@ export class YpApp extends YpBaseElement {
   }
 
   renderActionItems() {
+    const helpPages = this.translatedPages(this.pages);
+    const hasHelpPages = helpPages.length > 0;
+
     return html`
       <md-icon-button
         id="translationButton"
@@ -742,11 +748,7 @@ export class YpApp extends YpBaseElement {
         slot="actionItems"
       >
         <span style="position: relative">
-          <span
-            id="helpButtonDescription"
-            class="visuallyHidden"
-            >${this.t("helpMenuDescription")}</span
-          >
+
           <md-filled-tonal-icon-button
             id="helpIconButton"
             class="topActionItem"
@@ -755,8 +757,10 @@ export class YpApp extends YpBaseElement {
             aria-label="${this.t("menu.helpDetailed")}"
             aria-describedby="helpButtonDescription"
             aria-haspopup="menu"
-            aria-expanded="${this.helpMenuOpen ? "true" : "false"}"
+            aria-expanded="${hasHelpPages && this.helpMenuOpen ? "true" : "false"}"
             aria-controls="helpMenu"
+            aria-disabled="${hasHelpPages ? "false" : "true"}"
+            ?disabled="${!hasHelpPages}"
             ><md-icon>${this.useInfoIconInsteadOfHelpIcon
               ? "info"
               : "help_outline"}</md-icon>
@@ -769,8 +773,9 @@ export class YpApp extends YpBaseElement {
             @closed="${this._onHelpMenuClosed}"
             @close-menu="${this._handleHelpMenuSelection}"
             aria-labelledby="helpButtonDescription"
+            ?hidden="${!hasHelpPages}"
           >
-            ${this.translatedPages(this.pages).map(
+            ${helpPages.map(
               (page: YpHelpPageData, index) => html`
                 <md-menu-item
                   data-args="${index}"
@@ -1234,8 +1239,11 @@ export class YpApp extends YpBaseElement {
     const kind = detail.reason.kind;
     const key = detail.reason.key as string | undefined;
     const isClickSelection = kind === "click-selection";
+    const allowedMenuKeys = ["Enter", " ", "Space", "Spacebar"];
     const isKeyboardSelection =
-      kind === "keydown" && (key === "Enter" || key === "Space");
+      kind === "keydown" &&
+      !!key &&
+      allowedMenuKeys.includes(key);
 
     if (!isClickSelection && !isKeyboardSelection) {
       return;
