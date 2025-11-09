@@ -57,6 +57,12 @@ export class YpCollectionItemCard extends YpBaseElement {
           text-transform: uppercase;
         }
 
+        @media (max-width: 960px) {
+          .groupType {
+            margin-top: 8px;
+          }
+        }
+
         .groupType[is-folder] {
           color: var(--md-sys-color-tertiary);
         }
@@ -120,10 +126,32 @@ export class YpCollectionItemCard extends YpBaseElement {
           font-family: var(--md-ref-typeface-brand);
         }
 
+        .collectionNameHeading {
+          margin: 0;
+          padding: 0;
+          font: inherit;
+          font-size: inherit;
+          font-weight: inherit;
+          line-height: inherit;
+          display: flex;
+        }
+
+        @media (max-width: 960px) {
+          .collectionNameHeading {
+            margin-top: 24px;
+          }
+        }
+
         .collectionItemCount {
           padding-left: 12px;
           font-size: 18px;
           padding-top: 4px;
+        }
+
+        @media (max-width: 960px) {
+          .collectionItemCount {
+            padding-top: 1px;
+          }
         }
 
         yp-image[archived] {
@@ -392,7 +420,7 @@ export class YpCollectionItemCard extends YpBaseElement {
 
   renderCollectionName() {
     return html`
-      <div class="layout horizontal" role="heading" aria-level="2" aria-label="${this.contentName}">
+      <h2 class="layout horizontal collectionNameHeading" aria-label="${this.contentName}">
         <yp-magic-text
           id="collectionName"
           class="collection-name"
@@ -414,7 +442,7 @@ export class YpCollectionItemCard extends YpBaseElement {
             ? html`<div class="collectionItemCount">(${this.collectionItemCount})</div>`
             : nothing
         }
-      </div>
+      </h2>
     `;
   }
 

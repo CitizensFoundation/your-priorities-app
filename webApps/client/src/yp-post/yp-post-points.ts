@@ -734,22 +734,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
     return !alternativeHeader
       ? html`
-          <div
-            class="pointMainHeader layout horizontal"
-            role="heading"
-            aria-level="3"
-          >
+          <h3 class="pointMainHeader layout horizontal">
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
-          </div>
+          </h3>
         `
       : html`
-          <div
-            hidden
-            role="heading"
-            aria-level="3"
-            class="pointMainHeader layout horizontal"
-          >
+          <h3 hidden class="pointMainHeader layout horizontal">
             ${this.renderHeaderIcon(headerTextType)}
             <yp-magic-text
               .contentId="${this.post.Group.id}"
@@ -761,7 +752,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               textType="${headerTextType}"
             >
             </yp-magic-text>
-          </div>
+          </h3>
         `;
   }
 
@@ -908,8 +899,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ?.alternativePointForLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
-            role="heading"
-            aria-level="3"
             textType="alternativePointForLabel"
           >
           </yp-magic-text>
@@ -926,8 +915,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ?.alternativePointAgainstLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
-            role="heading"
-            aria-level="3"
             textType="alternativePointAgainstLabel"
           >
           </yp-magic-text>

@@ -516,6 +516,7 @@ export class YpPostEdit extends YpEditBase {
             max-width: 100%;
             width: 100%;
             padding: 0;
+            margin-top: 48px;
           }
 
           .frameContainer {
@@ -893,7 +894,7 @@ export class YpPostEdit extends YpEditBase {
                 `
               : nothing}
             ${this.structuredQuestions != undefined
-              ? html`<div id="surveyContainer">
+              ? html`<div id="surveyContainer" class="layout vertical center-center">
                   ${this.structuredQuestions.map(
                     (question: YpStructuredQuestionData, index: number) => html`
                       <yp-structured-question-edit

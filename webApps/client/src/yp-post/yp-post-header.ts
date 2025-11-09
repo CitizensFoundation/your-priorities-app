@@ -97,6 +97,16 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           line-height: 25px;
         }
 
+        .postHeaderHeading {
+          margin: 0;
+          padding: 0;
+          font: inherit;
+          font-size: inherit;
+          font-weight: inherit;
+          line-height: inherit;
+          display: block;
+        }
+
         .postName {
           font-family: var(
             --md-ref-typeface-brand
@@ -388,7 +398,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             .post="${this.post}"
           ></yp-post-ratings-info>
         `
-      : !this.hideActions ? html`
+      : !this.hideActions
+      ? html`
           <yp-post-actions
             ?hidden="${this.hideActions}"
             hideDebate
@@ -399,7 +410,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             class="postActions"
             .post="${this.post}"
           ></yp-post-actions>
-        ` : nothing} `;
+        `
+      : nothing} `;
   }
 
   renderName() {
@@ -443,11 +455,11 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   renderClose() {
-      return html`<md-filled-tonal-icon-button
-        ?hidden="${!this.wide}"
-        @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
-        title="${this.t("close")}"
-        aria-label="${this.t("close")}"
+    return html`<md-filled-tonal-icon-button
+      ?hidden="${!this.wide}"
+      @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
+      title="${this.t("close")}"
+      aria-label="${this.t("close")}"
       ><md-icon
         >${this.hasNoLeftRightButtons ? "arrow_upward" : "close"}</md-icon
       >
@@ -490,10 +502,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
   override render() {
     return html`
-      <div
-        class="layout vertical"
-        role="heading"
-        aria-level="2"
+      <h1
+        class="layout vertical postHeaderHeading"
         aria-label="${this.post.name}"
       >
         ${!this.hideTopActionBar
@@ -526,7 +536,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 </div>
               </div>
             `}
-      </div>
+      </h1>
     `;
   }
 

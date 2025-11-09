@@ -118,7 +118,7 @@ export class YpSurveyGroup extends YpBaseElement {
                   ? html`
                       <div class="layout vertical center-center">
                         <div class="surveyContainer">
-                          <div id="surveyContainer">
+                          <div id="surveyContainer" class="layout vertical center-center">
                             ${this.structuredQuestions.map(
                               (question, index) => html`
                                 <yp-structured-question-edit

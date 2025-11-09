@@ -292,6 +292,13 @@ export class YpCollectionHeader extends YpBaseElement {
 
         .nameText {
           border-radius: 16px;
+          margin: 0;
+          padding: 0;
+          font: inherit;
+          font-size: inherit;
+          font-weight: inherit;
+          line-height: inherit;
+          display: block;
         }
 
         .descriptionContainer {
@@ -365,9 +372,13 @@ export class YpCollectionHeader extends YpBaseElement {
 
           .collectionDescription {
             width: auto;
-            margin-left: 8px;
-            margin-right: 8px;
+            margin-left: 0;
+            margin-right: 0;
             margin-top: 8px !important;
+          }
+
+          .description {
+            padding-left: 0;
           }
 
           yp-image,
@@ -387,7 +398,7 @@ export class YpCollectionHeader extends YpBaseElement {
           }
 
           .collection-name {
-            font-size: 22px;
+            font-size: 24px;
             padding-bottom: 9px;
             min-height: 28px;
           }
@@ -594,7 +605,7 @@ export class YpCollectionHeader extends YpBaseElement {
 
   renderName() {
     return html`
-      <div class="nameText" role="heading" aria-level="1" aria-label="${this.collection!.name}">
+      <h1 class="nameText" aria-label="${this.collection!.name}">
         <yp-magic-text
           class="collection-name"
           aria-label="${this.collection!.name}"
@@ -607,7 +618,7 @@ export class YpCollectionHeader extends YpBaseElement {
           .contentId="${this.collection!.id}"
         >
         </yp-magic-text>
-      </div>
+      </h1>
     `;
   }
 
@@ -641,7 +652,7 @@ export class YpCollectionHeader extends YpBaseElement {
                     <div class="flex"></div>
                     ${this.hasCollectionAccess ? this.renderMenu() : nothing}
                   </div>
-                  <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
+                  <div class="layout horizontal ${!this.wide ? "center-center wrap" : ""}">
                     <div
                       is-video="${ifDefined(this.collectionVideoURL)}"
                       id="cardImage"

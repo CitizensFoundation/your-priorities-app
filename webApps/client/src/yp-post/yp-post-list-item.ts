@@ -126,6 +126,16 @@ export class YpPostListItem extends YpBaseElement {
           padding: 16px;
         }
 
+        .postNameContainer {
+          margin: 0;
+          padding: 0;
+          font: inherit;
+          font-size: inherit;
+          font-weight: inherit;
+          line-height: inherit;
+          display: block;
+        }
+
         .description {
           font-size: 17px;
           font-weight: 400;
@@ -336,7 +346,7 @@ export class YpPostListItem extends YpBaseElement {
                       .post="${this.post}"
                       ?hidden="${this.post.Group.configuration?.hidePostCover}"
                     ></yp-post-cover-media>
-                    <div class="postNameContainer" role="heading" aria-level="2" aria-label="${this.post.name}">
+                    <h2 class="postNameContainer" aria-label="${this.post.name}">
                       <div
                         class="post-name  layout horizontal"
                         ?mini="${this.mini}"
@@ -359,7 +369,7 @@ export class YpPostListItem extends YpBaseElement {
                           ? this.renderTags()
                           : this.renderDescription()
                       }
-                    </div>
+                    </h2>
                   </div>
                 </a>
               </div>

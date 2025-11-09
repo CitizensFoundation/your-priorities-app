@@ -202,7 +202,7 @@ export class YpRegistrationQuestions extends YpBaseElement {
         }
         ${
           this.filteredQuestions
-            ? html`<div id="surveyContainer">
+            ? html`<div id="surveyContainer" class="layout vertical center-center">
                 ${this.filteredQuestions.map((question, index) => {
                   return html`
                     <yp-structured-question-edit
