@@ -195,8 +195,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _clearTextValueMobileUpOrDown() {
-    if (this.$$("#up_point"))
-      (this.$$("#up_point") as MdOutlinedTextField).value = "";
+    if (this.$$("#mobile_point"))
+      (this.$$("#mobile_point") as MdOutlinedTextField).value = "";
   }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
