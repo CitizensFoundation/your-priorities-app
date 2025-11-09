@@ -338,6 +338,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             positioning="popover"
             .menuCorner="${Corner.START_START}"
             anchor="menuAnchor"
+            aria-labelledby="menuAnchor"
           >
             <md-menu-item @click="${this._openEdit}" hidden>
               ${this.t("post.edit")}

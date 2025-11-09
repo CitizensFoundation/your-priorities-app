@@ -192,6 +192,7 @@ export class YpPostsFilter extends YpBaseElement {
                   icon="reorder"
                   outlined
                   index="1"
+                  label="${this.t("post.filterMenuLabel")}"
                   @change="${this._changeFilter}"
                 >
                   <md-select-option graphic="icon" value="top">
@@ -218,6 +219,7 @@ export class YpPostsFilter extends YpBaseElement {
                   outlined
                   @change="${this._changeCategory}"
                   class="dropdown-content wrap categoriesDropdownMenu"
+                  label="${this.t("post.categoryMenuLabel")}"
                 >
                   <md-select-option data-category-id="-1" name="-1" selected>
                     <md-icon icon="select-all" class="filterIcon"></md-icon>

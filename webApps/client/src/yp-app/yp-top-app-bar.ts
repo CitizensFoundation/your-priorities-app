@@ -114,6 +114,7 @@ export class YpTopAppBar extends YpBaseElement {
           .open="${this.isMenuOpen && this.activeMenu === "breadcrumbs"}"
           @closed="${() => this._onMenuClosed("breadcrumbs")}"
           .menuCorner="${Corner.START_END}"
+          aria-labelledby="breadCrumbTrigger"
         >
           ${this.computedBreadcrumbs.map(
             (crumb, index) => html`
@@ -158,14 +159,15 @@ export class YpTopAppBar extends YpBaseElement {
           >
             <md-icon>unfold_more</md-icon>
           </md-icon-button>
-          <md-menu
-            id="domainMenu"
-            anchor="domainTrigger"
-            positioning="popover"
-            .open="${this.isMenuOpen && this.activeMenu === "domains"}"
-            @closed="${() => this._onMenuClosed("domains")}"
-            .menuCorner="${Corner.START_END}"
-          >
+        <md-menu
+          id="domainMenu"
+          anchor="domainTrigger"
+          positioning="popover"
+          .open="${this.isMenuOpen && this.activeMenu === "domains"}"
+          @closed="${() => this._onMenuClosed("domains")}"
+          .menuCorner="${Corner.START_END}"
+          aria-labelledby="domainTrigger"
+        >
             ${this.myDomains?.map(
               (domain, index) => html`
                 <md-menu-item

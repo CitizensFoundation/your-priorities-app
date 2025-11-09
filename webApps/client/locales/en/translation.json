@@ -1143,6 +1143,8 @@
     "top": "Popular",
     "newest": "Latest",
     "random": "By random",
+    "filterMenuLabel": "Select how to sort ideas",
+    "categoryMenuLabel": "Filter ideas by category",
     "inProgress": "In progress",
     "search": "Search for ideas",
     "add_new": "Add new idea",

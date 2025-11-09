@@ -767,6 +767,7 @@ export class YpApp extends YpBaseElement {
             .menuCorner="${Corner.START_START}"
             anchor="helpIconButton"
             @closed="${this._onHelpMenuClosed}"
+            aria-labelledby="helpButtonDescription"
           >
             ${this.translatedPages(this.pages).map(
               (page: YpHelpPageData, index) => html`

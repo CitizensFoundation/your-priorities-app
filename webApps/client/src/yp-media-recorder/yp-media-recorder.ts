@@ -477,8 +477,10 @@ export class YpMediaRecorder extends YpBaseElement {
       ${this.allDevices
         ? html`
             <md-dialog id="selectDevices" modal>
-              <div slot="headline">${this.selectDeviceTitle}</div>
-              <md-select id="deviceListBox">
+              <div slot="headline" id="selectDevicesTitle">
+                ${this.selectDeviceTitle}
+              </div>
+              <md-select id="deviceListBox" aria-labelledby="selectDevicesTitle">
                 ${this.allDevices.map(
                   (item) => html`
                     <md-select-option

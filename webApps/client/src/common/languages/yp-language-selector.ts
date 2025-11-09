@@ -153,7 +153,7 @@ export class YpLanguageSelector extends YpBaseElement {
           id="menu"
           anchor="textfield"
           role="listbox"
-          aria-label="states"
+          aria-labelledby="textfield"
         >
           ${this.foundAutoCompleteLanguages.map((item) => {
             return this.renderMenuItem(idIndex++, item);
