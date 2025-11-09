@@ -511,10 +511,12 @@ export class YpPost extends YpCollection {
     `;
   }
 
+  private _isEditRoute(route: string | undefined) {
+    return !!route && (route.endsWith("/edit") || route.endsWith("/edit/"));
+  }
+
   get isEditingPost() {
-    return (
-      this.subRoute?.endsWith("/edit") || this.subRoute?.endsWith("/edit/")
-    );
+    return this._isEditRoute(this.subRoute);
   }
 
   get forAgentBundle() {
@@ -607,6 +609,15 @@ export class YpPost extends YpCollection {
 
     if (changedProperties.has("selectedTab")) {
       this._selectedTabChanged();
+    }
+
+    if (changedProperties.has("subRoute")) {
+      const previousSubRoute = changedProperties.get("subRoute") as
+        | string
+        | undefined;
+      if (this._isEditRoute(previousSubRoute) && !this.isEditingPost) {
+        this._getPost();
+      }
     }
 
     if (changedProperties.has("post") && this.post) {

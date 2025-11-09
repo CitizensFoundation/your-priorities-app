@@ -1979,8 +1979,36 @@ export class YpPostEdit extends YpEditBase {
     this.uploadedDocumentFilename = event.detail.filename;
   }
 
-  override customFormResponse() {
+  override customFormResponse(event?: CustomEvent<YpPostData>) {
     window.appGlobals.groupLoadNewPost = true;
+
+    const updatedPost = event?.detail;
+    if (updatedPost && updatedPost.id) {
+      this._updateCachesWithPost(updatedPost);
+    }
+  }
+
+  _updateCachesWithPost(post: YpPostData) {
+    const cache = window.appGlobals?.cache;
+    if (!cache) {
+      return;
+    }
+
+    if (!post.Group || !post.Group.id) {
+      console.warn("Skipping cache update for incomplete post data");
+      return;
+    }
+
+    cache.cachedPostItem = post;
+    cache.updatePostInCache(post);
+
+    const groupPosts = cache.currentPostListForGroup[post.group_id];
+    if (groupPosts) {
+      const index = groupPosts.findIndex((item) => item.id === post.id);
+      if (index !== -1) {
+        groupPosts[index] = post;
+      }
+    }
   }
 
   _updateEmojiBindings() {
