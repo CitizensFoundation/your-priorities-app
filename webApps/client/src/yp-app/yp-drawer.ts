@@ -1,11 +1,11 @@
-import { LitElement, html, css, CSSResult, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, css, TemplateResult, nothing } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element";
 
 @customElement("yp-drawer")
 export class YpDrawer extends YpBaseElement {
   @property({ type: Boolean, reflect: true })
-  open: boolean | undefined;
+  open = false;
 
   @property({ type: String })
   position: "left" | "right" = "left";
@@ -15,6 +15,14 @@ export class YpDrawer extends YpBaseElement {
 
   private _boundHandleEscKey = this._handleEscKey.bind(this);
   private _boundCloseAllDrawers = this._closeAllDrawers.bind(this);
+  private _focusableSelector =
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  @query(".drawer-content")
+  private drawerContentElement?: HTMLElement;
+
+  @query("slot")
+  private slotElement?: HTMLSlotElement;
 
   static override get styles() {
     return [
@@ -110,14 +118,22 @@ export class YpDrawer extends YpBaseElement {
     this.open = false;
   }
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     if (changedProperties.has("open")) {
-      if (this.open===true) {
-        this.fire("opened")
-        console.error("opened")
-      } else if (this.open===false) {
+      if (this.open) {
+        this.removeAttribute("aria-hidden");
+      } else {
+        this.setAttribute("aria-hidden", "true");
+      }
+      this.toggleAttribute("inert", !this.open);
+
+      if (this.open === true) {
+        this.fire("opened");
+        this._focusDrawerContainer();
+      } else if (this.open === false) {
         this.fire("closed");
-        console.error("closed")
       }
     }
   }
@@ -131,15 +147,124 @@ export class YpDrawer extends YpBaseElement {
   }
 
   private _handleEscKey(event: KeyboardEvent): void {
-    if (event.key === "Escape" && this.open) {
+    if (!this.open) {
+      return;
+    }
+
+    if (event.key === "Escape") {
       this.open = false;
+    } else if (event.key === "Tab") {
+      this._trapFocus(event);
     }
   }
 
+  private _trapFocus(event: KeyboardEvent): void {
+    const focusableElements = this._getFocusableElements();
+
+    if (focusableElements.length === 0) {
+      this.drawerContentElement?.focus();
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const rootNode = this.getRootNode();
+    const docLike =
+      rootNode instanceof Document || rootNode instanceof ShadowRoot
+        ? rootNode
+        : document;
+    const activeElement = docLike.activeElement as HTMLElement | null;
+    const isShiftPressed = event.shiftKey;
+
+    if (isShiftPressed) {
+      if (!activeElement || activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      }
+    } else if (!activeElement || activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
+  private _getFocusableElements(): HTMLElement[] {
+    const focusableElements: HTMLElement[] = [];
+    const visitedNodes = new Set<Node>();
+    const root = this.drawerContentElement;
+
+    if (!root) {
+      return focusableElements;
+    }
+
+    const isVisible = (element: HTMLElement) =>
+      !!(
+        element.offsetWidth ||
+        element.offsetHeight ||
+        element.getClientRects().length
+      );
+
+    const isFocusable = (element: HTMLElement) =>
+      element.matches(this._focusableSelector) &&
+      !element.hasAttribute("disabled") &&
+      element.getAttribute("tabindex") !== "-1" &&
+      isVisible(element) &&
+      element.getAttribute("aria-hidden") !== "true";
+
+    const collectFromNode = (node: Node | null) => {
+      if (!node || visitedNodes.has(node)) {
+        return;
+      }
+
+      visitedNodes.add(node);
+
+      if (node instanceof HTMLElement) {
+        if (isFocusable(node)) {
+          focusableElements.push(node);
+        }
+
+        if (node.shadowRoot) {
+          node.shadowRoot.childNodes.forEach((child) => collectFromNode(child));
+        }
+      }
+
+      if (node instanceof HTMLSlotElement) {
+        const assigned = node.assignedNodes({ flatten: true });
+        assigned.forEach((assignedNode) => collectFromNode(assignedNode));
+      }
+
+      if (node instanceof ShadowRoot || node instanceof DocumentFragment) {
+        node.childNodes.forEach((child) => collectFromNode(child));
+      } else {
+        node.childNodes.forEach((child) => collectFromNode(child));
+      }
+    };
+
+    collectFromNode(root);
+
+    return focusableElements;
+  }
+
+  private _focusDrawerContainer() {
+    this.drawerContentElement?.focus();
+  }
+
   override render(): TemplateResult {
+    const labelledBy = this.getAttribute("aria-labelledby");
+    const label = this.getAttribute("aria-label");
+
     return html`
       <div class="scrim"></div>
-      <div class="drawer-content">
+      <div
+        class="drawer-content"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="${this.open ? "false" : "true"}"
+        ?inert="${!this.open}"
+        tabindex="-1"
+        aria-labelledby="${labelledBy ? labelledBy : nothing}"
+        aria-label="${label ? label : nothing}"
+      >
         <slot></slot>
       </div>
     `;

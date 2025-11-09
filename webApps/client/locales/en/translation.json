@@ -626,6 +626,7 @@
   "clearEmbededMedia": "Clear embedded media",
   "openOneItemMenu": "Open one item menu",
   "openSelectedItemsMenu": "Open selected items menu",
+  "openBreadcrumbMenu": "Open breadcrumb menu",
   "linkToContentItem": "Link to content item",
   "deleteRecordedMedia": "Delete recorded media",
   "closeRecordingWindow": "Close recording window",

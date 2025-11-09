@@ -93,6 +93,7 @@ declare global {
 }
 
 type YpAppModes = "main" | "admin" | "promotion" | "analytics";
+type DrawerId = "leftDrawer" | "notificationDrawer" | "userDrawer";
 
 @customElement("yp-app")
 export class YpApp extends YpBaseElement {
@@ -185,6 +186,15 @@ export class YpApp extends YpBaseElement {
 
   @property({ type: Boolean })
   notificationDrawerOpened = false;
+
+  private drawerTriggerMap: Record<DrawerId, HTMLElement | null> = {
+    leftDrawer: null,
+    notificationDrawer: null,
+    userDrawer: null,
+  };
+
+  private focusableDrawerSelector =
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
   @state()
   private helpMenuOpen = false;
@@ -331,6 +341,7 @@ export class YpApp extends YpBaseElement {
   _ypError(event: CustomEvent) {
     const text = event.detail;
     if (text) {
+      this.notifyDialogHeading = this.t("error");
       this.notifyDialogText = text;
       (this.$$("#dialog") as Dialog).open = true;
     }
@@ -362,6 +373,7 @@ export class YpApp extends YpBaseElement {
       statusCode = detail.response.status;
 
     if (detail.showUserError) {
+      this.notifyDialogHeading = this.t("error");
       this.notifyDialogText = errorText;
       (this.$$("#dialog") as Dialog).open = true;
     }
@@ -515,6 +527,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _haveCopiedNotification() {
+    this.notifyDialogHeading = this.t("notifications");
     this.notifyDialogText = this.t("copiedToClipboard");
     (this.$$("#dialog") as Dialog).open = true;
   }
@@ -622,7 +635,9 @@ export class YpApp extends YpBaseElement {
         @click="${this._openNavDrawer}"
         title="${this.t("navigationMenu")}"
         aria-label="${this.t("navigationMenu")}"
-        aria-haspopup="true"
+        aria-haspopup="dialog"
+        aria-controls="leftDrawer"
+        aria-expanded="${this.navDrawerOpened ? "true" : "false"}"
         ><md-icon>apps</md-icon></md-filled-tonal-icon-button
       >
     `;
@@ -712,7 +727,8 @@ export class YpApp extends YpBaseElement {
         class="topActionItem"
         ?hidden="${!this.autoTranslate}"
         @click="${window.appGlobals.stopTranslation}"
-        .label="${this.t("stopAutoTranslate")}"
+        aria-label="${this.t("stopAutoTranslate")}"
+        title="${this.t("stopAutoTranslate")}"
         ><md-icon>translate</md-icon>
       </md-icon-button>
 
@@ -770,11 +786,15 @@ export class YpApp extends YpBaseElement {
         ? html`
             <div style="position: relative;">
               <md-filled-tonal-icon-button
+                id="notificationButton"
                 class="layout horizontal topActionItem"
                 @click="${this._openNotificationDrawer}"
                 slot="actionItems"
                 title="${this.t("notifications")}"
                 aria-label="${this.t("notifications")}"
+                aria-haspopup="dialog"
+                aria-controls="notificationDrawer"
+                aria-expanded="${this.notificationDrawerOpened ? "true" : "false"}"
               >
                 <md-icon>notifications</md-icon>
               </md-filled-tonal-icon-button>
@@ -788,11 +808,15 @@ export class YpApp extends YpBaseElement {
               </md-badge>
             </div>
             <md-icon-button
+              id="userMenuButton"
               class="userIcon"
               @click="${this._openUserDrawer}"
               slot="actionItems"
               title="${this.t("userMenuLabel")}"
               aria-label="${this.t("userMenuLabel")}"
+              aria-haspopup="dialog"
+              aria-controls="userDrawer"
+              aria-expanded="${this.userDrawerOpened ? "true" : "false"}"
             >
               <yp-user-image id="userImage" small .user="${this.user}">
               </yp-user-image>
@@ -946,6 +970,7 @@ export class YpApp extends YpBaseElement {
     return html`
       <yp-drawer
         id="leftDrawer"
+        aria-label="${this.t("navigationMenu")}"
         position="${window.appGlobals.domain?.configuration
           .disableArrowBasedTopNavigation
           ? "left"
@@ -964,6 +989,7 @@ export class YpApp extends YpBaseElement {
 
       <yp-drawer
         id="notificationDrawer"
+        aria-label="${this.t("notifications")}"
         position="right"
         ?hidden="${!this.notificationDrawerOpened}"
         @closed="${this._closeNotificationDrawer}"
@@ -984,6 +1010,7 @@ export class YpApp extends YpBaseElement {
 
       <yp-drawer
         id="userDrawer"
+        aria-label="${this.t("userMenuLabel")}"
         position="right"
         ?hidden="${!this.userDrawerOpened}"
         @closed="${this._closeUserDrawer}"
@@ -1017,6 +1044,9 @@ export class YpApp extends YpBaseElement {
       </yp-sw-update-toast>
 
       <md-dialog id="dialog">
+        ${this.notifyDialogHeading
+          ? html`<div slot="headline">${this.notifyDialogHeading}</div>`
+          : nothing}
         <div slot="content">
           <div class="errorText">${this.notifyDialogText}</div>
         </div>
@@ -1092,7 +1122,18 @@ export class YpApp extends YpBaseElement {
   }
 
   _openNotifyDialog(event: CustomEvent) {
-    this.notifyDialogText = event.detail;
+    const detail = event.detail;
+    if (typeof detail === "string") {
+      this.notifyDialogHeading = this.t("notifications");
+      this.notifyDialogText = detail;
+    } else if (detail && typeof detail === "object") {
+      this.notifyDialogHeading =
+        detail.heading || this.t("notifications");
+      this.notifyDialogText = detail.text || "";
+    } else {
+      this.notifyDialogHeading = undefined;
+      this.notifyDialogText = "";
+    }
     (this.$$("#dialog") as Dialog).open = true;
   }
 
@@ -1103,6 +1144,7 @@ export class YpApp extends YpBaseElement {
 
   _resetNotifyDialogText() {
     this.notifyDialogText = undefined;
+    this.notifyDialogHeading = undefined;
     (this.$$("#dialog") as MdDialog).close();
   }
 
@@ -1691,22 +1733,105 @@ export class YpApp extends YpBaseElement {
     else return false;
   }
 
+  private _rememberDrawerTrigger(
+    drawerId: DrawerId,
+    trigger?: HTMLElement | null
+  ) {
+    this.drawerTriggerMap[drawerId] = trigger ?? null;
+  }
+
+  private _restoreFocusToTrigger(drawerId: DrawerId) {
+    const trigger = this.drawerTriggerMap[drawerId];
+    if (trigger?.isConnected) {
+      trigger.focus({ preventScroll: true });
+    }
+  }
+
+  private _isElementVisible(element: HTMLElement) {
+    return !!(
+      element.offsetWidth ||
+      element.offsetHeight ||
+      element.getClientRects().length
+    );
+  }
+
+  private async _focusFirstElementInDrawer(drawerId: DrawerId) {
+    await this.updateComplete;
+    const drawer = this.renderRoot?.querySelector<YpDrawer>(`#${drawerId}`);
+    if (!drawer) {
+      return;
+    }
+    await drawer.updateComplete;
+    const focusTarget =
+      this._findFirstFocusable(drawer) ??
+      drawer.shadowRoot?.querySelector<HTMLElement>(".drawer-content");
+    focusTarget?.focus({ preventScroll: true });
+  }
+
+  private _findFirstFocusable(
+    root: Element | ShadowRoot
+  ): HTMLElement | null {
+    if (
+      root instanceof HTMLElement &&
+      root.matches(this.focusableDrawerSelector) &&
+      this._isElementVisible(root)
+    ) {
+      return root;
+    }
+
+    if (root instanceof HTMLSlotElement) {
+      for (const assignedElement of root.assignedElements({ flatten: true })) {
+        const assignedFocusable = this._findFirstFocusable(assignedElement);
+        if (assignedFocusable) {
+          return assignedFocusable;
+        }
+      }
+    }
+
+    const children =
+      root instanceof ShadowRoot
+        ? Array.from(root.children)
+        : Array.from((root as Element).children);
+
+    for (const child of children) {
+      const focusableChild = this._findFirstFocusable(child);
+      if (focusableChild) {
+        return focusableChild;
+      }
+    }
+
+    if (root instanceof HTMLElement && root.shadowRoot) {
+      return this._findFirstFocusable(root.shadowRoot);
+    }
+
+    return null;
+  }
+
   async _openNavDrawer() {
+    const trigger =
+      this.renderRoot?.querySelector<HTMLElement>("#navIconButton") ?? null;
+    this._rememberDrawerTrigger("leftDrawer", trigger);
     this.navDrawerOpened = true;
     (this.$$("#leftDrawer") as any).open = true;
     await this.updateComplete;
     (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = true;
+    await this._focusFirstElementInDrawer("leftDrawer");
   }
 
   async _closeNavDrawer() {
+    const wasOpen = this.navDrawerOpened;
     if (this.$$("#leftDrawer")) {
       (this.$$("#leftDrawer") as any).open = false;
     }
     if (this.$$("#ypNavDrawer")) {
       (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = false;
     }
+    if (!wasOpen) {
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 300));
     this.navDrawerOpened = false;
+    this._restoreFocusToTrigger("leftDrawer");
   }
 
   async getDialogAsync(idName: string, callback: Function) {
@@ -1734,25 +1859,44 @@ export class YpApp extends YpBaseElement {
   }
 
   async _openUserDrawer() {
+    const trigger =
+      this.renderRoot?.querySelector<HTMLElement>("#userMenuButton") ?? null;
+    this._rememberDrawerTrigger("userDrawer", trigger);
     this.userDrawerOpened = true;
     (this.$$("#userDrawer") as YpDrawer).open = true;
+    await this._focusFirstElementInDrawer("userDrawer");
   }
 
   async _closeUserDrawer() {
+    const wasOpen = this.userDrawerOpened;
     (this.$$("#userDrawer") as YpDrawer).open = false;
+    if (!wasOpen) {
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 300));
     this.userDrawerOpened = false;
+    this._restoreFocusToTrigger("userDrawer");
   }
 
   async _openNotificationDrawer() {
+    const trigger =
+      this.renderRoot?.querySelector<HTMLElement>("#notificationButton") ??
+      null;
+    this._rememberDrawerTrigger("notificationDrawer", trigger);
     this.notificationDrawerOpened = true;
     (this.$$("#notificationDrawer") as YpDrawer).open = true;
+    await this._focusFirstElementInDrawer("notificationDrawer");
   }
 
   async _closeNotificationDrawer() {
+    const wasOpen = this.notificationDrawerOpened;
     (this.$$("#notificationDrawer") as YpDrawer).open = false;
+    if (!wasOpen) {
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 300));
     this.notificationDrawerOpened = false;
+    this._restoreFocusToTrigger("notificationDrawer");
   }
 
   get isOnDomainLoginPageAndNotLoggedIn() {

@@ -1328,13 +1328,11 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  renderSaveButton(skipFromTabOrder = false) {
+  renderSaveButton() {
     return html`
       <md-filled-button
         @click="${this.customSubmit}"
         .disabled="${this.submitDisabled}"
-        .tabIndex=${skipFromTabOrder ? -1 : 0}
-        aria-hidden="${ifDefined(skipFromTabOrder ? "true" : undefined)}"
         >${this.saveText || this.t("save")}</md-filled-button
       >
     `;
@@ -1347,7 +1345,7 @@ export class YpPostEdit extends YpEditBase {
         <div class="flex"></div>
         <md-icon>lightbulb</md-icon>
         <div class="flex"></div>
-        ${this.wide ? this.renderSaveButton(true) : nothing}
+        ${this.wide ? this.renderSaveButton() : nothing}
       </div>
       <div class="topHeader">
         ${this.editHeaderText ? this.editHeaderText : ""}
@@ -1392,6 +1390,7 @@ export class YpPostEdit extends YpEditBase {
           </form>
         </yp-form>
         <md-dialog id="formErrorDialog" modal>
+          <div slot="headline">${this.t("error")}</div>
           <div slot="content" id="errorText">${this.errorText}</div>
           <div class="buttons" slot="actions">
             <md-text-button autofocus @click="${this._clearErrorText}"

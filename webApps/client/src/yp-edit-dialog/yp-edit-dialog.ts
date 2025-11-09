@@ -454,9 +454,13 @@ export class YpEditDialog extends YpBaseElement {
 
   override render() {
     if (this.disableDialog) {
-      return html` <md-icon-button @click="${
-        this.close
-      }"><md-icon>close</md-icon></md-icon-button> <span>${
+      return html` <md-icon-button
+          @click="${this.close}"
+          .label="${this.t("close")}"
+          aria-label="${this.t("close")}"
+          title="${this.t("close")}"
+          ><md-icon>close</md-icon></md-icon-button
+        > <span>${
         this.heading
       }</span></span>
         ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}`;
@@ -492,6 +496,7 @@ export class YpEditDialog extends YpBaseElement {
         </md-dialog>
 
         <md-dialog id="formErrorDialog" modal>
+          <div slot="headline">${this.t("error")}</div>
           <div slot="content" id="errorText">${this.errorText}</div>
           <div class="buttons" slot="actions">
             <md-text-button autofocus @click="${this._clearErrorText}"

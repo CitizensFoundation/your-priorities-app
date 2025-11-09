@@ -33,6 +33,9 @@ export class YpTopAppBar extends YpBaseElement {
   private isMenuOpen: boolean = false;
 
   @state()
+  private activeMenu: "breadcrumbs" | "domains" | null = null;
+
+  @state()
   private domain: YpDomainData | undefined;
 
   @property({ type: Boolean })
@@ -90,15 +93,26 @@ export class YpTopAppBar extends YpBaseElement {
   renderBreadcrumbsDropdown() {
     if (this.computedBreadcrumbs.length > 1 && !this.hideBreadcrumbs) {
       return html`
-        <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
+        <md-icon-button
+          id="breadCrumbTrigger"
+          @click="${this._toggleBreadcrumbMenu}"
+          aria-label="${this.t("openBreadcrumbMenu")}"
+          aria-haspopup="menu"
+          aria-controls="breadcrumbMenu"
+          aria-expanded="${
+            this.isMenuOpen && this.activeMenu === "breadcrumbs"
+              ? "true"
+              : "false"
+          }"
+        >
           <md-icon>unfold_more</md-icon>
         </md-icon-button>
         <md-menu
           id="breadcrumbMenu"
           anchor="breadCrumbTrigger"
           positioning="popover"
-          .open="${this.isMenuOpen}"
-          @closed="${this._onMenuClosed}"
+          .open="${this.isMenuOpen && this.activeMenu === "breadcrumbs"}"
+          @closed="${() => this._onMenuClosed("breadcrumbs")}"
           .menuCorner="${Corner.START_END}"
         >
           ${this.computedBreadcrumbs.map(
@@ -122,6 +136,7 @@ export class YpTopAppBar extends YpBaseElement {
     YpNavHelpers.redirectTo(url);
     this.fireGlobal("yp-close-all-drawers");
     this.isMenuOpen = false;
+    this.activeMenu = null;
   }
 
   renderMyDomainsDropdown() {
@@ -132,8 +147,14 @@ export class YpTopAppBar extends YpBaseElement {
         return html`
           <md-icon-button
             id="domainTrigger"
-            @click="${this._toggleMenu}"
+            @click="${this._toggleDomainMenu}"
             ?hidden="${this.hideTitle}"
+            aria-label="${this.t("selectOrganization")}"
+            aria-haspopup="menu"
+            aria-controls="domainMenu"
+            aria-expanded="${
+              this.isMenuOpen && this.activeMenu === "domains" ? "true" : "false"
+            }"
           >
             <md-icon>unfold_more</md-icon>
           </md-icon-button>
@@ -141,8 +162,8 @@ export class YpTopAppBar extends YpBaseElement {
             id="domainMenu"
             anchor="domainTrigger"
             positioning="popover"
-            .open="${this.isMenuOpen}"
-            @closed="${this._onMenuClosed}"
+            .open="${this.isMenuOpen && this.activeMenu === "domains"}"
+            @closed="${() => this._onMenuClosed("domains")}"
             .menuCorner="${Corner.START_END}"
           >
             ${this.myDomains?.map(
@@ -165,13 +186,30 @@ export class YpTopAppBar extends YpBaseElement {
     }
   }
 
-  private _toggleMenu(e: Event) {
-    e.stopPropagation();
-    this.isMenuOpen = !this.isMenuOpen;
+  private _toggleBreadcrumbMenu(event: Event) {
+    this._toggleMenu(event, "breadcrumbs");
   }
 
-  private _onMenuClosed() {
-    this.isMenuOpen = false;
+  private _toggleDomainMenu(event: Event) {
+    this._toggleMenu(event, "domains");
+  }
+
+  private _toggleMenu(event: Event, menu: "breadcrumbs" | "domains") {
+    event.stopPropagation();
+    if (this.isMenuOpen && this.activeMenu === menu) {
+      this.isMenuOpen = false;
+      this.activeMenu = null;
+    } else {
+      this.activeMenu = menu;
+      this.isMenuOpen = true;
+    }
+  }
+
+  private _onMenuClosed(menu: "breadcrumbs" | "domains") {
+    if (this.activeMenu === menu) {
+      this.isMenuOpen = false;
+      this.activeMenu = null;
+    }
   }
 
   static override get styles() {
