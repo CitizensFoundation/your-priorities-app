@@ -39,6 +39,7 @@ import { Progress } from "@material/web/progress/internal/progress.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { ifDefined } from "lit/directives/if-defined.js";
+import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
@@ -138,6 +139,9 @@ export class YpPostEdit extends YpEditBase {
 
   @property({ type: String })
   validationErrorMessage: string | undefined;
+
+  @property({ type: Boolean })
+  deletingHeaderImage = false;
 
   @property({ type: String })
   uploadedDocumentUrl: string | undefined;
@@ -473,6 +477,18 @@ export class YpPostEdit extends YpEditBase {
           margin-top: 16px;
         }
 
+        .coverImageWrapper {
+          position: relative;
+          display: inline-block;
+        }
+
+        .deleteImageButton {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          z-index: 1;
+        }
+
         md-secondary-tab {
           --md-secondary-tab-container-color: var(
             --md-sys-color-surface-container-lowest
@@ -783,7 +799,8 @@ export class YpPostEdit extends YpEditBase {
       `;
     } else if (this.imagePreviewUrl) {
       return html`
-        <div style="position: relative;">
+        <div class="coverImageWrapper">
+          ${this.renderDeleteCoverImageButton()}
           <yp-image
             class="image"
             sizing="cover"
@@ -799,7 +816,8 @@ export class YpPostEdit extends YpEditBase {
       this.post?.PostHeaderImages.length > 0
     ) {
       return html`
-        <div style="position: relative;">
+        <div class="coverImageWrapper">
+          ${this.renderDeleteCoverImageButton()}
           <yp-image
             class="image"
             sizing="cover"
@@ -822,6 +840,29 @@ export class YpPostEdit extends YpEditBase {
         ></yp-image>
       `;
     }
+  }
+
+  renderDeleteCoverImageButton() {
+    return this._canDeleteCoverImage
+      ? html`
+          <md-filled-icon-button
+            class="deleteImageButton"
+            aria-label="${this.t("deleteHeaderImage")}"
+            title="${this.t("deleteHeaderImage")}"
+            ?disabled="${this.deletingHeaderImage}"
+            @click="${this._confirmDeleteCoverImage}"
+          >
+            <md-icon>delete</md-icon>
+          </md-filled-icon-button>
+        `
+      : nothing;
+  }
+
+  get _canDeleteCoverImage() {
+    return !!(
+      this.imagePreviewUrl ||
+      (this.post?.PostHeaderImages && this.post.PostHeaderImages.length > 0)
+    );
   }
 
   renderDescriptionInputs() {
@@ -2201,6 +2242,85 @@ export class YpPostEdit extends YpEditBase {
     this.uploadedHeaderImageId = image.id;
     this.imagePreviewUrl = YpMediaHelpers.getImageFormatUrl([image]);
     this.selectedCoverMediaType = "image";
+  }
+
+  _confirmDeleteCoverImage(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!this._canDeleteCoverImage || this.deletingHeaderImage) {
+      return;
+    }
+
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(this.t("deleteImageConfirmation"), () => {
+          void this._deleteCoverImage();
+        });
+      }
+    );
+  }
+
+  async _deleteCoverImage() {
+    if (this.uploadedHeaderImageId) {
+      this._clearNewHeaderImageUpload();
+      return;
+    }
+
+    const headerImageId = this._currentHeaderImageId;
+
+    if (!this.post?.id || !headerImageId) {
+      this._clearPersistedHeaderImage();
+      return;
+    }
+
+    this.deletingHeaderImage = true;
+    try {
+      await window.serverApi.apiAction(
+        `/api/images/${this.post.id}/${headerImageId}/deleteImageFromPost`,
+        "DELETE",
+        {}
+      );
+      this._clearPersistedHeaderImage();
+    } catch (error) {
+      console.error("Failed to delete header image", error);
+      window.appGlobals.showToast(this.t("error"));
+    } finally {
+      this.deletingHeaderImage = false;
+    }
+  }
+
+  get _currentHeaderImageId() {
+    if (this.post?.PostHeaderImages && this.post.PostHeaderImages.length > 0) {
+      return this.post.PostHeaderImages[this.post.PostHeaderImages.length - 1]
+        .id;
+    }
+    return undefined;
+  }
+
+  _clearNewHeaderImageUpload() {
+    this.imagePreviewUrl = undefined;
+    this.uploadedHeaderImageId = undefined;
+    if (!this.post?.PostHeaderImages || this.post.PostHeaderImages.length === 0) {
+      this._resetCoverMediaTypeIfImage();
+    }
+  }
+
+  _clearPersistedHeaderImage() {
+    if (this.post) {
+      this.post = {
+        ...this.post,
+        PostHeaderImages: [],
+      };
+    }
+    this._resetCoverMediaTypeIfImage();
+  }
+
+  _resetCoverMediaTypeIfImage() {
+    if (this.selectedCoverMediaType === "image") {
+      this.selectedCoverMediaType = "none";
+    }
   }
 
   async _redirectAfterVideo(post: YpPostData) {

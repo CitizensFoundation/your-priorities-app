@@ -669,6 +669,7 @@
   "manageAllContent": "Manage all content",
   "myContent": "My content",
   "always": "Always",
+  "deleteImageConfirmation": "Are you sure you want to delete this image?",
   "flaggedContent": "Flagged content",
   "contentItemsFlagged": "items flagged",
   "firstReported": "First at",
