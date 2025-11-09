@@ -21,7 +21,7 @@ export class YpCollectionStats extends YpBaseElement {
         .stats {
           padding-top: 16px;
           padding-bottom: 0;
-          opacity: 0.5;
+          opacity: 0.7;
         }
 
         .stats-text {

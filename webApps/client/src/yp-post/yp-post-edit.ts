@@ -1324,6 +1324,7 @@ export class YpPostEdit extends YpEditBase {
       form.submit();
       (this.$$("#spinner") as Progress).hidden = false;
     } else {
+      this.submitDisabled = false;
       this.fire("yp-form-invalid");
       //const error = this.t("form.invalid");
       //this._showErrorDialog(error);
