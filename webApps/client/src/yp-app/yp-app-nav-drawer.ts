@@ -155,6 +155,13 @@ export class YpAppNavDrawer extends YpBaseElement {
     this.fireGlobal("yp-close-all-drawers");
   }
 
+  private _handleKeyActivate(event: KeyboardEvent) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      (event.currentTarget as HTMLElement).click();
+    }
+  }
+
   _userChanged() {
     if (this.user) {
       this._reset();
@@ -335,7 +342,12 @@ export class YpAppNavDrawer extends YpBaseElement {
           ? html`
               <div hidden class="header layout vertical center-center">
                 <md-icon icon="home" @click="${this._goBack}"></md-icon>
-                <div role="button" @click="${this._goBack}">
+                <div
+                  role="button"
+                  tabindex="0"
+                  @keydown="${this._handleKeyActivate}"
+                  @click="${this._goBack}"
+                >
                   ${this.homeLink.name}
                 </div>
               </div>
@@ -365,6 +377,8 @@ export class YpAppNavDrawer extends YpBaseElement {
                         role="button"
                         class="item"
                         data-args="${community.id}"
+                        tabindex="0"
+                        @keydown="${this._handleKeyActivate}"
                         @click="${this._goToCommunity}"
                       >
                         ${community.name}
@@ -387,14 +401,16 @@ export class YpAppNavDrawer extends YpBaseElement {
                         ${this.getGroupTypeName(group)}
                       </div>
                       <div class="layout horizontal groupName">
-                        <div
-                          role="button"
-                          class="item"
-                          data-args="${group.id}"
-                          @click="${this._goToGroup}"
-                        >
-                          ${group.name}
-                        </div>
+                      <div
+                        role="button"
+                        class="item"
+                        data-args="${group.id}"
+                        tabindex="0"
+                        @keydown="${this._handleKeyActivate}"
+                        @click="${this._goToGroup}"
+                      >
+                        ${group.name}
+                      </div>
                       </div>
                     </div>
                   `

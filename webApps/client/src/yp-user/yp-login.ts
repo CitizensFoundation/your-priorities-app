@@ -1,4 +1,5 @@
 import { html, css, nothing } from "lit";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { customElement, property } from "lit/decorators.js";
 
 import "./yp-registration-questions.js";
@@ -50,6 +51,9 @@ export class YpLogin extends YpBaseElement {
 
   @property({ type: String })
   password = "";
+
+  @property({ type: String })
+  inputErrorText = "";
 
   @property({ type: String })
   submitText = "";
@@ -122,6 +126,15 @@ export class YpLogin extends YpBaseElement {
 
   @property({ type: Object })
   registrationQuestionsGroup: YpGroupData | undefined;
+
+  @property({ type: String })
+  registrationNameErrorMessage: string | undefined;
+
+  @property({ type: String })
+  registrationEmailErrorMessage: string | undefined;
+
+  @property({ type: String })
+  registrationPasswordErrorMessage: string | undefined;
 
   onLoginFunction: Function | undefined;
 
@@ -591,6 +604,11 @@ export class YpLogin extends YpBaseElement {
         .openTerms {
           text-decoration: underline;
           cursor: pointer;
+          border: none;
+          background: transparent;
+          padding: 0;
+          font: inherit;
+          color: inherit;
         }
 
         @media all and (-ms-high-contrast: none) {
@@ -634,6 +652,7 @@ export class YpLogin extends YpBaseElement {
   }
 
   renderSamlLogin() {
+    const ariaLabel = this.t("samlAuth");
     return html`
       ${this.samlLoginButtonUrl
         ? html`
@@ -641,21 +660,25 @@ export class YpLogin extends YpBaseElement {
               class="islandIs cursor layout horizontal center-center"
               role="button"
               tabindex="0"
+              aria-label="${ariaLabel}"
+              @click="${this._openSamlLogin}"
+              @keydown="${this._onSamlKeydown}"
             >
               <img
                 ?hidden="${this.forceSecureSamlLogin}"
-                @click="${this._openSamlLogin}"
                 width="80"
                 src="${this.samlLoginButtonUrl}"
+                alt="${ariaLabel}"
               />
               <div
                 ?hidden="${!this.forceSecureSamlLogin}"
                 class="largeSamlLogo"
-                @click="${this._openSamlLogin}"
-                role="button"
-                tabindex="0"
               >
-                <img width="130" src="${this.samlLoginButtonUrl}" />
+                <img
+                  width="130"
+                  src="${this.samlLoginButtonUrl}"
+                  alt="${ariaLabel}"
+                />
               </div>
             </div>
           `
@@ -664,26 +687,26 @@ export class YpLogin extends YpBaseElement {
               class="islandIs cursor layout horizontal center-center"
               role="button"
               tabindex="0"
-              @keydown="${this._keySaml}"
+              aria-label="${ariaLabel}"
+              @click="${this._openSamlLogin}"
+              @keydown="${this._onSamlKeydown}"
             >
               <img
                 ?hidden="${this.forceSecureSamlLogin}"
-                @click="${this._openSamlLogin}"
                 width="107"
                 height="19"
                 src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"
+                alt="${ariaLabel}"
               />
               <div
                 ?hidden="${!this.forceSecureSamlLogin}"
                 class="largeSamlLogo"
-                @click="${this._openSamlLogin}"
-                role="button"
-                tabindex="0"
               >
                 <img
                   width="140"
                   height="25"
                   src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"
+                  alt="${ariaLabel}"
                 />
               </div>
             </div>
@@ -727,6 +750,7 @@ export class YpLogin extends YpBaseElement {
                     @click="${this._facebookLogin}"
                     role="button"
                     tabindex="0"
+                    @keydown="${this._onFacebookKeydown}"
                     ?hidden="${this.disableFacebookLoginForGroup}"
                   >
                     ${this.t("user.facebookLogin")}
@@ -748,7 +772,6 @@ export class YpLogin extends YpBaseElement {
 
   renderLoginButton() {
     return html`<md-filled-button
-      autofocus
       ?has-static-theme="${this.hasStaticTheme}"
       raised
       ?fullWithLoginButton="${this.fullWithLoginButton}"
@@ -769,6 +792,9 @@ export class YpLogin extends YpBaseElement {
         class="loginField"
         .value="${this.email}"
         autocomplete="username"
+        @input="${this._onLoginEmailInput}"
+        ?error="${!!this.emailErrorMessage}"
+        .errorText="${ifDefined(this.emailErrorMessage)}"
       ></md-outlined-text-field>
       <md-outlined-text-field
         id="password"
@@ -779,6 +805,9 @@ export class YpLogin extends YpBaseElement {
         minLength="1"
         .value="${this.password}"
         @keyup="${this.onEnterLogin}"
+        @input="${this._onLoginPasswordInput}"
+        ?error="${!!this.passwordErrorMessage}"
+        .errorText="${ifDefined(this.passwordErrorMessage)}"
       ></md-outlined-text-field>
       <div style="width: 100%">${this.renderForgotPasswordButton()}</div> `;
   }
@@ -936,6 +965,9 @@ export class YpLogin extends YpBaseElement {
         class="createUserInputField"
         required
         charCounter
+        @input="${this._onRegistrationNameInput}"
+        ?error="${!!this.registrationNameErrorMessage}"
+        .errorText="${ifDefined(this.registrationNameErrorMessage)}"
       ></md-outlined-text-field>
       <md-outlined-text-field
         id="regEmail"
@@ -946,6 +978,9 @@ export class YpLogin extends YpBaseElement {
         pattern=".+@.+"
         min="5"
         autocomplete="username"
+        @input="${this._onRegistrationEmailInput}"
+        ?error="${!!this.registrationEmailErrorMessage}"
+        .errorText="${ifDefined(this.registrationEmailErrorMessage)}"
       ></md-outlined-text-field>
       <md-outlined-text-field
         id="regPassword"
@@ -955,6 +990,9 @@ export class YpLogin extends YpBaseElement {
         .label="${this.t("user.password")}"
         autocomplete="current-password"
         @keyup="${this.onEnterRegistration}"
+        @input="${this._onRegistrationPasswordInput}"
+        ?error="${!!this.registrationPasswordErrorMessage}"
+        .errorText="${ifDefined(this.registrationPasswordErrorMessage)}"
       ></md-outlined-text-field>
       ${this.registrationQuestionsGroup
         ? html`
@@ -969,9 +1007,9 @@ export class YpLogin extends YpBaseElement {
         : nothing}
       <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
         ${this.customTermsIntroText} -
-        <span @click="${this._openTerms}" class="openTerms"
-          >${this.t("signupTermsOpen")}</span
-        >
+        <button type="button" @click="${this._openTerms}" class="openTerms">
+          ${this.t("signupTermsOpen")}
+        </button>
       </div>
     </div>`;
   }
@@ -1031,11 +1069,10 @@ export class YpLogin extends YpBaseElement {
         >
         <md-filled-button
           ?hidden="${this.forceSecureSamlLogin}"
-          autofocus
           raised
           class="boldButton"
           .label="${this.submitText}"
-          @click="${this._validateAndSend}"
+          @click="${() => this._validateAndSend(false)}"
         ></md-filled-button>
       </div>
     `;
@@ -1170,10 +1207,25 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
-  _keySaml(event: KeyboardEvent) {
-    if (event.keyCode == 13) {
+  _onFacebookKeydown(event: KeyboardEvent) {
+    this._handleKeyboardActivation(event, () => this._facebookLogin());
+  }
+
+  _onSamlKeydown(event: KeyboardEvent) {
+    this._handleKeyboardActivation(event, () => this._openSamlLogin());
+  }
+
+  _handleKeyboardActivation(
+    event: KeyboardEvent,
+    action: () => void
+  ): void {
+    if (
+      event.key === "Enter" ||
+      event.key === " " ||
+      event.key === "Spacebar"
+    ) {
       event.preventDefault();
-      this._openSamlLogin();
+      action();
     }
   }
 
@@ -1553,12 +1605,6 @@ export class YpLogin extends YpBaseElement {
         this.customSamlLoginText = undefined;
       }
 
-      setTimeout(() => {
-        //TODO: Make return work - shold work now 24112020
-        //this.$$('#a11y').target = this.$$('#form');
-        //this.$$('#email').focus();
-      }, 50);
-
       if (window.appGlobals.signupTermsPageId) {
         this.signupTermsId = window.appGlobals.signupTermsPageId;
       } else {
@@ -1570,6 +1616,20 @@ export class YpLogin extends YpBaseElement {
       } else {
         this.forceSecureSamlLogin = false;
       }
+
+      setTimeout(() => {
+        this._focusFirstLoginField();
+      }, 50);
+    }
+  }
+
+  _focusFirstLoginField() {
+    if (this.forceSecureSamlLogin) {
+      return;
+    }
+    const emailField = this.$$("#email") as TextField | null;
+    if (emailField) {
+      emailField.focus();
     }
   }
 
@@ -1637,7 +1697,7 @@ export class YpLogin extends YpBaseElement {
   }
 
   override disconnectedCallback() {
-    super.connectedCallback();
+    super.disconnectedCallback();
     this.removeListener("yp-domain-changed", this._domainEvent.bind(this));
     this.removeListener("yp-network-error", this._networkError.bind(this));
     this.removeGlobalListener(
@@ -1682,10 +1742,48 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
+  _resetValidationErrors() {
+    this.emailErrorMessage = undefined;
+    this.passwordErrorMessage = undefined;
+    this.registrationNameErrorMessage = undefined;
+    this.registrationEmailErrorMessage = undefined;
+    this.registrationPasswordErrorMessage = undefined;
+  }
+
   _setTexts() {
-    this.emailErrorMessage = this.t("inputError");
-    this.passwordErrorMessage = this.t("inputError");
+    this.inputErrorText = this.t("inputError");
     this.submitText = this.t("user.login");
+    this._resetValidationErrors();
+  }
+
+  _onLoginEmailInput() {
+    if (this.emailErrorMessage) {
+      this.emailErrorMessage = undefined;
+    }
+  }
+
+  _onLoginPasswordInput() {
+    if (this.passwordErrorMessage) {
+      this.passwordErrorMessage = undefined;
+    }
+  }
+
+  _onRegistrationNameInput() {
+    if (this.registrationNameErrorMessage) {
+      this.registrationNameErrorMessage = undefined;
+    }
+  }
+
+  _onRegistrationEmailInput() {
+    if (this.registrationEmailErrorMessage) {
+      this.registrationEmailErrorMessage = undefined;
+    }
+  }
+
+  _onRegistrationPasswordInput() {
+    if (this.registrationPasswordErrorMessage) {
+      this.registrationPasswordErrorMessage = undefined;
+    }
   }
 
   emailValue(registerMode: boolean | undefined = undefined) {
@@ -1755,46 +1853,96 @@ export class YpLogin extends YpBaseElement {
   }
 
   _validateAndSend(registerMode: boolean) {
-    if (!this.isSending) {
-      this.isSending = true;
-      window.appGlobals.analytics.sendLoginAndSignup(
-        -1,
-        registerMode ? "Signup Submit" : "Login Submit",
-        "Email"
-      );
-      if (
-        this.emailValue(registerMode) &&
-        this.passwordValue(registerMode) &&
-        (!registerMode ||
-          !this.registrationQuestionsGroup ||
-          (
-            this.$$("#registrationQuestions") as YpRegistrationQuestions
-          ).validate())
-      ) {
-        this.userSpinner = true;
-        this._setupJsonCredentials(registerMode);
-        if (registerMode) {
-          this._registerUser();
-        } else {
-          this._loginUser();
-        }
-        this.userSpinner = false;
-        return true;
-      } else {
-        //this.fire("yp-error", this.t("user.completeForm"));
-        window.appGlobals.analytics.sendLoginAndSignup(
-          -1,
-          registerMode ? "Signup Fail" : "Login Fail",
-          "Email",
-          "Form not validated"
-        );
-        this.isSending = false;
-        return false;
-      }
-    } else {
+    if (this.isSending) {
       console.warn("Trying to call _validateAndSend while sending");
       return false;
     }
+
+    this._resetValidationErrors();
+    this.isSending = true;
+    window.appGlobals.analytics.sendLoginAndSignup(
+      -1,
+      registerMode ? "Signup Submit" : "Login Submit",
+      "Email"
+    );
+
+    const email = this.emailValue(registerMode);
+    const password = this.passwordValue(registerMode);
+    const fullname = registerMode ? this.fullnameValue : undefined;
+
+    const emailField = (registerMode
+      ? this.$$("#regEmail")
+      : this.$$("#email")) as TextField | null;
+    const passwordField = (registerMode
+      ? this.$$("#regPassword")
+      : this.$$("#password")) as TextField | null;
+    const fullnameField = registerMode
+      ? (this.$$("#fullname") as TextField | null)
+      : null;
+
+    let formValid = true;
+    const invalidFields: (TextField | null)[] = [];
+
+    if (registerMode && (!fullname || fullname.length < 2)) {
+      this.registrationNameErrorMessage = this.inputErrorText;
+      formValid = false;
+      invalidFields.push(fullnameField);
+    }
+
+    if (!email) {
+      if (registerMode) {
+        this.registrationEmailErrorMessage = this.inputErrorText;
+      } else {
+        this.emailErrorMessage = this.inputErrorText;
+      }
+      formValid = false;
+      invalidFields.push(emailField);
+    }
+
+    if (!password) {
+      if (registerMode) {
+        this.registrationPasswordErrorMessage = this.inputErrorText;
+      } else {
+        this.passwordErrorMessage = this.inputErrorText;
+      }
+      formValid = false;
+      invalidFields.push(passwordField);
+    }
+
+    const registrationQuestionsValid =
+      !registerMode ||
+      !this.registrationQuestionsGroup ||
+      (
+        this.$$("#registrationQuestions") as YpRegistrationQuestions
+      ).validate();
+
+    formValid = formValid && registrationQuestionsValid;
+
+    const firstInvalidField = invalidFields.find(
+      (field): field is TextField => !!field
+    );
+
+    if (!formValid) {
+      firstInvalidField?.focus();
+      window.appGlobals.analytics.sendLoginAndSignup(
+        -1,
+        registerMode ? "Signup Fail" : "Login Fail",
+        "Email",
+        "Form not validated"
+      );
+      this.isSending = false;
+      return false;
+    }
+
+    this.userSpinner = true;
+    this._setupJsonCredentials(registerMode);
+    if (registerMode) {
+      this._registerUser();
+    } else {
+      this._loginUser();
+    }
+    this.userSpinner = false;
+    return true;
   }
 
   _loginAfterSavePassword(user: YpUserData) {
