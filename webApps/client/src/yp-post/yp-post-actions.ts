@@ -87,7 +87,7 @@ export class YpPostActions extends YpBaseElement {
         this.$$("#actionDown")!.className += " " + "default-buttons-color";
         this.$$("#actionUp")!.className += " " + "default-buttons-color";
       } else {
-        console.warn("Could not find action buttons in post actions");
+        console.debug("Could not find action buttons in post actions");
       }
     }
   }
@@ -309,6 +309,15 @@ export class YpPostActions extends YpBaseElement {
     if (this.onlyShowDebate) {
       return this.renderDebate();
     } else {
+      const formattedUpVotes = YpFormattingHelpers.number(
+        this.post.counter_endorsements_up
+      );
+      const formattedDownVotes = YpFormattingHelpers.number(
+        this.post.counter_endorsements_down
+      );
+      const upVoteCountLabel = `${this.customVoteUpHoverText}: ${formattedUpVotes}`;
+      const downVoteCountLabel = `${this.customVoteDownHoverText}: ${formattedDownVotes}`;
+
       return html`
         <div
           ?rtl="${this.rtl}"
@@ -345,8 +354,10 @@ export class YpPostActions extends YpBaseElement {
               ?rtl="${this.rtl}"
               class="action-text up-text"
               ?hidden="${this.hideVoteCount}"
+              role="text"
+              aria-label="${upVoteCountLabel}"
             >
-              ${YpFormattingHelpers.number(this.post.counter_endorsements_up)}
+              <span aria-hidden="true">${formattedUpVotes}</span>
             </div>
           </div>
 
@@ -373,8 +384,13 @@ export class YpPostActions extends YpBaseElement {
                 >${this.endorseModeIconDown}</md-icon
               ></md-filled-icon-button
             >
-            <div class="action-text down-text" ?hidden="${this.hideVoteCount}">
-              ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
+            <div
+              class="action-text down-text"
+              ?hidden="${this.hideVoteCount}"
+              role="text"
+              aria-label="${downVoteCountLabel}"
+            >
+              <span aria-hidden="true">${formattedDownVotes}</span>
             </div>
           </div>
           ${this.forceShowDebate ? this.renderDebate() : ""}
@@ -673,7 +689,7 @@ export class YpPostActions extends YpBaseElement {
         }
       }
     } else {
-      console.warn("Could not find action buttons in post actions");
+      console.debug("Could not find action buttons in post actions");
     }
 
     this.requestUpdate();

@@ -169,7 +169,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   }
 
   refresh(): void {
-    console.info("REFRESH");
     if (this.collection) {
       if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
@@ -201,11 +200,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
       if (this.$$("#collectionItems")) {
         (this.$$("#collectionItems") as YpCollectionItemsList).refresh();
-      } else {
-        console.error("No collection items for refresh call");
       }
     } else {
-      console.error("No collection for refresh");
+      console.debug("No collection for refresh");
     }
   }
 

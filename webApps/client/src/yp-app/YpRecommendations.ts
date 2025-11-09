@@ -142,7 +142,7 @@ export class YpRecommendations extends YpCodeBase {
 
         return post;
       } else {
-        console.warn("Recommendation no post for getSelectedPost, groupId: "+groupId);
+        console.debug("Recommendation no post for getSelectedPost, groupId: "+groupId);
         return null;
       }
     } else {
