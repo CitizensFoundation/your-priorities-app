@@ -2023,10 +2023,26 @@ export class YpPostEdit extends YpEditBase {
   override customFormResponse(event?: CustomEvent<YpPostData>) {
     window.appGlobals.groupLoadNewPost = true;
 
-    const updatedPost = event?.detail;
-    if (updatedPost && updatedPost.id) {
-      this._updateCachesWithPost(updatedPost);
+    const postForCache = this._buildPostForCache(event?.detail);
+    if (postForCache) {
+      this.post = postForCache;
+      this._updateCachesWithPost(postForCache);
     }
+  }
+
+  _buildPostForCache(serverResponse?: YpPostData) {
+    const basePost = this.post ?? serverResponse;
+    if (!basePost) {
+      return undefined;
+    }
+
+    const mergedPost = {
+      ...basePost,
+      ...(serverResponse || {}),
+      Group: serverResponse?.Group ?? basePost.Group,
+    } as YpPostData;
+
+    return mergedPost.Group ? mergedPost : undefined;
   }
 
   _updateCachesWithPost(post: YpPostData) {
