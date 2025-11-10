@@ -901,12 +901,17 @@ export class YpPostEdit extends YpEditBase {
                   class="categoryDropDown"
                   .label="${this.t("category.select")}"
                   .selectedIndex="${this.selectedCategoryArrayId ?? -1}"
+                  .value="${this.selectedCategoryId != null
+                    ? this.selectedCategoryId.toString()
+                    : ""}"
                   @change="${this._selectedCategory}"
                   ?required="${this.group.configuration.makeCategoryRequiredOnNewPost}"
                 >
                   ${this.group.Categories.map(
                     (category) => html`
-                      <md-select-option .data-category-id="${category.id}"
+                      <md-select-option
+                        value="${category.id}"
+                        data-category-id="${category.id}"
                         >${category.name}</md-select-option
                       >
                     `
@@ -2210,13 +2215,26 @@ export class YpPostEdit extends YpEditBase {
 
   _selectedCategory(event: Event) {
     const select = event.target as MdOutlinedSelect;
-    this.selectedCategoryArrayId = select.selectedIndex;
+    const selectedValue = select.value;
+
+    if (selectedValue && this.group?.Categories) {
+      this.selectedCategoryId = Number(selectedValue);
+      this.selectedCategoryArrayId = this.getPositionInArrayFromId(
+        this.group.Categories,
+        this.selectedCategoryId
+      );
+    } else {
+      this.selectedCategoryId = undefined;
+      this.selectedCategoryArrayId = undefined;
+    }
   }
 
   _selectedCategoryChanged() {
     if (this.selectedCategoryArrayId != null && this.group && this.group.Categories) {
       this.selectedCategoryId =
         this.group.Categories[this.selectedCategoryArrayId].id;
+    } else {
+      this.selectedCategoryId = undefined;
     }
   }
 
