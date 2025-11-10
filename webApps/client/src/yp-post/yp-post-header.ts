@@ -181,6 +181,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           }
 
           .coverContainer {
+            margin-right: 0;
             width: 100%;
           }
 

@@ -102,19 +102,20 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         md-dialog {
-          // height: 100%;
-          width: 1024px;
-          height: 100%;
+          width: min(1024px, calc(100vw - 32px));
+          max-width: min(1024px, calc(100vw - 32px));
+          height: auto;
+          max-height: min(90vh, calc(100vh - 32px), calc(100dvh - 32px));
           --md-dialog-container-color: var(
             --md-sys-color-surface-container-lowest
           );
         }
 
         md-dialog.popUpDialogDouble {
-          width: 1024px;
-          max-width: 1024px;
-          height: 100%;
-          max-height: 750px;
+          width: min(1024px, calc(100vw - 32px));
+          max-width: min(1024px, calc(100vw - 32px));
+          height: auto;
+          max-height: min(750px, 90vh, calc(100vh - 32px), calc(100dvh - 32px));
         }
 
         md-dialog[open][is-safari] {
@@ -127,9 +128,9 @@ export class YpEditDialog extends YpBaseElement {
           top: 0;
           bottom: 0;
           margin: 0;
-          min-width: 360px;
-          max-width: 1024px;
-          width: 100%;
+          min-width: min(360px, 100%);
+          max-width: min(1024px, calc(100vw - 16px));
+          width: min(100%, calc(100vw - 16px));
         }
 
         [main] {
@@ -170,13 +171,13 @@ export class YpEditDialog extends YpBaseElement {
 
         @media (max-width: 1024px) {
           .fullScreenDialog {
-            min-width: 320px;
+            min-width: min(360px, 100%);
           }
         }
 
         @media (max-width: 359px) {
           .fullScreenDialog {
-            min-width: 320px;
+            min-width: min(360px, 100%);
           }
         }
 
