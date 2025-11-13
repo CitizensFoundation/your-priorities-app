@@ -605,6 +605,42 @@ export class NewAiModelSetup {
       await openAiGpt5.save();
       log.debug("OpenAI model already exists: GPT-5");
     }
+
+    const openAiGpt51 = await PsAiModel.findOne({
+      where: { name: "GPT-5.1" },
+    });
+
+    const openAiGpt51Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 1.25,
+        costOutTokensPerMillion: 10.0,
+        costInCachedContextTokensPerMillion: 0.125,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 400000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.1",
+      active: true,
+    };
+
+    if (!openAiGpt51) {
+      await PsAiModel.create({
+        name: "GPT-5.1",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt51Config,
+      });
+      log.info("Created OpenAI model: GPT-5.1");
+    } else {
+      openAiGpt51.set("configuration", openAiGpt51Config);
+      openAiGpt51.changed("configuration", true);
+      await openAiGpt51.save();
+      log.debug("OpenAI model already exists: GPT-5.1");
+    }
   }
 
   /**
@@ -1000,6 +1036,8 @@ export class NewAiModelSetup {
       { name: "GPT-4.1 mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4.1 nano", envKey: "OPENAI_API_KEY" },
       { name: "o3", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
     ];
 
     const groupAccessConfig: { aiModelId: number; apiKey: string }[] = [];
