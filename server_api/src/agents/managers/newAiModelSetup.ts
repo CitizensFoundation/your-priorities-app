@@ -647,80 +647,7 @@ export class NewAiModelSetup {
    * Seeds Google models.
    * Currently, this creates Gemini 1.5 Pro 2 and Gemini 1.5 Flash 2.
    */
-  static async seedGoogleModels(userId: number): Promise<void> {
-    // Gemini 1.5 Pro 2
-    const geminiPro = await PsAiModel.findOne({
-      where: { name: "Gemini 1.5 Pro 2" },
-    });
-    const geminiProConfig: PsAiModelConfiguration = {
-      type: PsAiModelType.Text,
-      modelSize: PsAiModelSize.Medium,
-      provider: "google",
-      prices: {
-        costInTokensPerMillion: 1.25,
-        costOutTokensPerMillion: 5.0,
-        costInCachedContextTokensPerMillion: 0.875,
-        currency: "USD",
-      },
-      maxTokensOut: 8192,
-      maxContextTokens: 1000000,
-      defaultTemperature: 0.0,
-      model: "gemini-1.5-pro-002",
-      active: true,
-    };
-
-    if (!geminiPro) {
-      await PsAiModel.create({
-        name: "Gemini 1.5 Pro 2",
-        organization_id: 1,
-        user_id: userId,
-        configuration: geminiProConfig,
-      });
-      log.info("Created Google model: Gemini 1.5 Pro 2");
-    } else {
-      geminiPro.set("configuration", geminiProConfig);
-      geminiPro.changed("configuration", true);
-      await geminiPro.save();
-      log.debug("Google model already exists: Gemini 1.5 Pro 2");
-    }
-
-    // Gemini 1.5 Flash 2
-    const geminiPro15Flash = await PsAiModel.findOne({
-      where: { name: "Gemini 1.5 Flash 2" },
-    });
-    const geminiPro15FlashConfig: PsAiModelConfiguration = {
-      type: PsAiModelType.Text,
-      modelSize: PsAiModelSize.Small,
-      provider: "google",
-      prices: {
-        costInTokensPerMillion: 0.075,
-        costOutTokensPerMillion: 0.3,
-        costInCachedContextTokensPerMillion: 0.525,
-        currency: "USD",
-      },
-      maxTokensOut: 8192,
-      maxContextTokens: 1000000,
-      defaultTemperature: 0.0,
-      model: "gemini-1.5-flash-002",
-      active: true,
-    };
-
-    if (!geminiPro15Flash) {
-      await PsAiModel.create({
-        name: "Gemini 1.5 Flash 2",
-        organization_id: 1,
-        user_id: userId,
-        configuration: geminiPro15FlashConfig,
-      });
-      log.info("Created Google model: Gemini 1.5 Flash 2");
-    } else {
-      geminiPro15Flash.set("configuration", geminiPro15FlashConfig);
-      geminiPro15Flash.changed("configuration", true);
-      await geminiPro15Flash.save();
-      log.debug("Google model already exists: Gemini 1.5 Flash 2");
-    }
-
-    // Gemini 2.0 Flash
+  static async seedGoogleModels(userId: number): Promise<void> {    // Gemini 2.0 Flash
     const gemini20Flash = await PsAiModel.findOne({
       where: { name: "Gemini 2.0 Flash" },
     });
@@ -909,6 +836,82 @@ export class NewAiModelSetup {
       await gemini25Flash.save();
       log.debug("Google model already exists: Gemini 2.5 Flash");
     }
+
+    const gemini3ProPreview = await PsAiModel.findOne({
+      where: { name: "Gemini 3 Pro Preview" },
+    });
+
+    const gemini3ProPreviewConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Medium,
+      provider: "google",
+      prices: {
+        costInTokensPerMillion: 2,
+        costOutTokensPerMillion: 12,
+        costInCachedContextTokensPerMillion: 1,
+        longContextTokenThreshold: 200_000,
+        longContextCostInTokensPerMillion: 4.0,
+        longContextCostInCachedContextTokensPerMillion: 2,
+        longContextCostOutTokensPerMillion: 18,
+        currency: "USD",
+      },
+      model: "gemini-3-pro-preview",
+      active: true,
+      maxTokensOut: 100000,
+      maxContextTokens: 1000000,
+      defaultTemperature: 0.0,
+    };
+
+    if (!gemini3ProPreview) {
+      await PsAiModel.create({
+        name: "Gemini 3 Pro Preview",
+        organization_id: 1,
+        user_id: userId,
+        configuration: gemini3ProPreviewConfig,
+      });
+      log.info("Created Google model: Gemini 3 Pro Preview");
+    } else {
+      gemini3ProPreview.set("configuration", gemini3ProPreviewConfig);
+      gemini3ProPreview.changed("configuration", true);
+      await gemini3ProPreview.save();
+      log.debug("Google model already exists: Gemini 3 Pro Preview");
+    }
+
+    const gemini3FlashPreview = await PsAiModel.findOne({
+      where: { name: "Gemini 3 Flash Preview" },
+    });
+
+    const gemini3FlashPreviewConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Medium,
+      provider: "google",
+      prices: {
+        costInTokensPerMillion: 0.1,
+        costOutTokensPerMillion: 0.4,
+        costInCachedContextTokensPerMillion: 0.07,
+        currency: "USD",
+      },
+      model: "gemini-3-flash-preview",
+      active: true,
+      maxTokensOut: 100000,
+      maxContextTokens: 1000000,
+      defaultTemperature: 0.0,
+    };
+
+    if (!gemini3FlashPreview) {
+      await PsAiModel.create({
+        name: "Gemini 3 Flash Preview",
+        organization_id: 1,
+        user_id: userId,
+        configuration: gemini3FlashPreviewConfig,
+      });
+    }
+    else {
+      gemini3FlashPreview.set("configuration", gemini3FlashPreviewConfig);
+      gemini3FlashPreview.changed("configuration", true);
+      await gemini3FlashPreview.save();
+      log.debug("Google model already exists: Gemini 3 Flash Preview");
+    }
   }
 
   /**
@@ -1023,13 +1026,10 @@ export class NewAiModelSetup {
       { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
       { name: "o1 Preview", envKey: "OPENAI_API_KEY" },
       { name: "o1 Mini", envKey: "OPENAI_API_KEY" },
-      { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
-      { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.5 Pro", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.5 Flash Preview 1", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 2.5 Flash Preview", envKey: "GEMINI_API_KEY" },
-      { name: "o1 24", envKey: "OPENAI_API_KEY" },
       { name: "o3 mini", envKey: "OPENAI_API_KEY" },
       { name: "o4 mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4.1", envKey: "OPENAI_API_KEY" },
