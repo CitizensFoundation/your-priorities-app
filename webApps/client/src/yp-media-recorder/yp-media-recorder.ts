@@ -337,15 +337,20 @@ export class YpMediaRecorder extends YpBaseElement {
             <label>
               Landscape
               <md-radio
-                @click="${this._setVideoAspect}"
-                checked
+                name="videoAspectOptions"
+                @change="${this._setVideoAspect}"
+                ?checked="${this.videoAspect === "landscape"}"
                 value="landscape"
                 ><md-icon>landscape</md-icon></md-radio
               >
             </label>
             <label
               >Portrait
-              <md-radio value="portrait" @click="${this._setVideoAspect}"
+              <md-radio
+                name="videoAspectOptions"
+                value="portrait"
+                @change="${this._setVideoAspect}"
+                ?checked="${this.videoAspect === "portrait"}"
                 ><md-icon>portrait</md-icon></md-radio
               >
             </label>
@@ -448,6 +453,7 @@ export class YpMediaRecorder extends YpBaseElement {
                     name="videoAspect"
                     @change="${this._setVideoAspect}"
                     value="landscape"
+                    ?checked="${this.videoAspect === "landscape"}"
                   >
                   </md-radio>
                   landscape
@@ -457,6 +463,7 @@ export class YpMediaRecorder extends YpBaseElement {
                     name="videoAspect"
                     @change="${this._setVideoAspect}"
                     value="portrait"
+                    ?checked="${this.videoAspect === "portrait"}"
                   >
                   </md-radio>
                   portrait
@@ -515,9 +522,15 @@ export class YpMediaRecorder extends YpBaseElement {
   }
 
   _setVideoAspect(event: CustomEvent) {
-    debugger;
-    this.videoAspect = (event.target as HTMLInputElement).value as string;
-    debugger;
+    const target = event.currentTarget as HTMLElement;
+    const value =
+      (target as HTMLInputElement).value ||
+      target.getAttribute?.("value") ||
+      (event.target as HTMLInputElement).value;
+
+    if (value === "landscape" || value === "portrait") {
+      this.videoAspect = value;
+    }
   }
 
   _selectAudioDevice(event: CustomEvent) {
@@ -676,7 +689,6 @@ export class YpMediaRecorder extends YpBaseElement {
   }
 
   _openMediaSession(callback: Function | undefined) {
-    debugger;
     if (callback) {
       if (this.selectedVideoDeviceId) {
         this.videoSettings!.deviceId = this.selectedVideoDeviceId;
