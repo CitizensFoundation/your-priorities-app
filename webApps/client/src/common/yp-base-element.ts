@@ -47,6 +47,57 @@ export class YpBaseElement extends LitElement {
           display: none !important;
         }
 
+        /* Tiny viewport support for md-dialog (e.g. 500% zoom in landscape) */
+        @media (max-height: 420px), (max-width: 520px) and (orientation: landscape) {
+          md-dialog {
+            /* Remove rigid defaults so the dialog can fit in ultra-small viewports */
+            max-width: calc(100dvw - 12px);
+            max-height: calc(100dvh - 12px);
+            min-width: auto;
+            min-height: auto;
+            margin: 4px;
+            /* Slightly tighter typography reduces vertical footprint */
+            --md-dialog-headline-size: 16px;
+            --md-dialog-supporting-text-size: 14px;
+          }
+
+          /* Compress headline/content padding so real content remains visible */
+          md-dialog [slot="headline"] {
+            padding: 8px 12px 0;
+            line-height: 1.2;
+          }
+
+          md-dialog [slot="content"] {
+            padding: 12px;
+          }
+
+          md-dialog [slot="actions"] {
+            padding: 8px 12px 12px;
+            gap: 8px;
+          }
+
+          /* Icons eat vertical space on ultra-small viewports; hide them but keep headline/aria-label intact. */
+          md-dialog [slot="icon"] {
+            display: none !important;
+          }
+        }
+
+        /* If the viewport is extremely short, visually hide headline text
+           while keeping it in the accessibility tree for screen readers. */
+        @media (max-height: 300px) {
+          md-dialog [slot="headline"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+          }
+        }
+
         .lightDarkContainer {
           padding-left: 8px;
           padding-right: 8px;

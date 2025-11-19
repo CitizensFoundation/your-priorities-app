@@ -120,7 +120,6 @@ services:
     build: ./your-priorities-encoder/
     restart: unless-stopped
     env_file: .env
-    restart: unless-stopped
     environment:
       - NODE_ENV=production
     command: node out-tsc/worker.js
@@ -128,7 +127,7 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-file: "100"
+        max-file: "10"
         max-size: "25m"
 
   minio:
