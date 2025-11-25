@@ -51,47 +51,11 @@ export class NewAiModelSetup {
      * Seeds the test AI models (and a top-level agent class) if they do not exist.
      * @param userId the user id to associate with the new models
      */
-    static async seedAnthropicModels(userId) {
-        const anthropicSonnet = await PsAiModel.findOne({
-            where: { name: "Anthropic Sonnet 3.5" },
+    static async seedAnthropic45Models(userId) {
+        const anthropicSonnet45 = await PsAiModel.findOne({
+            where: { name: "Anthropic Sonnet 4.5" },
         });
-        const anthropicSonnetConfig = {
-            type: PsAiModelType.Text,
-            modelSize: PsAiModelSize.Medium,
-            provider: "anthropic",
-            prices: {
-                costInTokensPerMillion: 3,
-                costOutTokensPerMillion: 15,
-                costInCachedContextTokensPerMillion: 0.3,
-                currency: "USD",
-            },
-            maxTokensOut: 8000,
-            maxContextTokens: 200000,
-            defaultTemperature: 0.7,
-            model: "claude-3-5-sonnet-20240620",
-            active: true,
-        };
-        if (!anthropicSonnet) {
-            const createdModel = await PsAiModel.create({
-                name: "Anthropic Sonnet 3.5",
-                organization_id: 1,
-                user_id: userId,
-                configuration: anthropicSonnetConfig,
-            });
-            log.info("Created Anthropic model:", createdModel);
-        }
-        else {
-            log.debug("Anthropic model already exists: Anthropic Sonnet 3.5");
-            anthropicSonnet.set("configuration", anthropicSonnetConfig);
-            anthropicSonnet.changed("configuration", true);
-            await anthropicSonnet.save();
-        }
-    }
-    static async seedAnthropic37Models(userId) {
-        const anthropicSonnet = await PsAiModel.findOne({
-            where: { name: "Anthropic Sonnet 3.7" },
-        });
-        const anthropicSonnetConfig = {
+        const anthropicSonnet45Config = {
             type: PsAiModelType.TextReasoning,
             modelSize: PsAiModelSize.Medium,
             provider: "anthropic",
@@ -101,26 +65,60 @@ export class NewAiModelSetup {
                 costInCachedContextTokensPerMillion: 0.3,
                 currency: "USD",
             },
-            maxTokensOut: 8000,
+            maxTokensOut: 64000,
             maxContextTokens: 200000,
             defaultTemperature: 0.7,
-            model: "claude-3-7-sonnet-20250219",
+            model: "claude-sonnet-4-5-20250929",
             active: true,
         };
-        if (!anthropicSonnet) {
+        if (!anthropicSonnet45) {
             const createdModel = await PsAiModel.create({
-                name: "Anthropic Sonnet 3.7",
+                name: "Anthropic Sonnet 4.5",
                 organization_id: 1,
                 user_id: userId,
-                configuration: anthropicSonnetConfig,
+                configuration: anthropicSonnet45Config,
             });
             log.info("Created Anthropic model:", createdModel);
         }
         else {
-            log.debug("Anthropic model already exists: Anthropic Sonnet 3.7");
-            anthropicSonnet.set("configuration", anthropicSonnetConfig);
-            anthropicSonnet.changed("configuration", true);
-            await anthropicSonnet.save();
+            log.debug("Anthropic model already exists: Anthropic Sonnet 4.5");
+            anthropicSonnet45.set("configuration", anthropicSonnet45Config);
+            anthropicSonnet45.changed("configuration", true);
+            await anthropicSonnet45.save();
+        }
+        const anthropicOpus45 = await PsAiModel.findOne({
+            where: { name: "Anthropic Opus 4.5" },
+        });
+        const anthropicOpus45Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "anthropic",
+            prices: {
+                costInTokensPerMillion: 5,
+                costOutTokensPerMillion: 25,
+                costInCachedContextTokensPerMillion: 0.5,
+                currency: "USD",
+            },
+            maxTokensOut: 64000,
+            maxContextTokens: 200000,
+            defaultTemperature: 0.7,
+            model: "claude-opus-4-5-20251101",
+            active: true,
+        };
+        if (!anthropicOpus45) {
+            const createdModel = await PsAiModel.create({
+                name: "Anthropic Opus 4.5",
+                organization_id: 1,
+                user_id: userId,
+                configuration: anthropicOpus45Config,
+            });
+            log.info("Created Anthropic model:", createdModel);
+        }
+        else {
+            log.debug("Anthropic model already exists: Anthropic Opus 4.5");
+            anthropicOpus45.set("configuration", anthropicOpus45Config);
+            anthropicOpus45.changed("configuration", true);
+            await anthropicOpus45.save();
         }
     }
     /**
@@ -577,83 +575,46 @@ export class NewAiModelSetup {
             await openAiGpt5.save();
             log.debug("OpenAI model already exists: GPT-5");
         }
+        const openAiGpt51 = await PsAiModel.findOne({
+            where: { name: "GPT-5.1" },
+        });
+        const openAiGpt51Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 1.25,
+                costOutTokensPerMillion: 10.0,
+                costInCachedContextTokensPerMillion: 0.125,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 400000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.1",
+            active: true,
+        };
+        if (!openAiGpt51) {
+            await PsAiModel.create({
+                name: "GPT-5.1",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt51Config,
+            });
+            log.info("Created OpenAI model: GPT-5.1");
+        }
+        else {
+            openAiGpt51.set("configuration", openAiGpt51Config);
+            openAiGpt51.changed("configuration", true);
+            await openAiGpt51.save();
+            log.debug("OpenAI model already exists: GPT-5.1");
+        }
     }
     /**
      * Seeds Google models.
      * Currently, this creates Gemini 1.5 Pro 2 and Gemini 1.5 Flash 2.
      */
     static async seedGoogleModels(userId) {
-        // Gemini 1.5 Pro 2
-        const geminiPro = await PsAiModel.findOne({
-            where: { name: "Gemini 1.5 Pro 2" },
-        });
-        const geminiProConfig = {
-            type: PsAiModelType.Text,
-            modelSize: PsAiModelSize.Medium,
-            provider: "google",
-            prices: {
-                costInTokensPerMillion: 1.25,
-                costOutTokensPerMillion: 5.0,
-                costInCachedContextTokensPerMillion: 0.875,
-                currency: "USD",
-            },
-            maxTokensOut: 8192,
-            maxContextTokens: 1000000,
-            defaultTemperature: 0.0,
-            model: "gemini-1.5-pro-002",
-            active: true,
-        };
-        if (!geminiPro) {
-            await PsAiModel.create({
-                name: "Gemini 1.5 Pro 2",
-                organization_id: 1,
-                user_id: userId,
-                configuration: geminiProConfig,
-            });
-            log.info("Created Google model: Gemini 1.5 Pro 2");
-        }
-        else {
-            geminiPro.set("configuration", geminiProConfig);
-            geminiPro.changed("configuration", true);
-            await geminiPro.save();
-            log.debug("Google model already exists: Gemini 1.5 Pro 2");
-        }
-        // Gemini 1.5 Flash 2
-        const geminiPro15Flash = await PsAiModel.findOne({
-            where: { name: "Gemini 1.5 Flash 2" },
-        });
-        const geminiPro15FlashConfig = {
-            type: PsAiModelType.Text,
-            modelSize: PsAiModelSize.Small,
-            provider: "google",
-            prices: {
-                costInTokensPerMillion: 0.075,
-                costOutTokensPerMillion: 0.3,
-                costInCachedContextTokensPerMillion: 0.525,
-                currency: "USD",
-            },
-            maxTokensOut: 8192,
-            maxContextTokens: 1000000,
-            defaultTemperature: 0.0,
-            model: "gemini-1.5-flash-002",
-            active: true,
-        };
-        if (!geminiPro15Flash) {
-            await PsAiModel.create({
-                name: "Gemini 1.5 Flash 2",
-                organization_id: 1,
-                user_id: userId,
-                configuration: geminiPro15FlashConfig,
-            });
-            log.info("Created Google model: Gemini 1.5 Flash 2");
-        }
-        else {
-            geminiPro15Flash.set("configuration", geminiPro15FlashConfig);
-            geminiPro15Flash.changed("configuration", true);
-            await geminiPro15Flash.save();
-            log.debug("Google model already exists: Gemini 1.5 Flash 2");
-        }
-        // Gemini 2.0 Flash
         const gemini20Flash = await PsAiModel.findOne({
             where: { name: "Gemini 2.0 Flash" },
         });
@@ -798,6 +759,110 @@ export class NewAiModelSetup {
             await gemini25FlashPreview.save();
             log.debug("Google model already exists: Gemini 2.5 Flash Preview");
         }
+        const gemini25Flash = await PsAiModel.findOne({
+            where: { name: "Gemini 2.5 Flash" },
+        });
+        const gemini25FlashConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.30,
+                costOutTokensPerMillion: 2.5,
+                costInCachedContextTokensPerMillion: 0.15,
+                currency: "USD",
+            },
+            model: "gemini-2.5-flash",
+            active: true,
+            maxTokensOut: 32000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini25Flash) {
+            await PsAiModel.create({
+                name: "Gemini 2.5 Flash",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini25FlashConfig,
+            });
+        }
+        else {
+            gemini25Flash.set("configuration", gemini25FlashConfig);
+            gemini25Flash.changed("configuration", true);
+            await gemini25Flash.save();
+            log.debug("Google model already exists: Gemini 2.5 Flash");
+        }
+        const gemini3ProPreview = await PsAiModel.findOne({
+            where: { name: "Gemini 3 Pro Preview" },
+        });
+        const gemini3ProPreviewConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 2,
+                costOutTokensPerMillion: 12,
+                costInCachedContextTokensPerMillion: 1,
+                longContextTokenThreshold: 200000,
+                longContextCostInTokensPerMillion: 4.0,
+                longContextCostInCachedContextTokensPerMillion: 2,
+                longContextCostOutTokensPerMillion: 18,
+                currency: "USD",
+            },
+            model: "gemini-3-pro-preview",
+            active: true,
+            maxTokensOut: 100000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini3ProPreview) {
+            await PsAiModel.create({
+                name: "Gemini 3 Pro Preview",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini3ProPreviewConfig,
+            });
+            log.info("Created Google model: Gemini 3 Pro Preview");
+        }
+        else {
+            gemini3ProPreview.set("configuration", gemini3ProPreviewConfig);
+            gemini3ProPreview.changed("configuration", true);
+            await gemini3ProPreview.save();
+            log.debug("Google model already exists: Gemini 3 Pro Preview");
+        }
+        const gemini3FlashPreview = await PsAiModel.findOne({
+            where: { name: "Gemini 3 Flash Preview" },
+        });
+        const gemini3FlashPreviewConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.1,
+                costOutTokensPerMillion: 0.4,
+                costInCachedContextTokensPerMillion: 0.07,
+                currency: "USD",
+            },
+            model: "gemini-3-flash-preview",
+            active: true,
+            maxTokensOut: 100000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini3FlashPreview) {
+            await PsAiModel.create({
+                name: "Gemini 3 Flash Preview",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini3FlashPreviewConfig,
+            });
+        }
+        else {
+            gemini3FlashPreview.set("configuration", gemini3FlashPreviewConfig);
+            gemini3FlashPreview.changed("configuration", true);
+            await gemini3FlashPreview.save();
+            log.debug("Google model already exists: Gemini 3 Flash Preview");
+        }
     }
     /**
      * Master seeding function which calls the provider-specific functions
@@ -805,8 +870,7 @@ export class NewAiModelSetup {
      */
     static async seedAiModels(userId) {
         try {
-            await NewAiModelSetup.seedAnthropicModels(userId);
-            await NewAiModelSetup.seedAnthropic37Models(userId);
+            await NewAiModelSetup.seedAnthropic45Models(userId);
             await NewAiModelSetup.seedOpenAiModels(userId);
             await NewAiModelSetup.seedGoogleModels(userId);
             // Optionally, seed the top-level agent class if it does not exist.
@@ -895,26 +959,25 @@ export class NewAiModelSetup {
         // Define a mapping between model names and their required API key
         // Explicitly type envKey as a key of apiKeys
         const modelsMapping = [
-            { name: "Anthropic Sonnet 3.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
-            { name: "Anthropic Sonnet 3.7", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+            { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+            { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
             { name: "o1 Preview", envKey: "OPENAI_API_KEY" },
             { name: "o1 Mini", envKey: "OPENAI_API_KEY" },
-            { name: "Gemini 1.5 Pro 2", envKey: "GEMINI_API_KEY" },
-            { name: "Gemini 1.5 Flash 2", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.0 Flash", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.5 Pro", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.5 Flash Preview 1", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 2.5 Flash Preview", envKey: "GEMINI_API_KEY" },
-            { name: "o1 24", envKey: "OPENAI_API_KEY" },
             { name: "o3 mini", envKey: "OPENAI_API_KEY" },
             { name: "o4 mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.1", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.1 mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.1 nano", envKey: "OPENAI_API_KEY" },
             { name: "o3", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
         ];
         const groupAccessConfig = [];
         for (const { name, envKey } of modelsMapping) {

@@ -62,48 +62,11 @@ export class NewAiModelSetup {
    * Seeds the test AI models (and a top-level agent class) if they do not exist.
    * @param userId the user id to associate with the new models
    */
-  static async seedAnthropicModels(userId: number): Promise<void> {
-    const anthropicSonnet = await PsAiModel.findOne({
-      where: { name: "Anthropic Sonnet 3.5" },
+  static async seedAnthropic45Models(userId: number): Promise<void> {
+    const anthropicSonnet45 = await PsAiModel.findOne({
+      where: { name: "Anthropic Sonnet 4.5" },
     });
-    const anthropicSonnetConfig: PsAiModelConfiguration = {
-      type: PsAiModelType.Text,
-      modelSize: PsAiModelSize.Medium,
-      provider: "anthropic",
-      prices: {
-        costInTokensPerMillion: 3,
-        costOutTokensPerMillion: 15,
-        costInCachedContextTokensPerMillion: 0.3,
-        currency: "USD",
-      },
-      maxTokensOut: 8000,
-      maxContextTokens: 200000,
-      defaultTemperature: 0.7,
-      model: "claude-3-5-sonnet-20240620",
-      active: true,
-    };
-
-    if (!anthropicSonnet) {
-      const createdModel = await PsAiModel.create({
-        name: "Anthropic Sonnet 3.5",
-        organization_id: 1,
-        user_id: userId,
-        configuration: anthropicSonnetConfig,
-      });
-      log.info("Created Anthropic model:", createdModel);
-    } else {
-      log.debug("Anthropic model already exists: Anthropic Sonnet 3.5");
-      anthropicSonnet.set("configuration", anthropicSonnetConfig);
-      anthropicSonnet.changed("configuration", true);
-      await anthropicSonnet.save();
-    }
-  }
-
-  static async seedAnthropic37Models(userId: number): Promise<void> {
-    const anthropicSonnet = await PsAiModel.findOne({
-      where: { name: "Anthropic Sonnet 3.7" },
-    });
-    const anthropicSonnetConfig: PsAiModelConfiguration = {
+    const anthropicSonnet45Config: PsAiModelConfiguration = {
       type: PsAiModelType.TextReasoning,
       modelSize: PsAiModelSize.Medium,
       provider: "anthropic",
@@ -113,25 +76,61 @@ export class NewAiModelSetup {
         costInCachedContextTokensPerMillion: 0.3,
         currency: "USD",
       },
-      maxTokensOut: 8000,
+      maxTokensOut: 64000,
       maxContextTokens: 200000,
       defaultTemperature: 0.7,
-      model: "claude-3-7-sonnet-20250219",
+      model: "claude-sonnet-4-5-20250929",
       active: true,
     };
-    if (!anthropicSonnet) {
+
+    if (!anthropicSonnet45) {
       const createdModel = await PsAiModel.create({
-        name: "Anthropic Sonnet 3.7",
+        name: "Anthropic Sonnet 4.5",
         organization_id: 1,
         user_id: userId,
-        configuration: anthropicSonnetConfig,
+        configuration: anthropicSonnet45Config,
       });
       log.info("Created Anthropic model:", createdModel);
     } else {
-      log.debug("Anthropic model already exists: Anthropic Sonnet 3.7");
-      anthropicSonnet.set("configuration", anthropicSonnetConfig);
-      anthropicSonnet.changed("configuration", true);
-      await anthropicSonnet.save();
+      log.debug("Anthropic model already exists: Anthropic Sonnet 4.5");
+      anthropicSonnet45.set("configuration", anthropicSonnet45Config);
+      anthropicSonnet45.changed("configuration", true);
+      await anthropicSonnet45.save();
+    }
+
+    const anthropicOpus45 = await PsAiModel.findOne({
+      where: { name: "Anthropic Opus 4.5" },
+    });
+    const anthropicOpus45Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "anthropic",
+      prices: {
+        costInTokensPerMillion: 5,
+        costOutTokensPerMillion: 25,
+        costInCachedContextTokensPerMillion: 0.5,
+        currency: "USD",
+      },
+      maxTokensOut: 64000,
+      maxContextTokens: 200000,
+      defaultTemperature: 0.7,
+      model: "claude-opus-4-5-20251101",
+      active: true,
+    };
+
+    if (!anthropicOpus45) {
+      const createdModel = await PsAiModel.create({
+        name: "Anthropic Opus 4.5",
+        organization_id: 1,
+        user_id: userId,
+        configuration: anthropicOpus45Config,
+      });
+      log.info("Created Anthropic model:", createdModel);
+    } else {
+      log.debug("Anthropic model already exists: Anthropic Opus 4.5");
+      anthropicOpus45.set("configuration", anthropicOpus45Config);
+      anthropicOpus45.changed("configuration", true);
+      await anthropicOpus45.save();
     }
   }
 
@@ -920,8 +919,7 @@ export class NewAiModelSetup {
    */
   static async seedAiModels(userId: number): Promise<void> {
     try {
-      await NewAiModelSetup.seedAnthropicModels(userId);
-      await NewAiModelSetup.seedAnthropic37Models(userId);
+      await NewAiModelSetup.seedAnthropic45Models(userId);
       await NewAiModelSetup.seedOpenAiModels(userId);
       await NewAiModelSetup.seedGoogleModels(userId);
 
@@ -1019,8 +1017,8 @@ export class NewAiModelSetup {
     // Define a mapping between model names and their required API key
     // Explicitly type envKey as a key of apiKeys
     const modelsMapping: { name: string; envKey: keyof typeof apiKeys }[] = [
-      { name: "Anthropic Sonnet 3.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
-      { name: "Anthropic Sonnet 3.7", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },

@@ -7,8 +7,7 @@ export declare class NewAiModelSetup {
      * Seeds the test AI models (and a top-level agent class) if they do not exist.
      * @param userId the user id to associate with the new models
      */
-    static seedAnthropicModels(userId: number): Promise<void>;
-    static seedAnthropic37Models(userId: number): Promise<void>;
+    static seedAnthropic45Models(userId: number): Promise<void>;
     /**
      * Seeds OpenAI models.
      * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
