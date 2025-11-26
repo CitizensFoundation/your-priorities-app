@@ -57,7 +57,7 @@ export class YpServerApi extends YpServerApiBase {
   public getRecommendationsForGroup(groupId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/recommendations/groups/${groupId}/getPostRecommendations`,
+      `/recommendations/groups/${groupId}/getPostRecommendations`,
       {
         method: 'PUT',
         body: JSON.stringify({}),
@@ -146,12 +146,12 @@ export class YpServerApi extends YpServerApiBase {
   public startGeneratingAiImage(collectionType: string, collectionId: number, imageType: string, prompt: string) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${YpServerApi.transformCollectionTypeToApi(
-          collectionType
-        )}/${collectionId}/start_generating/ai_image`,{
-          method: 'POST',
-          body: JSON.stringify({prompt, imageType}),
-        }
+      `/${YpServerApi.transformCollectionTypeToApi(
+        collectionType
+      )}/${collectionId}/start_generating/ai_image`, {
+      method: 'POST',
+      body: JSON.stringify({ prompt, imageType }),
+    }
     );
   }
 
@@ -164,18 +164,18 @@ export class YpServerApi extends YpServerApiBase {
   public pollForGeneratingAiImage(collectionType: string, collectionId: number, jobId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${YpServerApi.transformCollectionTypeToApi(
-          collectionType
-        )}/${collectionId}/${jobId}/poll_for_generating_ai_image`
+      `/${YpServerApi.transformCollectionTypeToApi(
+        collectionType
+      )}/${collectionId}/${jobId}/poll_for_generating_ai_image`
     );
   }
 
   public getCollection(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${YpServerApi.transformCollectionTypeToApi(
-          collectionType
-        )}/${collectionId}`
+      `/${YpServerApi.transformCollectionTypeToApi(
+        collectionType
+      )}/${collectionId}`
     );
   }
 
@@ -186,7 +186,7 @@ export class YpServerApi extends YpServerApiBase {
   public getGroupFolder(groupId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/groups/${groupId}/groupFolder`
+      `/groups/${groupId}/groupFolder`
     );
   }
 
@@ -228,9 +228,9 @@ export class YpServerApi extends YpServerApiBase {
   public getHelpPages(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${YpServerApi.transformCollectionTypeToApi(
-          collectionType
-        )}/${collectionId}/pages`
+      `/${YpServerApi.transformCollectionTypeToApi(
+        collectionType
+      )}/${collectionId}/pages`
     );
   }
 
@@ -244,7 +244,7 @@ export class YpServerApi extends YpServerApiBase {
   ) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/groups/${groupId}/translatedRegistrationQuestions?targetLanguage=${targetLanguage}`
+      `/groups/${groupId}/translatedRegistrationQuestions?targetLanguage=${targetLanguage}`
     ) as unknown as Array<string>;
   }
 
@@ -302,6 +302,17 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public completeMediaPointLoggedIn(mediaType: string, pointId: number, body: Record<string, unknown>) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${mediaType}/${pointId}/completeAndAddToPointLoggedIn`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
   public completeMediaPost(
     mediaType: string,
     method: string,
@@ -325,28 +336,28 @@ export class YpServerApi extends YpServerApiBase {
   public getMorePoints(postId: number, offsetUp: number, offsetDown: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/posts/${postId}/points?offsetUp=${offsetUp}&offsetDown=${offsetDown}`
+      `/posts/${postId}/points?offsetUp=${offsetUp}&offsetDown=${offsetDown}`
     );
   }
 
   public getNewPoints(postId: number, latestPointCreatedAt: Date) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/posts/${postId}/newPoints?latestPointCreatedAt=${latestPointCreatedAt}`
+      `/posts/${postId}/newPoints?latestPointCreatedAt=${latestPointCreatedAt}`
     );
   }
 
   public getSurveyTranslations(post: YpPostData, language: string) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/posts/${post.id}/translatedSurvey?targetLanguage=${language}&groupId=${post.Group.id}`
+      `/posts/${post.id}/translatedSurvey?targetLanguage=${language}&groupId=${post.Group.id}`
     );
   }
 
   public getSurveyQuestionsTranslations(group: YpGroupData, language: string) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/groups/${group.id}/translatedSurveyQuestions?targetLanguage=${language}`
+      `/groups/${group.id}/translatedSurveyQuestions?targetLanguage=${language}`
     );
   }
 
@@ -379,7 +390,7 @@ export class YpServerApi extends YpServerApiBase {
       this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`,
       {
         method: 'PUT',
-        body: JSON.stringify({jobId}),
+        body: JSON.stringify({ jobId }),
       },
     );
   }
@@ -445,7 +456,7 @@ export class YpServerApi extends YpServerApiBase {
   }
 
   public checkPointTranscriptStatus(type: string, pointId: number) {
-    return this.fetchWrapper(this.baseUrlPath + `/$points/${pointId}/${type}`);
+    return this.fetchWrapper(this.baseUrlPath + `/points/${pointId}/${type}`);
   }
 
   public registerUser(body: Record<string, unknown>) {
@@ -529,7 +540,7 @@ export class YpServerApi extends YpServerApiBase {
   ) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${type}/${collectionId}/${activityId}/delete_activity`,
+      `/${type}/${collectionId}/${activityId}/delete_activity`,
       {
         method: 'DELETE',
         body: JSON.stringify({}),

@@ -12,6 +12,7 @@ import "@material/web/radio/radio.js";
 
 import "../yp-file-upload/yp-file-upload.js";
 import "../yp-file-upload/yp-file-upload-icon.js";
+import "../yp-file-upload/yp-set-video-cover.js";
 import "../common/yp-emoji-selector.js";
 
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
@@ -78,10 +79,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   @property({ type: Number })
   uploadedVideoUpId: number | undefined;
-
   @property({ type: Number })
   uploadedVideoDownId: number | undefined;
-
   @property({ type: Number })
   uploadedVideoMobileId: number | undefined;
 
@@ -117,6 +116,24 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   @property({ type: Boolean })
   hideMobileAudio = false;
+
+  @property({ type: Boolean })
+  videoUploadStartedUp = false;
+
+  @property({ type: Boolean })
+  videoUploadStartedDown = false;
+
+  @property({ type: Boolean })
+  videoUploadStartedMobile = false;
+
+  @property({ type: Boolean })
+  audioUploadStartedUp = false;
+
+  @property({ type: Boolean })
+  audioUploadStartedDown = false;
+
+  @property({ type: Boolean })
+  audioUploadStartedMobile = false;
 
   @property({ type: Boolean })
   hideUpText = false;
@@ -561,6 +578,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           margin-bottom: 4px;
         }
 
+        .videoAttached {
+          margin-top: 6px;
+          font-size: 13px;
+          color: var(--md-sys-color-primary, #1a73e8);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
         div[rtl] {
           direction: rtl;
         }
@@ -572,11 +598,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     type: string,
     hideAudio: boolean,
     hasCurrentAudio: string | undefined,
-    uploadAudioPointHeader: string
+    uploadAudioPointHeader: string,
+    uploadedVideoId: number | undefined,
+    videoUploadStarted: boolean,
+    audioUploadStartingFunc: Function
   ) {
     return this.post.Group.configuration?.allowPointAudioUploads
       ? html`
-          <div ?hidden="${hideAudio}" class="uploadSection">
+          <div ?hidden="${hideAudio || uploadedVideoId != undefined || videoUploadStarted}" class="uploadSection">
             <div
               class="layout vertical center-center"
               ?hidden="${!this.isLoggedIn}"
@@ -595,6 +624,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 .buttonText="${uploadAudioPointHeader}"
                 method="POST"
                 @success="${this._audioUpUploaded}"
+                @file-upload-starting="${audioUploadStartingFunc}"
               >
               </yp-file-upload-icon>
             </div>
@@ -619,11 +649,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     hasCurrentVideo: string | undefined,
     uploadVideoHeader: string,
     videoUploadedFunc: Function,
-    uploadedVideoId: number | undefined
+    uploadedVideoId: number | undefined,
+    uploadedAudioId: number | undefined,
+    audioUploadStarted: boolean,
+    videoUploadStartingFunc: Function
   ) {
     return this.post.Group.configuration?.allowPointVideoUploads
       ? html`
-          <div ?hidden="${hideVideo}" class="uploadSection">
+          <div ?hidden="${hideVideo || uploadedAudioId != undefined || audioUploadStarted}" class="uploadSection">
             <div
               class="layout vertical center-center self-start"
               ?hidden="${!this.isLoggedIn}"
@@ -643,6 +676,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 buttonIcon="videocam"
                 .buttonText="${uploadVideoHeader}"
                 @success="${videoUploadedFunc}"
+                @error="${this._videoUploadError}"
+                @file-upload-starting="${videoUploadStartingFunc}"
               >
               </yp-file-upload-icon>
             </div>
@@ -699,10 +734,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   renderPointItem(point: YpPointData, index: number): TemplateResult {
-    return html`<div
-      class="item layout-horizontal"
-      tabindex="0"
-    >
+    return html`<div class="item layout-horizontal" tabindex="0">
       <div
         id="point${point.id}"
         class="pointMaterial"
@@ -737,7 +769,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
     return !alternativeHeader
       ? html`
-          <h2 class="pointMainHeader layout horizontal" ?hidden="${this.post.Group.configuration?.disableDebate}">
+          <h2
+            class="pointMainHeader layout horizontal"
+            ?hidden="${this.post.Group.configuration?.disableDebate}"
+          >
             ${this.renderHeaderIcon(headerTextType)} ${header}
             ${pointsLengthText}
           </h2>
@@ -775,6 +810,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     hideAudio: boolean,
     hasCurrentAudio: string | undefined,
     uploadAudioPointHeader: string,
+    uploadedAudioId: number | undefined,
+    videoUploadStarted: boolean,
+    audioUploadStarted: boolean,
+    videoUploadStartingFunc: Function,
+    audioUploadStartingFunc: Function,
     ifLengthIsRight: boolean,
     addPointFunc: Function,
     points: Array<YpPointData> | undefined,
@@ -841,16 +881,30 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                     hasCurrentVideo,
                     uploadVideoHeader,
                     videoUploadedFunc,
-                    uploadedVideoId
+                    uploadedVideoId,
+                    uploadedAudioId,
+                    audioUploadStarted,
+                    videoUploadStartingFunc
                   )}
                   ${this.renderAudioUpload(
                     type,
                     hideAudio,
                     hasCurrentAudio,
-                    uploadAudioPointHeader
+                    uploadAudioPointHeader,
+                    uploadedVideoId,
+                    videoUploadStarted,
+                    audioUploadStartingFunc
                   )}
                 </div>
               </md-filled-text-field>
+              ${uploadedVideoId
+                ? html`<yp-set-video-cover
+                    expanded
+                    .noDefaultCoverImage="${true}"
+                    .videoId="${uploadedVideoId}"
+                    style="width: 100%; margin-top: 8px;"
+                  ></yp-set-video-cover>`
+                : nothing}
             </div>
 
             ${mobile ? this.renderMobilePointSelection() : nothing}
@@ -988,6 +1042,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                       this.hideUpAudio,
                       this.hasCurrentUpAudio,
                       this.t("uploadAudioPointFor"),
+                      this.uploadedAudioUpId,
+                      this.videoUploadStartedUp,
+                      this.audioUploadStartedUp,
+                      this._videoUpUploadStarting,
+                      this._audioUpUploadStarting,
                       this.ifLengthUpIsRight,
                       this.addPointUp,
                       this.upPoints
@@ -1011,6 +1070,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                       this.hideDownAudio,
                       this.hasCurrentDownAudio,
                       this.t("uploadAudioPointAgainst"),
+                      this.uploadedAudioDownId,
+                      this.videoUploadStartedDown,
+                      this.audioUploadStartedDown,
+                      this._videoDownUploadStarting,
+                      this._audioDownUploadStarting,
                       this.ifLengthDownIsRight,
                       this.addPointDown,
                       this.downPoints
@@ -1039,6 +1103,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 this.hideMobileAudio,
                 this.hasCurrentMobileAudio,
                 this.t("uploadAudioPointAgainst"),
+                this.uploadedAudioMobileId,
+                this.videoUploadStartedMobile,
+                this.audioUploadStartedMobile,
+                this._videoMobileUploadStarting,
+                this._audioMobileUploadStarting,
                 this.ifLengthMobileIsRight,
                 this.addMobilePointUpOrDown,
                 this.points,
@@ -1093,6 +1162,46 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _videoMobileUploaded(event: CustomEvent) {
     this.uploadedVideoMobileId = event.detail.videoId;
+  }
+
+  _videoUpUploadStarting() {
+    this.videoUploadStartedUp = true;
+  }
+
+  _videoDownUploadStarting() {
+    this.videoUploadStartedDown = true;
+  }
+
+  _videoMobileUploadStarting() {
+    this.videoUploadStartedMobile = true;
+  }
+
+  _audioUpUploadStarting() {
+    this.audioUploadStartedUp = true;
+  }
+
+  _audioDownUploadStarting() {
+    this.audioUploadStartedDown = true;
+  }
+
+  _audioMobileUploadStarting() {
+    this.audioUploadStartedMobile = true;
+  }
+
+  _videoUploadError(event: CustomEvent) {
+    console.error("Video upload failed", event.detail);
+    // Reset video upload started flags so audio upload becomes available again
+    this.videoUploadStartedUp = false;
+    this.videoUploadStartedDown = false;
+    this.videoUploadStartedMobile = false;
+    if (window.appDialogs && window.appDialogs.getDialogAsync) {
+      window.appDialogs.getDialogAsync("masterToast", (toast: any) => {
+        toast.labelText = this.t("errorUploading");
+        toast.open = true;
+      });
+    } else {
+      this.fire("yp-error", { message: this.t("errorUploading") });
+    }
   }
 
   _audioUpUploaded(event: CustomEvent) {
@@ -1343,6 +1452,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.hideUpVideo = false;
     this.hideDownVideo = false;
     this.hideMobileVideo = false;
+    this.hideUpText = false;
+    this.hideDownText = false;
+    this.hideMobileText = false;
+    this.hideUpAudio = false;
+    this.hideDownAudio = false;
+    this.hideMobileAudio = false;
+    this.videoUploadStartedUp = false;
+    this.videoUploadStartedDown = false;
+    this.videoUploadStartedMobile = false;
     if (this.$$("#videoFileUploadUp"))
       (this.$$("#videoFileUploadUp") as YpFileUpload).clear();
     if (this.$$("#videoFileUploadDown"))
@@ -1359,6 +1477,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.hideUpAudio = false;
     this.hideDownAudio = false;
     this.hideMobileAudio = false;
+    this.hideUpText = false;
+    this.hideDownText = false;
+    this.hideMobileText = false;
+    this.hideUpVideo = false;
+    this.hideDownVideo = false;
+    this.hideMobileVideo = false;
+    this.audioUploadStartedUp = false;
+    this.audioUploadStartedDown = false;
+    this.audioUploadStartedMobile = false;
     if (this.$$("#audioFileUploadUp"))
       (this.$$("#audioFileUploadUp") as YpFileUpload).clear();
     if (this.$$("#audioFileUploadDown"))
@@ -1879,6 +2006,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           postId: this.post.id,
           content: content,
           value: value,
+          videoId: this.currentVideoId,
+          audioId: this.currentAudioId,
+          appLanguage: this.language,
         });
       } catch (error: unknown) {
         if ((error as YpErrorData).offlineSendLater) {
@@ -1891,17 +2021,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
       }
       point = this._preProcessPoints([point])[0];
-      if (this.currentVideoId) {
-        await window.serverApi.completeMediaPoint("videos", point.id, {
-          videoId: this.currentVideoId,
-          appLanguage: this.language,
-        });
-        window.appGlobals.showSpeechToTextInfoIfNeeded();
-      } else if (this.currentAudioId) {
-        await window.serverApi.completeMediaPoint("audios", point.id, {
-          videoId: this.currentAudioId,
-          appLanguage: this.language,
-        });
+      // Video/audio are attached during addPoint (backend handles completeUploadAndAddToPoint)
+      if (this.currentVideoId || this.currentAudioId) {
         window.appGlobals.showSpeechToTextInfoIfNeeded();
       }
       this._completeNewPointResponse(point);

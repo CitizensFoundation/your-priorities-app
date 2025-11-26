@@ -35,16 +35,34 @@ export class YpSetVideoCover extends YpBaseElement {
   @property({ type: Boolean })
   noDefaultCoverImage = false;
 
+  @property({ type: Boolean, reflect: true })
+  expanded = false;
+
   static override get styles() {
     return [
       super.styles,
       css`
+        :host {
+          display: block;
+        }
+
+        :host([expanded]) {
+          width: 100%;
+        }
+
         .previewFrame {
           max-height: 50px;
           max-width: 89px;
           height: 50px;
           width: 89px;
           cursor: pointer;
+        }
+
+        :host([expanded]) .previewFrame {
+          max-height: 100%;
+          max-width: 100%;
+          height: auto;
+          width: 100%;
         }
 
         .videoPreviewContainer {
@@ -58,6 +76,15 @@ export class YpSetVideoCover extends YpBaseElement {
           height: 50px;
         }
 
+        :host([expanded]) .videoImages {
+          width: 100%;
+          max-height: 100%;
+          height: auto;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 8px;
+        }
+
         .selectedCover {
           border-top: 2px solid var(--accent-color);
           max-height: 50px;
@@ -65,10 +92,21 @@ export class YpSetVideoCover extends YpBaseElement {
           white-space: nowrap;
         }
 
+        :host([expanded]) .selectedCover {
+          max-height: 100%;
+          max-width: 100%;
+          border: 4px solid var(--accent-color);
+        }
+
         .coverImage {
           max-height: 50px;
           max-width: 89px;
           white-space: nowrap;
+        }
+
+        :host([expanded]) .coverImage {
+          max-height: 100%;
+          max-width: 100%;
         }
 
         .limitInfo {
@@ -96,7 +134,7 @@ export class YpSetVideoCover extends YpBaseElement {
           <div class="layout horizontal videoImages videoPreviewContainer">
             <div style="white-space: nowrap">
               ${this.videoImages.map(
-                (image, index) => html`
+        (image, index) => html`
                   <img
                     .class="${this._classFromImageIndex(index)}"
                     data-index="${index}"
@@ -106,7 +144,7 @@ export class YpSetVideoCover extends YpBaseElement {
                     alt="Preview frame ${index + 1}"
                     src="${image}" />
                 `
-              )}
+      )}
 
               <div
                 class="layout horizontal mainPhotoCheckbox"
@@ -148,7 +186,7 @@ export class YpSetVideoCover extends YpBaseElement {
         this.previewVideoUrl = response.previewVideoUrl;
         this.videoImages = response.videoImages;
       }
-     } else {
+    } else {
       console.error('_getVideoImages no video id');
     }
   }
@@ -157,14 +195,14 @@ export class YpSetVideoCover extends YpBaseElement {
     const frameIndex = (event.target as HTMLElement).getAttribute('data-index');
     this.fire('set-cover', frameIndex);
     this.fire('set-default-cover', false);
-    window.serverApi.setVideoCover(this.videoId,  { frameIndex: frameIndex });
+    window.serverApi.setVideoCover(this.videoId, { frameIndex: frameIndex });
 
   }
 
   _selectVideoCoverMainPhoto() {
     setTimeout(() => {
       if ((this.$$('#useMainPhotoId') as MdRadio).checked) {
-        window.serverApi.setVideoCover(this.videoId,  { frameIndex: -2 });
+        window.serverApi.setVideoCover(this.videoId, { frameIndex: -2 });
         this.fire('set-default-cover', true);
       } else {
         this.fire('set-default-cover', false);

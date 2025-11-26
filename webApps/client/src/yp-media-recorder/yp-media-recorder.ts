@@ -312,7 +312,6 @@ export class YpMediaRecorder extends YpBaseElement {
             <div hidden class="layout horizontal center-center">
               <md-filled-button
                 raised
-                dialogAction="confirm"
                 class="uploadFileButton"
                 @click="${this._openRecorderDialog}"
               >
@@ -323,7 +322,6 @@ export class YpMediaRecorder extends YpBaseElement {
             <div class="layout horizontal center-center">
               <md-filled-button
                 raised
-                dialogAction="confirm"
                 class="uploadFileButton"
                 @click="${this._uploadFile}"
               >
@@ -355,11 +353,11 @@ export class YpMediaRecorder extends YpBaseElement {
               >
             </label>
           </div>
-          <div class="layout horizontal center-center" slot="actions">
-            <md-text-button dialogAction="close"
-              >${this.t("cancel")}</md-text-button
-            >
-          </div>
+        </div>
+        <div class="layout horizontal center-center" slot="actions">
+          <md-text-button @click="${this._closeOptionsDialog}"
+            >${this.t("cancel")}</md-text-button
+          >
         </div>
       </md-dialog>
       <md-dialog id="dialog" modal ?audioRecording="${this.audioRecording}">
@@ -626,6 +624,11 @@ export class YpMediaRecorder extends YpBaseElement {
       this.surfer.destroy();
     }
     this.previewActive = false;
+    (this.$$("#dialog") as Dialog).open = false;
+    (this.$$("#optionsDialog") as Dialog).open = false;
+  }
+
+  _closeOptionsDialog() {
     (this.$$("#optionsDialog") as Dialog).open = false;
   }
 

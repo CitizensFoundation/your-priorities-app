@@ -524,25 +524,26 @@ export class YpPoint extends YpBaseElement {
           class="userInfoContainer layout horizontal"
           ?hidden="${this.hideUser}"
         >
-        <div class="layout horizontal" style="width: 100%">
-          <yp-user-with-organization
-            .titleDate="${this.point.created_at}"
-            inverted
-            mediumImage
-            ?hidden="${this.group.configuration?.hidePointAuthor}"
-            .user="${this.user}"
-            class="userWithOrganization"
-          ></yp-user-with-organization>
-          <div class="flex"></div>
-          <md-icon-button hidden
-            class="shareIcon"
-            aria-label="${this.t("sharePoint")}"
-            title="${this.t("sharePoint")}"
-            @click="${this._shareTap}"
-            ><md-icon>share</md-icon></md-icon-button
-          >
-        </div>
-      </div>`
+          <div class="layout horizontal" style="width: 100%">
+            <yp-user-with-organization
+              .titleDate="${this.point.created_at}"
+              inverted
+              mediumImage
+              ?hidden="${this.group.configuration?.hidePointAuthor}"
+              .user="${this.user}"
+              class="userWithOrganization"
+            ></yp-user-with-organization>
+            <div class="flex"></div>
+            <md-icon-button
+              hidden
+              class="shareIcon"
+              aria-label="${this.t("sharePoint")}"
+              title="${this.t("sharePoint")}"
+              @click="${this._shareTap}"
+              ><md-icon>share</md-icon></md-icon-button
+            >
+          </div>
+        </div>`
       : nothing;
   }
 
@@ -769,7 +770,8 @@ export class YpPoint extends YpBaseElement {
               aria-label="${this.t("point.report")}"
               id="reportPointIconButton"
               @click="${this._reportPoint}"
-            ><md-icon>warning</md-icon></md-icon-button>
+              ><md-icon>warning</md-icon></md-icon-button
+            >
             ${this.hasPointAccess ? this.renderEditMenu() : nothing}
           </div>
         </div>
@@ -873,10 +875,7 @@ export class YpPoint extends YpBaseElement {
     if (event.target !== event.currentTarget) {
       return;
     }
-    if (
-      !this.linkPoint ||
-      (event.key !== "Enter" && event.key !== " ")
-    ) {
+    if (!this.linkPoint || (event.key !== "Enter" && event.key !== " ")) {
       return;
     }
     event.preventDefault();
@@ -1134,7 +1133,7 @@ export class YpPoint extends YpBaseElement {
       type,
       this.point.id
     )) as YpGetPointTranscriptResponse;
-    if (pointInfo.point) {
+    if (pointInfo && pointInfo.point) {
       const point = pointInfo.point;
       this.checkingTranscript = false;
       point.latestContent =

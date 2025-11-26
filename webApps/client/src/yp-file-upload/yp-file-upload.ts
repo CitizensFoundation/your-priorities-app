@@ -170,6 +170,10 @@ export class YpFileUpload extends YpBaseElement {
   @property({ type: Boolean })
   indeterminateProgress = false;
 
+  // Indicates whether we used a logged-in (non-group) presign flow; used to pick the matching transcoding endpoint
+  @property({ type: Boolean })
+  useLoggedInPresign = false;
+
   @property({ type: String })
   uploadStatus: string | undefined;
 
@@ -311,7 +315,7 @@ export class YpFileUpload extends YpBaseElement {
         <div class="layout vertical center-center">
           <div class="layout horizontal center-center">
             ${this.useIconButton
-              ? html`
+        ? html`
                   <md-filled-icon-button
                     id="button"
                     class="blue"
@@ -322,14 +326,14 @@ export class YpFileUpload extends YpBaseElement {
                     ></md-filled-icon-button
                   >
                 `
-              : html`
+        : html`
                   <md-outlined-button
                     id="button"
                     class="blue"
                     trailing-icon
                     @click="${this._fileClick}"
                     ><md-icon slot="icon">${this.buttonIcon}</md-icon> ${this
-                      .buttonText}</md-outlined-button
+            .buttonText}</md-outlined-button
                   >
                 `}
             <md-outlined-icon-button
@@ -353,7 +357,7 @@ export class YpFileUpload extends YpBaseElement {
         </div>
         <div id="UploadBorder" ?hidden="${this.hideStatus}">
           ${this.files.map(
-            (item) => html`
+              (item) => html`
               <div class="file">
                 <div class="name">
                   <span>${this.uploadStatus}</span>
@@ -390,19 +394,19 @@ export class YpFileUpload extends YpBaseElement {
                 </div>
               </div>
             `
-          )}
+            )}
         </div>
         ${this.currentVideoId && false &&
         this.transcodingComplete &&
         !this.coverImageSelected &&
         !this.autoChooseFirstVideoFrameAsPost
-          ? html`<yp-set-video-cover
+        ? html`<yp-set-video-cover
               .noDefaultCoverImage="${this.noDefaultCoverImage}"
               .videoId="${this.currentVideoId}"
               @set-cover="${this._setVideoCover}"
               @set-default-cover="${this._setDefaultImageAsVideoCover}"
             ></yp-set-video-cover> `
-          : nothing}
+        : nothing}
       </div>
       <input
         type="file"
@@ -449,6 +453,7 @@ export class YpFileUpload extends YpBaseElement {
     this.coverImageSelected = false;
     this.isPollingForTranscoding = false;
     this.useMainPhotoForVideoCover = false;
+    this.useLoggedInPresign = false;
 
     const fileInput = this.$$("#fileInput") as HTMLInputElement;
     if (fileInput) fileInput.value = "";
@@ -457,7 +462,7 @@ export class YpFileUpload extends YpBaseElement {
       else if (this.audioUpload)
         this.fire("success", { detail: null, audioId: null });
     }
- }
+  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -542,7 +547,10 @@ export class YpFileUpload extends YpBaseElement {
     const isIOs =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-    if (this._hasRecorderApp()) {
+    // Always open media recorder for video uploads to show aspect ratio choice
+    if (this.videoUpload) {
+      this._openMediaRecorder();
+    } else if (this._hasRecorderApp()) {
       this._openFileInput();
     } else {
       if (
@@ -659,7 +667,10 @@ export class YpFileUpload extends YpBaseElement {
       this.currentFile = file;
 
       let mediaUrl: string;
+      let fallbackMediaUrl: string | undefined;
       let ajaxBody = {};
+      // default: logged-in flow only when no group is present
+      this.useLoggedInPresign = !this.group;
 
       if (this.videoUpload) {
         window.appGlobals.activity("starting", "videoUpload");
@@ -669,8 +680,10 @@ export class YpFileUpload extends YpBaseElement {
         if (this.group) {
           mediaUrl =
             "/api/videos/" + this.group.id + "/createAndGetPreSignedUploadUrl";
+          fallbackMediaUrl = "/api/videos/createAndGetPreSignedUploadUrlLoggedIn";
         } else {
           mediaUrl = "/api/videos/createAndGetPreSignedUploadUrlLoggedIn";
+          this.useLoggedInPresign = true;
         }
       } else if (this.audioUpload) {
         window.appGlobals.activity("starting", "audioUpload");
@@ -680,8 +693,10 @@ export class YpFileUpload extends YpBaseElement {
         if (this.group) {
           mediaUrl =
             "/api/audios/" + this.group.id + "/createAndGetPreSignedUploadUrl";
+          fallbackMediaUrl = "/api/audios/createAndGetPreSignedUploadUrlLoggedIn";
         } else {
           mediaUrl = "/api/audios/createAndGetPreSignedUploadUrlLoggedIn";
+          this.useLoggedInPresign = true;
         }
       } else if (this.attachmentUpload) {
         window.appGlobals.activity("starting", "attachmentUpload");
@@ -700,10 +715,21 @@ export class YpFileUpload extends YpBaseElement {
         }
       }
 
-      const response = await window.serverApi.createPresignUrl(
-        mediaUrl!,
-        ajaxBody
-      );
+      let response;
+      try {
+        response = await this._createPresignUrlWithFallback(
+          mediaUrl!,
+          ajaxBody,
+          fallbackMediaUrl
+        );
+      } catch (error) {
+        this.indeterminateProgress = false;
+        this.uploadStatus = this.t("errorUploading");
+        this.fire("error", { error });
+        this.fire("file-upload-complete");
+        window.appGlobals.activity("error", "mediaUpload");
+        return;
+      }
 
       this.target = response.presignedUrl;
       if (this.videoUpload) this.currentVideoId = response.videoId;
@@ -715,6 +741,23 @@ export class YpFileUpload extends YpBaseElement {
       window.appGlobals.activity("starting", "imageUpload");
       this.uploadStatus = this.t("uploadingImage");
       this.reallyUploadFile(file);
+    }
+  }
+
+  private async _createPresignUrlWithFallback(
+    primaryUrl: string,
+    ajaxBody: Record<string, unknown>,
+    fallbackUrl?: string
+  ) {
+    try {
+      return await window.serverApi.createPresignUrl(primaryUrl, ajaxBody);
+    } catch (primaryError) {
+      if (fallbackUrl) {
+        console.warn("Primary presign failed, retrying fallback", primaryError);
+        this.useLoggedInPresign = true;
+        return await window.serverApi.createPresignUrl(fallbackUrl, ajaxBody);
+      }
+      throw primaryError;
     }
   }
 
@@ -749,6 +792,7 @@ export class YpFileUpload extends YpBaseElement {
                 this.fire("success", {
                   detail: detail,
                   videoId: this.currentVideoId,
+                  useLoggedInPresign: this.useLoggedInPresign,
                 });
               } else {
                 console.error("No detail or video id");
@@ -762,6 +806,7 @@ export class YpFileUpload extends YpBaseElement {
               this.fire("success", {
                 detail: detail,
                 audioId: this.currentAudioId,
+                useLoggedInPresign: this.useLoggedInPresign,
               });
             this.fire("file-upload-complete");
             window.appGlobals.activity("complete", "mediaTranscoding");
@@ -842,12 +887,8 @@ export class YpFileUpload extends YpBaseElement {
           this.indeterminateProgress = true;
           this.uploadStatus = this.t("transcodingVideo");
 
-          let startType;
-          if (this.group) {
-            startType = "startTranscoding";
-          } else {
-            startType = "startTranscodingLoggedIn";
-          }
+          // Server now expects the logged-in transcoding endpoint even for group uploads
+          const startType = "startTranscodingLoggedIn";
 
           let options;
 
@@ -869,12 +910,35 @@ export class YpFileUpload extends YpBaseElement {
 
           options.aspect = aspect;
 
-          const response = (await window.serverApi.startTranscoding(
-            "videos",
-            this.currentVideoId,
-            startType,
-            options
-          )) as StartTranscodingResponse;
+          let response: StartTranscodingResponse | undefined;
+          try {
+            response = (await window.serverApi.startTranscoding(
+              "videos",
+              this.currentVideoId,
+              startType,
+              options
+            )) as StartTranscodingResponse;
+          } catch (error) {
+            this.indeterminateProgress = false;
+            this.files[fileIndex].error = true;
+            this.files[fileIndex].progress = 100;
+            this.uploadStatus = this.t("errorUploading");
+            this.fire("error", { xhr, error });
+            this.fire("file-upload-complete");
+            window.appGlobals.activity("error", "mediaTranscoding");
+            return;
+          }
+
+          if (!response || !response.transcodingJobId) {
+            this.indeterminateProgress = false;
+            this.files[fileIndex].error = true;
+            this.files[fileIndex].progress = 100;
+            this.uploadStatus = this.t("errorUploading");
+            this.fire("error", { xhr });
+            this.fire("file-upload-complete");
+            window.appGlobals.activity("error", "mediaTranscoding");
+            return;
+          }
 
           this._checkTranscodingJob(response.transcodingJobId);
 
@@ -884,12 +948,7 @@ export class YpFileUpload extends YpBaseElement {
           this.indeterminateProgress = true;
           this.uploadStatus = this.t("transcodingAudio");
 
-          let startType;
-          if (this.group) {
-            startType = "startTranscoding";
-          } else {
-            startType = "startTranscodingLoggedIn";
-          }
+          const startType = "startTranscodingLoggedIn";
 
           let options;
           if (this.containerType === "posts" && this.group) {
@@ -906,12 +965,35 @@ export class YpFileUpload extends YpBaseElement {
             options = {};
           }
 
-          const response = (await window.serverApi.startTranscoding(
-            "audios",
-            this.currentAudioId,
-            startType,
-            options
-          )) as StartTranscodingResponse;
+          let response: StartTranscodingResponse | undefined;
+          try {
+            response = (await window.serverApi.startTranscoding(
+              "audios",
+              this.currentAudioId,
+              startType,
+              options
+            )) as StartTranscodingResponse;
+          } catch (error) {
+            this.indeterminateProgress = false;
+            this.files[fileIndex].error = true;
+            this.files[fileIndex].progress = 100;
+            this.uploadStatus = this.t("errorUploading");
+            this.fire("error", { xhr, error });
+            this.fire("file-upload-complete");
+            window.appGlobals.activity("error", "mediaTranscoding");
+            return;
+          }
+
+          if (!response || !response.transcodingJobId) {
+            this.indeterminateProgress = false;
+            this.files[fileIndex].error = true;
+            this.files[fileIndex].progress = 100;
+            this.uploadStatus = this.t("errorUploading");
+            this.fire("error", { xhr });
+            this.fire("file-upload-complete");
+            window.appGlobals.activity("error", "mediaTranscoding");
+            return;
+          }
 
           this._checkTranscodingJob(response.transcodingJobId);
 

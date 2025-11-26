@@ -4,6 +4,7 @@ import { property, customElement } from "lit/decorators.js";
 import { Corner, MdMenu } from "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import "@material/web/iconbutton/icon-button.js";
+import "@material/web/icon/icon.js";
 import "@material/web/checkbox/checkbox.js";
 import "@material/web/progress/circular-progress.js";
 
@@ -300,6 +301,33 @@ export class YpContentModeration extends YpBaseElement {
         .details {
           display: flex;
           margin: 8px;
+          max-width: 100%;
+          overflow: hidden;
+        }
+
+        .detailArea {
+          max-width: 100%;
+          padding: 16px;
+          box-sizing: border-box;
+        }
+
+        .creatorEmail {
+          font-weight: 500;
+          color: var(--md-sys-color-primary);
+          margin-bottom: 8px;
+          font-size: 13px;
+        }
+
+        .contentText {
+          max-width: 600px;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          white-space: normal;
+          line-height: 1.4;
+          padding: 12px;
+          background: var(--md-sys-color-surface-container-low);
+          border-radius: 8px;
+          margin-bottom: 12px;
         }
 
         yp-point {
@@ -319,6 +347,7 @@ export class YpContentModeration extends YpBaseElement {
 
         .analysis {
           margin-top: 12px;
+          font-size: 12px;
         }
 
         .leftColumn {
@@ -326,13 +355,26 @@ export class YpContentModeration extends YpBaseElement {
         }
 
         .mainScore {
+          font-weight: 500;
         }
 
         .linkIcon {
         }
 
         vaadin-grid {
-          font-size: 14px;
+          font-size: 12px;
+          max-width: 100%;
+        }
+
+        vaadin-grid::part(header-cell) {
+          font-size: 12px;
+        }
+
+        vaadin-grid-cell-content {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          padding: 8px 6px;
         }
       `,
     ];
@@ -373,49 +415,29 @@ export class YpContentModeration extends YpBaseElement {
 
   renderItemDetail(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
+    const contentText = item.pointTextContent || item.postNameContent || item.postTextContent || item.postTranscriptContent || "";
     return render(
       html`
-        <div class="details layout vertical center-center detailArea">
-          <div class="layout horizontal">
+        <div class="details layout vertical detailArea">
+          <div class="creatorEmail">${item.user_email || "n/a"}</div>
+          <div class="contentText">${contentText}</div>
+          <div class="layout horizontal center-center">
             ${item.is_post
               ? html`
-                  <div class="layout vertical center-center">
-                    <yp-post-header
-                      hideActions
-                      hideTopActionBar
-                      onlyRenderTopActionBar
-                      .post="${item as unknown as YpPostData}"
-                      .postName="${item.name}"
-                      headerMode
-                    ></yp-post-header>
-                    <a href="/yp/${item.id}" target="_blank"
-                      ><paper-icon-button
-                        .ariaLabel="${this.t("linkToContentItem")}"
-                        class="linkIcon"
-                        icon="link"
-                      ></paper-icon-button
-                    ></a>
-                  </div>
+                  <a href="/post/${item.id}" target="_blank">
+                    <md-icon-button .ariaLabel="${this.t("linkToContentItem")}">
+                      <md-icon>link</md-icon>
+                    </md-icon-button>
+                  </a>
                 `
               : nothing}
-            ${item.is_point
+            ${item.is_point && item.post_id
               ? html`
-                  <div class="layout vertical center-center">
-                    <yp-point
-                      hideActions
-                      .point="${item as unknown as YpPointData}"
-                    ></yp-point>
-                    <a
-                      ?hidden="${!item.post_id}"
-                      href="/yp/[[item.post_id]]/${item.id}"
-                      target="_blank"
-                      ><md-icon-button
-                        .ariaLabel="${this.t("linkToContentItem")}"
-                        class="linkIcon"
-                        ><md-icon>link</md-icon></md-icon-button
-                      ></a
-                    >
-                  </div>
+                  <a href="/post/${item.post_id}/${item.id}" target="_blank">
+                    <md-icon-button .ariaLabel="${this.t("linkToContentItem")}">
+                      <md-icon>link</md-icon>
+                    </md-icon-button>
+                  </a>
                 `
               : nothing}
           </div>
@@ -526,9 +548,8 @@ export class YpContentModeration extends YpBaseElement {
           <md-icon-button
             id="selected-items-anchor"
             .ariaLabel="${this.t("openSelectedItemsMenu")}"
-            icon="more_vert"
             @click="${this._openSelectedMenu.bind(this)}"
-          ></md-icon-button>
+          ><md-icon>more_vert</md-icon></md-icon-button>
           <md-menu
             id="selectedItemsMenu"
             class="helpButton"
@@ -579,11 +600,10 @@ export class YpContentModeration extends YpBaseElement {
         <div style="position: relative;">
           <md-icon-button
             .ariaLabel="${this.t("openOneItemMenu")}"
-            icon="more_vert"
             id="item-${item.id}-anchor"
             data-args="${item.id}"
             @click="${this._setSelected.bind(this)}"
-          ></md-icon-button>
+          ><md-icon>more_vert</md-icon></md-icon-button>
           <md-menu
             id="itemMenu${item.id}"
             class="helpButton"
@@ -697,7 +717,7 @@ export class YpContentModeration extends YpBaseElement {
         <vaadin-grid-selection-column> </vaadin-grid-selection-column>
 
         <vaadin-grid-sort-column
-          width="130px"
+          width="90px"
           flexGrow="0"
           path="firstReportedDateFormatted"
           .header="${this.t("firstReported")}"
@@ -706,7 +726,7 @@ export class YpContentModeration extends YpBaseElement {
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="130px"
+          width="90px"
           flexGrow="0"
           path="lastReportedAtDateFormatted"
           .header="${this.t("lastReported")}"
@@ -715,7 +735,7 @@ export class YpContentModeration extends YpBaseElement {
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="100px"
+          width="70px"
           textAlign="start"
           flexGrow="0"
           path="type"
@@ -731,7 +751,7 @@ export class YpContentModeration extends YpBaseElement {
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="100px"
+          width="80px"
           textAlign="start"
           flexGrow="0"
           .renderer="${(
@@ -742,12 +762,12 @@ export class YpContentModeration extends YpBaseElement {
             root.textContent = rowData.item.status || "unknown";
           }}"
           path="status"
-          .header="${this.t("publishStatus")}"
+          header="Status"
         >
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="100px"
+          width="55px"
           textAlign="center"
           flexGrow="0"
           path="counter_flags"
@@ -764,7 +784,7 @@ export class YpContentModeration extends YpBaseElement {
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="130px"
+          width="80px"
           textAlign="start"
           flexGrow="0"
           path="source"
@@ -781,7 +801,7 @@ export class YpContentModeration extends YpBaseElement {
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="105px"
+          width="60px"
           textAlign="center"
           flexGrow="0"
           path="toxicityScoreRaw"
@@ -792,15 +812,15 @@ export class YpContentModeration extends YpBaseElement {
           ) => {
             root.textContent = `${rowData.item.toxicityScore || "n/a"}`;
           }}"
-          .header="${this.t("toxicityScore")}?"
+          .header="${this.t("toxic")}?"
           ?hidden="${this.userId != undefined}"
         >
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
-          width="150px"
+          width="120px"
           textAlign="start"
-          flexGrow="1"
+          flexGrow="0"
           path="groupName"
           .renderer="${(
             root: HTMLElement,
@@ -815,19 +835,18 @@ export class YpContentModeration extends YpBaseElement {
         </vaadin-grid-sort-column>
 
         <vaadin-grid-filter-column
-          width="200px"
-          flexGrow="4"
+          width="150px"
+          flexGrow="1"
           path="content"
           .renderer="${this.renderContent.bind(this)}"
           .header="${this.t("content")}"
-          ?hidden="${!this.wide}"
         >
         </vaadin-grid-filter-column>
 
         <vaadin-grid-filter-column
-          flexGrow="1"
+          flexGrow="0"
           path="user_email"
-          width="150px"
+          width="120px"
           .renderer="${(
             root: HTMLElement,
             _column: unknown,
@@ -843,14 +862,14 @@ export class YpContentModeration extends YpBaseElement {
         <vaadin-grid-filter-column
           flexGrow="0"
           path="lastReportedByEmail"
-          width="150px"
+          width="120px"
           .header="${this.t("flaggedBy")}"
           ?hidden="${!this.onlyFlaggedItems}"
         >
         </vaadin-grid-filter-column>
 
         <vaadin-grid-column
-          width="70px"
+          width="48px"
           flexGrow="0"
           .headerRenderer="${this.renderActionHeader.bind(this)}"
           .renderer="${this.renderAction.bind(this)}"
@@ -905,21 +924,24 @@ export class YpContentModeration extends YpBaseElement {
     }
 
     try {
+      this.forceSpinner = true;
       if (itemIdsAndType && itemIdsAndType.length > 0) {
         url = `/api/${this.modelType}/${collectionId}/${action}/process_many_moderation_item`;
         await window.adminServerApi.adminMethod(
           url,
-          "PUT",
-          itemIdsAndType as any
+          "DELETE",
+          { items: itemIdsAndType }
         );
+        this._manyItemsResponse();
       } else if (this.selectedItemId && this.selectedModelClass) {
         url = `/api/${this.modelType}/${collectionId}/${this.selectedItemId}/${this.selectedModelClass}/${action}/process_one_moderation_item`;
-        await window.adminServerApi.adminMethod(url, "PUT");
+        await window.adminServerApi.adminMethod(url, "DELETE");
+        this._singleItemResponse();
       } else {
         console.error("No item ids to process");
+        this.forceSpinner = false;
         return;
       }
-      this.forceSpinner = true;
       this._resetSelectedAndClearCache();
     } catch (error) {
       this._ajaxError(error);
@@ -1116,17 +1138,15 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _setGridSize() {
-    if (window.innerWidth <= 600) {
-      (this.$$("#grid") as HTMLElement).style.width =
-        window.innerWidth.toFixed() + "px";
-      (this.$$("#grid") as HTMLElement).style.height =
-        window.innerHeight.toFixed() + "px";
-    } else {
-      (this.$$("#grid") as HTMLElement).style.width =
-        (window.innerWidth - 16).toFixed() + "px";
-      (this.$$("#grid") as HTMLElement).style.height =
-        window.innerHeight.toFixed() + "px";
-    }
+    const grid = this.$$("#grid") as HTMLElement;
+    if (!grid) return;
+
+    // Account for sidebar drawer (300px) and rightPanel margin (32px) + padding
+    const sidebarWidth = this.wide ? 332 : 0;
+    const availableWidth = window.innerWidth - sidebarWidth - 48;
+
+    grid.style.width = Math.max(availableWidth, 400).toFixed() + "px";
+    grid.style.height = (window.innerHeight - 150).toFixed() + "px";
   }
 
   get totalItemsCount() {
