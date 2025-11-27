@@ -250,7 +250,8 @@ export class YpPostTranscript extends YpBaseElement {
       });
     } else if (response && response.inProgress) {
       setTimeout(() => {
-        this._checkTranscriptStatus();
+        //TODO: Look into this, it's not working
+        //this._checkTranscriptStatus();
       }, 2000);
     } else if (response && response.error) {
       this.checkingTranscript = false;
@@ -293,7 +294,8 @@ export class YpPostTranscript extends YpBaseElement {
           this.post.public_data.transcript &&
           this.post.public_data.transcript.inProgress
         ) {
-          this._checkTranscriptStatus();
+          //TODO: Look into this, it's not working
+          //this._checkTranscriptStatus();
         }
       }
     }
