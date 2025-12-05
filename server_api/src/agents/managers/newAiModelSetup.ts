@@ -106,9 +106,9 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "anthropic",
       prices: {
-        costInTokensPerMillion: 5,
-        costOutTokensPerMillion: 25,
-        costInCachedContextTokensPerMillion: 0.5,
+        costInTokensPerMillion: 6.0,
+        costOutTokensPerMillion: 27.5,
+        costInCachedContextTokensPerMillion: 0.55,
         currency: "USD",
       },
       maxTokensOut: 64000,
