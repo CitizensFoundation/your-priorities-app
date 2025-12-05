@@ -32,7 +32,7 @@
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",
-    "bull": "^4.16.5",
+    "bullmq": "^5.31.0",
     "bunyan": "^1.8.15",
     "bunyan-prettystream": "git+https://github.com/rbjarnason/node-bunyan-prettystream.git",
     "cheerio": "^1.0.0",
