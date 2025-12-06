@@ -35,13 +35,15 @@ if (redisUrl.startsWith("rediss://")) {
 
 log.info("Starting app access to BullMQ Queue", {redis_url: redisUrl});
 
+MAIN_WORKER_QUEUE_NAME = process.env.MAIN_WORKER_QUEUE_NAME || 'mainYpQueue';
+
 class YpQueue {
   constructor() {
     log.info("Create YpQueue")
     this.processors = new Map(); // Store processors per job name
     this.workers = new Map(); // Store workers per job name
     this.queues = new Map(); // Store queues per job name
-    this.queuePrefix = 'mainYpQueue';
+    this.queuePrefix = MAIN_WORKER_QUEUE_NAME;
   }
 
   get defaultJobOptions() {
