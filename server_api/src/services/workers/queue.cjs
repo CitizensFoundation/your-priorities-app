@@ -8,7 +8,7 @@ if(process.env.AIRBRAKE_PROJECT_ID) {
 
 const { Queue, Worker } = require('bullmq');
 
-let redisUrl = process.env.REDIS_URL ? process.env.REDIS_URL : "redis://localhost:6379";
+let redisUrl = process.env.REDIS_WORKER_URL ?? process.env.REDIS_URL ?? "redis://localhost:6379";
 
 if (redisUrl.startsWith("redis://h:")) {
   redisUrl = redisUrl.replace("redis://h:","redis://:")
