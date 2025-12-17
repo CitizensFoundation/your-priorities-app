@@ -640,6 +640,42 @@ export class NewAiModelSetup {
       await openAiGpt51.save();
       log.debug("OpenAI model already exists: GPT-5.1");
     }
+
+    const openAiGpt52 = await PsAiModel.findOne({
+      where: { name: "GPT-5.2" },
+    });
+
+    const openAiGpt52Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 1.75,
+        costOutTokensPerMillion: 14.0,
+        costInCachedContextTokensPerMillion: 0.175,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 400000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.2",
+      active: true,
+    };
+
+    if (!openAiGpt52) {
+      await PsAiModel.create({
+        name: "GPT-5.2",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt52Config,
+      });
+      log.info("Created OpenAI model: GPT-5.2");
+    } else {
+      openAiGpt52.set("configuration", openAiGpt52Config);
+      openAiGpt52.changed("configuration", true);
+      await openAiGpt52.save();
+      log.debug("OpenAI model already exists: GPT-5.2");
+    }
   }
 
   /**
@@ -911,6 +947,42 @@ export class NewAiModelSetup {
       await gemini3FlashPreview.save();
       log.debug("Google model already exists: Gemini 3 Flash Preview");
     }
+
+    const gemini30Flash = await PsAiModel.findOne({
+      where: { name: "Gemini 3.0 Flash" },
+    });
+
+    const gemini30FlashConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Medium,
+      provider: "google",
+      prices: {
+        costInTokensPerMillion: 0.5,
+        costOutTokensPerMillion: 3.0,
+        costInCachedContextTokensPerMillion: 0.25,
+        currency: "USD",
+      },
+      model: "gemini-3.0-flash-preview",
+      active: true,
+      maxTokensOut: 100000,
+      maxContextTokens: 1000000,
+      defaultTemperature: 0.0,
+    };
+
+    if (!gemini30Flash) {
+      await PsAiModel.create({
+        name: "Gemini 3.0 Flash",
+        organization_id: 1,
+        user_id: userId,
+        configuration: gemini30FlashConfig,
+      });
+      log.info("Created Google model: Gemini 3.0 Flash");
+    } else {
+      gemini30Flash.set("configuration", gemini30FlashConfig);
+      gemini30Flash.changed("configuration", true);
+      await gemini30Flash.save();
+      log.debug("Google model already exists: Gemini 3.0 Flash");
+    }
   }
 
   /**
@@ -1036,6 +1108,8 @@ export class NewAiModelSetup {
       { name: "o3", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.2", envKey: "OPENAI_API_KEY" },
+      { name: "Gemini 3.0 Flash", envKey: "GEMINI_API_KEY" },
     ];
 
     const groupAccessConfig: { aiModelId: number; apiKey: string }[] = [];
