@@ -102,7 +102,9 @@ export class YpAppUser extends YpCodeBase {
   constructor(serverApi: YpServerApi, skipRegularInit = false) {
     super();
     this.serverApi = serverApi;
-    this._setupBrowserFingerprint();
+    setTimeout(() => {
+      this._setupBrowserFingerprint();
+    }, 2500);
     if (!skipRegularInit) {
       if (!window.location.pathname.startsWith("/survey/")) {
         this.checkLogin();
