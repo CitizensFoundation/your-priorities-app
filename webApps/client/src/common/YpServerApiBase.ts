@@ -91,7 +91,7 @@ export class YpServerApiBase extends YpCodeBase {
         responseJson = await response.json();
       } catch (error) {
         if (
-          response.status === 200 ||
+          response.status === 200 || response.status === 204 ||
           (response.statusText === "OK" && response.status != 401)
         ) {
           // Do nothing
