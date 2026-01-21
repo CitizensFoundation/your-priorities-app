@@ -59,7 +59,7 @@
     "iso-639-1": "^3.1.5",
     "jsonrepair": "^3.12.0",
     "knuth-shuffle-seeded": "^1.0.6",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "marked": "^15.0.11",
     "moment": "^2.30.1",
     "morgan": "~1.10.0",
