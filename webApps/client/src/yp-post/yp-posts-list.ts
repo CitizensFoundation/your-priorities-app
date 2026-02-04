@@ -575,6 +575,73 @@ export class YpPostsList extends YpBaseElement {
     }
   }
 
+  private _getPostsRouteParams():
+    | {
+        filter?: string;
+        categoryId?: number;
+        categoryName?: string;
+      }
+    | undefined {
+    if (!this.group) return undefined;
+
+    const segments = window.location.pathname.split("/").filter(Boolean);
+    const groupIndex = segments.indexOf("group");
+    if (groupIndex === -1) return undefined;
+
+    const groupId = parseInt(segments[groupIndex + 1] || "");
+    if (!groupId || groupId !== this.group.id) return undefined;
+
+    const tabSegment = segments[groupIndex + 2];
+    if (!this._matchesTabSegment(tabSegment)) return undefined;
+
+    const postsSegment = segments[groupIndex + 3];
+    if (postsSegment !== "posts") return undefined;
+
+    const filterSegment = segments[groupIndex + 4];
+    const categoryIdSegment = segments[groupIndex + 5];
+    const categoryNameSegment = segments[groupIndex + 6];
+
+    const params: {
+      filter?: string;
+      categoryId?: number;
+      categoryName?: string;
+    } = {};
+
+    if (filterSegment) {
+      params.filter = filterSegment;
+    }
+
+    if (categoryIdSegment && categoryIdSegment !== "null") {
+      const parsed = parseInt(categoryIdSegment);
+      if (!isNaN(parsed)) {
+        params.categoryId = parsed;
+      }
+      if (categoryNameSegment) {
+        params.categoryName = decodeURIComponent(categoryNameSegment);
+      }
+    }
+
+    return params;
+  }
+
+  private _matchesTabSegment(tabSegment?: string) {
+    if (!tabSegment) return false;
+    const normalized = tabSegment.toLowerCase();
+
+    switch (this.statusFilter) {
+      case "open":
+        return normalized === "open";
+      case "in_progress":
+        return normalized === "in_progress" || normalized === "inprogress";
+      case "successful":
+        return normalized === "successful" || normalized === "successfull";
+      case "failed":
+        return normalized === "failed";
+      default:
+        return false;
+    }
+  }
+
   get scrollOffset() {
     const list = this.$$("ironList");
     if (list) {
@@ -636,7 +703,8 @@ export class YpPostsList extends YpBaseElement {
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
     if (
-      changedProperties.has("statusFilter") &&
+      (changedProperties.has("statusFilter") ||
+        changedProperties.has("group")) &&
       this.group &&
       this.statusFilter
     ) {
@@ -656,7 +724,15 @@ export class YpPostsList extends YpBaseElement {
       if (this.group) {
         this.moreToLoad = true;
 
-        if (
+        const routeParams = this._getPostsRouteParams();
+
+        if (routeParams?.categoryId !== undefined) {
+          this.categoryId = routeParams.categoryId;
+          this.selectedCategoryName = routeParams.categoryName;
+          if (window.appGlobals.originalQueryParameters) {
+            window.appGlobals.originalQueryParameters["categoryId"] = undefined;
+          }
+        } else if (
           window.appGlobals.originalQueryParameters &&
           window.appGlobals.originalQueryParameters["categoryId"]
         ) {
@@ -666,9 +742,22 @@ export class YpPostsList extends YpBaseElement {
           window.appGlobals.originalQueryParameters["categoryId"] = undefined;
         } else {
           this.categoryId = undefined;
+          this.selectedCategoryName = undefined;
         }
 
         if (
+          window.appGlobals.originalQueryParameters &&
+          window.appGlobals.originalQueryParameters["searchingFor"]
+        ) {
+          this.searchingFor = window.appGlobals.originalQueryParameters[
+            "searchingFor"
+          ] as string;
+          window.appGlobals.originalQueryParameters["searchingFor"] = undefined;
+        }
+
+        if (routeParams?.filter) {
+          this.filter = routeParams.filter;
+        } else if (
           this.group.configuration &&
           this.group.configuration.forcePostSortMethodAs &&
           allowedForceByValues.indexOf(

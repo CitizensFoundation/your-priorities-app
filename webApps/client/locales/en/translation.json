@@ -789,6 +789,7 @@
   "disconnectFromSamlLogin": "Disconnect Electronic ID Login",
   "disconnectFromFacebookLogin": "Disconnect Facebok Login",
   "hidePostFilterAndSearch": "Hide post filter and search",
+  "categoryListView": "Show category portal view",
   "forceSecureSamlLoginInfo": "To access this group you need to login with secure electronic identification to ensure one vote per person. Click below to login.",
   "forceSecureSamlLogin": "Force secure SAML eID login",
   "forceElectronicIds": "Force electronic ID login",

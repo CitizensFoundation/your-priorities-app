@@ -15,6 +15,7 @@ import "../ac-activities/ac-activities.js";
 
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
+import "../yp-category/yp-category-list-view.js";
 import { YpPostsList } from "../yp-post/yp-posts-list.js";
 import { YpPostEdit } from "../yp-post/yp-post-edit.js";
 import { YpPostMap } from "../yp-post/yp-post-map.js";
@@ -406,9 +407,11 @@ export class YpGroup extends YpCollection {
         tabNumber = GroupTabTypes.Open;
         break;
       case "inProgress":
+      case "in_progress":
         tabNumber = GroupTabTypes.InProgress;
         break;
       case "successfull":
+      case "successful":
         tabNumber = GroupTabTypes.Successful;
         break;
       case "failed":
@@ -950,43 +953,67 @@ export class YpGroup extends YpCollection {
   }
 
   renderPostList(statusFilter: string): TemplateResult {
-    return this.collection
-      ? html`
-          ${this.hideBigHeaders
-            ? html`
-                <div class="smallHeader">
-                  ${this.collection.name}
-                  <span class="smallHeaderCounter"
-                    >${this.tabCounters && this.tabCounters["open"] != undefined
-                      ? `(${this.tabCounters["open"]})`
-                      : ""}</span
-                  >
-                </div>
-              `
-            : nothing}
-          <div
-            class="xlsDownloadContainer"
-            ?hidden="${!YpAccessHelpers.checkGroupAccess(
-              this.collection as YpGroupData
-            ) || !window.location.href.includes("agentBundle")}"
-          >
-            ${this.renderXlsDownload()}
-          </div>
-          <div class="layout vertical center-center">
-            <yp-posts-list
-              id="${statusFilter}PostList"
-              role="main"
-              ?hideCategories="${this.hideBigHeaders}"
-              aria-label="${this.t("posts.posts")}"
-              .selectedGroupTab="${this.selectedGroupTab}"
-              .listRoute="${this.subRoute}"
-              .statusFilter="${statusFilter}"
-              .searchingFor="${this.searchingFor}"
-              .group="${this.collection as YpGroupData}"
-            ></yp-posts-list>
-          </div>
-        `
-      : html``;
+    if (!this.collection) return html``;
+
+    const group = this.collection as YpGroupData;
+    const config = group.configuration as YpGroupConfiguration;
+    const hasCategories = group.Categories && group.Categories.length > 0;
+    const subRouteSegments = this.subRoute?.split("/").filter(Boolean) || [];
+    const showCategoryPortal =
+      !!config.categoryListView &&
+      hasCategories &&
+      !subRouteSegments.includes("posts") &&
+      !subRouteSegments.includes("search");
+
+    return html`
+      ${this.hideBigHeaders
+        ? html`
+            <div class="smallHeader">
+              ${this.collection.name}
+              <span class="smallHeaderCounter"
+                >${this.tabCounters && this.tabCounters["open"] != undefined
+                  ? `(${this.tabCounters["open"]})`
+                  : ""}</span
+              >
+            </div>
+          `
+        : nothing}
+      <div
+        class="xlsDownloadContainer"
+        ?hidden="${!YpAccessHelpers.checkGroupAccess(
+          this.collection as YpGroupData
+        ) || !window.location.href.includes("agentBundle")}"
+      >
+        ${this.renderXlsDownload()}
+      </div>
+      <div class="layout vertical center-center">
+        ${showCategoryPortal
+          ? html`
+              <yp-category-list-view
+                id="${statusFilter}CategoryList"
+                role="main"
+                aria-label="${this.t("posts.posts")}"
+                .statusFilter="${statusFilter}"
+                .group="${this.collection as YpGroupData}"
+                .hideFilterAndSearch="${group.configuration
+                  .hidePostFilterAndSearch}"
+              ></yp-category-list-view>
+            `
+          : html`
+              <yp-posts-list
+                id="${statusFilter}PostList"
+                role="main"
+                ?hideCategories="${this.hideBigHeaders}"
+                aria-label="${this.t("posts.posts")}"
+                .selectedGroupTab="${this.selectedGroupTab}"
+                .listRoute="${this.subRoute}"
+                .statusFilter="${statusFilter}"
+                .searchingFor="${this.searchingFor}"
+                .group="${this.collection as YpGroupData}"
+              ></yp-posts-list>
+            `}
+      </div>
+    `;
   }
 
   renderCurrentGroupTabPage(): TemplateResult | undefined {

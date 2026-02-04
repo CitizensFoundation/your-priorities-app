@@ -558,6 +558,10 @@ var updateGroupConfigParameters = function (req, group) {
     truthValueFromBody(req.body.hidePostFilterAndSearch)
   );
   group.set(
+    "configuration.categoryListView",
+    truthValueFromBody(req.body.categoryListView)
+  );
+  group.set(
     "configuration.hidePostImageUploads",
     truthValueFromBody(req.body.hidePostImageUploads)
   );

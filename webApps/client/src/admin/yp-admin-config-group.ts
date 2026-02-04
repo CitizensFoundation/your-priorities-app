@@ -1058,6 +1058,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "hidePostFilterAndSearch",
         },
         {
+          text: "categoryListView",
+          type: "checkbox",
+          value: this.group.configuration.categoryListView,
+          translationToken: "categoryListView",
+        },
+        {
           text: "hideMediaInput",
           type: "checkbox",
           value: this.group.configuration.hideMediaInput,

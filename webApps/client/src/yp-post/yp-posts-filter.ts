@@ -55,6 +55,8 @@ export class YpPostsFilter extends YpBaseElement {
   @property({ type: Array })
   categoriesWithCount: Array<YpCategoryData> | undefined;
 
+  private categoryCountsInfo: YpCategoriesCountInfo | undefined;
+
   static override get styles() {
     return [
       super.styles,
@@ -219,9 +221,14 @@ export class YpPostsFilter extends YpBaseElement {
                   outlined
                   @change="${this._changeCategory}"
                   class="dropdown-content wrap categoriesDropdownMenu"
+                  .value="${this.categoryId ? this.categoryId.toString() : "-1"}"
                   label="${this.t("post.categoryMenuLabel")}"
                 >
-                  <md-select-option data-category-id="-1" name="-1" selected>
+                  <md-select-option
+                    data-category-id="-1"
+                    name="-1"
+                    .value="${"-1"}"
+                  >
                     <md-icon icon="select-all" class="filterIcon"></md-icon>
                     <span
                       >${this.t("categories.the_all")}
@@ -234,6 +241,7 @@ export class YpPostsFilter extends YpBaseElement {
                       <md-select-option
                         data-category-id="${category.id}"
                         data-category-name="${category.name}"
+                        .value="${category.id.toString()}"
                       >
                         <yp-image
                           sizing="cover"
@@ -402,7 +410,20 @@ export class YpPostsFilter extends YpBaseElement {
   resetSelection(id: string | undefined = undefined) {
     const categoryMenu = this.$$("#categoryMenu");
     if (categoryMenu) {
-      (this.$$("#categoryMenu") as Select).value = id ? id : "";
+      const menu = this.$$("#categoryMenu") as Select;
+      const targetId = id ? id : "-1";
+      const options = Array.from(
+        menu.querySelectorAll("md-select-option")
+      ) as Array<HTMLElement>;
+      const foundIndex = options.findIndex(
+        (option) => option.getAttribute("data-category-id") === targetId
+      );
+      menu.value = targetId;
+      if (foundIndex >= 0) {
+        menu.selectedIndex = foundIndex;
+      } else {
+        menu.selectedIndex = 0;
+      }
     }
     //this._updateMainListMenuValue('');
   }
@@ -414,31 +435,36 @@ export class YpPostsFilter extends YpBaseElement {
       this.tabName
     )) as YpCategoriesCountInfo | void;
     if (categoryCountsInfo) {
-      const categoriesCount = categoryCountsInfo.categoriesCount;
-      this.allPostCount = categoryCountsInfo.allPostCount;
+      this.categoryCountsInfo = categoryCountsInfo;
+      this._rebuildCategoriesWithCount(categoryCountsInfo);
+    }
+  }
 
-      const categoriesWithCount: Array<YpCategoryData> = [];
-      categoriesWithCount.push({
-        id: -1,
-        name: this.t("categories.the_all"),
-        count: this.allPostCount,
-      });
-      this.group.Categories?.forEach((category) => {
-        category.count = this._getCategoryCount(category.id, categoriesCount);
-        if (category.count > 0) {
-          categoriesWithCount.push(category);
-        }
-      });
-      if (categoriesWithCount.length > 1) {
-        this.categoriesWithCount = categoriesWithCount;
-        setTimeout(() => {
-          this.resetSelection(
-            this.categoryId ? this.categoryId.toString() : ""
-          );
-        });
-      } else {
-        console.error("Unexpected categories count");
+  private _rebuildCategoriesWithCount(
+    categoryCountsInfo: YpCategoriesCountInfo
+  ) {
+    const categoriesCount = categoryCountsInfo.categoriesCount;
+    this.allPostCount = categoryCountsInfo.allPostCount;
+
+    const categoriesWithCount: Array<YpCategoryData> = [];
+    categoriesWithCount.push({
+      id: -1,
+      name: this.t("categories.the_all"),
+      count: this.allPostCount,
+    });
+    this.group.Categories?.forEach((category) => {
+      category.count = this._getCategoryCount(category.id, categoriesCount);
+      if (category.count > 0 || category.id === this.categoryId) {
+        categoriesWithCount.push(category);
       }
+    });
+    if (categoriesWithCount.length > 1) {
+      this.categoriesWithCount = categoriesWithCount;
+      setTimeout(() => {
+        this.resetSelection(this.categoryId ? this.categoryId.toString() : "");
+      });
+    } else {
+      console.error("Unexpected categories count");
     }
   }
 
@@ -460,6 +486,7 @@ export class YpPostsFilter extends YpBaseElement {
     if (changedProperties.has("group") && this.group) {
       this.categoriesWithCount = undefined;
       this.allPostCount = 0;
+      this.categoryCountsInfo = undefined;
       this._updateTitle();
       if (this.group.Categories && this.group.Categories.length > 0) {
         this._setupCategories();
@@ -473,7 +500,22 @@ export class YpPostsFilter extends YpBaseElement {
       this._updateMainListMenuValue();
     }
 
+    if (changedProperties.has("categoryId")) {
+      if (this.group?.Categories && this.categoryCountsInfo) {
+        this._rebuildCategoriesWithCount(this.categoryCountsInfo);
+      }
+    }
+
     if (changedProperties.has("categoryId") && this.categoryId) {
+      if (this.group?.Categories) {
+        const matchedCategory = this.group.Categories.find(
+          (category) => category.id === this.categoryId
+        );
+        if (matchedCategory) {
+          this.categoryName = matchedCategory.name;
+        }
+      }
+      this.resetSelection(this.categoryId.toString());
       this._updateTitle();
     }
 

@@ -253,6 +253,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   alternativeTextForNewIdeaButtonClosed?: string;
   alternativeTextForNewIdeaButton?: string;
   hidePostFilterAndSearch?: boolean;
+  categoryListView?: boolean;
   allPostsBlockedByDefault?: boolean;
   disablePostPageLink?: boolean;
   resourceLibraryLinkMode?: boolean;
