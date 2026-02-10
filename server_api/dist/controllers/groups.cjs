@@ -295,6 +295,7 @@ var updateGroupConfigParameters = function (req, group) {
     group.set("configuration.hideNewestFromFilter", truthValueFromBody(req.body.hideNewestFromFilter));
     group.set("configuration.hideGroupLevelTabs", truthValueFromBody(req.body.hideGroupLevelTabs));
     group.set("configuration.hidePostFilterAndSearch", truthValueFromBody(req.body.hidePostFilterAndSearch));
+    group.set("configuration.categoryListView", truthValueFromBody(req.body.categoryListView));
     group.set("configuration.hidePostImageUploads", truthValueFromBody(req.body.hidePostImageUploads));
     group.set("configuration.hideNewPointOnNewIdea", truthValueFromBody(req.body.hideNewPointOnNewIdea));
     group.set("configuration.maxDaysBackForRecommendations", req.body.maxDaysBackForRecommendations &&

@@ -31,12 +31,24 @@ const operatorsAliases = {
     $contains: Op.contains,
     $any: Op.any,
 };
+// Pool configuration from environment variables
+const poolConfig = {
+    max: parseInt(process.env.DB_POOL_MAX ?? "5", 10),
+    min: parseInt(process.env.DB_POOL_MIN ?? "5", 10),
+    acquire: parseInt(process.env.DB_POOL_ACQUIRE_MS ?? "30000", 10),
+    idle: parseInt(process.env.DB_POOL_IDLE_MS ?? "10000", 10),
+};
+if (poolConfig.min > poolConfig.max) {
+    logger_cjs_1.default.error(`DB_POOL_MIN (${poolConfig.min}) cannot be greater than DB_POOL_MAX (${poolConfig.max})`);
+    process.exit(1);
+}
 if (process.env.NODE_ENV === "production") {
     if (process.env.DISABLE_PG_SSL) {
         logger_cjs_1.default.debug("Creating Sequelize instance with DISABLE_PG_SSL");
         sequelize = new Sequelize(process.env.DATABASE_URL, {
             dialect: "postgres",
             minifyAliases: true,
+            pool: poolConfig,
             logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
             operatorsAliases,
         });
@@ -47,6 +59,7 @@ if (process.env.NODE_ENV === "production") {
             dialect: "postgres",
             dialectOptions: { ssl: { rejectUnauthorized: false } },
             minifyAliases: true,
+            pool: poolConfig,
             logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
             operatorsAliases,
         });
@@ -62,6 +75,7 @@ else {
             port: process.env.YP_DEV_DATABASE_PORT,
             minifyAliases: true,
             dialectOptions: { ssl: false, rejectUnauthorized: false },
+            pool: poolConfig,
             logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
             operatorsAliases,
         });
@@ -71,6 +85,7 @@ else {
         process.exit(1);
     }
 }
+logger_cjs_1.default.info(`DB Pool configured: max=${poolConfig.max}, min=${poolConfig.min}, acquire=${poolConfig.acquire}ms, idle=${poolConfig.idle}ms`);
 // -----------------------------------------------------------------------------
 // Model loading
 // -----------------------------------------------------------------------------

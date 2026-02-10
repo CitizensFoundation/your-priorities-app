@@ -108,6 +108,17 @@ const renderTemplateWithLocals = (templatePath, locals, done) => {
         done(error, { html, text });
     });
 };
+const renderTemplatePart = (templatePath, locals, part, done) => {
+    var fileName = part === "html" ? "html.ejs" : "text.ejs";
+    ejs.renderFile(path.join(templatePath, fileName), locals, {}, (err, rendered) => {
+        if (err) {
+            done(err);
+        }
+        else {
+            done(null, rendered);
+        }
+    });
+};
 const translateSubject = function (subjectHash) {
     if (typeof subjectHash === 'string') {
         return i18n.t(subjectHash);
@@ -433,7 +444,44 @@ var sendOneEmail = function (emailLocals, callback) {
                 },
                 function (seriesCallback) {
                     log.info("EmailWorker Started Sending", { locale: i18n.language });
-                    renderTemplateWithLocals(path.join(templatesDir, emailLocals.template), emailLocals, (error, results) => {
+                    var hasRenderedHtml = emailLocals && typeof emailLocals.renderedHtml === "string";
+                    var hasRenderedText = emailLocals && typeof emailLocals.renderedText === "string";
+                    var usePreRendered = hasRenderedHtml || hasRenderedText;
+                    var renderOrUse = function (done) {
+                        if (!usePreRendered) {
+                            return renderTemplateWithLocals(path.join(templatesDir, emailLocals.template), emailLocals, done);
+                        }
+                        var templatePath = emailLocals && emailLocals.template
+                            ? path.join(templatesDir, emailLocals.template)
+                            : null;
+                        if ((hasRenderedHtml && hasRenderedText) || !templatePath) {
+                            return done(null, {
+                                html: hasRenderedHtml ? emailLocals.renderedHtml : undefined,
+                                text: hasRenderedText ? emailLocals.renderedText : undefined,
+                            });
+                        }
+                        if (hasRenderedHtml && !hasRenderedText) {
+                            return renderTemplatePart(templatePath, emailLocals, "text", function (error, renderedText) {
+                                if (error) {
+                                    return done(error);
+                                }
+                                return done(null, {
+                                    html: emailLocals.renderedHtml,
+                                    text: renderedText,
+                                });
+                            });
+                        }
+                        return renderTemplatePart(templatePath, emailLocals, "html", function (error, renderedHtml) {
+                            if (error) {
+                                return done(error);
+                            }
+                            return done(null, {
+                                html: renderedHtml,
+                                text: emailLocals.renderedText,
+                            });
+                        });
+                    };
+                    renderOrUse((error, results) => {
                         if (error) {
                             log.error("EmailWorker Error", {
                                 err: error,
@@ -459,16 +507,21 @@ var sendOneEmail = function (emailLocals, callback) {
                                     if (bcc === emailLocals.user.email) {
                                         bcc = null;
                                     }
-                                    transport.sendMail({
+                                    var mailOptions = {
                                         from: fromEmail,
                                         sender: sender,
                                         replyTo: replyTo,
                                         to: emailLocals.user.email,
                                         bcc: bcc,
                                         subject: translatedSubject,
-                                        html: results.html,
-                                        text: results.text,
-                                    }, function (error, responseStatus) {
+                                    };
+                                    if (typeof results.html === "string") {
+                                        mailOptions.html = results.html;
+                                    }
+                                    if (typeof results.text === "string") {
+                                        mailOptions.text = results.text;
+                                    }
+                                    transport.sendMail(mailOptions, function (error, responseStatus) {
                                         if (error) {
                                             log.error("EmailWorker", {
                                                 errorHeaders: error.response
@@ -510,7 +563,7 @@ var sendOneEmail = function (emailLocals, callback) {
                                         parseInt(Math.random() * (423432432432 - 1232) + 1232) +
                                         ".html";
                                     fs.unlink(fileName, function (err) {
-                                        fs.writeFile(fileName, results.html, function (err) {
+                                        fs.writeFile(fileName, typeof results.html === "string" ? results.html : "", function (err) {
                                             if (err) {
                                                 log.error(err);
                                             }

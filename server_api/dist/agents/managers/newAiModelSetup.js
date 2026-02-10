@@ -94,9 +94,9 @@ export class NewAiModelSetup {
             modelSize: PsAiModelSize.Large,
             provider: "anthropic",
             prices: {
-                costInTokensPerMillion: 5,
-                costOutTokensPerMillion: 25,
-                costInCachedContextTokensPerMillion: 0.5,
+                costInTokensPerMillion: 6.0,
+                costOutTokensPerMillion: 27.5,
+                costInCachedContextTokensPerMillion: 0.55,
                 currency: "USD",
             },
             maxTokensOut: 64000,
@@ -609,6 +609,40 @@ export class NewAiModelSetup {
             await openAiGpt51.save();
             log.debug("OpenAI model already exists: GPT-5.1");
         }
+        const openAiGpt52 = await PsAiModel.findOne({
+            where: { name: "GPT-5.2" },
+        });
+        const openAiGpt52Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 1.75,
+                costOutTokensPerMillion: 14.0,
+                costInCachedContextTokensPerMillion: 0.175,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 400000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.2",
+            active: true,
+        };
+        if (!openAiGpt52) {
+            await PsAiModel.create({
+                name: "GPT-5.2",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt52Config,
+            });
+            log.info("Created OpenAI model: GPT-5.2");
+        }
+        else {
+            openAiGpt52.set("configuration", openAiGpt52Config);
+            openAiGpt52.changed("configuration", true);
+            await openAiGpt52.save();
+            log.debug("OpenAI model already exists: GPT-5.2");
+        }
     }
     /**
      * Seeds Google models.
@@ -687,78 +721,6 @@ export class NewAiModelSetup {
             await gemini25Pro.save();
             log.debug("Google model already exists: Gemini 2.5 Pro");
         }
-        const gemini25FlashPreview1 = await PsAiModel.findOne({
-            where: { name: "Gemini 2.5 Flash Preview 1" },
-        });
-        const gemini25FlashPreview1Config = {
-            type: PsAiModelType.Text,
-            modelSize: PsAiModelSize.Medium,
-            provider: "google",
-            prices: {
-                costInTokensPerMillion: 0.15,
-                costOutTokensPerMillion: 0.6,
-                costInCachedContextTokensPerMillion: 0.09,
-                longContextTokenThreshold: 200000,
-                longContextCostInTokensPerMillion: 0.3,
-                longContextCostInCachedContextTokensPerMillion: 0.21,
-                longContextCostOutTokensPerMillion: 2.4,
-                currency: "USD",
-            },
-            model: "gemini-2.5-flash-preview-05-20",
-            active: true,
-            maxTokensOut: 100000,
-            maxContextTokens: 1000000,
-            defaultTemperature: 0.0
-        };
-        if (!gemini25FlashPreview1) {
-            await PsAiModel.create({
-                name: "Gemini 2.5 Flash Preview 1",
-                organization_id: 1,
-                user_id: userId,
-                configuration: gemini25FlashPreview1Config,
-            });
-            log.info("Created Google model: Gemini 2.5 Flash Preview 1");
-        }
-        else {
-            gemini25FlashPreview1.set("configuration", gemini25FlashPreview1Config);
-            gemini25FlashPreview1.changed("configuration", true);
-            await gemini25FlashPreview1.save();
-            log.debug("Google model already exists: Gemini 2.5 Flash Preview 1");
-        }
-        const gemini25FlashPreview = await PsAiModel.findOne({
-            where: { name: "Gemini 2.5 Flash Preview" },
-        });
-        const gemini25FlashPreviewConfig = {
-            type: PsAiModelType.Text,
-            modelSize: PsAiModelSize.Medium,
-            provider: "google",
-            prices: {
-                costInTokensPerMillion: 0.15,
-                costOutTokensPerMillion: 0.6,
-                costInCachedContextTokensPerMillion: 0.09,
-                currency: "USD",
-            },
-            maxTokensOut: 32000,
-            maxContextTokens: 1000000,
-            defaultTemperature: 0.0,
-            model: "gemini-2.5-flash-preview-05-20",
-            active: true,
-        };
-        if (!gemini25FlashPreview) {
-            await PsAiModel.create({
-                name: "Gemini 2.5 Flash Preview",
-                organization_id: 1,
-                user_id: userId,
-                configuration: gemini25FlashPreviewConfig,
-            });
-            log.info("Created Google model: Gemini 2.5 Flash Preview");
-        }
-        else {
-            gemini25FlashPreview.set("configuration", gemini25FlashPreviewConfig);
-            gemini25FlashPreview.changed("configuration", true);
-            await gemini25FlashPreview.save();
-            log.debug("Google model already exists: Gemini 2.5 Flash Preview");
-        }
         const gemini25Flash = await PsAiModel.findOne({
             where: { name: "Gemini 2.5 Flash" },
         });
@@ -791,6 +753,40 @@ export class NewAiModelSetup {
             gemini25Flash.changed("configuration", true);
             await gemini25Flash.save();
             log.debug("Google model already exists: Gemini 2.5 Flash");
+        }
+        const gemini25FlashLite = await PsAiModel.findOne({
+            where: { name: "Gemini 2.5 Flash Lite" },
+        });
+        const gemini25FlashLiteConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.10,
+                costOutTokensPerMillion: 0.4,
+                costInCachedContextTokensPerMillion: 0.07,
+                currency: "USD",
+            },
+            model: "gemini-2.5-flash-lite-preview-09-2025",
+            active: true,
+            maxTokensOut: 32000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini25FlashLite) {
+            await PsAiModel.create({
+                name: "Gemini 2.5 Flash Lite",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini25FlashLiteConfig,
+            });
+            log.info("Created Google model: Gemini 2.5 Flash Lite");
+        }
+        else {
+            gemini25FlashLite.set("configuration", gemini25FlashLiteConfig);
+            gemini25FlashLite.changed("configuration", true);
+            await gemini25FlashLite.save();
+            log.debug("Google model already exists: Gemini 2.5 Flash Lite");
         }
         const gemini3ProPreview = await PsAiModel.findOne({
             where: { name: "Gemini 3 Pro Preview" },
@@ -830,17 +826,17 @@ export class NewAiModelSetup {
             await gemini3ProPreview.save();
             log.debug("Google model already exists: Gemini 3 Pro Preview");
         }
-        const gemini3FlashPreview = await PsAiModel.findOne({
-            where: { name: "Gemini 3 Flash Preview" },
+        const gemini30Flash = await PsAiModel.findOne({
+            where: { name: "Gemini 3.0 Flash" },
         });
-        const gemini3FlashPreviewConfig = {
+        const gemini30FlashConfig = {
             type: PsAiModelType.Text,
             modelSize: PsAiModelSize.Medium,
             provider: "google",
             prices: {
-                costInTokensPerMillion: 0.1,
-                costOutTokensPerMillion: 0.4,
-                costInCachedContextTokensPerMillion: 0.07,
+                costInTokensPerMillion: 0.5,
+                costOutTokensPerMillion: 3.0,
+                costInCachedContextTokensPerMillion: 0.25,
                 currency: "USD",
             },
             model: "gemini-3-flash-preview",
@@ -849,19 +845,29 @@ export class NewAiModelSetup {
             maxContextTokens: 1000000,
             defaultTemperature: 0.0,
         };
-        if (!gemini3FlashPreview) {
+        if (!gemini30Flash) {
             await PsAiModel.create({
-                name: "Gemini 3 Flash Preview",
+                name: "Gemini 3.0 Flash",
                 organization_id: 1,
                 user_id: userId,
-                configuration: gemini3FlashPreviewConfig,
+                configuration: gemini30FlashConfig,
             });
+            log.info("Created Google model: Gemini 3.0 Flash");
         }
         else {
-            gemini3FlashPreview.set("configuration", gemini3FlashPreviewConfig);
-            gemini3FlashPreview.changed("configuration", true);
-            await gemini3FlashPreview.save();
-            log.debug("Google model already exists: Gemini 3 Flash Preview");
+            gemini30Flash.set("configuration", gemini30FlashConfig);
+            gemini30Flash.changed("configuration", true);
+            await gemini30Flash.save();
+            log.debug("Google model already exists: Gemini 3.0 Flash");
+        }
+        const gemini30FlashPreview = await PsAiModel.findOne({
+            where: { name: "Gemini 3.0 Flash Preview" },
+        });
+        if (gemini30FlashPreview) {
+            gemini30FlashPreview.set("configuration", { ...gemini30FlashConfig, model: "gemini-3-flash-preview-disabled" });
+            gemini30FlashPreview.changed("configuration", true);
+            await gemini30FlashPreview.save();
+            log.debug("Google model already exists: Gemini 3.0 Flash Preview (disabled)");
         }
     }
     /**
@@ -978,6 +984,8 @@ export class NewAiModelSetup {
             { name: "o3", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.2", envKey: "OPENAI_API_KEY" },
+            { name: "Gemini 3.0 Flash", envKey: "GEMINI_API_KEY" },
         ];
         const groupAccessConfig = [];
         for (const { name, envKey } of modelsMapping) {

@@ -5,9 +5,24 @@ const _ = require('lodash');
 const queue = require('../services/workers/queue.cjs');
 let bullAudioQueue;
 if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
-    const Queue = require('bull');
-    const redisUrl = process.env.REDIS_URL ? process.env.REDIS_URL : undefined;
-    bullAudioQueue = new Queue('AudioEncoding', redisUrl);
+    const { Queue } = require('bullmq');
+    let redisUrl = process.env.REDIS_WORKER_URL ?? process.env.REDIS_URL ?? "redis://localhost:6379";
+    if (redisUrl.startsWith("redis://h:")) {
+        redisUrl = redisUrl.replace("redis://h:", "redis://:");
+    }
+    const parsedRedisUrl = new URL(redisUrl);
+    const redisConnection = {
+        host: parsedRedisUrl.hostname,
+        port: parseInt(parsedRedisUrl.port) || 6379,
+        password: parsedRedisUrl.password || undefined,
+        username: parsedRedisUrl.username || undefined,
+    };
+    if (redisUrl.startsWith("rediss://")) {
+        redisConnection.tls = {
+            rejectUnauthorized: false,
+        };
+    }
+    bullAudioQueue = new Queue('AudioEncoding', { connection: redisConnection });
 }
 module.exports = (sequelize, DataTypes) => {
     const Audio = sequelize.define("Audio", {
@@ -393,7 +408,7 @@ module.exports = (sequelize, DataTypes) => {
                 jobPackage = _.merge(jobPackage, {
                     acBackgroundJobId: jobId,
                 });
-                await bullAudioQueue.add(jobPackage);
+                await bullAudioQueue.add('audio-encoding', jobPackage);
                 callback(null, { Job: { Id: jobId } });
             }
         });
