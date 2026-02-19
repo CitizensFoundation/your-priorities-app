@@ -826,6 +826,44 @@ export class NewAiModelSetup {
             await gemini3ProPreview.save();
             log.debug("Google model already exists: Gemini 3 Pro Preview");
         }
+        const gemini31ProPreview = await PsAiModel.findOne({
+            where: { name: "Gemini 3.1 Pro Preview" },
+        });
+        const gemini31ProPreviewConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 2,
+                costOutTokensPerMillion: 12,
+                costInCachedContextTokensPerMillion: 1,
+                longContextTokenThreshold: 200000,
+                longContextCostInTokensPerMillion: 4.0,
+                longContextCostInCachedContextTokensPerMillion: 2,
+                longContextCostOutTokensPerMillion: 18,
+                currency: "USD",
+            },
+            model: "gemini-3.1-pro-preview",
+            active: true,
+            maxTokensOut: 100000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini31ProPreview) {
+            await PsAiModel.create({
+                name: "Gemini 3.1 Pro Preview",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini31ProPreviewConfig,
+            });
+            log.info("Created Google model: Gemini 3.1 Pro Preview");
+        }
+        else {
+            gemini31ProPreview.set("configuration", gemini31ProPreviewConfig);
+            gemini31ProPreview.changed("configuration", true);
+            await gemini31ProPreview.save();
+            log.debug("Google model already exists: Gemini 3.1 Pro Preview");
+        }
         const gemini30Flash = await PsAiModel.findOne({
             where: { name: "Gemini 3.0 Flash" },
         });
@@ -985,6 +1023,8 @@ export class NewAiModelSetup {
             { name: "GPT-5", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.2", envKey: "OPENAI_API_KEY" },
+            { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 3.0 Flash", envKey: "GEMINI_API_KEY" },
         ];
         const groupAccessConfig = [];
