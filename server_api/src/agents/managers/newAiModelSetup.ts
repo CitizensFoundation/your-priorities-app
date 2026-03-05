@@ -676,6 +676,86 @@ export class NewAiModelSetup {
       await openAiGpt52.save();
       log.debug("OpenAI model already exists: GPT-5.2");
     }
+
+    const openAiGpt54 = await PsAiModel.findOne({
+      where: { name: "GPT-5.4" },
+    });
+
+    const openAiGpt54Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 2.5,
+        costOutTokensPerMillion: 15.0,
+        costInCachedContextTokensPerMillion: 0.25,
+        longContextTokenThreshold: 272_000,
+        longContextCostInTokensPerMillion: 5.0,
+        longContextCostInCachedContextTokensPerMillion: 0.5,
+        longContextCostOutTokensPerMillion: 22.5,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.4",
+      active: true,
+    };
+
+    if (!openAiGpt54) {
+      await PsAiModel.create({
+        name: "GPT-5.4",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt54Config,
+      });
+      log.info("Created OpenAI model: GPT-5.4");
+    } else {
+      openAiGpt54.set("configuration", openAiGpt54Config);
+      openAiGpt54.changed("configuration", true);
+      await openAiGpt54.save();
+      log.debug("OpenAI model already exists: GPT-5.4");
+    }
+
+    const openAiGpt54Pro = await PsAiModel.findOne({
+      where: { name: "GPT-5.4 Pro" },
+    });
+
+    const openAiGpt54ProConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 30.0,
+        costOutTokensPerMillion: 180.0,
+        costInCachedContextTokensPerMillion: 0.0,
+        longContextTokenThreshold: 272_000,
+        longContextCostInTokensPerMillion: 60.0,
+        longContextCostInCachedContextTokensPerMillion: 0.0,
+        longContextCostOutTokensPerMillion: 270.0,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.4-pro",
+      active: true,
+    };
+
+    if (!openAiGpt54Pro) {
+      await PsAiModel.create({
+        name: "GPT-5.4 Pro",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt54ProConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.4 Pro");
+    } else {
+      openAiGpt54Pro.set("configuration", openAiGpt54ProConfig);
+      openAiGpt54Pro.changed("configuration", true);
+      await openAiGpt54Pro.save();
+      log.debug("OpenAI model already exists: GPT-5.4 Pro");
+    }
   }
 
   /**
@@ -1120,6 +1200,8 @@ export class NewAiModelSetup {
       { name: "GPT-5", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.2", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.4", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.4 Pro", envKey: "OPENAI_API_KEY" },
       { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Flash Lite Preview", envKey: "GEMINI_API_KEY" },
