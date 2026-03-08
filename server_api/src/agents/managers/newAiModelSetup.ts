@@ -132,6 +132,45 @@ export class NewAiModelSetup {
       anthropicOpus45.changed("configuration", true);
       await anthropicOpus45.save();
     }
+
+    const anthropicOpus46 = await PsAiModel.findOne({
+      where: { name: "Anthropic Opus 4.6" },
+    });
+    const anthropicOpus46Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "anthropic",
+      prices: {
+        costInTokensPerMillion: 5,
+        costOutTokensPerMillion: 25,
+        costInCachedContextTokensPerMillion: 0.5,
+        longContextTokenThreshold: 200_000,
+        longContextCostInTokensPerMillion: 10,
+        longContextCostInCachedContextTokensPerMillion: 1.0,
+        longContextCostOutTokensPerMillion: 37.5,
+        currency: "USD",
+      },
+      maxTokensOut: 64000,
+      maxContextTokens: 1000000,
+      defaultTemperature: 0.7,
+      model: "claude-opus-4-6",
+      active: true,
+    };
+
+    if (!anthropicOpus46) {
+      const createdModel = await PsAiModel.create({
+        name: "Anthropic Opus 4.6",
+        organization_id: 1,
+        user_id: userId,
+        configuration: anthropicOpus46Config,
+      });
+      log.info("Created Anthropic model:", createdModel);
+    } else {
+      log.debug("Anthropic model already exists: Anthropic Opus 4.6");
+      anthropicOpus46.set("configuration", anthropicOpus46Config);
+      anthropicOpus46.changed("configuration", true);
+      await anthropicOpus46.save();
+    }
   }
 
   /**
@@ -1182,6 +1221,7 @@ export class NewAiModelSetup {
     const modelsMapping: { name: string; envKey: keyof typeof apiKeys }[] = [
       { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Opus 4.6", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
