@@ -137,9 +137,25 @@ if (process.env.NODE_ENV === "production") {
     log.debug("Creating Sequelize instance with ENABLE_PG_SSL");
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect: "postgres",
-      dialectOptions: { ssl: { rejectUnauthorized: false } },
+      dialectOptions: {
+        keepAlive: true,
+        keepAliveInitialDelayMillis: 10000,
+        ssl: {
+          rejectUnauthorized: false
+        }
+      },
       minifyAliases: true,
       pool: poolConfig,
+      retry: {
+        max: 3,
+        match: [
+          /ECONNRESET/i,
+          /ETIMEDOUT/i,
+          /SequelizeConnectionError/i,
+          /SequelizeConnectionTimedOutError/i,
+          /57P01/i,
+        ],
+      },
       logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
       operatorsAliases,
     });
