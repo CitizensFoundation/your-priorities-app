@@ -176,7 +176,7 @@ export class NewAiModelSetup {
   /**
    * Seeds OpenAI models.
    * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
-   * o1 Preview, o1 24, and o3 mini.
+   * o1 Preview, o1 24, o3 mini, and GPT-5.4 variants.
    */
   static async seedOpenAiModels(userId: number): Promise<void> {
     // GPT-4o
@@ -792,6 +792,78 @@ export class NewAiModelSetup {
       log.debug("OpenAI model already exists: GPT-5.4");
     }
 
+    const openAiGpt54Mini = await PsAiModel.findOne({
+      where: { name: "GPT-5.4 mini" },
+    });
+
+    const openAiGpt54MiniConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Small,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 0.75,
+        costOutTokensPerMillion: 4.5,
+        costInCachedContextTokensPerMillion: 0.075,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 400000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.4-mini",
+      active: true,
+    };
+
+    if (!openAiGpt54Mini) {
+      await PsAiModel.create({
+        name: "GPT-5.4 mini",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt54MiniConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.4 mini");
+    } else {
+      openAiGpt54Mini.set("configuration", openAiGpt54MiniConfig);
+      openAiGpt54Mini.changed("configuration", true);
+      await openAiGpt54Mini.save();
+      log.debug("OpenAI model already exists: GPT-5.4 mini");
+    }
+
+    const openAiGpt54Nano = await PsAiModel.findOne({
+      where: { name: "GPT-5.4 nano" },
+    });
+
+    const openAiGpt54NanoConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Small,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 0.2,
+        costOutTokensPerMillion: 1.25,
+        costInCachedContextTokensPerMillion: 0.02,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 400000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.4-nano",
+      active: true,
+    };
+
+    if (!openAiGpt54Nano) {
+      await PsAiModel.create({
+        name: "GPT-5.4 nano",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt54NanoConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.4 nano");
+    } else {
+      openAiGpt54Nano.set("configuration", openAiGpt54NanoConfig);
+      openAiGpt54Nano.changed("configuration", true);
+      await openAiGpt54Nano.save();
+      log.debug("OpenAI model already exists: GPT-5.4 nano");
+    }
+
     const openAiGpt54Pro = await PsAiModel.findOne({
       where: { name: "GPT-5.4 Pro" },
     });
@@ -1278,6 +1350,8 @@ export class NewAiModelSetup {
       { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.2", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.4", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.4 mini", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.4 nano", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.4 Pro", envKey: "OPENAI_API_KEY" },
       { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
