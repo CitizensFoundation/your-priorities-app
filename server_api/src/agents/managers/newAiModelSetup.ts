@@ -761,9 +761,9 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
-        costInTokensPerMillion: 2.5,
-        costOutTokensPerMillion: 15.0,
-        costInCachedContextTokensPerMillion: 0.25,
+        costInTokensPerMillion: 5.0,
+        costOutTokensPerMillion: 30.0,
+        costInCachedContextTokensPerMillion: 0.5,
         longContextTokenThreshold: 272_000,
         longContextCostInTokensPerMillion: 5.0,
         longContextCostInCachedContextTokensPerMillion: 0.5,
