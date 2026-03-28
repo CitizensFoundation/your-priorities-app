@@ -46,7 +46,7 @@
     "download-file": "^0.1.5",
     "ejs": "^3.1.10",
     "exceljs": "^4.4.0",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "express-rate-limit": "^7.5.0",
     "express-session": "git+https://github.com/rbjarnason/session.git#upgrade-21",
     "express-useragent": "^1.0.15",
