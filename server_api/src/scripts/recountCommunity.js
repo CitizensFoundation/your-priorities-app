@@ -2,7 +2,7 @@ const models = require('../models/index.cjs');
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("../utils/requestCompat.cjs");
 
 const recountCommunity = require('../utils/recount_utils.cjs').recountCommunity;
 
@@ -21,4 +21,3 @@ recountCommunity(communityId, error=>{
   log.info("Done recounting");
   process.exit();
 })
-

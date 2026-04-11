@@ -1,9 +1,7 @@
 import { OpenAI } from "openai";
-import { Stream } from "openai/streaming";
 import { WebSocket } from "ws";
 
 import { YpBaseChatBot } from "../../llms/baseChatBot.js";
-import { url } from "inspector";
 import ioredis from "ioredis";
 import { v4 as uuidv4 } from "uuid";
 const tlsOptions = process.env.REDIS_MEMORY_URL?.startsWith("rediss://")

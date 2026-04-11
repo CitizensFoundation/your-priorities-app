@@ -1,5 +1,4 @@
 import { OpenAI } from "openai";
-import { Stream } from "openai/streaming.js";
 import WebSocket from "ws";
 import { v4 as uuidv4 } from "uuid";
 import ioredis from "ioredis";
@@ -180,7 +179,7 @@ export class YpBaseChatBot {
   }
 
   async streamWebSocketResponses(
-    stream: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+    stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {
     return new Promise<void>(async (resolve, reject) => {
       this.sendToClient(

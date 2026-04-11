@@ -2,7 +2,7 @@ const async = require('async');
 const models = require('../models/index.cjs');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("./requestCompat.cjs");
 const log = require('./logger.cjs');
 
 const recountPosts = (postIds, done) => {

@@ -2,7 +2,7 @@ const models = require('../../../models/index.cjs');
 const _ = require('lodash');
 const async = require('async');
 const log = require('../../../utils/logger.cjs');
-const request = require('request');
+const request = require("../../../utils/requestCompat.cjs");
 
 let airbrake = null;
 

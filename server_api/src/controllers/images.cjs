@@ -6,7 +6,7 @@ var multerMultipartResolver = multer({ dest: "uploads/" }).single("file");
 var auth = require("../authorization.cjs");
 var log = require("../utils/logger.cjs");
 var toJson = require("../utils/to_json.cjs");
-const s3Storage = require("multer-sharp-s3");
+const s3Storage = require("../utils/multerSharpS3Compat.cjs");
 const crypto = require("crypto");
 var queue = require("../services/workers/queue.cjs");
 

@@ -2,7 +2,7 @@ const models = require('../models/index.cjs');
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("../utils/requestCompat.cjs");
 
 /*
 const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/WBMoveIdeas160221.csv"//process.argv[1];

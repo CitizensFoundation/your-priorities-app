@@ -1,6 +1,6 @@
 const models = require("../../../../models/index.cjs");
 const log = require("../../../../utils/logger.cjs");
-const request = require("request");
+const request = require("../../../../utils/requestCompat.cjs");
 const moment = require("moment");
 
 // This SQL is needed to allow the site API

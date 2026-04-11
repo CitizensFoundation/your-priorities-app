@@ -306,13 +306,29 @@ const filterNotificationForDelivery = function (
           processNotification(notification, user, template, subject, callback);
         } else {
           const redisKey = `${SUPPRESSION_KEYBASE}${user.id}`;
-          redisConnection.get(redisKey, (error, found) => {
-            if (found) {
-              log.info(
-                `Suppressing emails for user ${user.email} settings ${LIMIT_EMAILS_FOR_SECONDS}`
-              );
-              callback();
-            } else {
+          redisConnection
+            .get(redisKey)
+            .then((found) => {
+              if (found) {
+                log.info(
+                  `Suppressing emails for user ${user.email} settings ${LIMIT_EMAILS_FOR_SECONDS}`
+                );
+                callback();
+              } else {
+                processNotification(
+                  notification,
+                  user,
+                  template,
+                  subject,
+                  callback
+                );
+              }
+            })
+            .catch((error) => {
+              log.warn("Redis suppression lookup failed, continuing delivery", {
+                err: error,
+                userId: user.id,
+              });
               processNotification(
                 notification,
                 user,
@@ -320,8 +336,7 @@ const filterNotificationForDelivery = function (
                 subject,
                 callback
               );
-            }
-          });
+            });
         }
       });
     } else {

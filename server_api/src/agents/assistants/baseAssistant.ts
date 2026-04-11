@@ -1,16 +1,13 @@
 import express from "express";
 import { OpenAI } from "openai";
-import { Stream } from "openai/streaming.js";
 import WebSocket from "ws";
 import { v4 as uuidv4 } from "uuid";
 import ioredis from "ioredis";
 import { EventEmitter } from "events";
 import {
   type ChatCompletionMessageParam,
-  type ChatCompletionCreateParams,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
-import { FunctionDefinition } from "openai/resources/shared.mjs";
 import { YpBaseChatBot } from "../../services/llms/baseChatBot.js";
 import { YpAgentProduct } from "../models/agentProduct.js";
 import { YpSubscription } from "../models/subscription.js";

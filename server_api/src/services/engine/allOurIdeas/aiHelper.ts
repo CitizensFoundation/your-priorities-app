@@ -1,6 +1,4 @@
 import { OpenAI } from "openai";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
-import { Stream } from "openai/streaming";
 import { WebSocket } from "ws";
 import log from "../../../utils/loggerTs.js";
 
@@ -50,7 +48,7 @@ Only output: PASSES or FAILS`;
         role: "user",
         content: this.moderationUserPrompt(question, answerToModerate),
       },
-    ] as ChatCompletionMessageParam[];
+    ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[];
 
     log.info(JSON.stringify(messages, null, 2));
 
@@ -80,14 +78,13 @@ Only output: PASSES or FAILS`;
   };
 
   async streamChatCompletions(messages: any[]): Promise<void> {
-    const stream: Stream<OpenAI.Chat.Completions.ChatCompletionChunk> =
-      await this.openaiClient.chat.completions.create({
-        model: this.modelName,
-        messages,
-        max_tokens: this.maxTokens,
-        temperature: this.temperature,
-        stream: true,
-      });
+    const stream = await this.openaiClient.chat.completions.create({
+      model: this.modelName,
+      messages,
+      max_tokens: this.maxTokens,
+      temperature: this.temperature,
+      stream: true,
+    });
 
     await this.streamWebSocketResponses(stream);
   }
@@ -103,7 +100,7 @@ Only output: PASSES or FAILS`;
   }
 
   async streamWebSocketResponses(
-    stream: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+    stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {
     return new Promise<void>(async (resolve, reject) => {
       this.sendToClient("bot", "", "start");

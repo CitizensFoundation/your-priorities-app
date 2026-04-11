@@ -2,7 +2,7 @@ const models = require('../../models/index.cjs');
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("../../utils/requestCompat.cjs");
 const copyCommunityNoUsersNoEndorsementsNoPoints = require('../../utils/copy_utils').copyCommunityNoUsersNoEndorsementsNoPoints;
 const updateTranslation = require('../../services/utils/translation_helpers').updateTranslation;
 

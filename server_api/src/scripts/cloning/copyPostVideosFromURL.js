@@ -2,7 +2,7 @@ const models = require('../../models/index.cjs');
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("../../utils/requestCompat.cjs");
 const cloneTranslationForConfig = require('../../services/utils/translation_cloning').cloneTranslationForConfig;
 
 const userId = process.argv[2];
@@ -230,5 +230,3 @@ async.series([
   log.info(finalOutput);
   process.exit();
 });
-
-

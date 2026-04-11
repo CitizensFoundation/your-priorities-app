@@ -748,7 +748,9 @@ const getCommunity = function (req, done) {
       },
     ],
     function (error) {
-      log.error("getCommunity", { error: error });
+      if (error) {
+        log.error("getCommunity", { error: error });
+      }
       done(error, community);
     }
   );

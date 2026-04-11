@@ -1,6 +1,6 @@
 "use strict";
 
-const request = require("request").defaults({ encoding: null });
+const request = require("../utils/requestCompat.cjs").defaults({ encoding: null });
 const fs = require("fs");
 const randomstring = require("randomstring");
 const log = require("../utils/logger.cjs");

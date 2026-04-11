@@ -24,7 +24,7 @@ const getAllModeratedItemsByGroup =
   require("../services/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByGroup;
 const performSingleModerationAction =
   require("../services/engine/moderation/process_moderation_items.cjs").performSingleModerationAction;
-const request = require("request");
+const request = require("../utils/requestCompat.cjs");
 const {
   updateAnswerTranslation,
 } = require("../services/utils/translation_helpers.cjs");

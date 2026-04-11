@@ -1,3 +1,4 @@
+.codex
 startWatchWithEnv.sh
 startWorkerWithEnv.sh
 ts-out/
