@@ -1,17 +1,13 @@
 "use strict";
 
+const crypto = require("crypto");
+const fs = require("fs");
 const sharp = require("sharp");
 const mime = require("mime-types");
-
-const streamToBuffer = (stream) =>
-  new Promise((resolve, reject) => {
-    const chunks = [];
-    stream.on("data", (chunk) => {
-      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-    });
-    stream.on("end", () => resolve(Buffer.concat(chunks)));
-    stream.on("error", reject);
-  });
+const os = require("os");
+const path = require("path");
+const { PassThrough } = require("stream");
+const { pipeline } = require("stream/promises");
 
 const buildVariantKey = (baseKey, size) => {
   const suffix = size?.suffix || "";
@@ -32,6 +28,38 @@ const buildVariantKey = (baseKey, size) => {
   return directory ? `${directory}/${variantKey}` : variantKey;
 };
 
+const createTempUploadPath = (originalName) => {
+  const extension = path.extname(originalName || "");
+  const randomSuffix = crypto.randomBytes(6).toString("hex");
+
+  return path.join(
+    os.tmpdir(),
+    `multer-sharp-s3-${process.pid}-${Date.now()}-${randomSuffix}${extension}`
+  );
+};
+
+const getUploadedObjects = (file) => {
+  const uploads = [];
+  const seen = new Set();
+
+  const addUpload = (value) => {
+    if (!value?.Bucket || !value?.Key) {
+      return;
+    }
+
+    const key = `${value.Bucket}/${value.Key}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uploads.push({ Bucket: value.Bucket, Key: value.Key });
+    }
+  };
+
+  addUpload(file);
+  Object.values(file || {}).forEach(addUpload);
+
+  return uploads;
+};
+
 class MulterSharpS3Compat {
   constructor(options) {
     if (!options?.s3) {
@@ -50,7 +78,23 @@ class MulterSharpS3Compat {
   }
 
   _removeFile(req, file, cb) {
-    this.opts.s3.deleteObject({ Bucket: file.Bucket, Key: file.Key }, cb);
+    const uploads = getUploadedObjects(file);
+
+    if (!uploads.length) {
+      cb(null);
+      return;
+    }
+
+    Promise.allSettled(
+      uploads.map(({ Bucket, Key }) =>
+        this.opts.s3.deleteObject({ Bucket, Key }).promise()
+      )
+    )
+      .then((results) => {
+        const failed = results.find((result) => result.status === "rejected");
+        cb(failed ? failed.reason : null);
+      })
+      .catch(cb);
   }
 
   _handleFile(req, file, cb) {
@@ -91,75 +135,146 @@ class MulterSharpS3Compat {
     }
   }
 
-  async _uploadImageVariants(params, file) {
-    const inputBuffer = await streamToBuffer(file.stream);
-    const sizes =
-      this.opts.multiple && Array.isArray(this.opts.resize) && this.opts.resize.length
-        ? this.opts.resize
-        : [this.opts.resize || {}];
-
-    const uploads = {};
-
-    for (const size of sizes) {
-      let transformer = sharp(inputBuffer, { animated: true, failOn: "none" });
-      const outputFormat = file.outputFormat || this.opts.toFormat;
-
-      if (size?.width || size?.height || size?.options) {
-        transformer = transformer.resize(size.width, size.height, size.options);
-      }
-
-      if (outputFormat) {
-        transformer = transformer.toFormat(outputFormat);
-      }
-
-      const { data, info } = await transformer.toBuffer({ resolveWithObject: true });
-      const contentType =
-        this.opts.ContentType ||
-        mime.contentType(info.format) ||
-        `image/${info.format}`;
-
-      const uploadResult = await this.opts.s3
-        .upload({
-          ...params,
-          Key: buildVariantKey(params.Key, size),
-          Body: data,
-          ContentType: contentType,
-        })
-        .promise();
-
-      uploads[size?.suffix || "default"] = {
-        ACL: this.opts.ACL,
-        ContentDisposition: this.opts.ContentDisposition,
-        StorageClass: this.opts.StorageClass,
-        ServerSideEncryption: this.opts.ServerSideEncryption,
-        Metadata: this.opts.Metadata,
-        ...uploadResult,
-        size: info.size,
-        ContentType: contentType,
-      };
+  async _deleteUploadedObjects(uploads) {
+    if (!uploads.length) {
+      return;
     }
 
-    uploads.mimetype =
+    await Promise.allSettled(
+      uploads.map(({ Bucket, Key }) =>
+        this.opts.s3.deleteObject({ Bucket, Key }).promise()
+      )
+    );
+  }
+
+  async _uploadStreamToS3(params, readable) {
+    let uploadedSize = 0;
+    const body = new PassThrough();
+    const upload = this.opts.s3.upload({ ...params, Body: body });
+    const uploadPromise = upload.promise().catch((error) => {
+      if (typeof upload.abort === "function") {
+        try {
+          upload.abort();
+        } catch (abortError) {
+          // Ignore abort cleanup failures and preserve the original error.
+        }
+      }
+      readable.destroy(error);
+      body.destroy(error);
+      throw error;
+    });
+
+    body.on("data", (chunk) => {
+      uploadedSize += chunk.length;
+    });
+
+    readable.on("error", (error) => {
+      body.destroy(error);
+    });
+
+    readable.pipe(body);
+
+    const uploadResult = await uploadPromise;
+    return { uploadResult, size: uploadedSize };
+  }
+
+  async _uploadImageVariant(tempFilePath, params, file, size) {
+    let transformer = sharp(tempFilePath, { animated: true, failOn: "none" });
+    const outputFormat = file.outputFormat || this.opts.toFormat;
+
+    if (size?.width || size?.height || size?.options) {
+      transformer = transformer.resize(size.width, size.height, size.options);
+    }
+
+    if (outputFormat) {
+      transformer = transformer.toFormat(outputFormat);
+    }
+
+    const contentType =
       this.opts.ContentType ||
-      mime.contentType(file.outputFormat || this.opts.toFormat || "png") ||
+      mime.contentType(outputFormat || file.mimetype) ||
       file.mimetype;
 
-    return uploads;
+    const { uploadResult, size: uploadedSize } = await this._uploadStreamToS3(
+      {
+        ...params,
+        ContentType: contentType,
+      },
+      transformer
+    );
+
+    return { uploadResult, uploadedSize, contentType };
+  }
+
+  async _uploadImageVariants(params, file) {
+    const tempFilePath = createTempUploadPath(file.originalname || params.Key);
+    const sizes =
+      this.opts.multiple &&
+      Array.isArray(this.opts.resize) &&
+      this.opts.resize.length
+        ? this.opts.resize
+        : [this.opts.resize || {}];
+    const uploads = {};
+    const uploadedObjects = [];
+
+    try {
+      await pipeline(file.stream, fs.createWriteStream(tempFilePath));
+
+      for (const size of sizes) {
+        const variantKey = buildVariantKey(params.Key, size);
+        const { uploadResult, uploadedSize, contentType } =
+          await this._uploadImageVariant(
+            tempFilePath,
+            { ...params, Key: variantKey },
+            file,
+            size
+          );
+
+        uploadedObjects.push({
+          Bucket: uploadResult.Bucket || params.Bucket,
+          Key: uploadResult.Key || variantKey,
+        });
+
+        uploads[size?.suffix || "default"] = {
+          ACL: this.opts.ACL,
+          ContentDisposition: this.opts.ContentDisposition,
+          StorageClass: this.opts.StorageClass,
+          ServerSideEncryption: this.opts.ServerSideEncryption,
+          Metadata: this.opts.Metadata,
+          ...uploadResult,
+          Bucket: uploadResult.Bucket || params.Bucket,
+          Key: uploadResult.Key || variantKey,
+          size: uploadedSize,
+          ContentType: contentType,
+        };
+      }
+
+      uploads.mimetype =
+        this.opts.ContentType ||
+        mime.contentType(file.outputFormat || this.opts.toFormat || "png") ||
+        file.mimetype;
+
+      return uploads;
+    } catch (error) {
+      await this._deleteUploadedObjects(uploadedObjects);
+      throw error;
+    } finally {
+      await fs.promises.unlink(tempFilePath).catch(() => {});
+    }
   }
 
   async _uploadNonImage(params, file) {
-    const body = await streamToBuffer(file.stream);
     const contentType = params.ContentType || file.mimetype;
-    const uploadResult = await this.opts.s3
-      .upload({
+    const { uploadResult, size } = await this._uploadStreamToS3(
+      {
         ...params,
-        Body: body,
         ContentType: contentType,
-      })
-      .promise();
+      },
+      file.stream
+    );
 
     return {
-      size: body.length,
+      size,
       ACL: this.opts.ACL,
       ContentDisposition: this.opts.ContentDisposition,
       StorageClass: this.opts.StorageClass,

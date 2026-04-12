@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import tar from 'tar';
+import { c as tarCreate, x as tarExtract } from 'tar';
 import os from 'os';
 import { fileURLToPath } from 'url';
-import { promisify } from 'util';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -14,6 +13,7 @@ const repackPackage = async () => {
     // Create a safe package name that can be used in file paths
     const safePackageName = packageJson.name.replace('/', '-').replace('@', '');
     const packageName = `${safePackageName}-${packageJson.version}.tgz`;
+    const packagePath = path.join(__dirname, packageName);
 
     // Create temporary directories
     const tmpDir = path.join(os.tmpdir(), `pck${Math.floor(Math.random() * 10000)}`);
@@ -21,7 +21,7 @@ const repackPackage = async () => {
     fs.mkdirSync(newDir, { recursive: true });
 
     // Extract the original package
-    await promisify(tar.x)({ file: packageName, C: tmpDir });
+    await tarExtract({ file: packagePath, C: tmpDir });
 
     // Function to recursively move files
     const moveAndRemove = (srcPath, destPath) => {
@@ -47,7 +47,7 @@ const repackPackage = async () => {
 
     // Create a new tarball from 'new-folder'
     const newPackageName = path.join(tmpDir, `${safePackageName}-${packageJson.version}.tgz`);
-    await promisify(tar.c)(
+    await tarCreate(
         {
             gzip: true,
             file: newPackageName,

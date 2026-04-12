@@ -165,6 +165,14 @@ router.delete(
   }
 );
 
+router.delete(
+  "/:postId/:imageId/deleteImageFromPost",
+  auth.can("edit post"),
+  (req, res) => {
+    models.Image.removeImageFromCollection(req, res);
+  }
+);
+
 // TODO: Pagination
 router.get("/:imageId/comments", auth.can("view image"), function (req, res) {
   models.Point.findAll({
@@ -373,6 +381,16 @@ router.post("/", isAuthenticated, async function (req, res) {
         return res.send(image);
       } catch (err) {
         log.error("Error saving image record:", err);
+
+        if (req.file) {
+          return storage._removeFile(req, req.file, (cleanupError) => {
+            if (cleanupError) {
+              log.error("Error cleaning up uploaded image variants:", cleanupError);
+            }
+            return res.status(500).json({ error: "Failed to save image record" });
+          });
+        }
+
         return res.status(500).json({ error: "Failed to save image record" });
       }
     });
