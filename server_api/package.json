@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.222",
+  "version": "9.0.223",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -167,8 +167,5 @@
   },
   "cacheDirectories": [
     "node_modules"
-  ],
-  "engines": {
-    "node": "24.11.1"
-  }
+  ]
 }
