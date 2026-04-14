@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.223",
+  "version": "9.0.224",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -132,11 +132,33 @@
     "validator": "13.15.35",
     "path-to-regexp": "8.4.2",
     "picomatch": "2.3.2",
+    "dottie": "2.0.7",
+    "glob@6.0.4": {
+      "minimatch": {
+        "brace-expansion": "1.1.14"
+      }
+    },
+    "glob@7.1.7": {
+      "minimatch": {
+        "brace-expansion": "1.1.14"
+      }
+    },
+    "glob@7.2.3": {
+      "minimatch": {
+        "brace-expansion": "1.1.14"
+      }
+    },
     "copyfiles": {
-      "minimatch": "3.1.4"
+      "minimatch": {
+        ".": "3.1.4",
+        "brace-expansion": "1.1.14"
+      }
     },
     "readdir-glob": {
-      "minimatch": "5.1.9"
+      "minimatch": {
+        ".": "5.1.9",
+        "brace-expansion": "2.1.0"
+      }
     },
     "@types/request": {
       "form-data": "2.5.4"
