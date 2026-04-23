@@ -1036,7 +1036,7 @@ export class NewAiModelSetup {
         costInCachedContextTokensPerMillion: 0.07,
         currency: "USD",
       },
-      model: "gemini-2.5-flash-lite-preview-09-2025",
+      model: "gemini-2.5-flash-lite",
       active: true,
       maxTokensOut: 32000,
       maxContextTokens: 1000000,
