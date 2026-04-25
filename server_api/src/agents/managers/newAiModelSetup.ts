@@ -176,7 +176,7 @@ export class NewAiModelSetup {
   /**
    * Seeds OpenAI models.
    * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
-   * o1 Preview, o1 24, o3 mini, and GPT-5.4 variants.
+   * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, and GPT-5.5.
    */
   static async seedOpenAiModels(userId: number): Promise<void> {
     // GPT-4o
@@ -903,6 +903,45 @@ export class NewAiModelSetup {
       await openAiGpt54Pro.save();
       log.debug("OpenAI model already exists: GPT-5.4 Pro");
     }
+
+    const openAiGpt55 = await PsAiModel.findOne({
+      where: { name: "GPT-5.5" },
+    });
+
+    const openAiGpt55Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 12.5,
+        costOutTokensPerMillion: 75.0,
+        costInCachedContextTokensPerMillion: 1.25,
+        priorityTokensIn: 12.5,
+        priorityTokensCachedIn: 1.25,
+        priorityTokensOut: 75.0,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.5",
+      active: true,
+    };
+
+    if (!openAiGpt55) {
+      await PsAiModel.create({
+        name: "GPT-5.5",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt55Config,
+      });
+      log.info("Created OpenAI model: GPT-5.5");
+    } else {
+      openAiGpt55.set("configuration", openAiGpt55Config);
+      openAiGpt55.changed("configuration", true);
+      await openAiGpt55.save();
+      log.debug("OpenAI model already exists: GPT-5.5");
+    }
   }
 
   /**
@@ -1353,6 +1392,7 @@ export class NewAiModelSetup {
       { name: "GPT-5.4 mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.4 nano", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.4 Pro", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.5", envKey: "OPENAI_API_KEY" },
       { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Flash Lite Preview", envKey: "GEMINI_API_KEY" },
