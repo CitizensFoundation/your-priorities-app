@@ -218,6 +218,21 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         fleshy-jsoneditor {
           width: 960px;
         }
+
+        .innerTabContainer
+          > div:has(+ div aoi-earl-ideas-editor)
+          yp-structured-question-edit,
+        .htmlItem:has(aoi-earl-ideas-editor) {
+          width: 780px;
+          max-width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .htmlItem:has(aoi-earl-ideas-editor) aoi-earl-ideas-editor {
+          display: block;
+          width: 100%;
+        }
       `,
     ];
   }
