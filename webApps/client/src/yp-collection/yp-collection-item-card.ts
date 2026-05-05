@@ -28,6 +28,9 @@ export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
+  @property({ type: Object })
+  parentCollection: YpCollectionData | undefined;
+
   @property({ type: Boolean })
   useEvenOddItemLayout = false;
 
@@ -290,7 +293,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   get groupTypeName() {
-    if ((this.item as YpGroupData).configuration.hideGroupType === true) {
+    if (this.hideGroupTypeInList) {
       return "";
     } else if ((this.item as YpGroupData).configuration.groupType) {
       switch (
@@ -313,6 +316,14 @@ export class YpCollectionItemCard extends YpBaseElement {
     } else {
       return this.t("ideas");
     }
+  }
+
+  get hideGroupTypeInList() {
+    return (
+      (this.item as YpGroupData).configuration.hideGroupType === true ||
+      (this.parentCollection as YpCommunityData | undefined)?.configuration
+        ?.hideGroupTypeInList === true
+    );
   }
 
   goToItem(event: CustomEvent) {
@@ -408,7 +419,7 @@ export class YpCollectionItemCard extends YpBaseElement {
     if (
       this.statsCollectionType === "group" &&
       this.item?.configuration &&
-      (this.item as YpGroupData).configuration.hideGroupType !== true
+      !this.hideGroupTypeInList
     ) {
       return html`<div class="groupType" ?is-folder="${this.isGroupFolder}">
         ${this.groupTypeName}

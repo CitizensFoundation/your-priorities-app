@@ -2012,6 +2012,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.group.configuration.allOurIdeas = (
       this.$$("aoi-earl-ideas-editor") as AoiEarlIdeasEditor
     ).configuration;
+    this._configChanged();
     this.requestUpdate();
   }
 

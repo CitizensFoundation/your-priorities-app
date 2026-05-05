@@ -293,6 +293,17 @@ export class AoiSurvey extends YpBaseElement {
           max-width: 960px;
         }
 
+        .desktopNavContainer {
+          padding-top: 8px;
+        }
+
+        .aoiNavigationTabs {
+          min-height: 64px;
+          overflow: visible;
+          --md-primary-tab-container-height: 64px;
+          --md-primary-tab-with-icon-and-label-text-container-height: 64px;
+        }
+
         body {
           background-color: var(--md-sys-color-on-surface, #fefefe);
         }
@@ -554,8 +565,8 @@ export class AoiSurvey extends YpBaseElement {
   renderNavigationBar() {
     if (this.wide) {
       return html`
-        <div class="layout vertical center-center">
-          <md-tabs aria-label="Navigation Tabs">
+        <div class="layout vertical center-center desktopNavContainer">
+          <md-tabs class="aoiNavigationTabs" aria-label="Navigation Tabs">
             <md-primary-tab
               id="introTab"
               class="${this.pageIndex == PagesTypes.Introduction &&

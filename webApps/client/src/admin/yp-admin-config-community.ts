@@ -1069,6 +1069,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           translationToken: "hideItemCount",
         },
         {
+          text: "hideGroupTypeInList",
+          type: "checkbox",
+          value: (this.collection?.configuration as YpCommunityConfiguration)
+            .hideGroupTypeInList,
+          translationToken: "hideGroupTypeInList",
+        },
+        {
           text: "customBackName",
           type: "textfield",
           maxLength: 20,

@@ -895,6 +895,10 @@ const updateCommunityConfigParameters = function (req, community) {
     "configuration.hideItemCount",
     truthValueFromBody(req.body.hideItemCount)
   );
+  community.set(
+    "configuration.hideGroupTypeInList",
+    truthValueFromBody(req.body.hideGroupTypeInList)
+  );
 
   community.set(
     "configuration.recalculateCountersRecursively",

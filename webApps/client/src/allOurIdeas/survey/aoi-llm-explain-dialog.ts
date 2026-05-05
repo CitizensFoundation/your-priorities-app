@@ -68,10 +68,12 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
-    this.addEventListener("chatbot-close", this.cancel);
+    this.removeEventListener("chatbot-close", this.cancel);
   }
 
   async sendFirstQuestion() {
+    if (this.haveSentFirstQuestion) return;
+    this.haveSentFirstQuestion = true;
     window.appGlobals.activity(`Explain - first qestion`);
     const firstMessage = `**${this.t("hereIsTheQuestion")}:**
 ${this.questionText}

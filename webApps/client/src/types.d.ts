@@ -465,6 +465,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   onlyAdminsCanCreateGroups?: boolean;
   alwaysShowOnDomainPage?: boolean;
   alwaysHideLogoImage?: boolean;
+  hideGroupTypeInList?: boolean;
   useAsTemplate?: boolean;
   useInfoIconInsteadOfHelpIcon?: boolean;
 }

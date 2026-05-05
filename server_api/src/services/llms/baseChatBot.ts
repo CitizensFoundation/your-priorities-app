@@ -67,6 +67,7 @@ export class YpBaseChatBot {
     this.wsClientId = wsClientId;
     this.wsClientSocket = wsClients.get(this.wsClientId)!;
     this.wsClients = wsClients;
+    this.memory = { chatLog: [] } as YpBaseChatBotMemoryData;
 
     log.info(`WebSockets: BaseChatBot constructor for ${this.wsClientId}`);
 
@@ -191,8 +192,11 @@ export class YpBaseChatBot {
       try {
         let botMessage = "";
         for await (const part of stream) {
-          this.sendToClient("assistant", part.choices[0].delta.content!);
-          botMessage += part.choices[0].delta.content!;
+          const content = part.choices[0].delta.content;
+          if (content) {
+            this.sendToClient("assistant", content);
+            botMessage += content;
+          }
 
           if (part.choices[0].finish_reason == "stop") {
             this.memory.chatLog!.push({
@@ -217,6 +221,30 @@ export class YpBaseChatBot {
       }
       resolve();
     });
+  }
+
+  usesMaxCompletionTokens(modelName: string) {
+    return modelName.startsWith("gpt-5");
+  }
+
+  getStreamingChatCompletionParams(
+    messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+  ): OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming {
+    const requestParams: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming =
+      {
+        model: this.llmModel,
+        messages,
+        stream: true,
+      };
+
+    if (this.usesMaxCompletionTokens(this.llmModel)) {
+      requestParams.max_completion_tokens = this.maxTokens;
+    } else {
+      requestParams.max_tokens = this.maxTokens;
+      requestParams.temperature = this.temperature;
+    }
+
+    return requestParams;
   }
 
   async saveMemoryIfNeeded() {
@@ -248,13 +276,9 @@ export class YpBaseChatBot {
 
     messages.unshift(systemMessage);
 
-    const stream = await this.openaiClient.chat.completions.create({
-      model: this.llmModel,
-      messages,
-      max_tokens: this.maxTokens,
-      temperature: this.temperature,
-      stream: true,
-    });
+    const stream = await this.openaiClient.chat.completions.create(
+      this.getStreamingChatCompletionParams(messages)
+    );
 
     this.streamWebSocketResponses(stream);
   }

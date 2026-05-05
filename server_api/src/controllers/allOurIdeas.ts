@@ -894,7 +894,8 @@ export class AllOurIdeasController {
           req.redisClient,
           usedLanguageName,
           topOrBottomText,
-          analysisType.label
+          analysisType.label,
+          `aoi-analysis-${analysisIndex}-${analysisTypeIndex}`
         );
       }
 

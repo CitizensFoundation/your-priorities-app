@@ -7,6 +7,7 @@ export class AiHelper {
   wsClientSocket: WebSocket | undefined;
   modelName = "gpt-4o";
   answerIdeasModelName = "gpt-5.3-chat-latest";
+  analysisModelName = "gpt-5.3-chat-latest";
   maxTokens = 2048;
   temperature = 0.7;
   cacheExpireTime = 60 * 60;
@@ -84,7 +85,8 @@ Only output: PASSES or FAILS`;
 
   async streamChatCompletions(
     messages: any[],
-    modelName = this.modelName
+    modelName = this.modelName,
+    uniqueToken?: string
   ): Promise<void> {
     const requestParams: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
       model: modelName,
@@ -103,30 +105,37 @@ Only output: PASSES or FAILS`;
       requestParams
     );
 
-    await this.streamWebSocketResponses(stream);
+    await this.streamWebSocketResponses(stream, uniqueToken);
   }
 
-  sendToClient(sender: string, message: string, type = "stream") {
+  sendToClient(
+    sender: string,
+    message: string,
+    type = "stream",
+    uniqueToken?: string
+  ) {
     this.wsClientSocket?.send(
       JSON.stringify({
         sender,
         type: type,
         message,
+        uniqueToken,
       })
     );
   }
 
   async streamWebSocketResponses(
-    stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>
+    stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+    uniqueToken?: string
   ) {
     return new Promise<void>(async (resolve, reject) => {
-      this.sendToClient("assistant", "", "start");
+      this.sendToClient("assistant", "", "start", uniqueToken);
       try {
         let botMessage = "";
         for await (const part of stream) {
           const content = part.choices[0].delta.content;
           if (content) {
-            this.sendToClient("assistant", content);
+            this.sendToClient("assistant", content, "stream", uniqueToken);
             botMessage += content;
           }
         }
@@ -144,11 +153,12 @@ Only output: PASSES or FAILS`;
         this.sendToClient(
           "assistant",
           "There has been an error, please retry",
-          "error"
+          "error",
+          uniqueToken
         );
         reject();
       } finally {
-        this.sendToClient("assistant", "", "end");
+        this.sendToClient("assistant", "", "end", uniqueToken);
       }
       resolve();
     });
@@ -226,7 +236,8 @@ Only output: PASSES or FAILS`;
     redisClient: any,
     locale: string,
     topOrBottomIdeasText: string,
-    typeOfAnalysisText: string
+    typeOfAnalysisText: string,
+    uniqueToken?: string
   ): Promise<string | null | undefined> {
     this.redisClient = redisClient;
     this.cacheKeyForFullResponse = cacheKeyForFullResponse;
@@ -288,14 +299,15 @@ Only output: PASSES or FAILS`;
           },
         ] as any;
 
-        this.streamChatCompletions(messages);
+        this.streamChatCompletions(messages, this.analysisModelName, uniqueToken);
       }
     } catch (error) {
       log.error("Error in getAiAnalysis:", error);
       this.sendToClient(
         "assistant",
         "There has been an error, please retry",
-        "error"
+        "error",
+        uniqueToken
       );
     }
   }

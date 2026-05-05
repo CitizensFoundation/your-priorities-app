@@ -37,10 +37,22 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
   @property({ type: String })
   analysis = "";
 
+  @property({ type: Boolean })
+  isStreaming = false;
+
   @property({ type: Array })
   selectedChoices: AoiChoiceData[] = [];
 
   serverApi!: AoiServerApi;
+  haveStartedStreaming = false;
+
+  get analysisStreamToken() {
+    return `aoi-analysis-${this.analysisIndex}-${this.analysisTypeIndex}`;
+  }
+
+  get normalizedAnalysis() {
+    return this.analysis.replace(/([^\n])\s*(#{1,6}\s+)/g, "$1\n\n$2");
+  }
 
   constructor() {
     super();
@@ -54,10 +66,12 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.addEventListener("yp-ws-opened", this.streamAnalysis);
+    this.removeEventListener("yp-ws-opened", this.streamAnalysis);
   }
 
   async streamAnalysis() {
+    if (this.haveStartedStreaming) return;
+    this.haveStartedStreaming = true;
     const { cachedAnalysis, selectedChoices } =
       await this.serverApi.getSurveyAnalysis(
         this.groupId,
@@ -74,6 +88,17 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
     this.selectedChoices = selectedChoices;
   }
 
+  override async onMessage(event: MessageEvent) {
+    const data = JSON.parse(event.data) as YpAssistantMessage;
+    if (
+      data.sender === "assistant" &&
+      data.uniqueToken !== this.analysisStreamToken
+    ) {
+      return;
+    }
+
+    await super.onMessage(event);
+  }
 
   renderChoice(index: number, result: AoiChoiceData) {
     return html`
@@ -108,14 +133,16 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
   async addChatBotElement(wsMessage: YpAssistantMessage): Promise<void> {
     switch (wsMessage.type) {
       case "start":
+        this.isStreaming = true;
         break;
       case "moderation_error":
         //TODO
         break;
       case "error":
-        //TODO
+        this.isStreaming = false;
         break;
       case "end":
+        this.isStreaming = false;
         break;
       case "stream":
         if (wsMessage.message && wsMessage.message != "undefined") {
@@ -143,6 +170,10 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
           margin-top: 8px;
           margin-bottom: 16px;
           font-style: italic;
+        }
+
+        .analysisText {
+          white-space: pre-wrap;
         }
 
         .column {
@@ -194,11 +225,13 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
       ${this.selectedChoices.map((result, index) =>
         this.renderChoice(index, result)
       )}
-      ${resolveMarkdown(this.analysis, {
-        includeImages: true,
-        includeCodeBlockClassNames: true,
-      })}
-      <div ?hidden="${!this.analysis}" class="generatingInfo">${this.t("Written by GPT-4")}</div>
+      ${this.isStreaming
+        ? html`<div class="analysisText">${this.normalizedAnalysis}</div>`
+        : resolveMarkdown(this.normalizedAnalysis, {
+            includeImages: true,
+            includeCodeBlockClassNames: true,
+          })}
+      <div ?hidden="${!this.analysis}" class="generatingInfo">${this.t("Written by AI")}</div>
     </div>`;
   }
 }

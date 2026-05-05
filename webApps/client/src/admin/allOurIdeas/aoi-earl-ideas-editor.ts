@@ -322,87 +322,87 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
     this.isGeneratingWithAi = true;
     this.shouldContinueGenerating = true;
 
-    for (
-      let i = 0;
-      i < this.choices!.length;
-      i += numberOfIconsToGenerateInParallel
-    ) {
+    const choicesToGenerate = this.choices!.filter(
+      (choice) => !choice.data?.imageUrl
+    );
+
+    const generateIconForChoice = async (choice: AoiChoiceData) => {
       if (!this.shouldContinueGenerating) {
-        break;
+        return;
       }
 
-      const generationPromises = [];
-      for (
-        let j = i;
-        j < i + numberOfIconsToGenerateInParallel && j < this.choices!.length;
-        j++
-      ) {
-        const choice = this.choices![j];
+      const imageGenerator = new AoiGenerateAiLogos(this.themeColor);
 
-        if (choice.data?.imageUrl) {
-          continue;
-        }
-
-        const imageGenerator = new AoiGenerateAiLogos(this.themeColor);
-
-        if (this.communityId) {
-          imageGenerator.collectionType = "community";
-          imageGenerator.collectionId = this.communityId!;
-        } else if (this.domainId) {
-          imageGenerator.collectionType = "domain";
-          imageGenerator.collectionId = this.domainId!;
-        }
-
-        choice.data.isGeneratingImage = true;
-        this.requestUpdate();
-        const generationPromise = imageGenerator
-          .generateIcon(
-            choice.data.content,
-            (this.$$("#aiStyleInput") as MdOutlinedTextField).value
-          )
-          .then((result: IconGenerationResult) => {
-            // Use the interface here
-            choice.data.isGeneratingImage = undefined;
-            if (result.error) {
-              console.error(result.error);
-              return;
-            }
-
-            if (!this.shouldContinueGenerating) {
-              return;
-            }
-
-            if (result.imageUrl) {
-              return this.serverApi
-                .updateChoice(
-                  this.domainId!,
-                  this.communityId!,
-                  this.configuration.earl!.question_id!,
-                  choice.id,
-                  {
-                    content: choice.data.content,
-                    imageUrl: result.imageUrl,
-                    choiceId: choice.id,
-                  }
-                )
-                .then(() => {
-                  choice.data.imageUrl = result.imageUrl;
-                  this.requestUpdate();
-                });
-            } else {
-              return;
-            }
-          })
-          .catch((e) => {
-            choice.data.isGeneratingImage = false;
-            console.error(e);
-          });
-
-        generationPromises.push(generationPromise);
+      if (this.communityId) {
+        imageGenerator.collectionType = "community";
+        imageGenerator.collectionId = this.communityId!;
+      } else if (this.domainId) {
+        imageGenerator.collectionType = "domain";
+        imageGenerator.collectionId = this.domainId!;
       }
 
-      await Promise.all(generationPromises);
-    }
+      choice.data.isGeneratingImage = true;
+      this.requestUpdate();
+
+      try {
+        const result = (await imageGenerator.generateIcon(
+          choice.data.content,
+          (this.$$("#aiStyleInput") as MdOutlinedTextField).value
+        )) as IconGenerationResult;
+
+        choice.data.isGeneratingImage = undefined;
+        if (result.error) {
+          console.error(result.error);
+          return;
+        }
+
+        if (!this.shouldContinueGenerating) {
+          return;
+        }
+
+        if (result.imageUrl) {
+          await this.serverApi.updateChoice(
+            this.domainId!,
+            this.communityId!,
+            this.configuration.earl!.question_id!,
+            choice.id,
+            {
+              content: choice.data.content,
+              imageUrl: result.imageUrl,
+              choiceId: choice.id,
+            }
+          );
+
+          choice.data.imageUrl = result.imageUrl;
+          this.fire("configuration-changed", this.configuration);
+          this.requestUpdate();
+        }
+      } catch (e) {
+        choice.data.isGeneratingImage = false;
+        console.error(e);
+      }
+    };
+
+    let nextChoiceIndex = 0;
+    const workers = Array.from(
+      {
+        length: Math.min(
+          numberOfIconsToGenerateInParallel,
+          choicesToGenerate.length
+        ),
+      },
+      async () => {
+        while (
+          this.shouldContinueGenerating &&
+          nextChoiceIndex < choicesToGenerate.length
+        ) {
+          const choice = choicesToGenerate[nextChoiceIndex++];
+          await generateIconForChoice(choice);
+        }
+      }
+    );
+
+    await Promise.all(workers);
 
     this.isGeneratingWithAi = false;
     this.currentGeneratingIndex = undefined;

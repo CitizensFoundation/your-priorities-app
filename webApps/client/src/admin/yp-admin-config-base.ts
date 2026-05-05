@@ -390,7 +390,15 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         ${configItems.map(
           (question, index) => html`
             ${question.type == "html"
-              ? html`<div class="layout vertical"><div class="htmlItem">${question.templateData}</div></div>`
+              ? html`<div class="layout vertical">
+                  <div
+                    class="htmlItem ${question.text === "htmlContent"
+                      ? "fullWidthHtmlItem"
+                      : ""}"
+                  >
+                    ${question.templateData}
+                  </div>
+                </div>`
               : html`
                   <div class="layout vertical">
                     <yp-structured-question-edit
@@ -910,6 +918,11 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           margin-bottom: 16px;
           margin-top: 16px;
           width: 600px;
+          max-width: 100%;
+        }
+
+        .fullWidthHtmlItem {
+          width: 100%;
         }
 
         .innerTabContainer {

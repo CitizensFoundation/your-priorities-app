@@ -96,6 +96,15 @@ export class YpAdminHtmlEditor extends YpBaseElement {
     return [
       super.styles,
       css`
+        :host {
+          display: block;
+          width: 100%;
+        }
+
+        .tabsContainer {
+          width: 100%;
+        }
+
         md-tabs {
           width: 100%;
           margin-bottom: 16px;
@@ -481,7 +490,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="layout vertical center-center">
+      <div class="layout vertical center-center tabsContainer">
         <md-tabs
           @change="${this._selectTab}"
           .activeTabIndex="${this.selectedTab}"

@@ -58,17 +58,37 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     super();
   }
 
+  private static notifyWebSocketOpened(subscriber?: YpStreamingLlmBase) {
+    const event = new CustomEvent("yp-ws-opened");
+    if (subscriber) {
+      subscriber.dispatchEvent(event);
+    } else {
+      YpStreamingLlmBase.subscribers.forEach((sub) => {
+        sub.dispatchEvent(new CustomEvent("yp-ws-opened"));
+      });
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     if (!this.disableWebsockets) {
       // Add this instance to the list of subscribers
       YpStreamingLlmBase.subscribers.add(this);
+      const storedClientId = localStorage.getItem("ypWsClientId") || "";
+      if (storedClientId) {
+        this.wsClientId = storedClientId;
+      }
       // If no shared connection exists or if it’s closed, create a new one.
       if (
         !YpStreamingLlmBase.ws ||
         YpStreamingLlmBase.ws.readyState === WebSocket.CLOSED
       ) {
         YpStreamingLlmBase.initWebSocketsStatic(this);
+      } else if (
+        YpStreamingLlmBase.ws.readyState === WebSocket.OPEN &&
+        this.wsClientId
+      ) {
+        setTimeout(() => YpStreamingLlmBase.notifyWebSocketOpened(this));
       }
     }
   }
@@ -120,6 +140,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
         YpStreamingLlmBase.subscribers.forEach((sub) => {
           sub.wsClientId = data.clientId;
         });
+        YpStreamingLlmBase.notifyWebSocketOpened();
       }
 
       // Dispatch the event to every subscriber’s onMessage method.

@@ -10,7 +10,7 @@ const tlsOptions = process.env.REDIS_MEMORY_URL?.startsWith("rediss://")
 
 export class ExplainAnswersAssistant extends YpBaseChatBot {
   openaiClient: OpenAI;
-  modelName = "gpt-4o";
+  override llmModel = "gpt-5.3-chat-latest";
   maxTokens = 4000;
   temperature = 0.8;
   languageName: string;
@@ -65,7 +65,7 @@ Output:
   }
 
   explainConversation = async (chatLog: YpSimpleChatLog[]) => {
-    this.setChatLog(chatLog);
+    await this.setChatLog(chatLog);
 
     let messages: any[] = chatLog.map((message: YpSimpleChatLog) => {
       return {
@@ -81,13 +81,9 @@ Output:
 
     messages.unshift(systemMessage);
 
-    const stream = await this.openaiClient.chat.completions.create({
-      model: this.llmModel,
-      messages,
-      max_tokens: this.maxTokens,
-      temperature: this.temperature,
-      stream: true,
-    });
+    const stream = await this.openaiClient.chat.completions.create(
+      this.getStreamingChatCompletionParams(messages)
+    );
 
     this.streamWebSocketResponses(stream);
   };

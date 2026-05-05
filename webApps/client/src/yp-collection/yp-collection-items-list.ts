@@ -109,6 +109,7 @@ export class YpCollectionItemsList extends YpBaseElement {
         <yp-collection-item-card
           class="card"
           .index="${index}"
+          .parentCollection="${this.collection}"
           ?useEvenOddItemLayout="${this.useEvenOddItemLayout && this.wide}"
           aria-label="${item.name}"
           .item="${item}"

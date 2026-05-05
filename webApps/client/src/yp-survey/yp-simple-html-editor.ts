@@ -376,12 +376,19 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
     super.connectedCallback();
   }
 
+  private get htmlEditorElement() {
+    return this.shadowRoot?.querySelector("#htmlEditor") as HTMLElement | null;
+  }
+
   override update(
     changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.update(changedProperties);
     if (changedProperties.has("value")) {
-      this.setRichValue(this.value);
+      const htmlEditor = this.htmlEditorElement;
+      if (htmlEditor && htmlEditor.innerHTML !== this.value) {
+        this.setRichValue(this.value);
+      }
     }
   }
 
@@ -413,7 +420,10 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
 
   setRichValue(value: string) {
     this.value = value;
-    this.shadowRoot!.querySelector("#htmlEditor")!.innerHTML = this.value;
+    const htmlEditor = this.htmlEditorElement;
+    if (htmlEditor && htmlEditor.innerHTML !== this.value) {
+      htmlEditor.innerHTML = this.value;
+    }
   }
 
   _updateCharacterCounter() {
