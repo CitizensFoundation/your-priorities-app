@@ -38,6 +38,18 @@ export class YpGenerateAiImage extends YpBaseElement {
   @property({ type: String })
   imageType: YpAiGenerateImageTypes = "logo";
 
+  @property({ type: String })
+  imageProvider: YpAiGenerateImageProvider | undefined;
+
+  @property({ type: String })
+  imageModel: YpAiGenerateImageModel | undefined;
+
+  @property({ type: String })
+  imageSize: YpAiGenerateImageSize | undefined;
+
+  @property({ type: String })
+  imageQuality: YpAiGenerateImageQuality | undefined;
+
   @property({ type: Number })
   jobId: number | undefined;
 
@@ -137,7 +149,11 @@ export class YpGenerateAiImage extends YpBaseElement {
           this.collectionType,
           this.collectionId,
           this.imageType,
-          this.finalPrompt
+          this.finalPrompt,
+          this.imageProvider,
+          this.imageModel,
+          this.imageSize,
+          this.imageQuality
         );
     } catch (error: any) {
       console.error(error);
@@ -201,6 +217,10 @@ export class YpGenerateAiImage extends YpBaseElement {
       collectionId: this.collectionId,
       collectionType: this.collectionType,
       imageType: this.imageType,
+      imageProvider: this.imageProvider,
+      imageModel: this.imageModel,
+      imageSize: this.imageSize,
+      imageQuality: this.imageQuality,
       jobId: this.jobId,
     });
     window.appGlobals.activity(`Generate AI Image - move to background`);

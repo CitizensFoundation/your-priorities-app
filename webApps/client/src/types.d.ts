@@ -872,9 +872,44 @@ interface YpWorkPackageData {
 interface YpGenerativeAiWorkPackageData extends YpWorkPackageData {
   prompt: string;
   imageType: YpAiGenerateImageTypes | undefined;
+  imageProvider?: YpAiGenerateImageProvider;
+  imageModel?: YpAiGenerateImageModel;
+  imageSize?: YpAiGenerateImageSize;
+  imageQuality?: YpAiGenerateImageQuality;
 }
 
 type YpAiGenerateImageTypes = "logo" | "icon";
+type YpAiGenerateImageProvider =
+  | "openai"
+  | "azureOpenai"
+  | "flux"
+  | "imagen";
+type YpAiGenerateImageModel =
+  | "gpt-image-2"
+  | "gpt-image-1.5"
+  | "gpt-image-1"
+  | "gpt-image-1-mini"
+  | "dall-e-3"
+  | (string & {});
+type YpAiGenerateImageSize =
+  | "auto"
+  | "1024x1024"
+  | "1536x1024"
+  | "1024x1536"
+  | "2048x1152"
+  | "2048x2048"
+  | "3840x2160"
+  | "2160x3840"
+  | "1792x1024"
+  | "1024x1792"
+  | (string & {});
+type YpAiGenerateImageQuality =
+  | "auto"
+  | "low"
+  | "medium"
+  | "high"
+  | "standard"
+  | "hd";
 
 interface YpUserData {
   id: number;

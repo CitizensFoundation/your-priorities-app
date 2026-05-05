@@ -23,6 +23,9 @@ const getDomainIncludes = require('../services/engine/analytics/statsCalc.cjs').
 const getPointDomainIncludes = require('../services/engine/analytics/statsCalc.cjs').getPointDomainIncludes;
 const getParsedSimilaritiesContent = require('../services/engine/analytics/manager.cjs').getParsedSimilaritiesContent;
 const crypto = require('crypto');
+const {
+  normalizeImageGenerationOptions,
+} = require("../services/llms/imageGeneration/imageModelConfig.cjs");
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -1367,6 +1370,17 @@ router.delete('/:domainId/:campaignId/delete_campaign', auth.can('edit domain'),
 
 //TODO: Move permission back to edit after figuring out how
 router.post('/:domainId/:start_generating/ai_image', auth.can('view domain'), function(req, res) {
+  const imageOptions = normalizeImageGenerationOptions(
+    req.body.imageProvider,
+    req.body.imageModel,
+    req.body.imageSize,
+    req.body.imageQuality
+  );
+  if (imageOptions.error) {
+    res.status(400).send({ error: imageOptions.error });
+    return;
+  }
+
   models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
     if (error) {
       log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });
@@ -1379,7 +1393,11 @@ router.post('/:domainId/:start_generating/ai_image', auth.can('view domain'), fu
         collectionId: req.params.domainId,
         collectionType: "domain",
         prompt: req.body.prompt,
-        imageType: req.body.imageType
+        imageType: req.body.imageType,
+        imageProvider: imageOptions.imageProvider,
+        imageModel: imageOptions.imageModel,
+        imageSize: imageOptions.imageSize,
+        imageQuality: imageOptions.imageQuality
       }, 'critical');
 
       res.send({ jobId });

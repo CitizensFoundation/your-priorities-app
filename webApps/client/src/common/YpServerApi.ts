@@ -143,14 +143,30 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public startGeneratingAiImage(collectionType: string, collectionId: number, imageType: string, prompt: string) {
+  public startGeneratingAiImage(
+    collectionType: string,
+    collectionId: number,
+    imageType: string,
+    prompt: string,
+    imageProvider?: YpAiGenerateImageProvider,
+    imageModel?: YpAiGenerateImageModel,
+    imageSize?: YpAiGenerateImageSize,
+    imageQuality?: YpAiGenerateImageQuality
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath +
       `/${YpServerApi.transformCollectionTypeToApi(
         collectionType
       )}/${collectionId}/start_generating/ai_image`, {
       method: 'POST',
-      body: JSON.stringify({ prompt, imageType }),
+      body: JSON.stringify({
+        prompt,
+        imageType,
+        imageProvider,
+        imageModel,
+        imageSize,
+        imageQuality,
+      }),
     }
     );
   }

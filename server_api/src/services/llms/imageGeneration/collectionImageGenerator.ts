@@ -2,7 +2,11 @@ import path from "path";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import {
+  IImageGenerator,
+  YpAiGenerateImageTypes,
+  YpImageGenerationOptions,
+} from "./iImageGenerator.js";
 import { FluxImageGenerator } from "./fluxImageGenerator.js";
 import { DalleImageGenerator } from "./dalleImageGenerator.js";
 import { ImageProcessorService } from "./imageProcessorService.js";
@@ -13,13 +17,18 @@ import log from "../../../utils/loggerTs.js";
 import models from "../../../models/index.cjs";
 import { ImagenImageGenerator } from "./imagenImageGenerator.js";
 import { ChatGptImageGenerator } from "./chatGptImageGenerator.js";
+import imageModelConfig from "./imageModelConfig.cjs";
 // For reference, in your code:
 const dbModels: any = models;
 const Image = dbModels.Image as ImageClass;
 const AcBackgroundJob = dbModels.AcBackgroundJob as AcBackgroundJobClass;
 
 const disableFlux = false;
-const useImagen = false;
+const {
+  isOpenAiDalleImageModel,
+  isOpenAiGptImageModel,
+  normalizeImageGenerationOptions,
+} = imageModelConfig;
 
 export class CollectionImageGenerator {
   protected s3Service: S3Service;
@@ -59,7 +68,7 @@ export class CollectionImageGenerator {
       process.env.OPENAI_API_KEY
     );
 
-    if (useImagen && process.env.GOOGLE_CLOUD_PROJECT_ID) {
+    if (process.env.GOOGLE_CLOUD_PROJECT_ID) {
       this.imagenImageGenerator = new ImagenImageGenerator(this.s3Service);
     }
   }
@@ -80,33 +89,62 @@ export class CollectionImageGenerator {
 
       try {
         let imageGenerator: IImageGenerator;
+        const rawImageOptions = normalizeImageGenerationOptions(
+          workPackage.imageProvider,
+          workPackage.imageModel,
+          workPackage.imageSize,
+          workPackage.imageQuality
+        );
 
-        // Decide which generator to use
-        if (this.imagenImageGenerator) {
+        if (rawImageOptions.error) {
+          return reject(rawImageOptions.error);
+        }
+        const imageOptions = rawImageOptions as YpImageGenerationOptions & {
+          imageProvider: "openai" | "azureOpenai" | "flux" | "imagen";
+          imageModel: string;
+        };
+
+        if (imageOptions.imageProvider === "imagen") {
+          if (!this.imagenImageGenerator) {
+            return reject("Imagen image generator is not configured.");
+          }
           imageGenerator = this.imagenImageGenerator;
-          log.info("Using ImagenImageGenerator");
-        } else if (this.fluxImageGenerator) {
+          log.info(`Using ImagenImageGenerator: ${imageOptions.imageModel}`);
+        } else if (imageOptions.imageProvider === "flux") {
+          if (!this.fluxImageGenerator) {
+            return reject("Flux image generator is not configured.");
+          }
           imageGenerator = this.fluxImageGenerator;
-          log.info("Using FluxImageGenerator");
-        } else if (process.env.USE_CHATGPT_IMAGE_GENERATOR) {
-          imageGenerator = this.chatGptImageGenerator;
-          log.info("Using ChatGptImageGenerator");
-        } else {
+          log.info(`Using FluxImageGenerator: ${imageOptions.imageModel}`);
+        } else if (imageOptions.imageProvider === "azureOpenai") {
           imageGenerator = this.dalleImageGenerator;
-          log.info("Using DalleImageGenerator");
+          log.info(
+            `Using Azure OpenAI image generator: ${imageOptions.imageModel}`
+          );
+        } else if (isOpenAiDalleImageModel(imageOptions.imageModel)) {
+          imageGenerator = this.dalleImageGenerator;
+          log.info(`Using DalleImageGenerator: ${imageOptions.imageModel}`);
+        } else if (isOpenAiGptImageModel(imageOptions.imageModel)) {
+          imageGenerator = this.chatGptImageGenerator;
+          log.info(`Using ChatGptImageGenerator: ${imageOptions.imageModel}`);
+        } else {
+          return reject(
+            `Unsupported OpenAI image model: ${imageOptions.imageModel}`
+          );
         }
 
         // 1) Generate image
         const imageUrl = await imageGenerator.generateImageUrl(
           workPackage.prompt,
-          workPackage.imageType as YpAiGenerateImageTypes
+          workPackage.imageType as YpAiGenerateImageTypes,
+          imageOptions
         );
 
         if (!imageUrl) {
           return reject("Error getting image URL from prompt.");
         }
 
-        if (useImagen && this.imagenImageGenerator) {
+        if (imageOptions.imageProvider === "imagen") {
           newImageUrl = imageUrl;
         } else {
           // 2) Download image to temporary location or write data URI to file

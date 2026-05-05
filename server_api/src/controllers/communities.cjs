@@ -36,6 +36,9 @@ const {
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
 const { copyGroup, copyCommunity } = require("../utils/copy_utils.cjs");
 const { recountCommunity } = require("../utils/recount_utils.cjs");
+const {
+  normalizeImageGenerationOptions,
+} = require("../services/llms/imageGeneration/imageModelConfig.cjs");
 
 const getFromAnalyticsApi =
   require("../services/engine/analytics/manager.cjs").getFromAnalyticsApi;
@@ -3848,6 +3851,17 @@ router.post(
   "/:communityId/:start_generating/ai_image",
   auth.can("view community"),
   function (req, res) {
+    const imageOptions = normalizeImageGenerationOptions(
+      req.body.imageProvider,
+      req.body.imageModel,
+      req.body.imageSize,
+      req.body.imageQuality
+    );
+    if (imageOptions.error) {
+      res.status(400).send({ error: imageOptions.error });
+      return;
+    }
+
     models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
       if (error) {
         log.error("Could not create backgroundJob", {
@@ -3867,6 +3881,10 @@ router.post(
             collectionType: "community",
             prompt: req.body.prompt,
             imageType: req.body.imageType,
+            imageProvider: imageOptions.imageProvider,
+            imageModel: imageOptions.imageModel,
+            imageSize: imageOptions.imageSize,
+            imageQuality: imageOptions.imageQuality,
           },
           "critical"
         );

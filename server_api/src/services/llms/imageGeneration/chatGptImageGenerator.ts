@@ -1,7 +1,18 @@
 // chatGptImageGenerator.ts
 import { OpenAI } from "openai";
-import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import {
+  IImageGenerator,
+  YpAiGenerateImageTypes,
+  YpImageGenerationOptions,
+} from "./iImageGenerator.js";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+
+const {
+  defaultOpenAiImageModel,
+  getDefaultImageQualityForOptions,
+  getDefaultImageSizeForOptions,
+} = imageModelConfig;
 
 export class ChatGptImageGenerator implements IImageGenerator {
   private readonly maxRetryCount = 3;
@@ -19,20 +30,20 @@ export class ChatGptImageGenerator implements IImageGenerator {
    */
   async generateImageUrl(
     prompt: string,
-    type: YpAiGenerateImageTypes = "logo"
+    type: YpAiGenerateImageTypes = "logo",
+    options?: YpImageGenerationOptions
   ): Promise<string | undefined> {
     const client = new OpenAI({ apiKey: this.openAiKey });
+    const model = options?.imageModel || defaultOpenAiImageModel;
 
-    // Pick a sensible canvas size from the image type
-    let size:
-      | "1024x1024"
-      | "1792x1024"
-      | "1024x1792"
-      | "1536x1024"
-      | "512x512"
-      | "256x256" = "1536x1024";
-    if (type === "icon") size = "1024x1024";
-    else if (type === "other") size = "1536x1024";
+    const size =
+      options?.imageSize ||
+      getDefaultImageSizeForOptions("openai", model, type) ||
+      "1536x1024";
+    const quality =
+      options?.imageQuality ||
+      getDefaultImageQualityForOptions("openai", model) ||
+      "medium";
 
     const finalPrompt = `
     ${prompt}
@@ -45,11 +56,15 @@ export class ChatGptImageGenerator implements IImageGenerator {
     while (retryCount < this.maxRetryCount) {
       try {
         const res = await client.images.generate({
-          model: "gpt-image-1",
+          model,
           prompt: finalPrompt,
-          quality: "medium",
+          quality: quality as "auto" | "low" | "medium" | "high",
           n: 1,
-          size,
+          size: size as
+            | "auto"
+            | "1024x1024"
+            | "1536x1024"
+            | "1024x1536",
         });
 
         log.info("res", JSON.stringify(res, null, 2));

@@ -1,6 +1,13 @@
 import Replicate from "replicate";
-import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import {
+  IImageGenerator,
+  YpAiGenerateImageTypes,
+  YpImageGenerationOptions,
+} from "./iImageGenerator.js";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+
+const { getAspectRatioForImageSize } = imageModelConfig;
 
 interface PsFluxProSchema {
   prompt: string;
@@ -22,7 +29,8 @@ export class FluxImageGenerator implements IImageGenerator {
 
   async generateImageUrl(
     prompt: string,
-    type: YpAiGenerateImageTypes = "logo"
+    type: YpAiGenerateImageTypes = "logo",
+    options?: YpImageGenerationOptions
   ): Promise<string | undefined> {
     let retryCount = 0;
     let retrying = true;
@@ -32,7 +40,9 @@ export class FluxImageGenerator implements IImageGenerator {
     const input: PsFluxProSchema = { prompt };
 
     // Assign aspect ratio depending on type
-    if (type === "logo") {
+    if (options?.imageSize) {
+      input.aspect_ratio = getAspectRatioForImageSize(options.imageSize);
+    } else if (type === "logo") {
       input.aspect_ratio = "16:9";
     } else if (type === "icon") {
       input.aspect_ratio = "1:1";
@@ -42,7 +52,8 @@ export class FluxImageGenerator implements IImageGenerator {
 
     while (retrying && retryCount < this.maxRetryCount) {
       try {
-        result = await this.replicate.run(this.fluxProModelName as `${string}/${string}`, {
+        const modelName = options?.imageModel || this.fluxProModelName;
+        result = await this.replicate.run(modelName as `${string}/${string}`, {
           input,
         });
 

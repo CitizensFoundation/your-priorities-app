@@ -3,9 +3,17 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { PredictionServiceClient } from "@google-cloud/aiplatform";
 import { helpers } from "@google-cloud/aiplatform";
-import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import {
+  IImageGenerator,
+  YpAiGenerateImageTypes,
+  YpImageGenerationOptions,
+} from "./iImageGenerator.js";
 import { S3Service } from "./s3Service.js";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+
+const { defaultImagenImageModel, getAspectRatioForImageSize } =
+  imageModelConfig;
 
 export class ImagenImageGenerator implements IImageGenerator {
   private maxRetryCount = 3;
@@ -14,8 +22,6 @@ export class ImagenImageGenerator implements IImageGenerator {
   private projectId = process.env.GOOGLE_CLOUD_PROJECT_ID || "";
   private location = process.env.GOOGLE_CLOUD_IMAGEN_LOCATION || "us-east1";
 
-  // Matches the official endpoint for Imagen v3.0:
-  private endpoint = `projects/${this.projectId}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-002`;
   private s3Bucket = process.env.S3_BUCKET || "";
 
   constructor(private s3Service: S3Service) {
@@ -35,10 +41,13 @@ export class ImagenImageGenerator implements IImageGenerator {
    */
   async generateImageUrl(
     prompt: string,
-    type: YpAiGenerateImageTypes = "logo"
+    type: YpAiGenerateImageTypes = "logo",
+    options?: YpImageGenerationOptions
   ): Promise<string | undefined> {
     let retryCount = 0;
     let finalUrl: string | undefined;
+    const imageModel = options?.imageModel || defaultImagenImageModel;
+    const endpoint = `projects/${this.projectId}/locations/${this.location}/publishers/google/models/${imageModel}`;
 
     // Configure the API endpoint for Vertex AI
     const clientOptions = {
@@ -61,7 +70,9 @@ export class ImagenImageGenerator implements IImageGenerator {
           // You can tweak these settings to your needs:
           // seed: 100,
           // addWatermark: false,
-          aspectRatio: "16:9",
+          aspectRatio: options?.imageSize
+            ? getAspectRatioForImageSize(options.imageSize)
+            : "16:9",
           safetyFilterLevel: "block_some",
           personGeneration: "allow_adult",
         };
@@ -69,7 +80,7 @@ export class ImagenImageGenerator implements IImageGenerator {
 
         // 2) Build the predict request
         const request = {
-          endpoint: this.endpoint,
+          endpoint,
           instances,
           parameters,
         };

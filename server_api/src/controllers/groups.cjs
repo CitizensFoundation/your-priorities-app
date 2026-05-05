@@ -32,6 +32,9 @@ const {
   updateSurveyTranslation,
 } = require("../services/utils/translation_helpers.cjs");
 const {
+  normalizeImageGenerationOptions,
+} = require("../services/llms/imageGeneration/imageModelConfig.cjs");
+const {
   plausibleStatsProxy,
   getPlausibleStats,
 } = require("../services/engine/analytics/plausible/manager.cjs");
@@ -2406,6 +2409,17 @@ router.post(
   "/:groupId/:start_generating/ai_image",
   auth.can("view group"),
   function (req, res) {
+    const imageOptions = normalizeImageGenerationOptions(
+      req.body.imageProvider,
+      req.body.imageModel,
+      req.body.imageSize,
+      req.body.imageQuality
+    );
+    if (imageOptions.error) {
+      res.status(400).send({ error: imageOptions.error });
+      return;
+    }
+
     models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
       if (error) {
         log.error("Could not create backgroundJob", {
@@ -2426,6 +2440,10 @@ router.post(
             collectionType: "group",
             prompt: req.body.prompt,
             imageType: req.body.imageType,
+            imageProvider: imageOptions.imageProvider,
+            imageModel: imageOptions.imageModel,
+            imageSize: imageOptions.imageSize,
+            imageQuality: imageOptions.imageQuality,
           },
           "critical"
         );
