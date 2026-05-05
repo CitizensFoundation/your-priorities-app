@@ -736,15 +736,6 @@ export class AoiSurveyVoting extends YpBaseElement {
           ${this.renderProgressBar()}
           <div class="layout horizontal wrap center-center"></div>
         </div>
-        ${!this.wide
-          ? html`
-              <input
-                type="text"
-                id="dummyInput"
-                style="position:absolute;opacity:0;"
-              />
-            `
-          : nothing}
         <aoi-new-idea-dialog
           id="newIdeaDialog"
           .question=${this.question}

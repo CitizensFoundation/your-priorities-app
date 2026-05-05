@@ -67,14 +67,10 @@ export class ImagenImageGenerator implements IImageGenerator {
 
         const parameter = {
           sampleCount: 1,
-          // You can tweak these settings to your needs:
-          // seed: 100,
-          // addWatermark: false,
           aspectRatio: options?.imageSize
             ? getAspectRatioForImageSize(options.imageSize)
             : "16:9",
-          safetyFilterLevel: "block_some",
-          personGeneration: "allow_adult",
+          safetySetting: "block_medium_and_above",
         };
         const parameters = helpers.toValue(parameter);
 

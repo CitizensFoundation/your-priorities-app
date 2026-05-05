@@ -236,10 +236,6 @@ export class AcActivities extends YpBaseElementWithLogin {
           margin-top: 16px;
         }
 
-        :focus {
-          outline: none;
-        }
-
         .notLoggedInButton {
           margin-top: 8px;
           width: 250px;
@@ -258,7 +254,6 @@ export class AcActivities extends YpBaseElementWithLogin {
     return html`
       <div class="layout vertical center-center" style="width: 100%;">
         <ac-activity
-          tabindex="0"
           .hasLoggedInUser="${this.isLoggedIn}"
           class="activityContainer"
           .activity="${activity}"

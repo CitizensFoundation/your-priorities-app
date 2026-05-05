@@ -112,7 +112,6 @@ export class YpCollectionItemsList extends YpBaseElement {
           ?useEvenOddItemLayout="${this.useEvenOddItemLayout && this.wide}"
           aria-label="${item.name}"
           .item="${item}"
-          @keypress="${this._keypress.bind(this)}"
           @click="${this._selectedItemChanged.bind(this)}"
         ></yp-collection-item-card>
       </div>
@@ -128,12 +127,6 @@ export class YpCollectionItemsList extends YpBaseElement {
       return "posts";
     } else {
       return "unknownItemType";
-    }
-  }
-
-  _keypress(event: KeyboardEvent) {
-    if (event.keyCode == 13) {
-      this._selectedItemChanged(event as unknown as CustomEvent);
     }
   }
 

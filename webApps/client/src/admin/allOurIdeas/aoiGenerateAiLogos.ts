@@ -11,6 +11,10 @@ export class AoiGenerateAiLogos extends YpGenerateAiImage {
   constructor(hexColor: string) {
     super();
     this.hexColor = hexColor;
+    this.imageProvider = "openai";
+    this.imageModel = "gpt-image-2";
+    this.imageSize = "816x816";
+    this.imageQuality = "low";
   }
 
   hexToRgb(hex: string): { r: number; g: number; b: number } {

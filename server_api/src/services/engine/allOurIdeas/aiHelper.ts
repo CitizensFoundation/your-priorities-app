@@ -6,12 +6,17 @@ export class AiHelper {
   openaiClient: OpenAI;
   wsClientSocket: WebSocket | undefined;
   modelName = "gpt-4o";
+  answerIdeasModelName = "gpt-5.3-chat-latest";
   maxTokens = 2048;
   temperature = 0.7;
   cacheExpireTime = 60 * 60;
 
   redisClient?: any;
   cacheKeyForFullResponse?: string;
+
+  usesMaxCompletionTokens(modelName: string) {
+    return modelName.startsWith("gpt-5");
+  }
 
   constructor(wsClientSocket: WebSocket | undefined = undefined) {
     this.openaiClient = new OpenAI({
@@ -77,14 +82,26 @@ Only output: PASSES or FAILS`;
     }
   };
 
-  async streamChatCompletions(messages: any[]): Promise<void> {
-    const stream = await this.openaiClient.chat.completions.create({
-      model: this.modelName,
+  async streamChatCompletions(
+    messages: any[],
+    modelName = this.modelName
+  ): Promise<void> {
+    const requestParams: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
+      model: modelName,
       messages,
-      max_tokens: this.maxTokens,
-      temperature: this.temperature,
       stream: true,
-    });
+    };
+
+    if (this.usesMaxCompletionTokens(modelName)) {
+      requestParams.max_completion_tokens = this.maxTokens;
+    } else {
+      requestParams.max_tokens = this.maxTokens;
+      requestParams.temperature = this.temperature;
+    }
+
+    const stream = await this.openaiClient.chat.completions.create(
+      requestParams
+    );
 
     await this.streamWebSocketResponses(stream);
   }
@@ -103,12 +120,15 @@ Only output: PASSES or FAILS`;
     stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {
     return new Promise<void>(async (resolve, reject) => {
-      this.sendToClient("bot", "", "start");
+      this.sendToClient("assistant", "", "start");
       try {
         let botMessage = "";
         for await (const part of stream) {
-          this.sendToClient("bot", part.choices[0].delta.content!);
-          botMessage += part.choices[0].delta.content!;
+          const content = part.choices[0].delta.content;
+          if (content) {
+            this.sendToClient("assistant", content);
+            botMessage += content;
+          }
         }
 
         if (this.redisClient && this.cacheKeyForFullResponse) {
@@ -122,13 +142,13 @@ Only output: PASSES or FAILS`;
       } catch (error) {
         log.error(error);
         this.sendToClient(
-          "bot",
+          "assistant",
           "There has been an error, please retry",
           "error"
         );
         reject();
       } finally {
-        this.sendToClient("bot", "", "end");
+        this.sendToClient("assistant", "", "end");
       }
       resolve();
     });
@@ -185,12 +205,12 @@ Only output: PASSES or FAILS`;
           },
         ];
 
-        await this.streamChatCompletions(messages);
+        await this.streamChatCompletions(messages, this.answerIdeasModelName);
       }
     } catch (error) {
       log.error("Error in getAnswerIdeas:", error);
       this.sendToClient(
-        "bot",
+        "assistant",
         "There has been an error, please retry",
         "error"
       );
@@ -273,7 +293,7 @@ Only output: PASSES or FAILS`;
     } catch (error) {
       log.error("Error in getAiAnalysis:", error);
       this.sendToClient(
-        "bot",
+        "assistant",
         "There has been an error, please retry",
         "error"
       );

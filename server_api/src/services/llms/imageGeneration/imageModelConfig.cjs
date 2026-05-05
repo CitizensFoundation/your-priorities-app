@@ -1,7 +1,7 @@
 "use strict";
 
 const defaultOpenAiImageModel = "gpt-image-2";
-const defaultImagenImageModel = "imagen-3.0-generate-002";
+const defaultImagenImageModel = "imagen-4.0-generate-001";
 const defaultGptImage2LandscapeSize = "2048x1152";
 
 const imageProviders = ["openai", "azureOpenai", "flux", "imagen"];
@@ -21,6 +21,27 @@ const openAiLegacyGptImageSizes = [
   "1024x1536",
 ];
 const openAiDalleImageSizes = ["1024x1024", "1792x1024", "1024x1792"];
+const imagenImageModels = [
+  "imagen-4.0-generate-001",
+  "imagen-4.0-fast-generate-001",
+  "imagen-4.0-ultra-generate-001",
+  "imagen-3.0-generate-002",
+  "imagen-3.0-generate-001",
+  "imagen-3.0-fast-generate-001",
+];
+const imagenAspectRatios = ["1:1", "3:4", "4:3", "9:16", "16:9"];
+const imagenResolutionAspectRatios = {
+  "1024x1024": "1:1",
+  "2048x2048": "1:1",
+  "896x1280": "3:4",
+  "1792x2560": "3:4",
+  "1280x896": "4:3",
+  "2560x1792": "4:3",
+  "768x1408": "9:16",
+  "1536x2816": "9:16",
+  "1408x768": "16:9",
+  "2816x1536": "16:9",
+};
 const supportedAspectRatioSizes = [
   "1:1",
   "16:9",
@@ -48,6 +69,9 @@ const greatestCommonDivisor = (a, b) =>
   b === 0 ? a : greatestCommonDivisor(b, a % b);
 const getAspectRatioForImageSize = (imageSize) => {
   if (!imageSize) return undefined;
+  if (imagenResolutionAspectRatios[imageSize]) {
+    return imagenResolutionAspectRatios[imageSize];
+  }
   if (supportedAspectRatioSizes.includes(imageSize)) return imageSize;
 
   const parsedSize = parsePixelSize(imageSize);
@@ -65,6 +89,7 @@ const isValidGptImage2Size = (imageSize) => {
   const { width, height } = parsedSize;
   const longEdge = Math.max(width, height);
   const shortEdge = Math.min(width, height);
+  const totalPixels = width * height;
 
   return (
     width > 0 &&
@@ -72,12 +97,18 @@ const isValidGptImage2Size = (imageSize) => {
     longEdge <= 3840 &&
     width % 16 === 0 &&
     height % 16 === 0 &&
-    longEdge / shortEdge <= 3
+    longEdge / shortEdge <= 3 &&
+    totalPixels >= 655360 &&
+    totalPixels <= 8294400
   );
 };
 
 const isValidAspectRatioSize = (imageSize) =>
   supportedAspectRatioSizes.includes(imageSize) || Boolean(parsePixelSize(imageSize));
+const isValidImagenImageSize = (imageSize) => {
+  const aspectRatio = getAspectRatioForImageSize(imageSize);
+  return Boolean(aspectRatio && imagenAspectRatios.includes(aspectRatio));
+};
 
 const getAllowedImageModels = (imageProvider) => {
   switch (imageProvider) {
@@ -88,7 +119,7 @@ const getAllowedImageModels = (imageProvider) => {
     case "flux":
       return uniqueDefined([process.env.FLUX_PRO_MODEL_NAME]);
     case "imagen":
-      return [defaultImagenImageModel];
+      return imagenImageModels;
     default:
       return [];
   }
@@ -168,7 +199,11 @@ const validateImageSize = (imageProvider, imageModel, imageSize) => {
   }
 
   if (imageProvider === "flux" || imageProvider === "imagen") {
-    return isValidAspectRatioSize(imageSize)
+    const isValidSize =
+      imageProvider === "imagen"
+        ? isValidImagenImageSize(imageSize)
+        : isValidAspectRatioSize(imageSize);
+    return isValidSize
       ? undefined
       : `Unsupported image size for ${imageProvider}: ${imageSize}`;
   }
@@ -259,6 +294,9 @@ module.exports = {
   imageProviders,
   openAiGptImageModels,
   openAiDalleImageModels,
+  imagenImageModels,
+  imagenAspectRatios,
+  imagenResolutionAspectRatios,
   openAiGptImageQualities,
   openAiDalleImageQualities,
   openAiLegacyGptImageSizes,

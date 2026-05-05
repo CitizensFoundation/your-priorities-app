@@ -374,7 +374,8 @@ export class YpPostsList extends YpBaseElement {
           <yp-post-list-gallery-item
             aria-label="${post.name}"
             ?is-last-item="${this._isLastItem(index!)}"
-            @keypress="${this._keypress.bind(this)}"
+            role="link"
+            @keydown="${this._postItemKeydown.bind(this)}"
             @click="${this._selectedItemChanged.bind(this)}"
             tabindex="0"
             id="postCard${post.id}"
@@ -387,7 +388,8 @@ export class YpPostsList extends YpBaseElement {
           <yp-post-list-item
             aria-label="${post.name}"
             ?is-last-item="${this._isLastItem(index!)}"
-            @keypress="${this._keypress.bind(this)}"
+            role="link"
+            @keydown="${this._postItemKeydown.bind(this)}"
             @click="${this._selectedItemChanged.bind(this)}"
             tabindex="0"
             id="postCard${post.id}"
@@ -423,8 +425,12 @@ export class YpPostsList extends YpBaseElement {
     return this.posts && index >= this.posts.length - 1;
   }
 
-  _keypress(event: KeyboardEvent) {
-    if (event.keyCode == 13) {
+  _postItemKeydown(event: KeyboardEvent) {
+    if (
+      event.key === "Enter" &&
+      event.composedPath()[0] === event.currentTarget
+    ) {
+      event.preventDefault();
       this._selectedItemChanged(event as unknown as CustomEvent);
     }
   }

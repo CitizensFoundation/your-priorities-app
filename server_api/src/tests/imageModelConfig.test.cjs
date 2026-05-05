@@ -4,6 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const {
+  getAspectRatioForImageSize,
   getDefaultImageSizeForOptions,
   normalizeImageGenerationOptions,
 } = require("../services/llms/imageGeneration/imageModelConfig.cjs");
@@ -41,6 +42,44 @@ test("image generation options default to OpenAI gpt-image-2", () => {
   });
 });
 
+test("image generation options default Imagen to Imagen 4 GA", () => {
+  const options = normalizeImageGenerationOptions("imagen", undefined);
+
+  assert.deepEqual(options, {
+    imageProvider: "imagen",
+    imageModel: "imagen-4.0-generate-001",
+  });
+});
+
+test("image generation options allow Imagen 4 variants", () => {
+  const options = normalizeImageGenerationOptions(
+    "imagen",
+    "imagen-4.0-ultra-generate-001",
+    "16:9"
+  );
+
+  assert.deepEqual(options, {
+    imageProvider: "imagen",
+    imageModel: "imagen-4.0-ultra-generate-001",
+    imageSize: "16:9",
+  });
+});
+
+test("image generation options map Imagen 4 listed resolutions to aspect ratios", () => {
+  assert.equal(getAspectRatioForImageSize("2816x1536"), "16:9");
+  assert.equal(getAspectRatioForImageSize("1536x2816"), "9:16");
+});
+
+test("image generation options reject unsupported Imagen aspect ratios", () => {
+  const options = normalizeImageGenerationOptions(
+    "imagen",
+    "imagen-4.0-generate-001",
+    "21:9"
+  );
+
+  assert.equal(options.error, "Unsupported image size for imagen: 21:9");
+});
+
 test("gpt-image-2 defaults to 16:9 landscape size outside icon generation", () => {
   assert.equal(
     getDefaultImageSizeForOptions("openai", "gpt-image-2", "logo"),
@@ -60,20 +99,20 @@ test("image generation options allow gpt-image-2 custom size and quality", () =>
   const options = normalizeImageGenerationOptions(
     "openai",
     "gpt-image-2",
-    "3840x2160",
-    "high"
+    "816x816",
+    "low"
   );
 
   assert.deepEqual(options, {
     imageProvider: "openai",
     imageModel: "gpt-image-2",
-    imageSize: "3840x2160",
-    imageQuality: "high",
+    imageSize: "816x816",
+    imageQuality: "low",
   });
 });
 
 test("image generation options reject invalid gpt-image-2 custom sizes", () => {
-  const options = normalizeImageGenerationOptions(
+  const nonMultipleSizeOptions = normalizeImageGenerationOptions(
     "openai",
     "gpt-image-2",
     "2049x1152",
@@ -81,8 +120,32 @@ test("image generation options reject invalid gpt-image-2 custom sizes", () => {
   );
 
   assert.equal(
-    options.error,
+    nonMultipleSizeOptions.error,
     "Unsupported image size for gpt-image-2: 2049x1152"
+  );
+
+  const tooSmallOptions = normalizeImageGenerationOptions(
+    "openai",
+    "gpt-image-2",
+    "512x512",
+    "low"
+  );
+
+  assert.equal(
+    tooSmallOptions.error,
+    "Unsupported image size for gpt-image-2: 512x512"
+  );
+
+  const tooLargeOptions = normalizeImageGenerationOptions(
+    "openai",
+    "gpt-image-2",
+    "3840x3840",
+    "high"
+  );
+
+  assert.equal(
+    tooLargeOptions.error,
+    "Unsupported image size for gpt-image-2: 3840x3840"
   );
 });
 

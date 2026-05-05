@@ -94,6 +94,8 @@ export class YpCategoryListView extends YpBaseElement {
           border: 1px solid var(--md-sys-color-outline-variant);
           overflow: hidden;
           cursor: pointer;
+          color: inherit;
+          text-decoration: none;
           transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
@@ -294,18 +296,34 @@ export class YpCategoryListView extends YpBaseElement {
     }
   }
 
-  _navigateToPosts(category?: YpCategoryData) {
+  _navigateToPosts(category?: YpCategoryData, event?: MouseEvent) {
+    if (event && !this._shouldHandleCategoryLinkClick(event)) {
+      return;
+    }
+    event?.preventDefault();
     if (!this.group) return;
+    if (category) {
+      window.appGlobals.originalQueryParameters["categoryId"] = category.id;
+      window.appGlobals.originalQueryParameters["searchingFor"] = undefined;
+    }
     const path = this._buildPostsUrlPath(category);
     window.appGlobals.activity("change", "filter", path);
     YpNavHelpers.redirectTo(path);
   }
 
+  _shouldHandleCategoryLinkClick(event: MouseEvent) {
+    return (
+      event.button === 0 &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    );
+  }
+
   _buildPostsUrlPath(category?: YpCategoryData) {
     let newLocation = `/group/${this.group.id}/${this.statusFilter}/posts/${this.filter}`;
     if (category) {
-      window.appGlobals.originalQueryParameters["categoryId"] = category.id;
-      window.appGlobals.originalQueryParameters["searchingFor"] = undefined;
       const safeCategoryName = encodeURIComponent(category.name || "");
       newLocation += `/${category.id}/${safeCategoryName}`;
     }
@@ -316,17 +334,13 @@ export class YpCategoryListView extends YpBaseElement {
     const count = category.count || 0;
     const imageSrc = this._categoryImageSrc(category);
     const initial = (category.name || "?").trim().charAt(0).toUpperCase();
+    const categoryPath = this._buildPostsUrlPath(category);
     return html`
-      <div
+      <a
         class="categoryCard"
-        role="button"
-        tabindex="0"
-        @click="${() => this._navigateToPosts(category)}"
-        @keypress="${(event: KeyboardEvent) => {
-          if (event.key === "Enter") {
-            this._navigateToPosts(category);
-          }
-        }}"
+        href="${categoryPath}"
+        @click="${(event: MouseEvent) =>
+          this._navigateToPosts(category, event)}"
       >
         <div class="imageWrap">
           ${imageSrc
@@ -347,7 +361,7 @@ export class YpCategoryListView extends YpBaseElement {
             ? html`<div class="emptyText">${this.t("noIdeasHere")}</div>`
             : nothing}
         </div>
-      </div>
+      </a>
     `;
   }
 

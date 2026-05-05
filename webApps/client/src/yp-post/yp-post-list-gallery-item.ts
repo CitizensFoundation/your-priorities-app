@@ -158,6 +158,7 @@ export class YpPostListGalleryItem extends YpBaseElement {
                 <div class="authorName">${this.post.description}</div>
                 <div class="artName">${this.post.name}</div>
                 <yp-post-actions
+                  @click="${this._stopCardActivation}"
                   class="postActions"
                   .post="${this.post}"
                   larger-icons
@@ -211,10 +212,19 @@ export class YpPostListGalleryItem extends YpBaseElement {
     `;
   }
 
-  _savePostToBackCache() {
+  _savePostToBackCache(event?: Event) {
+    event?.stopPropagation();
     if (this.post) {
       window.appGlobals.cache.cachedPostItem = this.post;
     }
+  }
+
+  _stopCardActivation(event: Event) {
+    event.stopPropagation();
+  }
+
+  clickOnA() {
+    this.$$("#mainA")?.click();
   }
 
   _getPostLink(post: YpPostData) {
