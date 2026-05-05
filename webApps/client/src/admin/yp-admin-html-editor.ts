@@ -363,6 +363,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
                           <img
                             class="mediaImage"
                             src="${media.url}"
+                            alt="${this.t("uploadedMedia") || "Uploaded media"}"
                             @load="${() =>
                               this._setMediaLoaded(media.id, true)}"
                             @error="${() =>

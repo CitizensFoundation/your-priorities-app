@@ -477,7 +477,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
       return html` <img
         class="iconImage"
         src="${this.choice!.data.imageUrl}"
-        alt="icon"
+        alt=""
         slot="icon"
         ?hidden="${!this.choice!.data.imageUrl}"
       />`;

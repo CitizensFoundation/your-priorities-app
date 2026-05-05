@@ -125,12 +125,14 @@ export class YpAgentBundleTopBar extends YpBaseElementWithLogin {
             <img
               class="agentBundleLogo"
               src="https://evoly.ai/is/img/evoly-logo.png"
+              alt="Evoly"
             />
           `
         : html`
             <img
               class="agentBundleLogo"
               src="https://evoly.ai/is/img/evoly-logo.png"
+              alt="Evoly"
             />
           `}
     </div> `;

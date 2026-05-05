@@ -231,11 +231,36 @@ export class YpAppGlobals extends YpCodeBase {
         i18next.changeLanguage(locale, () => {
           //TODO: Fix moment
           //moment.locale([locale, 'en']);
+          this.language = locale;
+          this.locale = locale;
+          this.updateDocumentLanguage(locale);
           this.fireGlobal("yp-language-loaded", { language: locale });
           this.fireGlobal("language-loaded", { language: locale });
         });
       }
     }
+  }
+
+  updateDocumentLanguage(locale: string) {
+    const documentLanguage = locale.replace(/_/g, "-").toLowerCase();
+    const languagePrefix = documentLanguage.substring(0, 2);
+    const rtlLanguages = [
+      "fa",
+      "ar",
+      "he",
+      "ur",
+      "ps",
+      "ku",
+      "sd",
+      "dv",
+      "ug",
+      "yi",
+    ];
+
+    document.documentElement.lang = documentLanguage || "en";
+    document.documentElement.dir = rtlLanguages.includes(languagePrefix)
+      ? "rtl"
+      : "ltr";
   }
 
   setHighlightedLanguages(languages: string | undefined) {
@@ -425,6 +450,8 @@ export class YpAppGlobals extends YpCodeBase {
         window.appGlobals.locale = defaultLocale;
         window.appGlobals.i18nTranslation = i18next;
         window.appGlobals.haveLoadedLanguages = true;
+        this.language = defaultLocale;
+        this.updateDocumentLanguage(defaultLocale);
         //TODO: Fix moment
         //moment.locale([defaultLocale, 'en']);
         // wait for 2 seconds

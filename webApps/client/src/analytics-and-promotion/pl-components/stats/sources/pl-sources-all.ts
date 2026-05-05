@@ -76,6 +76,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
               <img
                   src=${this.faviconUrl(referrer.name)}
                   class="inline w-4 h-4 mr-2 -mt-px align-middle"
+                  alt=""
                 />
             ` : html`
               <div class="inline w-4 h-4 mr-2 -mt-px align-middle directNoneIcon"></div>

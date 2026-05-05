@@ -789,7 +789,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
       return html` <img
         class="iconImage"
         src="${choice.data.imageUrl}"
-        alt="icon"
+        alt=""
         slot="icon"
         ?hidden="${!choice.data.imageUrl}"
       />`;
