@@ -202,7 +202,10 @@ export class PsAgentConnector extends PsOperationsBaseNode {
             : nothing}
 
           <div class="layout horizontal">
-            <md-icon-button class="linkIcon" @click="${this.editNode}"
+            <md-icon-button
+              class="linkIcon"
+              @click="${this.editNode}"
+              aria-label="Connector settings"
               ><md-icon>settings</md-icon></md-icon-button
             >
             <div class="flex"></div>
@@ -211,6 +214,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
                   <md-icon-button
                     class="linkIcon"
                     @click="${this.openInternalLink}"
+                    aria-label="Open connector"
                   >
                     <md-icon>read_more</md-icon>
                   </md-icon-button>
@@ -221,6 +225,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
                   <md-icon-button
                     class="linkIcon"
                     @click="${this.openExternalLink}"
+                    aria-label="Open external connector link"
                   >
                     <md-icon>read_more</md-icon>
                   </md-icon-button>

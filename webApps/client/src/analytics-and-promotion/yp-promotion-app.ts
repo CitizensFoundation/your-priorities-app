@@ -315,7 +315,10 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       return html`
         <div class="layout vertical">
           <div class="layout horizontal backContainer">
-            <md-icon-button @click="${this.exitToMainApp}">
+            <md-icon-button
+              @click="${this.exitToMainApp}"
+              aria-label="${this.t("close")}"
+            >
               <md-icon>close</md-icon>
             </md-icon-button>
           </div>

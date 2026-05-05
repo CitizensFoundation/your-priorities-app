@@ -334,6 +334,70 @@ export class YpBaseElement extends LitElement {
     }
   }
 
+  protected activateOnEnterOrSpace(event: KeyboardEvent) {
+    if (
+      event.key === "Enter" ||
+      event.key === " " ||
+      event.key === "Spacebar"
+    ) {
+      event.preventDefault();
+      (event.currentTarget as HTMLElement).click();
+    }
+  }
+
+  protected shouldHandleAnchorClick(event?: Event) {
+    if (!event) return true;
+
+    const mouseEvent = event as MouseEvent;
+    const isModifiedClick =
+      mouseEvent.metaKey ||
+      mouseEvent.ctrlKey ||
+      mouseEvent.shiftKey ||
+      mouseEvent.altKey;
+    const isNonPrimaryClick =
+      typeof mouseEvent.button === "number" && mouseEvent.button !== 0;
+
+    if (event.defaultPrevented || isModifiedClick || isNonPrimaryClick) {
+      return false;
+    }
+
+    const currentTarget = event.currentTarget;
+    const path = typeof event.composedPath === "function"
+      ? event.composedPath()
+      : [];
+    const currentTargetIndex = currentTarget
+      ? path.indexOf(currentTarget)
+      : -1;
+    const targetsBeforeCurrent =
+      currentTargetIndex >= 0 ? path.slice(0, currentTargetIndex) : path;
+    const hasNestedInteractiveTarget = targetsBeforeCurrent.some((target) => {
+      if (!(target instanceof HTMLElement)) return false;
+
+      const role = target.getAttribute("role");
+      return (
+        target instanceof HTMLAnchorElement ||
+        target instanceof HTMLButtonElement ||
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement ||
+        role === "button" ||
+        role === "link" ||
+        role === "menuitem" ||
+        role === "checkbox" ||
+        role === "radio" ||
+        role === "switch" ||
+        role === "tab"
+      );
+    });
+
+    if (hasNestedInteractiveTarget) {
+      return false;
+    }
+
+    event.preventDefault();
+    return true;
+  }
+
   $$(id: string): HTMLElement | null {
     return this.shadowRoot ? this.shadowRoot.querySelector(id) : null;
   }

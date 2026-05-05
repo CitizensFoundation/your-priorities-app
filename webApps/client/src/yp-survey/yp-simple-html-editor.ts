@@ -213,44 +213,52 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
         <div class="layout horizontal">
           <md-icon-button
             aria-label="${this.t("formatBold")}"
-            @mousedown="${this._toggleBold}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleBold}"
             ><md-icon>format_bold</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatItalic")}"
-            @mousedown="${this._toggleItalic}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleItalic}"
             ><md-icon>format_italic</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatUnderline")}"
-            @mousedown="${this._toggleUnderline}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleUnderline}"
             ><md-icon>format_underlined</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatListBullets")}"
-            @mousedown="${this._toggleListBullets}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleListBullets}"
             ><md-icon>format_list_bulleted</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatListNumbered")}"
-            @mousedown="${this._toggleListNumbers}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleListNumbers}"
             ><md-icon>format_list_numbered</md-icon></md-icon-button
           >
         </div>
         <div class="layout horizontal">
           <md-icon-button
             aria-label="${this.t("formatLeft")}"
-            @mousedown="${this._toggleAlignLeft}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleAlignLeft}"
             ><md-icon>format_align_left</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatCenter")}"
-            @mousedown="${this._toggleAlignCenter}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleAlignCenter}"
             ><md-icon>format_align_center</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatRight")}"
-            @mousedown="${this._toggleAlignRight}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleAlignRight}"
             ><md-icon>format_align_right</md-icon></md-icon-button
           >
         </div>
@@ -258,42 +266,50 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
         <div class="layout horizontal">
           <md-icon-button
             aria-label="${this.t("formatH1")}"
-            @mousedown="${this._toggleH1}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleH1}"
             ><md-icon>format_h1</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatH2")}"
-            @mousedown="${this._toggleH2}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleH2}"
             ><md-icon>format_h2</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatH3")}"
-            @mousedown="${this._toggleH3}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleH3}"
             ><md-icon>format_h3</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatH4")}"
-            @mousedown="${this._toggleH4}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleH4}"
             ><md-icon>format_h4</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatH5")}"
-            @mousedown="${this._toggleH5}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleH5}"
             ><md-icon>format_h5</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatH6")}"
-            @mousedown="${this._toggleH6}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleH6}"
             ><md-icon>format_h6</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatP")}"
-            @mousedown="${this._toggleP}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._toggleP}"
             ><md-icon>format_paragraph</md-icon></md-icon-button
           >
           <md-icon-button
             aria-label="${this.t("formatClear")}"
-            @mousedown="${this._clearFormat}"
+            @mousedown="${this._preserveEditorSelection}"
+            @click="${this._clearFormat}"
             ><md-icon>format_clear</md-icon></md-icon-button
           >
         </div>
@@ -304,6 +320,11 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
         @focus="${this._setFocus}"
         @blur="${this._setBlur}"
         contenteditable="true"
+        role="textbox"
+        aria-multiline="true"
+        aria-label="${this.question.text || this.t("htmlEditor")}"
+        aria-invalid="${this.showErrorLine ? "true" : "false"}"
+        aria-required="${this.question.required ? "true" : "false"}"
         spellcheck="false"
         @keydown="${this._keydown}"
         @paste="${this._paste}"
@@ -384,6 +405,10 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   _setBlur(event: CustomEvent) {
     //TODO: Fix blinking on using the icon buttons
     this.hasFocus = false;
+  }
+
+  _preserveEditorSelection(event: MouseEvent) {
+    event.preventDefault();
   }
 
   setRichValue(value: string) {

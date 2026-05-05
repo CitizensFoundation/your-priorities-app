@@ -58,6 +58,14 @@ export class YpSetVideoCover extends YpBaseElement {
           cursor: pointer;
         }
 
+        .previewFrameButton {
+          appearance: none;
+          background: transparent;
+          border: 0;
+          margin: 0;
+          padding: 0;
+        }
+
         :host([expanded]) .previewFrame {
           max-height: 100%;
           max-width: 100%;
@@ -135,14 +143,19 @@ export class YpSetVideoCover extends YpBaseElement {
             <div style="white-space: nowrap">
               ${this.videoImages.map(
         (image, index) => html`
-                  <img
-                    .class="${this._classFromImageIndex(index)}"
+                  <button
+                    type="button"
+                    class="previewFrameButton"
                     data-index="${index}"
                     @click="${this._selectVideoCover}"
-                    sizing="cover"
-                    class="previewFrame"
-                    alt="Preview frame ${index + 1}"
-                    src="${image}" />
+                    aria-label="Select preview frame ${index + 1}"
+                  >
+                    <img
+                      class="previewFrame ${this._classFromImageIndex(index)}"
+                      sizing="cover"
+                      alt=""
+                      src="${image}" />
+                  </button>
                 `
       )}
 
@@ -191,8 +204,8 @@ export class YpSetVideoCover extends YpBaseElement {
     }
   }
 
-  _selectVideoCover(event: CustomEvent) {
-    const frameIndex = (event.target as HTMLElement).getAttribute('data-index');
+  _selectVideoCover(event: Event) {
+    const frameIndex = (event.currentTarget as HTMLElement).getAttribute('data-index');
     this.fire('set-cover', frameIndex);
     this.fire('set-default-cover', false);
     window.serverApi.setVideoCover(this.videoId, { frameIndex: frameIndex });

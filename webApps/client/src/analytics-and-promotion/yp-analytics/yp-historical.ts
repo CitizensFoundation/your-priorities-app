@@ -50,6 +50,7 @@ export class YpHistorical extends PlausibleHistorical {
                     <md-icon-button
                       icon="close"
                       @click="${() => this.fire('exit-to-app')}"
+                      aria-label="${this.t('close')}"
                     ></md-icon-button>
                   `
                 : nothing}

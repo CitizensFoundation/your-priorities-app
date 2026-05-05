@@ -71,6 +71,12 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
           cursor: pointer;
         }
 
+        a.withCursor {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         [hidden] {
           display: none !important;
         }
@@ -81,28 +87,61 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
   override render() {
     return html`
       <div class="layout vertical pointContainer">
-        <div
-          class="actionInfo withCursor"
-          ?hidden="${!this.isUpVote}"
-          @click="${this._goToPoint}">
-          ${this.t('point.forAdded')}...
-        </div>
-        <div
-          class="actionInfo withCursor"
-          ?hidden="${!this.isDownVote}"
-          @click="${this._goToPoint}">
-          ${this.t('point.againstAdded')}...
-        </div>
+        ${!this.postId
+          ? html`
+              <a
+                class="actionInfo withCursor"
+                ?hidden="${!this.isUpVote}"
+                href="${this.pointUrl}"
+                @click="${this._goToPoint}"
+              >
+                ${this.t('point.forAdded')}...
+              </a>
+              <a
+                class="actionInfo withCursor"
+                ?hidden="${!this.isDownVote}"
+                href="${this.pointUrl}"
+                @click="${this._goToPoint}"
+              >
+                ${this.t('point.againstAdded')}...
+              </a>
+            `
+          : html`
+              <div class="actionInfo" ?hidden="${!this.isUpVote}">
+                ${this.t('point.forAdded')}...
+              </div>
+              <div class="actionInfo" ?hidden="${!this.isDownVote}">
+                ${this.t('point.againstAdded')}...
+              </div>
+            `}
         <div class="layout vertical">
-          <yp-magic-text
-            class="post-name withCursor"
-            @click="${this._goToPoint}"
-            textOnly
-            textType="postName"
-            .contentLanguage="${this.activity.Post!.language}"
-            .content="${this.activity.Post!.name}"
-            .contentId="${this.activity.Post!.id}">
-          </yp-magic-text>
+          ${!this.postId
+            ? html`
+                <a
+                  class="post-name withCursor"
+                  href="${this.pointUrl}"
+                  @click="${this._goToPoint}"
+                  aria-label="${this.activity.Post!.name}"
+                >
+                  <yp-magic-text
+                    textOnly
+                    textType="postName"
+                    .contentLanguage="${this.activity.Post!.language}"
+                    .content="${this.activity.Post!.name}"
+                    .contentId="${this.activity.Post!.id}">
+                  </yp-magic-text>
+                </a>
+              `
+            : html`
+                <yp-magic-text
+                  class="post-name"
+                  textOnly
+                  textType="postName"
+                  .contentLanguage="${this.activity.Post!.language}"
+                  .content="${this.activity.Post!.name}"
+                  .contentId="${this.activity.Post!.id}">
+                </yp-magic-text>
+              `}
           <yp-point
             hideUser
             .linkPoint="${!this.postId}"
@@ -114,8 +153,20 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
     `;
   }
 
-  _goToPoint() {
-    if (!this.postId && this.activity) {
+  get pointUrl() {
+    return this.activity?.Post && this.activity?.Point
+      ? YpNavHelpers.withForAgentBundle(
+          `/post/${this.activity.Post.id}/${this.activity.Point.id}`
+        )
+      : "#";
+  }
+
+  _goToPoint(event?: Event) {
+    if (
+      !this.postId &&
+      this.activity &&
+      this.shouldHandleAnchorClick(event)
+    ) {
       YpNavHelpers.goToPost(
         this.activity.Post!.id,
         this.activity.Point!.id,

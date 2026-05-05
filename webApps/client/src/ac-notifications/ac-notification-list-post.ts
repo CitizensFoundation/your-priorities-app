@@ -54,6 +54,12 @@ export class AcNotificationListPost extends YpBaseElement {
           cursor: pointer;
         }
 
+        a.pointerCursor {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         .bulb-icon {
           min-width: 26px;
           min-height: 26px;
@@ -106,9 +112,11 @@ export class AcNotificationListPost extends YpBaseElement {
   override render() {
     return this.post
       ? html`
-          <div
+          <a
+            href="${this.postUrl}"
             class="layout vertical pointerCursor"
             @click="${this._goToPost}"
+            aria-label="${this.post.name}"
             ?hidden="${!this.post}">
             <div class="layout horizontal">
               <div
@@ -152,14 +160,20 @@ export class AcNotificationListPost extends YpBaseElement {
                 </div>
               </div>
             </div>
-          </div>
+          </a>
         `
       : nothing;
   }
 
-  _goToPost() {
-    if (this.post) {
-      const postUrl = '/post/' + this.post.id;
+  get postUrl() {
+    return this.post
+      ? YpNavHelpers.withForAgentBundle(`/post/${this.post.id}`)
+      : "#";
+  }
+
+  _goToPost(event?: Event) {
+    if (this.post && this.shouldHandleAnchorClick(event)) {
+      const postUrl = this.postUrl;
       window.appGlobals.activity('open', 'post', postUrl);
       setTimeout(() => {
         YpNavHelpers.redirectTo(postUrl);

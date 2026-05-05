@@ -4,13 +4,23 @@ export class YpNavHelpers {
    */
   static withForAgentBundle(path: string): string {
     if (window.appGlobals?.originalQueryParameters?.forAgentBundle) {
+      const hashIndex = path.indexOf("#");
+      const pathWithoutHash = hashIndex === -1 ? path : path.slice(0, hashIndex);
+      const hash = hashIndex === -1 ? "" : path.slice(hashIndex);
+
+      if (/[?&]forAgentBundle=/.test(pathWithoutHash)) {
+        return path;
+      }
+
       const forAgentBundleValue = encodeURIComponent(
         window.appGlobals.originalQueryParameters.forAgentBundle
       );
       // Decide if we add ? or & based on whether path already has a query string
-      path += (path.indexOf('?') === -1)
-        ? `?forAgentBundle=${forAgentBundleValue}`
-        : `&forAgentBundle=${forAgentBundleValue}`;
+      const separator = pathWithoutHash.indexOf("?") === -1 ? "?" : "&";
+      path =
+        pathWithoutHash +
+        `${separator}forAgentBundle=${forAgentBundleValue}` +
+        hash;
     }
     return path;
   }

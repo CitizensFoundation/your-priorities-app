@@ -379,19 +379,32 @@ export class PsAgentNode extends PsOperationsBaseNode {
             class="playButtons"
             @click="${this.pauseAgent}"
             disabled
+            aria-label="Pause agent"
           >
             <md-icon>pause</md-icon>
           </md-icon-button>
-          <md-icon-button class="playButtons" @click="${this.stopAgent}">
+          <md-icon-button
+            class="playButtons"
+            @click="${this.stopAgent}"
+            aria-label="Stop agent"
+          >
             <md-icon>stop</md-icon>
           </md-icon-button>
         `;
       case "paused":
         return html`
-          <md-icon-button class="playButtons" @click="${this.startAgent}">
+          <md-icon-button
+            class="playButtons"
+            @click="${this.startAgent}"
+            aria-label="Start agent"
+          >
             <md-icon>play_circle</md-icon>
           </md-icon-button>
-          <md-icon-button class="playButtons" @click="${this.stopAgent}">
+          <md-icon-button
+            class="playButtons"
+            @click="${this.stopAgent}"
+            aria-label="Stop agent"
+          >
             <md-icon>stop</md-icon>
           </md-icon-button>
         `;
@@ -399,7 +412,11 @@ export class PsAgentNode extends PsOperationsBaseNode {
       case "completed":
       case "error":
         return html`
-          <md-icon-button class="playButtons" @click="${this.startAgent}">
+          <md-icon-button
+            class="playButtons"
+            @click="${this.startAgent}"
+            aria-label="Start agent"
+          >
             <md-icon>play_circle</md-icon>
           </md-icon-button>
         `;
@@ -434,6 +451,9 @@ export class PsAgentNode extends PsOperationsBaseNode {
         <md-icon-button
           id="connectorMenuAnchor"
           @click="${this.toggleConnectorMenu}"
+          aria-label="Add connector"
+          aria-haspopup="menu"
+          aria-controls="agentConnectorMenu"
         >
           <md-icon>add</md-icon>
         </md-icon-button>
@@ -508,6 +528,9 @@ export class PsAgentNode extends PsOperationsBaseNode {
     return html` <md-icon-button
         id="mainMenuAnchor"
         @click="${this.toggleMainMenu}"
+        aria-label="Agent actions"
+        aria-haspopup="menu"
+        aria-controls="agentMainMenu"
       >
         <md-icon>more_horiz</md-icon>
       </md-icon-button>

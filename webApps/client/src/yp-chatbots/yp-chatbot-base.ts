@@ -10,13 +10,11 @@ import '@material/web/button/outlined-button.js';
 import '@material/web/button/filled-button.js';
 import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/icon/icon.js';
-
-
 import '@material/web/iconbutton/outlined-icon-button.js';
 
 import '../common/yp-image.js';
 import { YpAiChatbotItemBase } from './yp-chatbot-item-base.js';
-import { MdFilledTonalButton } from '@material/web/button/filled-tonal-button.js';
+import type { MdOutlinedIconButton } from '@material/web/iconbutton/outlined-icon-button.js';
 import { MdOutlinedTextField } from '@material/web/textfield/outlined-text-field.js';
 
 import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
@@ -56,7 +54,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
   showCloseButton = false;
 
   @query('#sendButton')
-  sendButton?: MdFilledTonalButton;
+  sendButton?: MdOutlinedIconButton;
 
   @queryAll('yp-chatbot-item-base')
   chatElements?: YpAiChatbotItemBase[];
@@ -432,7 +430,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
           margin-top: 0;
         }
 
-        .sendIcon {
+        .sendButton {
           cursor: pointer;
         }
 
@@ -526,14 +524,16 @@ export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
               }}"
               .label="${this.textInputLabel}"
             >
-              <md-icon
-                class="sendIcon"
+              <md-outlined-icon-button
+                class="sendButton"
                 @click="${this.sendChatMessage}"
                 slot="trailing-icon"
                 id="sendButton"
+                aria-label="${this.t('send')}"
                 ?input-is-focused="${this.inputIsFocused}"
-                >send</md-icon
               >
+                <md-icon>send</md-icon>
+              </md-outlined-icon-button>
             </md-outlined-text-field>
           `
         : html`<md-outlined-text-field
@@ -546,14 +546,16 @@ export abstract class YpChatbotBase extends YpStreamingLlmScrolling {
             @blur="${() => (this.inputIsFocused = true)}"
             .label="${this.textInputLabel}"
           >
-            <md-icon
-              class="sendIcon"
+            <md-outlined-icon-button
+              class="sendButton"
               @click="${this.sendChatMessage}"
               slot="trailing-icon"
               id="sendButton"
+              aria-label="${this.t('send')}"
               ?input-is-focused="${this.inputIsFocused}"
-              >send</md-icon
-            ></md-outlined-text-field
+            >
+              <md-icon>send</md-icon>
+            </md-outlined-icon-button></md-outlined-text-field
           >`}
     `;
   }

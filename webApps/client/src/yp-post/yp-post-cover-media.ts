@@ -66,6 +66,9 @@ export class YpPostCoverMedia extends YpBaseElement {
   showAudio = false;
 
   @property({ type: Boolean })
+  disablePostNavigation = false;
+
+  @property({ type: Boolean })
   portraitVideo = false;
 
   // From YpElementWithPlayback
@@ -576,6 +579,8 @@ export class YpPostCoverMedia extends YpBaseElement {
   }
 
   _goToPost() {
+    if (this.disablePostNavigation) return;
+
     if (
       this.post &&
       this.post.Group.configuration &&

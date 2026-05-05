@@ -41,6 +41,12 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
           cursor: pointer;
         }
 
+        a.pointerCursor {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         .icon {
           min-width: 24px;
           min-height: 24px;
@@ -74,55 +80,81 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
   }
 
   override render() {
+    const targetUrl = this.targetUrl;
     return html`
-      <div class="layout vertical pointerCursor" @click="${this._goTo}">
-        <div class="layout horizontal">
-          <div class="layout vertical center-center self-start leftContainer">
-            <yp-user-image small .user="${this.user!}"></yp-user-image>
-            <md-icon class="icon">${this.icon}</md-icon>
-          </div>
-          <div class="layout vertical">
-            <div class="name">${this.nameTruncated}</div>
-            <div ?hidden="${!this.shortText}" class="shortText">
-              ${this.shortTextTruncated}
-            </div>
+      ${targetUrl
+        ? html`
+            <a
+              class="layout vertical pointerCursor"
+              href="${targetUrl}"
+              @click="${this._goTo}"
+              aria-label="${this.nameTruncated}"
+            >
+              ${this.renderContent()}
+            </a>
+          `
+        : html`<div class="layout vertical">${this.renderContent()}</div>`}
+    `;
+  }
+
+  renderContent() {
+    return html`
+      <div class="layout horizontal">
+        <div class="layout vertical center-center self-start leftContainer">
+          <yp-user-image small .user="${this.user!}"></yp-user-image>
+          <md-icon class="icon">${this.icon}</md-icon>
+        </div>
+        <div class="layout vertical">
+          <div class="name">${this.nameTruncated}</div>
+          <div ?hidden="${!this.shortText}" class="shortText">
+            ${this.shortTextTruncated}
           </div>
         </div>
       </div>
     `;
   }
 
-  _goTo() {
-    let gotoLocation;
+  get targetUrl() {
     if (this.post) {
-      this.goToPost();
+      return this.postUrl;
     } else if (this.notification) {
       if (
         this.notification.AcActivities[0].Group &&
         this.notification.AcActivities[0].Group.name !=
           'hidden_public_group_for_domain_level_points'
       ) {
-        gotoLocation =
+        return YpNavHelpers.withForAgentBundle(
           '/group/' +
-          this.notification.AcActivities[0].Group.id +
-          '/news/' +
-          this.notification.AcActivities[0].id;
+            this.notification.AcActivities[0].Group.id +
+            '/news/' +
+            this.notification.AcActivities[0].id
+        );
       } else if (this.notification.AcActivities[0].Community) {
-        gotoLocation =
+        return YpNavHelpers.withForAgentBundle(
           '/community/' +
-          this.notification.AcActivities[0].Community.id +
-          '/news/' +
-          this.notification.AcActivities[0].id;
+            this.notification.AcActivities[0].Community.id +
+            '/news/' +
+            this.notification.AcActivities[0].id
+        );
       } else if (this.notification.AcActivities[0].Domain) {
-        gotoLocation =
+        return YpNavHelpers.withForAgentBundle(
           '/domain/' +
-          this.notification.AcActivities[0].Domain.id +
-          '/news/' +
-          this.notification.AcActivities[0].id;
+            this.notification.AcActivities[0].Domain.id +
+            '/news/' +
+            this.notification.AcActivities[0].id
+        );
       }
-      if (gotoLocation) {
-        YpNavHelpers.redirectTo(gotoLocation);
-      }
+    }
+    return undefined;
+  }
+
+  _goTo(event?: Event) {
+    if (!this.shouldHandleAnchorClick(event)) return;
+
+    if (this.post) {
+      this.goToPost();
+    } else if (this.targetUrl) {
+      YpNavHelpers.redirectTo(this.targetUrl);
     }
   }
 
@@ -167,13 +199,19 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
 
   goToPost() {
     if (this.post) {
-      const postUrl = '/post/' + this.post.id + '/news';
+      const postUrl = this.postUrl;
       window.appGlobals.activity('open', 'post', postUrl);
       setTimeout(() => {
         YpNavHelpers.redirectTo(postUrl);
         this.fire('yp-close-right-drawer');
       });
     }
+  }
+
+  get postUrl() {
+    return this.post
+      ? YpNavHelpers.withForAgentBundle('/post/' + this.post.id + '/news')
+      : '#';
   }
 
   _notificationChanged() {

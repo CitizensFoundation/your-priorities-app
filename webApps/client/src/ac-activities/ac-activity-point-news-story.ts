@@ -36,6 +36,12 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
           cursor: pointer;
         }
 
+        a.postName {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         .mainContainer {
           width: auto;
         }
@@ -48,16 +54,21 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
       <div class="layout vertical mainContainer">
         ${this.activity.Post
           ? html`
-              <yp-magic-text
+              <a
+                href="${this.postUrl}"
                 @click="${this._goToPost}"
                 class="postName"
+                aria-label="${this.activity.Post.name}"
                 ?hidden="${!this.activity.Post.name}"
-                textOnly
-                textType="postName"
-                .contentLanguage="${this.activity.Post.language}"
-                .content="${this.activity.Post.name}"
-                .contentId="${this.activity.Post.id}">
-              </yp-magic-text>
+              >
+                <yp-magic-text
+                  textOnly
+                  textType="postName"
+                  .contentLanguage="${this.activity.Post.language}"
+                  .content="${this.activity.Post.name}"
+                  .contentId="${this.activity.Post.id}">
+                </yp-magic-text>
+              </a>
             `
           : nothing}
         <div class="layout vertical center-center newsStoryContainer">
@@ -79,8 +90,16 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
     `;
   }
 
-  _goToPost() {
-    YpNavHelpers.goToPost(this.activity.Post!.id, undefined, this.activity);
+  get postUrl() {
+    return this.activity?.Post
+      ? YpNavHelpers.withForAgentBundle(`/post/${this.activity.Post.id}`)
+      : "#";
+  }
+
+  _goToPost(event?: Event) {
+    if (this.shouldHandleAnchorClick(event)) {
+      YpNavHelpers.goToPost(this.activity.Post!.id, undefined, this.activity);
+    }
   }
 
   get hidePostName() {

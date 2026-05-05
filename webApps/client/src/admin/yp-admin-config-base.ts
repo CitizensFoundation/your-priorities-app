@@ -735,6 +735,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           ? html`<md-filled-tonal-icon-button
               class="deleteImageButton"
               @click="${this.deleteCurrentLogoImage}"
+              aria-label="${this.t("deleteImage")}"
               ><md-icon>delete</md-icon></md-filled-tonal-icon-button
             >`
           : nothing}
@@ -759,6 +760,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
               ?hidden="${!this.hasLlm}"
               id="generateButton"
               @click="${this._generateLogo}"
+              aria-label="${this.t("generateImage")}"
               ><md-icon>smart_toy</md-icon></md-filled-icon-button
             >
             ${this.generatingAiImageInBackground
@@ -778,6 +780,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
               ? html`<md-filled-icon-button
                   style="margin-bottom: 8px;"
                   @click="${this.deleteCurrentVideo}"
+                  aria-label="${this.t("deleteVideo")}"
                   ><md-icon>delete</md-icon></md-filled-icon-button
                 >`
               : nothing}
@@ -829,7 +832,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         </yp-file-upload>
         ${this.currentHeaderImages && this.currentHeaderImages.length > 0
           ? html`
-              <md-icon-button @click="${this.deleteCurrentHeaderImage}">
+              <md-icon-button
+                @click="${this.deleteCurrentHeaderImage}"
+                aria-label="${this.t("deleteHeaderImage")}"
+              >
                 <md-icon>delete</md-icon>
               </md-icon-button>
             `

@@ -392,6 +392,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
                         class="deleteMediaButton"
                         @click="${() => this._removeMedia(media)}"
                         title="${this.t("deleteMedia")}"
+                        aria-label="${this.t("deleteMedia")}"
                       >
                         <md-icon>delete</md-icon>
                       </md-filled-tonal-icon-button>
@@ -399,6 +400,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
                         class="insertMediaButton"
                         @click="${() => this._insertMediaIntoHtml(media)}"
                         title="${this.t("insertMedia")}"
+                        aria-label="${this.t("insertMedia")}"
                       >
                         <md-icon>post_add</md-icon>
                       </md-filled-icon-button>
@@ -452,6 +454,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
               ?hidden="${!this.hasLlm}"
               id="generateButton"
               @click="${this._generateLogo}"
+              aria-label="${this.t("generateImage")}"
               ><md-icon>smart_toy</md-icon></md-filled-icon-button
             >
           </div>

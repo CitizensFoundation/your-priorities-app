@@ -142,6 +142,12 @@ export class AcActivityRecommendedPosts extends YpBaseElement {
         .postItem {
         }
 
+        a.postItem {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         .headerText {
           font-size: 20px;
           margin: 16px;
@@ -167,27 +173,39 @@ export class AcActivityRecommendedPosts extends YpBaseElement {
             post => html`
               <div class="postContainer">
                 <div class="shadow-elevation-2dp shadow-transition postItem">
-                  <div
+                  <a
                     class="layout vertical postItem"
-                    @click="${() => {
-                      YpNavHelpers.goToPost(post.id);
-                    }}"
+                    href="${this.postUrl(post)}"
+                    @click="${(event: Event) =>
+                      this._goToRecommendedPost(event, post)}"
+                    aria-label="${post.name}"
                   >
                     <div class="layout horizontal">
                       <yp-post-cover-media
                         tiny
                         .post="${post}"
+                        .disablePostNavigation="${true}"
                       ></yp-post-cover-media>
                     </div>
                     <div class="post-name layout horizontal center-center">
                       ${post.name}
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
             `
           )}
         `
       : nothing;
+  }
+
+  _goToRecommendedPost(event: Event, post: YpPostData) {
+    if (this.shouldHandleAnchorClick(event)) {
+      YpNavHelpers.goToPost(post.id);
+    }
+  }
+
+  postUrl(post: YpPostData) {
+    return YpNavHelpers.withForAgentBundle(`/post/${post.id}`);
   }
 }

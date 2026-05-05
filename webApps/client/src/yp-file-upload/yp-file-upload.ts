@@ -249,12 +249,12 @@ export class YpFileUpload extends YpBaseElement {
           float: right;
         }
 
-        .commands iron-icon:not([icon="check-circle"]) {
+        .commands md-icon-button {
           cursor: pointer;
           opacity: 0.9;
         }
 
-        .commands iron-icon:hover {
+        .commands md-icon-button:hover {
           opacity: 1;
         }
 
@@ -362,20 +362,25 @@ export class YpFileUpload extends YpBaseElement {
                 <div class="name">
                   <span>${this.uploadStatus}</span>
                   <div class="commands">
-                    <md-icon
-                      .title="${this.retryText}"
+                    <md-outlined-icon-button
+                      title="${this.retryText}"
+                      aria-label="${this.retryText}"
                       @click="${this._retryUpload}"
                       ?hidden="${!item.error}"
-                      >autorenew</md-icon
                     >
-                    <md-icon
-                      .title="${this.removeText}"
+                      <md-icon>autorenew</md-icon>
+                    </md-outlined-icon-button>
+                    <md-outlined-icon-button
+                      title="${this.removeText}"
+                      aria-label="${this.removeText}"
                       @click="${this._cancelUpload}"
                       ?hidden="${item.complete}"
-                      >cancel</md-icon
                     >
+                      <md-icon>cancel</md-icon>
+                    </md-outlined-icon-button>
                     <md-icon
-                      .title="${this.successText}"
+                      title="${this.successText}"
+                      aria-label="${this.successText}"
                       ?hidden="${!item.complete}"
                       >check_circle</md-icon
                     >

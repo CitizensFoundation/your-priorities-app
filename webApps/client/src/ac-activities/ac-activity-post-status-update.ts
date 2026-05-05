@@ -31,6 +31,12 @@ export class AcActivityPostStatusUpdate extends YpBaseElement {
           cursor: pointer;
         }
 
+        a.postName {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         .groupName {
           padding-left: 32px;
           padding: 16px;
@@ -47,15 +53,20 @@ export class AcActivityPostStatusUpdate extends YpBaseElement {
         <div class="groupName">
           ${this.activity.Group!.name}
         </div>
-        <yp-magic-text
-          @click="${this._goToPost}"
+        <a
+          href="${this.postUrl}"
           class="postName"
-          textOnly
-          textType="postName"
-          .contentLanguage="${this.activity.Post!.language}"
-          .content="${this.activity.Post!.name}"
-          .contentId="${this.activity.Post!.id}">
-        </yp-magic-text>
+          @click="${this._goToPost}"
+          aria-label="${this.activity.Post!.name}"
+        >
+          <yp-magic-text
+            textOnly
+            textType="postName"
+            .contentLanguage="${this.activity.Post!.language}"
+            .content="${this.activity.Post!.name}"
+            .contentId="${this.activity.Post!.id}">
+          </yp-magic-text>
+        </a>
         <yp-magic-text
           id="statusChange"
           class="statusChange"
@@ -70,8 +81,14 @@ export class AcActivityPostStatusUpdate extends YpBaseElement {
     `;
   }
 
-  _goToPost() {
-    if (this.activity.Post) {
+  get postUrl() {
+    return this.activity?.Post
+      ? YpNavHelpers.withForAgentBundle(`/post/${this.activity.Post.id}`)
+      : "#";
+  }
+
+  _goToPost(event?: Event) {
+    if (this.activity.Post && this.shouldHandleAnchorClick(event)) {
       YpNavHelpers.goToPost(this.activity.Post.id, undefined, this.activity);
     }
   }

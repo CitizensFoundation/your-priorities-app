@@ -859,16 +859,21 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     return html`
       <div class="controlPanel" ?hidden="${this.minimizeWorkflow}">
         <div class="navControls">
-          <md-icon-button @click="${this.zoomIn}" class="firstButton"
+          <md-icon-button
+            @click="${this.zoomIn}"
+            class="firstButton"
+            aria-label="Zoom in"
             ><md-icon>zoom_in</md-icon></md-icon-button
           >
-          <md-icon-button @click="${this.zoomOut}"
+          <md-icon-button @click="${this.zoomOut}" aria-label="Zoom out"
             ><md-icon>zoom_out</md-icon></md-icon-button
           >
-          <md-icon-button @click="${this.resetZoom}"
+          <md-icon-button @click="${this.resetZoom}" aria-label="Reset zoom"
             ><md-icon>center_focus_strong</md-icon></md-icon-button
           >
-          <md-icon-button @click="${this.updatePaperSize}"
+          <md-icon-button
+            @click="${this.updatePaperSize}"
+            aria-label="Fit workflow to screen"
             ><md-icon>zoom_out_map</md-icon></md-icon-button
           >
         </div>
@@ -877,15 +882,17 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
 
         <div class="masterPlayConfigButtons" ?hidden="${this.minimizeWorkflow}">
           ${this.currentRunningAgentId
-            ? html`<md-filled-icon-button
+              ? html`<md-filled-icon-button
                 class="mainAgentStopButton"
                 @click="${this.stop}"
+                aria-label="${this.t("stop")}"
                 ><md-icon>stop</md-icon></md-filled-icon-button
               >`
             : html`<md-outlined-icon-button
                 hidden
                 class="mainAgentPlayButton"
                 @click="${this.start}"
+                aria-label="${this.t("start")}"
                 ><md-icon>play_arrow</md-icon></md-outlined-icon-button
               >`}
           <md-fab
@@ -902,19 +909,22 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
         </div>
 
         <div hidden ?hidden="${this.minimizeWorkflow}">
-          <md-icon-button @click="${() => this.pan("left")}"
+          <md-icon-button @click="${() => this.pan("left")}" aria-label="Pan left"
             ><md-icon>arrow_back</md-icon></md-icon-button
           >
 
-          <md-icon-button @click="${() => this.pan("up")}"
+          <md-icon-button @click="${() => this.pan("up")}" aria-label="Pan up"
             ><md-icon>arrow_upward</md-icon></md-icon-button
           >
 
-          <md-icon-button @click="${() => this.pan("down")}"
+          <md-icon-button @click="${() => this.pan("down")}" aria-label="Pan down"
             ><md-icon>arrow_downward</md-icon></md-icon-button
           >
 
-          <md-icon-button @click="${() => this.pan("right")}" class="lastButton"
+          <md-icon-button
+            @click="${() => this.pan("right")}"
+            class="lastButton"
+            aria-label="Pan right"
             ><md-icon>arrow_forward</md-icon></md-icon-button
           >
         </div>

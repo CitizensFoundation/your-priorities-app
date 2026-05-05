@@ -49,6 +49,7 @@ export class YpAdminGroups extends YpBaseElementWithLogin {
         .groupItem {
           background-color: var(--md-sys-color-secondary-container);
           color: var(--md-sys-color-on-secondary-container);
+          text-decoration: none;
           width: 600px;
           margin: 16px;
           border-radius: 6px;
@@ -63,16 +64,21 @@ export class YpAdminGroups extends YpBaseElementWithLogin {
     ];
   }
 
-  gotoGroup(group: YpGroupData) {
-    YpNavHelpers.redirectTo(`/group/${group.id}`);
+  gotoGroup(event: Event, group: YpGroupData) {
+    if (this.shouldHandleAnchorClick(event)) {
+      YpNavHelpers.redirectTo(`/group/${group.id}`);
+    }
   }
 
   renderGroup(group: YpGroupData) {
     const groupImage = YpMediaHelpers.getImageFormatUrl(group.GroupLogoImages);
+    const groupUrl = YpNavHelpers.withForAgentBundle(`/group/${group.id}`);
     return html`
-      <div
+      <a
         class="layout horizontal groupItem"
-        @click="${() => this.gotoGroup(group)}"
+        href="${groupUrl}"
+        @click="${(event: Event) => this.gotoGroup(event, group)}"
+        aria-label="${group.name}"
       >
         <yp-image
           class="mainImage"
@@ -84,7 +90,7 @@ export class YpAdminGroups extends YpBaseElementWithLogin {
         <div class="layout vertical">
           <div class="groupText">${group.name}</div>
         </div>
-      </div>
+      </a>
     `;
   }
 

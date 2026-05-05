@@ -49,6 +49,7 @@ export class YpAdminCommunities extends YpBaseElementWithLogin {
         .communityItem {
           background-color: var(--md-sys-color-secondary-container);
           color: var(--md-sys-color-on-secondary-container);
+          text-decoration: none;
           width: 600px;
           margin: 16px;
           border-radius: 6px;
@@ -63,18 +64,25 @@ export class YpAdminCommunities extends YpBaseElementWithLogin {
     ];
   }
 
-  gotoCommunity(community: YpCommunityData) {
-    YpNavHelpers.redirectTo(`/community/${community.id}`);
+  gotoCommunity(event: Event, community: YpCommunityData) {
+    if (this.shouldHandleAnchorClick(event)) {
+      YpNavHelpers.redirectTo(`/community/${community.id}`);
+    }
   }
 
   renderCommunity(community: YpCommunityData) {
     const communityImage = YpMediaHelpers.getImageFormatUrl(
       community.CommunityLogoImages
     );
+    const communityUrl = YpNavHelpers.withForAgentBundle(
+      `/community/${community.id}`
+    );
     return html`
-      <div
+      <a
         class="layout horizontal communityItem"
-        @click="${() => this.gotoCommunity(community)}"
+        href="${communityUrl}"
+        @click="${(event: Event) => this.gotoCommunity(event, community)}"
+        aria-label="${community.name}"
       >
         <yp-image
           class="mainImage"
@@ -86,7 +94,7 @@ export class YpAdminCommunities extends YpBaseElementWithLogin {
         <div class="layout vertical">
           <div class="communityText">${community.name}</div>
         </div>
-      </div>
+      </a>
     `;
   }
 

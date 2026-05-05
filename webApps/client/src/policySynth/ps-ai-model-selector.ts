@@ -203,7 +203,10 @@ export class PsAiModelSelector extends YpBaseElement {
         </md-filled-select>
         ${currentModel
           ? html`
-              <md-icon-button @click="${() => this._handleRemoveModel(size)}">
+              <md-icon-button
+                @click="${() => this._handleRemoveModel(size)}"
+                aria-label="${this.t("removeModel")}"
+              >
                 <md-icon>delete</md-icon>
               </md-icon-button>
             `
@@ -246,6 +249,7 @@ export class PsAiModelSelector extends YpBaseElement {
           ? html`
               <md-icon-button
                 @click="${() => this._handleRemoveReasoningModel(size)}"
+                aria-label="${this.t("removeReasoningModel")}"
               >
                 <md-icon>delete</md-icon>
               </md-icon-button>

@@ -157,70 +157,110 @@ export class AcActivityPost extends YpPostBaseWithAnswers(
         .hasPointer {
           cursor: pointer;
         }
+
+        a.hasPointer {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
       `,
     ];
   }
 
   //TODO: Check jucy-html below
   override render() {
-    return html`
-      ${this.activity && this.activity.Post
-        ? html`
-            <div class="layout vertical hasPointer" @click="${this._goToPost}">
-              <div class="actionInfo">${this.t('addedAnIdea')}</div>
-              <div class="layout horizontal center-center">
-                <yp-post-cover-media
-                  .post="${this.activity.Post!}"
-                ></yp-post-cover-media>
-              </div>
-              <div class="layout vertical center-center">
-                <yp-magic-text
-                  class="post-name mainContainerItem"
-                  is-ie11="${this.isIE11}"
-                  textOnly
-                  textType="postName"
-                  .contentLanguage="${this.activity.Post.language}"
-                  .content="${this.activity.Post!.name}"
-                  .contentId="${this.activity.Post!.id}"
-                >
-                </yp-magic-text>
-              </div>
-              <div class="layout vertical center-center descriptionOuter">
-                <div
-                  id="description"
-                  class="description mainContainerItem"
-                  is-ie11="${this.isIE11}"
-                >
-                  <yp-magic-text
-                    id="description"
-                    textType="postContent"
-                    .contentLanguage="${this.activity.Post.language}"
-                    .content="${this.structuredAnswersFormatted}"
-                    ?noUserInfo="${!this.activity.Post.Group.configuration
-                      .showWhoPostedPosts}"
-                    simpleFormat
-                    skipSanitize
-                    .contentId="${this.activity.Post.id}"
-                    class="description"
-                    .truncate="${this.activity.Post.Group.configuration
-                      .descriptionTruncateAmount}"
-                    .moreText="${this.t('readMore')}"
-                    .closeDialogText="${this.t('close')}"
-                  >
-                  </yp-magic-text>
-                </div>
+    if (!this.activity?.Post) return html``;
 
-                ${this.hasGroupHeader
-                  ? html`
-                      <div class="groupTitle layout horizontal center-center">
-                        ${this.groupTitle}
-                      </div>
-                    `
-                  : html``}
-              </div>
+    return html`
+      ${this.postId
+        ? html`<div class="layout vertical">${this.renderPostContent()}</div>`
+        : html`
+            <div class="layout vertical">
+              <a
+                class="layout vertical hasPointer"
+                href="${this.postUrl}"
+                @click="${this._goToPost}"
+                aria-label="${this.activity.Post.name}"
+              >
+                ${this.renderPostLinkContent(true)}
+              </a>
+              ${this.renderPostDescriptionContent()}
             </div>
           `
-        : html``}
+      }
+    `;
+  }
+
+  renderPostContent() {
+    return html`
+      ${this.renderPostLinkContent()}
+      ${this.renderPostDescriptionContent()}
+    `;
+  }
+
+  renderPostLinkContent(disableCoverNavigation = false) {
+    const post = this.activity.Post!;
+
+    return html`
+      <div class="actionInfo">${this.t('addedAnIdea')}</div>
+      <div class="layout horizontal center-center">
+        <yp-post-cover-media
+          .post="${post}"
+          ?disablePostNavigation="${disableCoverNavigation}"
+        ></yp-post-cover-media>
+      </div>
+      <div class="layout vertical center-center">
+        <yp-magic-text
+          class="post-name mainContainerItem"
+          is-ie11="${this.isIE11}"
+          textOnly
+          textType="postName"
+          .contentLanguage="${post.language}"
+          .content="${post.name}"
+          .contentId="${post.id}"
+        >
+        </yp-magic-text>
+      </div>
+    `;
+  }
+
+  renderPostDescriptionContent() {
+    const post = this.activity.Post!;
+
+    return html`
+      <div class="layout vertical center-center descriptionOuter">
+        <div
+          id="description"
+          class="description mainContainerItem"
+          is-ie11="${this.isIE11}"
+        >
+          <yp-magic-text
+            id="description"
+            textType="postContent"
+            .contentLanguage="${post.language}"
+            .content="${this.structuredAnswersFormatted}"
+            ?noUserInfo="${!post.Group.configuration
+              .showWhoPostedPosts}"
+            simpleFormat
+            skipSanitize
+            .contentId="${post.id}"
+            class="description"
+            .truncate="${post.Group.configuration
+              .descriptionTruncateAmount}"
+            .moreText="${this.t('readMore')}"
+            .closeDialogText="${this.t('close')}"
+          >
+          </yp-magic-text>
+        </div>
+
+        ${this.hasGroupHeader
+          ? html`
+              <div class="groupTitle layout horizontal center-center">
+                ${this.groupTitle}
+              </div>
+            `
+          : html``}
+      </div>
     `;
   }
 
@@ -229,8 +269,18 @@ export class AcActivityPost extends YpPostBaseWithAnswers(
     this.post = this.activity.Post;
   }
 
-  _goToPost() {
-    if (this.activity.Post && !this.postId) {
+  get postUrl() {
+    return this.activity?.Post
+      ? YpNavHelpers.withForAgentBundle(`/post/${this.activity.Post.id}`)
+      : "#";
+  }
+
+  _goToPost(event?: Event) {
+    if (
+      this.activity.Post &&
+      !this.postId &&
+      this.shouldHandleAnchorClick(event)
+    ) {
       YpNavHelpers.goToPost(this.activity.Post.id, undefined, this.activity);
     }
   }

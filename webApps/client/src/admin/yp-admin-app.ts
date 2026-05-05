@@ -1228,7 +1228,11 @@ export class YpAdminApp extends YpBaseElement {
       return html`
         <div class="drawer">
           <div class="layout horizontal backContainer">
-            <md-icon-button class="backIcon" @click="${this.exitToMainApp}">
+            <md-icon-button
+              class="backIcon"
+              @click="${this.exitToMainApp}"
+              aria-label="${this.t("close")}"
+            >
               <md-icon>close</md-icon>
             </md-icon-button>
           </div>

@@ -60,6 +60,12 @@ export class AcNotificationListPoint extends YpBaseElement {
           cursor: pointer;
         }
 
+        a.pointerCursor {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+        }
+
         .endorsers {
         }
 
@@ -123,9 +129,11 @@ export class AcNotificationListPoint extends YpBaseElement {
 
   override render() {
     return html`
-      <div
+      <a
+        href="${this.pointUrl}"
         class="layout vertical pointerCursor"
         @click="${this.goToPost}"
+        aria-label="${this.postNameTruncated}"
         ?hidden="${!this.post}">
         <div class="layout horizontal">
           <div class="layout vertical center-center self-start leftContainer">
@@ -159,7 +167,7 @@ export class AcNotificationListPoint extends YpBaseElement {
             <div class="postName">${this.postNameTruncated}</div>
           </div>
         </div>
-      </div>
+      </a>
     `;
   }
 
@@ -175,12 +183,21 @@ export class AcNotificationListPoint extends YpBaseElement {
     return this.point && this.point.value > 0;
   }
 
-  goToPost() {
+  get pointUrl() {
     if (this.post) {
-      let postUrl = '/post/' + this.post.id;
+      let postUrl = "/post/" + this.post.id;
       if (this.point) {
-        postUrl += '/' + this.point.id;
+        postUrl += "/" + this.point.id;
       }
+      return YpNavHelpers.withForAgentBundle(postUrl);
+    } else {
+      return "#";
+    }
+  }
+
+  goToPost(event?: Event) {
+    if (this.post && this.shouldHandleAnchorClick(event)) {
+      const postUrl = this.pointUrl;
       window.appGlobals.activity('open', 'post', postUrl);
       setTimeout(() => {
         YpNavHelpers.redirectTo(postUrl);

@@ -44,60 +44,66 @@ export class YpRating extends YpBaseElement {
           text-align: center;
         }
 
-        .rating-wrapper > span {
+        .rating-wrapper > .ratingButton {
+          appearance: none;
+          background: transparent;
+          border: 0;
+          color: inherit;
           display: inline-block;
           position: relative;
           width: 1.35em;
           font-size: 1.6em;
+          line-height: 1;
+          padding: 0;
           cursor: pointer;
           opacity: 0.4;
           -webkit-filter: grayscale(50%);
           filter: grayscale(50%);
         }
 
-        .rating-wrapper[voting-disabled] > span {
+        .rating-wrapper[voting-disabled] > .ratingButton {
           cursor: initial;
         }
 
-        .rating-wrapper > span.active,
-        .rating-wrapper > span.active ~ span {
+        .rating-wrapper > .ratingButton.active,
+        .rating-wrapper > .ratingButton.active ~ .ratingButton {
           opacity: 1;
           -webkit-filter: grayscale(0%);
           filter: grayscale(0%);
         }
 
         @media (pointer: fine) {
-          .rating-wrapper:not([read-only]):hover > span.active,
-          .rating-wrapper:not([read-only]):hover > span.active ~ span {
+          .rating-wrapper:not([read-only]):hover > .ratingButton.active,
+          .rating-wrapper:not([read-only]):hover > .ratingButton.active ~ .ratingButton {
             opacity: 0.4;
           }
-          .rating-wrapper:not([read-only]) > span:hover,
-          .rating-wrapper:not([read-only]) > span:hover ~ span,
-          .rating-wrapper:not([read-only]) > span.active:hover ~ span {
+          .rating-wrapper:not([read-only]) > .ratingButton:hover,
+          .rating-wrapper:not([read-only]) > .ratingButton:hover ~ .ratingButton,
+          .rating-wrapper:not([read-only]) > .ratingButton.active:hover ~ .ratingButton {
             opacity: 0.8 !important;
             -webkit-filter: grayscale(0%);
             filter: grayscale(0%);
           }
-          .rating-wrapper:not([read-only]) > span:hover {
+          .rating-wrapper:not([read-only]) > .ratingButton:hover {
             opacity: 0.9 !important;
             -webkit-filter: grayscale(0%);
             filter: grayscale(0%);
           }
         }
 
-        .rating-wrapper > span.totals {
+        .rating-wrapper > .ratingButton.totals {
           opacity: 1 !important;
           margin-left: 50px;
         }
 
-        .rating-wrapper:not([read-only]) > span.totals:hover {
+        .rating-wrapper:not([read-only]) > .ratingButton.totals:hover {
           opacity: 1 !important;
         }
 
-        .rating-wrapper[read-only] > span {
+        .rating-wrapper[read-only] > .ratingButton {
         }
 
-        .rating-wrapper[read-only] > span {
+        .rating-wrapper[read-only] > .ratingButton {
           font-size: 0.8em !important;
           width: 1.248em;
         }
@@ -112,15 +118,19 @@ export class YpRating extends YpBaseElement {
     return html`
       <div
         class="rating-wrapper"
-        voting-disabled$="[[votingDisabled]]"
-        read-only$="[[readOnly]]">
+        ?voting-disabled="${this.votingDisabled}"
+        ?read-only="${this.readOnly}">
         ${this.currentRatings?.map((item, index) => {
           return html`
-            <span
-              class="${this.isActive(index, this.rate)}"
-              @click="${this._setRate}"
+            <button
+              type="button"
+              class="ratingButton ${this.isActive(item, this.rate)}"
+              @click="${(event: Event) => this._setRate(event, index)}"
               data-index="${index}"
-              >${this.emoji}</span
+              aria-label="Rate ${item} out of ${this.numberOf}"
+              aria-pressed="${item === this.rate ? 'true' : 'false'}"
+              ?disabled="${this.votingDisabled || this.readOnly}"
+              >${this.emoji}</button
             >
           `;
         })}
@@ -128,9 +138,8 @@ export class YpRating extends YpBaseElement {
     `;
   }
 
-  // Caller in polymer was {{isActive(numberOf, index, rate)}}
-  isActive(index: number, rate: number) {
-    if (index <= rate) {
+  isActive(item: number, rate: number) {
+    if (item === rate) {
       return 'active';
     } else {
       return '';
@@ -179,11 +188,10 @@ export class YpRating extends YpBaseElement {
     });
   }
 
-  _setRate(e: CustomEvent) {
+  _setRate(e: Event, index: number) {
+    e.preventDefault();
     const deep = dom(this.shadowRoot);
-    if (!this.readOnly && this.numberOf) {
-      //@ts-ignore
-      const index = e.model.index;
+    if (!this.readOnly && !this.votingDisabled && this.numberOf) {
       const indexOld = this.rate * -1 + this.numberOf;
       const oldRate = this.rate;
       this.rate = (index - this.numberOf) * -1;

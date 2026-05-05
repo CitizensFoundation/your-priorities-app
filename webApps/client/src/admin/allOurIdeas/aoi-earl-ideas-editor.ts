@@ -831,6 +831,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
           ?hidden="${!answer.data.imageUrl}"
           @click="${() => this.deleteImageUrl(answer)}"
           class="deleteIcon"
+          aria-label="${this.t("deleteImage")}"
           ><md-icon class="closeIcon"
             >close</md-icon
           ></md-filled-tonal-icon-button
