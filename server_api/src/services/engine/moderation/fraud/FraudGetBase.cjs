@@ -125,7 +125,7 @@ class FraudGetBase extends FraudBase {
       item.ip_address = outData.cIpAddresses.indexOf(item.ip_address);
       item.user_agent = outData.cUserAgents.indexOf(item.user_agent);
       item.User.email = outData.cEmails.indexOf(item.User.email);
-      item.User.name = outData.cEmails.indexOf(item.User.name);
+      item.User.name = outData.cNames.indexOf(item.User.name);
 
       outData.items.push(item);
     });

@@ -109,7 +109,10 @@ export class YpAdminReports extends YpAdminPage {
   }
 
   startReportCreation() {
-    let url = this.action; // Adjust the URL as needed
+    const url =
+      this.type === "fraudAuditReport"
+        ? `/api/communities/${this.collectionId}/fraudAuditReport/start_report_creation`
+        : this.action;
 
     const body = {
       selectedFraudAuditId: this.selectedFraudAuditId,

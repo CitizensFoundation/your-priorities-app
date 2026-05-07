@@ -176,7 +176,7 @@ class FraudAuditReport {
 
     if (['pointQualities'].indexOf(originalWorkPackage.collectionType) !== -1) {
       this.worksheet.columns = this.worksheet.columns.concat([
-        { header: "Point Id", key: "postId", width: 20 },
+        { header: "Point Id", key: "pointId", width: 20 },
       ])
     }
 

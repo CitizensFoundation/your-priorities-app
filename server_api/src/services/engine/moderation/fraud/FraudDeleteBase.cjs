@@ -40,7 +40,7 @@ class FraudDeleteBase extends FraudBase {
       return items;
     } else {
       const sortedItems = _.sortBy(items, function (item) {
-        return item.date;
+        return moment(item.created_at || item.date).valueOf();
       });
 
       const finalItems = [];

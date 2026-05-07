@@ -42,22 +42,7 @@ class FraudGetEndorsements extends FraudGetBase {
           return [item.post_id, item.user_agent];
         });
 
-        let groupConfiguration;
-
-        if (getGroup && items.length>0) {
-          const group = await models.Group.findOne({
-            where: {
-              id: itemsToAnalyse[0].Post.Group.id
-            },
-            attributes: ['configuration']
-          });
-
-          if (group) {
-            groupConfiguration = group.configuration;
-          }
-        }
-
-        resolve({itemsToAnalyse, groupConfiguration});
+        resolve({itemsToAnalyse});
       } catch (error) {
         reject(error);
       }

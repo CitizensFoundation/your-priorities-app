@@ -4,9 +4,9 @@ const i18n = require('../../../utils/i18n.cjs');
 const deepEqual = require('deep-equal');
 const log = require("../../../../utils/logger.cjs");
 
-const FraudGetEndorsements = require("./FraudGetEndorsements");
-const FraudGetPointQualities = require("./FraudGetPointQualities");
-const FraudGetRatings = require("./FraudGetRatings");
+const FraudGetEndorsements = require("./FraudGetEndorsements.cjs");
+const FraudGetPointQualities = require("./FraudGetPointQualities.cjs");
+const FraudGetRatings = require("./FraudGetRatings.cjs");
 const queue = require("../../../workers/queue.cjs");
 const Backend = require("i18next-fs-backend");
 const path = require("path");
@@ -19,6 +19,10 @@ class FraudScannerNotifier {
     this.uniqueCollectionItemsIds = {};
     this.collectionsToScan = ['endorsements', 'ratings','pointQualities'];
     this.scannerModels = [FraudGetEndorsements, FraudGetRatings, FraudGetPointQualities];
+  }
+
+  resetCounts() {
+    this.uniqueCollectionItemsIds = {};
   }
 
   getCommunityURL () {
@@ -136,7 +140,7 @@ class FraudScannerNotifier {
   getContainerOldCount(collectionType) {
     let foundCollection;
 
-    if (this.currentCommunity.data.lastFraudScanResults) {
+    if (this.currentCommunity.data && this.currentCommunity.data.lastFraudScanResults) {
       for (let i=0;i<this.currentCommunity.data.lastFraudScanResults.length;i++) {
         if (this.currentCommunity.data.lastFraudScanResults[i].collectionType &&
             this.currentCommunity.data.lastFraudScanResults[i].collectionType===collectionType) {
@@ -250,6 +254,7 @@ class FraudScannerNotifier {
         for (let i=0;i<communities.length;i++) {
           log.info("Processing community: "+communities[i].name);
           this.currentCommunity = communities[i];
+          this.resetCounts();
           try {
             await this.scan();
             await this.notify();
@@ -301,4 +306,3 @@ i18n
     })();
   }
 )
-
