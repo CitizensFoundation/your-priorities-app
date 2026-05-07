@@ -59,6 +59,47 @@ const getTranslatedTextsForCommunity =
 const updateTranslationForCommunity =
   require("../services/utils/translation_helpers.cjs").updateTranslationForCommunity;
 
+const isFraudDetectionEnabledForCommunity = async function (communityId) {
+  const community = await models.Community.findOne({
+    where: {
+      id: communityId,
+    },
+    attributes: ["id", "configuration"],
+  });
+
+  if (!community) {
+    return null;
+  }
+
+  return !!(community.configuration && community.configuration.enableFraudDetection);
+};
+
+const ensureFraudDetectionEnabledForCommunity = async function (
+  req,
+  res,
+  communityId,
+  context
+) {
+  const enabled = await isFraudDetectionEnabledForCommunity(communityId);
+
+  if (enabled === null) {
+    res.sendStatus(404);
+    return false;
+  }
+
+  if (!enabled) {
+    log.warn("Fraud detection access denied because feature is disabled", {
+      context,
+      communityId,
+      userId: req.user.id,
+    });
+    res.sendStatus(403);
+    return false;
+  }
+
+  return true;
+};
+
 var sendCommunityOrError = function (
   res,
   community,
@@ -3437,41 +3478,76 @@ router.get(
 router.put(
   "/:communityId/:type/start_report_creation",
   auth.can("edit community"),
-  function (req, res) {
-    models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
-      if (error) {
-        log.error("Could not create backgroundJob", {
-          err: error,
-          context: "start_report_creation",
-          user: toJson(req.user.simple()),
-        });
-        res.sendStatus(500);
-      } else {
-        let reportType;
-        if (req.params.type === "usersxls") {
-          reportType = "start-xls-users-community-report-generation";
-        } else if (req.params.type === "fraudAuditReport") {
-          reportType = "start-fraud-audit-report-generation";
-        }
-
-        queue.add(
-          "process-reports",
-          {
-            type: reportType,
-            userId: req.user.id,
-            exportType: req.params.type,
-            fileEnding: req.params.fileEnding ? req.params.fileEnding : "xlsx",
-            translateLanguage: req.query.translateLanguage,
-            selectedFraudAuditId: req.body.selectedFraudAuditId,
-            jobId: jobId,
-            communityId: req.params.communityId,
-          },
-          "critical"
-        );
-
-        res.send({ jobId });
+  async function (req, res) {
+    try {
+      const communityId = parseInt(req.params.communityId);
+      let reportType;
+      if (req.params.type === "usersxls") {
+        reportType = "start-xls-users-community-report-generation";
+      } else if (req.params.type === "fraudAuditReport") {
+        reportType = "start-fraud-audit-report-generation";
       }
-    });
+
+      if (!reportType) {
+        res.sendStatus(400);
+        return;
+      }
+
+      if (
+        req.params.type === "fraudAuditReport" &&
+        !(await ensureFraudDetectionEnabledForCommunity(
+          req,
+          res,
+          communityId,
+          "start_report_creation"
+        ))
+      ) {
+        return;
+      }
+
+      models.AcBackgroundJob.createJob(
+        {},
+        {
+          communityId,
+          userId: req.user.id,
+          reportType,
+        },
+        (error, jobId) => {
+          if (error) {
+            log.error("Could not create backgroundJob", {
+              err: error,
+              context: "start_report_creation",
+              user: toJson(req.user.simple()),
+            });
+            res.sendStatus(500);
+          } else {
+            queue.add(
+              "process-reports",
+              {
+                type: reportType,
+                userId: req.user.id,
+                exportType: req.params.type,
+                fileEnding: req.params.fileEnding ? req.params.fileEnding : "xlsx",
+                translateLanguage: req.query.translateLanguage,
+                selectedFraudAuditId: req.body.selectedFraudAuditId,
+                jobId: jobId,
+                communityId,
+              },
+              "critical"
+            );
+
+            res.send({ jobId });
+          }
+        }
+      );
+    } catch (error) {
+      log.error("Could not create backgroundJob", {
+        err: error,
+        context: "start_report_creation",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
   }
 );
 
@@ -3533,64 +3609,148 @@ router.post("/:id/clone", auth.can("edit community"), function (req, res) {
 router.get(
   "/:communityId/:jobId/report_creation_progress",
   auth.can("edit community"),
-  function (req, res) {
-    models.AcBackgroundJob.findOne({
-      where: {
-        id: req.params.jobId,
-      },
-      attributes: ["id", "progress", "error", "data"],
-    })
-      .then((job) => {
-        res.send(job);
-      })
-      .catch((error) => {
-        log.error("Could not get backgroundJob", {
-          err: error,
-          context: "start_report_creation",
-          user: toJson(req.user.simple()),
-        });
-        res.sendStatus(500);
+  async function (req, res) {
+    try {
+      const communityId = parseInt(req.params.communityId);
+      const jobMetadata = await models.AcBackgroundJob.findOne({
+        where: {
+          id: req.params.jobId,
+        },
+        attributes: ["id", "internal_data"],
       });
+
+      if (!jobMetadata) {
+        res.sendStatus(404);
+        return;
+      }
+
+      const internalData = jobMetadata.internal_data || {};
+      if (
+        parseInt(internalData.communityId) !== communityId ||
+        parseInt(internalData.userId) !== req.user.id
+      ) {
+        log.warn("Report job status access denied", {
+          context: "report_creation_progress",
+          communityId,
+          jobId: req.params.jobId,
+          userId: req.user.id,
+        });
+        res.sendStatus(403);
+        return;
+      }
+
+      if (
+        internalData.reportType === "start-fraud-audit-report-generation" &&
+        !(await ensureFraudDetectionEnabledForCommunity(
+          req,
+          res,
+          communityId,
+          "report_creation_progress"
+        ))
+      ) {
+        return;
+      }
+
+      const job = await models.AcBackgroundJob.findOne({
+        where: {
+          id: req.params.jobId,
+        },
+        attributes: ["id", "progress", "error", "data"],
+      });
+
+      if (!job) {
+        res.sendStatus(404);
+        return;
+      }
+
+      res.send(job);
+    } catch (error) {
+      log.error("Could not get backgroundJob", {
+        err: error,
+        context: "start_report_creation",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
   }
 );
 
 router.put(
   "/:communityId/:type/:selectedMethod/:collectionType/start_endorsement_fraud_action",
   auth.can("edit community"),
-  function (req, res) {
-    models.AcBackgroundJob.createJob(
-      {},
-      {
-        idsToDelete: req.body.idsToDelete,
-        communityId: parseInt(req.params.communityId),
-        userId: req.user.id,
-      },
-      (error, jobId) => {
-        if (error) {
-          log.error("Could not create backgroundJob", {
-            err: error,
-            context: "start_report_creation",
-            user: toJson(req.user.simple()),
-          });
-          res.sendStatus(500);
-        } else {
-          queue.add(
-            "process-fraud-action",
-            {
-              type: req.params.type,
-              collectionType: req.params.collectionType,
-              selectedMethod: req.params.selectedMethod,
-              userId: req.user.id,
-              jobId: jobId,
-              communityId: req.params.communityId,
-            },
-            "critical"
-          );
+  async function (req, res) {
+    try {
+      const communityId = parseInt(req.params.communityId);
 
-          res.send({ jobId });
-        }
+      if (
+        !(await ensureFraudDetectionEnabledForCommunity(
+          req,
+          res,
+          communityId,
+          "start_endorsement_fraud_action"
+        ))
+      ) {
+        return;
       }
-    );
+
+      const idsToDelete = Array.isArray(req.body.idsToDelete)
+        ? req.body.idsToDelete
+        : [];
+
+      if (req.params.type === "delete-one-item" && idsToDelete.length !== 1) {
+        res.status(400).send({ error: "single_delete_requires_one_id" });
+        return;
+      }
+
+      if (
+        req.params.selectedMethod === "byMissingBrowserFingerprint" &&
+        (req.params.type === "delete-items" || idsToDelete.length > 1)
+      ) {
+        res.status(400).send({ error: "bulk_delete_missing_fingerprint_disabled" });
+        return;
+      }
+
+      models.AcBackgroundJob.createJob(
+        {},
+        {
+          idsToDelete,
+          communityId,
+          userId: req.user.id,
+        },
+        (error, jobId) => {
+          if (error) {
+            log.error("Could not create backgroundJob", {
+              err: error,
+              context: "start_report_creation",
+              user: toJson(req.user.simple()),
+            });
+            res.sendStatus(500);
+          } else {
+            queue.add(
+              "process-fraud-action",
+              {
+                type: req.params.type,
+                collectionType: req.params.collectionType,
+                selectedMethod: req.params.selectedMethod,
+                userId: req.user.id,
+                jobId: jobId,
+                communityId,
+              },
+              "critical"
+            );
+
+            res.send({ jobId });
+          }
+        }
+      );
+    } catch (error) {
+      log.error("Could not create backgroundJob", {
+        err: error,
+        context: "start_report_creation",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
   }
 );
 
@@ -3600,6 +3760,17 @@ router.get(
   async function (req, res) {
     try {
       const communityId = parseInt(req.params.communityId);
+      if (
+        !(await ensureFraudDetectionEnabledForCommunity(
+          req,
+          res,
+          communityId,
+          "endorsement_fraud_action_status"
+        ))
+      ) {
+        return;
+      }
+
       const jobMetadata = await models.AcBackgroundJob.findOne({
         where: {
           id: req.params.jobId,
@@ -3666,32 +3837,44 @@ router.get(
 router.get(
   "/:communityId/getFraudAudits",
   auth.can("edit community"),
-  function (req, res) {
-    models.Community.findOne({
-      where: {
-        id: req.params.communityId,
-      },
-      attributes: ["data"],
-    })
-      .then((community) => {
-        if (community) {
-          if (community.data) {
-            res.send(community.data.fraudDeletionsAuditLogs);
-          } else {
-            res.send(null);
-          }
-        } else {
-          res.sendStatus(404);
-        }
-      })
-      .catch((error) => {
-        log.error("Could not get backgroundJob", {
-          err: error,
-          context: "endorsement_fraud_action_status",
-          user: toJson(req.user.simple()),
-        });
-        res.sendStatus(500);
+  async function (req, res) {
+    try {
+      const communityId = parseInt(req.params.communityId);
+      if (
+        !(await ensureFraudDetectionEnabledForCommunity(
+          req,
+          res,
+          communityId,
+          "getFraudAudits"
+        ))
+      ) {
+        return;
+      }
+
+      const community = await models.Community.findOne({
+        where: {
+          id: communityId,
+        },
+        attributes: ["data"],
       });
+
+      if (community) {
+        if (community.data) {
+          res.send(community.data.fraudDeletionsAuditLogs);
+        } else {
+          res.send(null);
+        }
+      } else {
+        res.sendStatus(404);
+      }
+    } catch (error) {
+      log.error("Could not get backgroundJob", {
+        err: error,
+        context: "endorsement_fraud_action_status",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
   }
 );
 

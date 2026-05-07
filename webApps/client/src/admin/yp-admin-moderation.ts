@@ -35,7 +35,11 @@ export class YpAdminModeration extends YpAdminPage {
   }
 
   get fraudAvailable() {
-    return this.collectionType === "community";
+    const community = this.collection as YpCommunityData | undefined;
+    return (
+      this.collectionType === "community" &&
+      !!community?.configuration?.enableFraudDetection
+    );
   }
 
   get visiblePages(): YpAdminModerationPage[] {

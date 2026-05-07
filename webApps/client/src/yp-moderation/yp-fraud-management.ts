@@ -334,6 +334,10 @@ export class YpFraudManagement extends YpBaseElement {
     return this.selectedCollectionType === "posts";
   }
 
+  get bulkDeleteAllowed() {
+    return this.selectedMethod !== "byMissingBrowserFingerprint";
+  }
+
   private _onActiveItemChanged(
     event: CustomEvent<GridItemModel<YpFraudManagementItem>>
   ) {
@@ -420,7 +424,9 @@ export class YpFraudManagement extends YpBaseElement {
       html`
         <md-icon-button
           .ariaLabel="${this.t("deleteSelectedContent")}"
-          ?disabled="${this.selectedItemsEmpty || this.inProgress}"
+          ?disabled="${this.selectedItemsEmpty ||
+          this.inProgress ||
+          !this.bulkDeleteAllowed}"
           @click="${this._deleteSelected.bind(this)}"
           ><md-icon>delete</md-icon></md-icon-button
         >
@@ -520,7 +526,7 @@ export class YpFraudManagement extends YpBaseElement {
           @click="${this._reload.bind(this)}"
           >${this.t("reload")}</md-outlined-button
         >
-        ${this.selectedItemsCount > 0
+        ${this.selectedItemsCount > 0 && this.bulkDeleteAllowed
           ? html`
               <md-filled-button
                 ?disabled="${this.inProgress}"
@@ -561,7 +567,9 @@ export class YpFraudManagement extends YpBaseElement {
         @active-item-changed="${this._onActiveItemChanged.bind(this)}"
         @selected-items-changed="${this._selectedItemsChanged.bind(this)}"
       >
-        <vaadin-grid-selection-column></vaadin-grid-selection-column>
+        ${this.bulkDeleteAllowed
+          ? html`<vaadin-grid-selection-column></vaadin-grid-selection-column>`
+          : nothing}
 
         <vaadin-grid-sort-column
           id="keyCol"
@@ -814,6 +822,11 @@ export class YpFraudManagement extends YpBaseElement {
       return;
     }
 
+    if (type === "delete-items" && !this.bulkDeleteAllowed) {
+      this.errorMessage = "Bulk delete is disabled for missing fingerprint results";
+      return;
+    }
+
     const requestToken = ++this.requestToken;
     this.currentType = type;
     this.jobId = undefined;
@@ -1039,6 +1052,11 @@ export class YpFraudManagement extends YpBaseElement {
   }
 
   private async _reallyDeleteSelected() {
+    if (!this.bulkDeleteAllowed) {
+      this.errorMessage = "Bulk delete is disabled for missing fingerprint results";
+      return;
+    }
+
     await this._masterRequest("delete-items", this.selectedItemIds);
   }
 
