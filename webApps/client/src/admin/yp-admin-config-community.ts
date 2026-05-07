@@ -828,6 +828,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           translationToken: "community.onlyAdminsCanCreateGroups",
         },
         {
+          text: "enableFraudDetection",
+          type: "checkbox",
+          value: (this.collection as YpCommunityData).configuration
+            .enableFraudDetection,
+          translationToken: "enableFraudDetection",
+        },
+        {
           text: "alwaysShowOnDomainPage",
           type: "checkbox",
           value: (this.collection as YpCommunityData).configuration

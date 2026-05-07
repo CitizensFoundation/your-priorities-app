@@ -183,7 +183,7 @@ export class YpDialogRatings extends YpBaseElement {
     if (this.refreshFunction) this.refreshFunction();
   }
 
-  _addRating(event: CustomEvent) {
+  async _addRating(event: CustomEvent) {
     const detail = event.detail;
     window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, {
       post_id: detail.postId,
@@ -191,8 +191,11 @@ export class YpDialogRatings extends YpBaseElement {
       value: detail.rate,
     } as YpRatingData);
 
+    const fingerprintData =
+      await window.appUser.getBrowserFingerprintData("rating");
     window.serverApi.postRating(detail.postId, detail.ratingIndex, {
       value: detail.rate,
+      ...fingerprintData,
     });
   }
 

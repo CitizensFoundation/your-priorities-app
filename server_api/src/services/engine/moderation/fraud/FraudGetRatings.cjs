@@ -26,6 +26,10 @@ class FraudGetRatings extends FraudGetEndorsements {
       ratingsCount = Object.keys(this.groupConfiguration.customRatings).length;
     }
 
+    if (this.isDebugFraudDetectionCountAll()) {
+      return this.getDebugTopItems(topItems);
+    }
+
     if (type==="byIpUserAgentPostId") {
       let out = [];
 

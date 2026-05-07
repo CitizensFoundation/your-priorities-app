@@ -1284,6 +1284,76 @@ interface YpModerationItem extends YpDatabaseItem {
   };
 }
 
+type YpFraudManagementCollectionType =
+  | "endorsements"
+  | "ratings"
+  | "pointQualities"
+  | "points"
+  | "posts";
+
+type YpFraudManagementMethod =
+  | "byIpFingerprintPostId"
+  | "byIpUserAgentPostId"
+  | "byIpFingerprintPointId"
+  | "byIpUserAgentPointId"
+  | "byIpFingerprint"
+  | "byMissingBrowserFingerprint"
+  | "byIpAddress";
+
+interface YpFraudManagementItem extends YpDatabaseItem {
+  key?: string | number;
+  groupCount?: number;
+  ip_address?: string | number;
+  user_agent?: string | number;
+  created_at?: string;
+  createAtValue?: number;
+  confidenceScore?: string;
+  confidenceScoreSort?: number;
+  backgroundColor?: string | number;
+  value?: number;
+  post_id?: number;
+  point_id?: number;
+  name?: string | number;
+  data?: {
+    browserId?: string;
+    browserFingerprint?: string;
+  };
+  User?: {
+    id?: number;
+    email?: string | number;
+    name?: string | number;
+  };
+  Post?: {
+    id?: number;
+    name?: string | number;
+  };
+  Point?: {
+    id?: number;
+    Post?: {
+      id?: number;
+      name?: string | number;
+    };
+  };
+}
+
+interface YpCompressedFraudManagementData {
+  cBackgroundColors: string[];
+  cIpAddresses: string[];
+  cUserAgents: string[];
+  cEmails: string[];
+  cNames: string[];
+  cPostNames: string[];
+  items: YpFraudManagementItem[];
+}
+
+interface YpFraudManagementJobResponse {
+  id?: number;
+  jobId?: number;
+  progress?: number;
+  error?: string;
+  data?: YpCompressedFraudManagementData;
+}
+
 interface YpCustomRatingsData extends YpDatabaseItem {
   emoji: string;
   numberOf: number;

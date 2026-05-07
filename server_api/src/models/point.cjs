@@ -4,6 +4,9 @@ const async = require('async');
 const queue = require('../services/workers/queue.cjs');
 const log = require('../utils/logger.cjs');
 const _ = require("lodash");
+const {
+  getFingerprintDataFromBody,
+} = require("../utils/fingerprint_data.cjs");
 
 const findCommunityAndDomainForPointFromGroup = (sequelize, options, callback) => {
   sequelize.models.Group.findOne({
@@ -367,9 +370,7 @@ module.exports = (sequelize, DataTypes) => {
 
       (seriesCallback) => {
         options.data = {
-          browserId: req.body.pointBaseId,
-          browserFingerprint: req.body.pointValCode,
-          browserFingerprintConfidence: req.body.pointConf,
+          ...getFingerprintDataFromBody(req.body, "point"),
           originalQueryString: req.body.originalQueryString,
           userLocale: req.body.userLocale,
           userAutoTranslate: req.body.userAutoTranslate,
@@ -562,6 +563,42 @@ module.exports = (sequelize, DataTypes) => {
       options.status = 'published';
       options.user_agent = req.useragent.source;
       options.ip_address = req.clientIp;
+      const body = req.body || {};
+      const data = options.data ? { ...options.data } : {};
+      const fingerprintData = getFingerprintDataFromBody(body, "point");
+      const optionalDataKeys = [
+        "originalQueryString",
+        "userLocale",
+        "userAutoTranslate",
+        "referrer",
+        "url",
+        "screen_width"
+      ];
+
+      if (fingerprintData.browserId) {
+        data.browserId = fingerprintData.browserId;
+      }
+
+      if (fingerprintData.browserFingerprint) {
+        data.browserFingerprint = fingerprintData.browserFingerprint;
+      }
+
+      if (
+        fingerprintData.browserId ||
+        fingerprintData.browserFingerprint ||
+        body.pointConf !== undefined
+      ) {
+        data.browserFingerprintConfidence =
+          fingerprintData.browserFingerprintConfidence;
+      }
+
+      optionalDataKeys.forEach(key => {
+        if (body[key] !== undefined) {
+          data[key] = body[key];
+        }
+      });
+
+      options.data = data;
 
       sequelize.models.Point.build(options).save().then((point) => {
         options.point_id = point.id;

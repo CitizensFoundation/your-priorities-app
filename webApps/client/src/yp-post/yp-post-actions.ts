@@ -717,10 +717,12 @@ export class YpPostActions extends YpBaseElement {
         method = "POST";
       }
 
+      const fingerprintData =
+        await window.appUser.getBrowserFingerprintData("endorsement");
       const endorseResponse = (await window.serverApi.endorsePost(
         this.post.id,
         method,
-        { post_id: this.post.id, value: value }
+        { post_id: this.post.id, value: value, ...fingerprintData }
       )) as YpEndorseResponse | void;
 
       if (endorseResponse) {

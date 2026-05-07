@@ -1325,7 +1325,31 @@ export class YpPostEdit extends YpEditBase {
         name="structuredAnswersJson"
         .value="${this.structuredAnswersJson}"
       />
+      <input type="hidden" name="postBaseId" value="" />
+      <input type="hidden" name="postValCode" value="" />
+      <input type="hidden" name="postConf" value="" />
+      <input type="hidden" name="pointBaseId" value="" />
+      <input type="hidden" name="pointValCode" value="" />
+      <input type="hidden" name="pointConf" value="" />
     `;
+  }
+
+  private _setHiddenInputValue(name: string, value: unknown) {
+    const input = this.renderRoot.querySelector<HTMLInputElement>(
+      `input[name="${name}"]`
+    );
+    if (input) {
+      input.value = value != null ? value.toString() : "";
+    }
+  }
+
+  private async _populateFraudDetectionInputs() {
+    const postData = await window.appUser.getBrowserFingerprintData("post");
+    const pointData = await window.appUser.getBrowserFingerprintData("point");
+
+    Object.entries({ ...postData, ...pointData }).forEach(([name, value]) => {
+      this._setHiddenInputValue(name, value);
+    });
   }
 
   renderClose() {
@@ -1386,6 +1410,7 @@ export class YpPostEdit extends YpEditBase {
     this.requestUpdate();
 
     const form = this.$$("#form") as YpForm;
+    await this._populateFraudDetectionInputs();
 
     let validated = false;
 

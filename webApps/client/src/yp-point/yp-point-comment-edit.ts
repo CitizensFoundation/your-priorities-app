@@ -154,15 +154,21 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
       this.comment.content.length > 0
     ) {
       if (this.point) {
+        const fingerprintData =
+          await window.appUser.getBrowserFingerprintData("point");
         await window.serverApi.postComment("points", this.point.id, {
           point_id: this.point.id,
           comment: this.comment,
+          ...fingerprintData,
         });
         (this.$$("#submitButton") as Button).disabled = false;
       } else if (this.image) {
+        const fingerprintData =
+          await window.appUser.getBrowserFingerprintData("point");
         await window.serverApi.postComment("images", this.image.id, {
           image_id: this.image.id,
           comment: this.comment,
+          ...fingerprintData,
         });
         (this.$$("#submitButton") as Button).disabled = false;
       } else {

@@ -13,6 +13,9 @@ const {
   plausibleStatsProxy,
 } = require("../services/engine/analytics/plausible/manager.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
+const {
+  getFingerprintDataFromBody,
+} = require("../utils/fingerprint_data.cjs");
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.findOne({
@@ -1104,9 +1107,7 @@ var truthValueFromBody = function (bodyParameter) {
 var updatePostData = function (req, post) {
   if (!post.data) {
     post.set("data", {
-      browserId: req.body.postBaseId,
-      browserFingerprint: req.body.postValCode,
-      browserFingerprintConfidence: req.body.postConf,
+      ...getFingerprintDataFromBody(req.body, "post"),
       originalQueryString: req.body.originalQueryString,
       userLocale: req.body.userLocale,
       userAutoTranslate: req.body.userAutoTranslate,
@@ -2131,9 +2132,7 @@ router.post(
                   endorsement.value = req.body.value;
                   endorsement.status = "active";
                   endorsement.set("data", {
-                    browserId: req.body.endorsementBaseId,
-                    browserFingerprint: req.body.endorsementValCode,
-                    browserFingerprintConfidence: req.body.endorsementConf,
+                    ...getFingerprintDataFromBody(req.body, "endorsement"),
                   });
                 } else {
                   endorsement = models.Endorsement.build({
@@ -2141,9 +2140,7 @@ router.post(
                     value: req.body.value,
                     user_id: req.user.id,
                     data: {
-                      browserId: req.body.endorsementBaseId,
-                      browserFingerprint: req.body.endorsementValCode,
-                      browserFingerprintConfidence: req.body.endorsementConf,
+                      ...getFingerprintDataFromBody(req.body, "endorsement"),
                     },
                     status: "active",
                     user_agent: req.useragent.source,

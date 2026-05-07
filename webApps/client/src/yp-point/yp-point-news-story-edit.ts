@@ -228,7 +228,9 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
   async _sendStory() {
     (this.$$("#storySubmitButton") as Button).disabled = true;
     this.point!.content = this.newPointContent;
-    let body = { point: this.point };
+    const fingerprintData =
+      await window.appUser.getBrowserFingerprintData("point");
+    let body = { point: this.point, ...fingerprintData };
     let url;
     if (this.point && this.point.content && this.point.content.length > 2) {
       if (this.postId && this.postGroupId) {

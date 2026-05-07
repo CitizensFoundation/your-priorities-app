@@ -21,7 +21,7 @@ import "./yp-admin-communities.js";
 import "./yp-admin-groups.js";
 
 import "./yp-users-grid.js";
-import "./yp-content-moderation.js";
+import "./yp-admin-moderation.js";
 import "./yp-pages-grid.js";
 
 import "./yp-admin-translations.js";
@@ -684,37 +684,15 @@ export class YpAdminApp extends YpBaseElement {
               return html``;
           }
         case "moderation":
-          switch (this.collectionType) {
-            case "domain":
-              return html`
-                ${this.collection
-                  ? html`<yp-content-moderation
-                      .domainId="${this.collectionId as number}"
-                    >
-                    </yp-content-moderation>`
-                  : nothing}
-              `;
-            case "community":
-              return html`
-                ${this.collection
-                  ? html`<yp-content-moderation
-                      .communityId="${this.collectionId as number}"
-                    >
-                    </yp-content-moderation>`
-                  : nothing}
-              `;
-            case "group":
-              return html`
-                ${this.collection
-                  ? html`<yp-content-moderation
-                      .groupId="${this.collectionId as number}"
-                    >
-                    </yp-content-moderation>`
-                  : nothing}
-              `;
-            default:
-              return html``;
-          }
+          return html`
+            ${this.collection
+              ? html`<yp-admin-moderation
+                  .collectionType="${this.collectionType}"
+                  .collection="${this.collection}"
+                  .collectionId="${this.collectionId}"
+                ></yp-admin-moderation>`
+              : nothing}
+          `;
         case "pages":
           switch (this.collectionType) {
             case "domain":

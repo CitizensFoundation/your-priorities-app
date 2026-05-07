@@ -98,6 +98,8 @@ export class YpAppUser extends YpCodeBase {
 
   browserFingerprint: string | undefined;
   browserFingerprintConfidence: number | undefined;
+  browserFingerprintPromise: Promise<void> | undefined;
+  private fallbackBrowserId: string | undefined;
 
   constructor(serverApi: YpServerApi, skipRegularInit = false) {
     super();
@@ -122,32 +124,60 @@ export class YpAppUser extends YpCodeBase {
   }
 
   getBrowserId() {
-    var currentId = localStorage.getItem("yp-brid");
+    try {
+      var currentId = localStorage.getItem("yp-brid");
 
-    if (!currentId) {
-      currentId = this._generateRandomString(32);
-      if (currentId) localStorage.setItem("yp-brid", currentId);
-      else console.error("Could not generate browser id");
+      if (!currentId) {
+        currentId = this._generateRandomString(32);
+        if (currentId) localStorage.setItem("yp-brid", currentId);
+        else console.error("Could not generate browser id");
+      }
+
+      return currentId;
+    } catch (error) {
+      console.warn("Could not persist browser id", error);
+      if (!this.fallbackBrowserId) {
+        this.fallbackBrowserId =
+          this._generateRandomString(32) || "browser-id-unavailable";
+      }
+      return this.fallbackBrowserId;
     }
-
-    return currentId;
   }
 
   _setupBrowserFingerprint() {
     try {
-      var fpPromise = FingerprintJS.load({
+      this.browserFingerprintPromise = FingerprintJS.load({
         monitoring: false,
-      });
-
-      fpPromise
+      })
         .then((fp) => fp.get())
         .then((result) => {
           this.browserFingerprint = result.visitorId;
           this.browserFingerprintConfidence = result.confidence.score;
+        })
+        .catch((error) => {
+          console.error(error);
         });
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async ensureBrowserFingerprint() {
+    if (this.browserFingerprintPromise && !this.browserFingerprint) {
+      await this.browserFingerprintPromise;
+    }
+  }
+
+  async getBrowserFingerprintData(prefix: string) {
+    await this.ensureBrowserFingerprint();
+    const browserId = this.getBrowserId() || "";
+    const browserFingerprint = this.browserFingerprint || browserId;
+
+    return {
+      [`${prefix}BaseId`]: browserId,
+      [`${prefix}ValCode`]: browserFingerprint,
+      [`${prefix}Conf`]: this.browserFingerprintConfidence ?? 0,
+    };
   }
 
   _generateRandomString(length: number) {

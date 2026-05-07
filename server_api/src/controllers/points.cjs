@@ -8,6 +8,9 @@ var async = require("async");
 const ogs = require("open-graph-scraper");
 var _ = require("lodash");
 var queue = require("../services/workers/queue.cjs");
+const {
+  getFingerprintDataFromBody,
+} = require("../utils/fingerprint_data.cjs");
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.findOne({
@@ -842,9 +845,7 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
     user_agent: req.useragent.source,
     ip_address: req.clientIp,
     data: {
-      browserId: req.body.pointBaseId,
-      browserFingerprint: req.body.pointValCode,
-      browserFingerprintConfidence: req.body.pointConf,
+      ...getFingerprintDataFromBody(req.body, "point"),
       originalQueryString: req.body.originalQueryString,
       userLocale: req.body.userLocale,
       userAutoTranslate: req.body.userAutoTranslate,
@@ -1139,9 +1140,7 @@ router.post(
         pointQuality.value = req.body.value;
         pointQuality.status = "active";
         pointQuality.set("data", {
-          browserId: req.body.qualityBaseId,
-          browserFingerprint: req.body.qualityValCode,
-          browserFingerprintConfidence: req.body.qualityConf,
+          ...getFingerprintDataFromBody(req.body, "quality"),
         });
       } else {
         pointQuality = models.PointQuality.build({
@@ -1149,9 +1148,7 @@ router.post(
           value: req.body.value,
           user_id: req.user.id,
           data: {
-            browserId: req.body.qualityBaseId,
-            browserFingerprint: req.body.qualityValCode,
-            browserFingerprintConfidence: req.body.qualityConf,
+            ...getFingerprintDataFromBody(req.body, "quality"),
           },
           status: "active",
           user_agent: req.useragent.source,

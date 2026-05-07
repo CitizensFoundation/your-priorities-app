@@ -74,6 +74,10 @@ class FraudGetEndorsements extends FraudGetBase {
     const postIds = this.getPostIdsFromItems(topItems);
     const postCount = _.uniq(postIds).length;
 
+    if (this.isDebugFraudDetectionCountAll()) {
+      return this.getDebugTopItems(topItems);
+    }
+
     if (type==="byIpUserAgentPostId") {
       let out = [];
       _.each(topItems, function (item) {

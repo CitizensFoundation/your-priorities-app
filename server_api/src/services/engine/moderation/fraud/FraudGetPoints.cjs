@@ -56,6 +56,10 @@ class FraudGetPointQualities extends FraudGetBase {
 
     const pointMultiplier = 10;
 
+    if (this.isDebugFraudDetectionCountAll()) {
+      return this.getDebugTopItems(topItems);
+    }
+
     if (type==="byIpUserAgentPostId") {
       let out = [];
       _.each(topItems, function (item) {

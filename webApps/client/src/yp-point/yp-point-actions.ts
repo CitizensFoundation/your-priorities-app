@@ -289,12 +289,15 @@ export class YpPointActions extends YpBaseElement {
       } else {
         method = "POST";
       }
+      const fingerprintData =
+        await window.appUser.getBrowserFingerprintData("quality");
       const pointQuality = (await window.serverApi.setPointQuality(
         this.point.id,
         method,
         {
           point_id: this.point.id,
           value: value,
+          ...fingerprintData,
         }
       )) as YpPointQualityResponse;
       this._pointQualityResponse(pointQuality);

@@ -49,6 +49,10 @@ class FraudGetPoints extends FraudGetBase {
 
     const pointMultiplier = 10;
 
+    if (this.isDebugFraudDetectionCountAll()) {
+      return this.getDebugTopItems(topItems);
+    }
+
     if (type==="byIpFingerprint") {
       let out = [];
       _.each(topItems, function (item) {

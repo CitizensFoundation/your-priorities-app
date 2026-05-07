@@ -2002,10 +2002,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.addPointDisabled = true;
       let point;
       try {
+        const fingerprintData =
+          await window.appUser.getBrowserFingerprintData("point");
         point = await window.serverApi.addPoint(this.post.group_id, {
           postId: this.post.id,
           content: content,
           value: value,
+          ...fingerprintData,
           videoId: this.currentVideoId,
           audioId: this.currentAudioId,
           appLanguage: this.language,
