@@ -110,7 +110,7 @@ class FraudAuditReport {
   }
 
   async getPostItems(ids) {
-    return await model.unscoped().findAll({
+    return await models.Post.unscoped().findAll({
       attributes: ["id","created_at","group_id","user_id","user_agent","ip_address","data"],
       where: {
         id: {

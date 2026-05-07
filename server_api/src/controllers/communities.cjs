@@ -3562,6 +3562,8 @@ router.put(
       {},
       {
         idsToDelete: req.body.idsToDelete,
+        communityId: parseInt(req.params.communityId),
+        userId: req.user.id,
       },
       (error, jobId) => {
         if (error) {
@@ -3595,35 +3597,69 @@ router.put(
 router.get(
   "/:communityId/:jobId/endorsement_fraud_action_status",
   auth.can("edit community"),
-  function (req, res) {
-    models.AcBackgroundJob.findOne({
-      where: {
-        id: req.params.jobId,
-      },
-      attributes: ["id", "progress", "error", "data"],
-    })
-      .then((job) => {
-        if (job.progress === 100) {
-          queue.add(
-            "process-fraud-action",
-            {
-              type: "delete-job",
-              jobId: job.id,
-            },
-            "critical",
-            { delay: 30000 }
-          );
-        }
-        res.send(job);
-      })
-      .catch((error) => {
-        log.error("Could not get backgroundJob", {
-          err: error,
-          context: "endorsement_fraud_action_status",
-          user: toJson(req.user.simple()),
-        });
-        res.sendStatus(500);
+  async function (req, res) {
+    try {
+      const communityId = parseInt(req.params.communityId);
+      const jobMetadata = await models.AcBackgroundJob.findOne({
+        where: {
+          id: req.params.jobId,
+        },
+        attributes: ["id", "internal_data"],
       });
+
+      if (!jobMetadata) {
+        res.sendStatus(404);
+        return;
+      }
+
+      const internalData = jobMetadata.internal_data || {};
+      if (
+        parseInt(internalData.communityId) !== communityId ||
+        parseInt(internalData.userId) !== req.user.id
+      ) {
+        log.warn("Fraud job status access denied", {
+          context: "endorsement_fraud_action_status",
+          communityId,
+          jobId: req.params.jobId,
+          userId: req.user.id,
+        });
+        res.sendStatus(403);
+        return;
+      }
+
+      const job = await models.AcBackgroundJob.findOne({
+        where: {
+          id: req.params.jobId,
+        },
+        attributes: ["id", "progress", "error", "data"],
+      });
+
+      if (!job) {
+        res.sendStatus(404);
+        return;
+      }
+
+      if (job.progress === 100) {
+        queue.add(
+          "process-fraud-action",
+          {
+            type: "delete-job",
+            jobId: job.id,
+          },
+          "critical",
+          { delay: 30000 }
+        );
+      }
+
+      res.send(job);
+    } catch (error) {
+      log.error("Could not get backgroundJob", {
+        err: error,
+        context: "endorsement_fraud_action_status",
+        user: toJson(req.user.simple()),
+      });
+      res.sendStatus(500);
+    }
   }
 );
 

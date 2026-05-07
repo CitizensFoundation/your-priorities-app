@@ -284,7 +284,7 @@ class FraudBase {
     })
 
     return _.groupBy(filtered, item => {
-      return item.key;
+      return item.dataValues.key;
     });
   }
 }

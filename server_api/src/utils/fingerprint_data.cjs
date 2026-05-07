@@ -31,7 +31,7 @@ const getFingerprintDataFromBody = (body, prefix) => {
 
   return {
     browserId: baseId || valCode,
-    browserFingerprint: valCode || baseId,
+    browserFingerprint: valCode,
     browserFingerprintConfidence: confidence,
   };
 };

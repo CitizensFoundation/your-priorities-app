@@ -171,11 +171,10 @@ export class YpAppUser extends YpCodeBase {
   async getBrowserFingerprintData(prefix: string) {
     await this.ensureBrowserFingerprint();
     const browserId = this.getBrowserId() || "";
-    const browserFingerprint = this.browserFingerprint || browserId;
 
     return {
       [`${prefix}BaseId`]: browserId,
-      [`${prefix}ValCode`]: browserFingerprint,
+      [`${prefix}ValCode`]: this.browserFingerprint,
       [`${prefix}Conf`]: this.browserFingerprintConfidence ?? 0,
     };
   }

@@ -210,17 +210,23 @@ export class YpAdminReports extends YpAdminPage {
     }
   }
 
-  startGeneration() {
+  async startGeneration() {
     if (this.type == "fraudAuditReport") {
       this.waitingOnFraudAudits = true;
       this.progress = 0;
-      const response = window.adminServerApi.adminMethod(
-        this.reportGenerationUrl!,
-        "GET"
-      ) as unknown as YpFraudAuditData[];
-      this.waitingOnFraudAudits = false;
-      this.progress = undefined;
-      this.fraudAuditsAvailable = this.formatAuditReportDates(response);
+      try {
+        const response = (await window.adminServerApi.adminMethod(
+          this.reportGenerationUrl!,
+          "GET"
+        )) as YpFraudAuditData[] | null;
+        this.fraudAuditsAvailable = this.formatAuditReportDates(response || []);
+      } catch (error) {
+        console.error(error);
+        this.error = this.t("error");
+      } finally {
+        this.waitingOnFraudAudits = false;
+        this.progress = undefined;
+      }
     } else {
       this.startReportCreationAjax(this.reportGenerationUrl!);
     }
