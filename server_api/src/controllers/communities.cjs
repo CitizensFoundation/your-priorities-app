@@ -58,6 +58,9 @@ const getTranslatedTextsForCommunity =
   require("../services/utils/translation_helpers.cjs").getTranslatedTextsForCommunity;
 const updateTranslationForCommunity =
   require("../services/utils/translation_helpers.cjs").updateTranslationForCommunity;
+const {
+  validateFraudActionRequest,
+} = require("../services/engine/moderation/fraud/FraudRequestValidation.cjs");
 
 const isFraudDetectionEnabledForCommunity = async function (communityId) {
   const community = await models.Community.findOne({
@@ -3693,27 +3696,22 @@ router.put(
         return;
       }
 
-      const idsToDelete = Array.isArray(req.body.idsToDelete)
-        ? req.body.idsToDelete
-        : [];
+      const validation = validateFraudActionRequest({
+        type: req.params.type,
+        selectedMethod: req.params.selectedMethod,
+        collectionType: req.params.collectionType,
+        idsToDelete: req.body.idsToDelete,
+      });
 
-      if (req.params.type === "delete-one-item" && idsToDelete.length !== 1) {
-        res.status(400).send({ error: "single_delete_requires_one_id" });
-        return;
-      }
-
-      if (
-        req.params.selectedMethod === "byMissingBrowserFingerprint" &&
-        (req.params.type === "delete-items" || idsToDelete.length > 1)
-      ) {
-        res.status(400).send({ error: "bulk_delete_missing_fingerprint_disabled" });
+      if (validation.error) {
+        res.status(400).send({ error: validation.error });
         return;
       }
 
       models.AcBackgroundJob.createJob(
         {},
         {
-          idsToDelete,
+          idsToDelete: validation.idsToDelete,
           communityId,
           userId: req.user.id,
         },

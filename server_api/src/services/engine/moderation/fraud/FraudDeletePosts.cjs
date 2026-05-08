@@ -5,7 +5,7 @@ const models = require("../../../../models/index.cjs");
 
 class FraudDeletePosts extends FraudDeleteEndorsements {
 
-  async destroyChunkItems(items) {
+  async destroyChunkItems(items, transaction) {
     return await new Promise(async (resolve, reject) => {
       const idsToDestroy = items.map(i => i.id);
       try {
@@ -33,7 +33,8 @@ class FraudDeletePosts extends FraudDeleteEndorsements {
               ]
             }
           ],
-          attributes: ['id']
+          attributes: ['id'],
+          transaction
         })
 
         resolve();
