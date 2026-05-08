@@ -26,6 +26,9 @@ const fraudBasePath = require.resolve(
 const validationPath = require.resolve(
   "../services/engine/moderation/fraud/FraudRequestValidation.cjs"
 );
+const fraudAuditReportPath = require.resolve(
+  "../services/engine/moderation/fraud/CreateFraudAuditReport.cjs"
+);
 
 const injectMockModule = (modulePath, moduleExports) => {
   const mockModule = new Module(modulePath);
@@ -46,6 +49,7 @@ const loadFraudModules = (fakeModels = {}, fakeRecountUtils) => {
     fraudDeleteRatingsPath,
     fraudGetBasePath,
     fraudBasePath,
+    fraudAuditReportPath,
   ];
   const originals = new Map(pathsToRestore.map(path => [path, require.cache[path]]));
 
@@ -74,6 +78,7 @@ const loadFraudModules = (fakeModels = {}, fakeRecountUtils) => {
     fraudDeleteRatingsPath,
     fraudGetBasePath,
     fraudBasePath,
+    fraudAuditReportPath,
   ]) {
     delete require.cache[modulePath];
   }
@@ -82,6 +87,8 @@ const loadFraudModules = (fakeModels = {}, fakeRecountUtils) => {
     FraudDeleteBase: require(fraudDeleteBasePath),
     FraudDeleteRatings: require(fraudDeleteRatingsPath),
     FraudGetBase: require(fraudGetBasePath),
+    FraudAuditReport: require(fraudAuditReportPath).FraudAuditReport,
+    sanitizeWorksheetName: require(fraudAuditReportPath).sanitizeWorksheetName,
     restore() {
       Module._resolveFilename = originalResolveFilename;
       for (const [modulePath, originalModule] of originals) {
@@ -143,6 +150,43 @@ test("fraud scan compression tolerates missing user associations", (t) => {
   assert.deepEqual(engine.dataToProcess.cNames, [""]);
   assert.equal(engine.dataToProcess.items[0].User.email, 0);
   assert.equal(engine.dataToProcess.items[0].User.name, 0);
+});
+
+test("fraud scan compression tolerates missing parent associations", (t) => {
+  const { FraudGetBase, restore } = loadFraudModules();
+  t.after(restore);
+
+  const ratingsEngine = new FraudGetBase({ collectionType: "ratings" });
+  ratingsEngine.dataToProcess = [
+    {
+      key: "127.0.0.1:fingerprint",
+      items: [
+        makeFraudItem({
+          Post: null,
+        }),
+      ],
+    },
+  ];
+
+  assert.doesNotThrow(() => ratingsEngine.customCompress());
+  assert.deepEqual(ratingsEngine.dataToProcess.cPostNames, [""]);
+  assert.equal(ratingsEngine.dataToProcess.items[0].Post.name, 0);
+
+  const pointQualityEngine = new FraudGetBase({ collectionType: "pointQualities" });
+  pointQualityEngine.dataToProcess = [
+    {
+      key: "127.0.0.1:fingerprint",
+      items: [
+        makeFraudItem({
+          Point: null,
+        }),
+      ],
+    },
+  ];
+
+  assert.doesNotThrow(() => pointQualityEngine.customCompress());
+  assert.deepEqual(pointQualityEngine.dataToProcess.cPostNames, [""]);
+  assert.equal(pointQualityEngine.dataToProcess.items[0].Point.Post.name, 0);
 });
 
 test("fraud delete grouping tolerates missing user associations", (t) => {
@@ -306,7 +350,10 @@ test("fraud deletion and audit log share one transaction", async (t) => {
 });
 
 test("fraud action request validation rejects unsafe and invalid inputs", () => {
-  const { validateFraudActionRequest } = require(validationPath);
+  const {
+    MAX_FRAUD_IDS_TO_DELETE,
+    validateFraudActionRequest,
+  } = require(validationPath);
 
   assert.equal(
     validateFraudActionRequest({
@@ -348,11 +395,71 @@ test("fraud action request validation rejects unsafe and invalid inputs", () => 
   assert.equal(
     validateFraudActionRequest({
       type: "delete-items",
+      selectedMethod: "byIpAddress",
+      collectionType: "ratings",
+      idsToDelete: [],
+    }).error,
+    "delete_requires_ids"
+  );
+
+  assert.equal(
+    validateFraudActionRequest({
+      type: "delete-items",
+      selectedMethod: "byIpAddress",
+      collectionType: "ratings",
+      idsToDelete: "1",
+    }).error,
+    "invalid_ids_to_delete"
+  );
+
+  assert.equal(
+    validateFraudActionRequest({
+      type: "delete-items",
+      selectedMethod: "byIpAddress",
+      collectionType: "ratings",
+      idsToDelete: [1, 0],
+    }).error,
+    "invalid_ids_to_delete"
+  );
+
+  assert.equal(
+    validateFraudActionRequest({
+      type: "delete-items",
+      selectedMethod: "byIpAddress",
+      collectionType: "ratings",
+      idsToDelete: [1, "bad"],
+    }).error,
+    "invalid_ids_to_delete"
+  );
+
+  assert.equal(
+    validateFraudActionRequest({
+      type: "delete-items",
+      selectedMethod: "byIpAddress",
+      collectionType: "ratings",
+      idsToDelete: Array.from({ length: MAX_FRAUD_IDS_TO_DELETE + 1 }, (_value, index) => index + 1),
+    }).error,
+    "too_many_ids_to_delete"
+  );
+
+  assert.equal(
+    validateFraudActionRequest({
+      type: "delete-items",
       selectedMethod: "byMissingBrowserFingerprint",
       collectionType: "ratings",
       idsToDelete: [1],
     }).error,
     "bulk_delete_missing_fingerprint_disabled"
+  );
+
+  assert.deepEqual(
+    validateFraudActionRequest({
+      type: "delete-items",
+      selectedMethod: "byIpAddress",
+      collectionType: "ratings",
+      idsToDelete: [3, "2", 3, "2"],
+    }),
+    { idsToDelete: [3, 2] }
   );
 
   assert.deepEqual(
@@ -364,4 +471,54 @@ test("fraud action request validation rejects unsafe and invalid inputs", () => 
     }),
     { idsToDelete: [1] }
   );
+});
+
+test("fraud audit report validates community ownership and xlsx metadata", (t) => {
+  const { FraudAuditReport, sanitizeWorksheetName, restore } = loadFraudModules();
+  t.after(restore);
+
+  const report = new FraudAuditReport({
+    communityId: 10,
+    community: {
+      id: 10,
+      name: "Community / With * Invalid : Characters",
+    },
+    userName: "Admin [With] A Very Very Very Long Name",
+    auditReportData: {
+      workPackage: {
+        collectionType: "posts",
+      },
+    },
+  });
+
+  assert.doesNotThrow(() => report.validateAuditReportCommunity({
+    data: {
+      workPackage: {
+        communityId: "10",
+      },
+    },
+  }));
+  assert.throws(
+    () => report.validateAuditReportCommunity({
+      data: {
+        workPackage: {
+          communityId: 11,
+        },
+      },
+    }),
+    /does not belong/
+  );
+
+  report.setupFilename();
+  assert.ok(report.workPackage.filename.endsWith(".xlsx"));
+  assert.equal(report.workPackage.fileEnding, "xlsx");
+
+  const worksheetName = sanitizeWorksheetName("Community Users 10 Admin [With] / Invalid * Long Long Long Long");
+  assert.ok(worksheetName.length <= 31);
+  assert.equal(/[\\/\*\?:\[\]]/.test(worksheetName), false);
+
+  const apostropheBoundaryName = sanitizeWorksheetName("Community Users 10 ABCDEFGHIJK'LMNO");
+  assert.ok(apostropheBoundaryName.length <= 31);
+  assert.equal(apostropheBoundaryName.endsWith("'"), false);
+  assert.equal(apostropheBoundaryName.startsWith("'"), false);
 });

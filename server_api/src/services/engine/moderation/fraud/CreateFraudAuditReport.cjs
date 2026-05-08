@@ -15,6 +15,18 @@ const formatWorksheet = (worksheet) => {
   //  worksheet.properties.defaultRowHeight = 20;
 };
 
+const sanitizeWorksheetName = (name) => {
+  const sanitizedName = String(name || "Fraud Audit")
+    .replace(/[\\/\*\?:\[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .substring(0, 31)
+    .trim()
+    .replace(/^'+|'+$/g, "");
+
+  return sanitizedName.trim() || "Fraud Audit";
+};
+
 class FraudAuditReport {
   constructor(workPackage) {
     this.workPackage = workPackage;
@@ -146,7 +158,7 @@ class FraudAuditReport {
     this.workBook.creator = "Your Priorities Report - Automated";
     this.workBook.created = new Date();
 
-    this.worksheet = this.workBook.addWorksheet(`Community Users ${this.workPackage.community.id} ${this.workPackage.userName}`);
+    this.worksheet = this.workBook.addWorksheet(sanitizeWorksheetName(`Community Users ${this.workPackage.community.id} ${this.workPackage.userName}`));
 
     this.worksheet.columns = [
       { header: "Type", key: "collectionType", width: 20 },
@@ -196,9 +208,9 @@ class FraudAuditReport {
       communityName +
       "_" +
       dateString +
-      ".xls";
+      ".xlsx";
 
-    this.workPackage.fileEnding = "xls";
+    this.workPackage.fileEnding = "xlsx";
   }
 
   async getCommunity() {
@@ -315,6 +327,7 @@ class FraudAuditReport {
         });
 
         if (auditReport && auditReport.data) {
+          this.validateAuditReportCommunity(auditReport);
           this.workPackage.auditReportData = auditReport.data;
            await this.getCommunity();
           this.setupFilename();
@@ -350,6 +363,21 @@ class FraudAuditReport {
       }
     })
   }
+
+  validateAuditReportCommunity(auditReport) {
+    const auditCommunityId = auditReport &&
+      auditReport.data &&
+      auditReport.data.workPackage &&
+      auditReport.data.workPackage.communityId;
+
+    if (
+      auditCommunityId === undefined ||
+      auditCommunityId === null ||
+      String(auditCommunityId) !== String(this.workPackage.communityId)
+    ) {
+      throw new Error("Fraud audit report does not belong to this community");
+    }
+  }
 }
 
 const createFraudAuditReport = async (workPackage, done) => {
@@ -366,5 +394,7 @@ const createFraudAuditReport = async (workPackage, done) => {
 }
 
 module.exports = {
-  createFraudAuditReport
+  createFraudAuditReport,
+  FraudAuditReport,
+  sanitizeWorksheetName
 };

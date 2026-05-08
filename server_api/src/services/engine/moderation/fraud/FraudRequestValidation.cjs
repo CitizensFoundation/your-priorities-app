@@ -1,5 +1,7 @@
 "use strict";
 
+const MAX_FRAUD_IDS_TO_DELETE = 1000;
+
 const validActionTypes = new Set(["get-items", "delete-one-item", "delete-items"]);
 const validCollectionTypes = new Set([
   "endorsements",
@@ -24,8 +26,65 @@ const pointMethods = new Set([
   "byIpUserAgentPointId",
 ]);
 
+const normalizeIdValue = (value) => {
+  if (typeof value === "number") {
+    return Number.isSafeInteger(value) && value > 0 ? value : null;
+  } else if (typeof value === "string") {
+    const trimmedValue = value.trim();
+    if (!/^[1-9]\d*$/.test(trimmedValue)) {
+      return null;
+    }
+
+    const parsedValue = Number(trimmedValue);
+    return Number.isSafeInteger(parsedValue) ? parsedValue : null;
+  } else {
+    return null;
+  }
+};
+
+const validateIdsToDelete = (idsToDelete) => {
+  if (idsToDelete === undefined || idsToDelete === null) {
+    return { idsToDelete: [] };
+  }
+
+  if (!Array.isArray(idsToDelete)) {
+    return {
+      error: "invalid_ids_to_delete",
+      idsToDelete: [],
+    };
+  }
+
+  if (idsToDelete.length > MAX_FRAUD_IDS_TO_DELETE) {
+    return {
+      error: "too_many_ids_to_delete",
+      idsToDelete: [],
+    };
+  }
+
+  const seenIds = new Set();
+  const normalizedIds = [];
+
+  for (let i = 0; i < idsToDelete.length; i++) {
+    const normalizedId = normalizeIdValue(idsToDelete[i]);
+
+    if (!normalizedId) {
+      return {
+        error: "invalid_ids_to_delete",
+        idsToDelete: [],
+      };
+    }
+
+    if (!seenIds.has(normalizedId)) {
+      seenIds.add(normalizedId);
+      normalizedIds.push(normalizedId);
+    }
+  }
+
+  return { idsToDelete: normalizedIds };
+};
+
 const normalizeIdsToDelete = (idsToDelete) => {
-  return Array.isArray(idsToDelete) ? idsToDelete : [];
+  return validateIdsToDelete(idsToDelete).idsToDelete;
 };
 
 const getValidMethodsForCollectionType = (collectionType) => {
@@ -44,19 +103,17 @@ const validateFraudActionRequest = ({
   collectionType,
   idsToDelete,
 }) => {
-  const normalizedIdsToDelete = normalizeIdsToDelete(idsToDelete);
-
   if (!validActionTypes.has(type)) {
     return {
       error: "invalid_fraud_action_type",
-      idsToDelete: normalizedIdsToDelete,
+      idsToDelete: [],
     };
   }
 
   if (!validCollectionTypes.has(collectionType)) {
     return {
       error: "invalid_fraud_collection_type",
-      idsToDelete: normalizedIdsToDelete,
+      idsToDelete: [],
     };
   }
 
@@ -64,6 +121,23 @@ const validateFraudActionRequest = ({
   if (!validMethods.has(selectedMethod)) {
     return {
       error: "invalid_fraud_detection_method",
+      idsToDelete: [],
+    };
+  }
+
+  const idsValidation = validateIdsToDelete(idsToDelete);
+  const normalizedIdsToDelete = idsValidation.idsToDelete;
+
+  if (idsValidation.error) {
+    return idsValidation;
+  }
+
+  if (
+    (type === "delete-one-item" || type === "delete-items") &&
+    normalizedIdsToDelete.length === 0
+  ) {
+    return {
+      error: "delete_requires_ids",
       idsToDelete: normalizedIdsToDelete,
     };
   }
@@ -91,6 +165,8 @@ const validateFraudActionRequest = ({
 };
 
 module.exports = {
+  MAX_FRAUD_IDS_TO_DELETE,
   normalizeIdsToDelete,
   validateFraudActionRequest,
+  validateIdsToDelete,
 };
