@@ -201,6 +201,7 @@ test("rating fraud deletion preserves one row per custom rating dimension", (t) 
 test("fraud deletion and audit log share one transaction", async (t) => {
   const transaction = { id: "tx" };
   const seenTransactions = [];
+  let auditLogData;
   const fakeModels = {
     sequelize: {
       async transaction(callback) {
@@ -227,6 +228,7 @@ test("fraud deletion and audit log share one transaction", async (t) => {
     GeneralDataStore: {
       async create(data, options) {
         seenTransactions.push(options.transaction);
+        auditLogData = data.data;
         return {
           id: 123,
           data: data.data,
@@ -299,6 +301,8 @@ test("fraud deletion and audit log share one transaction", async (t) => {
   await engine.deleteItems();
   assert.equal(seenTransactions.length, 6);
   assert.ok(seenTransactions.every(item => item === transaction));
+  assert.deepEqual(auditLogData.deleteData.idsToDelete, [2]);
+  assert.deepEqual(auditLogData.deleteData.requestedIdsToDelete, [1, 2]);
 });
 
 test("fraud action request validation rejects unsafe and invalid inputs", () => {
@@ -318,6 +322,15 @@ test("fraud action request validation rejects unsafe and invalid inputs", () => 
       type: "get-items",
       selectedMethod: "byIpFingerprintPointId",
       collectionType: "ratings",
+    }).error,
+    "invalid_fraud_detection_method"
+  );
+
+  assert.equal(
+    validateFraudActionRequest({
+      type: "get-items",
+      selectedMethod: "byIpFingerprintPostId",
+      collectionType: "posts",
     }).error,
     "invalid_fraud_detection_method"
   );

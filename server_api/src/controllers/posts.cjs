@@ -1353,6 +1353,9 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
                         status: "active",
                         user_agent: req.useragent.source,
                         ip_address: req.clientIp,
+                        data: {
+                          ...getFingerprintDataFromBody(req.body, "post"),
+                        },
                       })
                         .save()
                         .then(function (endorsement) {

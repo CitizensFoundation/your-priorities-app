@@ -13,6 +13,7 @@ class FraudDeleteBase extends FraudBase {
     super(workPackage);
     this.postsToRecount = [];
     this.pointsToRecount = [];
+    this.deletedItemIds = [];
     this.job = null;
   }
 
@@ -80,11 +81,17 @@ class FraudDeleteBase extends FraudBase {
         });
         const userName = user && user.name ? user.name : "Unknown";
 
+        const deleteData = {
+          ...this.job.internal_data,
+          requestedIdsToDelete: this.job.internal_data.idsToDelete,
+          idsToDelete: this.deletedItemIds,
+        };
+
         const fraudAuditLog = await models.GeneralDataStore.create({ data: {
           date: new Date(),
           userName,
           workPackage: this.workPackage,
-          deleteData: this.job.internal_data
+          deleteData
         }}, { transaction });
 
         const community = await models.Community.findOne({
@@ -168,6 +175,7 @@ class FraudDeleteBase extends FraudBase {
           itemsToDelete = itemsToDelete.concat(this.getAllItemsExceptOne(this.dataToProcess[keys[c]].items));
         }
 
+        this.deletedItemIds = itemsToDelete.map(item => item.id);
         await this.destroyAllItems(this.sliceIntoChunks(itemsToDelete, 100), transaction);
         resolve();
       } catch (error) {

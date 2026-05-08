@@ -275,8 +275,8 @@ class FraudAuditReport {
         dateDeleted: this.workPackage.auditReportData.date,
         id: item.id,
         date: item.created_at,
-        userId: item.User.id,
-        email: item.User.email,
+        userId: item.User ? item.User.id : item.user_id,
+        email: item.User ? item.User.email : "",
         ipAddress: item.ip_address,
         userAgent: item.user_agent,
       }
@@ -287,8 +287,8 @@ class FraudAuditReport {
       }
 
       if (['posts','pointQualities'].indexOf(originalWorkPackage.collectionType) === -1) {
-        row.postId = item.Post.id;
-        row.postName = item.Post.name;
+        row.postId = item.Post ? item.Post.id : item.post_id;
+        row.postName = item.Post ? item.Post.name : "";
       }
 
       if (['endorsements','pointQualities','ratings'].indexOf(originalWorkPackage.collectionType) !== -1) {
@@ -296,7 +296,7 @@ class FraudAuditReport {
       }
 
       if (['pointQualities'].indexOf(originalWorkPackage.collectionType) !== -1) {
-        row.pointId = item.Point.id;
+        row.pointId = item.Point ? item.Point.id : item.point_id;
       }
 
       this.worksheet.addRow(row);

@@ -29,7 +29,13 @@ const normalizeIdsToDelete = (idsToDelete) => {
 };
 
 const getValidMethodsForCollectionType = (collectionType) => {
-  return collectionType === "pointQualities" ? pointMethods : postMethods;
+  if (collectionType === "pointQualities") {
+    return pointMethods;
+  } else if (collectionType === "posts") {
+    return commonMethods;
+  } else {
+    return postMethods;
+  }
 };
 
 const validateFraudActionRequest = ({

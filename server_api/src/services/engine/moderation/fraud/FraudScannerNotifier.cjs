@@ -7,6 +7,8 @@ const log = require("../../../../utils/logger.cjs");
 const FraudGetEndorsements = require("./FraudGetEndorsements.cjs");
 const FraudGetPointQualities = require("./FraudGetPointQualities.cjs");
 const FraudGetRatings = require("./FraudGetRatings.cjs");
+const FraudGetPoints = require("./FraudGetPoints.cjs");
+const FraudGetPosts = require("./FraudGetPosts.cjs");
 const queue = require("../../../workers/queue.cjs");
 const Backend = require("i18next-fs-backend");
 const path = require("path");
@@ -17,8 +19,14 @@ class FraudScannerNotifier {
   constructor() {
     this.currentCommunity = null;
     this.uniqueCollectionItemsIds = {};
-    this.collectionsToScan = ['endorsements', 'ratings','pointQualities'];
-    this.scannerModels = [FraudGetEndorsements, FraudGetRatings, FraudGetPointQualities];
+    this.collectionsToScan = ['endorsements', 'ratings', 'pointQualities', 'points', 'posts'];
+    this.scannerModels = [
+      FraudGetEndorsements,
+      FraudGetRatings,
+      FraudGetPointQualities,
+      FraudGetPoints,
+      FraudGetPosts
+    ];
   }
 
   resetCounts() {
@@ -207,7 +215,7 @@ class FraudScannerNotifier {
 
       if (this.collectionsToScan[c]==="pointQualities") {
         methodsToScan = methodsToScan.concat(['byIpFingerprintPointId', 'byIpUserAgentPointId']);
-      } else {
+      } else if (this.collectionsToScan[c]!=="posts") {
         methodsToScan = methodsToScan.concat(['byIpFingerprintPostId', 'byIpUserAgentPostId']);
       }
 
