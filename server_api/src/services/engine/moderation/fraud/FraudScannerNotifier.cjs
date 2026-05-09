@@ -281,36 +281,50 @@ class FraudScannerNotifier {
   }
 }
 
-i18n
-  .use(Backend)
-  .init({
-    preload: ['en', 'fr', 'sk','bg', 'cs','it','da', 'kl', 'es', 'sv', 'sq','uz','uk', 'ca', 'hr','ro','ru',
-      'ro_md','pt_br', 'hu', 'tr', 'is', 'nl','no', 'pl', 'zh_tw','ky'],
+const runFraudScannerNotifier = () => {
+  i18n
+    .use(Backend)
+    .init({
+      preload: ['en', 'fr', 'sk','bg', 'cs','it','da', 'kl', 'es', 'sv', 'sq','uz','uk', 'ca', 'hr','ro','ru',
+        'ro_md','pt_br', 'hu', 'tr', 'is', 'nl','no', 'pl', 'zh_tw','ky'],
 
-    fallbackLng:'en',
+      fallbackLng:'en',
 
-    // this is the defaults
-    backend: {
-      // path where resources get loaded from
-      loadPath: localesPath+'/{{lng}}/translation.json',
+      // this is the defaults
+      backend: {
+        // path where resources get loaded from
+        loadPath: localesPath+'/{{lng}}/translation.json',
 
-      // path to post missing resources
-      addPath: localesPath+'/{{lng}}/translation.missing.json',
+        // path to post missing resources
+        addPath: localesPath+'/{{lng}}/translation.missing.json',
 
-      // jsonIndent to use when storing json files
-      jsonIndent: 2
-    }
-  }, function (err, t) {
-    (async () => {
-      try {
-        const scanner = new FraudScannerNotifier();
-        await scanner.scanAndNotify();
-        log.info("Fraud Scanning Complete");
-        process.exit();
-      } catch (error) {
-        log.error(error);
-        process.exit();
+        // jsonIndent to use when storing json files
+        jsonIndent: 2
       }
-    })();
-  }
-)
+    }, function (err, t) {
+      (async () => {
+        try {
+          if (err) {
+            throw err;
+          }
+
+          const scanner = new FraudScannerNotifier();
+          await scanner.scanAndNotify();
+          log.info("Fraud Scanning Complete");
+          process.exit(0);
+        } catch (error) {
+          log.error(error);
+          process.exit(1);
+        }
+      })();
+    });
+};
+
+if (require.main === module) {
+  runFraudScannerNotifier();
+}
+
+module.exports = {
+  FraudScannerNotifier,
+  runFraudScannerNotifier
+};

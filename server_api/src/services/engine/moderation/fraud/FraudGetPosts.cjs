@@ -4,7 +4,7 @@ const FraudGetBase = require('./FraudGetBase.cjs');
 const models = require("../../../../models/index.cjs");
 const log = require("../../../../utils/logger.cjs");
 
-class FraudGetPoints extends FraudGetBase {
+class FraudGetPosts extends FraudGetBase {
   async getAllItems() {
     return await new Promise(async (resolve, reject) => {
       try {
@@ -44,8 +44,6 @@ class FraudGetPoints extends FraudGetBase {
 
   getTopItems(items, type) {
     let topItems = this.setupTopItems(items);
-    const postIds = this.getPostIdsFromItems(topItems);
-    const postCount = _.uniq(postIds).length;
 
     const pointMultiplier = 10;
 
@@ -56,14 +54,14 @@ class FraudGetPoints extends FraudGetBase {
     if (type==="byIpFingerprint") {
       let out = [];
       _.each(topItems, function (item) {
-        if ((item.count/postCount)>pointMultiplier) {
-          if ((item.count/postCount) > 5*pointMultiplier) {
+        if (item.count>pointMultiplier) {
+          if (item.count > 5*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 70);
-          } else if ((item.count/postCount) > 4*pointMultiplier) {
+          } else if (item.count > 4*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 60);
-          } else if ((item.count/postCount) > 3*pointMultiplier) {
+          } else if (item.count > 3*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 40);
-          } else if ((item.count/postCount) > 2*pointMultiplier) {
+          } else if (item.count > 2*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 20);
           } else {
             this.setWeightedConfidenceScore(item.items, 10);
@@ -77,18 +75,18 @@ class FraudGetPoints extends FraudGetBase {
     } else if (type==="byIpAddress") {
       let out = [];
       _.each(topItems, function (item) {
-        if ((item.count/postCount)>pointMultiplier) {
-          if ((item.count/postCount) > 100*pointMultiplier) {
+        if (item.count>pointMultiplier) {
+          if (item.count > 100*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 70);
-          } else if ((item.count/postCount) > 50*pointMultiplier) {
+          } else if (item.count > 50*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 65);
-          } else if ((item.count/postCount) > 25*pointMultiplier) {
+          } else if (item.count > 25*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 40);
-          } else if ((item.count/postCount) > 10*pointMultiplier) {
+          } else if (item.count > 10*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 35);
-          } else if ((item.count/postCount) > 5*pointMultiplier) {
+          } else if (item.count > 5*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 20);
-          } else if ((item.count/postCount) > 2*pointMultiplier) {
+          } else if (item.count > 2*pointMultiplier) {
             this.setWeightedConfidenceScore(item.items, 15);
           } else {
             this.setWeightedConfidenceScore(item.items, 10);
@@ -104,4 +102,4 @@ class FraudGetPoints extends FraudGetBase {
   }
 }
 
-module.exports = FraudGetPoints;
+module.exports = FraudGetPosts;

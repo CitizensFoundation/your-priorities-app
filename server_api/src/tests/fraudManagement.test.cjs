@@ -20,8 +20,14 @@ const fraudDeleteRatingsPath = require.resolve(
 const fraudGetBasePath = require.resolve(
   "../services/engine/moderation/fraud/FraudGetBase.cjs"
 );
+const fraudGetPostsPath = require.resolve(
+  "../services/engine/moderation/fraud/FraudGetPosts.cjs"
+);
 const fraudBasePath = require.resolve(
   "../services/engine/moderation/fraud/FraudBase.cjs"
+);
+const fraudScannerNotifierPath = require.resolve(
+  "../services/engine/moderation/fraud/FraudScannerNotifier.cjs"
 );
 const validationPath = require.resolve(
   "../services/engine/moderation/fraud/FraudRequestValidation.cjs"
@@ -29,6 +35,7 @@ const validationPath = require.resolve(
 const fraudAuditReportPath = require.resolve(
   "../services/engine/moderation/fraud/CreateFraudAuditReport.cjs"
 );
+const queuePath = require.resolve("../services/workers/queue.cjs");
 
 const injectMockModule = (modulePath, moduleExports) => {
   const mockModule = new Module(modulePath);
@@ -48,8 +55,11 @@ const loadFraudModules = (fakeModels = {}, fakeRecountUtils) => {
     fraudDeleteEndorsementsPath,
     fraudDeleteRatingsPath,
     fraudGetBasePath,
+    fraudGetPostsPath,
     fraudBasePath,
+    fraudScannerNotifierPath,
     fraudAuditReportPath,
+    queuePath,
   ];
   const originals = new Map(pathsToRestore.map(path => [path, require.cache[path]]));
 
@@ -64,6 +74,9 @@ const loadFraudModules = (fakeModels = {}, fakeRecountUtils) => {
     info() {},
     warn() {},
   });
+  injectMockModule(queuePath, {
+    add() {},
+  });
   Module._resolveFilename = function (request, parent, isMain, options) {
     if (request.endsWith("models/index.cjs")) {
       return modelsPath;
@@ -77,17 +90,24 @@ const loadFraudModules = (fakeModels = {}, fakeRecountUtils) => {
     fraudDeleteEndorsementsPath,
     fraudDeleteRatingsPath,
     fraudGetBasePath,
+    fraudGetPostsPath,
     fraudBasePath,
+    fraudScannerNotifierPath,
     fraudAuditReportPath,
   ]) {
     delete require.cache[modulePath];
   }
 
+  const scannerModule = require(fraudScannerNotifierPath);
+
   return {
     FraudDeleteBase: require(fraudDeleteBasePath),
     FraudDeleteRatings: require(fraudDeleteRatingsPath),
     FraudGetBase: require(fraudGetBasePath),
+    FraudGetPosts: require(fraudGetPostsPath),
+    FraudScannerNotifier: scannerModule.FraudScannerNotifier,
     FraudAuditReport: require(fraudAuditReportPath).FraudAuditReport,
+    runFraudScannerNotifier: scannerModule.runFraudScannerNotifier,
     sanitizeWorksheetName: require(fraudAuditReportPath).sanitizeWorksheetName,
     restore() {
       Module._resolveFilename = originalResolveFilename;
@@ -187,6 +207,53 @@ test("fraud scan compression tolerates missing parent associations", (t) => {
   assert.doesNotThrow(() => pointQualityEngine.customCompress());
   assert.deepEqual(pointQualityEngine.dataToProcess.cPostNames, [""]);
   assert.equal(pointQualityEngine.dataToProcess.items[0].Point.Post.name, 0);
+});
+
+test("post fraud detection counts post rows by id", (t) => {
+  const { FraudGetPosts, restore } = loadFraudModules();
+  t.after(restore);
+
+  const postItems = Array.from({ length: 20 }, (_value, index) => {
+    return makeFraudItem({
+      id: index + 1,
+      post_id: undefined,
+      created_at: `2026-01-01T00:${String(index).padStart(2, "0")}:00.000Z`,
+      data: {
+        browserFingerprint: "fingerprint",
+      },
+    });
+  });
+  const groupedItems = {
+    "127.0.0.1:fingerprint": postItems,
+  };
+  const engine = new FraudGetPosts({ collectionType: "posts" });
+
+  assert.deepEqual(engine.getTopItems(groupedItems, "byIpFingerprint"), []);
+  assert.deepEqual(engine.getTopItems(groupedItems, "byIpAddress"), []);
+});
+
+test("fraud scanner notifier is safe to import", (t) => {
+  const originalExit = process.exit;
+  let exitCalled = false;
+  process.exit = ((code) => {
+    exitCalled = true;
+    throw new Error(`Unexpected process.exit(${code})`);
+  });
+
+  const {
+    FraudScannerNotifier,
+    runFraudScannerNotifier,
+    restore,
+  } = loadFraudModules();
+
+  t.after(() => {
+    process.exit = originalExit;
+    restore();
+  });
+
+  assert.equal(typeof FraudScannerNotifier, "function");
+  assert.equal(typeof runFraudScannerNotifier, "function");
+  assert.equal(exitCalled, false);
 });
 
 test("fraud delete grouping tolerates missing user associations", (t) => {

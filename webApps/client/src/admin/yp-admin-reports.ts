@@ -64,6 +64,8 @@ export class YpAdminReports extends YpAdminPage {
   @property({ type: String })
   reportCreationProgressUrl: string | undefined;
 
+  private readonly boundRefresh = this.refresh.bind(this);
+
   refresh() {
     this.reportUrl = undefined;
     this.reportGenerationUrl = undefined;
@@ -90,13 +92,13 @@ export class YpAdminReports extends YpAdminPage {
       this.allOurIdeasQuestionId = undefined;
     }
 
-    this.addGlobalListener("yp-refresh-admin-content", this.refresh.bind(this));
+    this.addGlobalListener("yp-refresh-admin-content", this.boundRefresh);
   }
 
   override disconnectedCallback(): void {
     this.removeGlobalListener(
       "yp-refresh-admin-content",
-      this.refresh.bind(this)
+      this.boundRefresh
     );
     super.disconnectedCallback();
   }
