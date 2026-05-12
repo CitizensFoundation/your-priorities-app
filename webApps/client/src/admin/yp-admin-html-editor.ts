@@ -193,6 +193,8 @@ export class YpAdminHtmlEditor extends YpBaseElement {
       .collectionId="${this.collectionId === "new"
         ? this.parentCollectionId
         : this.group.id}"
+      generationContext="regularAiImage"
+      imageGenerationProfile="regularAiImage"
       disableBackgroundGeneration
       @got-image="${this._gotAiImage}"
     >

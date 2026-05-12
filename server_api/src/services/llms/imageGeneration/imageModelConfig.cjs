@@ -3,6 +3,8 @@
 const defaultOpenAiImageModel = "gpt-image-2";
 const defaultImagenImageModel = "imagen-4.0-generate-001";
 const defaultGptImage2LandscapeSize = "2048x1152";
+const defaultAoiIconProfileName = "aoiIcon";
+const defaultRegularAiImageProfileName = "regularAiImage";
 
 const imageProviders = ["openai", "azureOpenai", "flux", "imagen"];
 const openAiGptImageModels = [
@@ -55,6 +57,25 @@ const supportedAspectRatioSizes = [
   "21:9",
   "9:21",
 ];
+
+const imageGenerationProfiles = {
+  [defaultAoiIconProfileName]: {
+    imageProvider: "openai",
+    imageModel: "gpt-image-2",
+    imageSize: "1024x1024",
+    imageQuality: "low",
+    imageType: "icon",
+    generationContexts: ["aoiIconPublic", "aoiIconAdmin"],
+  },
+  [defaultRegularAiImageProfileName]: {
+    imageProvider: "openai",
+    imageModel: "gpt-image-2",
+    imageSize: defaultGptImage2LandscapeSize,
+    imageQuality: "medium",
+    imageType: "logo",
+    generationContexts: ["regularAiImage"],
+  },
+};
 
 const uniqueDefined = (values) => [...new Set(values.filter(Boolean))];
 const parsePixelSize = (imageSize) => {
@@ -287,11 +308,68 @@ const normalizeImageGenerationOptions = (
   };
 };
 
+const getDefaultImageGenerationProfileName = (generationContext) => {
+  switch (generationContext) {
+    case "aoiIconPublic":
+    case "aoiIconAdmin":
+      return defaultAoiIconProfileName;
+    case "regularAiImage":
+      return defaultRegularAiImageProfileName;
+    default:
+      return undefined;
+  }
+};
+
+const normalizeImageGenerationProfileOptions = (
+  imageGenerationProfile,
+  generationContext,
+  imageType
+) => {
+  const profileName =
+    imageGenerationProfile || getDefaultImageGenerationProfileName(generationContext);
+  const profile = imageGenerationProfiles[profileName];
+
+  if (!profile) {
+    return {
+      error: `Unsupported image generation profile: ${profileName}`,
+    };
+  }
+
+  if (!profile.generationContexts.includes(generationContext)) {
+    return {
+      error: `Image generation profile ${profileName} is not allowed for ${generationContext}`,
+    };
+  }
+
+  if (imageType && imageType !== profile.imageType) {
+    return {
+      error: `Image generation profile ${profileName} only supports ${profile.imageType} images`,
+    };
+  }
+
+  const options = normalizeImageGenerationOptions(
+    profile.imageProvider,
+    profile.imageModel,
+    profile.imageSize,
+    profile.imageQuality
+  );
+
+  if (options.error) return options;
+
+  return {
+    ...options,
+    imageGenerationProfile: profileName,
+  };
+};
+
 module.exports = {
   defaultOpenAiImageModel,
   defaultImagenImageModel,
   defaultGptImage2LandscapeSize,
+  defaultAoiIconProfileName,
+  defaultRegularAiImageProfileName,
   imageProviders,
+  imageGenerationProfiles,
   openAiGptImageModels,
   openAiDalleImageModels,
   imagenImageModels,
@@ -303,6 +381,7 @@ module.exports = {
   openAiDalleImageSizes,
   getAspectRatioForImageSize,
   getAllowedImageModels,
+  getDefaultImageGenerationProfileName,
   getDefaultImageModelForProvider,
   getDefaultImageSizeForOptions,
   getDefaultImageQualityForOptions,
@@ -311,4 +390,5 @@ module.exports = {
   isOpenAiDalleImageModel: (imageModel) =>
     openAiDalleImageModels.includes(imageModel),
   normalizeImageGenerationOptions,
+  normalizeImageGenerationProfileOptions,
 };

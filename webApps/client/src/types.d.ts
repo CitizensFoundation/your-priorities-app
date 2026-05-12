@@ -852,6 +852,12 @@ interface YpUserProfileData {
 interface YpGenerateAiImageStartResponse {
   error?: string;
   jobId?: number;
+  generationContext?: YpAiImageGenerationContext;
+  imageGenerationProfile?: YpAiImageGenerationProfile;
+  maxImagesPer24Hours?: number;
+  usedImagesInLast24Hours?: number;
+  nextImageAllowedAt?: string;
+  retryAfterSeconds?: number;
 }
 
 interface YpGenerateAiImageResponse extends YpGenerateAiImageStartResponse {
@@ -873,6 +879,8 @@ interface YpWorkPackageData {
 interface YpGenerativeAiWorkPackageData extends YpWorkPackageData {
   prompt: string;
   imageType: YpAiGenerateImageTypes | undefined;
+  generationContext?: YpAiImageGenerationContext;
+  imageGenerationProfile?: YpAiImageGenerationProfile;
   imageProvider?: YpAiGenerateImageProvider;
   imageModel?: YpAiGenerateImageModel;
   imageSize?: YpAiGenerateImageSize;
@@ -880,6 +888,11 @@ interface YpGenerativeAiWorkPackageData extends YpWorkPackageData {
 }
 
 type YpAiGenerateImageTypes = "logo" | "icon";
+type YpAiImageGenerationProfile = "aoiIcon" | "regularAiImage";
+type YpAiImageGenerationContext =
+  | "aoiIconPublic"
+  | "aoiIconAdmin"
+  | "regularAiImage";
 type YpAiGenerateImageProvider =
   | "openai"
   | "azureOpenai"

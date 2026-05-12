@@ -1578,6 +1578,8 @@ export class YpPostEdit extends YpEditBase {
           .collectionId="${this.group!.id}"
           .name="${this.post?.name}"
           .description="${this.post?.description}"
+          generationContext="regularAiImage"
+          imageGenerationProfile="regularAiImage"
           @got-image="${this._gotAiImage}"
         >
         </yp-generate-ai-image>

@@ -148,10 +148,8 @@ export class YpServerApi extends YpServerApiBase {
     collectionId: number,
     imageType: string,
     prompt: string,
-    imageProvider?: YpAiGenerateImageProvider,
-    imageModel?: YpAiGenerateImageModel,
-    imageSize?: YpAiGenerateImageSize,
-    imageQuality?: YpAiGenerateImageQuality
+    generationContext: YpAiImageGenerationContext,
+    imageGenerationProfile: YpAiImageGenerationProfile
   ) {
     return this.fetchWrapper(
       this.baseUrlPath +
@@ -162,10 +160,8 @@ export class YpServerApi extends YpServerApiBase {
       body: JSON.stringify({
         prompt,
         imageType,
-        imageProvider,
-        imageModel,
-        imageSize,
-        imageQuality,
+        generationContext,
+        imageGenerationProfile,
       }),
     }
     );

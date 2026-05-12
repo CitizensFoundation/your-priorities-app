@@ -118,6 +118,23 @@ export class YpServerApiBase extends YpCodeBase {
     } else {
       if (response.status == 401) {
         this.accessError();
+      } else if (response.status == 429) {
+        let responseJson = null;
+        try {
+          responseJson = await response.json();
+        } catch (error) {
+          responseJson = null;
+        }
+
+        if (responseJson) {
+          return responseJson;
+        }
+
+        this.fireGlobal("yp-network-error", {
+          response: response,
+          showUserError,
+          errorId,
+        });
       } else {
         this.fireGlobal("yp-network-error", {
           response: response,

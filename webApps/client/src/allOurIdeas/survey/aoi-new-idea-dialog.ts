@@ -56,6 +56,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
   override async connectedCallback() {
     super.connectedCallback();
     this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
+    this.imageGenerator.generationContext = "aoiIconPublic";
   }
 
   override disconnectedCallback(): void {
@@ -139,6 +140,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
     this.haveAddedIdea = false;
     this.choice = undefined;
     this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
+    this.imageGenerator.generationContext = "aoiIconPublic";
   }
 
   close() {
@@ -403,6 +405,12 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
         }
       } catch (e) {
         this.choice.data.isGeneratingImage = false;
+        this.currentError =
+          (e as YpGenerateAiImageStartResponse).error === "rate_limited"
+            ? this.imageGenerator.formatRateLimitError(
+                e as YpGenerateAiImageStartResponse
+              )
+            : this.t("An error occurred. Please try again.");
         console.error(e);
       }
     } else {

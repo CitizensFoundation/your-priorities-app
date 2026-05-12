@@ -6,6 +6,7 @@ const assert = require("node:assert/strict");
 const {
   getAspectRatioForImageSize,
   getDefaultImageSizeForOptions,
+  normalizeImageGenerationProfileOptions,
   normalizeImageGenerationOptions,
 } = require("../services/llms/imageGeneration/imageModelConfig.cjs");
 
@@ -109,6 +110,58 @@ test("image generation options allow gpt-image-2 custom size and quality", () =>
     imageSize: "816x816",
     imageQuality: "low",
   });
+});
+
+test("image generation profile maps AOI icons to low quality GPT Image 2", () => {
+  const options = normalizeImageGenerationProfileOptions(
+    "aoiIcon",
+    "aoiIconAdmin",
+    "icon"
+  );
+
+  assert.deepEqual(options, {
+    imageProvider: "openai",
+    imageModel: "gpt-image-2",
+    imageSize: "1024x1024",
+    imageQuality: "low",
+    imageGenerationProfile: "aoiIcon",
+  });
+});
+
+test("image generation profile maps regular images to medium landscape GPT Image 2", () => {
+  const options = normalizeImageGenerationProfileOptions(
+    "regularAiImage",
+    "regularAiImage",
+    "logo"
+  );
+
+  assert.deepEqual(options, {
+    imageProvider: "openai",
+    imageModel: "gpt-image-2",
+    imageSize: "2048x1152",
+    imageQuality: "medium",
+    imageGenerationProfile: "regularAiImage",
+  });
+});
+
+test("image generation profiles reject context and type mismatches", () => {
+  assert.equal(
+    normalizeImageGenerationProfileOptions(
+      "regularAiImage",
+      "aoiIconAdmin",
+      "icon"
+    ).error,
+    "Image generation profile regularAiImage is not allowed for aoiIconAdmin"
+  );
+
+  assert.equal(
+    normalizeImageGenerationProfileOptions(
+      "aoiIcon",
+      "aoiIconAdmin",
+      "logo"
+    ).error,
+    "Image generation profile aoiIcon only supports icon images"
+  );
 });
 
 test("image generation options reject invalid gpt-image-2 custom sizes", () => {

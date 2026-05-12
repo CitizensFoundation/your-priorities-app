@@ -39,16 +39,10 @@ export class YpGenerateAiImage extends YpBaseElement {
   imageType: YpAiGenerateImageTypes = "logo";
 
   @property({ type: String })
-  imageProvider: YpAiGenerateImageProvider | undefined;
+  generationContext: YpAiImageGenerationContext = "regularAiImage";
 
   @property({ type: String })
-  imageModel: YpAiGenerateImageModel | undefined;
-
-  @property({ type: String })
-  imageSize: YpAiGenerateImageSize | undefined;
-
-  @property({ type: String })
-  imageQuality: YpAiGenerateImageQuality | undefined;
+  imageGenerationProfile: YpAiImageGenerationProfile = "regularAiImage";
 
   @property({ type: Number })
   jobId: number | undefined;
@@ -80,6 +74,29 @@ export class YpGenerateAiImage extends YpBaseElement {
       ${this.description ? `Description: ${this.description}` : ""}
       Image style: ${this.styleText?.value || "Something cool"}
     `;
+  }
+
+  formatRateLimitError(response: YpGenerateAiImageStartResponse) {
+    const maxImages = response.maxImagesPer24Hours;
+    const usedImages = response.usedImagesInLast24Hours;
+    const nextDate = response.nextImageAllowedAt
+      ? new Date(response.nextImageAllowedAt)
+      : undefined;
+    const nextDateText =
+      nextDate && !Number.isNaN(nextDate.getTime())
+        ? new Intl.DateTimeFormat(window.appGlobals.locale || undefined, {
+            dateStyle: "medium",
+            timeStyle: "short",
+          }).format(nextDate)
+        : this.t("later");
+
+    if (maxImages !== undefined && usedImages !== undefined) {
+      return `You have created ${usedImages} of ${maxImages} AI images allowed per 24 hours. You can create another image after ${nextDateText}.`;
+    } else if (maxImages !== undefined) {
+      return `You have reached the limit of ${maxImages} AI images per 24 hours. You can create another image after ${nextDateText}.`;
+    } else {
+      return `You have reached the AI image generation limit. You can create another image after ${nextDateText}.`;
+    }
   }
 
   async pollForImage() {
@@ -150,10 +167,8 @@ export class YpGenerateAiImage extends YpBaseElement {
           this.collectionId,
           this.imageType,
           this.finalPrompt,
-          this.imageProvider,
-          this.imageModel,
-          this.imageSize,
-          this.imageQuality
+          this.generationContext,
+          this.imageGenerationProfile
         );
     } catch (error: any) {
       console.error(error);
@@ -164,8 +179,21 @@ export class YpGenerateAiImage extends YpBaseElement {
       generateAiImageStartResponse.error ||
       !generateAiImageStartResponse.jobId
     ) {
-      this.currentError = this.t("An error occurred. Please try again.");
-      window.appGlobals.activity(`Generate AI Image - general error`);
+      this.submitting = false;
+      if (generateAiImageStartResponse?.error === "rate_limited") {
+        this.currentError = this.formatRateLimitError(
+          generateAiImageStartResponse
+        );
+        window.appGlobals.activity(`Generate AI Image - rate limited`);
+      } else {
+        this.currentError = this.t("An error occurred. Please try again.");
+        window.appGlobals.activity(`Generate AI Image - general error`);
+      }
+      this.fire("image-generation-error", {
+        ...generateAiImageStartResponse,
+        error: generateAiImageStartResponse?.error || "general_error",
+        message: this.currentError,
+      });
     } else {
       this.jobId = generateAiImageStartResponse.jobId;
 
@@ -217,10 +245,8 @@ export class YpGenerateAiImage extends YpBaseElement {
       collectionId: this.collectionId,
       collectionType: this.collectionType,
       imageType: this.imageType,
-      imageProvider: this.imageProvider,
-      imageModel: this.imageModel,
-      imageSize: this.imageSize,
-      imageQuality: this.imageQuality,
+      generationContext: this.generationContext,
+      imageGenerationProfile: this.imageGenerationProfile,
       jobId: this.jobId,
     });
     window.appGlobals.activity(`Generate AI Image - move to background`);

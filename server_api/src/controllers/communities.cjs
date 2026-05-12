@@ -37,8 +37,13 @@ const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
 const { copyGroup, copyCommunity } = require("../utils/copy_utils.cjs");
 const { recountCommunity } = require("../utils/recount_utils.cjs");
 const {
-  normalizeImageGenerationOptions,
+  normalizeImageGenerationProfileOptions,
 } = require("../services/llms/imageGeneration/imageModelConfig.cjs");
+const {
+  validateImageGenerationStartRequest,
+  canPollImageGenerationJob,
+  publicJobFields,
+} = require("../utils/ai_image_generation_guard.cjs");
 
 const getFromAnalyticsApi =
   require("../services/engine/analytics/manager.cjs").getFromAnalyticsApi;
@@ -4071,24 +4076,49 @@ router.get(
 router.post(
   "/:communityId/:start_generating/ai_image",
   auth.can("view community"),
-  function (req, res) {
-    const imageOptions = normalizeImageGenerationOptions(
-      req.body.imageProvider,
-      req.body.imageModel,
-      req.body.imageSize,
-      req.body.imageQuality
+  async function (req, res) {
+    const imageOptions = normalizeImageGenerationProfileOptions(
+      req.body.imageGenerationProfile,
+      req.body.generationContext,
+      req.body.imageType
     );
     if (imageOptions.error) {
       res.status(400).send({ error: imageOptions.error });
       return;
     }
 
-    models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
+    let guard;
+    try {
+      guard = await validateImageGenerationStartRequest(req, {
+        collectionType: "community",
+        collectionId: req.params.communityId,
+      });
+    } catch (error) {
+      log.error("Could not validate image generation request", {
+        err: error,
+        context: "start_generating_ai_image",
+        user: req.user ? toJson(req.user.simple()) : null,
+      });
+      res.sendStatus(500);
+      return;
+    }
+
+    if (!guard.allowed) {
+      res.status(guard.status).send(guard.body);
+      return;
+    }
+
+    const internalData = {
+      ...guard.internalData,
+      imageGenerationProfile: imageOptions.imageGenerationProfile,
+    };
+
+    models.AcBackgroundJob.createJob({}, internalData, (error, jobId) => {
       if (error) {
         log.error("Could not create backgroundJob", {
           err: error,
           context: "start_generating_ai_image",
-          user: toJson(req.user.simple()),
+          user: req.user ? toJson(req.user.simple()) : null,
         });
         res.sendStatus(500);
       } else {
@@ -4096,12 +4126,14 @@ router.post(
           "process-generative-ai",
           {
             type: "collection-image",
-            userId: req.user.id,
+            userId: guard.userId,
             jobId: jobId,
             collectionId: req.params.communityId,
             collectionType: "community",
             prompt: req.body.prompt,
             imageType: req.body.imageType,
+            generationContext: guard.generationContext,
+            imageGenerationProfile: imageOptions.imageGenerationProfile,
             imageProvider: imageOptions.imageProvider,
             imageModel: imageOptions.imageModel,
             imageSize: imageOptions.imageSize,
@@ -4121,20 +4153,29 @@ router.get(
   "/:communityId/:jobId/poll_for_generating_ai_image",
   auth.can("view community"),
   function (req, res) {
+    if (!req.user) {
+      res.sendStatus(401);
+      return;
+    }
+
     models.AcBackgroundJob.findOne({
       where: {
         id: req.params.jobId,
       },
-      attributes: ["id", "progress", "error", "data"],
+      attributes: ["id", "progress", "error", "data", "internal_data"],
     })
       .then((job) => {
-        res.send(job);
+        if (!canPollImageGenerationJob(req, job)) {
+          res.sendStatus(404);
+        } else {
+          res.send(publicJobFields(job));
+        }
       })
       .catch((error) => {
         log.error("Could not get backgroundJob", {
           err: error,
           context: "poll_for_generating_ai_image",
-          user: toJson(req.user.simple()),
+          user: req.user ? toJson(req.user.simple()) : null,
         });
         res.sendStatus(500);
       });

@@ -1128,6 +1128,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             .collectionId="${collectionId}"
             .name="${name}"
             .description="${description}"
+            generationContext="regularAiImage"
+            imageGenerationProfile="regularAiImage"
             @yp-generate-ai-image-background="${this
               ._logoGeneratingInBackground}"
             @got-image="${this._gotAiImage}"

@@ -50,6 +50,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
   @property({ type: Boolean })
   isGeneratingWithAi = false;
 
+  @property({ type: String })
+  rateLimitError: string | undefined;
+
   @property({ type: Boolean })
   isSubmittingIdeas = false;
 
@@ -321,6 +324,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
 
     this.isGeneratingWithAi = true;
     this.shouldContinueGenerating = true;
+    this.rateLimitError = undefined;
 
     const choicesToGenerate = this.choices!.filter(
       (choice) => !choice.data?.imageUrl
@@ -379,6 +383,13 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
         }
       } catch (e) {
         choice.data.isGeneratingImage = false;
+        if ((e as YpGenerateAiImageStartResponse).error === "rate_limited") {
+          this.rateLimitError = imageGenerator.formatRateLimitError(
+            e as YpGenerateAiImageStartResponse
+          );
+          this.shouldContinueGenerating = false;
+          window.appGlobals.showToast(this.rateLimitError, 10000);
+        }
         console.error(e);
       }
     };
@@ -414,6 +425,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
 
     this.isGeneratingWithAi = true;
     this.shouldContinueGenerating = true;
+    this.rateLimitError = undefined;
 
     for (let i = 0; i < this.choices!.length; i++) {
       if (!this.shouldContinueGenerating) {
@@ -464,6 +476,13 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
         this.requestUpdate();
       } catch (e) {
         choice.data.isGeneratingImage = false;
+        if ((e as YpGenerateAiImageStartResponse).error === "rate_limited") {
+          this.rateLimitError = this.imageGenerator.formatRateLimitError(
+            e as YpGenerateAiImageStartResponse
+          );
+          this.shouldContinueGenerating = false;
+          window.appGlobals.showToast(this.rateLimitError, 10000);
+        }
         console.error(e);
       }
     }
@@ -590,6 +609,15 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
         .iconGenerationBottomSpinner {
           margin-top: 16px;
           width: 200px;
+        }
+
+        .rateLimitError {
+          color: var(--md-sys-color-error);
+          font-size: 14px;
+          line-height: 1.4;
+          max-width: 520px;
+          margin: 12px 0;
+          text-align: center;
         }
 
         .ideasList {
@@ -900,6 +928,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmScrolling {
             ?hidden="${this.allChoicesHaveIcons || !this.hasLlm}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"
           ></md-outlined-text-field>
+          <div class="rateLimitError" ?hidden="${!this.rateLimitError}">
+            ${this.rateLimitError}
+          </div>
           <div class="layout vertical center-center" ?hidden="${!this.hasLlm}">
             <md-outlined-button
               class="generateIconButton"
