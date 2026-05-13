@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.232",
+  "version": "9.0.233",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -18,18 +18,18 @@
   "dependencies": {
     "@airbrake/node": "^2.1.9",
     "@aws-sdk/client-s3": "^3.1029.0",
-    "@google-cloud/aiplatform": "^6.5.0",
-    "@google-cloud/speech": "^7.3.0",
+    "@google-cloud/aiplatform": "^6.8.0",
+    "@google-cloud/speech": "^7.3.1",
     "@google-cloud/storage": "^7.19.0",
-    "@google-cloud/translate": "^9.3.0",
+    "@google-cloud/translate": "^9.4.1",
     "@google-cloud/vertexai": "^1.10.0",
-    "@google-cloud/vision": "^5.3.5",
+    "@google-cloud/vision": "^5.3.6",
     "@node-saml/passport-saml": "^5.1.0",
-    "@policysynth/agents": "^1.3.180",
+    "@policysynth/agents": "^1.3.182",
     "async": "^3.2.6",
     "authorized": "^1.0.0",
     "aws-sdk": "^2.1693.0",
-    "axios": "^1.15.2",
+    "axios": "^1.16.1",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "bullmq": "^5.31.0",
@@ -44,30 +44,30 @@
     "deep-equal": "^2.2.3",
     "docx": "^9.6.1",
     "download-file": "^0.1.5",
-    "ejs": "^5.0.1",
+    "ejs": "^5.0.2",
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.3.2",
+    "express-rate-limit": "^8.5.1",
     "express-session": "git+https://github.com/rbjarnason/session.git#upgrade-21",
-    "express-useragent": "^2.1.0",
+    "express-useragent": "^2.1.1",
     "farmhash": "4.0.1",
     "form-data": "^4.0.4",
     "html-to-docx": "^1.8.0",
-    "i18next": "^26.0.4",
+    "i18next": "^26.1.0",
     "i18next-fs-backend": "^2.6.5",
     "image-size": "^2.0.2",
-    "isbot": "^5.1.37",
+    "isbot": "^5.1.40",
     "iso-639-1": "^3.1.5",
     "jsonrepair": "^3.12.0",
     "knuth-shuffle-seeded": "^1.0.6",
     "lodash": "^4.18.1",
-    "marked": "^18.0.0",
+    "marked": "^18.0.3",
     "moment": "^2.30.1",
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
     "multer-s3": "^3.0.1",
-    "newrelic": "^13.18.0",
-    "nodemailer": "^8.0.5",
+    "newrelic": "^13.20.0",
+    "nodemailer": "^8.0.7",
     "open-graph-scraper": "^6.11.0",
     "openai": "^6.36.0",
     "passport": "^0.7.0",
@@ -80,16 +80,16 @@
     "pug": "^3.0.4",
     "randomstring": "^1.3.1",
     "rate-limit-redis": "^4.3.1",
-    "redis": "^5.11.0",
+    "redis": "^5.12.1",
     "replicate": "^1.4.0",
     "request-ip": "^3.3.0",
     "sanitize-filename": "^1.6.4",
     "sequelize": "^6.37.7",
     "sharp": "^0.34.5",
     "sitemap": "^9.0.1",
-    "stripe": "^22.0.1",
+    "stripe": "^22.1.1",
     "striptags": "^3.2.0",
-    "uuid": "^13.0.0",
+    "uuid": "^13.0.2",
     "ws": "^8.18.2"
   },
   "devDependencies": {
@@ -100,17 +100,18 @@
     "@types/bunyan-prettystream": "^0.1.35",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/express-session": "^1.18.2",
+    "@types/express": "5.0.6",
+    "@types/express-serve-static-core": "5.0.7",
+    "@types/express-session": "^1.19.0",
     "@types/express-useragent": "^1.0.5",
     "@types/lodash": "^4.17.24",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^22.19.17",
+    "@types/node": "^22.19.19",
     "@types/passport": "^1.0.17",
     "@types/request-ip": "^0.0.41",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.18.1",
-    "axios": "^1.15.2",
+    "axios": "^1.16.1",
     "copyfiles": "^2.4.1",
     "csv-parse": "^6.2.1",
     "diacritics": "^1.3.0",
@@ -127,52 +128,16 @@
     "yamljs": "^0.3.0"
   },
   "overrides": {
-    "basic-ftp": "^5.3.0",
-    "@xmldom/xmldom": "0.8.13",
-    "follow-redirects": "1.16.0",
-    "protobufjs": "7.5.5",
-    "validator": "13.15.35",
-    "path-to-regexp": "8.4.2",
-    "picomatch": "2.3.2",
-    "dottie": "2.0.7",
-    "glob@6.0.4": {
-      "minimatch": {
-        "brace-expansion": "1.1.14"
-      }
+    "@types/express@5.0.6": {
+      "@types/express-serve-static-core": "5.0.7"
     },
-    "glob@7.1.7": {
-      "minimatch": {
-        "brace-expansion": "1.1.14"
-      }
+    "@google-cloud/storage": {
+      "retry-request": "8.0.2",
+      "teeny-request": "10.1.2"
     },
-    "glob@7.2.3": {
-      "minimatch": {
-        "brace-expansion": "1.1.14"
-      }
-    },
-    "copyfiles": {
-      "minimatch": {
-        ".": "3.1.4",
-        "brace-expansion": "1.1.14"
-      }
-    },
-    "readdir-glob": {
-      "minimatch": {
-        ".": "5.1.9",
-        "brace-expansion": "2.1.0"
-      }
-    },
-    "@types/request": {
-      "form-data": "2.5.4"
-    },
-    "graphql-request": {
-      "form-data": "3.0.4"
-    },
-    "prebuild-install": {
-      "tar-fs": "2.1.4"
-    },
-    "prebuildify": {
-      "tar-fs": "2.1.4"
+    "express-session": {
+      "cookie": "0.7.2",
+      "on-headers": "1.1.0"
     }
   },
   "scripts": {
