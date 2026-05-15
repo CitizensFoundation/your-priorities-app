@@ -1,20 +1,22 @@
-FROM node:20
-MAINTAINER Robert Vidar Bjarnason <robert@citizens.is>
+FROM node:22
+LABEL maintainer="Robert Vidar Bjarnason <robert@citizens.is>"
 
-RUN echo 'version 9.0'
+RUN echo 'version 9.1'
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+RUN mkdir -p /home/node/app/server_api && chown -R node:node /home/node/app
 
-WORKDIR /home/node/app
+WORKDIR /home/node/app/server_api
 
-COPY --chown=node:node ./server_api/package.json ./
-COPY --chown=node:node ./server_api/package-lock.json ./
-COPY --chown=node:node ./server_api .
+COPY --chown=node:node ./server_api/package.json ./server_api/package-lock.json ./
 
 USER node
 
 RUN npm ci
 
-COPY --chown=node:node . .
+COPY --chown=node:node ./server_api .
 
-CMD [ "node --optimize_for_size --max_old_space_size=960 ", "node_modules/@yrpri/api/services/workers/main.cjs" ]
+RUN npm run build
+
+WORKDIR /home/node/app
+
+CMD [ "node", "--optimize_for_size", "--max_old_space_size=960", "server_api/dist/services/workers/main.cjs" ]

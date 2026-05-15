@@ -1,27 +1,44 @@
-FROM node:20
+FROM node:22
 
 LABEL maintainer="Robert Vidar Bjarnason <robert@citizens.is>"
 
-RUN echo 'version 1.3'
+RUN echo 'version 1.5'
 
-# Create app directory and give permissions to node user
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 
 WORKDIR /home/node/app
 
-COPY --chown=node:node ./server_api/package.json ./
-COPY --chown=node:node ./server_api/package-lock.json ./
+# copy server package files
+COPY --chown=node:node ./server_api/package.json ./server_api/package-lock.json ./server_api/
+
+# copy webapps client package files
+COPY --chown=node:node ./webApps/client/package.json ./webApps/client/package-lock.json ./webApps/client/
 
 USER node
 
+# install server dependencies
+WORKDIR /home/node/app/server_api
 RUN npm ci
 
-COPY --chown=node:node ./server_api .
-COPY --chown=node:node ./webApps .
-COPY --chown=node:node ./webApps /home/node/webApps
+# install client dependencies
+WORKDIR /home/node/app/webApps/client
+RUN npm ci
+
+WORKDIR /home/node/app
+COPY --chown=node:node ./server_api ./server_api
+COPY --chown=node:node ./webApps ./webApps
+
+# build client
+WORKDIR /home/node/app/webApps/client
+RUN npm run build
+
+# build server
+WORKDIR /home/node/app/server_api
+RUN npm run build
+
+WORKDIR /home/node/app
 
 ENV PORT=9080
-
 EXPOSE 9080
 
 CMD [ "node", "server_api/dist/server.js" ]
