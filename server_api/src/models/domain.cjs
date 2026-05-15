@@ -339,22 +339,29 @@ module.exports = (sequelize, DataTypes) => {
 
   Domain.setYpDomain = (req, res, next) => {
     let domainName;
-    const parsedDomain = parseDomain(req.headers.host);
-    if (parsedDomain && parsedDomain.domain) {
-      if (parsedDomain.subdomain.indexOf(".") > -1) {
-        let subdomain =
-          parsedDomain.subdomain.split(".")[
-            parsedDomain.subdomain.split(".").length - 1
-          ];
-        domainName =
-          subdomain + "." + parsedDomain.domain + "." + parsedDomain.tld;
-      } else {
-        domainName = parsedDomain.domain + "." + parsedDomain.tld;
-      }
-    } else if (parsedDomain) {
-      domainName = parsedDomain.tld;
+
+    if (process.env.YP_FORCE_DOMAIN_NAME) {
+      domainName = process.env.YP_FORCE_DOMAIN_NAME;
+    } else if (process.env.DEFAULT_DOMAIN_NAME) {
+      domainName = process.env.DEFAULT_DOMAIN_NAME;
     } else {
-      domainName = "localhost";
+      const parsedDomain = parseDomain(req.headers.host);
+      if (parsedDomain && parsedDomain.domain) {
+        if (parsedDomain.subdomain.indexOf(".") > -1) {
+          let subdomain =
+            parsedDomain.subdomain.split(".")[
+              parsedDomain.subdomain.split(".").length - 1
+            ];
+          domainName =
+            subdomain + "." + parsedDomain.domain + "." + parsedDomain.tld;
+        } else {
+          domainName = parsedDomain.domain + "." + parsedDomain.tld;
+        }
+      } else if (parsedDomain) {
+        domainName = parsedDomain.tld;
+      } else {
+        domainName = "localhost";
+      }
     }
 
     if (process.env.CREATE_NEW_DOMAINS_ON_DEMAND) {

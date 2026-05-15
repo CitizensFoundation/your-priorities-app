@@ -404,14 +404,14 @@ async function seedAllModels() {
     log.info(`User ${newUser.email} created with ID: ${newUser.id}`);
 
     // Create Domain
-    const randomDomainName =
-      crypto.randomBytes(8).toString("hex") + ".seed.local"; // Shorter and identifiable
+    const defaultDomainName = process.env.YP_FORCE_DOMAIN_NAME || process.env.DEFAULT_DOMAIN_NAME ||
+      (crypto.randomBytes(8).toString("hex") + ".seed.local"); // Shorter and identifiable
     log.info(
-      `Attempting to create domain: ${randomDomainName} for user ${newUser.id}`
+      `Attempting to create domain: ${defaultDomainName} for user ${newUser.id}`
     );
     const newDomain = mainDb.Domain.build({
       name: `Default Domain for ${userName}`,
-      domain_name: randomDomainName,
+      domain_name: defaultDomainName,
       access:
         mainDb.Domain.ACCESS_PUBLIC !== undefined
           ? mainDb.Domain.ACCESS_PUBLIC
