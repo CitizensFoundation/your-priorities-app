@@ -25,11 +25,10 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Подождите примерно 30-40 секунд, чтобы база данных успела инициализироваться (healthcheck Postgres завершится). Затем выполните скрипт авто-сидирования вручную через контейнер приложения, указав email администратора и пароль:
-```bash
-docker compose exec your-priorities-app node server_api/dist/utils/seedModels.cjs spinmoded@gmail.com vash_nadezhniy_parol_123
-```
-> **Внимание!** Этот скрипт очистит все существующие таблицы (force sync) и создаст структуру с нуля. Если у вас уже есть данные, этот шаг следует пропустить, или заранее сделать бекап.
+Приложение настроено с помощью `entrypoint.sh` скрипта. Если база данных `yrpri_production` окажется пустой (таблица `Domains` не существует), скрипт автоматически запустит сидирование базы данных при старте контейнера, создав необходимые записи, и только потом запустит само приложение.
+
+> **Внимание!** Если у вас уже есть данные, инициализация не выполнится и данные будут в безопасности. Если вы хотите вызвать сидирование принудительно, используйте:
+> `docker compose exec your-priorities-app node server_api/dist/utils/seedModels.cjs spinmoded@gmail.com vash_nadezhniy_parol_123`
 
 ## Шаг 4. Настройка Nginx и WebSockets
 В папке `deployment/2024/webserver_reverse_proxy/templates/default.conf.template` уже добавлен эталонный конфиг Nginx. В нём прописан upstream `your-priorities-app:9080` и настроены корректные заголовки `X-Forwarded-Host $host;`, а также добавлены настройки проксирования WebSockets (`Upgrade` и `Connection "upgrade"`). Если вы поднимаете внешний Nginx на хосте, скопируйте эту конфигурацию к себе.

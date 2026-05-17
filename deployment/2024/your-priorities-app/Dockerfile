@@ -36,6 +36,10 @@ RUN npm run build
 WORKDIR /home/node/app/server_api
 RUN npm run build
 
+USER root
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+USER node
+
 WORKDIR /home/node/app
 
 # copy entrypoint
@@ -44,8 +48,6 @@ RUN chmod +x /home/node/app/entrypoint.sh
 
 ENV PORT=9080
 EXPOSE 9080
-
-RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/home/node/app/entrypoint.sh"]
 CMD [ "node", "server_api/dist/server.js" ]

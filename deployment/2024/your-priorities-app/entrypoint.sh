@@ -8,7 +8,7 @@ done
 echo "PostgreSQL is ready!"
 
 # Проверяем, пустая ли база
-DB_EXISTS=$(psql -U yrpri_db_user -d yrpri_production -h postgres -tAc "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'Domains');")
+DB_EXISTS=$(PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h postgres -tAc "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'Domains');")
 
 if [ "$DB_EXISTS" = "f" ]; then
     echo "Database is empty. Running seed models script..."

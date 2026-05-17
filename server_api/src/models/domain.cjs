@@ -302,7 +302,7 @@ module.exports = (sequelize, DataTypes) => {
             identifierFormat: domain.secret_api_keys.saml.identifierFormat
               ? domain.secret_api_keys.saml.identifierFormat
               : undefined,
-            cert: domain.secret_api_keys.saml.cert
+            idpCert: domain.secret_api_keys.saml.cert
               ? domain.secret_api_keys.saml.cert
               : null,
             callbackUrl:

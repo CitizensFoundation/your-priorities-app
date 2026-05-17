@@ -2377,6 +2377,25 @@ router.get('/auth/saml', function(req, res, next) {
   });
 });
 
+router.post('/auth/:strategy/callback', function(req, res) {
+  req.sso.authenticate(req.params.strategy, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from SAML login callback", { err: error });
+      if (error === "customError") {
+        res.render("samlCustomError", {
+          customErrorHTML: req.ypDomain.configuration.customSAMLErrorHTML,
+          closeWindowText: "Close window",
+        });
+      } else {
+        error.url = req.url;
+        res.sendStatus(500);
+      }
+    } else {
+      res.render('samlLoginComplete', {});
+    }
+  });
+});
+
 router.get('/auth/facebook/callback', function(req, res) {
   req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
     if (error) {
