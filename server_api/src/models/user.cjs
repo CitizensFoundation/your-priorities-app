@@ -128,9 +128,77 @@ module.exports = (sequelize, DataTypes) => {
       sequelize.models.User.serializeIslandIsSamlUser(profile, req, callback);
     } else if (profile["urn:mynj:userCode"] || profile.issuer === 'https://my.state.nj.us/idp/shibboleth') {
       sequelize.models.User.serializeMyNJSamlUser(profile, req, callback);
+    } else if (profile.email) {
+      sequelize.models.User.serializeGenericSamlUser(profile, req, callback);
     } else {
       callback("Can't find SAML serialize handler");
     }
+  };
+
+  User.serializeGenericSamlUser = (profile, req, callback) => {
+    log.info("User Serialized In Serialize Generic SAML User", { context: 'serializeGenericSamlUser', profile: profile });
+    let user;
+    let email = profile.email ? profile.email.toLowerCase() : null;
+
+    if (!email) {
+       return callback("SAML profile is missing an email address");
+    }
+
+    async.series([
+      (seriesCallback) => {
+        sequelize.models.User.findOne({
+          where: { email: email },
+          attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
+        }).then((userIn) => {
+          if (userIn) {
+            user = userIn;
+            log.info("User Serialized Found Generic SAML User", { context: 'serializeGenericSamlUser', email: user.email });
+            seriesCallback();
+          } else {
+            seriesCallback();
+          }
+        }).catch((error) => {
+          seriesCallback(error);
+        });
+      },
+      (seriesCallback) => {
+        if (!user) {
+          if (
+            req.ypDomain.configuration &&
+            req.ypDomain.configuration.doNotCreateElectronicIdUsersAutomatically
+          ) {
+            seriesCallback("customError");
+            return;
+          }
+          const name = profile.firstName && profile.lastName ? `${profile.firstName} ${profile.lastName}` : (profile.name || email);
+          sequelize.models.User.create({
+            email: email,
+            name: name,
+            private_profile_data: { saml_provider: "saml" },
+            notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+            status: 'active'
+          }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Created Generic SAML User", { context: 'serializeGenericSamlUser', email: user.email });
+              seriesCallback();
+            } else {
+              seriesCallback("Could not create user from SAML");
+            }
+          }).catch((error) => {
+            seriesCallback(error);
+          });
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) => {
+      if (error) {
+        callback(error);
+      } else {
+        callback(null, user);
+      }
+    });
   };
 
   User.serializeMyNJSamlUser = (profile, req, callback) => {
