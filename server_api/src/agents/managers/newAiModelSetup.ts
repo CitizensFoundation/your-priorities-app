@@ -1214,6 +1214,42 @@ export class NewAiModelSetup {
       log.debug("Google model already exists: Gemini 3.1 Flash Lite Preview");
     }
 
+    const gemini35Flash = await PsAiModel.findOne({
+      where: { name: "Gemini 3.5 Flash" },
+    });
+
+    const gemini35FlashConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.Text,
+      modelSize: PsAiModelSize.Medium,
+      provider: "google",
+      prices: {
+        costInTokensPerMillion: 1.5,
+        costOutTokensPerMillion: 9.0,
+        costInCachedContextTokensPerMillion: 0.15,
+        currency: "USD",
+      },
+      model: "gemini-3.5-flash",
+      active: true,
+      maxTokensOut: 65536,
+      maxContextTokens: 1048576,
+      defaultTemperature: 0.0,
+    };
+
+    if (!gemini35Flash) {
+      await PsAiModel.create({
+        name: "Gemini 3.5 Flash",
+        organization_id: 1,
+        user_id: userId,
+        configuration: gemini35FlashConfig,
+      });
+      log.info("Created Google model: Gemini 3.5 Flash");
+    } else {
+      gemini35Flash.set("configuration", gemini35FlashConfig);
+      gemini35Flash.changed("configuration", true);
+      await gemini35Flash.save();
+      log.debug("Google model already exists: Gemini 3.5 Flash");
+    }
+
     const gemini30Flash = await PsAiModel.findOne({
       where: { name: "Gemini 3.0 Flash" },
     });
@@ -1396,6 +1432,7 @@ export class NewAiModelSetup {
       { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Flash Lite Preview", envKey: "GEMINI_API_KEY" },
+      { name: "Gemini 3.5 Flash", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.0 Flash", envKey: "GEMINI_API_KEY" },
     ];
 
