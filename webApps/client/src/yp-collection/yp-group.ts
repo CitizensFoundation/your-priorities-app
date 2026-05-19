@@ -16,6 +16,7 @@ import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import "../yp-category/yp-category-list-view.js";
+import "../yp-evidence/yp-consultation-info-portal.js";
 import { YpPostsList } from "../yp-post/yp-posts-list.js";
 import { YpPostEdit } from "../yp-post/yp-post-edit.js";
 import { YpPostMap } from "../yp-post/yp-post-map.js";
@@ -41,6 +42,7 @@ export const GroupTabTypes: Record<string, number> = {
   Failed: 3,
   Newsfeed: 4,
   Map: 5,
+  Evidence: 6,
 };
 
 @customElement("yp-group")
@@ -341,6 +343,14 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  get visibleSelectedGroupTabIndex() {
+    if (!this.hasNonOpenPosts && this.selectedGroupTab > 0) {
+      return this.selectedGroupTab - 3;
+    } else {
+      return this.selectedGroupTab;
+    }
+  }
+
   _openHelpPageIfNeededOnce() {
     if (
       this.collection &&
@@ -422,6 +432,10 @@ export class YpGroup extends YpCollection {
         break;
       case "map":
         tabNumber = GroupTabTypes.Map;
+        break;
+      case "evidence":
+      case "info":
+        tabNumber = GroupTabTypes.Evidence;
         break;
       default:
         tabNumber = GroupTabTypes.Open;
@@ -910,7 +924,7 @@ export class YpGroup extends YpCollection {
         <div class="layout vertical center-center">
           <md-tabs
             @change="${this._selectGroupTab}"
-            .activeTabIndex="${this.selectedGroupTab}"
+            .activeTabIndex="${this.visibleSelectedGroupTabIndex}"
           >
             <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
               >${this.tabLabelWithCount("open")}<md-icon slot="icon"
@@ -937,6 +951,13 @@ export class YpGroup extends YpCollection {
                 `
               : nothing}
             ${this.renderNewsAndMapTabs()}
+            ${this.hasEvidencePortal
+              ? html`
+                  <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
+                    >Evidence<md-icon slot="icon">travel_explore</md-icon>
+                  </md-secondary-tab>
+                `
+              : nothing}
           </md-tabs>
         </div>
       `;
@@ -1043,9 +1064,32 @@ export class YpGroup extends YpCollection {
       case GroupTabTypes.Map:
         page = html``;
         break;
+      case GroupTabTypes.Evidence:
+        page = this.renderEvidencePortal();
+        break;
     }
 
     return page;
+  }
+
+  get hasEvidencePortal() {
+    return !!(
+      this.collection &&
+      (this.collection as YpGroupData).configuration?.enableEvidencePortal
+    );
+  }
+
+  renderEvidencePortal() {
+    if (!this.collection) return html``;
+
+    return html`
+      <yp-consultation-info-portal
+        .groupId="${this.collection.id}"
+        ?isAdmin="${YpAccessHelpers.checkGroupAccess(
+          this.collection as YpGroupData
+        )}"
+      ></yp-consultation-info-portal>
+    `;
   }
 
   renderAllOurIdeas() {

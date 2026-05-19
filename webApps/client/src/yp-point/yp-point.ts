@@ -17,6 +17,7 @@ import "../common/yp-emoji-selector.js";
 
 import "../yp-magic-text/yp-magic-text.js";
 import "./yp-point-actions.js";
+import "../yp-evidence/yp-evidence-bundle.js";
 
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
@@ -751,6 +752,7 @@ export class YpPoint extends YpBaseElement {
           ${this.videoOrAudioActive
             ? this.renderVideoOrAudio()
             : this.renderTextPoint()}
+          ${this.renderEvidenceBundle()}
           ${this.showAdminComments ? this.renderAdminComments() : nothing}
           ${this.isEditing ? this.renderEditPoint() : nothing}
 
@@ -776,6 +778,21 @@ export class YpPoint extends YpBaseElement {
           </div>
         </div>
       </div>
+    `;
+  }
+
+  renderEvidenceBundle() {
+    if (!this.post?.Group?.configuration?.enableEvidencePortal) {
+      return nothing;
+    }
+
+    return html`
+      <yp-evidence-bundle
+        compact
+        subjectType="point"
+        .subjectId="${this.point.id}"
+        ?canReview="${YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+      ></yp-evidence-bundle>
     `;
   }
 

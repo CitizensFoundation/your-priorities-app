@@ -260,6 +260,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forcePostSortMethodAs?: string;
   canVote?: boolean;
   customRatings?: Array<YpCustomRatingsData>;
+  enableEvidencePortal?: boolean;
   hidePostActionsInGrid?: boolean;
   hideDownVoteForPost?: boolean;
   hidePostCover?: boolean;

@@ -26,6 +26,8 @@ import "./yp-post-header.js";
 import "./yp-post-list-gallery-item.js";
 import "./yp-post-points.js";
 import "./yp-post-user-images.js";
+import "../yp-evidence/yp-evidence-bundle.js";
+import "../yp-evidence/yp-evidence-request-button.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 // TODO: Remove
@@ -221,6 +223,19 @@ export class YpPost extends YpCollection {
 
         ac-activities {
           padding-top: 8px;
+        }
+
+        .evidencePostContainer {
+          max-width: 860px;
+          width: 100%;
+          margin: 16px auto 0;
+        }
+
+        .evidenceActions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          align-items: center;
         }
 
         yp-post-user-images {
@@ -560,6 +575,33 @@ export class YpPost extends YpCollection {
     `;
   }
 
+  renderEvidence() {
+    if (!this.post?.Group?.configuration?.enableEvidencePortal) {
+      return nothing;
+    }
+
+    return html`
+      <div class="evidencePostContainer">
+        <div class="evidenceActions" ?hidden="${!this.isAdmin}">
+          <yp-evidence-request-button
+            subjectType="post"
+            .subjectId="${this.post.id}"
+          ></yp-evidence-request-button>
+          <yp-evidence-request-button
+            deepResearch
+            subjectType="post"
+            .subjectId="${this.post.id}"
+          ></yp-evidence-request-button>
+        </div>
+        <yp-evidence-bundle
+          subjectType="post"
+          .subjectId="${this.post.id}"
+          ?canReview="${this.isAdmin}"
+        ></yp-evidence-bundle>
+      </div>
+    `;
+  }
+
   private _isEditRoute(route: string | undefined) {
     return !!route && (route.endsWith("/edit") || route.endsWith("/edit/"));
   }
@@ -585,6 +627,7 @@ export class YpPost extends YpCollection {
                 : this.renderPostHeader()}
             </div>
             ${this.renderNavigationButtons()}
+            ${this.renderEvidence()}
             <div class="layout vertical center-center">
               ${this.renderPostTabs()}
             </div>

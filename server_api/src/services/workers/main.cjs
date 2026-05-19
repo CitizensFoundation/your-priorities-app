@@ -109,5 +109,13 @@ i18n
         generativeAi.process(job.data, done);
       });
     });
-  });
 
+    import(
+      "./evidence.js"
+    ).then(({EvidenceWorker}) => {
+      const evidence = new EvidenceWorker();
+      queue.process('process-evidence', 1, function(job, done) {
+        evidence.process(job.data, done);
+      });
+    });
+  });

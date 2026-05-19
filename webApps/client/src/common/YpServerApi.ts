@@ -817,4 +817,103 @@ export class YpServerApi extends YpServerApiBase {
       false
     );
   }
+
+  public getEvidenceBundles(
+    subjectType: 'post' | 'point',
+    subjectId: number
+  ) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/evidence/${this.evidenceSubjectPath(subjectType)}/${subjectId}/bundles`
+    );
+  }
+
+  public requestEvidenceResearch(
+    subjectType: 'post' | 'point',
+    subjectId: number,
+    body: Record<string, unknown> = {}
+  ) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/evidence/${this.evidenceSubjectPath(subjectType)}/${subjectId}/research`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public requestDeepEvidenceResearch(
+    subjectType: 'post' | 'point',
+    subjectId: number,
+    body: Record<string, unknown> = {}
+  ) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/evidence/${this.evidenceSubjectPath(subjectType)}/${subjectId}/deep_research`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public getEvidencePortal(groupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/evidence/groups/${groupId}/portal`
+    );
+  }
+
+  public analyzeEvidencePortal(groupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/evidence/groups/${groupId}/portal/analyze`,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public synthesizeEvidenceBundle(groupId: number, bundleId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/evidence/groups/${groupId}/bundles/${bundleId}/synthesize`,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public publishEvidenceBundle(groupId: number, bundleId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/evidence/groups/${groupId}/bundles/${bundleId}/publish`,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public archiveEvidenceBundle(groupId: number, bundleId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/evidence/groups/${groupId}/bundles/${bundleId}/archive`,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  private evidenceSubjectPath(subjectType: 'post' | 'point') {
+    return subjectType === 'post' ? 'posts' : 'points';
+  }
 }

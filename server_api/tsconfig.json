@@ -17,11 +17,13 @@
       "../webApps/client/src/types.d.ts",
       "../webApps/client/src/agents.d.ts",
       "../webApps/client/src/typesAoi.d.ts",
+      "../webApps/client/src/typesEvidence.d.ts",
       "../webApps/client/src/typesLlms.d.ts"
     ]
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.cts",
     "src/**/*.js",
     "src/**/*.cjs",
     "src/**/*.json",

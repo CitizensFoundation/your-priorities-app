@@ -12,6 +12,7 @@
     "ts-out/**/*",
     "src/types.d.ts",
     "src/typesAoi.d.ts",
+    "src/typesEvidence.d.ts",
     "src/typesLlms.d.ts",
     "locales/**/*"
   ],
