@@ -176,7 +176,8 @@ export class NewAiModelSetup {
   /**
    * Seeds OpenAI models.
    * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
-   * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, and GPT-5.5.
+   * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5, and
+   * GPT-5.5 tier variants.
    */
   static async seedOpenAiModels(userId: number): Promise<void> {
     // GPT-4o
@@ -942,6 +943,167 @@ export class NewAiModelSetup {
       await openAiGpt55.save();
       log.debug("OpenAI model already exists: GPT-5.5");
     }
+
+    const openAiGpt55Pro = await PsAiModel.findOne({
+      where: { name: "GPT-5.5 Pro" },
+    });
+
+    const openAiGpt55ProConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 30.0,
+        costOutTokensPerMillion: 180.0,
+        costInCachedContextTokensPerMillion: 30.0,
+        regionalProcessingMargin: 10,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.5-pro",
+      active: true,
+    };
+
+    if (!openAiGpt55Pro) {
+      await PsAiModel.create({
+        name: "GPT-5.5 Pro",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt55ProConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.5 Pro");
+    } else {
+      openAiGpt55Pro.set("configuration", openAiGpt55ProConfig);
+      openAiGpt55Pro.changed("configuration", true);
+      await openAiGpt55Pro.save();
+      log.debug("OpenAI model already exists: GPT-5.5 Pro");
+    }
+
+    const openAiGpt55Priority = await PsAiModel.findOne({
+      where: { name: "GPT-5.5 Priority" },
+    });
+
+    const openAiGpt55PriorityConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      inferenceType: "priority",
+      prices: {
+        costInTokensPerMillion: 12.5,
+        costOutTokensPerMillion: 75.0,
+        costInCachedContextTokensPerMillion: 1.25,
+        regionalProcessingMargin: 10,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.5-priority",
+      apiModel: "gpt-5.5",
+      active: true,
+    };
+
+    if (!openAiGpt55Priority) {
+      await PsAiModel.create({
+        name: "GPT-5.5 Priority",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt55PriorityConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.5 Priority");
+    } else {
+      openAiGpt55Priority.set("configuration", openAiGpt55PriorityConfig);
+      openAiGpt55Priority.changed("configuration", true);
+      await openAiGpt55Priority.save();
+      log.debug("OpenAI model already exists: GPT-5.5 Priority");
+    }
+
+    const openAiGpt55Normal = await PsAiModel.findOne({
+      where: { name: "GPT-5.5 Normal" },
+    });
+
+    const openAiGpt55NormalConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      prices: {
+        costInTokensPerMillion: 5.0,
+        costOutTokensPerMillion: 30.0,
+        costInCachedContextTokensPerMillion: 0.5,
+        longContextTokenThreshold: 272_000,
+        longContextCostInTokensPerMillion: 10.0,
+        longContextCostInCachedContextTokensPerMillion: 1.0,
+        longContextCostOutTokensPerMillion: 45.0,
+        regionalProcessingMargin: 10,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.5-normal",
+      apiModel: "gpt-5.5",
+      active: true,
+    };
+
+    if (!openAiGpt55Normal) {
+      await PsAiModel.create({
+        name: "GPT-5.5 Normal",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt55NormalConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.5 Normal");
+    } else {
+      openAiGpt55Normal.set("configuration", openAiGpt55NormalConfig);
+      openAiGpt55Normal.changed("configuration", true);
+      await openAiGpt55Normal.save();
+      log.debug("OpenAI model already exists: GPT-5.5 Normal");
+    }
+
+    const openAiGpt55Flex = await PsAiModel.findOne({
+      where: { name: "GPT-5.5 Flex" },
+    });
+
+    const openAiGpt55FlexConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "openai",
+      inferenceType: "flex",
+      prices: {
+        costInTokensPerMillion: 2.5,
+        costOutTokensPerMillion: 15.0,
+        costInCachedContextTokensPerMillion: 0.25,
+        longContextTokenThreshold: 272_000,
+        longContextCostInTokensPerMillion: 5.0,
+        longContextCostInCachedContextTokensPerMillion: 0.5,
+        longContextCostOutTokensPerMillion: 22.5,
+        regionalProcessingMargin: 10,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1050000,
+      defaultTemperature: 0.7,
+      model: "gpt-5.5-flex",
+      apiModel: "gpt-5.5",
+      active: true,
+    };
+
+    if (!openAiGpt55Flex) {
+      await PsAiModel.create({
+        name: "GPT-5.5 Flex",
+        organization_id: 1,
+        user_id: userId,
+        configuration: openAiGpt55FlexConfig,
+      });
+      log.info("Created OpenAI model: GPT-5.5 Flex");
+    } else {
+      openAiGpt55Flex.set("configuration", openAiGpt55FlexConfig);
+      openAiGpt55Flex.changed("configuration", true);
+      await openAiGpt55Flex.save();
+      log.debug("OpenAI model already exists: GPT-5.5 Flex");
+    }
   }
 
   /**
@@ -1429,6 +1591,10 @@ export class NewAiModelSetup {
       { name: "GPT-5.4 nano", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.4 Pro", envKey: "OPENAI_API_KEY" },
       { name: "GPT-5.5", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.5 Pro", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.5 Priority", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.5 Normal", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-5.5 Flex", envKey: "OPENAI_API_KEY" },
       { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.1 Flash Lite Preview", envKey: "GEMINI_API_KEY" },
