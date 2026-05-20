@@ -29,6 +29,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     command: server --address ":9000" --console-address ":9001" /data
     volumes:
       - miniodata:/data

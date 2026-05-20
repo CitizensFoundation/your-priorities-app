@@ -2,7 +2,7 @@
 
 # Ожидаем, когда Postgres поднимется
 echo "Waiting for PostgreSQL to be ready..."
-while ! pg_isready -U yrpri_db_user -d yrpri_production -h postgres -p 5432; do
+while ! pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h postgres -p 5432; do
   sleep 2
 done
 echo "PostgreSQL is ready!"
@@ -12,7 +12,7 @@ DB_EXISTS=$(PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGR
 
 if [ "$DB_EXISTS" = "f" ]; then
     echo "Database is empty. Running seed models script..."
-    node server_api/dist/utils/seedModels.cjs spinmoded@gmail.com vash_nadezhniy_parol_123
+    node server_api/dist/utils/seedModels.js spinmoded@gmail.com vash_nadezhniy_parol_123
 else
     echo "Database is not empty. Skipping seed models."
 fi

@@ -305,6 +305,7 @@ module.exports = (sequelize, DataTypes) => {
             idpCert: domain.secret_api_keys.saml.cert
               ? domain.secret_api_keys.saml.cert
               : null,
+            signatureAlgorithm: 'sha256',
             callbackUrl:
               domain.secret_api_keys.saml.callbackUrl &&
               domain.secret_api_keys.saml.callbackUrl !== ""
