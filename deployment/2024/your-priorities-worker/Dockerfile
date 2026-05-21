@@ -11,9 +11,10 @@ COPY --chown=node:node ./server_api/package.json ./server_api/package-lock.json 
 
 USER node
 
-RUN npm ci
+RUN npm install
 
 COPY --chown=node:node ./server_api .
+COPY --chown=node:node ./webApps /home/node/app/webApps
 
 RUN npm run build
 

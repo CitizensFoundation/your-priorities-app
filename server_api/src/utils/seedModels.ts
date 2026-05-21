@@ -279,10 +279,11 @@ async function syncMainDatabase() {
     }
   });
 
-  // This script is intended for creating a new database, so always force sync.
-  await mainSequelize.sync({ force: true });
+  // Only force sync if explicitly requested, to avoid wiping domain configurations
+  const forceSync = process.env.FORCE_DB_SYNC === "true" || process.env.FORCE_DB_SYNC === "1";
+  await mainSequelize.sync({ force: forceSync });
   log.info(
-    "Main database schema forcefully synchronized (tables dropped and recreated)."
+    `Main database schema synchronized (force: ${forceSync}).`
   );
   await createMainCompoundIndexes(mainSequelize, mainCompoundIndexCommands);
   if (mainDb.Post && typeof mainDb.Post.addFullTextIndex === "function") {
@@ -338,13 +339,16 @@ async function seedAllModels() {
     process.env.FORCE_DB_INDEX_SYNC
   );
 
-  const args = process.argv.slice(2);
+  let args = process.argv.slice(2);
+  // Filtering out any node flags like --inspect or double-dashed arguments that might be parsed
+  args = args.filter(arg => !arg.startsWith('--'));
+
   if (args.length < 2) {
     log.error("Usage: node <script_path> <username/email> <password>");
     process.exit(1);
   }
   const userEmail = args[0].toLowerCase();
-  const userName = args[0]; // Using email as name for simplicity, or a fixed name
+  const userName = userEmail.split('@')[0] || "Admin"; // Extract a simple name from email
   const userPassword = args[1];
 
   // Check for main database config outside of production if not using DATABASE_URL
@@ -403,37 +407,43 @@ async function seedAllModels() {
     await newUser.save();
     log.info(`User ${newUser.email} created with ID: ${newUser.id}`);
 
-    // Create Domain
+    // Create or Update Domain
     const defaultDomainName = process.env.YP_FORCE_DOMAIN_NAME || process.env.DEFAULT_DOMAIN_NAME ||
       (crypto.randomBytes(8).toString("hex") + ".seed.local"); // Shorter and identifiable
     log.info(
-      `Attempting to create domain: ${defaultDomainName} for user ${newUser.id}`
+      `Attempting to fetch or create domain: ${defaultDomainName} for user ${newUser.id}`
     );
-    const newDomain = mainDb.Domain.build({
-      name: `Default Domain for ${userName}`,
-      domain_name: defaultDomainName,
-      access:
-        mainDb.Domain.ACCESS_PUBLIC !== undefined
-          ? mainDb.Domain.ACCESS_PUBLIC
-          : 0, // Use constant if available
-      default_locale: "en",
-      ip_address: "::1", // Using localhost IP
-      user_agent: "seedModelsScript/1.0",
-      user_id: newUser.id, // Associate domain with the new user
-      configuration: {},
-      secret_api_keys: {},
-      data: {},
-      other_social_media_info: {},
-      public_api_keys: {},
-      info_texts: {},
-      // Fill other required non-nullable fields based on domain.cjs definition if any
-      // deleted: false, (already defaults to false)
-    });
 
-    await newDomain.save();
-    log.info(
-      `Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`
-    );
+    let newDomain = await mainDb.Domain.findOne({ where: { domain_name: defaultDomainName }});
+
+    if (!newDomain) {
+      newDomain = mainDb.Domain.build({
+        name: `Default Domain for ${userName}`,
+        domain_name: defaultDomainName,
+        access:
+          mainDb.Domain.ACCESS_PUBLIC !== undefined
+            ? mainDb.Domain.ACCESS_PUBLIC
+            : 0, // Use constant if available
+        default_locale: "en",
+        ip_address: "::1", // Using localhost IP
+        user_agent: "seedModelsScript/1.0",
+        user_id: newUser.id, // Associate domain with the new user
+        configuration: {},
+        secret_api_keys: {},
+        data: {},
+        other_social_media_info: {},
+        public_api_keys: {},
+        info_texts: {},
+        // Fill other required non-nullable fields based on domain.cjs definition if any
+        // deleted: false, (already defaults to false)
+      });
+      await newDomain.save();
+      log.info(
+        `Domain ${newDomain.name} created with ID: ${newDomain.id} and domain_name: ${newDomain.domain_name}`
+      );
+    } else {
+      log.info(`Domain ${newDomain.name} already exists. Skipping creation to preserve configuration.`);
+    }
 
     // Associate User with Domain
     if (typeof newDomain.addDomainUsers === "function") {

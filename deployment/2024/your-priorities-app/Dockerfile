@@ -18,11 +18,11 @@ USER node
 
 # install server dependencies
 WORKDIR /home/node/app/server_api
-RUN npm ci
+RUN npm install
 
 # install client dependencies
 WORKDIR /home/node/app/webApps/client
-RUN npm ci
+RUN npm install
 
 WORKDIR /home/node/app
 COPY --chown=node:node ./server_api ./server_api
