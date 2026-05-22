@@ -8,8 +8,9 @@ RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 
 WORKDIR /home/node/app
 
-# copy server package files
+# copy server package files and vendored passport-sso
 COPY --chown=node:node ./server_api/package.json ./server_api/package-lock.json ./server_api/
+COPY --chown=node:node ./server_api/src/passport-sso ./server_api/src/passport-sso
 
 # copy webapps client package files
 COPY --chown=node:node ./webApps/client/package.json ./webApps/client/package-lock.json ./webApps/client/

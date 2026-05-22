@@ -8,6 +8,7 @@ RUN mkdir -p /home/node/app/server_api && chown -R node:node /home/node/app
 WORKDIR /home/node/app/server_api
 
 COPY --chown=node:node ./server_api/package.json ./server_api/package-lock.json ./
+COPY --chown=node:node ./server_api/src/passport-sso ./src/passport-sso
 
 USER node
 

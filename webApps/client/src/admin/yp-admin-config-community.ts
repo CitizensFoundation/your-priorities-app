@@ -144,8 +144,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             @keyup="${this._hostnameChanged}"
             label="${this.t("community.hostname")}"
             .value="${(this.collection as YpCommunityData).hostname || ""}"
-            ?required="${!(this.collection as YpCommunityData)
-              .is_community_folder}"
             maxlength="80"
             charCounter
             class="mainInput"

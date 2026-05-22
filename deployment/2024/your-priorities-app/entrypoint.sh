@@ -12,7 +12,7 @@ DB_EXISTS=$(PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGR
 
 if [ "$DB_EXISTS" = "f" ]; then
     echo "Database is empty. Running seed models script..."
-    node server_api/dist/utils/seedModels.js spinmoded@gmail.com vash_nadezhniy_parol_123
+    node server_api/dist/utils/seedModels.js spinmoded@gmail.com ${ADMIN_PASSWORD}
 else
     echo "Database is not empty. Skipping seed models."
 fi

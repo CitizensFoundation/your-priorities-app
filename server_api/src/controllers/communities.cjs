@@ -2489,7 +2489,7 @@ const createNewCommunity = (req, res) => {
     access: models.Community.convertAccessFromRadioButtons(req.body),
     domain_id: req.params.domainId,
     user_id: req.user.id,
-    hostname: req.body.hostname,
+    hostname: req.body.hostname && req.body.hostname !== "" ? req.body.hostname : null,
     website: req.body.website,
     in_community_folder_id:
       req.body.in_community_folder_id && req.body.in_community_folder_id != "-1"
@@ -2600,9 +2600,7 @@ router.put("/:id", auth.can("edit community"), function (req, res) {
             ? req.body.is_community_folder
             : null;
 
-        if (req.body.hostname && req.body.hostname != "") {
-          community.hostname = req.body.hostname;
-        }
+        community.hostname = req.body.hostname && req.body.hostname !== "" ? req.body.hostname : null;
 
         community.access = models.Community.convertAccessFromRadioButtons(
           req.body
