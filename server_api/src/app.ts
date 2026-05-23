@@ -843,9 +843,11 @@ export class YourPrioritiesApi {
     this.app.use("/index.html", index);
     this.app.use("/domain", index);
     this.app.use("/community", index);
+    this.app.use("/community_folder", index);
     this.app.use("/organization", index);
     this.app.use("/agent_bundle/*splat", index);
     this.app.use("/group", index);
+    this.app.use("/group_folder", index);
     this.app.use("/post", index);
     this.app.use("/user", index);
     this.app.use("/admin", index);
