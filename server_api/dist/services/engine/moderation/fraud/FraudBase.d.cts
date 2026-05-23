@@ -1,0 +1,31 @@
+export = FraudBase;
+declare class FraudBase {
+    constructor(workPackage: any);
+    workPackage: any;
+    items: any;
+    dataToProcess: any;
+    average(arr: any): number;
+    getTopItems(): null;
+    getAllItems(): Promise<null>;
+    getPostIdsFromItems(topItems: any): any[];
+    setupTopItems(items: any): any[];
+    getTopDataByIp(): null;
+    getTopDataByIpUserAgentPostId(): null;
+    getTopDataByIpUserAgentPointId(): null;
+    getTopDataByIpFingerprintPostId(): null;
+    getTopDataByIpFingerprintPointId(): null;
+    getTopDataByIpFingerprint(): null;
+    getTopDataByNoFingerprints(): null;
+    setupDataToProcess(): void;
+    getTimeDifferentScores(items: any): number;
+    setWeightedConfidenceScore(items: any, score: any): void;
+    getStartFingerprintMoment(): number;
+    groupTopDataByIp(): _.Dictionary<any[]>;
+    groupTopDataByIpUserAgentPostId(): _.Dictionary<any[]>;
+    groupTopDataByIpUserAgentPointId(): _.Dictionary<any[]>;
+    groupTopDataByIpFingerprintPostId(): _.Dictionary<any[]>;
+    groupTopDataByIpFingerprintPointId(): _.Dictionary<any[]>;
+    groupTopDataByIpFingerprint(): _.Dictionary<any[]>;
+    groupTopDataByNoFingerprints(): _.Dictionary<any[]>;
+}
+import _ = require("lodash");
