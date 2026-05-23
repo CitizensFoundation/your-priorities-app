@@ -2489,7 +2489,7 @@ const createNewCommunity = (req, res) => {
     access: models.Community.convertAccessFromRadioButtons(req.body),
     domain_id: req.params.domainId,
     user_id: req.user.id,
-    hostname: req.body.hostname && req.body.hostname !== "" ? req.body.hostname : (req.ypDomain ? req.ypDomain.domain_name : null),
+    hostname: "",
     website: req.body.website,
     in_community_folder_id:
       req.body.in_community_folder_id && req.body.in_community_folder_id != "-1"
@@ -2562,24 +2562,7 @@ const createNewCommunity = (req, res) => {
 };
 
 router.post("/:domainId", auth.can("create community"), function (req, res) {
-  if (req.body.hostname && req.body.hostname !== "") {
-    models.Community.findOne({
-      where: {
-        hostname: req.body.hostname,
-      },
-    }).then(function (oldCommunity) {
-      if (oldCommunity) {
-        log.error("Can't save community, hostname already taken", {
-          hostname: req.body.hostname,
-        });
-        res.send({ hostnameTaken: true, isError: true });
-      } else {
-        createNewCommunity(req, res);
-      }
-    });
-  } else {
-    createNewCommunity(req, res);
-  }
+  createNewCommunity(req, res);
 });
 
 router.put("/:id", auth.can("edit community"), function (req, res) {
@@ -2600,7 +2583,7 @@ router.put("/:id", auth.can("edit community"), function (req, res) {
             ? req.body.is_community_folder
             : null;
 
-        community.hostname = req.body.hostname && req.body.hostname !== "" ? req.body.hostname : (req.ypDomain ? req.ypDomain.domain_name : null);
+        community.hostname = "";
 
         community.access = models.Community.convertAccessFromRadioButtons(
           req.body

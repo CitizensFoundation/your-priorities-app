@@ -126,32 +126,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   renderHostname() {
-    if (this.hideHostnameInput) {
-      return html`
-        <input
-          type="hidden"
-          name="hostname"
-          value="${ifDefined((this.collection as YpCommunityData).hostname)}"
-        />
-      `;
-    } else {
-      return html`
-        <div class="layout vertical">
-          <md-outlined-text-field
-            id="hostname"
-            name="hostname"
-            type="text"
-            @keyup="${this._hostnameChanged}"
-            label="${this.t("community.hostname")}"
-            .value="${(this.collection as YpCommunityData).hostname || ""}"
-            maxlength="80"
-            charCounter
-            class="mainInput"
-          ></md-outlined-text-field>
-          <div class="hostnameInfo">https://${this.hostnameExample}</div>
-        </div>
-      `;
-    }
+    return html`
+      <input
+        type="hidden"
+        name="hostname"
+        value="${ifDefined((this.collection as YpCommunityData).hostname)}"
+      />
+    `;
   }
 
   renderHeader() {
