@@ -2,6 +2,7 @@ declare module 'logger';
 declare module 'iso-639-1';
 declare module 'newrelic';
 declare module 'html-to-docx';
+declare module 'passport-sso';
 
 interface Logger {
   debug(text: string): void;

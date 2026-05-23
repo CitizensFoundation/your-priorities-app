@@ -1865,7 +1865,7 @@ router.post(
         },
         onlyAdminsCanCreateGroups: true,
       },
-      hostname: req.body.hostname && req.body.hostname !== "" ? req.body.hostname : null,
+      hostname: req.body.hostname && req.body.hostname !== "" ? req.body.hostname : req.ypDomain.domain_name,
       user_agent: req.useragent.source,
       ip_address: req.clientIp,
     });
