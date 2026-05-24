@@ -214,7 +214,7 @@ const getCollection = async (req) => {
       if (!isNaN(id)) {
         if (splitUrl[splitPath] === "domain") {
           collection = req.ypDomain;
-        } else if (splitUrl[splitPath] === "community") {
+        } else if (splitUrl[splitPath] === "community" || splitUrl[splitPath] === "community_folder") {
           if (
             req.ypCommunity &&
             req.ypCommunity.id &&
@@ -230,7 +230,7 @@ const getCollection = async (req) => {
               attributes: ["id", "name", "description", "language"],
             });
           }
-        } else if (splitUrl[splitPath] === "group") {
+        } else if (splitUrl[splitPath] === "group" || splitUrl[splitPath] === "group_folder") {
           collection = await models.Group.findOne({
             where: {
               id: id,

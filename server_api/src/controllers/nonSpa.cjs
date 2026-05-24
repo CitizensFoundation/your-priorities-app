@@ -549,9 +549,9 @@ router.get('/{*splat}', function botController(req, res, next) {
     }
     if (splitUrl[splitPath]=='domain') {
       sendDomain(id, communitiesOffset, req, res)
-    } else if (splitUrl[splitPath]=='community') {
+    } else if (splitUrl[splitPath]=='community' || splitUrl[splitPath]=='community_folder') {
       sendCommunity(id, req, res)
-    } else if (splitUrl[splitPath]=='group') {
+    } else if (splitUrl[splitPath]=='group' || splitUrl[splitPath]=='group_folder') {
       sendGroup(id, postsOffset, req, res)
     } else if (splitUrl[splitPath]=='post') {
       sendPost(id, pointsOffset, req, res)
