@@ -489,6 +489,13 @@ export class YourPrioritiesApi {
   }
 
   setupDomainAndCommunity(): void {
+    this.app.get("/community_folder/:id", (req: YpRequest, res: express.Response, next: NextFunction) => {
+      index(req, res, next);
+    });
+    this.app.get("/group_folder/:id", (req: YpRequest, res: express.Response, next: NextFunction) => {
+      index(req, res, next);
+    });
+
     this.app.use(
       (req: YpRequest, res: express.Response, next: NextFunction) => {
         (models as any).Domain.setYpDomain(req, res, () => {
