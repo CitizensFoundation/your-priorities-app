@@ -315,17 +315,18 @@ export class YpAppUser extends YpCodeBase {
 
   openUserlogin(
     email: string | undefined = undefined,
-    collectionConfiguration: object | undefined = undefined
+    collectionConfiguration: object | undefined = undefined,
+    redirectToURL: string | undefined = undefined
   ) {
     if (!window.appDialogs) {
       this.addGlobalListener(
         "yp-app-dialogs-ready",
-        this.openUserlogin.bind(this)
+        () => this.openUserlogin(email, collectionConfiguration, redirectToURL)
       );
     } else {
       window.appDialogs.getDialogAsync("userLogin", (dialog: YpLogin) => {
         dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
-        dialog.openDialog(undefined, email, collectionConfiguration);
+        dialog.openDialog(redirectToURL, email, collectionConfiguration);
       });
     }
   }

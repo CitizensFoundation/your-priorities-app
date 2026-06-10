@@ -355,7 +355,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     onlyAdminCanCreate: boolean,
     hasCollectionAccess: boolean
   ) {
-    if (this.loggedInUser && (!onlyAdminCanCreate || hasCollectionAccess)) {
+    if (!onlyAdminCanCreate || hasCollectionAccess) {
       this.createFabIcon = this.collectionCreateFabIcon;
       this.createFabLabel = this.collectionCreateFabLabel;
     } else {
@@ -392,9 +392,12 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       console.error("Invalid collection type for create new collection");
       return;
     }
-    YpNavHelpers.redirectTo(
-      `/admin/${childCollectionType}/new/${this.collectionId}`
-    );
+    const createPath = `/admin/${childCollectionType}/new/${this.collectionId}`;
+    if (this.loggedInUser) {
+      YpNavHelpers.redirectTo(createPath);
+    } else {
+      window.appUser.openUserlogin(undefined, undefined, createPath);
+    }
   }
 
   // UI
