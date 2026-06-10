@@ -6,38 +6,67 @@ const log = require("../../../../utils/logger.cjs");
 class FraudGetRatings extends FraudGetEndorsements {
     constructor(workPackage) {
         super(workPackage);
-        this.groupConfiguration = null;
+        this.ratingDimensionCountsByGroupId = {};
     }
     async getAllItems() {
         const itemsContainer = await this.getAllModelItems(models.Rating, true);
-        this.groupConfiguration = itemsContainer.groupConfiguration;
+        this.ratingDimensionCountsByGroupId = await this.getRatingDimensionCountsByGroupId(itemsContainer.itemsToAnalyse);
         return itemsContainer.itemsToAnalyse;
+    }
+    async getRatingDimensionCountsByGroupId(items) {
+        const groupIds = _.uniq(items.map(item => {
+            return item.Post && item.Post.Group && item.Post.Group.id;
+        }).filter(groupId => groupId));
+        if (groupIds.length === 0) {
+            return {};
+        }
+        const groups = await models.Group.findAll({
+            where: {
+                id: groupIds
+            },
+            attributes: ['id', 'configuration']
+        });
+        return groups.reduce((countsByGroupId, group) => {
+            const customRatings = group.configuration && group.configuration.customRatings;
+            countsByGroupId[group.id] =
+                customRatings && typeof customRatings === "object"
+                    ? Math.max(Object.keys(customRatings).length, 1)
+                    : 1;
+            return countsByGroupId;
+        }, {});
+    }
+    getRatingDimensionsForItem(item) {
+        const groupId = item.Post && item.Post.Group && item.Post.Group.id;
+        return this.ratingDimensionCountsByGroupId[groupId] || 1;
+    }
+    getNormalizedRatingCount(items) {
+        return _.sumBy(items, item => 1 / this.getRatingDimensionsForItem(item));
     }
     getTopItems(items, type) {
         let topItems = this.setupTopItems(items);
         const postIds = this.getPostIdsFromItems(topItems);
-        const postCount = _.uniq(postIds).length;
-        let ratingsCount = 10000000;
-        if (this.groupConfiguration) {
-            ratingsCount = Object.keys(this.groupConfiguration.customRatings).length;
+        const postCount = Math.max(_.uniq(postIds).length, 1);
+        if (this.isDebugFraudDetectionCountAll()) {
+            return this.getDebugTopItems(topItems);
         }
         if (type === "byIpUserAgentPostId") {
             let out = [];
             _.each(topItems, function (item) {
-                if ((item.count / ratingsCount) > 1) {
-                    if ((item.count / ratingsCount) > 10) {
+                const ratingRatio = this.getNormalizedRatingCount(item.items);
+                if (ratingRatio > 1) {
+                    if (ratingRatio > 10) {
                         this.setWeightedConfidenceScore(item.items, 95);
                     }
-                    else if ((item.count / ratingsCount) > 5) {
+                    else if (ratingRatio > 5) {
                         this.setWeightedConfidenceScore(item.items, 90);
                     }
-                    else if ((item.count / ratingsCount) > 4) {
+                    else if (ratingRatio > 4) {
                         this.setWeightedConfidenceScore(item.items, 85);
                     }
-                    else if ((item.count / ratingsCount) > 3) {
+                    else if (ratingRatio > 3) {
                         this.setWeightedConfidenceScore(item.items, 80);
                     }
-                    else if ((item.count / ratingsCount) > 2) {
+                    else if (ratingRatio > 2) {
                         this.setWeightedConfidenceScore(item.items, 75);
                     }
                     else {
@@ -51,17 +80,18 @@ class FraudGetRatings extends FraudGetEndorsements {
         else if (type === "byIpFingerprint") {
             let out = [];
             _.each(topItems, function (item) {
-                if ((item.count / postCount / ratingsCount) > 1) {
-                    if ((item.count / postCount / ratingsCount) > 5) {
+                const ratingRatio = this.getNormalizedRatingCount(item.items) / postCount;
+                if (ratingRatio > 1) {
+                    if (ratingRatio > 5) {
                         this.setWeightedConfidenceScore(item.items, 99);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 4) {
+                    else if (ratingRatio > 4) {
                         this.setWeightedConfidenceScore(item.items, 95);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 3) {
+                    else if (ratingRatio > 3) {
                         this.setWeightedConfidenceScore(item.items, 90);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 2) {
+                    else if (ratingRatio > 2) {
                         this.setWeightedConfidenceScore(item.items, 85);
                     }
                     else {
@@ -78,20 +108,21 @@ class FraudGetRatings extends FraudGetEndorsements {
         else if (type === "byIpFingerprintPostId") {
             let out = [];
             _.each(topItems, function (item) {
-                if ((item.count / ratingsCount) > 1) {
-                    if ((item.count / ratingsCount) > 10) {
+                const ratingRatio = this.getNormalizedRatingCount(item.items);
+                if (ratingRatio > 1) {
+                    if (ratingRatio > 10) {
                         this.setWeightedConfidenceScore(item.items, 100);
                     }
-                    else if ((item.count / ratingsCount) > 5) {
+                    else if (ratingRatio > 5) {
                         this.setWeightedConfidenceScore(item.items, 98);
                     }
-                    else if ((item.count / ratingsCount) > 4) {
+                    else if (ratingRatio > 4) {
                         this.setWeightedConfidenceScore(item.items, 95);
                     }
-                    else if ((item.count / ratingsCount) > 3) {
+                    else if (ratingRatio > 3) {
                         this.setWeightedConfidenceScore(item.items, 90);
                     }
-                    else if ((item.count / ratingsCount) > 2) {
+                    else if (ratingRatio > 2) {
                         this.setWeightedConfidenceScore(item.items, 85);
                     }
                     else {
@@ -105,23 +136,24 @@ class FraudGetRatings extends FraudGetEndorsements {
         else if (type === "byIpAddress") {
             let out = [];
             _.each(topItems, function (item) {
-                if ((item.count / postCount / ratingsCount) > 1) {
-                    if ((item.count / postCount / ratingsCount) > 100) {
+                const ratingRatio = this.getNormalizedRatingCount(item.items) / postCount;
+                if (ratingRatio > 1) {
+                    if (ratingRatio > 100) {
                         this.setWeightedConfidenceScore(item.items, 90);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 50) {
+                    else if (ratingRatio > 50) {
                         this.setWeightedConfidenceScore(item.items, 85);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 25) {
+                    else if (ratingRatio > 25) {
                         this.setWeightedConfidenceScore(item.items, 80);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 10) {
+                    else if (ratingRatio > 10) {
                         this.setWeightedConfidenceScore(item.items, 75);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 5) {
+                    else if (ratingRatio > 5) {
                         this.setWeightedConfidenceScore(item.items, 70);
                     }
-                    else if ((item.count / postCount / ratingsCount) > 2) {
+                    else if (ratingRatio > 2) {
                         this.setWeightedConfidenceScore(item.items, 65);
                     }
                     else {

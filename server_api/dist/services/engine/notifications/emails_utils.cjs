@@ -242,7 +242,9 @@ const filterNotificationForDelivery = function (notification, user, template, su
                 }
                 else {
                     const redisKey = `${SUPPRESSION_KEYBASE}${user.id}`;
-                    redisConnection.get(redisKey, (error, found) => {
+                    redisConnection
+                        .get(redisKey)
+                        .then((found) => {
                         if (found) {
                             log.info(`Suppressing emails for user ${user.email} settings ${LIMIT_EMAILS_FOR_SECONDS}`);
                             callback();
@@ -250,6 +252,13 @@ const filterNotificationForDelivery = function (notification, user, template, su
                         else {
                             processNotification(notification, user, template, subject, callback);
                         }
+                    })
+                        .catch((error) => {
+                        log.warn("Redis suppression lookup failed, continuing delivery", {
+                            err: error,
+                            userId: user.id,
+                        });
+                        processNotification(notification, user, template, subject, callback);
                     });
                 }
             });

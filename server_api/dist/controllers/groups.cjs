@@ -21,9 +21,11 @@ var sanitizeFilename = require("sanitize-filename");
 var queue = require("../services/workers/queue.cjs");
 const getAllModeratedItemsByGroup = require("../services/engine/moderation/get_moderation_items.cjs").getAllModeratedItemsByGroup;
 const performSingleModerationAction = require("../services/engine/moderation/process_moderation_items.cjs").performSingleModerationAction;
-const request = require("request");
+const request = require("../utils/requestCompat.cjs");
 const { updateAnswerTranslation, } = require("../services/utils/translation_helpers.cjs");
 const { updateSurveyTranslation, } = require("../services/utils/translation_helpers.cjs");
+const { normalizeImageGenerationProfileOptions, } = require("../services/llms/imageGeneration/imageModelConfig.cjs");
+const { validateImageGenerationStartRequest, canPollImageGenerationJob, publicJobFields, } = require("../utils/ai_image_generation_guard.cjs");
 const { plausibleStatsProxy, getPlausibleStats, } = require("../services/engine/analytics/plausible/manager.cjs");
 const { countAllModeratedItemsByGroup, } = require("../services/engine/moderation/get_moderation_items.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
@@ -1647,8 +1649,37 @@ router.get("/:groupId/:jobId/report_creation_progress", auth.can("edit group"), 
     });
 });
 //TODO: Fix this permission back to edit
-router.post("/:groupId/:start_generating/ai_image", auth.can("view group"), function (req, res) {
-    models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
+router.post("/:groupId/:start_generating/ai_image", auth.can("view group"), async function (req, res) {
+    const imageOptions = normalizeImageGenerationProfileOptions(req.body.imageGenerationProfile, req.body.generationContext, req.body.imageType);
+    if (imageOptions.error) {
+        res.status(400).send({ error: imageOptions.error });
+        return;
+    }
+    let guard;
+    try {
+        guard = await validateImageGenerationStartRequest(req, {
+            collectionType: "group",
+            collectionId: req.params.groupId,
+        });
+    }
+    catch (error) {
+        log.error("Could not validate image generation request", {
+            err: error,
+            context: "start_generating_ai_image",
+            user: req.user ? toJson(req.user.simple()) : null,
+        });
+        res.sendStatus(500);
+        return;
+    }
+    if (!guard.allowed) {
+        res.status(guard.status).send(guard.body);
+        return;
+    }
+    const internalData = {
+        ...guard.internalData,
+        imageGenerationProfile: imageOptions.imageGenerationProfile,
+    };
+    models.AcBackgroundJob.createJob({}, internalData, (error, jobId) => {
         if (error) {
             log.error("Could not create backgroundJob", {
                 err: error,
@@ -1660,13 +1691,18 @@ router.post("/:groupId/:start_generating/ai_image", auth.can("view group"), func
         else {
             queue.add("process-generative-ai", {
                 type: "collection-image",
-                //TODO: Look into this
-                userId: req.user ? req.user.id : 1,
+                userId: guard.userId,
                 jobId: jobId,
                 collectionId: req.params.groupId,
                 collectionType: "group",
                 prompt: req.body.prompt,
                 imageType: req.body.imageType,
+                generationContext: guard.generationContext,
+                imageGenerationProfile: imageOptions.imageGenerationProfile,
+                imageProvider: imageOptions.imageProvider,
+                imageModel: imageOptions.imageModel,
+                imageSize: imageOptions.imageSize,
+                imageQuality: imageOptions.imageQuality,
             }, "critical");
             res.send({ jobId });
         }
@@ -1674,14 +1710,23 @@ router.post("/:groupId/:start_generating/ai_image", auth.can("view group"), func
 });
 //TODO: Fix this permission back to edit
 router.get("/:groupId/:jobId/poll_for_generating_ai_image", auth.can("view group"), function (req, res) {
+    if (!req.user) {
+        res.sendStatus(401);
+        return;
+    }
     models.AcBackgroundJob.findOne({
         where: {
             id: req.params.jobId,
         },
-        attributes: ["id", "progress", "error", "data"],
+        attributes: ["id", "progress", "error", "data", "internal_data"],
     })
         .then((job) => {
-        res.send(job);
+        if (!canPollImageGenerationJob(req, job)) {
+            res.sendStatus(404);
+        }
+        else {
+            res.send(publicJobFields(job));
+        }
     })
         .catch((error) => {
         log.error("Could not get backgroundJob", {

@@ -322,7 +322,7 @@ export class SubscriptionManager {
                 return { freeSubscription: true };
             }
             const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-                apiVersion: "2025-04-30.basil",
+                apiVersion: "2026-04-22.dahlia",
             });
             // Create a PaymentIntent with Stripe
             const paymentIntent = await stripe.paymentIntents.create({
@@ -360,7 +360,7 @@ export class SubscriptionManager {
     async handleSuccessfulPayment(paymentIntentId) {
         try {
             const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-                apiVersion: "2025-04-30.basil",
+                apiVersion: "2026-04-22.dahlia",
             });
             const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
             if (paymentIntent.status !== "succeeded") {

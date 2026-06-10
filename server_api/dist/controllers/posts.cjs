@@ -12,6 +12,7 @@ const getAnonymousUser = require("../services/utils/get_anonymous_system_user.cj
 const moment = require("moment");
 const { plausibleStatsProxy, } = require("../services/engine/analytics/plausible/manager.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
+const { getFingerprintDataFromBody, } = require("../utils/fingerprint_data.cjs");
 var changePostCounter = function (req, postId, column, upDown, next) {
     models.Post.findOne({
         where: { id: postId },
@@ -963,9 +964,7 @@ var truthValueFromBody = function (bodyParameter) {
 var updatePostData = function (req, post) {
     if (!post.data) {
         post.set("data", {
-            browserId: req.body.postBaseId,
-            browserFingerprint: req.body.postValCode,
-            browserFingerprintConfidence: req.body.postConf,
+            ...getFingerprintDataFromBody(req.body, "post"),
             originalQueryString: req.body.originalQueryString,
             userLocale: req.body.userLocale,
             userAutoTranslate: req.body.userAutoTranslate,
@@ -1135,6 +1134,9 @@ router.post("/:groupId", auth.can("create post"), async function (req, res) {
                                 status: "active",
                                 user_agent: req.useragent.source,
                                 ip_address: req.clientIp,
+                                data: {
+                                    ...getFingerprintDataFromBody(req.body, "post"),
+                                },
                             })
                                 .save()
                                 .then(function (endorsement) {
@@ -1683,9 +1685,7 @@ router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) 
                         endorsement.value = req.body.value;
                         endorsement.status = "active";
                         endorsement.set("data", {
-                            browserId: req.body.endorsementBaseId,
-                            browserFingerprint: req.body.endorsementValCode,
-                            browserFingerprintConfidence: req.body.endorsementConf,
+                            ...getFingerprintDataFromBody(req.body, "endorsement"),
                         });
                     }
                     else {
@@ -1694,9 +1694,7 @@ router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) 
                             value: req.body.value,
                             user_id: req.user.id,
                             data: {
-                                browserId: req.body.endorsementBaseId,
-                                browserFingerprint: req.body.endorsementValCode,
-                                browserFingerprintConfidence: req.body.endorsementConf,
+                                ...getFingerprintDataFromBody(req.body, "endorsement"),
                             },
                             status: "active",
                             user_agent: req.useragent.source,

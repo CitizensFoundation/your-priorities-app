@@ -7,7 +7,7 @@ var multerMultipartResolver = multer({ dest: "uploads/" }).single("file");
 var auth = require("../authorization.cjs");
 var log = require("../utils/logger.cjs");
 var toJson = require("../utils/to_json.cjs");
-const s3Storage = require("multer-sharp-s3");
+const s3Storage = require("../utils/multerSharpS3Compat.cjs");
 const crypto = require("crypto");
 var queue = require("../services/workers/queue.cjs");
 const aws = require("aws-sdk");
@@ -136,6 +136,9 @@ router.delete("/:groupId/:imageId/deleteImageFromGroup", auth.can("edit group"),
         groupId: req.params.groupId,
         imageId: req.params.imageId,
     });
+});
+router.delete("/:postId/:imageId/deleteImageFromPost", auth.can("edit post"), (req, res) => {
+    models.Image.removeImageFromCollection(req, res);
 });
 // TODO: Pagination
 router.get("/:imageId/comments", auth.can("view image"), function (req, res) {
@@ -317,6 +320,14 @@ router.post("/", isAuthenticated, async function (req, res) {
             }
             catch (err) {
                 log.error("Error saving image record:", err);
+                if (req.file) {
+                    return storage._removeFile(req, req.file, (cleanupError) => {
+                        if (cleanupError) {
+                            log.error("Error cleaning up uploaded image variants:", cleanupError);
+                        }
+                        return res.status(500).json({ error: "Failed to save image record" });
+                    });
+                }
                 return res.status(500).json({ error: "Failed to save image record" });
             }
         });

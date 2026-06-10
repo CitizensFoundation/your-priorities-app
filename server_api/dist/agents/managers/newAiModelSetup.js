@@ -120,11 +120,50 @@ export class NewAiModelSetup {
             anthropicOpus45.changed("configuration", true);
             await anthropicOpus45.save();
         }
+        const anthropicOpus46 = await PsAiModel.findOne({
+            where: { name: "Anthropic Opus 4.6" },
+        });
+        const anthropicOpus46Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "anthropic",
+            prices: {
+                costInTokensPerMillion: 5,
+                costOutTokensPerMillion: 25,
+                costInCachedContextTokensPerMillion: 0.5,
+                longContextTokenThreshold: 200000,
+                longContextCostInTokensPerMillion: 10,
+                longContextCostInCachedContextTokensPerMillion: 1.0,
+                longContextCostOutTokensPerMillion: 37.5,
+                currency: "USD",
+            },
+            maxTokensOut: 64000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.7,
+            model: "claude-opus-4-6",
+            active: true,
+        };
+        if (!anthropicOpus46) {
+            const createdModel = await PsAiModel.create({
+                name: "Anthropic Opus 4.6",
+                organization_id: 1,
+                user_id: userId,
+                configuration: anthropicOpus46Config,
+            });
+            log.info("Created Anthropic model:", createdModel);
+        }
+        else {
+            log.debug("Anthropic model already exists: Anthropic Opus 4.6");
+            anthropicOpus46.set("configuration", anthropicOpus46Config);
+            anthropicOpus46.changed("configuration", true);
+            await anthropicOpus46.save();
+        }
     }
     /**
      * Seeds OpenAI models.
      * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
-     * o1 Preview, o1 24, and o3 mini.
+     * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5, and
+     * GPT-5.5 tier variants.
      */
     static async seedOpenAiModels(userId) {
         // GPT-4o
@@ -575,6 +614,40 @@ export class NewAiModelSetup {
             await openAiGpt5.save();
             log.debug("OpenAI model already exists: GPT-5");
         }
+        const openAiGpt5Mini = await PsAiModel.findOne({
+            where: { name: "GPT-5 mini" },
+        });
+        const openAiGpt5MiniConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Small,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 0.25,
+                costOutTokensPerMillion: 2.0,
+                costInCachedContextTokensPerMillion: 0.025,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 400000,
+            defaultTemperature: 0.7,
+            model: "gpt-5-mini",
+            active: true,
+        };
+        if (!openAiGpt5Mini) {
+            await PsAiModel.create({
+                name: "GPT-5 mini",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt5MiniConfig,
+            });
+            log.info("Created OpenAI model: GPT-5 mini");
+        }
+        else {
+            openAiGpt5Mini.set("configuration", openAiGpt5MiniConfig);
+            openAiGpt5Mini.changed("configuration", true);
+            await openAiGpt5Mini.save();
+            log.debug("OpenAI model already exists: GPT-5 mini");
+        }
         const openAiGpt51 = await PsAiModel.findOne({
             where: { name: "GPT-5.1" },
         });
@@ -642,6 +715,340 @@ export class NewAiModelSetup {
             openAiGpt52.changed("configuration", true);
             await openAiGpt52.save();
             log.debug("OpenAI model already exists: GPT-5.2");
+        }
+        const openAiGpt54 = await PsAiModel.findOne({
+            where: { name: "GPT-5.4" },
+        });
+        const openAiGpt54Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 5.0,
+                costOutTokensPerMillion: 30.0,
+                costInCachedContextTokensPerMillion: 0.5,
+                longContextTokenThreshold: 272000,
+                longContextCostInTokensPerMillion: 5.0,
+                longContextCostInCachedContextTokensPerMillion: 0.5,
+                longContextCostOutTokensPerMillion: 22.5,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.4",
+            active: true,
+        };
+        if (!openAiGpt54) {
+            await PsAiModel.create({
+                name: "GPT-5.4",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt54Config,
+            });
+            log.info("Created OpenAI model: GPT-5.4");
+        }
+        else {
+            openAiGpt54.set("configuration", openAiGpt54Config);
+            openAiGpt54.changed("configuration", true);
+            await openAiGpt54.save();
+            log.debug("OpenAI model already exists: GPT-5.4");
+        }
+        const openAiGpt54Mini = await PsAiModel.findOne({
+            where: { name: "GPT-5.4 mini" },
+        });
+        const openAiGpt54MiniConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Small,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 0.75,
+                costOutTokensPerMillion: 4.5,
+                costInCachedContextTokensPerMillion: 0.075,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 400000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.4-mini",
+            active: true,
+        };
+        if (!openAiGpt54Mini) {
+            await PsAiModel.create({
+                name: "GPT-5.4 mini",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt54MiniConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.4 mini");
+        }
+        else {
+            openAiGpt54Mini.set("configuration", openAiGpt54MiniConfig);
+            openAiGpt54Mini.changed("configuration", true);
+            await openAiGpt54Mini.save();
+            log.debug("OpenAI model already exists: GPT-5.4 mini");
+        }
+        const openAiGpt54Nano = await PsAiModel.findOne({
+            where: { name: "GPT-5.4 nano" },
+        });
+        const openAiGpt54NanoConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Small,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 0.2,
+                costOutTokensPerMillion: 1.25,
+                costInCachedContextTokensPerMillion: 0.02,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 400000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.4-nano",
+            active: true,
+        };
+        if (!openAiGpt54Nano) {
+            await PsAiModel.create({
+                name: "GPT-5.4 nano",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt54NanoConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.4 nano");
+        }
+        else {
+            openAiGpt54Nano.set("configuration", openAiGpt54NanoConfig);
+            openAiGpt54Nano.changed("configuration", true);
+            await openAiGpt54Nano.save();
+            log.debug("OpenAI model already exists: GPT-5.4 nano");
+        }
+        const openAiGpt54Pro = await PsAiModel.findOne({
+            where: { name: "GPT-5.4 Pro" },
+        });
+        const openAiGpt54ProConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 30.0,
+                costOutTokensPerMillion: 180.0,
+                costInCachedContextTokensPerMillion: 0.0,
+                longContextTokenThreshold: 272000,
+                longContextCostInTokensPerMillion: 60.0,
+                longContextCostInCachedContextTokensPerMillion: 0.0,
+                longContextCostOutTokensPerMillion: 270.0,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.4-pro",
+            active: true,
+        };
+        if (!openAiGpt54Pro) {
+            await PsAiModel.create({
+                name: "GPT-5.4 Pro",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt54ProConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.4 Pro");
+        }
+        else {
+            openAiGpt54Pro.set("configuration", openAiGpt54ProConfig);
+            openAiGpt54Pro.changed("configuration", true);
+            await openAiGpt54Pro.save();
+            log.debug("OpenAI model already exists: GPT-5.4 Pro");
+        }
+        const openAiGpt55 = await PsAiModel.findOne({
+            where: { name: "GPT-5.5" },
+        });
+        const openAiGpt55Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 12.5,
+                costOutTokensPerMillion: 75.0,
+                costInCachedContextTokensPerMillion: 1.25,
+                priorityTokensIn: 12.5,
+                priorityTokensCachedIn: 1.25,
+                priorityTokensOut: 75.0,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.5",
+            active: true,
+        };
+        if (!openAiGpt55) {
+            await PsAiModel.create({
+                name: "GPT-5.5",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt55Config,
+            });
+            log.info("Created OpenAI model: GPT-5.5");
+        }
+        else {
+            openAiGpt55.set("configuration", openAiGpt55Config);
+            openAiGpt55.changed("configuration", true);
+            await openAiGpt55.save();
+            log.debug("OpenAI model already exists: GPT-5.5");
+        }
+        const openAiGpt55Pro = await PsAiModel.findOne({
+            where: { name: "GPT-5.5 Pro" },
+        });
+        const openAiGpt55ProConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 30.0,
+                costOutTokensPerMillion: 180.0,
+                costInCachedContextTokensPerMillion: 30.0,
+                regionalProcessingMargin: 10,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.5-pro",
+            active: true,
+        };
+        if (!openAiGpt55Pro) {
+            await PsAiModel.create({
+                name: "GPT-5.5 Pro",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt55ProConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.5 Pro");
+        }
+        else {
+            openAiGpt55Pro.set("configuration", openAiGpt55ProConfig);
+            openAiGpt55Pro.changed("configuration", true);
+            await openAiGpt55Pro.save();
+            log.debug("OpenAI model already exists: GPT-5.5 Pro");
+        }
+        const openAiGpt55Priority = await PsAiModel.findOne({
+            where: { name: "GPT-5.5 Priority" },
+        });
+        const openAiGpt55PriorityConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            inferenceType: "priority",
+            prices: {
+                costInTokensPerMillion: 12.5,
+                costOutTokensPerMillion: 75.0,
+                costInCachedContextTokensPerMillion: 1.25,
+                regionalProcessingMargin: 10,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.5-priority",
+            apiModel: "gpt-5.5",
+            active: true,
+        };
+        if (!openAiGpt55Priority) {
+            await PsAiModel.create({
+                name: "GPT-5.5 Priority",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt55PriorityConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.5 Priority");
+        }
+        else {
+            openAiGpt55Priority.set("configuration", openAiGpt55PriorityConfig);
+            openAiGpt55Priority.changed("configuration", true);
+            await openAiGpt55Priority.save();
+            log.debug("OpenAI model already exists: GPT-5.5 Priority");
+        }
+        const openAiGpt55Normal = await PsAiModel.findOne({
+            where: { name: "GPT-5.5 Normal" },
+        });
+        const openAiGpt55NormalConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            prices: {
+                costInTokensPerMillion: 5.0,
+                costOutTokensPerMillion: 30.0,
+                costInCachedContextTokensPerMillion: 0.5,
+                longContextTokenThreshold: 272000,
+                longContextCostInTokensPerMillion: 10.0,
+                longContextCostInCachedContextTokensPerMillion: 1.0,
+                longContextCostOutTokensPerMillion: 45.0,
+                regionalProcessingMargin: 10,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.5-normal",
+            apiModel: "gpt-5.5",
+            active: true,
+        };
+        if (!openAiGpt55Normal) {
+            await PsAiModel.create({
+                name: "GPT-5.5 Normal",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt55NormalConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.5 Normal");
+        }
+        else {
+            openAiGpt55Normal.set("configuration", openAiGpt55NormalConfig);
+            openAiGpt55Normal.changed("configuration", true);
+            await openAiGpt55Normal.save();
+            log.debug("OpenAI model already exists: GPT-5.5 Normal");
+        }
+        const openAiGpt55Flex = await PsAiModel.findOne({
+            where: { name: "GPT-5.5 Flex" },
+        });
+        const openAiGpt55FlexConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "openai",
+            inferenceType: "flex",
+            prices: {
+                costInTokensPerMillion: 2.5,
+                costOutTokensPerMillion: 15.0,
+                costInCachedContextTokensPerMillion: 0.25,
+                longContextTokenThreshold: 272000,
+                longContextCostInTokensPerMillion: 5.0,
+                longContextCostInCachedContextTokensPerMillion: 0.5,
+                longContextCostOutTokensPerMillion: 22.5,
+                regionalProcessingMargin: 10,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1050000,
+            defaultTemperature: 0.7,
+            model: "gpt-5.5-flex",
+            apiModel: "gpt-5.5",
+            active: true,
+        };
+        if (!openAiGpt55Flex) {
+            await PsAiModel.create({
+                name: "GPT-5.5 Flex",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAiGpt55FlexConfig,
+            });
+            log.info("Created OpenAI model: GPT-5.5 Flex");
+        }
+        else {
+            openAiGpt55Flex.set("configuration", openAiGpt55FlexConfig);
+            openAiGpt55Flex.changed("configuration", true);
+            await openAiGpt55Flex.save();
+            log.debug("OpenAI model already exists: GPT-5.5 Flex");
         }
     }
     /**
@@ -767,7 +1174,7 @@ export class NewAiModelSetup {
                 costInCachedContextTokensPerMillion: 0.07,
                 currency: "USD",
             },
-            model: "gemini-2.5-flash-lite-preview-09-2025",
+            model: "gemini-2.5-flash-lite",
             active: true,
             maxTokensOut: 32000,
             maxContextTokens: 1000000,
@@ -863,6 +1270,108 @@ export class NewAiModelSetup {
             gemini31ProPreview.changed("configuration", true);
             await gemini31ProPreview.save();
             log.debug("Google model already exists: Gemini 3.1 Pro Preview");
+        }
+        const gemini31FlashLite = await PsAiModel.findOne({
+            where: { name: "Gemini 3.1 Flash Lite" },
+        });
+        const gemini31FlashLiteConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.25,
+                costOutTokensPerMillion: 1.5,
+                costInCachedContextTokensPerMillion: 0.025,
+                currency: "USD",
+            },
+            model: "gemini-3.1-flash-lite",
+            active: true,
+            maxTokensOut: 65536,
+            maxContextTokens: 1048576,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini31FlashLite) {
+            await PsAiModel.create({
+                name: "Gemini 3.1 Flash Lite",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini31FlashLiteConfig,
+            });
+            log.info("Created Google model: Gemini 3.1 Flash Lite");
+        }
+        else {
+            gemini31FlashLite.set("configuration", gemini31FlashLiteConfig);
+            gemini31FlashLite.changed("configuration", true);
+            await gemini31FlashLite.save();
+            log.debug("Google model already exists: Gemini 3.1 Flash Lite");
+        }
+        const gemini31FlashLitePreview = await PsAiModel.findOne({
+            where: { name: "Gemini 3.1 Flash Lite Preview" },
+        });
+        const gemini31FlashLitePreviewConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 0.25,
+                costOutTokensPerMillion: 1.5,
+                costInCachedContextTokensPerMillion: 0.025,
+                currency: "USD",
+            },
+            model: "gemini-3.1-flash-lite-preview",
+            active: true,
+            maxTokensOut: 65536,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini31FlashLitePreview) {
+            await PsAiModel.create({
+                name: "Gemini 3.1 Flash Lite Preview",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini31FlashLitePreviewConfig,
+            });
+            log.info("Created Google model: Gemini 3.1 Flash Lite Preview");
+        }
+        else {
+            gemini31FlashLitePreview.set("configuration", gemini31FlashLitePreviewConfig);
+            gemini31FlashLitePreview.changed("configuration", true);
+            await gemini31FlashLitePreview.save();
+            log.debug("Google model already exists: Gemini 3.1 Flash Lite Preview");
+        }
+        const gemini35Flash = await PsAiModel.findOne({
+            where: { name: "Gemini 3.5 Flash" },
+        });
+        const gemini35FlashConfig = {
+            type: PsAiModelType.Text,
+            modelSize: PsAiModelSize.Medium,
+            provider: "google",
+            prices: {
+                costInTokensPerMillion: 1.5,
+                costOutTokensPerMillion: 9.0,
+                costInCachedContextTokensPerMillion: 0.15,
+                currency: "USD",
+            },
+            model: "gemini-3.5-flash",
+            active: true,
+            maxTokensOut: 65536,
+            maxContextTokens: 1048576,
+            defaultTemperature: 0.0,
+        };
+        if (!gemini35Flash) {
+            await PsAiModel.create({
+                name: "Gemini 3.5 Flash",
+                organization_id: 1,
+                user_id: userId,
+                configuration: gemini35FlashConfig,
+            });
+            log.info("Created Google model: Gemini 3.5 Flash");
+        }
+        else {
+            gemini35Flash.set("configuration", gemini35FlashConfig);
+            gemini35Flash.changed("configuration", true);
+            await gemini35Flash.save();
+            log.debug("Google model already exists: Gemini 3.5 Flash");
         }
         const gemini30Flash = await PsAiModel.findOne({
             where: { name: "Gemini 3.0 Flash" },
@@ -1005,6 +1514,7 @@ export class NewAiModelSetup {
         const modelsMapping = [
             { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+            { name: "Anthropic Opus 4.6", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
@@ -1021,10 +1531,23 @@ export class NewAiModelSetup {
             { name: "GPT-4.1 nano", envKey: "OPENAI_API_KEY" },
             { name: "o3", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5 mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.1", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.2", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.4", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.4 mini", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.4 nano", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.4 Pro", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.5", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.5 Pro", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.5 Priority", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.5 Normal", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.5 Flex", envKey: "OPENAI_API_KEY" },
             { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 3.1 Flash Lite", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 3.1 Flash Lite Preview", envKey: "GEMINI_API_KEY" },
+            { name: "Gemini 3.5 Flash", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 3.0 Flash", envKey: "GEMINI_API_KEY" },
         ];
         const groupAccessConfig = [];

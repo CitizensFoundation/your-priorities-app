@@ -26,6 +26,21 @@ class FraudGetBase extends FraudBase {
             }
         });
     }
+    getUserEmail(item) {
+        return item.User && item.User.email ? item.User.email : "";
+    }
+    getUserName(item) {
+        return item.User && item.User.name ? item.User.name : "";
+    }
+    getPostName(item) {
+        return item.Post && item.Post.name ? item.Post.name : "";
+    }
+    getPointQualityPostName(item) {
+        return item.Point && item.Point.Post && item.Point.Post.name ? item.Point.Post.name : "";
+    }
+    getItemName(item) {
+        return item && item.name ? item.name : "";
+    }
     customCompress() {
         const flatData = [];
         _.forEach(this.dataToProcess, item => {
@@ -71,43 +86,52 @@ class FraudGetBase extends FraudBase {
                 cDoneUserAgents[item.user_agent] = true;
                 outData.cUserAgents.push(item.user_agent);
             }
-            if (!cDoneEmails[item.User.email]) {
-                cDoneEmails[item.User.email] = true;
-                outData.cEmails.push(item.User.email);
+            const userEmail = this.getUserEmail(item);
+            const userName = this.getUserName(item);
+            item.User = item.User || {};
+            if (!cDoneEmails[userEmail]) {
+                cDoneEmails[userEmail] = true;
+                outData.cEmails.push(userEmail);
             }
-            if (!cDoneNames[item.User.name]) {
-                cDoneNames[item.User.name] = true;
-                outData.cNames.push(item.User.name);
+            if (!cDoneNames[userName]) {
+                cDoneNames[userName] = true;
+                outData.cNames.push(userName);
             }
             if (this.workPackage.collectionType === "endorsements" ||
                 this.workPackage.collectionType === "ratings" ||
                 this.workPackage.collectionType === "points") {
-                if (!cDonePostNames[item.Post.name]) {
-                    cDonePostNames[item.Post.name] = true;
-                    outData.cPostNames.push(item.Post.name);
+                const postName = this.getPostName(item);
+                item.Post = item.Post || {};
+                if (!cDonePostNames[postName]) {
+                    cDonePostNames[postName] = true;
+                    outData.cPostNames.push(postName);
                 }
-                item.Post.name = outData.cPostNames.indexOf(item.Post.name);
+                item.Post.name = outData.cPostNames.indexOf(postName);
             }
             if (this.workPackage.collectionType === "posts") {
-                if (!cDonePostNames[item.name]) {
-                    cDonePostNames[item.name] = true;
-                    outData.cPostNames.push(item.name);
+                const postName = this.getItemName(item);
+                if (!cDonePostNames[postName]) {
+                    cDonePostNames[postName] = true;
+                    outData.cPostNames.push(postName);
                 }
-                item.name = outData.cPostNames.indexOf(item.name);
+                item.name = outData.cPostNames.indexOf(postName);
             }
             if (this.workPackage.collectionType === "pointQualities") {
-                if (!cDonePostNames[item.Point.Post.name]) {
-                    cDonePostNames[item.Point.Post.name] = true;
-                    outData.cPostNames.push(item.Point.Post.name);
+                const postName = this.getPointQualityPostName(item);
+                item.Point = item.Point || {};
+                item.Point.Post = item.Point.Post || {};
+                if (!cDonePostNames[postName]) {
+                    cDonePostNames[postName] = true;
+                    outData.cPostNames.push(postName);
                 }
-                item.Point.Post.name = outData.cPostNames.indexOf(item.Point.Post.name);
+                item.Point.Post.name = outData.cPostNames.indexOf(postName);
             }
             item.dataValues.backgroundColor = outData.cBackgroundColors.indexOf(item.dataValues.backgroundColor);
             item.dataValues.confidenceScoreSort = parseInt(item.dataValues.confidenceScore.replace("%", ''));
             item.ip_address = outData.cIpAddresses.indexOf(item.ip_address);
             item.user_agent = outData.cUserAgents.indexOf(item.user_agent);
-            item.User.email = outData.cEmails.indexOf(item.User.email);
-            item.User.name = outData.cEmails.indexOf(item.User.name);
+            item.User.email = outData.cEmails.indexOf(userEmail);
+            item.User.name = outData.cNames.indexOf(userName);
             outData.items.push(item);
         });
         this.dataToProcess = outData;

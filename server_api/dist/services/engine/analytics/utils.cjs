@@ -1,6 +1,6 @@
 "use strict";
 const _ = require('lodash');
-const request = require('request');
+const request = require("../../../utils/requestCompat.cjs");
 const models = require('../../../models/index.cjs');
 const log = require('../../../utils/logger.cjs');
 const convertToString = (integer, type) => {

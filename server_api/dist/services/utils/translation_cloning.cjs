@@ -3,7 +3,7 @@ const models = require('../../models/index.cjs');
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("../../utils/requestCompat.cjs");
 const farmhash = require('farmhash');
 const fixTargetLocale = require('./translation_helpers.cjs').fixTargetLocale;
 // For post get translations in all locales (that exists)

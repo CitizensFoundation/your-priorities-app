@@ -2,6 +2,49 @@ import AWS from "aws-sdk";
 import fs from "fs";
 import axios from "axios";
 import log from "../../../utils/loggerTs.js";
+const normalizeEndpointHost = (endpoint) => {
+    if (!endpoint) {
+        return null;
+    }
+    try {
+        const normalizedUrl = new URL(endpoint.includes("://") ? endpoint : `https://${endpoint}`);
+        return {
+            host: normalizedUrl.host,
+            hostname: normalizedUrl.hostname,
+        };
+    }
+    catch {
+        return {
+            host: endpoint,
+            hostname: endpoint,
+        };
+    }
+};
+const getBucketFromVirtualHost = (parsedUrl, normalizedEndpoint) => {
+    if (!normalizedEndpoint) {
+        return null;
+    }
+    const hostSuffix = `.${normalizedEndpoint.host}`;
+    const hostnameSuffix = `.${normalizedEndpoint.hostname}`;
+    if (parsedUrl.host.endsWith(hostSuffix)) {
+        return parsedUrl.host.slice(0, -hostSuffix.length) || null;
+    }
+    if (parsedUrl.hostname.endsWith(hostnameSuffix)) {
+        return parsedUrl.hostname.slice(0, -hostnameSuffix.length) || null;
+    }
+    return null;
+};
+const getAwsBucketFromHostname = (hostname) => {
+    const s3MarkerIndex = hostname.indexOf(".s3.");
+    if (s3MarkerIndex > 0) {
+        return hostname.slice(0, s3MarkerIndex) || null;
+    }
+    const legacyS3MarkerIndex = hostname.indexOf(".s3-");
+    if (legacyS3MarkerIndex > 0) {
+        return hostname.slice(0, legacyS3MarkerIndex) || null;
+    }
+    return null;
+};
 export class S3Service {
     constructor(cloudflareApiKey, cloudflareZoneId) {
         this.cloudflareApiKey = cloudflareApiKey;
@@ -37,13 +80,17 @@ export class S3Service {
         const params = {
             Bucket: bucket,
             Key: key,
-            ACL: "private",
         };
         log.info(`Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
         return new Promise((resolve, reject) => {
-            s3.putObjectAcl(params, (err, data) => {
+            s3.deleteObject(params, (err, data) => {
                 if (err) {
-                    log.error(`Error deleting image from S3: ${err}`);
+                    log.error("Error deleting image from S3", {
+                        imageUrl,
+                        bucket,
+                        key,
+                        err,
+                    });
                     reject(err);
                 }
                 else {
@@ -87,25 +134,39 @@ export class S3Service {
         let bucket, key;
         const cfImageProxyDomain = process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN;
         const s3Bucket = process.env.S3_BUCKET;
+        const normalizedEndpoint = normalizeEndpointHost(process.env.S3_ENDPOINT);
+        const parsedUrl = new URL(imageUrl);
         if (cfImageProxyDomain && imageUrl.includes(cfImageProxyDomain)) {
-            const urlPath = new URL(imageUrl).pathname;
-            const [, ...pathParts] = urlPath.split("/");
+            const [, ...pathParts] = parsedUrl.pathname.split("/");
             bucket = s3Bucket;
             key = pathParts.join("/");
         }
+        else if (normalizedEndpoint &&
+            (parsedUrl.hostname === normalizedEndpoint.hostname ||
+                parsedUrl.host === normalizedEndpoint.host)) {
+            const [, maybeBucket, ...pathParts] = parsedUrl.pathname.split("/");
+            bucket = process.env.MINIO_ROOT_USER ? maybeBucket || s3Bucket : s3Bucket;
+            key = process.env.MINIO_ROOT_USER ? pathParts.join("/") : parsedUrl.pathname.slice(1);
+        }
         else {
-            const match = imageUrl.match(/https:\/\/(.+?)\.s3\.amazonaws\.com\/(.+)/);
-            if (match) {
-                bucket = match[1];
-                key = match[2];
+            const virtualHostBucket = getBucketFromVirtualHost(parsedUrl, normalizedEndpoint) ||
+                getAwsBucketFromHostname(parsedUrl.hostname);
+            if (virtualHostBucket) {
+                bucket = virtualHostBucket;
+                key = parsedUrl.pathname.replace(/^\/+/, "");
             }
         }
         return { bucket, key };
     }
     async deleteMediaFormatsUrls(formats) {
         for (const url of formats) {
-            await this.deleteS3Url(url);
-            log.info(`Deleted image from S3: ${url}`);
+            try {
+                await this.deleteS3Url(url);
+                log.info(`Deleted image from S3: ${url}`);
+            }
+            catch (error) {
+                log.warn("Best-effort image cleanup failed", { url, error });
+            }
         }
     }
 }

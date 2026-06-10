@@ -65,6 +65,9 @@ class FraudGetPointQualities extends FraudGetBase {
         let topItems = this.setupTopItems(items);
         const pointIds = this.getPointIdsFromItems(topItems);
         const pointCount = _.uniq(pointIds).length;
+        if (this.isDebugFraudDetectionCountAll()) {
+            return this.getDebugTopItems(topItems);
+        }
         if (type === "byIpUserAgentPointId") {
             let out = [];
             _.each(topItems, function (item) {

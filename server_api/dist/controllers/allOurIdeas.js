@@ -578,7 +578,7 @@ export class AllOurIdeasController {
                     : `Top ${perPage} answers`;
                 const swClientSocket = this.wsClients.get(wsClientSocketId);
                 const aiHelper = new AiHelper(swClientSocket);
-                await aiHelper.getAiAnalysis(questionId, analysisType.contextPrompt, choices, analysisCacheKey, req.redisClient, usedLanguageName, topOrBottomText, analysisType.label);
+                await aiHelper.getAiAnalysis(questionId, analysisType.contextPrompt, choices, analysisCacheKey, req.redisClient, usedLanguageName, topOrBottomText, analysisType.label, `aoi-analysis-${analysisIndex}-${analysisTypeIndex}`);
             }
             res.json({
                 selectedChoices: choices,

@@ -1,4 +1,4 @@
-import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import { IImageGenerator, YpAiGenerateImageTypes, YpImageGenerationOptions } from "./iImageGenerator.js";
 export declare class DalleImageGenerator implements IImageGenerator {
     private maxRetryCount;
     private azureOpenaAiBase?;
@@ -6,5 +6,5 @@ export declare class DalleImageGenerator implements IImageGenerator {
     private azureDalleDeployment?;
     private openAiKey?;
     constructor(azureOpenaAiBase: string | undefined, azureOpenAiApiKey: string | undefined, azureDalleDeployment: string | undefined, openAiKey: string | undefined);
-    generateImageUrl(prompt: string, type?: YpAiGenerateImageTypes): Promise<string | undefined>;
+    generateImageUrl(prompt: string, type?: YpAiGenerateImageTypes, options?: YpImageGenerationOptions): Promise<string | undefined>;
 }

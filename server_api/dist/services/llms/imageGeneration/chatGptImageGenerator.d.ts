@@ -1,4 +1,4 @@
-import { IImageGenerator, YpAiGenerateImageTypes } from "./iImageGenerator.js";
+import { IImageGenerator, YpAiGenerateImageTypes, YpImageGenerationOptions } from "./iImageGenerator.js";
 export declare class ChatGptImageGenerator implements IImageGenerator {
     private readonly maxRetryCount;
     private readonly openAiKey?;
@@ -8,6 +8,6 @@ export declare class ChatGptImageGenerator implements IImageGenerator {
      * The returned link remains live for ~60 minutes – be sure to download
      * or cache it right away in the calling service.
      */
-    generateImageUrl(prompt: string, type?: YpAiGenerateImageTypes): Promise<string | undefined>;
+    generateImageUrl(prompt: string, type?: YpAiGenerateImageTypes, options?: YpImageGenerationOptions): Promise<string | undefined>;
 }
 export default ChatGptImageGenerator;

@@ -1,5 +1,5 @@
 "use strict";
-const request = require("request").defaults({ encoding: null });
+const request = require("../utils/requestCompat.cjs").defaults({ encoding: null });
 const fs = require("fs");
 const randomstring = require("randomstring");
 const log = require("../utils/logger.cjs");
@@ -192,6 +192,29 @@ module.exports = (sequelize, DataTypes) => {
         });
         return formats;
     };
+    const getBelongsToManyAssociations = () => {
+        return Object.entries(Image.associations || {}).filter(([, association]) => association.associationType === "BelongsToMany");
+    };
+    const hasRemainingCollectionAssociations = async (imageId) => {
+        const includes = getBelongsToManyAssociations().map(([associationName]) => ({
+            association: associationName,
+            required: false,
+            through: { attributes: [] },
+        }));
+        if (!includes.length) {
+            return false;
+        }
+        const imageWithAssociations = await Image.findByPk(imageId, {
+            include: includes,
+        });
+        if (!imageWithAssociations) {
+            return false;
+        }
+        return includes.some(({ association }) => {
+            const associatedRecords = imageWithAssociations[association];
+            return Array.isArray(associatedRecords) && associatedRecords.length > 0;
+        });
+    };
     Image.removeImageFromCollection = async (req, res) => {
         const imageId = req.params.imageId;
         const groupId = req.params.groupId;
@@ -199,14 +222,17 @@ module.exports = (sequelize, DataTypes) => {
         const domainId = req.params.domainId;
         const postId = req.params.postId;
         const image = await Image.findByPk(imageId);
+        const removeByUserIdOnly = Boolean(req.query.removeByUserIdOnly);
+        const requestUserId = req.user?.id;
+        const isOwnedByRequestUser = image && requestUserId !== undefined && image.user_id === requestUserId;
         let removed = false;
+        let remainingCollectionAssociations;
         if (image) {
-            if (req.query.removeByUserIdOnly) {
-                if (image.user_id === req.user.id) {
-                    image.deleted = true;
-                    await image.save();
-                    removed = true;
-                }
+            if (removeByUserIdOnly && !isOwnedByRequestUser) {
+                log.error("Could not remove image from collection not same user", {
+                    imageId,
+                    userId: requestUserId,
+                });
             }
             else if (groupId) {
                 const group = await sequelize.models.Group.findByPk(groupId);
@@ -271,40 +297,80 @@ module.exports = (sequelize, DataTypes) => {
             else if (postId) {
                 const post = await sequelize.models.Post.findByPk(postId);
                 if (post) {
-                    const isImageInPost = await sequelize.models.Post.findOne({
+                    const postWithImage = await sequelize.models.Post.findOne({
                         where: { id: postId },
                         include: [
                             {
                                 as: "PostImages",
                                 model: sequelize.models.Image,
                                 where: { id: imageId },
-                                required: true,
+                                required: false,
+                            },
+                            {
+                                as: "PostHeaderImages",
+                                model: sequelize.models.Image,
+                                where: { id: imageId },
+                                required: false,
+                            },
+                            {
+                                as: "PostUserImages",
+                                model: sequelize.models.Image,
+                                where: { id: imageId },
+                                required: false,
                             },
                         ],
                     });
-                    if (isImageInPost) {
+                    if (postWithImage?.PostHeaderImages?.length) {
+                        await post.removePostHeaderImage(image);
+                        const remainingHeaderImageCount = typeof post.countPostHeaderImages === "function"
+                            ? await post.countPostHeaderImages()
+                            : null;
+                        if (remainingHeaderImageCount === 0 &&
+                            post.cover_media_type === "image") {
+                            post.cover_media_type = "none";
+                            await post.save();
+                        }
+                        removed = true;
+                    }
+                    else if (postWithImage?.PostImages?.length) {
                         await post.removePostImage(image);
+                        removed = true;
+                    }
+                    else if (postWithImage?.PostUserImages?.length) {
+                        await post.removePostUserImage(image);
                         removed = true;
                     }
                 }
             }
+            if (!removed && removeByUserIdOnly && isOwnedByRequestUser) {
+                remainingCollectionAssociations = await hasRemainingCollectionAssociations(image.id);
+                removed = !remainingCollectionAssociations;
+            }
             if (removed) {
+                if (remainingCollectionAssociations === undefined) {
+                    remainingCollectionAssociations = await hasRemainingCollectionAssociations(image.id);
+                }
+                if (remainingCollectionAssociations) {
+                    log.info("Detached shared image from collection", { imageId: image.id });
+                    return res
+                        .status(200)
+                        .json({ message: "Image removed from collection" });
+                }
                 image.deleted = true;
                 await image.save();
-                import("../services/llms/imageGeneration/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
-                    try {
-                        const mediaManager = new CollectionImageGenerator();
-                        await mediaManager.deleteMediaFormatsUrls(image.formats ? JSON.parse(image.formats) : []);
-                        log.info("Deleted image", { imageId: image.id });
-                        res
-                            .status(200)
-                            .json({ message: "Image removed from collection" });
-                    }
-                    catch (error) {
-                        log.error("Could not delete image", { error });
-                        res.sendStatus(500);
-                    }
-                });
+                try {
+                    const { S3Service } = await import("../services/llms/imageGeneration/s3Service.js");
+                    const mediaManager = new S3Service(process.env.CLOUDFLARE_API_KEY, process.env.CLOUDFLARE_ZONE_ID);
+                    await mediaManager.deleteMediaFormatsUrls(image.formats ? JSON.parse(image.formats) : []);
+                }
+                catch (error) {
+                    log.warn("Best-effort image cleanup failed", {
+                        imageId: image.id,
+                        error,
+                    });
+                }
+                log.info("Deleted image", { imageId: image.id });
+                return res.status(200).json({ message: "Image removed from collection" });
             }
             else {
                 log.error("Could not remove image from collection");

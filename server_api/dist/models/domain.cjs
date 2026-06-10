@@ -257,7 +257,7 @@ module.exports = (sequelize, DataTypes) => {
                     provider: "saml",
                     protocol: "saml",
                     strategyObject: "Strategy",
-                    strategyPackage: "passport-saml",
+                    strategyPackage: "@node-saml/passport-saml",
                     certInPemFormat: true,
                     audience: req.hostname,
                     issuer: domain.secret_api_keys.saml.issuer

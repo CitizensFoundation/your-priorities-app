@@ -3,7 +3,7 @@ import { WebSocket } from "ws";
 import { YpBaseChatBot } from "../../llms/baseChatBot.js";
 export declare class ExplainAnswersAssistant extends YpBaseChatBot {
     openaiClient: OpenAI;
-    modelName: string;
+    llmModel: string;
     maxTokens: number;
     temperature: number;
     languageName: string;

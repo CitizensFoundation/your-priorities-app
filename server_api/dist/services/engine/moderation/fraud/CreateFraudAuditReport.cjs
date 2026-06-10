@@ -11,6 +11,16 @@ const formatWorksheet = (worksheet) => {
     worksheet.getRow(1).font = { bold: true };
     //  worksheet.properties.defaultRowHeight = 20;
 };
+const sanitizeWorksheetName = (name) => {
+    const sanitizedName = String(name || "Fraud Audit")
+        .replace(/[\\/\*\?:\[\]]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .substring(0, 31)
+        .trim()
+        .replace(/^'+|'+$/g, "");
+    return sanitizedName.trim() || "Fraud Audit";
+};
 class FraudAuditReport {
     constructor(workPackage) {
         this.workPackage = workPackage;
@@ -100,7 +110,7 @@ class FraudAuditReport {
         return items;
     }
     async getPostItems(ids) {
-        return await model.unscoped().findAll({
+        return await models.Post.unscoped().findAll({
             attributes: ["id", "created_at", "group_id", "user_id", "user_agent", "ip_address", "data"],
             where: {
                 id: {
@@ -133,7 +143,7 @@ class FraudAuditReport {
         this.workBook = new Excel.Workbook();
         this.workBook.creator = "Your Priorities Report - Automated";
         this.workBook.created = new Date();
-        this.worksheet = this.workBook.addWorksheet(`Community Users ${this.workPackage.community.id} ${this.workPackage.userName}`);
+        this.worksheet = this.workBook.addWorksheet(sanitizeWorksheetName(`Community Users ${this.workPackage.community.id} ${this.workPackage.userName}`));
         this.worksheet.columns = [
             { header: "Type", key: "collectionType", width: 20 },
             { header: "Method", key: "selectedMethod", width: 20 },
@@ -159,7 +169,7 @@ class FraudAuditReport {
         }
         if (['pointQualities'].indexOf(originalWorkPackage.collectionType) !== -1) {
             this.worksheet.columns = this.worksheet.columns.concat([
-                { header: "Point Id", key: "postId", width: 20 },
+                { header: "Point Id", key: "pointId", width: 20 },
             ]);
         }
         this.worksheet.columns = this.worksheet.columns.concat([
@@ -176,8 +186,8 @@ class FraudAuditReport {
                 communityName +
                 "_" +
                 dateString +
-                ".xls";
-        this.workPackage.fileEnding = "xls";
+                ".xlsx";
+        this.workPackage.fileEnding = "xlsx";
     }
     async getCommunity() {
         this.workPackage.community = await models.Community.findOne({
@@ -240,8 +250,8 @@ class FraudAuditReport {
                 dateDeleted: this.workPackage.auditReportData.date,
                 id: item.id,
                 date: item.created_at,
-                userId: item.User.id,
-                email: item.User.email,
+                userId: item.User ? item.User.id : item.user_id,
+                email: item.User ? item.User.email : "",
                 ipAddress: item.ip_address,
                 userAgent: item.user_agent,
             };
@@ -250,14 +260,14 @@ class FraudAuditReport {
                 row.browserId = item.data.browserId;
             }
             if (['posts', 'pointQualities'].indexOf(originalWorkPackage.collectionType) === -1) {
-                row.postId = item.Post.id;
-                row.postName = item.Post.name;
+                row.postId = item.Post ? item.Post.id : item.post_id;
+                row.postName = item.Post ? item.Post.name : "";
             }
             if (['endorsements', 'pointQualities', 'ratings'].indexOf(originalWorkPackage.collectionType) !== -1) {
                 row.value = item.value;
             }
             if (['pointQualities'].indexOf(originalWorkPackage.collectionType) !== -1) {
-                row.pointId = item.Point.id;
+                row.pointId = item.Point ? item.Point.id : item.point_id;
             }
             this.worksheet.addRow(row);
         }
@@ -272,6 +282,7 @@ class FraudAuditReport {
                     }
                 });
                 if (auditReport && auditReport.data) {
+                    this.validateAuditReportCommunity(auditReport);
                     this.workPackage.auditReportData = auditReport.data;
                     await this.getCommunity();
                     this.setupFilename();
@@ -296,6 +307,17 @@ class FraudAuditReport {
             }
         });
     }
+    validateAuditReportCommunity(auditReport) {
+        const auditCommunityId = auditReport &&
+            auditReport.data &&
+            auditReport.data.workPackage &&
+            auditReport.data.workPackage.communityId;
+        if (auditCommunityId === undefined ||
+            auditCommunityId === null ||
+            String(auditCommunityId) !== String(this.workPackage.communityId)) {
+            throw new Error("Fraud audit report does not belong to this community");
+        }
+    }
 }
 const createFraudAuditReport = async (workPackage, done) => {
     return await new Promise(async (resolve, reject) => {
@@ -310,5 +332,7 @@ const createFraudAuditReport = async (workPackage, done) => {
     });
 };
 module.exports = {
-    createFraudAuditReport
+    createFraudAuditReport,
+    FraudAuditReport,
+    sanitizeWorksheetName
 };

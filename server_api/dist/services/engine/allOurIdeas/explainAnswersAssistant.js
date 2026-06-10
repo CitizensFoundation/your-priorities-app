@@ -13,11 +13,11 @@ export class ExplainAnswersAssistant extends YpBaseChatBot {
             tls: tlsOptions,
         });
         super(wsClientId, wsClients, redisConnection, `${YpBaseChatBot.redisMemoryKeyPrefix}-${uuidv4()}-explain-answers-assistant`);
-        this.modelName = "gpt-4o";
+        this.llmModel = "gpt-5.3-chat-latest";
         this.maxTokens = 4000;
         this.temperature = 0.8;
         this.explainConversation = async (chatLog) => {
-            this.setChatLog(chatLog);
+            await this.setChatLog(chatLog);
             let messages = chatLog.map((message) => {
                 return {
                     role: message.sender,
@@ -29,13 +29,7 @@ export class ExplainAnswersAssistant extends YpBaseChatBot {
                 content: this.renderSystemPrompt(),
             };
             messages.unshift(systemMessage);
-            const stream = await this.openaiClient.chat.completions.create({
-                model: this.llmModel,
-                messages,
-                max_tokens: this.maxTokens,
-                temperature: this.temperature,
-                stream: true,
-            });
+            const stream = await this.openaiClient.chat.completions.create(this.getStreamingChatCompletionParams(messages));
             this.streamWebSocketResponses(stream);
         };
         this.languageName = languageName;

@@ -6,7 +6,7 @@ const importCommunity = require('./utils.cjs').importCommunity;
 const importGroup = require('./utils.cjs').importGroup;
 const importPost = require('./utils.cjs').importPost;
 const importPoint = require('./utils.cjs').importPoint;
-const request = require('request');
+const request = require("../../../utils/requestCompat.cjs");
 const updateDomain = (domainId, done) => {
     log.info('updateDomain');
     models.Domain.unscoped().findOne({

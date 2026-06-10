@@ -39,19 +39,7 @@ class FraudGetEndorsements extends FraudGetBase {
                 const itemsToAnalyse = _.sortBy(items, function (item) {
                     return [item.post_id, item.user_agent];
                 });
-                let groupConfiguration;
-                if (getGroup && items.length > 0) {
-                    const group = await models.Group.findOne({
-                        where: {
-                            id: itemsToAnalyse[0].Post.Group.id
-                        },
-                        attributes: ['configuration']
-                    });
-                    if (group) {
-                        groupConfiguration = group.configuration;
-                    }
-                }
-                resolve({ itemsToAnalyse, groupConfiguration });
+                resolve({ itemsToAnalyse });
             }
             catch (error) {
                 reject(error);
@@ -66,6 +54,9 @@ class FraudGetEndorsements extends FraudGetBase {
         let topItems = this.setupTopItems(items);
         const postIds = this.getPostIdsFromItems(topItems);
         const postCount = _.uniq(postIds).length;
+        if (this.isDebugFraudDetectionCountAll()) {
+            return this.getDebugTopItems(topItems);
+        }
         if (type === "byIpUserAgentPostId") {
             let out = [];
             _.each(topItems, function (item) {

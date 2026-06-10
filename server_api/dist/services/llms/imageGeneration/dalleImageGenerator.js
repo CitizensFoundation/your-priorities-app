@@ -1,5 +1,7 @@
 import { AzureOpenAI, OpenAI } from "openai";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+const { getDefaultImageQualityForOptions, getDefaultImageSizeForOptions, } = imageModelConfig;
 export class DalleImageGenerator {
     constructor(azureOpenaAiBase, azureOpenAiApiKey, azureDalleDeployment, openAiKey) {
         this.maxRetryCount = 3;
@@ -8,17 +10,30 @@ export class DalleImageGenerator {
         this.azureDalleDeployment = azureDalleDeployment;
         this.openAiKey = openAiKey;
     }
-    async generateImageUrl(prompt, type = "logo") {
+    async generateImageUrl(prompt, type = "logo", options) {
         let client;
         let result;
         let retryCount = 0;
         let retrying = true;
+        const hasAzureOpenAiConfig = Boolean(this.azureOpenaAiBase &&
+            this.azureOpenAiApiKey &&
+            this.azureDalleDeployment);
+        const useAzureOpenAi = options?.imageProvider === "azureOpenai" ||
+            (!options?.imageProvider && hasAzureOpenAiConfig);
+        const requestedModel = options?.imageModel ||
+            (useAzureOpenAi ? this.azureDalleDeployment : undefined) ||
+            "dall-e-3";
+        const imageProvider = useAzureOpenAi ? "azureOpenai" : "openai";
         // Decide which client to instantiate (Azure vs. standard OpenAI)
-        if (this.azureOpenaAiBase && this.azureOpenAiApiKey && this.azureDalleDeployment) {
+        if (useAzureOpenAi) {
+            if (!this.azureOpenaAiBase || !this.azureOpenAiApiKey) {
+                log.error("Azure OpenAI image generator is not configured.");
+                return undefined;
+            }
             client = new AzureOpenAI({
                 apiKey: this.azureOpenAiApiKey,
                 endpoint: this.azureOpenaAiBase,
-                deployment: this.azureDalleDeployment,
+                deployment: requestedModel,
                 apiVersion: "2024-10-21",
             });
         }
@@ -28,33 +43,30 @@ export class DalleImageGenerator {
                 apiKey: this.openAiKey,
             });
         }
-        // Decide on image dimensions
-        let size = "1792x1024";
-        if (type === "logo") {
-            size = "1792x1024";
-        }
-        else if (type === "icon") {
-            size = "1024x1024";
-        }
-        const modelQuality = "standard";
+        const size = options?.imageSize ||
+            getDefaultImageSizeForOptions(imageProvider, requestedModel, type) ||
+            "1792x1024";
+        const modelQuality = options?.imageQuality ||
+            getDefaultImageQualityForOptions(imageProvider, requestedModel) ||
+            "standard";
         while (retrying && retryCount < this.maxRetryCount) {
             try {
                 // If using Azure OpenAI
-                if (this.azureOpenaAiBase && this.azureOpenAiApiKey && this.azureDalleDeployment) {
+                if (useAzureOpenAi) {
                     result = await client.images.generate({
                         prompt,
                         n: 1,
-                        size,
+                        size: size,
                         quality: modelQuality,
                     });
                 }
                 else {
                     // Standard OpenAI
                     result = await client.images.generate({
-                        model: "dall-e-3",
+                        model: requestedModel,
                         prompt,
                         n: 1,
-                        size,
+                        size: size,
                         quality: modelQuality,
                     });
                 }

@@ -1,8 +1,13 @@
 import { OpenAI } from "openai";
 import log from "../../../utils/loggerTs.js";
 export class AiHelper {
+    usesMaxCompletionTokens(modelName) {
+        return modelName.startsWith("gpt-5");
+    }
     constructor(wsClientSocket = undefined) {
         this.modelName = "gpt-4o";
+        this.answerIdeasModelName = "gpt-5.3-chat-latest";
+        this.analysisModelName = "gpt-5.3-chat-latest";
         this.maxTokens = 2048;
         this.temperature = 0.7;
         this.cacheExpireTime = 60 * 60;
@@ -53,31 +58,41 @@ Only output: PASSES or FAILS`;
         });
         this.wsClientSocket = wsClientSocket;
     }
-    async streamChatCompletions(messages) {
-        const stream = await this.openaiClient.chat.completions.create({
-            model: this.modelName,
+    async streamChatCompletions(messages, modelName = this.modelName, uniqueToken) {
+        const requestParams = {
+            model: modelName,
             messages,
-            max_tokens: this.maxTokens,
-            temperature: this.temperature,
             stream: true,
-        });
-        await this.streamWebSocketResponses(stream);
+        };
+        if (this.usesMaxCompletionTokens(modelName)) {
+            requestParams.max_completion_tokens = this.maxTokens;
+        }
+        else {
+            requestParams.max_tokens = this.maxTokens;
+            requestParams.temperature = this.temperature;
+        }
+        const stream = await this.openaiClient.chat.completions.create(requestParams);
+        await this.streamWebSocketResponses(stream, uniqueToken);
     }
-    sendToClient(sender, message, type = "stream") {
+    sendToClient(sender, message, type = "stream", uniqueToken) {
         this.wsClientSocket?.send(JSON.stringify({
             sender,
             type: type,
             message,
+            uniqueToken,
         }));
     }
-    async streamWebSocketResponses(stream) {
+    async streamWebSocketResponses(stream, uniqueToken) {
         return new Promise(async (resolve, reject) => {
-            this.sendToClient("bot", "", "start");
+            this.sendToClient("assistant", "", "start", uniqueToken);
             try {
                 let botMessage = "";
                 for await (const part of stream) {
-                    this.sendToClient("bot", part.choices[0].delta.content);
-                    botMessage += part.choices[0].delta.content;
+                    const content = part.choices[0].delta.content;
+                    if (content) {
+                        this.sendToClient("assistant", content, "stream", uniqueToken);
+                        botMessage += content;
+                    }
                 }
                 if (this.redisClient && this.cacheKeyForFullResponse) {
                     this.redisClient.set(this.cacheKeyForFullResponse, botMessage, "EX", this.cacheExpireTime);
@@ -85,11 +100,11 @@ Only output: PASSES or FAILS`;
             }
             catch (error) {
                 log.error(error);
-                this.sendToClient("bot", "There has been an error, please retry", "error");
+                this.sendToClient("assistant", "There has been an error, please retry", "error", uniqueToken);
                 reject();
             }
             finally {
-                this.sendToClient("bot", "", "end");
+                this.sendToClient("assistant", "", "end", uniqueToken);
             }
             resolve();
         });
@@ -132,16 +147,16 @@ Only output: PASSES or FAILS`;
                         content: `What are some possible answers to the question: ${question}\n\n${previewIdeasText}Answers:\n`,
                     },
                 ];
-                await this.streamChatCompletions(messages);
+                await this.streamChatCompletions(messages, this.answerIdeasModelName);
             }
         }
         catch (error) {
             log.error("Error in getAnswerIdeas:", error);
-            this.sendToClient("bot", "There has been an error, please retry", "error");
+            this.sendToClient("assistant", "There has been an error, please retry", "error");
             return null;
         }
     }
-    async getAiAnalysis(questionId, contextPrompt, answers, cacheKeyForFullResponse, redisClient, locale, topOrBottomIdeasText, typeOfAnalysisText) {
+    async getAiAnalysis(questionId, contextPrompt, answers, cacheKeyForFullResponse, redisClient, locale, topOrBottomIdeasText, typeOfAnalysisText, uniqueToken) {
         this.redisClient = redisClient;
         this.cacheKeyForFullResponse = cacheKeyForFullResponse;
         const basePrePrompt = `You are a highly competent text and ideas analysis AI.
@@ -194,12 +209,12 @@ Only output: PASSES or FAILS`;
               Answers to analyse:\n${answersText}`,
                     },
                 ];
-                this.streamChatCompletions(messages);
+                this.streamChatCompletions(messages, this.analysisModelName, uniqueToken);
             }
         }
         catch (error) {
             log.error("Error in getAiAnalysis:", error);
-            this.sendToClient("bot", "There has been an error, please retry", "error");
+            this.sendToClient("assistant", "There has been an error, please retry", "error", uniqueToken);
         }
     }
 }

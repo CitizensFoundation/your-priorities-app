@@ -1,5 +1,4 @@
 import { OpenAI } from "openai";
-import { Stream } from "openai/streaming.js";
 import WebSocket from "ws";
 import ioredis from "ioredis";
 export declare class YpBaseChatBot {
@@ -26,7 +25,9 @@ export declare class YpBaseChatBot {
     sendAgentCompleted(name: string, lastAgent?: boolean, error?: string | undefined): void;
     sendAgentUpdate(message: string): void;
     sendToClient(sender: YpSenderType, message: string, type?: YpAssistantMessageType, uniqueToken?: string | undefined, hiddenContextMessage?: boolean): void;
-    streamWebSocketResponses(stream: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>): Promise<void>;
+    streamWebSocketResponses(stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>): Promise<void>;
+    usesMaxCompletionTokens(modelName: string): boolean;
+    getStreamingChatCompletionParams(messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]): OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming;
     saveMemoryIfNeeded(): Promise<void>;
     setChatLog(chatLog: YpSimpleChatLog[]): Promise<void>;
     conversation(chatLog: YpSimpleChatLog[]): Promise<void>;

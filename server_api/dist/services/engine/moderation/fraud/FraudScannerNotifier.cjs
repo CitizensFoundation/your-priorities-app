@@ -4,9 +4,11 @@ const models = require("../../../../models/index.cjs");
 const i18n = require('../../../utils/i18n.cjs');
 const deepEqual = require('deep-equal');
 const log = require("../../../../utils/logger.cjs");
-const FraudGetEndorsements = require("./FraudGetEndorsements");
-const FraudGetPointQualities = require("./FraudGetPointQualities");
-const FraudGetRatings = require("./FraudGetRatings");
+const FraudGetEndorsements = require("./FraudGetEndorsements.cjs");
+const FraudGetPointQualities = require("./FraudGetPointQualities.cjs");
+const FraudGetRatings = require("./FraudGetRatings.cjs");
+const FraudGetPoints = require("./FraudGetPoints.cjs");
+const FraudGetPosts = require("./FraudGetPosts.cjs");
 const queue = require("../../../workers/queue.cjs");
 const Backend = require("i18next-fs-backend");
 const path = require("path");
@@ -15,8 +17,17 @@ class FraudScannerNotifier {
     constructor() {
         this.currentCommunity = null;
         this.uniqueCollectionItemsIds = {};
-        this.collectionsToScan = ['endorsements', 'ratings', 'pointQualities'];
-        this.scannerModels = [FraudGetEndorsements, FraudGetRatings, FraudGetPointQualities];
+        this.collectionsToScan = ['endorsements', 'ratings', 'pointQualities', 'points', 'posts'];
+        this.scannerModels = [
+            FraudGetEndorsements,
+            FraudGetRatings,
+            FraudGetPointQualities,
+            FraudGetPoints,
+            FraudGetPosts
+        ];
+    }
+    resetCounts() {
+        this.uniqueCollectionItemsIds = {};
     }
     getCommunityURL() {
         if (this.currentCommunity && this.currentCommunity.Domain && this.currentCommunity.Domain.domain_name) {
@@ -134,7 +145,7 @@ class FraudScannerNotifier {
     }
     getContainerOldCount(collectionType) {
         let foundCollection;
-        if (this.currentCommunity.data.lastFraudScanResults) {
+        if (this.currentCommunity.data && this.currentCommunity.data.lastFraudScanResults) {
             for (let i = 0; i < this.currentCommunity.data.lastFraudScanResults.length; i++) {
                 if (this.currentCommunity.data.lastFraudScanResults[i].collectionType &&
                     this.currentCommunity.data.lastFraudScanResults[i].collectionType === collectionType) {
@@ -187,7 +198,7 @@ class FraudScannerNotifier {
             if (this.collectionsToScan[c] === "pointQualities") {
                 methodsToScan = methodsToScan.concat(['byIpFingerprintPointId', 'byIpUserAgentPointId']);
             }
-            else {
+            else if (this.collectionsToScan[c] !== "posts") {
                 methodsToScan = methodsToScan.concat(['byIpFingerprintPostId', 'byIpUserAgentPostId']);
             }
             for (let m = 0; m < methodsToScan.length; m++) {
@@ -230,6 +241,7 @@ class FraudScannerNotifier {
                 for (let i = 0; i < communities.length; i++) {
                     log.info("Processing community: " + communities[i].name);
                     this.currentCommunity = communities[i];
+                    this.resetCounts();
                     try {
                         await this.scan();
                         await this.notify();
@@ -249,32 +261,44 @@ class FraudScannerNotifier {
         });
     }
 }
-i18n
-    .use(Backend)
-    .init({
-    preload: ['en', 'fr', 'sk', 'bg', 'cs', 'it', 'da', 'kl', 'es', 'sv', 'sq', 'uz', 'uk', 'ca', 'hr', 'ro', 'ru',
-        'ro_md', 'pt_br', 'hu', 'tr', 'is', 'nl', 'no', 'pl', 'zh_tw', 'ky'],
-    fallbackLng: 'en',
-    // this is the defaults
-    backend: {
-        // path where resources get loaded from
-        loadPath: localesPath + '/{{lng}}/translation.json',
-        // path to post missing resources
-        addPath: localesPath + '/{{lng}}/translation.missing.json',
-        // jsonIndent to use when storing json files
-        jsonIndent: 2
-    }
-}, function (err, t) {
-    (async () => {
-        try {
-            const scanner = new FraudScannerNotifier();
-            await scanner.scanAndNotify();
-            log.info("Fraud Scanning Complete");
-            process.exit();
+const runFraudScannerNotifier = () => {
+    i18n
+        .use(Backend)
+        .init({
+        preload: ['en', 'fr', 'sk', 'bg', 'cs', 'it', 'da', 'kl', 'es', 'sv', 'sq', 'uz', 'uk', 'ca', 'hr', 'ro', 'ru',
+            'ro_md', 'pt_br', 'hu', 'tr', 'is', 'nl', 'no', 'pl', 'zh_tw', 'ky'],
+        fallbackLng: 'en',
+        // this is the defaults
+        backend: {
+            // path where resources get loaded from
+            loadPath: localesPath + '/{{lng}}/translation.json',
+            // path to post missing resources
+            addPath: localesPath + '/{{lng}}/translation.missing.json',
+            // jsonIndent to use when storing json files
+            jsonIndent: 2
         }
-        catch (error) {
-            log.error(error);
-            process.exit();
-        }
-    })();
-});
+    }, function (err, t) {
+        (async () => {
+            try {
+                if (err) {
+                    throw err;
+                }
+                const scanner = new FraudScannerNotifier();
+                await scanner.scanAndNotify();
+                log.info("Fraud Scanning Complete");
+                process.exit(0);
+            }
+            catch (error) {
+                log.error(error);
+                process.exit(1);
+            }
+        })();
+    });
+};
+if (require.main === module) {
+    runFraudScannerNotifier();
+}
+module.exports = {
+    FraudScannerNotifier,
+    runFraudScannerNotifier
+};

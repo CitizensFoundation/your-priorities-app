@@ -2,7 +2,7 @@ const models = require('../models/index.cjs');
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request');
+const request = require("../utils/requestCompat.cjs");
 models.Community.findAll({
     attributes: ['id', 'counter_groups']
 }).then(allCommunities => {

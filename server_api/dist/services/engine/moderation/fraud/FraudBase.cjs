@@ -2,6 +2,7 @@
 const _ = require("lodash");
 const moment = require("moment");
 const log = require("../../../../utils/logger.cjs");
+const { normalizeFingerprintValue, } = require("../../../../utils/fingerprint_data.cjs");
 class FraudBase {
     constructor(workPackage) {
         this.workPackage = workPackage;
@@ -37,6 +38,21 @@ class FraudBase {
         return _.sortBy(topItems, function (item) {
             return -item.count;
         });
+    }
+    isDebugFraudDetectionCountAll() {
+        return process.env.DEBUG_FRAUD_DETECTION_COUNT_ALL === "true" &&
+            this.workPackage.type === "get-items";
+    }
+    getDebugTopItems(topItems) {
+        _.forEach(topItems, topItem => {
+            _.forEach(topItem.items, item => {
+                item.dataValues = item.dataValues || {};
+                if (!item.dataValues.confidenceScore) {
+                    item.dataValues.confidenceScore = "0%";
+                }
+            });
+        });
+        return topItems;
     }
     getTopDataByIp() {
         return this.getTopItems(this.groupTopDataByIp(), "byIpAddress");
@@ -141,7 +157,7 @@ class FraudBase {
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             const hasData = item.data ? Object.keys(item.data).length === 0 : false;
-            if (hasData && !item.data.browserId && moment(item.created_at) > this.getStartFingerprintMoment()) {
+            if (hasData && !normalizeFingerprintValue(item.data.browserId) && moment(item.created_at) > this.getStartFingerprintMoment()) {
                 if (["posts", "points"].indexOf(this.workPackage.collectionType) > -1) {
                     item.dataValues.confidenceScore = `50%`;
                 }
@@ -180,50 +196,54 @@ class FraudBase {
     groupTopDataByIpFingerprintPostId() {
         const filtered = _.filter(this.items, (item) => {
             return item.data &&
-                item.data.browserFingerprint &&
-                item.data.browserFingerprint !== "undefined";
+                normalizeFingerprintValue(item.data.browserFingerprint);
         });
         return _.groupBy(filtered, (item) => {
-            return item.ip_address + ":" + item.post_id + ":" + item.data.browserFingerprint;
+            return item.ip_address + ":" + item.post_id + ":" + normalizeFingerprintValue(item.data.browserFingerprint);
         });
     }
     groupTopDataByIpFingerprintPointId() {
         const filtered = _.filter(this.items, (item) => {
             return item.data &&
-                item.data.browserFingerprint &&
-                item.data.browserFingerprint !== "undefined";
+                normalizeFingerprintValue(item.data.browserFingerprint);
         });
         return _.groupBy(filtered, (item) => {
-            return item.ip_address + ":" + item.point_id + ":" + item.data.browserFingerprint;
+            return item.ip_address + ":" + item.point_id + ":" + normalizeFingerprintValue(item.data.browserFingerprint);
         });
     }
     groupTopDataByIpFingerprint() {
         const filtered = _.filter(this.items, (item) => {
             return item.data &&
-                item.data.browserFingerprint &&
-                item.data.browserFingerprint !== "undefined";
+                normalizeFingerprintValue(item.data.browserFingerprint);
         });
         return _.groupBy(filtered, (item) => {
-            return item.ip_address + ":" + item.data.browserFingerprint;
+            return item.ip_address + ":" + normalizeFingerprintValue(item.data.browserFingerprint);
         });
     }
     groupTopDataByNoFingerprints() {
         const filtered = _.filter(this.items, item => {
-            return item.data &&
-                (!item.data.browserFingerprint ||
-                    !item.data.browserId) &&
-                moment(item.created_at).valueOf() > this.getStartFingerprintMoment();
+            item.data = item.data || {};
+            const missingFingerprint = !normalizeFingerprintValue(item.data.browserFingerprint) ||
+                !normalizeFingerprintValue(item.data.browserId);
+            if (this.isDebugFraudDetectionCountAll()) {
+                return missingFingerprint;
+            }
+            else {
+                return missingFingerprint &&
+                    moment(item.created_at).valueOf() > this.getStartFingerprintMoment();
+            }
         });
         const scoreHundred = (["posts", "points"].indexOf(this.workPackage.collectionType) > -1) ? "50%" : "100%";
         const scoreNinety = (["posts", "points"].indexOf(this.workPackage.collectionType) > -1) ? "45%" : "90%";
         const scoreSeventy = (["posts", "points"].indexOf(this.workPackage.collectionType) > -1) ? "60%" : "70%";
         _.forEach(filtered, item => {
-            if (!item.data.browserFingerprint &&
-                !item.data.browserId) {
+            const browserFingerprint = normalizeFingerprintValue(item.data.browserFingerprint);
+            const browserId = normalizeFingerprintValue(item.data.browserId);
+            if (!browserFingerprint && !browserId) {
                 item.dataValues.confidenceScore = scoreHundred;
                 item.dataValues.key = "bothUndefined";
             }
-            else if (!item.data.browserId) {
+            else if (!browserId) {
                 item.dataValues.confidenceScore = scoreNinety;
                 item.dataValues.key = "browserIdUndefined";
             }
@@ -233,7 +253,7 @@ class FraudBase {
             }
         });
         return _.groupBy(filtered, item => {
-            return item.key;
+            return item.dataValues.key;
         });
     }
 }

@@ -9,6 +9,7 @@ var async = require('async');
 var _ = require('lodash');
 var queue = require('../services/workers/queue.cjs');
 const moment = require('moment');
+const { getFingerprintDataFromBody, } = require("../utils/fingerprint_data.cjs");
 router.post('/:post_id/:type_index', auth.can('rate post'), function (req, res) {
     var post;
     models.Rating.findOne({
@@ -30,9 +31,7 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function (req, res) 
             rating.value = req.body.value;
             post = rating.Post;
             rating.set('data', {
-                browserId: req.body.ratingBaseId,
-                browserFingerprint: req.body.ratingValCode,
-                browserFingerprintConfidence: req.body.ratingConf
+                ...getFingerprintDataFromBody(req.body, "rating"),
             });
         }
         else {
@@ -42,9 +41,7 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function (req, res) 
                 value: req.body.value,
                 user_id: req.user.id,
                 data: {
-                    browserId: req.body.ratingBaseId,
-                    browserFingerprint: req.body.ratingValCode,
-                    browserFingerprintConfidence: req.body.ratingConf
+                    ...getFingerprintDataFromBody(req.body, "rating"),
                 },
                 user_agent: req.useragent.source,
                 ip_address: req.clientIp

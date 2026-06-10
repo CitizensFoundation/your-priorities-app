@@ -9,6 +9,8 @@ declare class FraudBase {
     getAllItems(): Promise<null>;
     getPostIdsFromItems(topItems: any): any[];
     setupTopItems(items: any): any[];
+    isDebugFraudDetectionCountAll(): boolean;
+    getDebugTopItems(topItems: any): any;
     getTopDataByIp(): null;
     getTopDataByIpUserAgentPostId(): null;
     getTopDataByIpUserAgentPointId(): null;

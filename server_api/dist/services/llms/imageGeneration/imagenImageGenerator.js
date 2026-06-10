@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { PredictionServiceClient } from "@google-cloud/aiplatform";
 import { helpers } from "@google-cloud/aiplatform";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+const { defaultImagenImageModel, getAspectRatioForImageSize } = imageModelConfig;
 export class ImagenImageGenerator {
     constructor(s3Service) {
         this.s3Service = s3Service;
@@ -11,8 +13,6 @@ export class ImagenImageGenerator {
         // Pull these from your environment or config
         this.projectId = process.env.GOOGLE_CLOUD_PROJECT_ID || "";
         this.location = process.env.GOOGLE_CLOUD_IMAGEN_LOCATION || "us-east1";
-        // Matches the official endpoint for Imagen v3.0:
-        this.endpoint = `projects/${this.projectId}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-002`;
         this.s3Bucket = process.env.S3_BUCKET || "";
         if (!this.projectId) {
             log.warn("Warning: GOOGLE_CLOUD_PROJECT_ID is not set. Vertex AI calls may fail.");
@@ -25,9 +25,11 @@ export class ImagenImageGenerator {
      * Generates an image from a text prompt using Vertex AI Imagen
      * and returns a public S3 URL to the uploaded image.
      */
-    async generateImageUrl(prompt, type = "logo") {
+    async generateImageUrl(prompt, type = "logo", options) {
         let retryCount = 0;
         let finalUrl;
+        const imageModel = options?.imageModel || defaultImagenImageModel;
+        const endpoint = `projects/${this.projectId}/locations/${this.location}/publishers/google/models/${imageModel}`;
         // Configure the API endpoint for Vertex AI
         const clientOptions = {
             apiEndpoint: `${this.location}-aiplatform.googleapis.com`,
@@ -43,17 +45,15 @@ export class ImagenImageGenerator {
                 const instances = [instanceValue];
                 const parameter = {
                     sampleCount: 1,
-                    // You can tweak these settings to your needs:
-                    // seed: 100,
-                    // addWatermark: false,
-                    aspectRatio: "16:9",
-                    safetyFilterLevel: "block_some",
-                    personGeneration: "allow_adult",
+                    aspectRatio: options?.imageSize
+                        ? getAspectRatioForImageSize(options.imageSize)
+                        : "16:9",
+                    safetySetting: "block_medium_and_above",
                 };
                 const parameters = helpers.toValue(parameter);
                 // 2) Build the predict request
                 const request = {
-                    endpoint: this.endpoint,
+                    endpoint,
                     instances,
                     parameters,
                 };

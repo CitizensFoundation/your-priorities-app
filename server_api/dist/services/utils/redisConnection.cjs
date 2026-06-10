@@ -9,18 +9,17 @@ if (process.env.REDIS_URL) {
     }
     if (redisUrl.includes("rediss://")) {
         redisClient = redis.createClient({
-            legacyMode: false,
             url: redisUrl,
             pingInterval: 10000,
             socket: { tls: true, rejectUnauthorized: false },
         });
     }
     else {
-        redisClient = redis.createClient({ legacyMode: true, url: redisUrl });
+        redisClient = redis.createClient({ url: redisUrl });
     }
 }
 else {
-    redisClient = redis.createClient({ legacyMode: true });
+    redisClient = redis.createClient();
 }
 redisClient.on("error", (err) => log.error("Backend Redis client error", err));
 redisClient.on("connect", () => log.info("Backend Redis client is connect"));

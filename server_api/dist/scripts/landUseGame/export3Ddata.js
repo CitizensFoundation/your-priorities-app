@@ -1,4 +1,4 @@
-const { post } = require("request");
+const { post } = require("../../utils/requestCompat.cjs");
 const queue = require("../../services/workers/queue.cjs");
 const models = require("../../models/index.cjs");
 const fs = require("fs");

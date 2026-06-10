@@ -3,6 +3,7 @@ const async = require("async");
 const queue = require('../services/workers/queue.cjs');
 const log = require('../utils/logger.cjs');
 const _ = require('lodash');
+const { getFingerprintDataFromBody, } = require("../utils/fingerprint_data.cjs");
 module.exports = (sequelize, DataTypes) => {
     const Post = sequelize.define("Post", {
         content_type: { type: DataTypes.INTEGER, allowNull: false },
@@ -490,9 +491,7 @@ module.exports = (sequelize, DataTypes) => {
                     user_agent: req.useragent.source,
                     ip_address: req.clientIp,
                     data: {
-                        browserId: req.body.pointBaseId,
-                        browserFingerprint: req.body.pointValCode,
-                        browserFingerprintConfidence: req.body.pointConf,
+                        ...getFingerprintDataFromBody(req.body, "point"),
                         originalQueryString: req.body.originalQueryString,
                         userLocale: req.body.userLocale,
                         userAutoTranslate: req.body.userAutoTranslate,

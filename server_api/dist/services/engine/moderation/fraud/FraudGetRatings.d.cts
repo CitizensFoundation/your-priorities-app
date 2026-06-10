@@ -1,5 +1,8 @@
 export = FraudGetRatings;
 declare class FraudGetRatings extends FraudGetEndorsements {
-    groupConfiguration: any;
+    ratingDimensionCountsByGroupId: {};
+    getRatingDimensionCountsByGroupId(items: any): Promise<{}>;
+    getRatingDimensionsForItem(item: any): any;
+    getNormalizedRatingCount(items: any): number;
 }
 import FraudGetEndorsements = require("./FraudGetEndorsements.cjs");

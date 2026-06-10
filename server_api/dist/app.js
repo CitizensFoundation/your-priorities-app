@@ -3,7 +3,7 @@ import session from "express-session";
 import path from "path";
 import bodyParser from "body-parser";
 import { RedisStore } from "connect-redis";
-import useragent from "express-useragent";
+import { express as useragentExpress } from "express-useragent";
 import requestIp from "request-ip";
 import compression from "compression";
 import { isbot } from "isbot";
@@ -306,17 +306,20 @@ export class YourPrioritiesApi {
                 redisUrl = redisUrl.replace("redis://h:", "redis://:");
             }
             this.redisClient = createClient({
-                legacyMode: false,
                 url: redisUrl,
                 pingInterval: 10000,
-                socket: {
-                    tls: redisUrl.startsWith("rediss://"),
-                    rejectUnauthorized: false,
-                },
+                ...(redisUrl.startsWith("rediss://")
+                    ? {
+                        socket: {
+                            tls: true,
+                            rejectUnauthorized: false,
+                        },
+                    }
+                    : {}),
             });
         }
         else {
-            this.redisClient = createClient({ legacyMode: false });
+            this.redisClient = createClient();
         }
         this.redisClient.on("error", (err) => {
             log.error("App Redis client error", err);
@@ -558,7 +561,7 @@ export class YourPrioritiesApi {
     }
     initializeMiddlewares() {
         this.app.use(this.setupExpresLogger);
-        this.app.use(useragent.express());
+        this.app.use(useragentExpress());
         this.app.use(requestIp.mw());
         this.app.use(bodyParser.json({ limit: "150mb", strict: false }));
         this.app.use(bodyParser.urlencoded({ limit: "150mb", extended: true }));

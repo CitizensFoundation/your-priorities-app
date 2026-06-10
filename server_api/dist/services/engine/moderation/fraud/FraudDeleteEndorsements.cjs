@@ -3,7 +3,7 @@ const _ = require("lodash");
 const FraudDeleteBase = require('./FraudDeleteBase.cjs');
 const models = require("../../../../models/index.cjs");
 class FraudDeleteEndorsements extends FraudDeleteBase {
-    async destroyChunkItemsByModel(model, items) {
+    async destroyChunkItemsByModel(model, items, transaction) {
         return await new Promise(async (resolve, reject) => {
             const idsToDestroy = items.map(i => i.id);
             try {
@@ -37,7 +37,8 @@ class FraudDeleteEndorsements extends FraudDeleteBase {
                             ]
                         }
                     ],
-                    attributes: ['id']
+                    attributes: ['id'],
+                    transaction
                 });
                 for (let i = 0; i < items.length; i++) {
                     if (this.postsToRecount.indexOf(items[i].post_id) === -1) {
@@ -51,8 +52,8 @@ class FraudDeleteEndorsements extends FraudDeleteBase {
             }
         });
     }
-    async destroyChunkItems(items) {
-        return this.destroyChunkItemsByModel(models.Endorsement, items);
+    async destroyChunkItems(items, transaction) {
+        return this.destroyChunkItemsByModel(models.Endorsement, items, transaction);
     }
     async getModelItemsById(model, getGroup) {
         return await new Promise(async (resolve, reject) => {

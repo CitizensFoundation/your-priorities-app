@@ -12,6 +12,7 @@ class FraudDeleteBase extends FraudBase {
         super(workPackage);
         this.postsToRecount = [];
         this.pointsToRecount = [];
+        this.deletedItemIds = [];
         this.job = null;
     }
     sliceIntoChunks(arr, chunkSize) {
@@ -30,18 +31,22 @@ class FraudDeleteBase extends FraudBase {
     async destroyChunkItems(chunks) {
         log.error("Should be implemented in a sub class");
     }
+    getUserEmail(item) {
+        return item.User && item.User.email ? item.User.email : "";
+    }
     getAllItemsExceptOne(items) {
         if (items.length === 1 && this.getAllowedSingleDelete()) {
             return items;
         }
         else {
             const sortedItems = _.sortBy(items, function (item) {
-                return item.date;
+                return moment(item.created_at || item.date).valueOf();
             });
             const finalItems = [];
             let foundEmail = false;
             for (let i = 0; i < sortedItems.length; i++) {
-                if (!foundEmail && sortedItems[i].User.email && sortedItems[i].User.email.indexOf("_anonymous@citizens.i") === -1) {
+                const userEmail = this.getUserEmail(sortedItems[i]);
+                if (!foundEmail && userEmail && userEmail.indexOf("_anonymous@citizens.i") === -1) {
                     foundEmail = true;
                 }
                 else {
@@ -54,27 +59,38 @@ class FraudDeleteBase extends FraudBase {
             return finalItems;
         }
     }
-    async createAuditLog() {
+    async createAuditLog(transaction) {
         return await new Promise(async (resolve, reject) => {
             try {
                 const user = await models.User.findOne({
                     where: {
                         id: this.workPackage.userId,
                     },
-                    attributes: ['name']
+                    attributes: ['name'],
+                    transaction
                 });
+                const userName = user && user.name ? user.name : "Unknown";
+                const deleteData = {
+                    ...this.job.internal_data,
+                    requestedIdsToDelete: this.job.internal_data.idsToDelete,
+                    idsToDelete: this.deletedItemIds,
+                };
                 const fraudAuditLog = await models.GeneralDataStore.create({ data: {
                         date: new Date(),
-                        userName: user.name,
+                        userName,
                         workPackage: this.workPackage,
-                        deleteData: this.job.internal_data
-                    } });
+                        deleteData
+                    } }, { transaction });
                 const community = await models.Community.findOne({
                     where: {
                         id: this.workPackage.communityId
                     },
-                    attributes: ['data', 'id']
+                    attributes: ['data', 'id'],
+                    transaction
                 });
+                if (!community) {
+                    throw new Error("Community not found for fraud audit log");
+                }
                 if (!community.data) {
                     community.data = {};
                 }
@@ -84,10 +100,10 @@ class FraudDeleteBase extends FraudBase {
                 community.data.fraudDeletionsAuditLogs.push({
                     logId: fraudAuditLog.id,
                     date: fraudAuditLog.data.date,
-                    userName: user.name
+                    userName
                 });
                 community.changed('data', true);
-                await community.save();
+                await community.save({ transaction });
                 resolve();
             }
             catch (error) {
@@ -109,13 +125,13 @@ class FraudDeleteBase extends FraudBase {
     getTopItems(items, type) {
         return this.setupTopItems(items);
     }
-    async destroyAllItems(chunks) {
+    async destroyAllItems(chunks, transaction) {
         return await new Promise(async (resolve, reject) => {
             try {
                 const progressAdvanceForChunk = 75 / 10;
                 let progress = 25;
                 for (let c = 0; c < chunks.length; c++) {
-                    await this.destroyChunkItems(chunks[c]);
+                    await this.destroyChunkItems(chunks[c], transaction);
                     progress = Math.round(Math.min(80, progress += progressAdvanceForChunk));
                     await models.AcBackgroundJob.updateProgressAsync(this.workPackage.jobId, progress);
                 }
@@ -126,7 +142,7 @@ class FraudDeleteBase extends FraudBase {
             }
         });
     }
-    async deleteData() {
+    async deleteData(transaction) {
         return await new Promise(async (resolve, reject) => {
             try {
                 const keys = Object.keys(this.dataToProcess);
@@ -134,7 +150,8 @@ class FraudDeleteBase extends FraudBase {
                 for (let c = 0; c < keys.length; c++) {
                     itemsToDelete = itemsToDelete.concat(this.getAllItemsExceptOne(this.dataToProcess[keys[c]].items));
                 }
-                await this.destroyAllItems(this.sliceIntoChunks(itemsToDelete, 100));
+                this.deletedItemIds = itemsToDelete.map(item => item.id);
+                await this.destroyAllItems(this.sliceIntoChunks(itemsToDelete, 100), transaction);
                 resolve();
             }
             catch (error) {
@@ -142,7 +159,7 @@ class FraudDeleteBase extends FraudBase {
             }
         });
     }
-    async recountPosts() {
+    async recountPosts(transaction) {
         return await new Promise(async (resolve, reject) => {
             recountPosts(this.postsToRecount, error => {
                 if (error) {
@@ -151,10 +168,10 @@ class FraudDeleteBase extends FraudBase {
                 else {
                     resolve();
                 }
-            });
+            }, transaction);
         });
     }
-    async recountPoints() {
+    async recountPoints(transaction) {
         return await new Promise(async (resolve, reject) => {
             recountPoints(this.pointsToRecount, error => {
                 if (error) {
@@ -163,10 +180,10 @@ class FraudDeleteBase extends FraudBase {
                 else {
                     resolve();
                 }
-            });
+            }, transaction);
         });
     }
-    async recountCommunity() {
+    async recountCommunity(transaction) {
         return await new Promise(async (resolve, reject) => {
             recountCommunity(this.workPackage.communityId, error => {
                 if (error) {
@@ -175,7 +192,7 @@ class FraudDeleteBase extends FraudBase {
                 else {
                     resolve();
                 }
-            });
+            }, transaction);
         });
     }
     async deleteItems() {
@@ -189,15 +206,17 @@ class FraudDeleteBase extends FraudBase {
                 });
                 this.items = await this.getItemsById();
                 this.setupDataToProcess();
-                await this.deleteData();
-                await this.createAuditLog();
-                if (this.postsToRecount.length > 0) {
-                    await this.recountPosts();
-                }
-                if (this.pointsToRecount.length > 0) {
-                    await this.recountPoints();
-                }
-                await this.recountCommunity();
+                await models.sequelize.transaction(async (transaction) => {
+                    await this.deleteData(transaction);
+                    await this.createAuditLog(transaction);
+                    if (this.postsToRecount.length > 0) {
+                        await this.recountPosts(transaction);
+                    }
+                    if (this.pointsToRecount.length > 0) {
+                        await this.recountPoints(transaction);
+                    }
+                    await this.recountCommunity(transaction);
+                });
                 await models.AcBackgroundJob.updateProgressAsync(this.workPackage.jobId, 100);
                 resolve();
             }

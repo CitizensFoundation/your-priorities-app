@@ -1,5 +1,7 @@
 import Replicate from "replicate";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+const { getAspectRatioForImageSize } = imageModelConfig;
 export class FluxImageGenerator {
     constructor(replicateApiKey, fluxProModelName) {
         this.replicateApiKey = replicateApiKey;
@@ -7,14 +9,17 @@ export class FluxImageGenerator {
         this.maxRetryCount = 3;
         this.replicate = new Replicate({ auth: replicateApiKey });
     }
-    async generateImageUrl(prompt, type = "logo") {
+    async generateImageUrl(prompt, type = "logo", options) {
         let retryCount = 0;
         let retrying = true;
         let result;
         // Configure the input to replicate’s model
         const input = { prompt };
         // Assign aspect ratio depending on type
-        if (type === "logo") {
+        if (options?.imageSize) {
+            input.aspect_ratio = getAspectRatioForImageSize(options.imageSize);
+        }
+        else if (type === "logo") {
             input.aspect_ratio = "16:9";
         }
         else if (type === "icon") {
@@ -25,7 +30,8 @@ export class FluxImageGenerator {
         }
         while (retrying && retryCount < this.maxRetryCount) {
             try {
-                result = await this.replicate.run(this.fluxProModelName, {
+                const modelName = options?.imageModel || this.fluxProModelName;
+                result = await this.replicate.run(modelName, {
                     input,
                 });
                 if (result) {

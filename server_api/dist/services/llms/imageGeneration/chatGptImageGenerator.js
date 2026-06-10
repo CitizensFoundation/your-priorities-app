@@ -1,6 +1,8 @@
 // chatGptImageGenerator.ts
 import { OpenAI } from "openai";
 import log from "../../../utils/loggerTs.js";
+import imageModelConfig from "./imageModelConfig.cjs";
+const { defaultOpenAiImageModel, getDefaultImageQualityForOptions, getDefaultImageSizeForOptions, } = imageModelConfig;
 export class ChatGptImageGenerator {
     constructor(openAiKey) {
         this.maxRetryCount = 3;
@@ -12,14 +14,15 @@ export class ChatGptImageGenerator {
      * The returned link remains live for ~60 minutes – be sure to download
      * or cache it right away in the calling service.
      */
-    async generateImageUrl(prompt, type = "logo") {
+    async generateImageUrl(prompt, type = "logo", options) {
         const client = new OpenAI({ apiKey: this.openAiKey });
-        // Pick a sensible canvas size from the image type
-        let size = "1536x1024";
-        if (type === "icon")
-            size = "1024x1024";
-        else if (type === "other")
-            size = "1536x1024";
+        const model = options?.imageModel || defaultOpenAiImageModel;
+        const size = options?.imageSize ||
+            getDefaultImageSizeForOptions("openai", model, type) ||
+            "1536x1024";
+        const quality = options?.imageQuality ||
+            getDefaultImageQualityForOptions("openai", model) ||
+            "medium";
         const finalPrompt = `
     ${prompt}
 
@@ -30,11 +33,11 @@ export class ChatGptImageGenerator {
         while (retryCount < this.maxRetryCount) {
             try {
                 const res = await client.images.generate({
-                    model: "gpt-image-1",
+                    model,
                     prompt: finalPrompt,
-                    quality: "medium",
+                    quality: quality,
                     n: 1,
-                    size,
+                    size: size,
                 });
                 log.info("res", JSON.stringify(res, null, 2));
                 const b64Json = res?.data?.[0]?.b64_json;

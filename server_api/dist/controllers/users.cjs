@@ -27,7 +27,7 @@ const logoutFromSession = (req, res, statusCode = 200, callback) => {
                     return callback(err);
                 }
             }
-            res.clearCookie('yrpri.sid', { path: '/' });
+            res.clearCookie(process.env.COOKIE_NAME || 'yrpri.sid', { path: '/' });
             log.info("Session destroyed successfully");
             if (callback) {
                 callback();
