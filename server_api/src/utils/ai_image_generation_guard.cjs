@@ -141,9 +141,17 @@ const canGenerateForContext = async ({
         );
       }
       if (collectionType === "community") {
-        return await hasCommunityAdmin(collection, user);
+        return (
+          (await hasCommunityAdmin(collection, user)) ||
+          !collection.only_admins_can_create_groups
+        );
       }
-      if (collectionType === "domain") return await hasDomainAdmin(collection, user);
+      if (collectionType === "domain") {
+        return (
+          (await hasDomainAdmin(collection, user)) ||
+          !collection.only_admins_can_create_communities
+        );
+      }
       return false;
     default:
       return false;
