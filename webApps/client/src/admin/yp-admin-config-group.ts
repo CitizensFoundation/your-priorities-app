@@ -555,6 +555,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         counter_users: 0,
         configuration: {
           ltp: defaultLtpConfiguration,
+          canVote: true,
         },
         community_id: this.parentCollectionId,
         hostname: "",

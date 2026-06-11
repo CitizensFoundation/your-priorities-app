@@ -259,7 +259,8 @@ export class YpDomain extends YpCollection {
       return this.renderDomainLogin();
     } else if (
       this.collection &&
-      !this.loggedInUser &&
+      (!this.loggedInUser ||
+        !YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData)) &&
       (this.collection.configuration as YpDomainConfiguration)
         .welcomeHtmlInsteadOfCommunitiesList
     ) {
