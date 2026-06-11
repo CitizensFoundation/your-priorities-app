@@ -80,39 +80,6 @@
     margin: 16px 0 0;
   }
 
-  .ypStatRow {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 32px;
-  }
-
-  .ypStat {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 20px;
-    border-radius: 100px;
-    background: var(--md-sys-color-surface-container, #f1e8d9);
-    border: 1px solid var(--md-sys-color-outline-variant, #d7cec0);
-  }
-
-  .ypStat md-icon {
-    color: var(--md-sys-color-primary, #1d6e8e);
-  }
-
-  .ypStatNumber {
-    font-weight: 700;
-    font-size: 1.05rem;
-    white-space: nowrap;
-  }
-
-  .ypStatLabel {
-    color: var(--md-sys-color-on-surface-variant, #51443b);
-    white-space: nowrap;
-  }
-
   .ypHeroActions {
     display: flex;
     flex-direction: column;
@@ -349,6 +316,40 @@
     gap: 20px;
   }
 
+  /* ---------- contact ---------- */
+
+  .ypContact {
+    margin-top: 64px;
+    text-align: center;
+    background: var(--md-sys-color-surface-container, #f1e8d9);
+    border: 1px solid var(--md-sys-color-outline-variant, #d7cec0);
+    border-radius: 28px;
+    padding: 40px 24px;
+  }
+
+  .ypContact md-icon {
+    color: var(--md-sys-color-primary, #1d6e8e);
+    --md-icon-size: 40px;
+  }
+
+  .ypContact h2 {
+    font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+    font-weight: 700;
+    margin: 10px 0 6px;
+  }
+
+  .ypContact p {
+    max-width: 520px;
+    margin: 0 auto 14px;
+    color: var(--md-sys-color-on-surface-variant, #51443b);
+  }
+
+  .ypContactEmail {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
   .ypFooter {
     margin-top: 64px;
     padding-top: 28px;
@@ -376,10 +377,6 @@
       padding: 36px 16px;
       border-radius: 22px;
     }
-
-    .ypStat {
-      padding: 8px 14px;
-    }
   }
 </style>
 
@@ -400,29 +397,6 @@
       connecting governments and citizens since 2008 — in thousands of projects
       across 45 countries.
     </p>
-
-    <div class="ypStatRow">
-      <div class="ypStat">
-        <md-icon>lightbulb</md-icon>
-        <span class="ypStatNumber">117,000+</span>
-        <span class="ypStatLabel">ideas</span>
-      </div>
-      <div class="ypStat">
-        <md-icon>forum</md-icon>
-        <span class="ypStatNumber">1.1M+</span>
-        <span class="ypStatLabel">points of debate</span>
-      </div>
-      <div class="ypStat">
-        <md-icon>group</md-icon>
-        <span class="ypStatNumber">660,000+</span>
-        <span class="ypStatLabel">participants</span>
-      </div>
-      <div class="ypStat">
-        <md-icon>public</md-icon>
-        <span class="ypStatNumber">45</span>
-        <span class="ypStatLabel">countries</span>
-      </div>
-    </div>
 
     <div class="ypHeroActions">
       <md-fab
@@ -693,6 +667,19 @@
         <md-icon slot="icon">open_in_new</md-icon>
       </md-outlined-button>
     </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="ypContact">
+    <md-icon>waving_hand</md-icon>
+    <h2>We would love to hear from you</h2>
+    <p>
+      Questions, ideas or a participation project in mind? Reach out to the
+      Citizens Foundation team — we are happy to help you get started.
+    </p>
+    <a class="ypContactEmail" href="mailto:citizens@citizens.is"
+      >citizens@citizens.is</a
+    >
   </section>
 
   <footer class="ypFooter">

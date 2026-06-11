@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.239",
+  "version": "9.0.242",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -17,19 +17,19 @@
   "type": "module",
   "dependencies": {
     "@airbrake/node": "^2.1.9",
-    "@aws-sdk/client-s3": "^3.1029.0",
-    "@google-cloud/aiplatform": "^6.8.0",
-    "@google-cloud/speech": "^7.3.1",
-    "@google-cloud/storage": "^7.19.0",
-    "@google-cloud/translate": "^9.4.1",
+    "@aws-sdk/client-s3": "^3.1067.0",
+    "@google-cloud/aiplatform": "^6.8.1",
+    "@google-cloud/speech": "^7.3.2",
+    "@google-cloud/storage": "^7.21.0",
+    "@google-cloud/translate": "^9.4.2",
     "@google-cloud/vertexai": "^1.10.0",
-    "@google-cloud/vision": "^5.3.6",
+    "@google-cloud/vision": "^5.3.7",
     "@node-saml/passport-saml": "^5.1.0",
-    "@policysynth/agents": "^1.3.185",
+    "@policysynth/agents": "^1.3.189",
     "async": "^3.2.6",
     "authorized": "^1.0.0",
     "aws-sdk": "^2.1693.0",
-    "axios": "^1.16.1",
+    "axios": "^1.17.0",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "bullmq": "^5.31.0",
@@ -42,32 +42,32 @@
     "connect-redis": "^9.0.0",
     "cors": "^2.8.6",
     "deep-equal": "^2.2.3",
-    "docx": "^9.6.1",
+    "docx": "^9.7.1",
     "download-file": "^0.1.5",
     "ejs": "^5.0.2",
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.5.1",
+    "express-rate-limit": "^8.5.2",
     "express-session": "git+https://github.com/rbjarnason/session.git#upgrade-21",
-    "express-useragent": "^2.1.1",
+    "express-useragent": "^2.2.0",
     "farmhash": "4.0.1",
     "form-data": "^4.0.4",
     "html-to-docx": "^1.8.0",
-    "i18next": "^26.1.0",
-    "i18next-fs-backend": "^2.6.5",
+    "i18next": "^26.3.1",
+    "i18next-fs-backend": "^2.6.6",
     "image-size": "^2.0.2",
-    "isbot": "^5.1.40",
+    "isbot": "^5.1.42",
     "iso-639-1": "^3.1.5",
     "jsonrepair": "^3.12.0",
     "knuth-shuffle-seeded": "^1.0.6",
     "lodash": "^4.18.1",
-    "marked": "^18.0.3",
+    "marked": "^18.0.5",
     "moment": "^2.30.1",
-    "morgan": "^1.10.1",
+    "morgan": "^1.11.0",
     "multer": "^2.1.1",
     "multer-s3": "^3.0.1",
     "newrelic": "^13.20.0",
-    "nodemailer": "^8.0.7",
+    "nodemailer": "^8.0.11",
     "open-graph-scraper": "^6.11.0",
     "openai": "^6.36.0",
     "passport": "^0.7.0",
@@ -87,7 +87,7 @@
     "sequelize": "^6.37.7",
     "sharp": "^0.34.5",
     "sitemap": "^9.0.1",
-    "stripe": "^22.1.1",
+    "stripe": "^22.2.0",
     "striptags": "^3.2.0",
     "uuid": "^13.0.2",
     "ws": "^8.18.2"
@@ -106,12 +106,12 @@
     "@types/express-useragent": "^1.0.5",
     "@types/lodash": "^4.17.24",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^22.19.19",
+    "@types/node": "^22.19.21",
     "@types/passport": "^1.0.17",
     "@types/request-ip": "^0.0.41",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.18.1",
-    "axios": "^1.16.1",
+    "axios": "^1.17.0",
     "copyfiles": "^2.4.1",
     "csv-parse": "^6.2.1",
     "diacritics": "^1.3.0",
@@ -128,10 +128,8 @@
     "yamljs": "^0.3.0"
   },
   "overrides": {
-    "@types/express@5.0.6": {
-      "@types/express-serve-static-core": "5.0.7"
-    },
     "@google-cloud/storage": {
+      "gaxios": "6.3.0",
       "retry-request": "8.0.2",
       "teeny-request": "10.1.2"
     },
@@ -139,7 +137,26 @@
       "cookie": "0.7.2",
       "on-headers": "1.1.0"
     },
-    "tmp": "0.2.7"
+    "@grpc/grpc-js": "1.14.4",
+    "@newrelic/security-agent": "3.0.4",
+    "google-auth-library@9.15.1": {
+      "gaxios": "6.3.0"
+    },
+    "gcp-metadata@6.1.1": {
+      "gaxios": "6.3.0"
+    },
+    "gtoken@7.1.0": {
+      "gaxios": "6.3.0"
+    },
+    "exceljs": {
+      "uuid": "11.1.1"
+    },
+    "sequelize": {
+      "uuid": "11.1.1"
+    },
+    "weaviate-ts-client": {
+      "uuid": "11.1.1"
+    }
   },
   "scripts": {
     "copyInLocalAgents": "cp -R ../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
