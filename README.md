@@ -238,7 +238,7 @@ to improve their communities.
 ## The Team
 Your Priorities - Citizens participation application
 
-Developed in 2008-2024 by
+Developed in 2008-2026 by
 Robert Bjarnason, robert@citizens.is
 Gudny Maren Valsdottir 
 Alexander Mani Gautason
