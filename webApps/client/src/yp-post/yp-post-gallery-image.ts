@@ -55,7 +55,17 @@ export class YpPostGalleryImage extends YpBaseElement {
   }
 
   override render() {
-    const style = `--yp-image-width:${this.imageWidth ?? 'auto'}px;--yp-image-height:${this.imageHeight ?? 'auto'}px;`;
+    const imageWidth = Number(this.imageWidth);
+    const imageHeight = Number(this.imageHeight);
+    const hasImageDimensions =
+      Number.isFinite(imageWidth) &&
+      imageWidth > 0 &&
+      Number.isFinite(imageHeight) &&
+      imageHeight > 0;
+    const style = hasImageDimensions
+      ? `width:${imageWidth}px;height:${imageHeight}px;--yp-image-width:${imageWidth}px;--yp-image-height:${imageHeight}px;`
+      : "";
+
     return html`
       <yp-image
         style="${style}"

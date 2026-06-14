@@ -523,7 +523,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               </div>
             `
           : nothing}
-        ${!this.onlyRenderTopActionBar
+        ${this.onlyRenderTopActionBar
           ? nothing
           : html`
               ${this.post.Group.configuration?.showWhoPostedPosts

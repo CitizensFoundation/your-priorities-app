@@ -61,6 +61,9 @@ export class YpPostActions extends YpBaseElement {
   @property({ type: Boolean })
   hideVoteCount = false;
 
+  @property({ type: Boolean })
+  compact = false;
+
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
@@ -108,6 +111,12 @@ export class YpPostActions extends YpBaseElement {
           position: relative;
         }
 
+        .action-bar[compact] {
+          position: relative;
+          align-items: center;
+          justify-content: flex-start;
+        }
+
         .action-bar-small {
           margin-top: 8px;
           position: absolute;
@@ -123,6 +132,14 @@ export class YpPostActions extends YpBaseElement {
           padding-top: 6px;
           margin-top: 6px;
           margin-left: 16px;
+        }
+
+        .action-bar[compact] .action-text {
+          font-size: 20px;
+          line-height: 36px;
+          margin: 0;
+          margin-left: 6px;
+          padding: 0;
         }
 
         .action-icon[hide-vote-count] {
@@ -194,6 +211,12 @@ export class YpPostActions extends YpBaseElement {
           padding-bottom: 8px;
         }
 
+        .action-bar[compact] .down-text,
+        .action-bar[compact] .up-text {
+          margin-right: 0;
+          padding: 0;
+        }
+
         .up-text {
           padding-top: 0px;
           margin-right: 32px;
@@ -210,6 +233,12 @@ export class YpPostActions extends YpBaseElement {
         }
 
         md-filled-tonal-icon-button.mainIcons {
+        }
+
+        .action-bar[compact] md-filled-icon-button.mainIcons {
+          --md-filled-icon-button-container-width: 36px;
+          --md-filled-icon-button-container-height: 36px;
+          --md-filled-icon-button-icon-size: 20px;
         }
 
         md-filled-tonal-icon-button.debateIcon {
@@ -323,6 +352,7 @@ export class YpPostActions extends YpBaseElement {
           ?rtl="${this.rtl}"
           title="${ifDefined(this.disabledTitle)}"
           floating="${this.floating}"
+          ?compact="${this.compact}"
           class="action-bar layout horizontal center-center"
         >
           <div

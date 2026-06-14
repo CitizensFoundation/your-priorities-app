@@ -593,7 +593,13 @@ export class YpPost extends YpCollection {
       if (this.hasActiveDirectPostNavigationContext) {
         if (directPreviousPostId) {
           this.useDirectNavigationContextForNextPost = true;
-          YpNavHelpers.goToPost(directPreviousPostId);
+          YpNavHelpers.goToPost(
+            directPreviousPostId,
+            undefined,
+            undefined,
+            undefined,
+            true
+          );
           this.fireGlobal("yp-scroll-to-post-for-group-id", {
             groupId: this.post.group_id,
             postId: directPreviousPostId,
@@ -607,7 +613,13 @@ export class YpPost extends YpCollection {
         this.post.id
       );
       if (previousPost) {
-        YpNavHelpers.goToPost(previousPost.id);
+        YpNavHelpers.goToPost(
+          previousPost.id,
+          undefined,
+          undefined,
+          undefined,
+          true
+        );
         window.appGlobals.cache.cachedPostItem = previousPost;
         this.fireGlobal("yp-scroll-to-post-for-group-id", {
           groupId: this.post.group_id,
@@ -626,7 +638,13 @@ export class YpPost extends YpCollection {
       if (this.hasActiveDirectPostNavigationContext) {
         if (directNextPostId) {
           this.useDirectNavigationContextForNextPost = true;
-          YpNavHelpers.goToPost(directNextPostId);
+          YpNavHelpers.goToPost(
+            directNextPostId,
+            undefined,
+            undefined,
+            undefined,
+            true
+          );
           this.fireGlobal("yp-scroll-to-post-for-group-id", {
             groupId: this.post.group_id,
             postId: directNextPostId,
@@ -645,7 +663,13 @@ export class YpPost extends YpCollection {
       }
 
       if (nextPost) {
-        YpNavHelpers.goToPost(nextPost.id);
+        YpNavHelpers.goToPost(
+          nextPost.id,
+          undefined,
+          undefined,
+          undefined,
+          true
+        );
         window.appGlobals.cache.cachedPostItem = nextPost;
         this.fireGlobal("yp-scroll-to-post-for-group-id", {
           groupId: this.post.group_id,

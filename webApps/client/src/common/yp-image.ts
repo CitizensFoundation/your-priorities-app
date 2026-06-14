@@ -474,7 +474,7 @@ export class YpImage extends LitElement {
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has("placeHolder")) {
+    if (changedProperties.has("placeholder")) {
       this._placeholderChanged();
     }
 

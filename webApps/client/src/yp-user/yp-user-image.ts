@@ -116,6 +116,7 @@ export class YpUserImage extends YpBaseElement {
                     ?use-image-border="${this.useImageBorder}"
                     .alt="${this.userTitle}"
                     .title="${this.userTitle}"
+                    .placeholder="${this.defaultProfileImageUrl}"
                     preload
                     src="${this.profileImageUrl}"
                     class="${this.computeClass}"></yp-image>
@@ -130,6 +131,7 @@ export class YpUserImage extends YpBaseElement {
                           ?hidden="${this.profileImageUrl}"
                           .alt="${this.userTitle}"
                           .title="${this.userTitle}"
+                          .placeholder="${this.defaultProfileImageUrl}"
                           preload
                           .src="${this.computeFacebookSrc}"
                           class="${this.computeClass}"></yp-image>
@@ -142,7 +144,7 @@ export class YpUserImage extends YpBaseElement {
                           .title="${this.userTitle}"
                           .alt="${this.userTitle}"
                           preload
-                          src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png"
+                          src="${this.defaultProfileImageUrl}"
                           class="${this.computeClass}"></yp-image>
                       `
                     : nothing}
@@ -195,6 +197,10 @@ export class YpUserImage extends YpBaseElement {
     else if (this.large) return 'large rounded-more';
     else if (this.veryLarge) return 'veryLarge rounded-even-more';
     else return 'medium rounded';
+  }
+
+  get defaultProfileImageUrl() {
+    return "https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png";
   }
 
   get computeFacebookSrc() {

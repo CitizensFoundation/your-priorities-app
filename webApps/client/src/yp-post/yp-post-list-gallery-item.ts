@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import './yp-post-gallery-image.js';
 import './yp-post-actions.js';
 import '../yp-magic-text/yp-magic-text.js';
@@ -70,7 +71,15 @@ export class YpPostListGalleryItem extends YpBaseElement {
 
         .postActions {
           height: 30px;
-          margin-left: -16px;
+          width: fit-content;
+          margin-left: -8px;
+        }
+
+        .galleryActions {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          margin-top: 10px;
         }
 
         .mainDataContainer {
@@ -110,15 +119,22 @@ export class YpPostListGalleryItem extends YpBaseElement {
         }
 
         .shareIcon {
-          text-align: right;
-          width: 48px;
-          height: 48px;
+          width: 36px;
+          height: 36px;
+          --md-icon-button-icon-size: 22px;
         }
 
         .shareText {
-          font-size: 16px;
+          font-size: 14px;
           color: #656565;
-          margin-right: 5px;
+          margin-left: -4px;
+        }
+
+        .share {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          margin-top: 4px;
         }
       `,
     ];
@@ -157,13 +173,17 @@ export class YpPostListGalleryItem extends YpBaseElement {
               <div class="layout vertical">
                 <div class="authorName">${this.post.description}</div>
                 <div class="artName">${this.post.name}</div>
-                <yp-post-actions
-                  @click="${this._stopCardActivation}"
-                  class="postActions"
-                  .post="${this.post}"
-                  larger-icons
-                  forceHideDebate
-                ></yp-post-actions>
+                <div class="galleryActions">
+                  <yp-post-actions
+                    @click="${this._stopCardActivation}"
+                    class="postActions"
+                    .post="${this.post}"
+                    larger-icons
+                    compact
+                    forceHideDebate
+                  ></yp-post-actions>
+                  ${this.descriptionOpen ? this.renderShare() : nothing}
+                </div>
               </div>
               <div class="flex"></div>
               <div class="layout vertical">
@@ -172,13 +192,13 @@ export class YpPostListGalleryItem extends YpBaseElement {
                       <a
                         href="${ifDefined(this._getPostLink(this.post))}"
                         id="mainA"
-                        @click="${this._savePostToBackCache}"
+                        @click="${this.goToPostIfNotHeader}"
                       >
                         <md-icon-button
                           class="openCloseButton"
                           aria-label="${this.t('openPostDetails')}"
                           title="${this.t('openPostDetails')}"
-                          ><md-icon>keyboard-arrow-right</md-icon></md-icon-button
+                          ><md-icon>keyboard_arrow_right</md-icon></md-icon-button
                         >
                       </a>
                     `
@@ -187,7 +207,6 @@ export class YpPostListGalleryItem extends YpBaseElement {
             </div>
             ${this.descriptionOpen
               ? html`
-                  ${this.renderShare()}
                   <div class="description">
                     ${this.post.public_data?.galleryMetaData?.Upphafsar}
                   </div>
@@ -224,7 +243,30 @@ export class YpPostListGalleryItem extends YpBaseElement {
   }
 
   clickOnA() {
-    this.$$("#mainA")?.click();
+    if (this.post?.Group.configuration?.resourceLibraryLinkMode) {
+      this.$$("#mainA")?.click();
+    } else {
+      this.goToPostIfNotHeader();
+    }
+  }
+
+  goToPostIfNotHeader(event?: Event) {
+    if (!this.post) return;
+
+    if (this.post.Group.configuration?.resourceLibraryLinkMode) {
+      this._savePostToBackCache(event);
+      return;
+    }
+
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    if (this.post.Group.configuration?.disablePostPageLink) {
+      return;
+    }
+
+    window.appGlobals.cache.cachedPostItem = this.post;
+    YpNavHelpers.goToPost(this.post.id);
   }
 
   _getPostLink(post: YpPostData) {
@@ -264,6 +306,9 @@ export class YpPostListGalleryItem extends YpBaseElement {
   }
 
   _shareTap(event: CustomEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
     window.appGlobals.activity(
       'postShareCardOpen',
       event.detail.brand,
