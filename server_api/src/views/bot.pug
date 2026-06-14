@@ -20,17 +20,21 @@ html(lang="en")
         h1= title
         img(src= imageUrl alt= title)
         p= descriptionText
-        div
-            h2= subItemContainerName
-            each val in subItemIds
-                div
-                    a(href != subItemsUrlbase+val.id)
-                        p
-                            != val.name
-        div
-            each val in subItemPoints
-                div
-                    p= val.content
+        if staticHtml
+            div
+                != staticHtml
+        else
+            div
+                h2= subItemContainerName
+                each val in subItemIds
+                    div
+                        a(href != subItemsUrlbase+val.id)
+                            p
+                                != val.name
+            div
+                each val in subItemPoints
+                    div
+                        p= val.content
         if moreUrl
             p
                 b
@@ -55,7 +59,6 @@ html(lang="en")
                 a(href != "https://citizens.is")
                     div
                         = "Check out the Citizens Foundation website for more information"
-
 
 
 

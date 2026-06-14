@@ -76,7 +76,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-openidconnect": "git+https://github.com/rbjarnason/passport-openidconnect.git",
-    "passport-sso": "github:rbjarnason/passport-sso#a3f8aa7523fd72eb2221db72eb72a81bf1a7c148",
+    "passport-sso": "github:rbjarnason/passport-sso#9d56a316716cbb8b6493b9fbc472c43029b7aba9",
     "pug": "^3.0.4",
     "randomstring": "^1.3.1",
     "rate-limit-redis": "^4.3.1",

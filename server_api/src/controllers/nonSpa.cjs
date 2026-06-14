@@ -12,11 +12,24 @@ const {isValidDbId} = require("../utils/is_valid_db_id.cjs");
 
 const ITEM_LIMIT = 1000;
 
+const getDomainStaticHtml = (domain) => {
+  if (
+    domain &&
+    domain.configuration &&
+    typeof domain.configuration.welcomeHtmlInsteadOfCommunitiesList === "string" &&
+    domain.configuration.welcomeHtmlInsteadOfCommunitiesList.trim() !== ""
+  ) {
+    return domain.configuration.welcomeHtmlInsteadOfCommunitiesList;
+  }
+
+  return null;
+};
+
 var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
   if (isValidDbId(id)) {
     models.Domain.findOne({
       where: { id: id },
-      attributes: ['id', 'name', 'description'],
+      attributes: ['id', 'name', 'description', 'language', 'configuration'],
       order: [
         [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'desc' ]
       ],
@@ -27,10 +40,46 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
           required: false
         }
       ]
-    }).then( (domain) => {
+    }).then( async (domain) => {
       if (domain) {
         if (!communitiesOffset)
           communitiesOffset = 0;
+
+        var imageUrl = '';
+        if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
+          var formats = JSON.parse(domain.DomainLogoImages[0].formats);
+          imageUrl = formats[0];
+        }
+
+        const staticHtml = getDomainStaticHtml(domain);
+        const sharingParameters = await getSharingParameters(
+          req,
+          domain,
+          getFullUrl(req),
+          imageUrl
+        );
+
+        if (staticHtml) {
+          var botOptions = {
+            url: sharingParameters.url,
+            title: sharingParameters.title,
+            descriptionText: sharingParameters.description,
+            imageUrl: sharingParameters.imageUrl,
+            locale: domain.language,
+            subItemsUrlbase: "/community/",
+            subItemContainerName: "Communities",
+            backUrl: "/domain/"+domain.id,
+            backText: "Back to domain",
+            moreUrl: null,
+            moreText: null,
+            subItemPoints: [],
+            subItemIds: [],
+            staticHtml: staticHtml
+          };
+          res.render('bot', botOptions);
+          return;
+        }
+
         models.Community.findAndCountAll({
           attributes: ['id','name'],
           order: [ ['created_at', 'desc'] ],
@@ -43,11 +92,6 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
         }).then( async communitiesInfo => {
           const communities = communitiesInfo.rows;
           //log.info('Bot: Domain', { id: domain ? domain.id : -1 });
-          var imageUrl = '';
-          if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
-            var formats = JSON.parse(domain.DomainLogoImages[0].formats);
-            imageUrl = formats[0];
-          }
 
           const communitiesLeft = communitiesInfo.count-(communitiesOffset+communities.length);
           if (communitiesLeft>0) {
@@ -55,13 +99,6 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
           } else {
             communitiesOffset = null;
           }
-
-          const sharingParameters = await getSharingParameters(
-            req,
-            domain,
-            getFullUrl(req),
-            imageUrl
-          );
 
           var botOptions = {
             url: sharingParameters.url,

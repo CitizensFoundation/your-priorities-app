@@ -212,6 +212,34 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(searchUrl);
   }
 
+  public getPostNavigation(
+    postId: number,
+    params?: YpPostNavigationRequest
+  ) {
+    const searchParams = new URLSearchParams();
+
+    if (params?.filter) {
+      searchParams.set("filter", params.filter);
+    }
+    if (params?.status) {
+      searchParams.set("status", params.status);
+    }
+    if (params?.categoryId !== undefined) {
+      searchParams.set("categoryId", `${params.categoryId}`);
+    }
+    if (params?.randomSeed !== undefined) {
+      searchParams.set("randomSeed", `${params.randomSeed}`);
+    }
+
+    const queryString = searchParams.toString();
+
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/posts/${postId}/navigation` +
+        (queryString ? `?${queryString}` : "")
+    );
+  }
+
   public getPost(postId: number) {
     return this.fetchWrapper(this.baseUrlPath + `/post/${postId}`);
   }

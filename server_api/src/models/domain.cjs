@@ -287,6 +287,17 @@ module.exports = (sequelize, DataTypes) => {
           domain.secret_api_keys.saml.entryPoint !== "" &&
           domain.secret_api_keys.saml.entryPoint.length > 6
         ) {
+          const samlCallbackUrl =
+            domain.secret_api_keys.saml.callbackUrl &&
+            domain.secret_api_keys.saml.callbackUrl !== ""
+              ? domain.secret_api_keys.saml.callbackUrl
+              : "https://" + callbackDomainName + "/saml_assertion";
+          const samlIssuer =
+            domain.secret_api_keys.saml.issuer &&
+            domain.secret_api_keys.saml.issuer !== ""
+              ? domain.secret_api_keys.saml.issuer
+              : samlCallbackUrl;
+
           providers.push({
             name: "saml-strategy-" + domain.id,
             provider: "saml",
@@ -295,21 +306,18 @@ module.exports = (sequelize, DataTypes) => {
             strategyPackage: "@node-saml/passport-saml",
             certInPemFormat: true,
             audience: req.hostname,
-            issuer: domain.secret_api_keys.saml.issuer
-              ? domain.secret_api_keys.saml.issuer
-              : null,
+            issuer: samlIssuer,
             entryPoint: domain.secret_api_keys.saml.entryPoint,
             identifierFormat: domain.secret_api_keys.saml.identifierFormat
               ? domain.secret_api_keys.saml.identifierFormat
               : undefined,
+            idpCert: domain.secret_api_keys.saml.cert
+              ? domain.secret_api_keys.saml.cert
+              : null,
             cert: domain.secret_api_keys.saml.cert
               ? domain.secret_api_keys.saml.cert
               : null,
-            callbackUrl:
-              domain.secret_api_keys.saml.callbackUrl &&
-              domain.secret_api_keys.saml.callbackUrl !== ""
-                ? domain.secret_api_keys.saml.callbackUrl
-                : null,
+            callbackUrl: samlCallbackUrl,
           });
         }
         seriesCallback();

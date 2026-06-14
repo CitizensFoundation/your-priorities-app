@@ -424,16 +424,24 @@ export class YpLogin extends YpBaseElement {
         }
 
         .islandIs {
-          width: 107px;
-          height: 19px;
-          margin-left: 8px;
+          width: 300px;
+          min-height: 44px;
           margin-top: 4px;
-          margin-bottom: 8px;
-          margin-right: 8px;
+          margin-bottom: 12px;
           margin-left: 8px;
-          padding: 2px;
+          margin-right: 8px;
+          padding: 8px 14px;
           border: 2px solid var(--md-sys-color-primary);
           border-radius: 3px;
+          box-sizing: border-box;
+          background: var(--md-sys-color-surface);
+        }
+
+        .samlLoginLogo {
+          display: block;
+          width: 150px;
+          max-width: 100%;
+          height: auto;
         }
 
         .buttons {
@@ -665,8 +673,8 @@ export class YpLogin extends YpBaseElement {
               @keydown="${this._onSamlKeydown}"
             >
               <img
+                class="samlLoginLogo"
                 ?hidden="${this.forceSecureSamlLogin}"
-                width="80"
                 src="${this.samlLoginButtonUrl}"
                 alt="${ariaLabel}"
               />
@@ -692,9 +700,8 @@ export class YpLogin extends YpBaseElement {
               @keydown="${this._onSamlKeydown}"
             >
               <img
+                class="samlLoginLogo"
                 ?hidden="${this.forceSecureSamlLogin}"
-                width="107"
-                height="19"
                 src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"
                 alt="${ariaLabel}"
               />

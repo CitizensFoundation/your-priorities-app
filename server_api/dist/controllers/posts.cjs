@@ -8,6 +8,7 @@ var toJson = require("../utils/to_json.cjs");
 var async = require("async");
 var _ = require("lodash");
 var queue = require("../services/workers/queue.cjs");
+var seededShuffle = require("knuth-shuffle-seeded");
 const getAnonymousUser = require("../services/utils/get_anonymous_system_user.cjs");
 const moment = require("moment");
 const { plausibleStatsProxy, } = require("../services/engine/analytics/plausible/manager.cjs");
@@ -114,6 +115,271 @@ var sendPostOrError = function (res, post, context, user, error, errorStatus) {
     }
     else {
         res.send(post);
+    }
+};
+const allowedPostNavigationFilters = [
+    "oldest",
+    "newest",
+    "top",
+    "most_debated",
+    "random",
+    "alphabetical",
+];
+const allowedPostNavigationStatuses = [
+    "open",
+    "failed",
+    "successful",
+    "in_progress",
+];
+const postNavigationPageSize = 20;
+const officialStatusToPostNavigationStatus = (officialStatus) => {
+    const status = parseInt(officialStatus);
+    if (status === 0) {
+        return "open";
+    }
+    else if (status === 2) {
+        return "successful";
+    }
+    else if (status === -2) {
+        return "failed";
+    }
+    else if (status === -1 || status === 1) {
+        return "in_progress";
+    }
+    else {
+        return undefined;
+    }
+};
+const defaultPostNavigationFilterForGroup = (group) => {
+    if (group.configuration &&
+        group.configuration.forcePostSortMethodAs &&
+        allowedPostNavigationFilters.indexOf(group.configuration.forcePostSortMethodAs) > -1) {
+        return group.configuration.forcePostSortMethodAs;
+    }
+    else if (group.configuration &&
+        group.configuration.canAddNewPosts != undefined) {
+        if (group.configuration.canAddNewPosts === true) {
+            return "newest";
+        }
+        else if (group.configuration.canAddNewPosts === false &&
+            group.configuration.canVote === false) {
+            return "top";
+        }
+        else {
+            return "random";
+        }
+    }
+    else {
+        return "newest";
+    }
+};
+const getPostNavigationOrderSql = (filter) => {
+    if (filter === "newest") {
+        return "p.created_at DESC, p.id DESC";
+    }
+    else if (filter === "most_debated") {
+        return "p.counter_points DESC, p.id DESC";
+    }
+    else if (filter === "oldest") {
+        return "p.created_at ASC, p.id ASC";
+    }
+    else if (filter === "alphabetical") {
+        return "p.name ASC, p.id ASC";
+    }
+    else {
+        return "(p.counter_endorsements_up-p.counter_endorsements_down) DESC, p.id DESC";
+    }
+};
+const getPostNavigationStatusSql = (statusFilter) => {
+    if (statusFilter === "open") {
+        return "p.official_status = 0";
+    }
+    else if (statusFilter === "successful") {
+        return "p.official_status = 2";
+    }
+    else if (statusFilter === "failed") {
+        return "p.official_status = -2";
+    }
+    else {
+        return "p.official_status IN (-1, 1)";
+    }
+};
+const getPostNavigationCategoryId = (categoryId) => {
+    if (!categoryId || categoryId === "null") {
+        return undefined;
+    }
+    const parsedCategoryId = parseInt(categoryId);
+    return isNaN(parsedCategoryId) ? undefined : parsedCategoryId;
+};
+const getRandomPostNavigationPage = async (statusFilter, where, pageOffset, randomSeed) => {
+    if (pageOffset < 0) {
+        return [];
+    }
+    const PostsByStatus = models.Post.scope(statusFilter);
+    const pageRows = await PostsByStatus.findAll({
+        where: where,
+        attributes: ["id"],
+        order: [
+            ["created_at", "DESC"],
+            ["id", "DESC"],
+        ],
+        limit: postNavigationPageSize,
+        offset: pageOffset,
+    });
+    return seededShuffle(pageRows, randomSeed);
+};
+const getRandomPostNavigationInfo = async (currentPost, statusFilter, categoryId, randomSeed) => {
+    const Op = models.Sequelize.Op;
+    const PostsByStatus = models.Post.scope(statusFilter);
+    const where = {
+        group_id: currentPost.group_id,
+    };
+    if (categoryId !== undefined) {
+        where.category_id = categoryId;
+    }
+    const totalPostsCount = await PostsByStatus.count({ where: where });
+    const countBeforeCurrent = await PostsByStatus.count({
+        where: {
+            ...where,
+            [Op.or]: [
+                {
+                    created_at: {
+                        [Op.gt]: currentPost.created_at,
+                    },
+                },
+                {
+                    created_at: currentPost.created_at,
+                    id: {
+                        [Op.gt]: currentPost.id,
+                    },
+                },
+            ],
+        },
+    });
+    const currentPageOffset = Math.floor(countBeforeCurrent / postNavigationPageSize) *
+        postNavigationPageSize;
+    const currentPageRows = await getRandomPostNavigationPage(statusFilter, where, currentPageOffset, randomSeed);
+    const currentPageIndex = currentPageRows.findIndex((post) => post.id === currentPost.id);
+    if (currentPageIndex === -1) {
+        return undefined;
+    }
+    let previousPostId = currentPageIndex > 0
+        ? currentPageRows[currentPageIndex - 1].id
+        : undefined;
+    let nextPostId = currentPageIndex < currentPageRows.length - 1
+        ? currentPageRows[currentPageIndex + 1].id
+        : undefined;
+    if (!previousPostId && currentPageOffset > 0) {
+        const previousPageRows = await getRandomPostNavigationPage(statusFilter, where, currentPageOffset - postNavigationPageSize, randomSeed);
+        previousPostId = previousPageRows[previousPageRows.length - 1]?.id;
+    }
+    if (!nextPostId &&
+        currentPageOffset + postNavigationPageSize < totalPostsCount) {
+        const nextPageRows = await getRandomPostNavigationPage(statusFilter, where, currentPageOffset + postNavigationPageSize, randomSeed);
+        nextPostId = nextPageRows[0]?.id;
+    }
+    return {
+        previousPostId: previousPostId,
+        nextPostId: nextPostId,
+        currentPostIndex: currentPageOffset + currentPageIndex + 1,
+        totalPostsCount: totalPostsCount,
+    };
+};
+const getWindowPostNavigationInfo = async (group, currentPost, statusFilter, filter, categoryId) => {
+    const replacements = {
+        groupId: group.id,
+        postId: currentPost.id,
+    };
+    const whereClauses = [
+        "p.group_id = :groupId",
+        "p.deleted = false",
+        "p.status = 'published'",
+        getPostNavigationStatusSql(statusFilter),
+    ];
+    let sql;
+    if (categoryId !== undefined) {
+        whereClauses.push("p.category_id = :categoryId");
+        replacements.categoryId = categoryId;
+    }
+    if (filter === "top" &&
+        group.configuration &&
+        group.configuration.customRatings != null &&
+        group.configuration.customRatings.length > 0) {
+        replacements.customRatingsCount = group.configuration.customRatings.length;
+        sql = `
+      WITH ordered_candidates AS (
+        SELECT
+          p.id,
+          CASE
+            WHEN COUNT(r.id) > :customRatingsCount THEN COALESCE(AVG(r.value), 0)
+            ELSE 0.0
+          END AS rating_score,
+          (p.counter_endorsements_up-p.counter_endorsements_down) AS endorsement_score
+        FROM posts p
+        LEFT JOIN ratings r ON r.post_id = p.id
+        WHERE ${whereClauses.join(" AND ")}
+        GROUP BY p.id, p.counter_endorsements_up, p.counter_endorsements_down
+        ORDER BY endorsement_score DESC, p.id DESC
+        LIMIT 1500
+      ),
+      ranked AS (
+        SELECT
+          id,
+          ROW_NUMBER() OVER (ORDER BY rating_score DESC, id DESC) AS row_number,
+          COUNT(*) OVER () AS total_count
+        FROM ordered_candidates
+      ),
+      current_row AS (
+        SELECT row_number FROM ranked WHERE id = :postId
+      )
+      SELECT ranked.id, ranked.row_number, ranked.total_count
+      FROM ranked, current_row
+      WHERE ranked.row_number BETWEEN current_row.row_number - 1 AND current_row.row_number + 1
+      ORDER BY ranked.row_number ASC
+    `;
+    }
+    else {
+        sql = `
+      WITH ranked AS (
+        SELECT
+          p.id,
+          ROW_NUMBER() OVER (ORDER BY ${getPostNavigationOrderSql(filter)}) AS row_number,
+          COUNT(*) OVER () AS total_count
+        FROM posts p
+        WHERE ${whereClauses.join(" AND ")}
+      ),
+      current_row AS (
+        SELECT row_number FROM ranked WHERE id = :postId
+      )
+      SELECT ranked.id, ranked.row_number, ranked.total_count
+      FROM ranked, current_row
+      WHERE ranked.row_number BETWEEN current_row.row_number - 1 AND current_row.row_number + 1
+      ORDER BY ranked.row_number ASC
+    `;
+    }
+    const rows = await models.sequelize.query(sql, {
+        replacements: replacements,
+        type: models.Sequelize.QueryTypes.SELECT,
+    });
+    const currentRow = rows.find((row) => Number(row.id) === currentPost.id);
+    if (!currentRow) {
+        return undefined;
+    }
+    return {
+        previousPostId: rows.find((row) => Number(row.row_number) === Number(currentRow.row_number) - 1)
+            ?.id,
+        nextPostId: rows.find((row) => Number(row.row_number) === Number(currentRow.row_number) + 1)
+            ?.id,
+        currentPostIndex: Number(currentRow.row_number),
+        totalPostsCount: Number(currentRow.total_count),
+    };
+};
+const getPostNavigationInfo = async (group, currentPost, statusFilter, filter, categoryId, randomSeed) => {
+    if (filter === "random") {
+        return getRandomPostNavigationInfo(currentPost, statusFilter, categoryId, randomSeed);
+    }
+    else {
+        return getWindowPostNavigationInfo(group, currentPost, statusFilter, filter, categoryId);
     }
 };
 router.delete("/:postId/:activityId/delete_activity", auth.can("edit post"), function (req, res) {
@@ -281,6 +547,74 @@ router.post("/:id/status_change", auth.can("send status change"), function (req,
             res.sendStatus(404);
         }
     });
+});
+router.get("/:id/navigation", auth.can("view post"), async function (req, res) {
+    if (!isValidDbId(req.params.id)) {
+        sendPostOrError(res, null, "navigation", req.user, "Invalid post id", 404);
+        return;
+    }
+    try {
+        const currentPost = await models.Post.findOne({
+            where: {
+                id: req.params.id,
+                deleted: false,
+                status: "published",
+            },
+            attributes: ["id", "group_id", "official_status", "created_at"],
+            include: [
+                {
+                    model: models.Group,
+                    required: true,
+                    attributes: ["id", "configuration"],
+                },
+            ],
+        });
+        if (!currentPost) {
+            sendPostOrError(res, null, "navigation", req.user, "Post not found", 404);
+            return;
+        }
+        const group = currentPost.Group;
+        const requestedFilter = req.query.filter;
+        const filter = requestedFilter &&
+            allowedPostNavigationFilters.indexOf(requestedFilter) > -1
+            ? requestedFilter
+            : defaultPostNavigationFilterForGroup(group);
+        const defaultStatusFilter = officialStatusToPostNavigationStatus(currentPost.official_status);
+        const requestedStatus = req.query.status;
+        const statusFilter = requestedStatus &&
+            allowedPostNavigationStatuses.indexOf(requestedStatus) > -1
+            ? requestedStatus
+            : defaultStatusFilter;
+        const categoryId = getPostNavigationCategoryId(req.query.categoryId);
+        const randomSeed = filter === "random"
+            ? req.query.randomSeed || Math.random().toString()
+            : undefined;
+        if (!statusFilter) {
+            sendPostOrError(res, null, "navigation", req.user, "Unsupported post status", 404);
+            return;
+        }
+        const navigationInfo = await getPostNavigationInfo(group, currentPost, statusFilter, filter, categoryId, randomSeed);
+        if (!navigationInfo) {
+            sendPostOrError(res, null, "navigation", req.user, "Post not found in navigation list", 404);
+            return;
+        }
+        res.send({
+            previousPostId: navigationInfo.previousPostId,
+            nextPostId: navigationInfo.nextPostId,
+            currentPostIndex: navigationInfo.currentPostIndex,
+            totalPostsCount: navigationInfo.totalPostsCount,
+            context: {
+                groupId: currentPost.group_id,
+                filter: filter,
+                statusFilter: statusFilter,
+                categoryId: categoryId,
+                randomSeed: randomSeed,
+            },
+        });
+    }
+    catch (error) {
+        sendPostOrError(res, null, "navigation", req.user, error, 500);
+    }
 });
 router.get("/:id", auth.can("view post"), function (req, res) {
     if (isValidDbId(req.params.id)) {

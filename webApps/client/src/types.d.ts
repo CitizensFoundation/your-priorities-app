@@ -985,6 +985,31 @@ interface YpPostsInfoInterface {
   totalPostsCount: number;
 }
 
+type YpPostStatusFilter = "open" | "in_progress" | "successful" | "failed";
+
+interface YpPostNavigationRequest {
+  filter?: string;
+  status?: YpPostStatusFilter;
+  categoryId?: number;
+  randomSeed?: number | string;
+}
+
+interface YpPostNavigationContext {
+  groupId: number;
+  filter: string;
+  statusFilter: YpPostStatusFilter;
+  categoryId?: number;
+  randomSeed?: number | string;
+}
+
+interface YpPostNavigationInfo {
+  previousPostId?: number;
+  nextPostId?: number;
+  currentPostIndex: number;
+  totalPostsCount: number;
+  context: YpPostNavigationContext;
+}
+
 interface YpEndorseResponse {
   endorsement: YpEndorsement;
   oldEndorsementValue: number;
