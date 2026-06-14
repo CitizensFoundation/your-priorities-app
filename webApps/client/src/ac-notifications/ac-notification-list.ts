@@ -1,7 +1,10 @@
 import { html, css, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 
-import { LitVirtualizer } from "@lit-labs/virtualizer";
+import {
+  LitVirtualizer,
+  RangeChangedEvent,
+} from "@lit-labs/virtualizer";
 import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow";
 
 import "@material/web/button/text-button.js";
@@ -53,6 +56,9 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
   @property({ type: Boolean })
   moreToLoad = false;
+
+  @property({ type: Boolean })
+  loadingMoreData = false;
 
   @property({ type: Boolean })
   opened = false;
@@ -323,17 +329,17 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     this.fire("yp-close-notification-list");
   }
 
-  scrollEvent(event: { last: number }) {
+  scrollEvent(event: RangeChangedEvent) {
     //TODO: Check this logic
 
     if (
       this.notifications &&
-      !this.moreToLoad &&
+      this.moreToLoad &&
+      !this.loadingMoreData &&
       event.last != -1 &&
       event.last < this.notifications.length &&
       event.last + 5 >= this.notifications.length
     ) {
-      this.moreToLoad = true;
       this._loadMoreData();
     }
   }
@@ -703,13 +709,19 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
   async _loadMoreData() {
     this._clearScrollThreshold();
-    if (this.oldestProcessedNotificationAt) {
-      this.moreToLoad = false;
-      this._processNotifications(
-        await this._getNotifications({
+    if (this.oldestProcessedNotificationAt && !this.loadingMoreData) {
+      this.loadingMoreData = true;
+      try {
+        const notificationsResponse = await this._getNotifications({
           oldestProcessedNotificationAt: this.oldestProcessedNotificationAt,
-        })
-      );
+        });
+        if (notificationsResponse.notifications.length === 0) {
+          this.moreToLoad = false;
+        }
+        this._processNotifications(notificationsResponse);
+      } finally {
+        this.loadingMoreData = false;
+      }
     }
   }
 
