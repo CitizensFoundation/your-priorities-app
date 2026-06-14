@@ -567,11 +567,17 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
       "shareDialog",
       (dialog: YpShareDialogData) => {
         const url = "https://" + window.location.host + "/post/" + this.post.id;
+        const coverMedia = this.$$(
+          "yp-post-cover-media"
+        ) as YpPostCoverMedia | undefined;
+        const imagePath =
+          coverMedia?.anyImagePath ||
+          YpMediaHelpers.getImageFormatUrl(this.post.PostHeaderImages, 0) ||
+          "";
         dialog.open(
           url,
           this.post.name,
-          (this.$$("yp-post-cover-media") as YpPostCoverMedia).anyImagePath ||
-            "",
+          imagePath,
           this._sharedContent
         );
       }
