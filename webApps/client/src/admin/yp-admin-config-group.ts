@@ -233,6 +233,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           display: block;
           width: 100%;
         }
+
+        .allGroupMenus {
+          margin-bottom: 16px;
+        }
+
+        .allGroupMenus a {
+          color: var(--md-sys-color-primary);
+        }
       `,
     ];
   }
@@ -262,6 +270,16 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         )}
       </md-outlined-select>
     `;
+  }
+
+  override renderBeforeTabPages() {
+    return this.group?.id && this.group.configuration.actAsLinkToCommunityId
+      ? html`<div class="layout horizontal allGroupMenus">
+          <a href="/group/${this.group.id}" target="_blank">
+            ${this.t("fullGroupLinkMenus")}
+          </a>
+        </div>`
+      : nothing;
   }
 
   renderHeader() {

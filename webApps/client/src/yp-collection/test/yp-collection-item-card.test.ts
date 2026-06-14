@@ -30,4 +30,68 @@ describe('YpCollectionItemCard', () => {
     debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
+
+  it('links a group community link to the linked community', async () => {
+    const group = {
+      id: 20,
+      name: 'Group link',
+      objectives: 'Group objectives',
+      language: 'en',
+      status: 'active',
+      counter_posts: 0,
+      community_id: 1,
+      configuration: { actAsLinkToCommunityId: 44 },
+      Community: {
+        id: 1,
+        name: 'Parent community',
+        configuration: {},
+      },
+      GroupLogoImages: [],
+      CommunityLink: {
+        id: 44,
+        name: 'Linked community',
+        description: 'Linked description',
+        language: 'en',
+        configuration: {},
+        CommunityLogoImages: [],
+      },
+    } as unknown as YpGroupData;
+
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-collection-item-card .item="${group}"></yp-collection-item-card>
+    `);
+    await element.updateComplete;
+
+    const link = element.shadowRoot!.querySelector('a') as HTMLAnchorElement;
+    expect(link.getAttribute('href')).to.equal('/community/44');
+  });
+
+  it('falls back to actAsLinkToCommunityId when CommunityLink is missing', async () => {
+    const group = {
+      id: 20,
+      name: 'Group link',
+      objectives: 'Group objectives',
+      language: 'en',
+      status: 'active',
+      counter_posts: 0,
+      community_id: 1,
+      configuration: { actAsLinkToCommunityId: 44 },
+      Community: {
+        id: 1,
+        name: 'Parent community',
+        configuration: {},
+      },
+      GroupLogoImages: [],
+    } as unknown as YpGroupData;
+
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-collection-item-card .item="${group}"></yp-collection-item-card>
+    `);
+    await element.updateComplete;
+
+    const link = element.shadowRoot!.querySelector('a') as HTMLAnchorElement;
+    expect(link.getAttribute('href')).to.equal('/community/44');
+  });
 });

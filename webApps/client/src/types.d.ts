@@ -73,6 +73,7 @@ interface YpCollectionConfiguration {
   useVideoCover?: boolean;
   welcomeHTML?: string;
   sortBySortOrder?: boolean;
+  orderByRandom?: boolean;
   sortAlphabetically?: boolean;
   optionalSortOrder?: number;
   locationHidden?: boolean;
@@ -340,7 +341,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   usePostListFormatOnDesktop?: boolean;
   externalId?: string;
   maxDaysBackForRecommendations?: number;
-  actAsLinkToCommunityId?: boolean;
+  actAsLinkToCommunityId?: number | string | null;
   simpleFormatDescription?: string;
   customRatingsText?: string;
   defaultDataImageId?: number;

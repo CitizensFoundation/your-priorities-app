@@ -34,7 +34,6 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 import { YpImage } from "../common/yp-image.js";
-import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
 import { MdCheckbox } from "@material/web/checkbox/checkbox.js";
@@ -1070,6 +1069,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     return html``;
   }
 
+  renderBeforeTabPages(): TemplateResult | typeof nothing {
+    return nothing;
+  }
+
   override render() {
     let collectionType, collectionId, name, description;
 
@@ -1102,7 +1105,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
               <div class="layout horizontal center-center">
                 ${this.renderHeader()}
               </div>
-              ${this.renderTabs()} ${this.renderTabPages()}
+              ${this.renderTabs()} ${this.renderBeforeTabPages()}
+              ${this.renderTabPages()}
               ${this.renderHiddenInputs()}
 
               <input

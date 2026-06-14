@@ -45,6 +45,13 @@ export const GroupTabTypes: Record<string, number> = {
 
 @customElement("yp-group")
 export class YpGroup extends YpCollection {
+  private static readonly postStatusFilters = [
+    "open",
+    "in_progress",
+    "successful",
+    "failed",
+  ];
+
   @property({ type: Object })
   override collection: YpGroupData | undefined;
 
@@ -78,7 +85,10 @@ export class YpGroup extends YpCollection {
   @state()
   haveLoadedAllOurIdeas = false;
 
+  @state()
   tabCounters: Record<string, number> = {};
+
+  tabCountersLoadId = 0;
   configCheckTTL = 45000;
 
   constructor() {
@@ -178,8 +188,11 @@ export class YpGroup extends YpCollection {
 
   _updateTabPostCount(event: CustomEvent) {
     const tabCounterInfo = event.detail;
-    if (tabCounterInfo.count) {
-      this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
+    if (tabCounterInfo.count !== undefined && tabCounterInfo.count !== null) {
+      this.tabCounters = {
+        ...this.tabCounters,
+        [tabCounterInfo.type]: tabCounterInfo.count,
+      };
     }
 
     this._setupOpenTab();
@@ -198,14 +211,17 @@ export class YpGroup extends YpCollection {
       ) {
         console.log("Not opening tabs with ideas in map mode");
       } else {
-        if (Object.keys(this.tabCounters).length === 4) {
-          //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
+        if (
+          YpGroup.postStatusFilters.every(
+            type => this.tabCounters[type] !== undefined
+          )
+        ) {
           if (this.selectedGroupTab === GroupTabTypes.Open) {
             if (this.tabCounters["open"] && this.tabCounters["open"] > 0) {
               this.selectedGroupTab = GroupTabTypes.Open;
             } else if (
-              this.tabCounters["inProgress"] &&
-              this.tabCounters["inProgress"] > 0
+              this.tabCounters["in_progress"] &&
+              this.tabCounters["in_progress"] > 0
             ) {
               this.selectedGroupTab = GroupTabTypes.InProgress;
             } else if (
@@ -225,11 +241,48 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  async _loadTabPostCounts() {
+    if (!this.collection || !this.hasNonOpenPosts) return;
+
+    const groupId = this.collection.id;
+    const loadId = ++this.tabCountersLoadId;
+
+    try {
+      const counts = await Promise.all(
+        YpGroup.postStatusFilters.map(async statusFilter => {
+          const postsInfo = (await window.serverApi.getGroupPosts(
+            `/api/groups/${groupId}/posts/newest/null/${statusFilter}?offset=0`
+          )) as YpPostsInfoInterface | void;
+
+          return [statusFilter, postsInfo?.totalPostsCount || 0] as const;
+        })
+      );
+
+      if (
+        !this.collection ||
+        this.collection.id !== groupId ||
+        this.tabCountersLoadId !== loadId
+      ) {
+        return;
+      }
+
+      this.tabCounters = {
+        ...this.tabCounters,
+        ...Object.fromEntries(counts),
+      };
+
+      this._setupOpenTab();
+      this.requestUpdate();
+    } catch (error) {
+      console.error("Error loading group tab counts", error);
+    }
+  }
+
   tabLabelWithCount(type: string): string {
     const labelTranslation = this.t("posts." + type);
     if (type === "inProgress") type = "in_progress";
 
-    if (this.tabCounters[type]) {
+    if (this.tabCounters[type] && this.tabCounters[type] > 0) {
       return `${labelTranslation} (${this.tabCounters[type]})`;
     } else {
       return labelTranslation;
@@ -269,6 +322,7 @@ export class YpGroup extends YpCollection {
     window.appGlobals.retryMethodAfter401Login = this.getCollection.bind(this);
     this.hasNonOpenPosts = false;
     this.tabCounters = {};
+    this.tabCountersLoadId += 1;
 
     if (
       this.collectionId &&
@@ -318,6 +372,7 @@ export class YpGroup extends YpCollection {
           this.haveLoadedAllOurIdeas = true;
         }
         this.refresh();
+        this._loadTabPostCounts();
       }
     }
     window.appGlobals.retryMethodAfter401Login = undefined;
@@ -1133,6 +1188,17 @@ export class YpGroup extends YpCollection {
       super.styles,
       //TODO: Fix this hack below
       css`
+        /* The base .createFab rule (yp-collection) sets width:225px and an
+           asymmetric margin-left:64px, which suits the collection-level fab in
+           the tabs row but pushes the centered "add new idea" button off-center
+           here. Let it span the row so it centers under the header. */
+        yp-post-card-add.createFab {
+          width: 100%;
+          max-width: 100%;
+          margin-left: 0;
+          margin-right: 0;
+        }
+
         .xlsDownloadContainer {
           padding-left: 32px;
           padding-top: 8px;

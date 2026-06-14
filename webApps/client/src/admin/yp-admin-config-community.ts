@@ -1060,6 +1060,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           translationToken: "sortGroupsBySortOrder",
         },
         {
+          text: "orderByRandom",
+          type: "checkbox",
+          translationToken: "orderGroupsByRandom",
+        },
+        {
           text: "sortAlphabetically",
           type: "checkbox",
           translationToken: "sortGroupsAlphabetically",

@@ -1,21 +1,45 @@
 import { YpMediaHelpers } from './YpMediaHelpers.js';
 
 export class YpCollectionHelpers {
+  private static defaultSortOrder = 100000;
+
+  private static optionalSortOrder(item: YpCollectionData) {
+    const optionalSortOrder = Number(item?.configuration?.optionalSortOrder);
+    return Number.isFinite(optionalSortOrder) && optionalSortOrder > 0
+      ? optionalSortOrder
+      : this.defaultSortOrder;
+  }
+
+  private static shuffleItems(items: Array<YpCollectionData>) {
+    const shuffledItems = [...items];
+
+    for (let i = shuffledItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledItems[i], shuffledItems[j]] = [shuffledItems[j], shuffledItems[i]];
+    }
+
+    return shuffledItems;
+  }
+
   static splitByStatus(
     items: Array<YpCollectionData>,
     containerConfig: YpCollectionConfiguration | undefined
   ): YpSplitCollectionsReturn {
-    if (containerConfig && containerConfig.sortBySortOrder) {
+    let orderedItems = [...items];
+
+    if (containerConfig && containerConfig.orderByRandom) {
+      orderedItems = this.shuffleItems(orderedItems);
+    } else if (containerConfig && containerConfig.sortBySortOrder) {
       try {
-        items = items.sort(item => {
-          return item?.configuration?.optionalSortOrder || 100000;
+        orderedItems = orderedItems.sort((a, b) => {
+          return this.optionalSortOrder(a) - this.optionalSortOrder(b);
         });
       } catch (e) {
         console.error(e);
       }
     } else if (containerConfig && containerConfig.sortAlphabetically) {
       try {
-        items = items.sort((a, b) => {
+        orderedItems = orderedItems.sort((a, b) => {
           return (a.name || '').localeCompare(b.name || '');
         });
       } catch (e) {
@@ -24,13 +48,13 @@ export class YpCollectionHelpers {
     }
 
     return {
-      active: items.filter(o => {
+      active: orderedItems.filter(o => {
         return o.status == 'active' || o.status == 'hidden';
       }),
-      archived: items.filter(o => {
+      archived: orderedItems.filter(o => {
         return o.status == 'archived';
       }),
-      featured: items.filter(o => {
+      featured: orderedItems.filter(o => {
         return o.status == 'featured';
       }),
     };

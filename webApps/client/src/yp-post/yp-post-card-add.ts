@@ -46,11 +46,20 @@ export class YpPostCardAdd extends YpBaseElement {
         md-fab {
           --md-fab-container-shape: 24px;
           --md-fab-label-text-size: 22px !important;
+          /* Material's .label has overflow:hidden; the default line-height
+             (1.25rem) is shorter than the 22px glyphs, which clips descenders
+             like the "g" tail. Give the line box room for the full glyph. */
+          --md-fab-label-text-line-height: 30px !important;
           --md-fab-label-text-weight: 500 !important;
           margin-bottom: 24px;
           --md-fab-container-elevation: 0;
           --md-fab-container-shadow-color: transparent;
-          width: 225px;
+          /* Size the pill to its label (dynamic) and never overflow the card.
+             No min-width: forcing the host wider than the inner button makes
+             Material left-align the button inside it, so it looks off-centre
+             for short labels. Letting host = button keeps it centred. */
+          width: auto;
+          max-width: 100%;
         }
 
         md-fab:not([has-static-theme]) {
@@ -61,17 +70,6 @@ export class YpPostCardAdd extends YpBaseElement {
         md-fab[disabled] {
           --md-sys-color-primary-container: var(--md-sys-color-secondary-container);
           --md-sys-color-on-primary-container: var(--md-sys-color-on-secondary-container);
-        }
-
-        .createFab {
-          width: 310px;
-          margin-left: -20px;
-        }
-
-        @media (max-width: 600px) {
-          .createFab {
-            margin-left: 0;
-          }
         }
 
         .addNewIdeaText {
@@ -95,6 +93,7 @@ export class YpPostCardAdd extends YpBaseElement {
 
           md-fab {
             width: 100%;
+            --md-fab-label-text-size: 18px !important;
           }
         }
 

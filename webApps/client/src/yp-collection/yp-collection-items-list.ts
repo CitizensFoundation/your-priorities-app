@@ -140,8 +140,7 @@ export class YpCollectionItemsList extends YpBaseElement {
     YpIronListHelpers.attachListeners(this as YpElementWithIronList);
   }
 
-  override async connectedCallback() {
-    super.connectedCallback();
+  private updateSortedCollectionItems() {
     if (this.collection && this.collectionItems) {
       const splitCommunities = YpCollectionHelpers.splitByStatus(
         this.collectionItems,
@@ -151,6 +150,24 @@ export class YpCollectionItemsList extends YpBaseElement {
       this.sortedCollectionItems = splitCommunities.featured.concat(
         splitCommunities.active.concat(splitCommunities.archived)
       );
+    } else {
+      this.sortedCollectionItems = undefined;
+    }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.updateSortedCollectionItems();
+  }
+
+  override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (
+      changedProperties.has("collection") ||
+      changedProperties.has("collectionItems")
+    ) {
+      this.updateSortedCollectionItems();
     }
   }
 

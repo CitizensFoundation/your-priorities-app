@@ -589,11 +589,27 @@ export class YpCollectionItemCard extends YpBaseElement {
     }
   }
 
+  get actAsLinkedCommunityId() {
+    return (this.item as YpGroupData | undefined)?.configuration
+      ?.actAsLinkToCommunityId;
+  }
+
+  get contentHref() {
+    if (
+      this.actAsLinkedCommunityId &&
+      this.itemType !== "groupCommunityLink"
+    ) {
+      return `/community/${this.actAsLinkedCommunityId}`;
+    } else {
+      return `/${this.contentUrlBase}/${this.contentId}`;
+    }
+  }
+
   override render() {
     return this.item && this.collection
       ? html`
           <a
-            href="/${this.contentUrlBase}/${this.contentId}"
+            href="${this.contentHref}"
             @click="${this.goToItem}"
             class="layout vertical center-center"
           >
