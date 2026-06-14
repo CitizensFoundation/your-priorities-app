@@ -225,8 +225,8 @@ export class AcNotificationListPoint extends YpBaseElement {
               : nothing}
             <md-icon
               class="actionIcon"
-              ?quality-up="${this.qualityMode && this.pointValueUp}"
-              ?quality-down="${this.qualityMode && !this.pointValueUp}"
+              ?quality-up="${this.qualityActionState === 'helpful'}"
+              ?quality-down="${this.qualityActionState === 'unhelpful'}"
               >${this.pointNotificationIcon}</md-icon
             >
           </div>
@@ -268,9 +268,38 @@ export class AcNotificationListPoint extends YpBaseElement {
 
   get pointNotificationIcon() {
     if (this.qualityMode) {
-      return this.pointValueUp ? "thumb_up" : "thumb_down";
+      if (this.qualityActionState === "helpful") {
+        return "thumb_up";
+      } else if (this.qualityActionState === "unhelpful") {
+        return "thumb_down";
+      } else {
+        return "thumbs_up_down";
+      }
     } else {
       return "chat_bubble_outline";
+    }
+  }
+
+  get qualityActionState(): "helpful" | "unhelpful" | "mixed" | undefined {
+    if (!this.qualityMode || !this.notification) {
+      return undefined;
+    }
+
+    const hasHelpful = this.notification.AcActivities.some(
+      activity => activity.type === "activity.point.helpful.new"
+    );
+    const hasUnhelpful = this.notification.AcActivities.some(
+      activity => activity.type === "activity.point.unhelpful.new"
+    );
+
+    if (hasHelpful && hasUnhelpful) {
+      return "mixed";
+    } else if (hasHelpful) {
+      return "helpful";
+    } else if (hasUnhelpful) {
+      return "unhelpful";
+    } else {
+      return undefined;
     }
   }
 
@@ -298,6 +327,11 @@ export class AcNotificationListPoint extends YpBaseElement {
   }
 
   _notificationChanged() {
+    this.helpfulsText = undefined;
+    this.unhelpfulsText = undefined;
+    this.newPointMode = undefined;
+    this.qualityMode = undefined;
+
     if (this.notification) {
       this.point = this.notification.AcActivities[0].Point;
       this.post = this.notification.AcActivities[0].Post;
@@ -315,11 +349,6 @@ export class AcNotificationListPoint extends YpBaseElement {
         this.qualityMode = true;
         this._createQualityStrings();
       }
-    } else {
-      this.helpfulsText = undefined;
-      this.unhelpfulsText = undefined;
-      this.newPointMode = undefined;
-      this.qualityMode = undefined;
     }
   }
 
