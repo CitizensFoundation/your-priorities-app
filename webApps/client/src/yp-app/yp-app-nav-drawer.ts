@@ -241,39 +241,72 @@ export class YpAppNavDrawer extends YpBaseElement {
       css`
         :host {
           z-index: 5000;
+          display: block;
+          height: 100dvh;
+          min-height: 0;
         }
 
         .count {
-          font-size: 18px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 15px;
+          font-weight: 650;
         }
 
         .item {
-          border-bottom: 3px solid transparent;
+          display: block;
+          box-sizing: border-box;
+          width: 100%;
+          border: 1px solid transparent;
+          border-radius: 6px;
+          line-height: 1.25;
         }
 
         .item:hover {
-          border-bottom: 3px solid var(--md-sys-color-primary-container);
+          border-color: color-mix(
+            in srgb,
+            var(--md-sys-color-primary) 26%,
+            transparent
+          );
+          background: var(--md-sys-color-surface-container-low);
         }
 
+        .item:focus-visible {
+          outline: 2px solid var(--md-sys-color-primary);
+          outline-offset: 2px;
+        }
 
         .groupTypeName {
           font-size: 12px;
           text-align: left;
-          line-height: 18px;
+          line-height: 16px;
           font-weight: 500;
-          margin-top: 8px;
-          margin-left: 8px;
+          margin-top: 10px;
+          margin-left: 10px;
           color: var(--md-sys-color-tertiary);
         }
 
         .header {
-          padding-top: 16px;
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          box-sizing: border-box;
+          margin: 0 -8px 6px;
+          padding-top: 18px;
           font-weight: 700;
-          padding-bottom: 8px;
+          padding-bottom: 10px;
           font-size: 20px;
-          padding-left: 8px;
+          padding-left: 12px;
+          padding-right: 12px;
           line-height: 22px;
           font-family: var(--md-ref-typeface-brand);
+          background: color-mix(
+            in srgb,
+            var(--md-sys-color-surface) 92%,
+            transparent
+          );
+          border-bottom: 1px solid
+            color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+          backdrop-filter: blur(10px);
         }
 
         md-linear-progress {
@@ -309,13 +342,40 @@ export class YpAppNavDrawer extends YpBaseElement {
 
         .material {
           background-color: var(--md-sys-color-surface);
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          height: 100dvh;
+          min-height: 0;
+          overflow: hidden;
+          width: 100%;
         }
 
         .item {
           cursor: pointer;
-          padding: 8px;
-          padding-top: 4px;
-          padding-bottom: 4px;
+          padding: 7px 10px;
+        }
+
+        .navigationList {
+          box-sizing: border-box;
+          flex: 1 1 auto;
+          min-height: 0;
+          overflow-x: hidden;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          padding: 0 8px 24px;
+          scrollbar-gutter: stable;
+          width: 100%;
+        }
+
+        .communityName,
+        .groupName {
+          min-width: 0;
+          width: 100%;
+        }
+
+        .groupBlock {
+          min-width: 0;
         }
 
         .languageSelector {
@@ -360,7 +420,7 @@ export class YpAppNavDrawer extends YpBaseElement {
           : nothing}
 
         <div
-          class="layout vertical"
+          class="layout vertical navigationList"
           role="navigation"
           aria-label="Community & Group navigation"
         >
@@ -396,7 +456,7 @@ export class YpAppNavDrawer extends YpBaseElement {
                 </div>
                 ${this.myGroups.map(
                   (group) => html`
-                    <div class="layout vertical">
+                    <div class="layout vertical groupBlock">
                       <div class="groupTypeName">
                         ${this.getGroupTypeName(group)}
                       </div>

@@ -77,6 +77,10 @@ export const YpAppStyles = css`
     z-index: 200;
   }
 
+  #notificationDrawer {
+    --drawer-width: min(420px, 100vw);
+  }
+
   #dialog {
     --md-dialog-container-color: var(--md-sys-color-error-container);
     --md-dialog-headline-color: var(--md-sys-color-on-error-container);

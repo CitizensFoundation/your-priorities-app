@@ -26,7 +26,6 @@ import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow.js";
 import { YpMagicText } from "../yp-magic-text/yp-magic-text.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
-import { MdRadio } from "@material/web/radio/radio.js";
 
 //import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
 
@@ -66,7 +65,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   labelDown: string | undefined;
 
   @property({ type: String })
-  pointUpOrDownSelected = "pointFor";
+  pointUpOrDownSelected: "pointFor" | "pointAgainst" | undefined;
 
   @property({ type: Object })
   latestPointCreatedAt: Date | undefined;
@@ -715,8 +714,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         <label ?hidden="${this.post.Group.configuration?.hidePointFor}"
           >${this.t("pointForShort")}
           <md-radio
-            @click="${this._chooseUpOrDownRadio}"
-            ?selected="${this.pointUpOrDownSelected == "pointFor"}"
+            @click="${() => (this.pointUpOrDownSelected = "pointFor")}"
+            ?checked="${this.pointUpOrDownSelected == "pointFor"}"
             id="upRadio"
             name="upOrDown"
           ></md-radio>
@@ -725,8 +724,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         <label ?hidden="${this.post.Group.configuration?.hidePointAgainst}"
           >${this.t("pointAgainstShort")}
           <md-radio
-            @click="${this._chooseUpOrDownRadio}"
-            ?selected="${this.pointUpOrDownSelected == "pointAgainst"}"
+            @click="${() => (this.pointUpOrDownSelected = "pointAgainst")}"
+            ?checked="${this.pointUpOrDownSelected == "pointAgainst"}"
             id="downRadio"
             name="upOrDown"
           ></md-radio>
@@ -831,6 +830,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         ${this.renderPointHeader(header, "Engin rök til", headerTextType, 0)}
       </div> `;
     } else {
+      const missingMobilePointDirection =
+        mobile && !this.hasMobilePointDirectionSelected;
+
       return html`
         <div class="point">
           ${mobile
@@ -922,7 +924,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ?is-up="${type == "Up"}"
                 ?is-down="${type == "Down"}"
                 ?hidden="${!ifLengthIsRight}"
-                ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
+                ?disabled="${this.addPointDisabled ||
+                !ifLengthIsRight ||
+                missingMobilePointDirection}"
                 @click="${addPointFunc}"
                 >${this.t("postPoint")}</md-filled-button
               >
@@ -1126,11 +1130,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     `;
   }
 
-  _chooseUpOrDownRadio() {
-    const up = this.$$("#upRadio") as MdRadio;
-    const down = this.$$("#downRadio") as MdRadio;
-    if (up.checked) this.pointUpOrDownSelected = "pointFor";
-    else if (down.checked) this.pointUpOrDownSelected = "pointAgainst";
+  get hasMobilePointDirectionSelected() {
+    return (
+      this.pointUpOrDownSelected === "pointFor" ||
+      this.pointUpOrDownSelected === "pointAgainst"
+    );
   }
 
   get wideReady() {
@@ -1446,6 +1450,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       } else {
         this.labelMobileUpOrDown = this.t("point.against");
       }
+      this.selectedPointForMobile = false;
+    } else {
+      this.labelMobileUpOrDown = undefined;
       this.selectedPointForMobile = false;
     }
   }
@@ -2015,6 +2022,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.uploadedAudioMobileId
       );
       window.appGlobals.activity("add", "pointDown");
+    } else {
+      return;
     }
   }
 

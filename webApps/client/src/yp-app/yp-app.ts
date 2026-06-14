@@ -1008,7 +1008,7 @@ export class YpApp extends YpBaseElement {
                 id="acNotificationsList"
                 ?hidden="${!this.notificationDrawerOpened}"
                 .user="${this.user}"
-                opened="${this.userDrawerOpened}"
+                .opened="${this.notificationDrawerOpened}"
                 .route="${this.route}"
               ></ac-notification-list>
             `

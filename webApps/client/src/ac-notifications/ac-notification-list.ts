@@ -5,6 +5,8 @@ import { LitVirtualizer } from "@lit-labs/virtualizer";
 import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow";
 
 import "@material/web/button/text-button.js";
+import "@material/web/icon/icon.js";
+import "@material/web/iconbutton/icon-button.js";
 
 import "../yp-user/yp-user-info.js";
 
@@ -67,7 +69,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       this._userChanged();
     }
 
-    if (changedProperties.has("open")) {
+    if (changedProperties.has("opened")) {
       this._openedChanged();
     }
 
@@ -82,6 +84,9 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       css`
         lit-virtualizer {
           flex: 1 1 auto;
+          width: 100%;
+          min-width: 0;
+          min-height: 0;
         }
 
         p {
@@ -89,13 +94,30 @@ export class AcNotificationList extends YpBaseElementWithLogin {
         }
 
         .notificationItem {
-          margin-bottom: 8px;
-          padding-bottom: 8px;
+          display: block;
+          box-sizing: border-box;
+          width: 100%;
+          padding: 0 12px 10px;
         }
 
         .unViewedCount {
-          padding-top: 8px;
+          align-items: flex-start;
+          box-sizing: border-box;
+          width: calc(100% - 24px);
+          margin: 10px 12px 4px;
+          padding: 10px 12px;
+          border-radius: 8px;
+          background: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
           font-size: 14px;
+        }
+
+        .unViewedCount md-text-button {
+          align-self: flex-start;
+          margin-top: 2px;
+          --md-text-button-label-text-color: var(
+            --md-sys-color-on-primary-container
+          );
         }
 
         [hidden] {
@@ -105,16 +127,62 @@ export class AcNotificationList extends YpBaseElementWithLogin {
         #material {
           z-index: 300;
           margin: 0 !important;
-          padding: 8px;
-          height: 100vh;
-          overflow-x: scroll;
-          background-color: var(--md-sys-color-surface-container-high);
+          padding: 0 0 12px;
+          width: 100%;
+          min-width: 0;
+          height: 100dvh;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          background:
+            linear-gradient(
+              180deg,
+              var(--md-sys-color-surface-container-highest),
+              var(--md-sys-color-surface-container-low) 42%,
+              var(--md-sys-color-surface-container)
+            );
           color: var(--md-sys-color-on-surface);
         }
 
         .notificationHeader {
-          font-size: 18px;
-          padding-top: 8px;
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          min-height: 64px;
+          padding: 22px 18px 14px;
+          border-bottom: 1px solid
+            color-mix(in srgb, var(--md-sys-color-outline) 26%, transparent);
+          background: color-mix(
+            in srgb,
+            var(--md-sys-color-surface-container-highest) 88%,
+            transparent
+          );
+          font-size: 24px;
+          font-weight: 700;
+          letter-spacing: 0;
+          backdrop-filter: blur(12px);
+        }
+
+        .headerTitle {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .closeButton {
+          flex: 0 0 auto;
+          margin-left: 8px;
+          color: var(--md-sys-color-on-surface);
+          --md-icon-button-icon-size: 26px;
         }
 
         #notificationsList {
@@ -127,11 +195,8 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
         .overflowSettings {
           overflow-x: hidden;
-          max-width: 255px !important;
-        }
-
-        .notificationHeader {
-          margin-bottom: 2px;
+          width: 100%;
+          max-width: 100%;
         }
 
         yp-language-selector {
@@ -175,6 +240,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       case "notification.point.newsStory":
         return html`
           <ac-notification-list-general-item
+            class="notificationItem"
             icon="face"
             .notification="${notification}"
             .shortText="${notification.AcActivities[0].Point!.content}"
@@ -184,6 +250,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       case "notification.point.comment":
         return html`
           <ac-notification-list-general-item
+            class="notificationItem"
             icon="chat_bubble_outline"
             .notification="${notification}"
             .shortText="${notification.AcActivities[0].Point!.content}"
@@ -192,6 +259,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       case "notification.generalUserNotification":
         return html`
           <ac-notification-list-general-item
+            class="notificationItem"
             icon="language"
             .notification="${notification}"
             .shortText="${this._getNotificationTypeAndName(
@@ -207,14 +275,20 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
   override render() {
     return html`
-      <div id="material" class="oversflowSettings">
+      <div id="material" class="overflowSettings">
         ${this.loggedInUser
           ? html`
               <div
-                class="notificationHeader layout horizontal center-center"
-                ?hidden="${!this.notificationsLength}"
+                class="notificationHeader"
               >
-                ${this.t("notifications")}
+                <div class="headerTitle">${this.t("notifications")}</div>
+                <md-icon-button
+                  class="closeButton"
+                  @click="${this._closeNotificationList}"
+                  aria-label="${this.t("close")}"
+                >
+                  <md-icon>close</md-icon>
+                </md-icon-button>
               </div>
               <div
                 ?hidden="${!this.unViewedCount}"
@@ -230,8 +304,8 @@ export class AcNotificationList extends YpBaseElementWithLogin {
               ${this.notifications
                 ? html`
                     <lit-virtualizer
+                      scroller
                       .items=${this.notifications}
-                      .scrollTarget="${window}"
                       id="activitiesList"
                       scrollOffset="300"
                       .renderItem=${this.renderNotification}
@@ -243,6 +317,10 @@ export class AcNotificationList extends YpBaseElementWithLogin {
           : html``}
       </div>
     `;
+  }
+
+  _closeNotificationList() {
+    this.fire("yp-close-notification-list");
   }
 
   scrollEvent(event: { last: number }) {

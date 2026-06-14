@@ -37,6 +37,12 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
     return [
       super.styles,
       css`
+        :host {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
         .pointerCursor {
           cursor: pointer;
         }
@@ -47,29 +53,87 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
           text-decoration: none;
         }
 
+        .notificationRow,
+        a.notificationRow {
+          display: grid;
+          grid-template-columns: 42px minmax(0, 1fr);
+          gap: 10px;
+          box-sizing: border-box;
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid
+            color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+          border-radius: 8px;
+          background: var(--md-sys-color-surface-container-lowest);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+          transition:
+            background-color 160ms ease,
+            border-color 160ms ease,
+            transform 160ms ease;
+        }
+
+        .notificationRow:hover {
+          border-color: color-mix(
+            in srgb,
+            var(--md-sys-color-primary) 34%,
+            transparent
+          );
+          background: var(--md-sys-color-surface-container-low);
+          transform: translateY(-1px);
+        }
+
+        .iconRail {
+          display: flex;
+          min-width: 0;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding-top: 1px;
+        }
+
+        yp-user-image {
+          width: 32px;
+          height: 32px;
+        }
+
         .icon {
-          min-width: 24px;
-          min-height: 24px;
-          max-width: 24px;
-          max-height: 24px;
-          margin: 6px;
-          margin-bottom: 0;
-          padding-bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: var(--md-sys-color-tertiary-container);
+          color: var(--md-sys-color-on-tertiary-container);
+          font-size: 19px;
         }
 
         .name {
-          padding-top: 4px;
+          overflow: hidden;
+          min-width: 0;
+          padding-top: 1px;
           padding-bottom: 0;
-          font-style: italic;
+          font-size: 15px;
+          font-weight: 700;
+          line-height: 1.28;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .shortText {
+          display: -webkit-box;
+          overflow: hidden;
           padding-right: 8px;
           padding-bottom: 4px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          line-height: 1.3;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
         }
 
-        .leftContainer {
-          margin-right: 8px;
+        .notificationBody {
+          min-width: 0;
         }
 
         [hidden] {
@@ -85,7 +149,7 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
       ${targetUrl
         ? html`
             <a
-              class="layout vertical pointerCursor"
+              class="notificationRow pointerCursor"
               href="${targetUrl}"
               @click="${this._goTo}"
               aria-label="${this.nameTruncated}"
@@ -93,24 +157,22 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
               ${this.renderContent()}
             </a>
           `
-        : html`<div class="layout vertical">${this.renderContent()}</div>`}
+        : html`<div class="notificationRow">${this.renderContent()}</div>`}
     `;
   }
 
   renderContent() {
     return html`
-      <div class="layout horizontal">
-        <div class="layout vertical center-center self-start leftContainer">
+        <div class="iconRail">
           <yp-user-image small .user="${this.user!}"></yp-user-image>
           <md-icon class="icon">${this.icon}</md-icon>
         </div>
-        <div class="layout vertical">
+        <div class="notificationBody">
           <div class="name">${this.nameTruncated}</div>
           <div ?hidden="${!this.shortText}" class="shortText">
             ${this.shortTextTruncated}
           </div>
         </div>
-      </div>
     `;
   }
 

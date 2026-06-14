@@ -56,6 +56,12 @@ export class AcNotificationListPoint extends YpBaseElement {
     return [
       super.styles,
       css`
+        :host {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
         .pointerCursor {
           cursor: pointer;
         }
@@ -66,58 +72,134 @@ export class AcNotificationListPoint extends YpBaseElement {
           text-decoration: none;
         }
 
-        .endorsers {
+        .notificationRow,
+        a.notificationRow {
+          display: grid;
+          grid-template-columns: 42px minmax(0, 1fr);
+          gap: 10px;
+          box-sizing: border-box;
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid
+            color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+          border-radius: 8px;
+          background: color-mix(
+            in srgb,
+            var(--md-sys-color-surface-container-lowest) 86%,
+            var(--md-sys-color-secondary-container)
+          );
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+          transition:
+            background-color 160ms ease,
+            border-color 160ms ease,
+            transform 160ms ease;
         }
 
-        .opposers {
+        .notificationRow:hover {
+          border-color: color-mix(
+            in srgb,
+            var(--md-sys-color-primary) 34%,
+            transparent
+          );
+          background: var(--md-sys-color-surface-container-lowest);
+          transform: translateY(-1px);
         }
 
-        .chatIcon {
-          min-width: 24px;
-          min-height: 24px;
-          max-width: 24px;
-          max-height: 24px;
-          margin: 6px;
-          margin-bottom: 0;
-          padding-bottom: 0;
+        .iconRail {
+          display: flex;
+          min-width: 0;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding-top: 1px;
         }
 
-        .thumbsIcon {
-          margin-top: 0;
-          padding-top: 0;
-          min-width: 20px;
-          min-height: 20px;
-          max-width: 20px;
-          max-height: 20px;
+        yp-user-image {
+          width: 32px;
+          height: 32px;
         }
 
-        .smallIcons {
-          max-width: 16px;
-          max-height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding-top: 2px;
-          padding-right: 2px;
+        .actionIcon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          min-height: 32px;
+          border-radius: 50%;
+          background: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+          font-size: 21px;
+          line-height: 32px;
+          overflow: visible;
+        }
+
+        .actionIcon[quality-up] {
+          background: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+        }
+
+        .actionIcon[quality-down] {
+          background: var(--md-sys-color-error-container);
+          color: var(--md-sys-color-on-error-container);
         }
 
         .postName {
-          padding-top: 4px;
+          overflow: hidden;
+          padding-top: 5px;
           padding-bottom: 0;
-          font-style: italic;
-        }
-
-        .postName[point-value-up] {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          line-height: 1.25;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .pointContent {
+          display: -webkit-box;
+          overflow: hidden;
           padding-bottom: 4px;
+          font-size: 15px;
+          font-weight: 650;
+          line-height: 1.28;
+          word-break: break-word;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
         }
 
-        .pointContent[point-value-up] {
+        .notificationBody {
+          min-width: 0;
         }
 
-        .leftContainer {
-          margin-right: 8px;
+        .metaRow {
+          display: flex;
+          min-width: 0;
+          align-items: center;
+          gap: 6px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          line-height: 1.25;
+        }
+
+        .metaText {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .metaLabel {
+          flex: 0 0 auto;
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        .metaLabel[quality-up] {
+          color: var(--md-sys-color-primary);
+        }
+
+        .metaLabel[quality-down] {
+          color: var(--md-sys-color-error);
         }
 
         [hidden] {
@@ -131,42 +213,43 @@ export class AcNotificationListPoint extends YpBaseElement {
     return html`
       <a
         href="${this.pointUrl}"
-        class="layout vertical pointerCursor"
+        class="notificationRow pointerCursor"
         @click="${this.goToPost}"
         aria-label="${this.postNameTruncated}"
         ?hidden="${!this.post}">
-        <div class="layout horizontal">
-          <div class="layout vertical center-center self-start leftContainer">
+          <div class="iconRail">
             ${this.user
               ? html`
                   <yp-user-image small .user="${this.user}"></yp-user-image>
                 `
               : nothing}
-            <md-icon class="chatIcon">chat_bubble_outline</md-icon>
-            <div ?hidden="${!this.pointValueUp}">
-              <md-icon class="chatIcon thumbsIcon">thumb_up</md-icon>
-            </div>
-            <div ?hidden="${this.pointValueUp}">
-              <md-icon class="chatIcon thumbsIcon">thumb_down</md-icon>
-            </div>
+            <md-icon
+              class="actionIcon"
+              ?quality-up="${this.qualityMode && this.pointValueUp}"
+              ?quality-down="${this.qualityMode && !this.pointValueUp}"
+              >${this.pointNotificationIcon}</md-icon
+            >
           </div>
-          <div class="layout vertical">
+          <div class="notificationBody">
             <div
               .pointValueUp="${this.pointValueUp}"
-              class="layout horizontal pointContent">
+              class="pointContent">
               ${this.pointContent}
             </div>
-            <div class="layout horizontal" ?hidden="${!this.helpfulsText}">
-              <md-icon class="smallIcons endorsers">arrow_upward</md-icon>
-              <div class="endorsers">${this.helpfulsText}</div>
+            <div class="metaRow" ?hidden="${!this.helpfulsText}">
+              <span class="metaLabel" quality-up
+                >${this.t("point.helpful")}</span
+              >
+              <div class="metaText endorsers">${this.helpfulsText}</div>
             </div>
-            <div class="layout horizontal" ?hidden="${!this.unhelpfulsText}">
-              <md-icon class="smallIcons opposers">arrow_downward</md-icon>
-              <div class="opposers">${this.unhelpfulsText}</div>
+            <div class="metaRow" ?hidden="${!this.unhelpfulsText}">
+              <span class="metaLabel" quality-down
+                >${this.t("point.not_helpful")}</span
+              >
+              <div class="metaText opposers">${this.unhelpfulsText}</div>
             </div>
             <div class="postName">${this.postNameTruncated}</div>
           </div>
-        </div>
       </a>
     `;
   }
@@ -180,7 +263,15 @@ export class AcNotificationListPoint extends YpBaseElement {
   }
 
   get pointValueUp() {
-    return this.point && this.point.value > 0;
+    return !!(this.point && this.point.value > 0);
+  }
+
+  get pointNotificationIcon() {
+    if (this.qualityMode) {
+      return this.pointValueUp ? "thumb_up" : "thumb_down";
+    } else {
+      return "chat_bubble_outline";
+    }
   }
 
   get pointUrl() {

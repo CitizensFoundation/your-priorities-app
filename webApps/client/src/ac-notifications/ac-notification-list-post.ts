@@ -50,6 +50,12 @@ export class AcNotificationListPost extends YpBaseElement {
     return [
       super.styles,
       css`
+        :host {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
         .pointerCursor {
           cursor: pointer;
         }
@@ -60,46 +66,136 @@ export class AcNotificationListPost extends YpBaseElement {
           text-decoration: none;
         }
 
-        .bulb-icon {
-          min-width: 26px;
-          min-height: 26px;
-          max-width: 26px;
-          max-height: 26px;
-          margin: 6px;
+        .notificationRow,
+        a.notificationRow {
+          display: grid;
+          grid-template-columns: 42px minmax(0, 1fr);
+          gap: 10px;
+          box-sizing: border-box;
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid
+            color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+          border-radius: 8px;
+          background: color-mix(
+            in srgb,
+            var(--md-sys-color-surface-container-lowest) 86%,
+            var(--md-sys-color-primary-container)
+          );
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+          transition:
+            background-color 160ms ease,
+            border-color 160ms ease,
+            transform 160ms ease;
         }
 
-        .bulb-icon[new-post] {
-          min-width: 30px;
-          min-height: 30px;
-          max-width: 30px;
-          max-height: 30px;
+        .notificationRow:hover {
+          border-color: color-mix(
+            in srgb,
+            var(--md-sys-color-primary) 34%,
+            transparent
+          );
+          background: var(--md-sys-color-surface-container-lowest);
+          transform: translateY(-1px);
         }
 
-        .smallIcons {
-          max-width: 16px;
-          max-height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding-top: 2px;
-          padding-right: 4px;
-          color: var(--primary-love-color-up, rgba(168, 0, 0, 0.65));
+        .iconRail {
+          display: flex;
+          min-width: 0;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding-top: 1px;
+        }
+
+        yp-user-image {
+          width: 32px;
+          height: 32px;
+        }
+
+        .actionIcon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          min-height: 32px;
+          border-radius: 50%;
+          background: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+          font-size: 21px;
+          line-height: 32px;
+          overflow: visible;
+        }
+
+        .actionIcon[new-post] {
+          background: var(--md-sys-color-primary);
+          color: var(--md-sys-color-on-primary);
+        }
+
+        .actionIcon[endorsement] {
+          background: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+        }
+
+        .actionIcon[opposition] {
+          background: var(--md-sys-color-error-container);
+          color: var(--md-sys-color-on-error-container);
+        }
+
+        .notificationBody {
+          min-width: 0;
         }
 
         .postName {
-          padding-top: 4px;
-        }
-
-        .postName {
+          min-width: 0;
           padding-top: 4px;
           padding-bottom: 0;
+          font-size: 15px;
+          font-weight: 700;
+          line-height: 1.28;
+          word-break: break-word;
         }
 
         .userName {
-          font-style: bold;
+          overflow: hidden;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 1.25;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
-        .leftContainer {
-          margin-right: 8px;
+        .metaRow {
+          display: flex;
+          min-width: 0;
+          align-items: center;
+          gap: 6px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          line-height: 1.25;
+        }
+
+        .metaText {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .metaLabel {
+          flex: 0 0 auto;
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        .metaLabel[endorsement] {
+          color: var(--md-sys-color-primary);
+        }
+
+        .metaLabel[opposition] {
+          color: var(--md-sys-color-error);
         }
 
         [hidden] {
@@ -114,35 +210,39 @@ export class AcNotificationListPost extends YpBaseElement {
       ? html`
           <a
             href="${this.postUrl}"
-            class="layout vertical pointerCursor"
+            class="notificationRow pointerCursor"
             @click="${this._goToPost}"
             aria-label="${this.post.name}"
             ?hidden="${!this.post}">
-            <div class="layout horizontal">
-              <div
-                class="layout vertical center-center self-start leftContainer">
+              <div class="iconRail">
                 ${this.user
                   ? html`
                       <yp-user-image small .user="${this.user}"></yp-user-image>
                     `
                   : nothing}
-                <md-icon .newPost="${this.newPostMode}" class="bulb-icon"
-                  >lightbulb_outline</md-icon
+                <md-icon
+                  ?new-post="${this.newPostMode}"
+                  ?endorsement="${this.showEndorsementIcon}"
+                  ?opposition="${this.showOppositionIcon}"
+                  class="actionIcon"
+                  >${this.postNotificationIcon}</md-icon
                 >
               </div>
-              <div class="layout vertical">
+              <div class="notificationBody">
                 <div ?hidden="${!this.endorsementsText}">
-                  <div class="layout horizontal">
-                    <md-icon class="smallIcons endorsers">favorite</md-icon>
-                    <div class="endorsers">${this.endorsementsText}</div>
+                  <div class="metaRow">
+                    <span class="metaLabel" endorsement
+                      >${this.t("pointForShort")}</span
+                    >
+                    <div class="metaText endorsers">${this.endorsementsText}</div>
                   </div>
                 </div>
                 <div ?hidden="${!this.oppositionsText}">
-                  <div class="layout horizontal">
-                    <md-icon class="smallIcons opposers"
-                      >do_not_disturb</md-icon
+                  <div class="metaRow">
+                    <span class="metaLabel" opposition
+                      >${this.t("pointAgainstShort")}</span
                     >
-                    <div class="opposers">${this.oppositionsText}</div>
+                    <div class="metaText opposers">${this.oppositionsText}</div>
                   </div>
                 </div>
                 <div class="postName">
@@ -159,7 +259,6 @@ export class AcNotificationListPost extends YpBaseElement {
                   ${this.userName}
                 </div>
               </div>
-            </div>
           </a>
         `
       : nothing;
@@ -169,6 +268,26 @@ export class AcNotificationListPost extends YpBaseElement {
     return this.post
       ? YpNavHelpers.withForAgentBundle(`/post/${this.post.id}`)
       : "#";
+  }
+
+  get showEndorsementIcon() {
+    return !!(!this.newPostMode && this.endorsementsText);
+  }
+
+  get showOppositionIcon() {
+    return !!(!this.newPostMode && !this.endorsementsText && this.oppositionsText);
+  }
+
+  get postNotificationIcon() {
+    if (this.newPostMode) {
+      return "lightbulb_outline";
+    } else if (this.showOppositionIcon) {
+      return "do_not_disturb";
+    } else if (this.showEndorsementIcon) {
+      return "favorite";
+    } else {
+      return "lightbulb_outline";
+    }
   }
 
   _goToPost(event?: Event) {
