@@ -470,9 +470,9 @@ export class YpGroup extends YpCollection {
     }, 100);
   }
 
-  _newPost() {
+  async _newPost() {
     window.appGlobals.activity("open", "newPost");
-    if (!window.appUser.loggedIn()) {
+    if (!(await window.appUser.ensureLoginChecked())) {
       window.appUser.loginForNewPost(
         this.collectionId!,
         this.collection?.configuration as YpGroupConfiguration

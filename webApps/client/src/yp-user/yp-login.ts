@@ -1446,10 +1446,10 @@ export class YpLogin extends YpBaseElement {
     const domainName = window.location.hostname.split(".").slice(-2).join(".");
 
     const url = "/api/users/auth/saml",
-      width = 1200,
-      height = 650,
-      top = (window.outerHeight - height) / 2,
-      left = (window.outerWidth - width) / 2,
+      width = window.screen?.availWidth || window.outerWidth || 1200,
+      height = window.screen?.availHeight || window.outerHeight || 650,
+      top = 0,
+      left = 0,
       name = "_blank";
     if (this._isInApp()) {
       document.cookie =
@@ -1467,7 +1467,7 @@ export class YpLogin extends YpBaseElement {
           width +
           ",height=" +
           height +
-          ",scrollbars=0,top=" +
+          ",scrollbars=1,resizable=1,top=" +
           top +
           ",left=" +
           left

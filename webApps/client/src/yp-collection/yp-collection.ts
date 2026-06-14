@@ -382,7 +382,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       return false;
     }
   }
-  createNewCollection() {
+  async createNewCollection() {
     let childCollectionType;
     if (this.collectionType == "domain") {
       childCollectionType = "community";
@@ -393,7 +393,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       return;
     }
     const createPath = `/admin/${childCollectionType}/new/${this.collectionId}`;
-    if (this.loggedInUser) {
+    if (this.loggedInUser || (await window.appUser.ensureLoginChecked())) {
       YpNavHelpers.redirectTo(createPath);
     } else {
       window.appUser.openUserlogin(undefined, undefined, createPath);

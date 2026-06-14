@@ -440,7 +440,11 @@ export class YpThemeManager {
     ];
     return fontImports.filter((url) => {
       try {
-        const parsedUrl = new URL(url);
+        const parsedUrl = new URL(url, window.location.origin);
+        if (parsedUrl.origin === window.location.origin) {
+          return parsedUrl.pathname.startsWith("/styles/fonts/");
+        }
+
         return (
           parsedUrl.protocol === "https:" &&
           allowedDomains.some(

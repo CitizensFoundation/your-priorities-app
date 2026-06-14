@@ -789,24 +789,7 @@ export class YpAdminApp extends YpBaseElement {
       this.parentCollectionId = window.appGlobals.domain?.id;
     }
 
-    const checkLoginStatus = async (attemptsLeft: number) => {
-      return new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          if (window.appUser.loggedIn()) {
-            clearInterval(interval);
-            resolve(true);
-          } else {
-            attemptsLeft--;
-            if (attemptsLeft <= 0) {
-              clearInterval(interval);
-              resolve(false);
-            }
-          }
-        }, 100);
-      });
-    };
-
-    const loggedIn = await checkLoginStatus(7);
+    const loggedIn = await window.appUser.ensureLoginChecked();
 
     if (loggedIn) {
       this._getAdminCollection();

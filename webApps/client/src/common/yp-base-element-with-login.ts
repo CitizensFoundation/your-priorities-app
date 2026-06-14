@@ -6,6 +6,9 @@ export class YpBaseElementWithLogin extends YpBaseElement {
   @property({ type: Object })
   loggedInUser: YpUserData|undefined;
 
+  private _loggedInListener = this._loggedIn.bind(this);
+  private _adminRightsListener = this.requestUpdate.bind(this);
+
   constructor() {
     super();
 
@@ -18,18 +21,18 @@ export class YpBaseElementWithLogin extends YpBaseElement {
     super.connectedCallback();
     this.addGlobalListener(
       'yp-logged-in',
-      this._loggedIn.bind(this)
+      this._loggedInListener
     );
-    this.addGlobalListener('yp-got-admin-rights', this.requestUpdate.bind(this));
+    this.addGlobalListener('yp-got-admin-rights', this._adminRightsListener);
   }
 
   override disconnectedCallback() {
-    super.connectedCallback();
+    super.disconnectedCallback();
     this.removeGlobalListener(
       'yp-logged-in',
-      this._loggedIn.bind(this)
+      this._loggedInListener
     );
-    this.removeGlobalListener('yp-got-admin-rights', this.requestUpdate.bind(this));
+    this.removeGlobalListener('yp-got-admin-rights', this._adminRightsListener);
   }
 
   get isLoggedIn() {

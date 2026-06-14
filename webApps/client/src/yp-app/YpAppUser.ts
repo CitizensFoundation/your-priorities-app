@@ -100,6 +100,9 @@ export class YpAppUser extends YpCodeBase {
   browserFingerprintConfidence: number | undefined;
   browserFingerprintPromise: Promise<void> | undefined;
   private fallbackBrowserId: string | undefined;
+  private loginCheckPromise: Promise<YpUserData | void> | undefined;
+  private loginCheckToken = 0;
+  hasCompletedInitialLoginCheck = false;
 
   constructor(serverApi: YpServerApi, skipRegularInit = false) {
     super();
@@ -497,6 +500,7 @@ export class YpAppUser extends YpCodeBase {
   }
 
   removeUserSession() {
+    this.loginCheckToken += 1;
     this.sessionUnset("user");
     this.user = null;
     window.appGlobals.setAnonymousUser(undefined);
@@ -605,16 +609,48 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _completeExternalLogin(fromString: string) {
-    this.checkLogin();
-    this._setUserLoginSpinner();
     this.completeExternalLoginText = fromString;
+    this.checkLogin(true);
+    this._setUserLoginSpinner();
   }
 
-  checkLogin() {
-    this.isloggedin();
+  checkLogin(forceRefresh = false) {
+    if (forceRefresh) {
+      this.loginCheckToken += 1;
+      this.loginCheckPromise = undefined;
+    }
+    if (!this.loginCheckPromise) {
+      const loginCheckToken = this.loginCheckToken;
+      const loginCheckPromise = this.isloggedin(loginCheckToken)
+        .catch((error) => {
+          console.error("Error checking login", error);
+          return undefined;
+        })
+        .finally(() => {
+          this.hasCompletedInitialLoginCheck = true;
+          this.fireGlobal("yp-login-check-complete", this.loggedIn());
+          if (this.loginCheckPromise === loginCheckPromise) {
+            this.loginCheckPromise = undefined;
+          }
+        });
+      this.loginCheckPromise = loginCheckPromise;
+    }
     this.getMemberShips();
     this.getAdminRights();
     this.getPromoterRights();
+    return this.loginCheckPromise;
+  }
+
+  async ensureLoginChecked() {
+    if (this.loggedIn()) {
+      return true;
+    }
+
+    if (!this.hasCompletedInitialLoginCheck || this.loginCheckPromise) {
+      await (this.loginCheckPromise || this.checkLogin());
+    }
+
+    return this.loggedIn();
   }
 
   recheckAdminRights() {
@@ -874,8 +910,12 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  async isloggedin() {
+  async isloggedin(loginCheckToken = this.loginCheckToken) {
     const user = (await this.serverApi.isloggedin()) as YpUserData | void;
+
+    if (loginCheckToken !== this.loginCheckToken) {
+      return user;
+    }
 
     if (user && user.notLoggedIn === true) {
       this.removeUserSession();
@@ -948,6 +988,8 @@ export class YpAppUser extends YpCodeBase {
       this.completeExternalLoginText = undefined;
       this._checkLoginForParameters();
     }
+
+    return user;
   }
 
   async getAdminRights() {

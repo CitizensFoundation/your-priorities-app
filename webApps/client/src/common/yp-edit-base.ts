@@ -120,7 +120,7 @@ export abstract class YpEditBase extends YpBaseElement {
   }
 
   async open(newItem: boolean, params: Record<string,string | boolean | number | object>) {
-    if (window.appUser && window.appUser.loggedIn() === true) {
+    if (window.appUser && (await window.appUser.ensureLoginChecked()) === true) {
       if (newItem) {
         this.new = true;
       } else {

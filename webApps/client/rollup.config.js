@@ -88,6 +88,7 @@ export default {
         { src: 'locales/*', dest: `dist/locales-${localesHash}` },
         { src: 'topo', dest: 'dist/' },
         { src: 'images', dest: 'dist/' },
+        { src: 'styles', dest: 'dist/' },
         { src: 'sw.js', dest: 'dist/' },
         { src: 'offline.html', dest: 'dist/' },
         // TODO: Remove this after the new version has been fully launched

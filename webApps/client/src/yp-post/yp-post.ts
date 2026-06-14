@@ -96,6 +96,8 @@ export class YpPost extends YpCollection {
 
   private directPostNavigationRequestSerial = 0;
 
+  private useDirectNavigationContextForNextPost = false;
+
   override scrollToCollectionItemSubClass(): void {
     this.scrollToPointId = undefined;
   }
@@ -309,14 +311,19 @@ export class YpPost extends YpCollection {
       return true;
     }
 
+    const directNavigation = this.directPostNavigationForCurrentPost;
+    if (directNavigation) {
+      return !directNavigation.previousPostId;
+    } else if (this.hasActiveDirectPostNavigationContext) {
+      return true;
+    }
+
     if (
       window.appGlobals.cache.getPreviousPostInGroupList(
         this.post.group_id,
         this.post.id
       )
     ) {
-      return false;
-    } else if (this.directPostNavigationForCurrentPost?.previousPostId) {
       return false;
     } else {
       return true;
@@ -328,14 +335,19 @@ export class YpPost extends YpCollection {
       return true;
     }
 
+    const directNavigation = this.directPostNavigationForCurrentPost;
+    if (directNavigation) {
+      return !directNavigation.nextPostId;
+    } else if (this.hasActiveDirectPostNavigationContext) {
+      return true;
+    }
+
     if (
       window.appGlobals.cache.getNextPostInGroupList(
         this.post.group_id,
         this.post.id
       )
     ) {
-      return false;
-    } else if (this.directPostNavigationForCurrentPost?.nextPostId) {
       return false;
     } else {
       return !this.canLoadMorePostsForCurrentGroupList;
@@ -353,6 +365,14 @@ export class YpPost extends YpCollection {
     } else {
       return undefined;
     }
+  }
+
+  get hasActiveDirectPostNavigationContext() {
+    return !!(
+      this.post &&
+      this.directPostNavigationInfo &&
+      this.directPostNavigationInfo.context.groupId === this.post.group_id
+    );
   }
 
   get canLoadMorePostsForCurrentGroupList() {
@@ -568,6 +588,20 @@ export class YpPost extends YpCollection {
 
   goToPreviousPost() {
     if (this.post) {
+      const directPreviousPostId =
+        this.directPostNavigationForCurrentPost?.previousPostId;
+      if (this.hasActiveDirectPostNavigationContext) {
+        if (directPreviousPostId) {
+          this.useDirectNavigationContextForNextPost = true;
+          YpNavHelpers.goToPost(directPreviousPostId);
+          this.fireGlobal("yp-scroll-to-post-for-group-id", {
+            groupId: this.post.group_id,
+            postId: directPreviousPostId,
+          });
+        }
+        return;
+      }
+
       const previousPost = window.appGlobals.cache.getPreviousPostInGroupList(
         this.post.group_id,
         this.post.id
@@ -580,21 +614,27 @@ export class YpPost extends YpCollection {
           postId: previousPost.id,
         });
       } else {
-        const previousPostId =
-          this.directPostNavigationForCurrentPost?.previousPostId;
-        if (previousPostId) {
-          YpNavHelpers.goToPost(previousPostId);
-          this.fireGlobal("yp-scroll-to-post-for-group-id", {
-            groupId: this.post.group_id,
-            postId: previousPostId,
-          });
-        }
+        return;
       }
     }
   }
 
   async goToNextPost() {
     if (this.post) {
+      const directNextPostId =
+        this.directPostNavigationForCurrentPost?.nextPostId;
+      if (this.hasActiveDirectPostNavigationContext) {
+        if (directNextPostId) {
+          this.useDirectNavigationContextForNextPost = true;
+          YpNavHelpers.goToPost(directNextPostId);
+          this.fireGlobal("yp-scroll-to-post-for-group-id", {
+            groupId: this.post.group_id,
+            postId: directNextPostId,
+          });
+        }
+        return;
+      }
+
       let nextPost = window.appGlobals.cache.getNextPostInGroupList(
         this.post.group_id,
         this.post.id
@@ -612,14 +652,7 @@ export class YpPost extends YpCollection {
           postId: nextPost.id,
         });
       } else {
-        const nextPostId = this.directPostNavigationForCurrentPost?.nextPostId;
-        if (nextPostId) {
-          YpNavHelpers.goToPost(nextPostId);
-          this.fireGlobal("yp-scroll-to-post-for-group-id", {
-            groupId: this.post.group_id,
-            postId: nextPostId,
-          });
-        }
+        return;
       }
     }
   }
@@ -959,8 +992,15 @@ export class YpPost extends YpCollection {
       // Check if the posts list for the group is already in the cache
       const postsList =
         window.appGlobals.cache.currentPostListForGroup[this.post.group_id];
+      const useDirectNavigationContext =
+        this.useDirectNavigationContextForNextPost &&
+        this.hasActiveDirectPostNavigationContext;
+      this.useDirectNavigationContextForNextPost = false;
 
-      if (this.postIsInCachedGroupList(postsList)) {
+      if (
+        !useDirectNavigationContext &&
+        this.postIsInCachedGroupList(postsList)
+      ) {
         // Use the cached list to calculate the position
         this.directPostNavigationInfo = undefined;
         this.directPostNavigationPostId = undefined;
@@ -1024,13 +1064,14 @@ export class YpPost extends YpCollection {
 
     const postId = this.post.id;
     const requestSerial = ++this.directPostNavigationRequestSerial;
+    const requestParams = this.directPostNavigationRequestParams();
 
     this.loadingDirectPostNavigation = true;
 
     try {
       const navigationInfo = (await window.serverApi.getPostNavigation(
         postId,
-        this.directPostNavigationRequestParams()
+        requestParams
       )) as YpPostNavigationInfo | void;
 
       if (
@@ -1045,7 +1086,7 @@ export class YpPost extends YpCollection {
       const postsList =
         window.appGlobals.cache.currentPostListForGroup[this.post.group_id];
 
-      if (this.postIsInCachedGroupList(postsList)) {
+      if (!requestParams && this.postIsInCachedGroupList(postsList)) {
         this.directPostNavigationInfo = undefined;
         this.directPostNavigationPostId = undefined;
         this.updatePostPosition(postsList!);

@@ -588,6 +588,7 @@ export class YpPostEdit extends YpEditBase {
 
         #description {
           margin-top: 16px;
+          width: 100%;
         }
 
         .imageSizeInfo {
@@ -620,8 +621,23 @@ export class YpPostEdit extends YpEditBase {
           width: 100%;
         }
 
+        #surveyContainer {
+          align-items: stretch;
+          width: 100%;
+        }
+
+        #surveyContainer yp-structured-question-edit {
+          width: 100%;
+        }
+
         .contactInfo {
-          margin-top: 16px;
+          margin-top: 48px;
+          margin-bottom: 24px;
+        }
+
+        .contactInfoField {
+          margin-bottom: 12px;
+          width: 100%;
         }
 
         #description {
@@ -731,6 +747,7 @@ export class YpPostEdit extends YpEditBase {
     return html`
       <h2 class="contactInfo">${this.t("contactInformation")}</h2>
       <md-outlined-text-field
+        class="contactInfoField"
         id="contactName"
         name="contactName"
         type="text"
@@ -739,6 +756,7 @@ export class YpPostEdit extends YpEditBase {
       >
       </md-outlined-text-field>
       <md-outlined-text-field
+        class="contactInfoField"
         id="contactEmail"
         name="contactEmail"
         type="text"
@@ -747,6 +765,7 @@ export class YpPostEdit extends YpEditBase {
       >
       </md-outlined-text-field>
       <md-outlined-text-field
+        class="contactInfoField"
         id="contactTelephone"
         name="contacTelephone"
         type="text"
@@ -756,6 +775,7 @@ export class YpPostEdit extends YpEditBase {
       >
       </md-outlined-text-field>
       <md-outlined-text-field
+        class="contactInfoField"
         id="contactAddress"
         name="contactAddress"
         type="text"
@@ -1436,6 +1456,7 @@ export class YpPostEdit extends YpEditBase {
     const ariaHidden = skipKeyboardFocus ? "true" : undefined;
     return html`
       <md-filled-button
+        type="button"
         @click="${this.customSubmit}"
         .disabled="${this.submitDisabled}"
         tabindex="${ifDefined(tabIndexValue)}"
@@ -1940,6 +1961,11 @@ export class YpPostEdit extends YpEditBase {
   }
 
   async customSubmit() {
+    if (this.submitDisabled) {
+      return;
+    }
+    this.submitDisabled = true;
+
     const hasStructuredQuestions =
       (this.group &&
         this.group.configuration &&
@@ -2562,7 +2588,7 @@ export class YpPostEdit extends YpEditBase {
     group: YpGroupData,
     params: any | undefined = undefined
   ) {
-    if (window.appUser && window.appUser.loggedIn() === true) {
+    if (window.appUser && (await window.appUser.ensureLoginChecked()) === true) {
       this._setupGroup(group);
       if (newItem) {
         this.new = true;

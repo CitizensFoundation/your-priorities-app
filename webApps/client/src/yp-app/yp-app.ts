@@ -254,6 +254,7 @@ export class YpApp extends YpBaseElement {
   private _boundAutoTranslateEvent = this._autoTranslateEvent.bind(this);
   private _boundOnChangeHeader = this._onChangeHeader.bind(this);
   private _boundOnUserChanged = this._onUserChanged.bind(this);
+  private _boundOnLoginCheckComplete = this._onLoginCheckComplete.bind(this);
   private _boundNetWorkError = this._netWorkError.bind(this);
   private _boundYpError = this._ypError.bind(this);
   private _boundOpenToast = this._openToast.bind(this);
@@ -392,6 +393,10 @@ export class YpApp extends YpBaseElement {
     );
     this.addGlobalListener("yp-change-header", this._boundOnChangeHeader);
     this.addGlobalListener("yp-logged-in", this._boundOnUserChanged);
+    this.addGlobalListener(
+      "yp-login-check-complete",
+      this._boundOnLoginCheckComplete
+    );
     this.addGlobalListener("yp-network-error", this._boundNetWorkError);
     this.addGlobalListener("yp-error", this._boundYpError);
     this.addListener(
@@ -462,6 +467,10 @@ export class YpApp extends YpBaseElement {
     this.removeGlobalListener("yp-auto-translate", this._boundAutoTranslateEvent);
     this.removeGlobalListener("yp-change-header", this._boundOnChangeHeader);
     this.removeGlobalListener("yp-logged-in", this._boundOnUserChanged);
+    this.removeGlobalListener(
+      "yp-login-check-complete",
+      this._boundOnLoginCheckComplete
+    );
     this.removeGlobalListener("yp-network-error", this._boundNetWorkError);
     this.removeGlobalListener("yp-error", this._boundYpError);
     this.removeGlobalListener(
@@ -819,7 +828,8 @@ export class YpApp extends YpBaseElement {
               </yp-user-image>
             </md-icon-button>
           `
-        : html`
+        : window.appUser?.hasCompletedInitialLoginCheck
+        ? html`
             <md-text-button
               slot="actionItems"
               ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn ||
@@ -828,7 +838,8 @@ export class YpApp extends YpBaseElement {
               @click="${this._login}"
               >${this.t("user.login")}
             </md-text-button>
-          `}
+          `
+        : nothing}
     `;
   }
 
@@ -2100,6 +2111,10 @@ export class YpApp extends YpBaseElement {
     } else {
       this.user = undefined;
     }
+  }
+
+  _onLoginCheckComplete() {
+    this.requestUpdate();
   }
 
   toggleSearch() {
