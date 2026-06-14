@@ -3,7 +3,7 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { nothing, html, TemplateResult, LitElement, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 //import '@material/web/navigationbar/navigation-bar.js';
 //import { MdNavigationBar } from '@material/web/navigationbar/navigation-bar.js';
@@ -78,6 +78,13 @@ export class YpPost extends YpCollection {
 
   private readonly _boundDocumentKeydown = (event: KeyboardEvent) =>
     this.handleKeydown(event);
+
+  private readonly _boundGoToNextPost = () => this.goToNextPost();
+
+  private readonly _boundGoToPreviousPost = () => this.goToPreviousPost();
+
+  @state()
+  private loadingMoreGroupPosts = false;
 
   override scrollToCollectionItemSubClass(): void {
     this.scrollToPointId = undefined;
@@ -301,6 +308,10 @@ export class YpPost extends YpCollection {
   }
 
   get rightArrowDisabled() {
+    if (!this.post || this.loadingMoreGroupPosts) {
+      return true;
+    }
+
     if (
       window.appGlobals.cache.getNextPostInGroupList(
         this.post!.group_id,
@@ -309,8 +320,31 @@ export class YpPost extends YpCollection {
     ) {
       return false;
     } else {
-      return true;
+      return !this.canLoadMorePostsForCurrentGroupList;
     }
+  }
+
+  get canLoadMorePostsForCurrentGroupList() {
+    if (!this.post) {
+      return false;
+    }
+
+    const groupId = this.post.group_id;
+    const cache = window.appGlobals.cache;
+    const posts = cache.currentPostListForGroup[groupId];
+    const totalPostsCount = cache.getPostCountsForGroup(groupId);
+    const currentPostIndex = cache.getPostPositionInTheGroupList(
+      groupId,
+      this.post.id
+    );
+
+    return (
+      !!posts &&
+      !!cache.getCurrentPostListRequestForGroup(groupId) &&
+      totalPostsCount !== undefined &&
+      posts.length < totalPostsCount &&
+      currentPostIndex === posts.length - 1
+    );
   }
 
   get bothArrowsDisabled() {
@@ -518,12 +552,17 @@ export class YpPost extends YpCollection {
     }
   }
 
-  goToNextPost() {
+  async goToNextPost() {
     if (this.post) {
-      const nextPost = window.appGlobals.cache.getNextPostInGroupList(
+      let nextPost = window.appGlobals.cache.getNextPostInGroupList(
         this.post.group_id,
         this.post.id
       );
+
+      if (!nextPost && this.canLoadMorePostsForCurrentGroupList) {
+        nextPost = await this.loadMorePostsForCurrentGroupList();
+      }
+
       if (nextPost) {
         YpNavHelpers.goToPost(nextPost.id);
         window.appGlobals.cache.cachedPostItem = nextPost;
@@ -533,6 +572,64 @@ export class YpPost extends YpCollection {
         });
       }
     }
+  }
+
+  async loadMorePostsForCurrentGroupList() {
+    if (
+      !this.post ||
+      this.loadingMoreGroupPosts ||
+      !this.canLoadMorePostsForCurrentGroupList
+    ) {
+      return undefined;
+    }
+
+    const groupId = this.post.group_id;
+    const cache = window.appGlobals.cache;
+    const posts = cache.currentPostListForGroup[groupId];
+    const request = cache.getCurrentPostListRequestForGroup(groupId);
+
+    if (!posts || !request) {
+      return undefined;
+    }
+
+    this.loadingMoreGroupPosts = true;
+
+    try {
+      let url = `${request.urlWithoutOffset}?offset=${posts.length}`;
+
+      if (request.randomSeed !== undefined) {
+        url += `&randomSeed=${request.randomSeed}`;
+      }
+
+      const postsInfo = (await window.serverApi.getGroupPosts(
+        url
+      )) as YpPostsInfoInterface | void;
+
+      if (postsInfo) {
+        cache.setPostCountsForGroup(groupId, postsInfo.totalPostsCount);
+
+        const mergedPosts = [...posts];
+        for (const newPost of postsInfo.posts) {
+          if (!mergedPosts.some((post) => post.id === newPost.id)) {
+            mergedPosts.push(newPost);
+          }
+        }
+
+        cache.setCurrentPostListForGroup(groupId, mergedPosts, request);
+        cache.addPostsToCacheLater(postsInfo.posts);
+
+        this.updatePostPosition(mergedPosts);
+        this.setPostPositionCounter();
+        this.requestUpdate();
+
+        return cache.getNextPostInGroupList(groupId, this.post.id);
+      }
+    } finally {
+      this.loadingMoreGroupPosts = false;
+      this.requestUpdate();
+    }
+
+    return undefined;
   }
 
   renderNavigationButtons() {
@@ -691,8 +788,11 @@ export class YpPost extends YpCollection {
     super.connectedCallback();
     this.addListener("yp-post-image-count", this._updatePostImageCount);
     document.addEventListener("keydown", this._boundDocumentKeydown);
-    this.addGlobalListener("yp-go-to-next-post", this.goToNextPost.bind(this));
-    this.addGlobalListener("yp-go-to-previous-post", this.goToPreviousPost.bind(this));
+    this.addGlobalListener("yp-go-to-next-post", this._boundGoToNextPost);
+    this.addGlobalListener(
+      "yp-go-to-previous-post",
+      this._boundGoToPreviousPost
+    );
   }
 
   override disconnectedCallback() {
@@ -700,8 +800,11 @@ export class YpPost extends YpCollection {
     this.removeListener("yp-debate-info", this._updateDebateInfo);
     this.removeListener("yp-post-image-count", this._updatePostImageCount);
     document.removeEventListener("keydown", this._boundDocumentKeydown);
-    this.removeGlobalListener("yp-go-to-next-post", this.goToNextPost.bind(this));
-    this.removeGlobalListener("yp-go-to-previous-post", this.goToPreviousPost.bind(this));
+    this.removeGlobalListener("yp-go-to-next-post", this._boundGoToNextPost);
+    this.removeGlobalListener(
+      "yp-go-to-previous-post",
+      this._boundGoToPreviousPost
+    );
   }
 
   _updatePostImageCount(event: CustomEvent) {
@@ -874,9 +977,10 @@ export class YpPost extends YpCollection {
   }*/
 
   async fetchGroupPosts() {
-    const url = `/api/groups/${
+    const urlWithoutOffset = `/api/groups/${
       this.post!.group_id
-    }/posts/newest/null/open?offset=0`;
+    }/posts/newest/null/open`;
+    const url = `${urlWithoutOffset}?offset=0`;
 
     const postsInfo = (await window.serverApi.getGroupPosts(
       url
@@ -893,7 +997,8 @@ export class YpPost extends YpCollection {
       if (postsInfo.posts.length != 0) {
         window.appGlobals.cache.setCurrentPostListForGroup(
           this.post!.group_id,
-          postsInfo.posts
+          postsInfo.posts,
+          { urlWithoutOffset }
         );
       }
 

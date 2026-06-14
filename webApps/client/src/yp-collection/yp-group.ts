@@ -20,7 +20,7 @@ import { YpPostsList } from "../yp-post/yp-posts-list.js";
 import { YpPostEdit } from "../yp-post/yp-post-edit.js";
 import { YpPostMap } from "../yp-post/yp-post-map.js";
 import { MdTabs } from "@material/web/tabs/tabs.js";
-import { cache } from "lit/directives/cache.js";
+import { keyed } from "lit/directives/keyed.js";
 
 import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
@@ -89,6 +89,9 @@ export class YpGroup extends YpCollection {
   tabCounters: Record<string, number> = {};
 
   tabCountersLoadId = 0;
+  tabCountersLoadingForGroupId: number | undefined;
+  hasAutoSelectedDefaultPostStatusTab = false;
+  userSelectedPostStatusTab = false;
   configCheckTTL = 45000;
 
   constructor() {
@@ -212,10 +215,11 @@ export class YpGroup extends YpCollection {
         console.log("Not opening tabs with ideas in map mode");
       } else {
         if (
-          YpGroup.postStatusFilters.every(
-            type => this.tabCounters[type] !== undefined
-          )
+          !this.hasAutoSelectedDefaultPostStatusTab &&
+          !this.userSelectedPostStatusTab &&
+          this._hasLoadedAllTabPostCounts()
         ) {
+          this.hasAutoSelectedDefaultPostStatusTab = true;
           if (this.selectedGroupTab === GroupTabTypes.Open) {
             if (this.tabCounters["open"] && this.tabCounters["open"] > 0) {
               this.selectedGroupTab = GroupTabTypes.Open;
@@ -223,17 +227,17 @@ export class YpGroup extends YpCollection {
               this.tabCounters["in_progress"] &&
               this.tabCounters["in_progress"] > 0
             ) {
-              this.selectedGroupTab = GroupTabTypes.InProgress;
+              this._selectTabFromCounts(GroupTabTypes.InProgress);
             } else if (
               this.tabCounters["successful"] &&
               this.tabCounters["successful"] > 0
             ) {
-              this.selectedGroupTab = GroupTabTypes.Successful;
+              this._selectTabFromCounts(GroupTabTypes.Successful);
             } else if (
               this.tabCounters["failed"] &&
               this.tabCounters["failed"] > 0
             ) {
-              this.selectedGroupTab = GroupTabTypes.Failed;
+              this._selectTabFromCounts(GroupTabTypes.Failed);
             }
           }
         }
@@ -241,20 +245,42 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  _selectTabFromCounts(tabIndex: number) {
+    if (this.selectedGroupTab === tabIndex) return;
+
+    this.selectedGroupTab = tabIndex;
+    this.requestUpdate();
+  }
+
+  _hasLoadedAllTabPostCounts() {
+    return YpGroup.postStatusFilters.every(
+      type => this.tabCounters[type] !== undefined
+    );
+  }
+
   async _loadTabPostCounts() {
-    if (!this.collection || !this.hasNonOpenPosts) return;
+    if (
+      !this.collection ||
+      !this.hasNonOpenPosts ||
+      this._hasLoadedAllTabPostCounts() ||
+      this.tabCountersLoadingForGroupId === this.collection.id
+    ) {
+      return;
+    }
 
     const groupId = this.collection.id;
     const loadId = ++this.tabCountersLoadId;
+    this.tabCountersLoadingForGroupId = groupId;
 
     try {
       const counts = await Promise.all(
         YpGroup.postStatusFilters.map(async statusFilter => {
-          const postsInfo = (await window.serverApi.getGroupPosts(
-            `/api/groups/${groupId}/posts/newest/null/${statusFilter}?offset=0`
-          )) as YpPostsInfoInterface | void;
+          const countInfo = (await window.serverApi.getCategoriesCount(
+            groupId,
+            statusFilter
+          )) as YpCategoriesCountInfo | void;
 
-          return [statusFilter, postsInfo?.totalPostsCount || 0] as const;
+          return [statusFilter, countInfo?.allPostCount || 0] as const;
         })
       );
 
@@ -275,6 +301,10 @@ export class YpGroup extends YpCollection {
       this.requestUpdate();
     } catch (error) {
       console.error("Error loading group tab counts", error);
+    } finally {
+      if (this.tabCountersLoadingForGroupId === groupId) {
+        this.tabCountersLoadingForGroupId = undefined;
+      }
     }
   }
 
@@ -323,6 +353,9 @@ export class YpGroup extends YpCollection {
     this.hasNonOpenPosts = false;
     this.tabCounters = {};
     this.tabCountersLoadId += 1;
+    this.tabCountersLoadingForGroupId = undefined;
+    this.hasAutoSelectedDefaultPostStatusTab = false;
+    this.userSelectedPostStatusTab = false;
 
     if (
       this.collectionId &&
@@ -389,6 +422,7 @@ export class YpGroup extends YpCollection {
   }
 
   _selectGroupTab(event: CustomEvent) {
+    this.userSelectedPostStatusTab = true;
     this.selectedGroupTab = (event.currentTarget as MdTabs).activeTabIndex;
 
     if (!this.hasNonOpenPosts && this.selectedGroupTab !== 0) {
@@ -728,6 +762,9 @@ export class YpGroup extends YpCollection {
 
         if (checkResults) {
           this.hasNonOpenPosts = checkResults.hasNonOpenPosts;
+          if (this.hasNonOpenPosts) {
+            this._loadTabPostCounts();
+          }
         }
       });
 
@@ -1353,7 +1390,9 @@ export class YpGroup extends YpCollection {
         </div>
       </div>
       <div class="currentPage layout vertical center-center">
-        <div class="topContainer">${this.renderCurrentGroupTabPage()}</div>
+        <div class="topContainer">
+          ${keyed(this.selectedGroupTab, this.renderCurrentGroupTabPage())}
+        </div>
       </div>
     `;
   }

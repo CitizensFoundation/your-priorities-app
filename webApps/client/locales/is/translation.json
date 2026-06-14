@@ -975,6 +975,8 @@
     "top": "Vinsælast",
     "newest": "Nýjast",
     "random": "Af handahófi",
+    "filterMenuLabel": "Raða hugmyndum",
+    "categoryMenuLabel": "Sía hugmyndir eftir flokki",
     "inProgress": "Í ferli",
     "groups": "Hugmyndahópar",
     "search": "Leitaðu að hugmyndum",

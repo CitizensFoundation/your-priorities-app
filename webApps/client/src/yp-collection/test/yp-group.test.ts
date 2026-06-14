@@ -15,6 +15,25 @@ describe('YpGroup', () => {
 
     fetchMock.get('/api/groups/1',YpTestHelpers.getGroupResults(), YpTestHelpers.fetchMockConfig);
     fetchMock.get('/api/groups/1/pages',[], YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/groups/1/checkNonOpenPosts', {
+      hasNonOpenPosts: true,
+    }, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/groups/1/categories_count/open', {
+      categoriesCount: [],
+      allPostCount: 0,
+    }, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/groups/1/categories_count/in_progress', {
+      categoriesCount: [],
+      allPostCount: 23,
+    }, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/groups/1/categories_count/successful', {
+      categoriesCount: [],
+      allPostCount: 0,
+    }, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/groups/1/categories_count/failed', {
+      categoriesCount: [],
+      allPostCount: 231,
+    }, YpTestHelpers.fetchMockConfig);
     fetchMock.get('/api/groups/1/posts/newest/null/open?offset=0', {
       posts: [],
       totalPostsCount: 0,
@@ -63,5 +82,40 @@ describe('YpGroup', () => {
     element._setupOpenTab();
 
     expect(element.selectedGroupTab).to.equal(GroupTabTypes.InProgress);
+  });
+
+  it('does not move back to the default status after a user selects an empty tab', async () => {
+    element.collection = YpTestHelpers.getGroup();
+    element.hasNonOpenPosts = true;
+    element.selectedGroupTab = GroupTabTypes.Open;
+    element.tabCounters = {
+      open: 0,
+      in_progress: 23,
+      successful: 0,
+      failed: 231,
+    };
+
+    element._setupOpenTab();
+    expect(element.selectedGroupTab).to.equal(GroupTabTypes.InProgress);
+
+    element.userSelectedPostStatusTab = true;
+    element.selectedGroupTab = GroupTabTypes.Open;
+    element._setupOpenTab();
+
+    expect(element.selectedGroupTab).to.equal(GroupTabTypes.Open);
+  });
+
+  it('loads tab post counts after cached group refresh detects non-open posts', async () => {
+    let didLoadTabPostCounts = false;
+    element.collection = YpTestHelpers.getGroup();
+    element.hasNonOpenPosts = false;
+    element._loadTabPostCounts = async () => {
+      didLoadTabPostCounts = true;
+    };
+
+    await element.refresh();
+    await aTimeout(50);
+
+    expect(didLoadTabPostCounts).to.equal(true);
   });
 });

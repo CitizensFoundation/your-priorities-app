@@ -193,7 +193,7 @@ export class YpPostsFilter extends YpBaseElement {
                   id="mainListMenu"
                   icon="reorder"
                   outlined
-                  index="1"
+                  .value="${this.filter}"
                   label="${this.t("post.filterMenuLabel")}"
                   @change="${this._changeFilter}"
                 >
@@ -334,22 +334,19 @@ export class YpPostsFilter extends YpBaseElement {
   }
 
   async _changeFilter(event: CustomEvent) {
-    switch ((event.target as MdOutlinedSelect).selectedIndex) {
-      case 0:
-        this.filter = "top";
-        break;
-      case 1:
-        this.filter = "newest";
-        break;
-      case 2:
-        this.filter = "most_debated";
-        break;
-      case 3:
-        this.filter = "random";
+    const selectedValue = (event.target as MdOutlinedSelect).value;
+
+    switch (selectedValue) {
+      case "top":
+      case "newest":
+      case "most_debated":
+      case "random":
+        this.filter = selectedValue;
         break;
     }
 
     await this.updateComplete;
+    this.fire("yp-filter-changed", this.filter);
     this._updateAfterFiltering();
   }
 
@@ -517,10 +514,6 @@ export class YpPostsFilter extends YpBaseElement {
       }
       this.resetSelection(this.categoryId.toString());
       this._updateTitle();
-    }
-
-    if (changedProperties.has("filter") && this.filter) {
-      this.fire("yp-filter-changed", this.filter);
     }
 
     if (changedProperties.has("searchingFor")) {

@@ -74,6 +74,9 @@ export class YpPostsList extends YpBaseElement {
 
   moreFromScrollTriggerActive = false;
 
+  private readonly _boundScrollToPostForGroupId = (event: CustomEvent) =>
+    this.scrollToPostForGroupId(event);
+
   // For YpIronListHelper
   resetListSize: Function | undefined;
   skipIronListWidth = false;
@@ -221,6 +224,15 @@ export class YpPostsList extends YpBaseElement {
           }
           .card {
             margin-bottom: 16px;
+          }
+
+          yp-post-list-item {
+            margin-top: 0;
+            margin-bottom: 32px;
+          }
+
+          yp-post-list-item[is-last-item] {
+            margin-bottom: 96px;
           }
         }
 
@@ -481,11 +493,15 @@ export class YpPostsList extends YpBaseElement {
       if (posts) {
         for (let i = 0; i < posts.length; i++) {
           if (posts[i].id == postId) {
-            (this.$$("#list") as LitVirtualizer).scrollToIndex(i, "center");
-            if (posts.length < i + 3) {
-              console.error(
-                `Loading more data for group ${groupId} to scroll to post ${postId} at index ${i} length ${posts.length}`
-              );
+            const list = this.$$("#list") as LitVirtualizer | null;
+            list?.scrollToIndex(i, "center");
+
+            const totalPostsCount =
+              window.appGlobals.cache.getPostCountsForGroup(groupId);
+            const hasLoadedAllKnownPosts =
+              totalPostsCount !== undefined && posts.length >= totalPostsCount;
+
+            if (!hasLoadedAllKnownPosts && posts.length < i + 3) {
               this._loadMoreData();
             }
             break;
@@ -501,7 +517,7 @@ export class YpPostsList extends YpBaseElement {
     this.addListener("yp-filter-changed", this._filterChanged);
     this.addGlobalListener(
       "yp-scroll-to-post-for-group-id",
-      this.scrollToPostForGroupId.bind(this)
+      this._boundScrollToPostForGroupId
     );
     this.addListener("refresh", this._refreshPost);
     if (this.posts) {
@@ -524,7 +540,7 @@ export class YpPostsList extends YpBaseElement {
     this.removeListener("refresh", this._refreshPost);
     this.removeGlobalListener(
       "yp-scroll-to-post-for-group-id",
-      this.scrollToPostForGroupId.bind(this)
+      this._boundScrollToPostForGroupId
     );
   }
 
@@ -854,6 +870,14 @@ export class YpPostsList extends YpBaseElement {
         url += "/" + this.statusFilter;
       }
 
+      const urlWithoutOffset = url;
+      const currentPostListRequest = !this.userId
+        ? {
+            urlWithoutOffset,
+            randomSeed: this.filter == "random" ? this.randomSeed : undefined,
+          }
+        : undefined;
+
       const offset = this.posts ? this.posts.length : 0;
       url += "?offset=" + offset;
 
@@ -881,12 +905,14 @@ export class YpPostsList extends YpBaseElement {
         if (!this.posts) {
           this.posts = postsInfo.posts;
         } else {
+          const mergedPosts = [...this.posts];
           for (let i = 0; i < postsInfo.posts.length; i++) {
             const newPost = postsInfo.posts[i];
-            if (!this.posts.some((p) => p.id === newPost.id)) {
-              this.posts.push(newPost);
+            if (!mergedPosts.some((p) => p.id === newPost.id)) {
+              mergedPosts.push(newPost);
             }
           }
+          this.posts = mergedPosts;
         }
 
         if (postsInfo.posts.length == 0 && this.posts.length == 0) {
@@ -894,7 +920,8 @@ export class YpPostsList extends YpBaseElement {
         } else {
           window.appGlobals.cache.setCurrentPostListForGroup(
             this.group.id,
-            this.posts
+            this.posts,
+            currentPostListRequest
           );
         }
 
@@ -913,9 +940,11 @@ export class YpPostsList extends YpBaseElement {
           }
         }, 20);
 
+        const loadedPostsCount = this.posts ? this.posts.length : 0;
+
         if (
           postsInfo.posts.length > 0 &&
-          postsInfo.posts.length != this.postsCount
+          loadedPostsCount < postsInfo.totalPostsCount
         ) {
           this.moreToLoad = true;
         }

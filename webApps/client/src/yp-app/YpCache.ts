@@ -1,5 +1,10 @@
 import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 
+export interface YpCurrentPostListRequest {
+  urlWithoutOffset: string;
+  randomSeed?: number;
+}
+
 export class YpCache extends YpCodeBase {
   cachedActivityItem: AcActivityData | undefined;
 
@@ -17,6 +22,8 @@ export class YpCache extends YpCodeBase {
 
   currentPostListForGroup: Record<number, Array<YpPostData>> = {};
 
+  currentPostListRequestForGroup: Record<number, YpCurrentPostListRequest> = {};
+
   postCountsForGroup: Record<number, number> = {};
 
   setPostCountsForGroup(groupId: number, postCount: number) {
@@ -27,8 +34,21 @@ export class YpCache extends YpCodeBase {
     return this.postCountsForGroup[groupId];
   }
 
-  setCurrentPostListForGroup(groupId: number, posts: Array<YpPostData>) {
+  setCurrentPostListForGroup(
+    groupId: number,
+    posts: Array<YpPostData>,
+    request?: YpCurrentPostListRequest
+  ) {
     this.currentPostListForGroup[groupId] = posts;
+    if (request) {
+      this.currentPostListRequestForGroup[groupId] = request;
+    } else {
+      delete this.currentPostListRequestForGroup[groupId];
+    }
+  }
+
+  getCurrentPostListRequestForGroup(groupId: number) {
+    return this.currentPostListRequestForGroup[groupId];
   }
 
   getPostPositionInTheGroupList(groupId: number, postId: number) {

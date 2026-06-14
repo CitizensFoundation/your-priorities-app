@@ -56,12 +56,18 @@ export class YpPostListItem extends YpBaseElement {
 
         @media (max-width: 600px) {
           .outerContainer {
-            padding: 0px;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 0;
+            padding: 0 0 28px;
           }
 
           .innerContainer {
             border-radius: 4px;
             padding: 0px;
+          }
+
+          :host([is-last-item]) .outerContainer {
+            border-bottom: 0;
           }
         }
 

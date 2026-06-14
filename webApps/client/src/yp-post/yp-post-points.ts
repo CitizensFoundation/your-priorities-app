@@ -183,6 +183,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   noMorePoints = false;
 
+  private pointRequestSerial = 0;
+
   get textValueUp() {
     if (this.$$("#up_point"))
       return (this.$$("#up_point") as MdOutlinedTextField).value;
@@ -733,7 +735,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     </div>`;
   }
 
-  renderPointItem(point: YpPointData, index: number): TemplateResult {
+  renderPointItem(point: YpPointData | undefined, index: number): TemplateResult {
+    if (!point) {
+      return html``;
+    }
+
     return html`<div class="item layout-horizontal" tabindex="0">
       <div
         id="point${point.id}"
@@ -1521,19 +1527,35 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   async _getPoints() {
+    const postId = this.post?.id;
+
     if (
-      this.post &&
-      this.post.Group &&
-      this.post.Group.configuration &&
-      this.post.Group.configuration?.hideDebate
+      !postId ||
+      (this.post &&
+        this.post.Group &&
+        this.post.Group.configuration &&
+        this.post.Group.configuration?.hideDebate)
     ) {
       return;
     }
+
+    const requestSerial = ++this.pointRequestSerial;
     this.fetchActive = true;
-    const pointsWithCount = (await window.serverApi.getPoints(
-      this.post.id
-    )) as YpGetPointsResponse;
-    this.fetchActive = false;
+    let pointsWithCount: YpGetPointsResponse | void;
+
+    try {
+      pointsWithCount = (await window.serverApi.getPoints(
+        postId
+      )) as YpGetPointsResponse;
+    } finally {
+      if (requestSerial === this.pointRequestSerial) {
+        this.fetchActive = false;
+      }
+    }
+
+    if (requestSerial !== this.pointRequestSerial || this.post?.id !== postId) {
+      return;
+    }
 
     if (pointsWithCount) {
       this.storedPoints = this._preProcessPoints(pointsWithCount.points);
@@ -1560,6 +1582,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _postChanged() {
+    this.pointRequestSerial += 1;
+    this.fetchActive = false;
+
     // Remove any manually inserted points when the list is updated
     this.points = undefined;
     this.upPoints = undefined;
@@ -1569,6 +1594,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this._clearVideo();
     this._clearAudio();
     this.loadedPointIds = {};
+    this.loadMoreInProgress = false;
+    this.noMorePoints = false;
+    this.totalCount = undefined;
 
     this.storedUpPointsCount = 0;
     this.storedDownPointsCount = 0;
