@@ -3397,27 +3397,14 @@ router.get("/:id/post_locations", auth.can("view group"), function (req, res) {
 });
 router.get("/:id/categories_count/:tabName", auth.can("view group"), function (req, res) {
     var categoriesCount, allPostCount;
-    var status = null;
-    if (req.params.tabName === "failed") {
-        status = -2;
-    }
-    else if (req.params.tabName === "open") {
-        status = 0;
-    }
-    else if (req.params.tabName === "in_progress") {
-        status = -1;
-    }
-    else if (req.params.tabName === "successful") {
-        status = 2;
-    }
-    if (status !== null) {
+    if (["open", "failed", "successful", "in_progress"].indexOf(req.params.tabName) > -1) {
+        var PostsByStatus = models.Post.scope(req.params.tabName);
         async.parallel([
             function (parallelCallback) {
-                models.Post.count({
+                PostsByStatus.count({
                     attributes: ["category_id"],
                     where: {
                         group_id: req.params.id,
-                        official_status: status,
                     },
                     include: [
                         {
@@ -3435,10 +3422,9 @@ router.get("/:id/categories_count/:tabName", auth.can("view group"), function (r
                 });
             },
             function (parallelCallback) {
-                models.Post.count({
+                PostsByStatus.count({
                     where: {
                         group_id: req.params.id,
-                        official_status: status,
                     },
                 })
                     .then(function (count) {

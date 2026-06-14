@@ -325,7 +325,7 @@ const getWindowPostNavigationInfo = async (group, currentPost, statusFilter, fil
       ranked AS (
         SELECT
           id,
-          ROW_NUMBER() OVER (ORDER BY rating_score DESC, id DESC) AS row_number,
+          ROW_NUMBER() OVER (ORDER BY rating_score DESC, endorsement_score DESC, id DESC) AS row_number,
           COUNT(*) OVER () AS total_count
         FROM ordered_candidates
       ),
