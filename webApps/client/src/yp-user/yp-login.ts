@@ -142,6 +142,8 @@ export class YpLogin extends YpBaseElement {
 
   reloadPageOnDialogClose = true;
 
+  private _boundLoggedInViaPolling = () => this.close();
+
   _logingDialogClose() {
     if (this.reloadPageOnDialogClose) {
       setTimeout(() => {
@@ -1694,7 +1696,10 @@ export class YpLogin extends YpBaseElement {
     }
     this.addListener("yp-domain-changed", this._domainEvent.bind(this));
     this.addListener("yp-network-error", this._networkError.bind(this));
-    this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
+    this.addGlobalListener(
+      "yp-logged-in-via-polling",
+      this._boundLoggedInViaPolling
+    );
     this.addGlobalListener("yp-language-loaded", this._setTexts.bind(this));
     this.addGlobalListener("assistant-requested-login-main-button-click", () => this._validateAndSend(false));
     this.addGlobalListener("assistant-requested-logout-main-button-click", () => this.logout());
@@ -1709,7 +1714,7 @@ export class YpLogin extends YpBaseElement {
     this.removeListener("yp-network-error", this._networkError.bind(this));
     this.removeGlobalListener(
       "yp-logged-in-via-polling",
-      this.close.bind(this)
+      this._boundLoggedInViaPolling
     );
     this.removeGlobalListener("yp-language-loaded", this._setTexts.bind(this));
     this.removeGlobalListener("assistant-requested-login-main-button-click", () => this._validateAndSend(false));

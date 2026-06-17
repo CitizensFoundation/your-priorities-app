@@ -368,7 +368,7 @@ export class YpAppUser extends YpCodeBase {
       this.getMemberShips();
       this.toastLoginTextCombined =
         this.t("user.loginCompleteFor") + " " + this.user?.name;
-      //this.fireGlobal("yp-open-toast", { text: this.toastLoginTextCombined });
+      this.fireGlobal("yp-open-toast", { text: this.toastLoginTextCombined });
     }
 
     this._checkLoginForParameters();
@@ -983,7 +983,13 @@ export class YpAppUser extends YpCodeBase {
     }
 
     if (this.completeExternalLoginText) {
-      window.appGlobals.notifyUserViaToast(this.completeExternalLoginText);
+      const completeExternalLoginText =
+        this.completeExternalLoginText === this.t("user.loggedInWithSaml") &&
+        user &&
+        (user as YpUserData).name
+          ? this.t("user.loginCompleteFor") + " " + (user as YpUserData).name
+          : this.completeExternalLoginText;
+      window.appGlobals.notifyUserViaToast(completeExternalLoginText);
       this._closeUserLogin();
       this.completeExternalLoginText = undefined;
       this._checkLoginForParameters();

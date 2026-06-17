@@ -323,9 +323,16 @@ export class YpAppDialogs extends YpBaseElement {
   }
 
   closeDialog(idName: string) {
-    const element = this.$$('#' + idName) as Dialog;
+    const element = this.$$('#' + idName) as (HTMLElement & {
+      close?: () => void;
+      open?: boolean;
+    });
     if (element) {
-      element.open = false;
+      if (typeof element.close === 'function') {
+        element.close();
+      } else {
+        element.open = false;
+      }
     } else {
       console.error('Did not find dialog to close: ' + idName);
     }
