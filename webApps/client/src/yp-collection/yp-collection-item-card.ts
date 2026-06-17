@@ -210,11 +210,26 @@ export class YpCollectionItemCard extends YpBaseElement {
             max-width: 90%;
           }
 
+          .collectionCardContent {
+            width: 100%;
+            align-items: stretch;
+          }
+
+          .informationText {
+            width: 100%;
+            flex: 0 0 100%;
+          }
+
           yp-image {
-            width: 80vw;
-            height: calc(80vw * 9 / 16);
-            max-width: 430px;
+            display: block;
+            box-sizing: border-box;
+            flex: 0 0 100%;
+            width: 100%;
+            height: calc(90vw * 9 / 16);
+            aspect-ratio: 16 / 9;
+            max-width: 100%;
             max-height: 242px;
+            margin-right: 0;
           }
 
           yp-image[featured] {
@@ -506,7 +521,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   renderCardInfo() {
     if (this.useEvenOddItemLayout && !this.isEvenIndex) {
       return html`
-        <div class="layout horizontal wrap">
+        <div class="layout horizontal wrap collectionCardContent">
           <div class="informationText layout vertical flex">
             ${this.renderCollectionType()} ${this.renderCollectionName()}
             ${this.renderCollectionDescription()}
@@ -517,7 +532,7 @@ export class YpCollectionItemCard extends YpBaseElement {
       `;
     } else {
       return html`
-        <div class="layout horizontal wrap">
+        <div class="layout horizontal wrap collectionCardContent">
           ${this.renderLogoImage()}
           <div class="informationText layout vertical flex">
             ${this.renderCollectionType()} ${this.renderCollectionName()}

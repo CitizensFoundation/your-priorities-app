@@ -338,6 +338,8 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         :host {
+          display: block;
+          width: 100%;
           margin-bottom: 32px;
         }
 
@@ -368,6 +370,19 @@ export class YpCollectionHeader extends YpBaseElement {
           .descriptionContainer {
             width: 100%;
             min-width: 100%;
+          }
+
+          .nameAndActions {
+            margin-top: 24px;
+          }
+
+          #mobileCardImage {
+            width: 100%;
+            margin-top: 24px;
+          }
+
+          #cardImage {
+            width: 100%;
           }
 
           .collectionDescription {
@@ -415,6 +430,10 @@ export class YpCollectionHeader extends YpBaseElement {
 
           .textBox {
             margin-left: 8px;
+          }
+
+          .collectionDescriptionimageCard {
+            width: 100%;
           }
         }
 
@@ -464,13 +483,15 @@ export class YpCollectionHeader extends YpBaseElement {
           yp-image,
           video,
           .image {
-            height: 180px;
-            width: 320px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
           }
 
           .imageCard {
-            height: 180px;
-            width: 320px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
           }
         }
 
@@ -504,7 +525,23 @@ export class YpCollectionHeader extends YpBaseElement {
           poster="${ifDefined(this.collectionVideoPosterURL)}"
         ></video>
       `;
-    } else if (this.collection && !this.hideLogoImage) {
+    } else if (this.useMobileLogoImage) {
+      return this.renderLogoImage(true);
+    } else {
+      return this.renderLogoImage();
+    }
+  }
+
+  get useMobileLogoImage(): boolean {
+    return !this.wide && this.collectionType !== "group";
+  }
+
+  renderLogoImage(ignoreHideLogo = false) {
+    const logoPath = this.collection
+      ? YpCollectionHelpers.logoImagePath(this.collectionType, this.collection)
+      : undefined;
+
+    if (this.collection && logoPath && (ignoreHideLogo || !this.hideLogoImage)) {
       return html`
         <yp-image
           class="image"
@@ -512,10 +549,7 @@ export class YpCollectionHeader extends YpBaseElement {
           .alt="${this.collection.name}"
           .title="${this.collection.name}"
           sizing="cover"
-          .src="${YpCollectionHelpers.logoImagePath(
-            this.collectionType,
-            this.collection
-          )}"
+          .src="${logoPath}"
         ></yp-image>
       `;
     } else {
@@ -645,8 +679,18 @@ export class YpCollectionHeader extends YpBaseElement {
         ? html`
             <div class="layout vertical center-center">
               <div class="layout vertical topContainer">
-                ${this.renderHeaderBanner()}
+                ${this.wide ? this.renderHeaderBanner() : nothing}
                 <div class="allContent">
+                  ${!this.wide
+                    ? html`
+                        <div
+                          id="mobileCardImage"
+                          class="collectionDescriptionimageCard top-card"
+                        >
+                          ${this.renderMediaContent()}
+                        </div>
+                      `
+                    : nothing}
                   <div class="layout horizontal nameAndActions wrap">
                     ${this.renderName()}
                     <div class="flex"></div>
@@ -658,7 +702,7 @@ export class YpCollectionHeader extends YpBaseElement {
                       id="cardImage"
                       class="top-card"
                     >
-                      ${this.renderMediaContent()}
+                      ${this.wide ? this.renderMediaContent() : nothing}
                     </div>
                     <div id="card" class="layout vertical">
                       <div class="descriptionContainer">

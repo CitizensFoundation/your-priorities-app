@@ -76,6 +76,7 @@ export class YpGroupHeader extends YpCollectionHeader {
 
           .collectionDescriptionimageCard {
             margin-top: 0;
+            margin-bottom: 12px;
           }
 
           .topContainer {
@@ -105,6 +106,17 @@ export class YpGroupHeader extends YpCollectionHeader {
               <div class="layout vertical topContainer">
                 <div class="allContent">
                   <div class="layout vertical">
+                    ${!this.wide
+                      ? html`
+                          <div
+                            is-video="${ifDefined(this.collectionVideoURL)}"
+                            id="mobileCardImage"
+                            class="collectionDescriptionimageCard top-card"
+                          >
+                            ${this.renderMediaContent()}
+                          </div>
+                        `
+                      : nothing}
                     <div class="layout vertical">
                       <div class="layout horizontal">
                         <div
@@ -126,13 +138,17 @@ export class YpGroupHeader extends YpCollectionHeader {
                       <div class="descriptionContainer">
                         ${this.renderDescription()} ${this.renderStats()}
                       </div>
-                      <div
-                        is-video="${ifDefined(this.collectionVideoURL)}"
-                        id="cardImage"
-                        class="collectionDescriptionimageCard top-card"
-                      >
-                        ${this.renderMediaContent()}
-                      </div>
+                      ${this.wide
+                        ? html`
+                            <div
+                              is-video="${ifDefined(this.collectionVideoURL)}"
+                              id="cardImage"
+                              class="collectionDescriptionimageCard top-card"
+                            >
+                              ${this.renderMediaContent()}
+                            </div>
+                          `
+                        : nothing}
                     </div>
                   </div>
                 </div>

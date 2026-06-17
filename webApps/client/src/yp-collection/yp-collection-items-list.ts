@@ -53,7 +53,7 @@ export class YpCollectionItemsList extends YpBaseElement {
         }
 
         lit-virtualizer {
-          margin-top: 80px;
+          margin-top: 32px;
           margin-left: 32px;
           margin-right: 32px;
           padding-left: 32px;
@@ -70,7 +70,7 @@ export class YpCollectionItemsList extends YpBaseElement {
 
         @media (max-width: 600px) {
           lit-virtualizer {
-            margin-top: 80px;
+            margin-top: 32px;
             margin-left: 0;
             margin-right: 0;
             padding-left: 0;

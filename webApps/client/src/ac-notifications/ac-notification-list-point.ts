@@ -11,6 +11,11 @@ import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import { truncateNameList } from './TruncateNameList.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import {
+  getNotificationLongTime,
+  getNotificationShortTime,
+  notificationTimeStyles,
+} from './NotificationTimeHelpers.js';
 
 @customElement('ac-notification-list-point')
 export class AcNotificationListPoint extends YpBaseElement {
@@ -55,6 +60,7 @@ export class AcNotificationListPoint extends YpBaseElement {
   static override get styles() {
     return [
       super.styles,
+      notificationTimeStyles,
       css`
         :host {
           display: block;
@@ -231,10 +237,15 @@ export class AcNotificationListPoint extends YpBaseElement {
             >
           </div>
           <div class="notificationBody">
-            <div
-              .pointValueUp="${this.pointValueUp}"
-              class="pointContent">
-              ${this.pointContent}
+            <div class="notificationHeaderLine">
+              <div class="notificationHeaderMain">
+                <div
+                  .pointValueUp="${this.pointValueUp}"
+                  class="pointContent">
+                  ${this.pointContent}
+                </div>
+              </div>
+              ${this.renderTimestamp()}
             </div>
             <div class="metaRow" ?hidden="${!this.helpfulsText}">
               <span class="metaLabel" quality-up
@@ -252,6 +263,23 @@ export class AcNotificationListPoint extends YpBaseElement {
           </div>
       </a>
     `;
+  }
+
+  renderTimestamp() {
+    const shortTime = getNotificationShortTime(this.notification);
+    const longTime = getNotificationLongTime(this.notification);
+    return shortTime
+      ? html`
+          <div
+            class="notificationTimeChip"
+            title="${longTime}"
+            aria-label="${longTime}"
+          >
+            <md-icon>schedule</md-icon>
+            <span>${shortTime}</span>
+          </div>
+        `
+      : nothing;
   }
 
   get postNameTruncated() {

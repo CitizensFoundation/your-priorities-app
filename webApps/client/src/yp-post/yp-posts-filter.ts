@@ -66,12 +66,6 @@ export class YpPostsFilter extends YpBaseElement {
           margin-bottom: 0 !important;
         }
 
-        @media (max-width: 600px) {
-          #categoriesMenu {
-            margin-top: 16px;
-          }
-        }
-
         .mainContainer {
           margin-bottom: 24px;
         }
@@ -178,6 +172,33 @@ export class YpPostsFilter extends YpBaseElement {
 
         .filterText {
           margin-right: 8px;
+        }
+
+        @media (max-width: 600px) {
+          :host {
+            display: block;
+            width: 100%;
+          }
+
+          .mainContainer {
+            align-items: center;
+            flex-direction: column;
+            gap: 22px;
+            margin-bottom: 20px;
+          }
+
+          .mainContainer > div,
+          md-outlined-select,
+          .categoriesDropdownMenu {
+            box-sizing: border-box;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            width: 100%;
+          }
+
+          #categoriesMenu {
+            margin-top: 0;
+          }
         }
       `,
     ];

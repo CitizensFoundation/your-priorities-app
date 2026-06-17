@@ -87,12 +87,17 @@ export class YpPostCardAdd extends YpBaseElement {
             margin-top: 0;
           }
 
+          .topContainer {
+            padding-bottom: 0;
+          }
+
           .closed {
             font-size: 14px;
           }
 
           md-fab {
             width: 100%;
+            margin-bottom: 0;
             --md-fab-label-text-size: 18px !important;
           }
         }

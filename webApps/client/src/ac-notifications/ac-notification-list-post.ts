@@ -11,6 +11,11 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import { truncateNameList } from './TruncateNameList.js';
+import {
+  getNotificationLongTime,
+  getNotificationShortTime,
+  notificationTimeStyles,
+} from './NotificationTimeHelpers.js';
 
 @customElement('ac-notification-list-post')
 export class AcNotificationListPost extends YpBaseElement {
@@ -49,6 +54,7 @@ export class AcNotificationListPost extends YpBaseElement {
   static override get styles() {
     return [
       super.styles,
+      notificationTimeStyles,
       css`
         :host {
           display: block;
@@ -229,37 +235,59 @@ export class AcNotificationListPost extends YpBaseElement {
                 >
               </div>
               <div class="notificationBody">
-                <div ?hidden="${!this.endorsementsText}">
-                  <div class="metaRow">
-                    <span class="metaLabel" endorsement
-                      >${this.t("pointForShort")}</span
-                    >
-                    <div class="metaText endorsers">${this.endorsementsText}</div>
+                <div class="notificationHeaderLine">
+                  <div class="notificationHeaderMain">
+                    <div ?hidden="${!this.endorsementsText}">
+                      <div class="metaRow">
+                        <span class="metaLabel" endorsement
+                          >${this.t("pointForShort")}</span
+                        >
+                        <div class="metaText endorsers">${this.endorsementsText}</div>
+                      </div>
+                    </div>
+                    <div ?hidden="${!this.oppositionsText}">
+                      <div class="metaRow">
+                        <span class="metaLabel" opposition
+                          >${this.t("pointAgainstShort")}</span
+                        >
+                        <div class="metaText opposers">${this.oppositionsText}</div>
+                      </div>
+                    </div>
+                    <div class="postName">
+                      <yp-magic-text
+                        class="postName"
+                        textOnly
+                        textType="postName"
+                        .contentLanguage="${this.post.language}"
+                        .content="${this.post.name}"
+                        .contentId="${this.post.id}">
+                      </yp-magic-text>
+                    </div>
+                    <div ?hidden="${!this.newPostMode}" class="userName">
+                      ${this.userName}
+                    </div>
                   </div>
-                </div>
-                <div ?hidden="${!this.oppositionsText}">
-                  <div class="metaRow">
-                    <span class="metaLabel" opposition
-                      >${this.t("pointAgainstShort")}</span
-                    >
-                    <div class="metaText opposers">${this.oppositionsText}</div>
-                  </div>
-                </div>
-                <div class="postName">
-                  <yp-magic-text
-                    class="postName"
-                    textOnly
-                    textType="postName"
-                    .contentLanguage="${this.post.language}"
-                    .content="${this.post.name}"
-                    .contentId="${this.post.id}">
-                  </yp-magic-text>
-                </div>
-                <div ?hidden="${!this.newPostMode}" class="userName">
-                  ${this.userName}
+                  ${this.renderTimestamp()}
                 </div>
               </div>
           </a>
+        `
+      : nothing;
+  }
+
+  renderTimestamp() {
+    const shortTime = getNotificationShortTime(this.notification);
+    const longTime = getNotificationLongTime(this.notification);
+    return shortTime
+      ? html`
+          <div
+            class="notificationTimeChip"
+            title="${longTime}"
+            aria-label="${longTime}"
+          >
+            <md-icon>schedule</md-icon>
+            <span>${shortTime}</span>
+          </div>
         `
       : nothing;
   }

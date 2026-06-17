@@ -189,8 +189,31 @@ export class YpPostsList extends YpBaseElement {
         }
 
         @media (max-width: 800px) {
+          .searchContainer {
+            width: 100%;
+            margin-top: 0;
+            margin-left: 0;
+          }
+
+          .searchBoxContainer,
+          yp-posts-filter {
+            box-sizing: border-box;
+            display: block;
+            width: calc(100% - 32px);
+            max-width: 366px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          #searchInput {
+            box-sizing: border-box;
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+          }
+
           .searchBox {
-            margin-bottom: 8px;
+            margin-bottom: 22px;
           }
 
           .searchBox {
@@ -201,20 +224,20 @@ export class YpPostsList extends YpBaseElement {
             width: 100%;
           }
 
-          .searchContainer {
-            margin-top: 0;
-            margin-left: 0;
+          .postsFilter {
+            padding-left: 0;
+            width: 100% !important;
           }
 
-          .postsFilter {
-            padding-left: 16px;
-            width: 215px !important;
+          yp-posts-filter {
+            margin-top: 0;
+            margin-bottom: 0;
           }
         }
 
         @media (max-width: 960px) {
           lit-virtualizer {
-            margin-top: 80px;
+            margin-top: 16px;
             margin-left: 0;
             margin-right: 0;
             padding-left: 0;
@@ -265,6 +288,31 @@ export class YpPostsList extends YpBaseElement {
           margin-right: 12px;
         }
 
+        @media (max-width: 800px) {
+          .searchContainer {
+            align-items: center;
+            flex-direction: column;
+          }
+
+          .searchContainer > .flex {
+            display: none;
+          }
+
+          .searchBoxContainer,
+          yp-posts-filter {
+            margin-left: auto;
+            margin-right: auto;
+            width: calc(100% - 32px);
+            max-width: 366px;
+          }
+
+          #searchInput {
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+          }
+        }
+
         [hidden] {
           display: none !important;
         }
@@ -312,7 +360,7 @@ export class YpPostsList extends YpBaseElement {
           ?hidden="${this.group.configuration.hidePostFilterAndSearch ||
           this.noPosts}"
         >
-          <div class="layout horizontal center-center">
+          <div class="layout horizontal center-center searchBoxContainer">
             <md-outlined-text-field
               id="searchInput"
               hasTrailingIcon

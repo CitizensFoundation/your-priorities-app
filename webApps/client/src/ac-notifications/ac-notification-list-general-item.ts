@@ -1,12 +1,18 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
+import '@material/web/icon/icon.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import { truncateNameList } from './TruncateNameList.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import {
+  getNotificationLongTime,
+  getNotificationShortTime,
+  notificationTimeStyles,
+} from './NotificationTimeHelpers.js';
 
 @customElement('ac-notification-list-general-item')
 export class AcNotificationListGenaralItem extends YpBaseElement {
@@ -36,6 +42,7 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
   static override get styles() {
     return [
       super.styles,
+      notificationTimeStyles,
       css`
         :host {
           display: block;
@@ -168,12 +175,34 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
           <md-icon class="icon">${this.icon}</md-icon>
         </div>
         <div class="notificationBody">
-          <div class="name">${this.nameTruncated}</div>
+          <div class="notificationHeaderLine">
+            <div class="notificationHeaderMain">
+              <div class="name">${this.nameTruncated}</div>
+            </div>
+            ${this.renderTimestamp()}
+          </div>
           <div ?hidden="${!this.shortText}" class="shortText">
             ${this.shortTextTruncated}
           </div>
         </div>
     `;
+  }
+
+  renderTimestamp() {
+    const shortTime = getNotificationShortTime(this.notification);
+    const longTime = getNotificationLongTime(this.notification);
+    return shortTime
+      ? html`
+          <div
+            class="notificationTimeChip"
+            title="${longTime}"
+            aria-label="${longTime}"
+          >
+            <md-icon>schedule</md-icon>
+            <span>${shortTime}</span>
+          </div>
+        `
+      : nothing;
   }
 
   get targetUrl() {
