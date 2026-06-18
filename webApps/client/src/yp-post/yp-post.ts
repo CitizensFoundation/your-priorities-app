@@ -192,6 +192,15 @@ export class YpPost extends YpCollection {
 
         .mapContainer {
           max-width: 1080px;
+          width: 100%;
+          height: 520px;
+          margin: 32px auto 0;
+        }
+
+        .mapContainer lit-google-map {
+          display: block;
+          width: 100%;
+          height: 100%;
         }
 
         .postHeader {
@@ -271,6 +280,11 @@ export class YpPost extends YpCollection {
             padding: 0;
             border-radius: 0;
             border: none;
+          }
+
+          .mapContainer {
+            height: 320px;
+            margin-top: 24px;
           }
 
           .arrowNavigation {
@@ -559,9 +573,10 @@ export class YpPost extends YpCollection {
                   id="map"
                   libraries="places"
                   class="map"
-                  .mapType="${this.post.location.mapType}"
-                  .zoom="${this.post.location.map_zoom}"
-                  fitToMarkers=""
+                  .styles="${[]}"
+                  .mapType="${this.post.location.mapType || "roadmap"}"
+                  .zoom="${this.post.location.map_zoom || 15}"
+                  fit-to-markers
                 >
                   <lit-google-map-marker
                     slot="markers"

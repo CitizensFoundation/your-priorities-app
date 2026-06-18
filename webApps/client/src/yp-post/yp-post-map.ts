@@ -161,6 +161,7 @@ export class YpPostMap extends YpBaseElement {
                   id="map"
                   version="weekly"
                   api-key="${ifDefined(window.appGlobals.googleMapsApiKey)}"
+                  .styles="${[]}"
                   fit-to-markers>
                   ${this.posts.map(
                     post => html`

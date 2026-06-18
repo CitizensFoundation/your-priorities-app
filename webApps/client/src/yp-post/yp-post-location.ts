@@ -145,6 +145,7 @@ export class YpPostLocation extends YpBaseElement {
               @map-type-changed="${this._mapTypeChanged}"
               class="map"
               zoom="${this.mapZoom}"
+              .styles="${[]}"
               @zoom-changed="${this._zoomChanged}"
               fit-to-markers>
               <lit-google-map-marker

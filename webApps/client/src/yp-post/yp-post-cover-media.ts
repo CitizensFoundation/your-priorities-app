@@ -8,6 +8,7 @@ import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import '../common/yp-image.js';
+import 'lit-google-map';
 
 //TODO: Integrate https://github.com/sachinchoolur/lightGallery/tree/master/lightgallery-lit
 
@@ -168,7 +169,8 @@ export class YpPostCoverMedia extends YpBaseElement {
         .topContainer[top-left-radius] > yp-image,
         #videoPreviewImage,
         google-streetview-pano,
-        google-map {
+        google-map,
+        lit-google-map {
           border-top-left-radius: 4px;
         }
 
@@ -183,7 +185,8 @@ export class YpPostCoverMedia extends YpBaseElement {
           padding: 0;
         }
 
-        google-map {
+        google-map,
+        lit-google-map {
           width: 100%;
           height: 100%;
           margin: 0;
@@ -494,7 +497,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                       sizing="cover"
                       .alt="${ifDefined(this.altTag || this.post?.name)}"
                       .title="${ifDefined(this.post?.name)}"
-                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.staticMapsApiKey}"
+                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.googleMapsStaticApiKey}"
                       ?hidden="${this.streetViewActivated}"></yp-image>
 
                     ${this.streetViewActivated
@@ -519,25 +522,25 @@ export class YpPostCoverMedia extends YpBaseElement {
                       sizing="cover"
                       .alt="${ifDefined(this.altTag || this.post?.name)}"
                       .title="${ifDefined(this.post?.name)}"
-                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;size=432x243&amp;zoom=${this.zoomLevel}&amp;maptype=${this.mapType}&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.staticMapsApiKey}"></yp-image>
+                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;size=432x243&amp;zoom=${this.zoomLevel}&amp;maptype=${this.mapType}&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.googleMapsStaticApiKey}"></yp-image>
 
                     ${this.mapActivated
                       ? html`
-                          <google-map
-                            additional-map-options="{keyboardShortcuts:false}"
+                          <lit-google-map
                             id="coverMediaMap"
                             class="map"
                             libraries="places"
                             fit-to-markers
+                            .styles="${[]}"
                             .zoom="${this.zoomLevel}"
-                            .map-type="${this.mapType}"
-                            api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-                            <google-map-marker
+                            .mapType="${this.mapType}"
+                            api-key="${ifDefined(window.appGlobals.googleMapsApiKey)}">
+                            <lit-google-map-marker
                               slot="markers"
                               .latitude="${this.latitude}"
                               .longitude="${this
-                                .longitude}"></google-map-marker>
-                          </google-map>
+                                .longitude}"></lit-google-map-marker>
+                          </lit-google-map>
                         `
                       : nothing}
                   `
@@ -611,6 +614,7 @@ export class YpPostCoverMedia extends YpBaseElement {
   }
 
   get isNoneActive() {
+    if (this.useMapAsHeaderFallback) return false;
     if (this._withCoverMediaType(this.post, 'none')) return true;
     else return false;
   }
@@ -675,10 +679,23 @@ export class YpPostCoverMedia extends YpBaseElement {
       this.post &&
       this.post.location &&
       this.post.location.latitude &&
-      this._withCoverMediaType(this.post, 'map')
+      (this._withCoverMediaType(this.post, 'map') ||
+        this.useMapAsHeaderFallback)
     )
       return true;
     else return false;
+  }
+
+  get useMapAsHeaderFallback() {
+    return (
+      this.headerMode &&
+      !this.disableMaps &&
+      this.post &&
+      this.post.location &&
+      this.post.location.latitude &&
+      !this.post.Category &&
+      (!this.post.cover_media_type || this.post.cover_media_type == 'none')
+    );
   }
 
   get isStreetViewActive() {
@@ -709,6 +726,10 @@ export class YpPostCoverMedia extends YpBaseElement {
     )
       return this.post.location.mapType;
     else return 'roadmap';
+  }
+
+  get googleMapsStaticApiKey() {
+    return window.appGlobals.googleMapsApiKey || this.staticMapsApiKey;
   }
 
   _withCoverMediaType(post: YpPostData, mediaType: string) {
