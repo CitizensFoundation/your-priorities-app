@@ -498,9 +498,9 @@ export class YpPostCoverMedia extends YpBaseElement {
                       .alt="${ifDefined(this.altTag || this.post?.name)}"
                       .title="${ifDefined(this.post?.name)}"
                       src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=${this.googleMapsStaticApiKey}"
-                      ?hidden="${this.streetViewActivated}"></yp-image>
+                      ?hidden="${this.streetViewActivated && !this.headerMode}"></yp-image>
 
-                    ${this.streetViewActivated
+                    ${this.streetViewActivated && !this.headerMode
                       ? html`
                           <google-streetview-pano
                             .position="${this.mapPosition}"
