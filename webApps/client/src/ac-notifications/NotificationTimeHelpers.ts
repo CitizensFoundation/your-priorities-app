@@ -74,7 +74,9 @@ export function getNotificationDateTime(
   notification: AcNotificationData | undefined
 ) {
   return parseDateTime(
-    notification?.created_at || notification?.AcActivities?.[0]?.created_at
+    notification?.updated_at ||
+      notification?.AcActivities?.[0]?.created_at ||
+      notification?.created_at
   );
 }
 

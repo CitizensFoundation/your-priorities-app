@@ -526,7 +526,7 @@ export class YpCollectionHeader extends YpBaseElement {
         ></video>
       `;
     } else if (this.useMobileLogoImage) {
-      return this.renderLogoImage(true);
+      return this.renderLogoImage();
     } else {
       return this.renderLogoImage();
     }

@@ -177,6 +177,7 @@ export class YpTestHelpers {
       get('/api/users/loggedInUser/isloggedin', { notLoggedIn: true }, YpTestHelpers.fetchMockConfig).
       get('/api/users/loggedInUser/memberships', { GroupUsers: [], CommunityUsers: [], DomainUsers: []}, YpTestHelpers.fetchMockConfig).
       get('/api/users/has/AutoTranslation', { hasAutoTranslation: true }, YpTestHelpers.fetchMockConfig).
+      get('/api/users/loggedInUser/promoterRights', 0, YpTestHelpers.fetchMockConfig).
       get('/api/users/loggedInUser/adminRights', 0, YpTestHelpers.fetchMockConfig)
   }
 

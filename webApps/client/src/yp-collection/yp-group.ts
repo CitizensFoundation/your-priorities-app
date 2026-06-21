@@ -1133,7 +1133,11 @@ export class YpGroup extends YpCollection {
         ></ac-activities>`;
         break;
       case GroupTabTypes.Map:
-        page = html``;
+        page = html`<yp-post-map
+          id="postMap"
+          .collectionType="${this.collectionType}"
+          .collectionId="${this.collectionId!}"
+        ></yp-post-map>`;
         break;
     }
 

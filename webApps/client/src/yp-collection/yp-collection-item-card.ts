@@ -232,6 +232,10 @@ export class YpCollectionItemCard extends YpBaseElement {
             margin-right: 0;
           }
 
+          yp-image[is-odd] {
+            margin-left: 0;
+          }
+
           yp-image[featured] {
           }
 

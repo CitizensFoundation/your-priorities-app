@@ -8,6 +8,7 @@ import './yp-post-card.js';
 
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 
 @customElement('yp-post-map')
 export class YpPostMap extends YpBaseElement {
@@ -143,9 +144,84 @@ export class YpPostMap extends YpBaseElement {
     ];
   }
 
+  getInfoCardDescription(post: YpPostData) {
+    const plainDescription = (post.description || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return YpFormattingHelpers.truncate(plainDescription, 140);
+  }
+
+  getPostLink(post: YpPostData) {
+    if (post.Group.configuration?.disablePostPageLink) {
+      return undefined;
+    } else if (post.Group.configuration?.resourceLibraryLinkMode) {
+      return post.description.trim();
+    } else {
+      return `/post/${post.id}`;
+    }
+  }
+
+  getInfoCardStyle() {
+    return `
+      display: block;
+      box-sizing: border-box;
+      width: 240px;
+      padding: 14px 16px 16px;
+      color: var(--md-sys-color-on-surface, #1f1f1f);
+      text-decoration: none;
+      font-family: var(--yp-font-family, var(--md-ref-typeface-plain, sans-serif));
+    `;
+  }
+
+  renderInfoCardContent(post: YpPostData, description: string) {
+    return html`
+      <div
+        style="
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1.25;
+          margin-bottom: 8px;
+        "
+      >
+        ${post.name}
+      </div>
+      ${description
+        ? html`
+            <div
+              style="
+                color: var(--md-sys-color-on-surface-variant, #555);
+                font-size: 13px;
+                line-height: 1.35;
+              "
+            >
+              ${description}
+            </div>
+          `
+        : nothing}
+    `;
+  }
+
   renderInfoCard(post: YpPostData) {
-    return post //&& post.id==this.selectedPost.id
-      ? html` <yp-post-card mini .post="${post}"></yp-post-card> `
+    const description = this.getInfoCardDescription(post);
+    const postLink = this.getPostLink(post);
+
+    return post
+      ? postLink
+        ? html`
+          <a
+            href="${postLink}"
+            style="${this.getInfoCardStyle()}"
+          >
+            ${this.renderInfoCardContent(post, description)}
+          </a>
+        `
+        : html`
+          <div style="${this.getInfoCardStyle()}">
+            ${this.renderInfoCardContent(post, description)}
+          </div>
+        `
       : nothing;
   }
 
@@ -169,12 +245,11 @@ export class YpPostMap extends YpBaseElement {
                         slot="markers"
                         .latitude="${post.location.latitude}"
                         .longitude="${post.location.longitude}"
-                        click-events
                         class="marker"
-                        @selector-item-activate="${() => {
+                        @google-map-marker-open="${() => {
                           this.markerClick(post);
                         }}">
-
+                        ${this.renderInfoCard(post)}
                       </lit-google-map-marker>
                     `
                   )}
@@ -291,8 +366,6 @@ export class YpPostMap extends YpBaseElement {
   }
 
   markerClick(post: YpPostData) {
-    debugger;
-    //TODO: Review this, if this data handling with the click makes sense and is not too slow
     window.appGlobals.activity('clicked', 'marker');
     this.selectedPost = post;
     //TODO: Review and removed if the current infocard solution is working

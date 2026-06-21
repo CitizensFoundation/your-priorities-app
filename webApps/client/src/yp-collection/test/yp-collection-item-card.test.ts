@@ -1,4 +1,5 @@
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
+import { setViewport } from '@web/test-runner-commands';
 
 import { YpCollectionItemCard } from '../yp-collection-item-card.js';
 import '../yp-collection-item-card.js';
@@ -17,7 +18,6 @@ describe('YpCollectionItemCard', () => {
     const itemType = 'community';
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-item-card
         .collection="${YpTestHelpers.getDomain()}"
         .item="${YpTestHelpers.getCommunity()}"
@@ -58,7 +58,6 @@ describe('YpCollectionItemCard', () => {
     } as unknown as YpGroupData;
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-item-card .item="${group}"></yp-collection-item-card>
     `);
     await element.updateComplete;
@@ -86,12 +85,34 @@ describe('YpCollectionItemCard', () => {
     } as unknown as YpGroupData;
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-item-card .item="${group}"></yp-collection-item-card>
     `);
     await element.updateComplete;
 
     const link = element.shadowRoot!.querySelector('a') as HTMLAnchorElement;
     expect(link.getAttribute('href')).to.equal('/community/44');
+  });
+
+  it('resets odd image margin in stacked tablet cards', async () => {
+    await setViewport({ width: 930, height: 800 });
+
+    const community = {
+      ...YpTestHelpers.getCommunity(),
+      CommunityLogoImages: YpTestHelpers.getImages(),
+    } as YpCommunityData;
+
+    element = await fixture(html`
+      <yp-collection-item-card
+        .collection="${YpTestHelpers.getDomain()}"
+        .item="${community}"
+        .itemType="${'community'}"
+        .useEvenOddItemLayout="${true}"
+        .index="${1}"></yp-collection-item-card>
+    `);
+    await element.updateComplete;
+
+    const image = element.shadowRoot!.querySelector('yp-image[is-odd]');
+    expect(image).to.exist;
+    expect(getComputedStyle(image as Element).marginLeft).to.equal('0px');
   });
 });
