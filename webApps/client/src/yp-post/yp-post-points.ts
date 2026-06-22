@@ -1952,11 +1952,22 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   _completeNewPointResponse(point: YpPointData) {
     this.addPointDisabled = false;
     point = this._preProcessPoints([point])[0];
-    if (this.currentVideoId) {
-      point.checkTranscriptFor = "video";
-    } else if (this.currentAudioId) {
-      point.checkTranscriptFor = "audio";
+    if (!point.checkTranscriptFor && window.appGlobals.hasTranscriptSupport === true) {
+      if (this.currentVideoId || (point.PointVideos && point.PointVideos.length > 0)) {
+        point.checkTranscriptFor = "video";
+      } else if (this.currentAudioId || (point.PointAudios && point.PointAudios.length > 0)) {
+        point.checkTranscriptFor = "audio";
+      }
     }
+    console.info("[transcript-debug] completeNewPointResponse", {
+      pointId: point.id,
+      currentVideoId: this.currentVideoId,
+      currentAudioId: this.currentAudioId,
+      checkTranscriptFor: point.checkTranscriptFor,
+      pointVideoIds: point.PointVideos?.map((video) => video.id),
+      pointAudioIds: point.PointAudios?.map((audio) => audio.id),
+      hasTranscriptSupport: window.appGlobals.hasTranscriptSupport,
+    });
     if (point.value > 0) {
       this.newPointTextCombined =
         this.t("point.forAdded") +
@@ -2049,6 +2060,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           videoId: this.currentVideoId,
           audioId: this.currentAudioId,
           appLanguage: this.language,
+        });
+        console.info("[transcript-debug] addPoint response", {
+          pointId: point?.id,
+          currentVideoId: this.currentVideoId,
+          currentAudioId: this.currentAudioId,
+          checkTranscriptFor: point?.checkTranscriptFor,
+          pointVideoIds: point?.PointVideos?.map((video: YpVideoData) => video.id),
+          pointAudioIds: point?.PointAudios?.map((audio: YpAudioData) => audio.id),
+          hasTranscriptSupport: window.appGlobals.hasTranscriptSupport,
         });
       } catch (error: unknown) {
         if ((error as YpErrorData).offlineSendLater) {

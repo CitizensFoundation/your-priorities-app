@@ -31,7 +31,7 @@ const defaultHeader = {
 };
 
 //TODO: Do not duplicate from app.ts
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
   ypDomain?: any;
   ypCommunity?: any;
   sso?: any;

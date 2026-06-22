@@ -9,7 +9,7 @@ var toJson = require("../utils/to_json.cjs");
 const s3Storage = require("../utils/multerSharpS3Compat.cjs");
 const crypto = require("crypto");
 var queue = require("../services/workers/queue.cjs");
-const { createS3Client } = require("../utils/awsS3Client.cjs");
+const { createS3ClientForBucket } = require("../utils/awsS3Client.cjs");
 
 var isAuthenticated = function (req, res, next) {
   // Check for regular authentication
@@ -274,7 +274,7 @@ router.post(
 
 router.post("/", isAuthenticated, async function (req, res) {
   try {
-    const s3 = createS3Client({
+    const s3 = await createS3ClientForBucket(process.env.S3_BUCKET, {
       endpoint: process.env.S3_ENDPOINT || null,
       forcePathStyle: process.env.MINIO_ROOT_USER ? true : undefined,
       region: process.env.S3_REGION,

@@ -547,7 +547,36 @@ export class YpPoint extends YpBaseElement {
       : nothing;
   }
 
+  _getLatestPointRevisionContent(point: YpPointData | undefined = this.point) {
+    const pointRevisions = point?.PointRevisions;
+    if (!pointRevisions || pointRevisions.length === 0) {
+      return undefined;
+    }
+
+    return pointRevisions[pointRevisions.length - 1].content;
+  }
+
+  _getPointContent(point: YpPointData | undefined = this.point) {
+    return (
+      point?.latestContent ??
+      this._getLatestPointRevisionContent(point) ??
+      point?.content ??
+      ""
+    );
+  }
+
+  _setLatestContentFromPointRevisions(point: YpPointData) {
+    const content = this._getPointContent(point);
+    if (content && !point.latestContent) {
+      point.latestContent = content;
+    }
+
+    return content;
+  }
+
   renderTextPoint() {
+    const pointContent = this._getPointContent();
+
     return html`
       <div class="point-content layout vertical ">
         <span ?hidden="${!this.point.name}">
@@ -567,7 +596,7 @@ export class YpPoint extends YpBaseElement {
             useFullWidth
             textType="pointContent"
             .contentLanguage="${this.point.language}"
-            .content="${this.point.latestContent}"
+            .content="${pointContent}"
             .contentId="${this.point.id}"
           >
           </yp-magic-text>
@@ -577,6 +606,8 @@ export class YpPoint extends YpBaseElement {
   }
 
   renderVideoOrAudio() {
+    const pointContent = this._getPointContent();
+
     return html`
       ${this.videoActive && this.pointVideoPath
         ? html`
@@ -630,7 +661,7 @@ export class YpPoint extends YpBaseElement {
         ${this.t("checkTranscriptError")}
       </div>
 
-      ${this.point.latestContent
+      ${pointContent
         ? html`
             <div class="transcriptText layout vertical center-center">
               <div class="layout horizontal">
@@ -673,7 +704,7 @@ export class YpPoint extends YpBaseElement {
                   simpleFormat
                   textType="pointContent"
                   .contentLanguage="${this.point.language}"
-                  .content="${this.point.latestContent}"
+                  .content="${pointContent}"
                   .contentId="${this.point.id}"
                 >
                 </yp-magic-text>
@@ -685,13 +716,17 @@ export class YpPoint extends YpBaseElement {
   }
 
   renderEditPoint() {
+    const pointContent = this._getPointContent();
+
     return html`
       <div class="layout vertical">
         <md-outlined-text-field
           id="pointContentEditor"
+          .type="${"textarea"}"
+          .rows="${3}"
           charCounter
           maxlength="1500"
-          .value="${this.editText ? this.editText : ""}"
+          .value="${this.editText ?? pointContent}"
         ></md-outlined-text-field>
         <div class="horizontal end-justified layout">
           <yp-emoji-selector id="pointEmojiSelector"></yp-emoji-selector>
@@ -699,12 +734,12 @@ export class YpPoint extends YpBaseElement {
         <div class="layout horizontal self-end">
           <md-outlined-button
             @click="${this._cancelEdit}"
-            .label="${this.t("cancel")}"
-          ></md-outlined-button>
+            >${this.t("cancel")}</md-outlined-button
+          >
           <md-outlined-button
             @click="${this._saveEdit}"
-            .label="${this.t("update")}"
-          ></md-outlined-button>
+            >${this.t("update")}</md-outlined-button
+          >
         </div>
       </div>
     `;
@@ -914,12 +949,13 @@ export class YpPoint extends YpBaseElement {
   }
 
   async _saveEdit() {
+    const editor = this.$$("#pointContentEditor") as HTMLInputElement;
+    const content = editor ? editor.value : this.editText;
     const point = (await window.serverApi.updatePoint(this.point.id, {
-      content: this.editText,
+      content,
     })) as YpPointData;
     if (point) {
-      point.latestContent =
-        point.PointRevisions![point.PointRevisions!.length - 1].content;
+      this._setLatestContentFromPointRevisions(point);
       this.point = point;
     }
     this.isEditing = false;
@@ -995,9 +1031,8 @@ export class YpPoint extends YpBaseElement {
   }
 
   _editPoint() {
-    if (this.hasPointAccess && this.point.PointRevisions) {
-      this.editText =
-        this.point.PointRevisions[this.point.PointRevisions.length - 1].content;
+    if (this.hasPointAccess) {
+      this.editText = this._getPointContent();
       this.isEditing = true;
     }
   }
@@ -1077,6 +1112,7 @@ export class YpPoint extends YpBaseElement {
         disableMachineTranscripts = true;
       }
       this.user = this.point.User;
+      this._setLatestContentFromPointRevisions(this.point);
       const videoURL = YpMediaHelpers.getVideoURL(this.point.PointVideos);
       const videoPosterURL = YpMediaHelpers.getVideoPosterURL(
         this.point.PointVideos,
@@ -1085,7 +1121,7 @@ export class YpPoint extends YpBaseElement {
       this.portraitVideo = YpMediaHelpers.isPortraitVideo(
         this.point.PointVideos
       );
-      if (videoURL && videoPosterURL) {
+      if (videoURL) {
         this.videoActive = true;
         this.pointVideoPath = videoURL;
         this.pointImageVideoPath = videoPosterURL;
@@ -1093,8 +1129,7 @@ export class YpPoint extends YpBaseElement {
         this.checkTranscriptError = false;
         if (
           !disableMachineTranscripts &&
-          this.point.checkTranscriptFor === "video" &&
-          window.appGlobals.hasTranscriptSupport === true
+          this.point.checkTranscriptFor === "video"
         ) {
           this._checkTranscriptStatus();
           this.checkingTranscript = true;
@@ -1109,8 +1144,7 @@ export class YpPoint extends YpBaseElement {
           this.checkTranscriptError = false;
           if (
             !disableMachineTranscripts &&
-            this.point.checkTranscriptFor === "audio" &&
-            window.appGlobals.hasTranscriptSupport === true
+            this.point.checkTranscriptFor === "audio"
           ) {
             this._checkTranscriptStatus();
             this.checkingTranscript = true;
@@ -1136,12 +1170,11 @@ export class YpPoint extends YpBaseElement {
     if (pointInfo && pointInfo.point) {
       const point = pointInfo.point;
       this.checkingTranscript = false;
-      point.latestContent =
-        point.PointRevisions![point.PointRevisions!.length - 1].content;
+      const pointContent = this._setLatestContentFromPointRevisions(point);
       this.point = point;
       this.fire("yp-update-point-in-list", point);
       if (this.hasPointAccess) {
-        this.editText = point.latestContent;
+        this.editText = pointContent;
         this.isEditing = true;
       }
       this.requestUpdate();

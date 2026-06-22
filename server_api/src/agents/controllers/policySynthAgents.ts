@@ -26,7 +26,7 @@ import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 import { NewAiModelSetup } from "../managers/newAiModelSetup.js";
 import { domainIncludes } from "../../services/engine/moderation/get_moderation_items.cjs";
 
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
   ypDomain?: any;
   ypCommunity?: any;
   sso?: any;
@@ -314,7 +314,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getAgent = async (req: express.Request, res: express.Response) => {
+  getAgent = async (req: YpRequest, res: express.Response) => {
     try {
       const agent = await this.agentManager.getAgent(req.params.groupId);
       res.json(agent);
@@ -325,7 +325,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getAgentAiModels = async (req: express.Request, res: express.Response) => {
+  getAgentAiModels = async (req: YpRequest, res: express.Response) => {
     try {
       const aiModels = await this.agentManager.getAgentAiModels(
         parseInt(req.params.id)
@@ -337,7 +337,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  removeAgentAiModel = async (req: express.Request, res: express.Response) => {
+  removeAgentAiModel = async (req: YpRequest, res: express.Response) => {
     try {
       await this.agentManager.removeAgentAiModel(
         parseInt(req.params.agentId),
@@ -350,7 +350,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  addAgentAiModel = async (req: express.Request, res: express.Response) => {
+  addAgentAiModel = async (req: YpRequest, res: express.Response) => {
     try {
       const { modelId, size } = req.body;
       await this.agentManager.addAgentAiModel(
@@ -366,7 +366,7 @@ export class PolicySynthAgentsController {
   };
 
   updateNodeConfiguration = async (
-    req: express.Request,
+    req: YpRequest,
     res: express.Response
   ) => {
     const nodeType = req.params.nodeType as "agent" | "connector";
@@ -395,14 +395,14 @@ export class PolicySynthAgentsController {
   };
 
   createInputConnector = async (
-    req: express.Request,
+    req: YpRequest,
     res: express.Response
   ) => {
     this.createConnector(req, res, "input");
   };
 
   createOutputConnector = async (
-    req: express.Request,
+    req: YpRequest,
     res: express.Response
   ) => {
     this.createConnector(req, res, "output");
@@ -439,7 +439,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getActiveAiModels = async (req: express.Request, res: express.Response) => {
+  getActiveAiModels = async (req: YpRequest, res: express.Response) => {
     try {
       const activeAiModels = await PsAiModel.findAll({
         where: { "configuration.active": true },
@@ -501,7 +501,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  controlAgent = async (req: express.Request, res: express.Response) => {
+  controlAgent = async (req: YpRequest, res: express.Response) => {
     const agentId = parseInt(req.params.id);
     const action = req.body.action;
 
@@ -525,7 +525,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getAgentStatus = async (req: express.Request, res: express.Response) => {
+  getAgentStatus = async (req: YpRequest, res: express.Response) => {
     const agentId = parseInt(req.params.id);
 
     try {
@@ -541,7 +541,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  updateAgentStatus = async (req: express.Request, res: express.Response) => {
+  updateAgentStatus = async (req: YpRequest, res: express.Response) => {
     const agentId = parseInt(req.params.id);
     const { state, details } = req.body;
 
@@ -591,7 +591,7 @@ export class PolicySynthAgentsController {
   };
 
   startAgentProcessing = async (
-    req: express.Request,
+    req: YpRequest,
     res: express.Response
   ) => {
     const agentId = parseInt(req.params.id);
@@ -612,7 +612,7 @@ export class PolicySynthAgentsController {
   };
 
   pauseAgentProcessing = async (
-    req: express.Request,
+    req: YpRequest,
     res: express.Response
   ) => {
     const agentId = parseInt(req.params.id);
@@ -632,7 +632,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getAgentCosts = async (req: express.Request, res: express.Response) => {
+  getAgentCosts = async (req: YpRequest, res: express.Response) => {
     try {
       const agentId = parseInt(req.params.id);
       const totalCosts = await this.agentCostManager.getAgentCosts(agentId);
@@ -643,7 +643,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getAgentCostsDetail = async (req: express.Request, res: express.Response) => {
+  getAgentCostsDetail = async (req: YpRequest, res: express.Response) => {
     try {
       const agentId = parseInt(req.params.id);
       const costRows = await this.agentCostManager.getDetailedAgentCosts(

@@ -1,8 +1,73 @@
 const vision = require('@google-cloud/vision');
 const models = require("../../../../models/index.cjs");
-var downloadFile = require('download-file');
+const axios = require("axios");
+const crypto = require("crypto");
 const fs = require("fs");
+const path = require("path");
+const { pipeline } = require("stream/promises");
 const log = require('../../../../utils/logger.cjs');
+
+const hasImageExtension = (imageUrl) =>
+  /\.(gif|jpe?g|png|webp)$/i.test(new URL(imageUrl).pathname);
+
+const isImageDownload = (contentType, imageUrl) => {
+  if (!contentType) {
+    return true;
+  }
+
+  const normalizedContentType = contentType.toLowerCase().split(";")[0].trim();
+  return (
+    normalizedContentType.startsWith("image/") ||
+    (normalizedContentType === "application/octet-stream" &&
+      hasImageExtension(imageUrl))
+  );
+};
+
+const downloadImageFile = async (imageUrl) => {
+  const parsedUrl = new URL(imageUrl);
+  const extension = path.extname(parsedUrl.pathname) || ".img";
+  const fileNameWithPath = path.join(
+    "/tmp",
+    `vision-${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`
+  );
+
+  let response;
+  try {
+    response = await axios.get(imageUrl, {
+      maxRedirects: 5,
+      responseType: "stream",
+      timeout: 20000,
+      validateStatus: () => true,
+    });
+
+    const contentType = response.headers["content-type"];
+    if (response.status < 200 || response.status >= 300) {
+      response.data.destroy();
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    if (!isImageDownload(contentType, imageUrl)) {
+      response.data.destroy();
+      throw new Error(`Unexpected content-type ${contentType}`);
+    }
+
+    await pipeline(response.data, fs.createWriteStream(fileNameWithPath));
+
+    const stats = fs.statSync(fileNameWithPath);
+    if (stats.size === 0) {
+      throw new Error("Downloaded image file was empty");
+    }
+
+    return {
+      contentType,
+      fileNameWithPath,
+      size: stats.size,
+    };
+  } catch (error) {
+    fs.unlink(fileNameWithPath, () => {});
+    throw error;
+  }
+};
 
 class ImageLabelingBase {
   constructor(workPackage) {
@@ -26,80 +91,81 @@ class ImageLabelingBase {
   }
 
   async reviewAndLabelUrl(imageUrl, mediaType, mediaId) {
-    return await new Promise(async (resolve, reject) => {
-      try {
-        const splitUrl = imageUrl.split('/');
-        const fileName =  splitUrl[splitUrl.length-1];
-        const fileNameWithPath = '/tmp/'+fileName;
-        downloadFile(imageUrl, { filename: fileName, directory: '/tmp/' }, async (error) => {
-          if (error) {
-            fs.unlink(fileNameWithPath, () => {
-              reject('Could not download file');
-            });
-            return;
-          } else {
-            let result;
-            try {
-              ;[result] = await this.visionClient.annotateImage({
-                ...this.visionRequesBase,
-                image: { content: fs.readFileSync(fileNameWithPath) }
-              });
-            } catch (annotationError) {
-              log.error('Vision API annotateImage failed', annotationError);
-              fs.unlink(fileNameWithPath, unlinkErr => {
-                if (unlinkErr) log.error(unlinkErr);
-              });
-              resolve();
-              return;
-            }
+    let downloadedFile;
+    try {
+      downloadedFile = await downloadImageFile(imageUrl);
+    } catch (error) {
+      log.warn("Skipping Vision image labeling for unavailable media", {
+        error: error.message || error,
+        imageUrl,
+        mediaId,
+        mediaType,
+      });
+      return null;
+    }
 
-            try {
-              fs.unlink(fileNameWithPath, async (unlinkError) => {
-                if (unlinkError)
-                  log.error(unlinkError);
-                if (result.error) {
-                  reject(result.error.message);
-                } else {
-                  const imageLabels = { ...result.labelAnnotations, mediaType, mediaId };
-                  const imageReviews = {
-                    ...result.safeSearchAnnotation,
-                    mediaType,
-                    mediaId,
-                  };
-                  log.info(`Image Labels: ${imageReviews ? JSON.stringify(imageReviews) : ''}`);
-                  await this.collection.reload();
-                  if (!this.collection.data) {
-                    this.collection.set("data", {});
-                  }
-                  if (!this.collection.data.labels) {
-                    this.collection.set("data.labels", {});
-                  }
-                  if (!this.collection.data.moderation) {
-                    this.collection.set("data.moderation", {});
-                  }
-                  if (!this.collection.data.moderation.imageReviews) {
-                    this.collection.set("data.moderation.imageReviews", []);
-                  }
-                  if (!this.collection.data.labels.images) {
-                    this.collection.set("data.labels.images", []);
-                  }
-                  this.collection.data.moderation.imageReviews.push(imageReviews);
-                  this.collection.data.labels.images.push(imageLabels);
-                  this.collection.changed("data", true);
-                  await this.collection.save();
-                  await this.evaluteImageReviews(imageReviews);
-                  resolve({ imageLabels, imageReviews });
-                }
-              });
-            } catch (error) {
-              reject(error);
-            }
-          }
+    try {
+      const [result] = await this.visionClient.annotateImage({
+        ...this.visionRequesBase,
+        image: { content: fs.readFileSync(downloadedFile.fileNameWithPath) }
+      });
+
+      if (result.error) {
+        log.warn("Skipping Vision image labeling for invalid media", {
+          contentType: downloadedFile.contentType,
+          error: result.error.message,
+          imageUrl,
+          mediaId,
+          mediaType,
+          size: downloadedFile.size,
         });
-      } catch (error) {
-        reject(error);
+        return null;
       }
-    });
+
+      const imageLabels = { ...result.labelAnnotations, mediaType, mediaId };
+      const imageReviews = {
+        ...result.safeSearchAnnotation,
+        mediaType,
+        mediaId,
+      };
+      log.info(`Image Labels: ${imageReviews ? JSON.stringify(imageReviews) : ''}`);
+      await this.collection.reload();
+      if (!this.collection.data) {
+        this.collection.set("data", {});
+      }
+      if (!this.collection.data.labels) {
+        this.collection.set("data.labels", {});
+      }
+      if (!this.collection.data.moderation) {
+        this.collection.set("data.moderation", {});
+      }
+      if (!this.collection.data.moderation.imageReviews) {
+        this.collection.set("data.moderation.imageReviews", []);
+      }
+      if (!this.collection.data.labels.images) {
+        this.collection.set("data.labels.images", []);
+      }
+      this.collection.data.moderation.imageReviews.push(imageReviews);
+      this.collection.data.labels.images.push(imageLabels);
+      this.collection.changed("data", true);
+      await this.collection.save();
+      await this.evaluteImageReviews(imageReviews);
+      return { imageLabels, imageReviews };
+    } catch (error) {
+      log.error('Vision API annotateImage failed', {
+        error,
+        imageUrl,
+        mediaId,
+        mediaType,
+      });
+      return null;
+    } finally {
+      if (downloadedFile) {
+        fs.unlink(downloadedFile.fileNameWithPath, unlinkErr => {
+          if (unlinkErr) log.error(unlinkErr);
+        });
+      }
+    }
   }
 
   async reportImageToModerators(options) {
@@ -237,12 +303,15 @@ class ImageLabelingBase {
               );
               for (let image of searchImages) {
                 const imageFormat = JSON.parse(image.formats);
-                const { imageLabels, imageReviews } =
-                await this.reviewAndLabelUrl(
+                const reviewResult = await this.reviewAndLabelUrl(
                   imageFormat[imageFormat.length - 1],
                     "Video",
                     image.id
                   );
+                if (!reviewResult) {
+                  continue;
+                }
+                const { imageLabels, imageReviews } = reviewResult;
                 if (!video.meta) {
                   video.set("meta", {});
                 }

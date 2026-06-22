@@ -10,7 +10,7 @@ import log from "../../../utils/loggerTs.js";
 import { Upload } from "@aws-sdk/lib-storage";
 import s3Utils from "../../../utils/awsS3Client.cjs";
 
-const { createS3Client, getPresignedGetObjectUrl } = s3Utils;
+const { createS3ClientForBucket, getPresignedGetObjectUrl } = s3Utils;
 
 const dbModels: Models = models;
 const AcBackgroundJob = dbModels.AcBackgroundJob as AcBackgroundJobClass;
@@ -68,46 +68,41 @@ export const uploadToS3 = (
   data: ExcelJS.Buffer,
   done: (error: Error | null, url?: string) => void
 ): void => {
-  const s3 = createS3Client({
-    endpoint: process.env.S3_ENDPOINT || "s3.amazonaws.com",
-    region:
-      process.env.S3_REGION ||
-      (process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT
-        ? null
-        : "us-east-1")!,
-  });
-
   const keyName = `/${exportType}/${userId}/${filename}`;
 
-  const upload = new Upload({
-    client: s3,
-    params: {
-      Bucket: process.env.S3_REPORTS_BUCKET!,
-      Key: keyName,
-      Body: data as any,
-    },
-  });
+  createS3ClientForBucket(process.env.S3_REPORTS_BUCKET, {
+    endpoint: process.env.S3_ENDPOINT || "s3.amazonaws.com",
+    region: process.env.S3_REGION,
+  })
+    .then((s3: any) => {
+      const upload = new Upload({
+        client: s3,
+        params: {
+          Bucket: process.env.S3_REPORTS_BUCKET!,
+          Key: keyName,
+          Body: data as any,
+        },
+      });
 
-  upload
-    .done()
-    .then(() =>
-      getPresignedGetObjectUrl(s3, {
-        Bucket: process.env.S3_REPORTS_BUCKET!,
-        Key: keyName,
-        Expires: 60 * 60,
-      })
-    )
+      upload.on("httpUploadProgress", (progress) => {
+        if (progress.loaded !== undefined && progress.total) {
+          const uploadProgress = Math.round((progress.loaded / progress.total) * 100);
+          updateUploadJobStatus(jobId, uploadProgress);
+        }
+      });
+
+      return upload.done().then(() =>
+        getPresignedGetObjectUrl(s3, {
+          Bucket: process.env.S3_REPORTS_BUCKET!,
+          Key: keyName,
+          Expires: 60 * 60,
+        })
+      );
+    })
     .then((url: string) => {
       done(null, url);
     })
     .catch((error: Error) => {
       done(error);
     });
-
-  upload.on("httpUploadProgress", (progress) => {
-    if (progress.loaded !== undefined && progress.total) {
-      const uploadProgress = Math.round((progress.loaded / progress.total) * 100);
-      updateUploadJobStatus(jobId, uploadProgress);
-    }
-  });
 };

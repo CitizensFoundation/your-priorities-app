@@ -11,6 +11,96 @@ var queue = require("../services/workers/queue.cjs");
 const {
   getFingerprintDataFromBody,
 } = require("../utils/fingerprint_data.cjs");
+const {
+  getSpeechToTextSupportConfig,
+  hasSpeechToTextSupport,
+} = require("../utils/speechToTextSupport.cjs");
+
+const transcriptTimeoutMs = 15 * 60 * 1000;
+
+const getBrowserLanguageFromRequest = (req) => {
+  const browserLanguage = req.headers["accept-language"]
+    ? req.headers["accept-language"].split(",")[0].trim()
+    : null;
+  return browserLanguage || "en-US";
+};
+
+const getTranscriptAppLanguage = (req, point) =>
+  (point && point.language) ||
+  (req.body && req.body.appLanguage) ||
+  (point && point.data && point.data.userLocale) ||
+  (req.body && req.body.userLocale) ||
+  getBrowserLanguageFromRequest(req);
+
+const getTranscriptStatusLogData = (transcript) => ({
+  hasText: Boolean(transcript && transcript.text),
+  hasError: Boolean(transcript && transcript.error),
+  error:
+    transcript && transcript.error
+      ? transcript.error.message || transcript.error.toString()
+      : null,
+  inProgress: Boolean(transcript && transcript.inProgress),
+  inProgressDate:
+    transcript && transcript.inProgressDate ? transcript.inProgressDate : null,
+});
+
+const queueVideoTranscript = (video, req, appLanguage, callback, pointId) => {
+  if (!hasSpeechToTextSupport()) {
+    const speechToTextConfig = getSpeechToTextSupportConfig();
+    log.warn("Speech-to-text is not configured for video transcript", {
+      ...speechToTextConfig,
+      pointId: pointId || req.params.id,
+      videoId: video ? video.id : null,
+    });
+    callback(null, false);
+    return;
+  }
+
+  if (!video.meta) {
+    video.set("meta", {});
+  }
+  if (!video.meta.transcript) {
+    video.set("meta.transcript", {});
+  }
+  video.set("meta.transcript.inProgress", true);
+  video.set("meta.transcript.inProgressDate", new Date());
+  video.set("meta.transcript.error", null);
+  video.changed("meta", true);
+
+  video.save().then(() => {
+    const browserLanguage = getBrowserLanguageFromRequest(req);
+    const workPackage = {
+      browserLanguage,
+      appLanguage: appLanguage || browserLanguage,
+      videoId: video.id,
+      type: "create-video-transcript",
+    };
+    log.info("Queueing video transcript", {
+      pointId: pointId || req.params.id,
+      videoId: video.id,
+    });
+    queue.add("process-voice-to-text", workPackage, "high");
+    callback(null, true);
+  }).catch((error) => {
+    callback(error);
+  });
+};
+
+const queueVideoTranscriptById = (videoId, req, appLanguage, callback, pointId) => {
+  models.Video.findOne({
+    where: {
+      id: videoId,
+    },
+  }).then((video) => {
+    if (!video) {
+      callback("Could not find video for transcript");
+    } else {
+      queueVideoTranscript(video, req, appLanguage, callback, pointId);
+    }
+  }).catch((error) => {
+    callback(error);
+  });
+};
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.findOne({
@@ -623,7 +713,14 @@ router.get(
           },
         })
           .then((video) => {
-            if (video.meta.transcript && video.meta.transcript.text) {
+            const transcript = video.meta ? video.meta.transcript : null;
+            log.info("videoTranscriptStatus state", {
+              pointId: req.params.id,
+              videoId: video ? video.id : null,
+              hasSpeechToTextSupport: Boolean(hasSpeechToTextSupport()),
+              ...getTranscriptStatusLogData(transcript),
+            });
+            if (transcript && transcript.text) {
               point
                 .save()
                 .then((savedPoint) => {
@@ -686,8 +783,57 @@ router.get(
                     500
                   );
                 });
-            } else if (video.meta.transcript && video.meta.transcript.error) {
-              res.send({ error: video.meta.transcript.error });
+            } else if (transcript && transcript.error) {
+              log.info("videoTranscriptStatus returning transcript error", {
+                pointId: req.params.id,
+                videoId: video.id,
+                error: transcript.error.message || transcript.error.toString(),
+              });
+              res.send({ error: transcript.error });
+            } else if (
+              transcript &&
+              transcript.inProgressDate &&
+              new Date(transcript.inProgressDate).getTime() <
+                Date.now() - transcriptTimeoutMs
+            ) {
+              video.set("meta.transcript.inProgress", false);
+              video.set("meta.transcript.error", "Timeout");
+              video.changed("meta", true);
+              video.save().then(() => {
+                res.send({ error: "Timeout" });
+              }).catch((error) => {
+                sendPointOrError(
+                  res,
+                  req.params.id,
+                  "videoTranscriptStatus",
+                  req.user,
+                  error,
+                  500
+                );
+              });
+            } else if (!transcript || !transcript.inProgressDate) {
+              const appLanguage = getTranscriptAppLanguage(req, point);
+              log.info("videoTranscriptStatus queueing missing transcript", {
+                pointId: req.params.id,
+                videoId: video.id,
+                appLanguage,
+              });
+              queueVideoTranscript(video, req, appLanguage, (error, queued) => {
+                if (error) {
+                  sendPointOrError(
+                    res,
+                    req.params.id,
+                    "videoTranscriptStatus",
+                    req.user,
+                    error,
+                    500
+                  );
+                } else if (queued) {
+                  res.send({ inProgress: true });
+                } else {
+                  res.send({ error: "Speech-to-text is not configured" });
+                }
+              }, req.params.id);
             } else {
               res.send({ inProgress: true });
             }
@@ -842,6 +988,7 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
     value: req.body.value,
     user_id: req.user.id,
     status: "published",
+    language: getTranscriptAppLanguage(req),
     user_agent: req.useragent.source,
     ip_address: req.clientIp,
     data: {
@@ -951,6 +1098,12 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
 
           (parallelCallback) => {
             if (req.body.videoId) {
+              log.info("Point has uploaded video, completing attachment", {
+                pointId: point.id,
+                videoId: req.body.videoId,
+                hasSpeechToTextSupport: Boolean(hasSpeechToTextSupport()),
+                speechToTextConfig: getSpeechToTextSupportConfig(),
+              });
               models.Video.completeUploadAndAddToPoint(
                 req,
                 res,
@@ -959,18 +1112,19 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
                   if (error) {
                     parallelCallback(error);
                   } else {
-                    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-                      const workPackage = {
-                        browserLanguage: req.headers["accept-language"]
-                          ? req.headers["accept-language"].split(",")[0]
-                          : "en-US",
-                        appLanguage: req.body.appLanguage,
-                        videoId: req.body.videoId,
-                        type: "create-video-transcript",
-                      };
-                      queue.add("process-voice-to-text", workPackage, "high");
-                    }
-                    parallelCallback();
+                    log.info("Point video attached, queueing transcript check", {
+                      pointId: point.id,
+                      videoId: req.body.videoId,
+                    });
+                    queueVideoTranscriptById(
+                      req.body.videoId,
+                      req,
+                      getTranscriptAppLanguage(req, point),
+                      (transcriptError) => {
+                        parallelCallback(transcriptError);
+                      },
+                      point.id
+                    );
                   }
                 }
               );
@@ -991,10 +1145,8 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
                   } else {
                     if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
                       const workPackage = {
-                        browserLanguage: req.headers["accept-language"]
-                          ? req.headers["accept-language"].split(",")[0]
-                          : "en-US",
-                        appLanguage: req.body.appLanguage,
+                        browserLanguage: getBrowserLanguageFromRequest(req),
+                        appLanguage: getTranscriptAppLanguage(req, point),
                         audioId: req.body.audioId,
                         type: "create-audio-transcript",
                       };
@@ -1045,6 +1197,28 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
                 });
                 res.sendStatus(500);
               } else {
+                log.info("createPoint transcript response state", {
+                  pointId: loadedPoint.id,
+                  reqVideoId: req.body.videoId,
+                  reqAudioId: req.body.audioId,
+                  hasSpeechToTextSupport: Boolean(hasSpeechToTextSupport()),
+                  speechToTextConfig: getSpeechToTextSupportConfig(),
+                  loadedPointVideoIds: loadedPoint.PointVideos
+                    ? loadedPoint.PointVideos.map((video) => video.id)
+                    : [],
+                  loadedPointAudioIds: loadedPoint.PointAudios
+                    ? loadedPoint.PointAudios.map((audio) => audio.id)
+                    : [],
+                });
+                if (hasSpeechToTextSupport()) {
+                  if (req.body.videoId) {
+                    loadedPoint.setDataValue("checkTranscriptFor", "video");
+                    loadedPoint.checkTranscriptFor = "video";
+                  } else if (req.body.audioId) {
+                    loadedPoint.setDataValue("checkTranscriptFor", "audio");
+                    loadedPoint.checkTranscriptFor = "audio";
+                  }
+                }
                 const newPointRedisKey = `newUserPoint_${req.user.id}`;
                 req.redisClient.setEx(newPointRedisKey, 30, JSON.stringify({}));
                 res.send(loadedPoint);

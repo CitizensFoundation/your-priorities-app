@@ -160,6 +160,8 @@ export class YpPostTranscript extends YpBaseElement {
               <div class="layout vertical" ?hidden="${!this.hasPostAccess}">
                 <md-outlined-text-field
                   id="postTranscriptionEditor"
+                  .type="${"textarea"}"
+                  .rows="${3}"
                   charCounter
                   maxlength="500"
                   .value="${this.editText ? this.editText : ''}"></md-outlined-text-field>
@@ -169,11 +171,9 @@ export class YpPostTranscript extends YpBaseElement {
                 </div>
                 <div class="layout horizontal self-end">
                   <md-outlined-button
-                    @click="${this._cancelEdit}"
-                    .label="${this.t('cancel')}"></md-outlined-button>
+                    @click="${this._cancelEdit}">${this.t('cancel')}</md-outlined-button>
                   <md-outlined-button
-                    @click="${this._saveEdit}"
-                    .label="${this.t('update')}"></md-outlined-button>
+                    @click="${this._saveEdit}">${this.t('update')}</md-outlined-button>
                 </div>
               </div>
             `
@@ -208,10 +208,12 @@ export class YpPostTranscript extends YpBaseElement {
   }
 
   async _saveEdit() {
+    const editor = this.$$('#postTranscriptionEditor') as HTMLInputElement;
+    const content = editor ? editor.value : this.editText;
     await window.serverApi.savePostTranscript(this.post.id, {
-      content: this.editText,
+      content,
     });
-    this.post.public_data!.transcript.text = this.editText ? this.editText : '';
+    this.post.public_data!.transcript.text = content ? content : '';
     this.post.public_data!.transcript.userEdited = true;
     this.isEditing = false;
   }

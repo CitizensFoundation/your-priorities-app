@@ -4,7 +4,7 @@ import auth from "../../authorization.cjs";
 import { TaskManager } from "../tasks/taskManager.js";
 import log from "../../utils/loggerTs.js";
 
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
   redisClient?: any;
   user?: any;
 }

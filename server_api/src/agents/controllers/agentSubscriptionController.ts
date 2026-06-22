@@ -11,7 +11,7 @@ import log from "../../utils/loggerTs.js";
 import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
   ypDomain?: any;
   ypCommunity?: any;
   sso?: any;

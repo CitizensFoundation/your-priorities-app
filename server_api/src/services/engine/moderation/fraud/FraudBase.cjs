@@ -30,7 +30,12 @@ class FraudBase {
     const postIds = [];
     _.forEach(topItems, item => {
       for (let i=0;i<item.items.length;i++) {
-        postIds.push(item.items[i].post_id);
+        const postId = this.workPackage.collectionType === "posts"
+          ? item.items[i].id
+          : item.items[i].post_id;
+        if (postId !== undefined && postId !== null) {
+          postIds.push(postId);
+        }
       }
     });
 

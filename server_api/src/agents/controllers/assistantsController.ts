@@ -18,7 +18,7 @@ import { NotificationAgentQueueManager } from "../managers/notificationAgentQueu
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
 import { WorkflowConversationManager } from "../managers/workflowConversationManager.js";
 
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
   ypDomain?: any;
   ypCommunity?: any;
   sso?: any;
@@ -381,7 +381,7 @@ export class AssistantController {
     }
   };
 
-  private submitAgentConfiguration: RequestHandler = async (
+  private submitAgentConfiguration: RequestHandler<Record<string, string>> = async (
     req: YpRequest,
     res: express.Response
   ): Promise<void> => {

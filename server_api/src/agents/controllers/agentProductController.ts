@@ -5,7 +5,7 @@ import { AgentProductManager } from '../managers/agentProductManager.js';
 import auth from '../../authorization.cjs';
 import log from "../../utils/loggerTs.js";
 
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
   ypDomain?: any;
   ypCommunity?: any;
   sso?: any;

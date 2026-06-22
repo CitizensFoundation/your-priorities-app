@@ -3,8 +3,7 @@ const log = require('../utils/logger.cjs');
 const _ = require('lodash');
 const queue = require('../services/workers/queue.cjs');
 const {
-  createS3Client,
-  getPresignedPutObjectUrl,
+  getPresignedPutObjectUrlForBucket,
 } = require("../utils/awsS3Client.cjs");
 const { Queue } = require('bullmq');
 
@@ -292,13 +291,6 @@ module.exports = (sequelize, DataTypes) => {
   Audio.prototype.getPreSignedUploadUrl = function (options, callback) {
     const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
     const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
-    const s3 = createS3Client({
-      endpoint: accelEndPoint,
-      useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
-      region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
-      forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
-    });
-
     const signedUrlExpireSeconds = 60 * 60;
     const bucketName = process.env.S3_AUDIO_UPLOAD_BUCKET;
     const publicBucket = process.env.S3_AUDIO_PUBLIC_BUCKET;
@@ -314,7 +306,12 @@ module.exports = (sequelize, DataTypes) => {
       ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : 'bucket-owner-full-control',
       ContentType: contentType
     };
-    getPresignedPutObjectUrl(s3, s3Params).then((url) => {
+    getPresignedPutObjectUrlForBucket(s3Params, {
+      endpoint: accelEndPoint,
+      useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
+      region: process.env.S3_REGION,
+      forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
+    }).then((url) => {
       let meta = { bucketName, publicBucket, endPoint, accelEndPoint,
         maxDuration: options.maxDuration, fileKey, contentType, uploadUrl: url };
       if (this.meta)

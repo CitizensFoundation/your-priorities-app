@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:24
 MAINTAINER Robert Vidar Bjarnason <robert@citizens.is>
 
 RUN echo 'version 9.0'
