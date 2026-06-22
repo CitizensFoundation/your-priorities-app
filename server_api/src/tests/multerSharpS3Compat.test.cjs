@@ -7,6 +7,8 @@ const { PassThrough } = require("node:stream");
 
 const sharpPath = require.resolve("sharp");
 const mimeTypesPath = require.resolve("mime-types");
+const awsLibStoragePath = require.resolve("@aws-sdk/lib-storage");
+const awsClientS3Path = require.resolve("@aws-sdk/client-s3");
 const multerSharpS3CompatPath = require.resolve("../utils/multerSharpS3Compat.cjs");
 
 const injectMockModule = (modulePath, moduleExports) => {
@@ -20,10 +22,33 @@ const injectMockModule = (modulePath, moduleExports) => {
 const loadMulterSharpS3Compat = ({ mockSharp, mockMimeTypes }) => {
   const originalSharpModule = require.cache[sharpPath];
   const originalMimeTypesModule = require.cache[mimeTypesPath];
+  const originalAwsLibStorageModule = require.cache[awsLibStoragePath];
+  const originalAwsClientS3Module = require.cache[awsClientS3Path];
   const originalCompatModule = require.cache[multerSharpS3CompatPath];
 
   injectMockModule(sharpPath, mockSharp);
   injectMockModule(mimeTypesPath, mockMimeTypes);
+  injectMockModule(awsLibStoragePath, {
+    Upload: class MockUpload {
+      constructor({ client, params }) {
+        this.client = client;
+        this.params = params;
+      }
+
+      done() {
+        return this.client.upload(this.params);
+      }
+
+      abort() {}
+    },
+  });
+  injectMockModule(awsClientS3Path, {
+    DeleteObjectCommand: class MockDeleteObjectCommand {
+      constructor(input) {
+        this.input = input;
+      }
+    },
+  });
   delete require.cache[multerSharpS3CompatPath];
 
   const multerSharpS3Compat = require(multerSharpS3CompatPath);
@@ -43,6 +68,18 @@ const loadMulterSharpS3Compat = ({ mockSharp, mockMimeTypes }) => {
         require.cache[mimeTypesPath] = originalMimeTypesModule;
       } else {
         delete require.cache[mimeTypesPath];
+      }
+
+      if (originalAwsLibStorageModule) {
+        require.cache[awsLibStoragePath] = originalAwsLibStorageModule;
+      } else {
+        delete require.cache[awsLibStoragePath];
+      }
+
+      if (originalAwsClientS3Module) {
+        require.cache[awsClientS3Path] = originalAwsClientS3Module;
+      } else {
+        delete require.cache[awsClientS3Path];
       }
 
       if (originalCompatModule) {
@@ -82,38 +119,30 @@ const createMockS3 = ({ failKeys = [] } = {}) => {
     s3: {
       upload(params) {
         uploads.push(params);
-        return {
-          promise() {
-            return new Promise((resolve, reject) => {
-              const chunks = [];
+        return new Promise((resolve, reject) => {
+          const chunks = [];
 
-              params.Body.on("data", (chunk) => {
-                chunks.push(chunk);
+          params.Body.on("data", (chunk) => {
+            chunks.push(chunk);
+          });
+          params.Body.on("error", reject);
+          params.Body.on("end", () => {
+            if (failKeys.includes(params.Key)) {
+              reject(new Error(`upload failed for ${params.Key}`));
+            } else {
+              resolve({
+                Bucket: params.Bucket,
+                Key: params.Key,
+                Location: `https://example.com/${params.Key}`,
+                uploadedBody: Buffer.concat(chunks).toString("utf8"),
               });
-              params.Body.on("error", reject);
-              params.Body.on("end", () => {
-                if (failKeys.includes(params.Key)) {
-                  reject(new Error(`upload failed for ${params.Key}`));
-                } else {
-                  resolve({
-                    Bucket: params.Bucket,
-                    Key: params.Key,
-                    Location: `https://example.com/${params.Key}`,
-                    uploadedBody: Buffer.concat(chunks).toString("utf8"),
-                  });
-                }
-              });
-            });
-          },
-        };
+            }
+          });
+        });
       },
-      deleteObject(params) {
-        deletedObjects.push(params);
-        return {
-          promise() {
-            return Promise.resolve();
-          },
-        };
+      send(command) {
+        deletedObjects.push(command.input);
+        return Promise.resolve();
       },
     },
   };

@@ -146,7 +146,7 @@ await s3Service.deleteMediaFormatsUrls([
 
 ## Dependencies
 
-- [aws-sdk](https://www.npmjs.com/package/aws-sdk): For S3 operations.
+- [@aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3): For S3 operations.
 - [fs](https://nodejs.org/api/fs.html): For file system operations.
 - [axios](https://www.npmjs.com/package/axios): For HTTP requests to Cloudflare API.
 

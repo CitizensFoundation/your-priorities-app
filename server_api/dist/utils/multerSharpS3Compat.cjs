@@ -7,6 +7,8 @@ const os = require("os");
 const path = require("path");
 const { PassThrough } = require("stream");
 const { pipeline } = require("stream/promises");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
 const buildVariantKey = (baseKey, size) => {
     const suffix = size?.suffix || "";
     const directory = size?.directory;
@@ -65,7 +67,7 @@ class MulterSharpS3Compat {
             cb(null);
             return;
         }
-        Promise.allSettled(uploads.map(({ Bucket, Key }) => this.opts.s3.deleteObject({ Bucket, Key }).promise()))
+        Promise.allSettled(uploads.map(({ Bucket, Key }) => this.opts.s3.send(new DeleteObjectCommand({ Bucket, Key }))))
             .then((results) => {
             const failed = results.find((result) => result.status === "rejected");
             cb(failed ? failed.reason : null);
@@ -114,13 +116,16 @@ class MulterSharpS3Compat {
         if (!uploads.length) {
             return;
         }
-        await Promise.allSettled(uploads.map(({ Bucket, Key }) => this.opts.s3.deleteObject({ Bucket, Key }).promise()));
+        await Promise.allSettled(uploads.map(({ Bucket, Key }) => this.opts.s3.send(new DeleteObjectCommand({ Bucket, Key }))));
     }
     async _uploadStreamToS3(params, readable) {
         let uploadedSize = 0;
         const body = new PassThrough();
-        const upload = this.opts.s3.upload({ ...params, Body: body });
-        const uploadPromise = upload.promise().catch((error) => {
+        const upload = new Upload({
+            client: this.opts.s3,
+            params: { ...params, Body: body },
+        });
+        const uploadPromise = upload.done().catch((error) => {
             if (typeof upload.abort === "function") {
                 try {
                     upload.abort();

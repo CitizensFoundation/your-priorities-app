@@ -367,7 +367,7 @@ Video.startTranscoding(videoInstance, options, req, res);
 
 ## Notes
 
-- The model supports both AWS Elastic Transcoder and a custom "Your Priorities" encoder for video processing.
+- The model uses the "Your Priorities" encoder for video processing.
 - Handles both standard and Ziggeo video uploads.
 - Includes robust error handling and logging for all major operations.
 - Uses environment variables for configuration of S3, MinIO, Redis, and transcoding services.

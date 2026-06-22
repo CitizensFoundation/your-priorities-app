@@ -8,6 +8,8 @@ const os = require("os");
 const path = require("path");
 const { PassThrough } = require("stream");
 const { pipeline } = require("stream/promises");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
 
 const buildVariantKey = (baseKey, size) => {
   const suffix = size?.suffix || "";
@@ -87,7 +89,7 @@ class MulterSharpS3Compat {
 
     Promise.allSettled(
       uploads.map(({ Bucket, Key }) =>
-        this.opts.s3.deleteObject({ Bucket, Key }).promise()
+        this.opts.s3.send(new DeleteObjectCommand({ Bucket, Key }))
       )
     )
       .then((results) => {
@@ -142,7 +144,7 @@ class MulterSharpS3Compat {
 
     await Promise.allSettled(
       uploads.map(({ Bucket, Key }) =>
-        this.opts.s3.deleteObject({ Bucket, Key }).promise()
+        this.opts.s3.send(new DeleteObjectCommand({ Bucket, Key }))
       )
     );
   }
@@ -150,8 +152,11 @@ class MulterSharpS3Compat {
   async _uploadStreamToS3(params, readable) {
     let uploadedSize = 0;
     const body = new PassThrough();
-    const upload = this.opts.s3.upload({ ...params, Body: body });
-    const uploadPromise = upload.promise().catch((error) => {
+    const upload = new Upload({
+      client: this.opts.s3,
+      params: { ...params, Body: body },
+    });
+    const uploadPromise = upload.done().catch((error) => {
       if (typeof upload.abort === "function") {
         try {
           upload.abort();

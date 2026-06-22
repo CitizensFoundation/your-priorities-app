@@ -4,10 +4,11 @@ var async = require('async');
 var _ = require('lodash');
 const moment = require('moment');
 const skipEmail = false;
-const aws = require('aws-sdk');
 const log = require('../../../utils/logger.cjs');
 const request = require("../../../utils/requestCompat.cjs");
 const fs = require('fs');
+const { Upload } = require('@aws-sdk/lib-storage');
+const { createS3Client, getPresignedGetObjectUrl, } = require('../../../utils/awsS3Client.cjs');
 const downloadImage = (uri, filename, callback) => {
     request.head(uri, (err, res, body) => {
         request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
@@ -15,37 +16,34 @@ const downloadImage = (uri, filename, callback) => {
 };
 const uploadToS3 = (jobId, userId, filename, exportType, data, done) => {
     const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
-    const s3 = new aws.S3({
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    const s3 = createS3Client({
         endpoint: endPoint,
         region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
     });
     const keyName = "/" + exportType + "/" + userId + "/" + filename;
-    s3.upload({
-        Bucket: process.env.S3_REPORTS_BUCKET,
-        Key: keyName,
-        Body: data
-    }, (error, data) => {
-        if (error) {
-            done(error);
+    const upload = new Upload({
+        client: s3,
+        params: {
+            Bucket: process.env.S3_REPORTS_BUCKET,
+            Key: keyName,
+            Body: data
         }
-        else {
-            s3.getSignedUrl('getObject', {
-                Bucket: process.env.S3_REPORTS_BUCKET,
-                Key: keyName,
-                Expires: 60 * 60
-            }, (error, url) => {
-                if (error) {
-                    done(error);
-                }
-                else {
-                    done(null, url);
-                }
-            });
+    });
+    upload.done().then(() => {
+        return getPresignedGetObjectUrl(s3, {
+            Bucket: process.env.S3_REPORTS_BUCKET,
+            Key: keyName,
+            Expires: 60 * 60
+        });
+    }).then((url) => {
+        done(null, url);
+    }).catch((error) => {
+        done(error);
+    });
+    upload.on('httpUploadProgress', function (progress) {
+        if (progress.loaded !== undefined && progress.total) {
+            updateUploadJobStatus(jobId, Math.round((progress.loaded / progress.total) * 100));
         }
-    }).on('httpUploadProgress', function (progress) {
-        updateUploadJobStatus(jobId, Math.round((progress.loaded / progress.total) * 100));
     });
 };
 const updateUploadJobStatus = (jobId, uploadProgress) => {

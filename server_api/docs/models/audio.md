@@ -1,6 +1,6 @@
 # Model: Audio
 
-Represents an audio file uploaded by a user, including metadata, formats, and associations with posts and points. Handles audio upload, transcoding, and association with collections. Integrates with AWS S3, AWS Elastic Transcoder, and optionally with a custom "Your Priorities" encoder.
+Represents an audio file uploaded by a user, including metadata, formats, and associations with posts and points. Handles audio upload, transcoding, and association with collections. Integrates with AWS S3 and the "Your Priorities" encoder.
 
 ## Properties
 
@@ -121,7 +121,7 @@ Adds an audio file to a collection (post or other). Delegates to `addToPost` if 
 
 ## Audio.getTranscodingJobStatus(audio: Audio, req: Request, res: Response): void
 
-Checks the status of an audio transcoding job, using either AWS Elastic Transcoder or the custom encoder.
+Checks the status of an audio transcoding job using the "Your Priorities" encoder.
 
 **Parameters**
 
@@ -196,7 +196,7 @@ Completes the upload process and adds the audio to a collection (post or other).
 
 ## Audio.startTranscodingJob(audio: Audio, callback: Function): void
 
-Starts a transcoding job for the audio file using AWS Elastic Transcoder or the custom encoder.
+Starts a transcoding job for the audio file using the "Your Priorities" encoder.
 
 **Parameters**
 
@@ -270,7 +270,6 @@ Generates a pre-signed S3 upload URL for the audio file and saves metadata.
 # Configuration
 
 - Uses environment variables for AWS, S3, Redis, and encoder settings:
-  - `USE_YOUR_PRIORITIES_ENCODER`
   - `REDIS_URL`
   - `MINIO_ROOT_USER`
   - `NODE_ENV`
@@ -282,9 +281,6 @@ Generates a pre-signed S3 upload URL for the audio file and saves metadata.
   - `S3_AUDIO_PUBLIC_BUCKET`
   - `AWS_SECRET_ACCESS_KEY`
   - `AWS_ACCESS_KEY_ID`
-  - `AWS_TRANSCODER_AUDIO_PIPELINE_ID`
-  - `AWS_TRANSCODER_AUDIO_PRESET_ID`
-  - `AWS_TRANSCODER_FLAC_PRESET_ID`
   - `GOOGLE_TRANSCODING_FLAC_BUCKET`
   - `GOOGLE_APPLICATION_CREDENTIALS_JSON`
 
@@ -321,7 +317,7 @@ Audio.completeUploadAndAddToPoint(req, res, { audioId: 42, pointId: 7 }, callbac
 
 # Notes
 
-- This model is tightly coupled with AWS S3 and Elastic Transcoder, but can also use a custom encoder if configured.
+- This model is tightly coupled with AWS S3 and the "Your Priorities" encoder.
 - All methods that interact with the database or external services are asynchronous and use callbacks or Promises.
 - Soft-deletion is implemented via the `deleted` flag and default scope.
 - The model is designed for use with Sequelize ORM.

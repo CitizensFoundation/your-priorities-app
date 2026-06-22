@@ -635,7 +635,7 @@ Marks an image as deleted in the database.
 
 ## Configuration: AWS S3/MinIO Setup
 
-The file configures AWS SDK for S3 or MinIO, using environment variables:
+The file configures AWS SDK v3 for S3 or MinIO, using environment variables:
 
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_ACCESS_KEY_ID`
@@ -653,7 +653,7 @@ This configuration is used for image upload and storage.
 - [express](https://expressjs.com/)
 - [multer](https://github.com/expressjs/multer)
 - [multer-sharp-s3](https://github.com/venveo/multer-sharp-s3)
-- [aws-sdk](https://github.com/aws/aws-sdk-js)
+- [@aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3)
 - [crypto](https://nodejs.org/api/crypto.html)
 - [../models/index.cjs](../models/index.cjs)
 - [../authorization.cjs](../authorization.cjs)

@@ -1,7 +1,10 @@
-import AWS from "aws-sdk";
 import fs from "fs";
 import axios from "axios";
 import log from "../../../utils/loggerTs.js";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import s3Utils from "../../../utils/awsS3Client.cjs";
+
+const { createS3Client } = s3Utils;
 
 const normalizeEndpointHost = (endpoint?: string) => {
   if (!endpoint) {
@@ -67,27 +70,23 @@ export class S3Service {
   constructor(private cloudflareApiKey?: string, private cloudflareZoneId?: string) {}
 
   async uploadImageToS3(bucket: string, filePath: string, key: string) {
-    const s3 = new AWS.S3();
+    const s3 = createS3Client();
     const fileContent = fs.readFileSync(filePath);
 
     const params = {
       Bucket: bucket,
       Key: key,
       Body: fileContent,
-      ACL: "public-read",
+      ACL: "public-read" as const,
       ContentType: "image/png",
       ContentDisposition: "inline",
     };
 
-    return new Promise((resolve, reject) => {
-      s3.upload(params, (err: any, data: any) => {
-        if (err) {
-          reject(err);
-        }
-        fs.unlinkSync(filePath);
-        resolve(data);
-      });
-    });
+    try {
+      return await s3.send(new PutObjectCommand(params));
+    } finally {
+      fs.unlinkSync(filePath);
+    }
   }
 
   async deleteS3Url(imageUrl: string) {
@@ -97,7 +96,7 @@ export class S3Service {
       throw new Error("Could not parse bucket or key from URL");
     }
 
-    const s3 = new AWS.S3();
+    const s3 = createS3Client();
 
     const params = {
       Bucket: bucket,
@@ -106,56 +105,45 @@ export class S3Service {
 
     log.info(`Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
 
-    return new Promise((resolve, reject) => {
-      s3.deleteObject(params, (err: any, data: any) => {
-        if (err) {
-          log.error("Error deleting image from S3", {
-            imageUrl,
-            bucket,
-            key,
-            err,
-          });
-          reject(err);
-        } else {
-          log.info(`Deleted image from S3: ${imageUrl}`, data);
-          if (this.cloudflareApiKey && this.cloudflareZoneId) {
-            log.info("Purging Cloudflare cache for image:", imageUrl);
-            axios
-              .post(
-                `https://api.cloudflare.com/client/v4/zones/${this.cloudflareZoneId}/purge_cache`,
-                { files: [imageUrl] },
-                {
-                  headers: {
-                    Authorization: `Bearer ${this.cloudflareApiKey}`,
-                    "Content-Type": "application/json",
-                  },
-                }
-              )
-              .then((response) => {
-                log.info("Cloudflare cache purged:", response.data);
-                resolve(data);
-              })
-              .catch((error) => {
-                if (error.response) {
-                  log.error(
-                    "Error purging Cloudflare cache:",
-                    error.response.data
-                  );
-                  log.error("Status code:", error.response.status);
-                  log.error("Headers:", error.response.headers);
-                } else if (error.request) {
-                  log.error("No response received:", error.request);
-                } else {
-                  log.error("Error setting up request:", error.message);
-                }
-                resolve(data);
-              });
+    try {
+      const data = await s3.send(new DeleteObjectCommand(params));
+      log.info(`Deleted image from S3: ${imageUrl}`, data);
+      if (this.cloudflareApiKey && this.cloudflareZoneId) {
+        log.info("Purging Cloudflare cache for image:", imageUrl);
+        try {
+          const response = await axios.post(
+            `https://api.cloudflare.com/client/v4/zones/${this.cloudflareZoneId}/purge_cache`,
+            { files: [imageUrl] },
+            {
+              headers: {
+                Authorization: `Bearer ${this.cloudflareApiKey}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          log.info("Cloudflare cache purged:", response.data);
+        } catch (error: any) {
+          if (error.response) {
+            log.error("Error purging Cloudflare cache:", error.response.data);
+            log.error("Status code:", error.response.status);
+            log.error("Headers:", error.response.headers);
+          } else if (error.request) {
+            log.error("No response received:", error.request);
           } else {
-            resolve(data);
+            log.error("Error setting up request:", error.message);
           }
         }
+      }
+      return data;
+    } catch (err) {
+      log.error("Error deleting image from S3", {
+        imageUrl,
+        bucket,
+        key,
+        err,
       });
-    });
+      throw err;
+    }
   }
 
   parseImageUrl(imageUrl: string) {

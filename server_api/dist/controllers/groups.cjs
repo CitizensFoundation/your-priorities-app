@@ -11,7 +11,7 @@ var crypto = require("crypto");
 var seededShuffle = require("knuth-shuffle-seeded");
 var multer = require("multer");
 var s3multer = require("multer-s3");
-var aws = require("aws-sdk");
+const { createS3Client, getPresignedPutObjectUrl, } = require("../utils/awsS3Client.cjs");
 var getExportFileDataForGroup = require("../utils/export_utils.cjs").getExportFileDataForGroup;
 const exportGroupToDocx = require("../utils/docx_utils.cjs").exportGroupToDocx;
 const { v4: uuidv4 } = require("uuid");
@@ -41,11 +41,8 @@ const getTranslatedTextsForGroup = require("../services/utils/translation_helper
 const updateTranslationForGroup = require("../services/utils/translation_helpers.cjs").updateTranslationForGroup;
 const convertDocxSurveyToJson = require("../services/engine/analytics/manager.cjs").convertDocxSurveyToJson;
 const copyGroup = require("../utils/copy_utils.cjs").copyGroup;
-var s3 = new aws.S3({
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+var s3 = createS3Client({
     endpoint: process.env.S3_ENDPOINT || null,
-    acl: "public-read",
     region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : "us-east-1"),
 });
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
@@ -869,14 +866,11 @@ router.post("/:id/getPresignedAttachmentURL", auth.can("add to group"), function
     const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT ||
         process.env.S3_ENDPOINT ||
         "s3.amazonaws.com";
-    const s3 = new aws.S3({
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    const s3 = createS3Client({
         endpoint: accelEndPoint,
-        signatureVersion: "v4",
         useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT != null,
         region: process.env.S3_REGION ? process.env.S3_REGION : "eu-west-1",
-        s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false,
+        forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false,
     });
     const signedUrlExpireSeconds = 60 * 60;
     const bucketName = process.env.S3_ATTACHMENTS_BUCKET;
@@ -893,17 +887,14 @@ router.post("/:id/getPresignedAttachmentURL", auth.can("add to group"), function
         ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : "public-read",
         ContentType: contentType,
     };
-    s3.getSignedUrl("putObject", s3Params, (error, url) => {
-        if (error) {
-            log.error("Error getting presigned attachment url from AWS S3", {
-                error,
-            });
-            res.sendStatus(500);
-        }
-        else {
-            log.info("Presigned URL:", { url });
-            res.send({ presignedUrl: url });
-        }
+    getPresignedPutObjectUrl(s3, s3Params).then((url) => {
+        log.info("Presigned URL:", { url });
+        res.send({ presignedUrl: url });
+    }).catch((error) => {
+        log.error("Error getting presigned attachment url from AWS S3", {
+            error,
+        });
+        res.sendStatus(500);
     });
 });
 router.delete("/:groupId/:activityId/delete_activity", auth.can("edit group"), function (req, res) {
@@ -4150,12 +4141,8 @@ var upload = multer({
         dirname: "attachments",
         s3: s3,
         bucket: process.env.S3_BUCKET,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        endpoint: process.env.S3_ENDPOINT || null,
         acl: "public-read",
         contentType: s3multer.AUTO_CONTENT_TYPE,
-        region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : "us-east-1"),
         key: function (req, file, cb) {
             cb(null, Date.now() + "_" + file.originalname);
         },

@@ -526,7 +526,9 @@ These are not exported but are used internally:
 
 ## Dependencies
 
-- [aws-sdk](https://www.npmjs.com/package/aws-sdk): For S3 uploads.
+- [@aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3): For S3 uploads.
+- [@aws-sdk/lib-storage](https://www.npmjs.com/package/@aws-sdk/lib-storage): For managed uploads.
+- [@aws-sdk/s3-request-presigner](https://www.npmjs.com/package/@aws-sdk/s3-request-presigner): For signed report URLs.
 - [async](https://www.npmjs.com/package/async): For async control flow.
 - [lodash](https://www.npmjs.com/package/lodash): For data manipulation.
 - [moment](https://www.npmjs.com/package/moment): For date formatting.

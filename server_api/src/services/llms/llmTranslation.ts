@@ -2,7 +2,6 @@ import { jsonrepair } from "jsonrepair";
 import { OpenAI } from "openai";
 import { YpLanguages } from "../../utils/ypLanguages.js";
 import { parse } from "path";
-import { Translate } from "aws-sdk";
 import * as cheerio from "cheerio";
 import { Cheerio } from "cheerio";
 import log from "../../utils/loggerTs.js";

@@ -129,7 +129,9 @@ A promisified version of `stream.pipeline` for use with async/await.
 
 - [lodash](https://lodash.com/)
 - [moment](https://momentjs.com/)
-- [aws-sdk](https://www.npmjs.com/package/aws-sdk)
+- [@aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3)
+- [@aws-sdk/lib-storage](https://www.npmjs.com/package/@aws-sdk/lib-storage)
+- [@aws-sdk/s3-request-presigner](https://www.npmjs.com/package/@aws-sdk/s3-request-presigner)
 - [node-fetch](https://www.npmjs.com/package/node-fetch)
 - [fs](https://nodejs.org/api/fs.html)
 - [stream](https://nodejs.org/api/stream.html)

@@ -10,7 +10,6 @@ import {
   updateUploadJobStatus,
   uploadToS3,
 } from "./commonUtils.js";
-import { AnyLengthString } from "aws-sdk/clients/comprehendmedical.js";
 import log from "../../../utils/loggerTs.js";
 
 const dbModels: Models = models;

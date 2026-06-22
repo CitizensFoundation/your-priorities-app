@@ -1,6 +1,5 @@
 import _ from "lodash";
 import moment from "moment";
-import AWS from "aws-sdk";
 import fetch from "node-fetch";
 import fs from "fs";
 import stream from "stream";
@@ -8,6 +7,10 @@ import { promisify } from "util";
 import models from "../../../models/index.cjs";
 import ExcelJS from "exceljs";
 import log from "../../../utils/loggerTs.js";
+import { Upload } from "@aws-sdk/lib-storage";
+import s3Utils from "../../../utils/awsS3Client.cjs";
+
+const { createS3Client, getPresignedGetObjectUrl } = s3Utils;
 
 const dbModels: Models = models;
 const AcBackgroundJob = dbModels.AcBackgroundJob as AcBackgroundJobClass;
@@ -65,9 +68,7 @@ export const uploadToS3 = (
   data: ExcelJS.Buffer,
   done: (error: Error | null, url?: string) => void
 ): void => {
-  const s3 = new AWS.S3({
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  const s3 = createS3Client({
     endpoint: process.env.S3_ENDPOINT || "s3.amazonaws.com",
     region:
       process.env.S3_REGION ||
@@ -78,36 +79,35 @@ export const uploadToS3 = (
 
   const keyName = `/${exportType}/${userId}/${filename}`;
 
-  s3.upload(
-    {
+  const upload = new Upload({
+    client: s3,
+    params: {
       Bucket: process.env.S3_REPORTS_BUCKET!,
       Key: keyName,
-      Body: data,
+      Body: data as any,
     },
-    (error, data) => {
-      if (error) {
-        done(error);
-        return;
-      }
+  });
 
-      s3.getSignedUrl(
-        "getObject",
-        {
-          Bucket: process.env.S3_REPORTS_BUCKET!,
-          Key: keyName,
-          Expires: 60 * 60,
-        },
-        (error, url) => {
-          if (error) {
-            done(error);
-          } else {
-            done(null, url);
-          }
-        }
-      );
+  upload
+    .done()
+    .then(() =>
+      getPresignedGetObjectUrl(s3, {
+        Bucket: process.env.S3_REPORTS_BUCKET!,
+        Key: keyName,
+        Expires: 60 * 60,
+      })
+    )
+    .then((url: string) => {
+      done(null, url);
+    })
+    .catch((error: Error) => {
+      done(error);
+    });
+
+  upload.on("httpUploadProgress", (progress) => {
+    if (progress.loaded !== undefined && progress.total) {
+      const uploadProgress = Math.round((progress.loaded / progress.total) * 100);
+      updateUploadJobStatus(jobId, uploadProgress);
     }
-  ).on("httpUploadProgress", (progress) => {
-    const uploadProgress = Math.round((progress.loaded / progress.total) * 100);
-    updateUploadJobStatus(jobId, uploadProgress);
   });
 };

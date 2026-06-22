@@ -9,16 +9,7 @@ var toJson = require("../utils/to_json.cjs");
 const s3Storage = require("../utils/multerSharpS3Compat.cjs");
 const crypto = require("crypto");
 var queue = require("../services/workers/queue.cjs");
-
-const aws = require("aws-sdk");
-aws.config.update({
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  endpoint: process.env.S3_ENDPOINT || null,
-  s3ForcePathStyle: process.env.MINIO_ROOT_USER ? true : undefined,
-  signatureVersion: process.env.MINIO_ROOT_USER ? "v4" : undefined,
-  region: process.env.S3_REGION ? process.env.S3_REGION : "eu-west-1", // region of your bucket
-});
+const { createS3Client } = require("../utils/awsS3Client.cjs");
 
 var isAuthenticated = function (req, res, next) {
   // Check for regular authentication
@@ -283,7 +274,11 @@ router.post(
 
 router.post("/", isAuthenticated, async function (req, res) {
   try {
-    const s3 = new aws.S3();
+    const s3 = createS3Client({
+      endpoint: process.env.S3_ENDPOINT || null,
+      forcePathStyle: process.env.MINIO_ROOT_USER ? true : undefined,
+      region: process.env.S3_REGION,
+    });
 
     // 1) Check if the file name ends with ".gif"
     const isGifFilename = (filename) => {

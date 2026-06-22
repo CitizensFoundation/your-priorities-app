@@ -1,35 +1,33 @@
 "use strict";
 const log = require('../utils/logger.cjs');
-const aws = require('aws-sdk');
 const _ = require('lodash');
 const queue = require('../services/workers/queue.cjs');
+const {
+  createS3Client,
+  getPresignedPutObjectUrl,
+} = require("../utils/awsS3Client.cjs");
+const { Queue } = require('bullmq');
 
-let bullAudioQueue;
-
-if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
-  const { Queue } = require('bullmq');
-
-  let redisUrl = process.env.REDIS_WORKER_URL ?? process.env.REDIS_URL ?? "redis://localhost:6379";
-  if (redisUrl.startsWith("redis://h:")) {
-    redisUrl = redisUrl.replace("redis://h:","redis://:");
-  }
-
-  const parsedRedisUrl = new URL(redisUrl);
-  const redisConnection = {
-    host: parsedRedisUrl.hostname,
-    port: parseInt(parsedRedisUrl.port) || 6379,
-    password: parsedRedisUrl.password || undefined,
-    username: parsedRedisUrl.username || undefined,
-  };
-
-  if (redisUrl.startsWith("rediss://")) {
-    redisConnection.tls = {
-      rejectUnauthorized: false,
-    };
-  }
-
-  bullAudioQueue = new Queue('AudioEncoding', { connection: redisConnection });
+let redisUrl = process.env.REDIS_WORKER_URL ?? process.env.REDIS_URL ?? "redis://localhost:6379";
+if (redisUrl.startsWith("redis://h:")) {
+  redisUrl = redisUrl.replace("redis://h:","redis://:");
 }
+
+const parsedRedisUrl = new URL(redisUrl);
+const redisConnection = {
+  host: parsedRedisUrl.hostname,
+  port: parseInt(parsedRedisUrl.port) || 6379,
+  password: parsedRedisUrl.password || undefined,
+  username: parsedRedisUrl.username || undefined,
+};
+
+if (redisUrl.startsWith("rediss://")) {
+  redisConnection.tls = {
+    rejectUnauthorized: false,
+  };
+}
+
+const bullAudioQueue = new Queue('AudioEncoding', { connection: redisConnection });
 
 module.exports = (sequelize, DataTypes) => {
   const Audio = sequelize.define("Audio", {
@@ -189,33 +187,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.getTranscodingJobStatus = (audio, req, res ) => {
-    if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
-      Audio.getYrpriEncoderTranscodingJobStatus(audio, req, res);
-    } else {
-      const params = {
-        Id: req.body.jobId
-      };
-      const eltr = new aws.ElasticTranscoder({
-        apiVersion: '2012–09–25',
-        region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
-      });
-      eltr.readJob(params, (error, data) => {
-        if (error) {
-          log.error("Could not get status of transcoding job", { error });
-          res.sendStatus(500);
-        } else {
-          const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
-          if (jobStatus.status==="Complete") {
-            res.send(jobStatus);
-          } else if (jobStatus.status==="Error") {
-            log.error("Could not transcode audio image and audio", { jobStatus: jobStatus, data: data });
-            res.sendStatus(500);
-          } else {
-            res.send(jobStatus);
-          }
-        }
-      });
-    }
+    Audio.getYrpriEncoderTranscodingJobStatus(audio, req, res);
   };
 
   Audio.startTranscoding = (audio, options, req, res) => {
@@ -309,45 +281,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.startTranscodingJob = (audio, callback) => {
-    if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
-      Audio.startYrpriEncoderTranscodingJob(audio, callback);
-    } else {
-      const eltr = new aws.ElasticTranscoder({
-        apiVersion: '2012–09–25',
-        region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
-      });
-      const fileKey = audio.meta.fileKey;
-      const pipelineId = process.env.AWS_TRANSCODER_AUDIO_PIPELINE_ID;
-      const params = {
-        PipelineId: pipelineId,
-        Input: {
-          Key: fileKey,
-          Container: 'auto',
-          TimeSpan: {
-            Duration: audio.meta.maxDuration+'.000'
-          }
-        },
-        Outputs: [
-          {
-            Key:fileKey,
-            PresetId: process.env.AWS_TRANSCODER_AUDIO_PRESET_ID,
-          },
-          {
-            Key: fileKey.slice(0, fileKey.length-4)+'.flac',
-            PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
-          }
-        ]
-      };
-      log.info('Starting AWS transcoding Audio Job');
-      eltr.createJob(params, (error, data) => {
-        if (error) {
-          log.error("Error creating AWS Audio transcoding job", { error });
-          callback(error);
-        } else {
-          callback(null, data)
-        }
-      });
-    }
+    Audio.startYrpriEncoderTranscodingJob(audio, callback);
   };
 
   Audio.prototype.createFormats = function (audio) {
@@ -358,13 +292,11 @@ module.exports = (sequelize, DataTypes) => {
   Audio.prototype.getPreSignedUploadUrl = function (options, callback) {
     const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
     const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
-    const s3 = new aws.S3({
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    const s3 = createS3Client({
       endpoint: accelEndPoint,
       useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
       region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
-      s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
+      forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
     });
 
     const signedUrlExpireSeconds = 60 * 60;
@@ -382,23 +314,20 @@ module.exports = (sequelize, DataTypes) => {
       ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : 'bucket-owner-full-control',
       ContentType: contentType
     };
-    s3.getSignedUrl('putObject', s3Params, (error, url) => {
-      if (error) {
+    getPresignedPutObjectUrl(s3, s3Params).then((url) => {
+      let meta = { bucketName, publicBucket, endPoint, accelEndPoint,
+        maxDuration: options.maxDuration, fileKey, contentType, uploadUrl: url };
+      if (this.meta)
+        meta = _.merge(this.meta, meta);
+      this.set('meta', meta);
+      log.info('Presigned URL:', { url, meta });
+      log.info('Saving audio metadata');
+      this.save().then(() => {
+        callback(null, url);
+      }).catch((error) => { callback(error) });
+    }).catch((error) => {
         log.error('Error getting presigned url from AWS S3', { error });
         callback(error);
-      }
-      else {
-        let meta = { bucketName, publicBucket, endPoint, accelEndPoint,
-          maxDuration: options.maxDuration, fileKey, contentType, uploadUrl: url };
-        if (this.meta)
-          meta = _.merge(this.meta, meta);
-        this.set('meta', meta);
-        log.info('Presigned URL:', { url, meta });
-        log.info('Saving audio metadata');
-        this.save().then(() => {
-          callback(null, url);
-        }).catch((error) => { callback(error) });
-      }
     });
   };
 
