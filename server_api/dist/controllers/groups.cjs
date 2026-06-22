@@ -11,7 +11,7 @@ var crypto = require("crypto");
 var seededShuffle = require("knuth-shuffle-seeded");
 var multer = require("multer");
 var s3multer = require("multer-s3");
-const { createS3Client, getPresignedPutObjectUrl, } = require("../utils/awsS3Client.cjs");
+const { createS3Client, getPresignedPutObjectUrlForBucket, } = require("../utils/awsS3Client.cjs");
 var getExportFileDataForGroup = require("../utils/export_utils.cjs").getExportFileDataForGroup;
 const exportGroupToDocx = require("../utils/docx_utils.cjs").exportGroupToDocx;
 const { v4: uuidv4 } = require("uuid");
@@ -866,12 +866,6 @@ router.post("/:id/getPresignedAttachmentURL", auth.can("add to group"), function
     const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT ||
         process.env.S3_ENDPOINT ||
         "s3.amazonaws.com";
-    const s3 = createS3Client({
-        endpoint: accelEndPoint,
-        useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT != null,
-        region: process.env.S3_REGION ? process.env.S3_REGION : "eu-west-1",
-        forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false,
-    });
     const signedUrlExpireSeconds = 60 * 60;
     const bucketName = process.env.S3_ATTACHMENTS_BUCKET;
     //  const contentType = req.body.contentType ? req.body.contentType : 'application/octet-stream';
@@ -887,7 +881,12 @@ router.post("/:id/getPresignedAttachmentURL", auth.can("add to group"), function
         ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : "public-read",
         ContentType: contentType,
     };
-    getPresignedPutObjectUrl(s3, s3Params).then((url) => {
+    getPresignedPutObjectUrlForBucket(s3Params, {
+        endpoint: accelEndPoint,
+        useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT != null,
+        region: process.env.S3_REGION,
+        forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false,
+    }).then((url) => {
         log.info("Presigned URL:", { url });
         res.send({ presignedUrl: url });
     }).catch((error) => {

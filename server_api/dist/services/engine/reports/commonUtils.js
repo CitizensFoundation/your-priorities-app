@@ -6,7 +6,7 @@ import models from "../../../models/index.cjs";
 import log from "../../../utils/loggerTs.js";
 import { Upload } from "@aws-sdk/lib-storage";
 import s3Utils from "../../../utils/awsS3Client.cjs";
-const { createS3Client, getPresignedGetObjectUrl } = s3Utils;
+const { createS3ClientForBucket, getPresignedGetObjectUrl } = s3Utils;
 const dbModels = models;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 export const updateUploadJobStatus = async (jobId, uploadProgress, data = undefined) => {
@@ -40,39 +40,36 @@ export const downloadImage = async (uri, filename) => {
     await pipeline(response.body, fs.createWriteStream(filename));
 };
 export const uploadToS3 = (jobId, userId, filename, exportType, data, done) => {
-    const s3 = createS3Client({
-        endpoint: process.env.S3_ENDPOINT || "s3.amazonaws.com",
-        region: process.env.S3_REGION ||
-            (process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT
-                ? null
-                : "us-east-1"),
-    });
     const keyName = `/${exportType}/${userId}/${filename}`;
-    const upload = new Upload({
-        client: s3,
-        params: {
+    createS3ClientForBucket(process.env.S3_REPORTS_BUCKET, {
+        endpoint: process.env.S3_ENDPOINT || "s3.amazonaws.com",
+        region: process.env.S3_REGION,
+    })
+        .then((s3) => {
+        const upload = new Upload({
+            client: s3,
+            params: {
+                Bucket: process.env.S3_REPORTS_BUCKET,
+                Key: keyName,
+                Body: data,
+            },
+        });
+        upload.on("httpUploadProgress", (progress) => {
+            if (progress.loaded !== undefined && progress.total) {
+                const uploadProgress = Math.round((progress.loaded / progress.total) * 100);
+                updateUploadJobStatus(jobId, uploadProgress);
+            }
+        });
+        return upload.done().then(() => getPresignedGetObjectUrl(s3, {
             Bucket: process.env.S3_REPORTS_BUCKET,
             Key: keyName,
-            Body: data,
-        },
-    });
-    upload
-        .done()
-        .then(() => getPresignedGetObjectUrl(s3, {
-        Bucket: process.env.S3_REPORTS_BUCKET,
-        Key: keyName,
-        Expires: 60 * 60,
-    }))
+            Expires: 60 * 60,
+        }));
+    })
         .then((url) => {
         done(null, url);
     })
         .catch((error) => {
         done(error);
-    });
-    upload.on("httpUploadProgress", (progress) => {
-        if (progress.loaded !== undefined && progress.total) {
-            const uploadProgress = Math.round((progress.loaded / progress.total) * 100);
-            updateUploadJobStatus(jobId, uploadProgress);
-        }
     });
 };

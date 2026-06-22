@@ -1,5 +1,5 @@
 import express from 'express';
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
     ypDomain?: any;
     ypCommunity?: any;
     sso?: any;

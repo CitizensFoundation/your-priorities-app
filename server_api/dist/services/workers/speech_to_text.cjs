@@ -7,8 +7,13 @@ const i18n = require('../utils/i18n.cjs');
 const toJson = require('../utils/to_json.cjs');
 const _ = require('lodash');
 const getAnonymousUser = require('../utils/get_anonymous_system_user.cjs');
-var downloadFile = require('download-file');
+const axios = require("axios");
+const crypto = require("crypto");
 const fs = require('fs');
+const path = require("path");
+const { pipeline } = require("stream/promises");
+const { GetObjectCommand } = require("@aws-sdk/client-s3");
+const { createS3ClientForBucket } = require("../../utils/awsS3Client.cjs");
 let speech, Storage;
 let GOOGLE_APPLICATION_CREDENTIALS;
 if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON && process.env.GOOGLE_TRANSCODING_FLAC_BUCKET) {
@@ -29,6 +34,116 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
  * @constructor
  */
 function VoiceToTextWorker() { }
+const maxTranscriptFlacDownloadRetries = 6;
+const getTranscriptRetryDelayMs = (retryCount) => Math.min((retryCount + 1) * 10000, 60000);
+const retryTranscriptJob = (workPackage, retryCount, delayMs) => {
+    queue.add("process-voice-to-text", {
+        ...workPackage,
+        transcriptRetryCount: retryCount + 1,
+    }, "medium", { delay: delayMs });
+};
+const replaceMediaExtensionWithFlac = (value) => {
+    if (!value)
+        return value;
+    return value.replace(/\.[^/.?]+(?=\?|$)/, ".flac");
+};
+const getFlacSourceFromMedia = (media) => {
+    const mediaUrl = media.formats && media.formats[0];
+    const flacUrl = replaceMediaExtensionWithFlac(mediaUrl);
+    const fileKey = media.meta ? media.meta.fileKey : null;
+    const publicBucket = media.meta ? media.meta.publicBucket : null;
+    if (fileKey && publicBucket) {
+        return {
+            bucket: publicBucket,
+            key: replaceMediaExtensionWithFlac(fileKey),
+            url: flacUrl,
+        };
+    }
+    return {
+        url: flacUrl,
+    };
+};
+const getTempFlacFile = (sourceFileName) => {
+    const fileName = sourceFileName || `speech-${Date.now()}-${crypto.randomBytes(8).toString("hex")}.flac`;
+    const fileNameWithPath = path.join("/tmp", `${Date.now()}-${crypto.randomBytes(8).toString("hex")}-${fileName}`);
+    return {
+        fileName,
+        fileNameWithPath,
+    };
+};
+const getFlacSourceLogData = (flacSource) => ({
+    flacUrl: flacSource.url,
+    bucket: flacSource.bucket,
+    key: flacSource.key,
+});
+const downloadFlacFileFromHttp = async (flacSource) => {
+    const parsedUrl = new URL(flacSource.url);
+    const sourceFileName = path.basename(parsedUrl.pathname);
+    const { fileName, fileNameWithPath } = getTempFlacFile(sourceFileName);
+    try {
+        const response = await axios.get(flacSource.url, {
+            maxRedirects: 5,
+            responseType: "stream",
+            timeout: 30000,
+            validateStatus: () => true,
+        });
+        if (response.status < 200 || response.status >= 300) {
+            response.data.destroy();
+            throw new Error(`HTTP ${response.status}`);
+        }
+        await pipeline(response.data, fs.createWriteStream(fileNameWithPath));
+        const stats = fs.statSync(fileNameWithPath);
+        if (stats.size === 0) {
+            throw new Error("Downloaded FLAC file was empty");
+        }
+        return {
+            fileName,
+            fileNameWithPath,
+            size: stats.size,
+        };
+    }
+    catch (error) {
+        fs.unlink(fileNameWithPath, () => { });
+        throw error;
+    }
+};
+const downloadFlacFileFromS3 = async (flacSource) => {
+    const sourceFileName = path.basename(flacSource.key);
+    const { fileName, fileNameWithPath } = getTempFlacFile(sourceFileName);
+    try {
+        const client = await createS3ClientForBucket(flacSource.bucket);
+        const response = await client.send(new GetObjectCommand({
+            Bucket: flacSource.bucket,
+            Key: flacSource.key,
+        }));
+        if (!response.Body) {
+            throw new Error("S3 FLAC object had no body");
+        }
+        await pipeline(response.Body, fs.createWriteStream(fileNameWithPath));
+        const stats = fs.statSync(fileNameWithPath);
+        if (stats.size === 0) {
+            throw new Error("Downloaded FLAC file was empty");
+        }
+        return {
+            fileName,
+            fileNameWithPath,
+            size: stats.size,
+        };
+    }
+    catch (error) {
+        fs.unlink(fileNameWithPath, () => { });
+        throw error;
+    }
+};
+const downloadFlacFile = async (flacSource) => {
+    if (typeof flacSource === "string") {
+        return downloadFlacFileFromHttp({ url: flacSource });
+    }
+    if (flacSource.bucket && flacSource.key) {
+        return downloadFlacFileFromS3(flacSource);
+    }
+    return downloadFlacFileFromHttp(flacSource);
+};
 const supportedGoogleLanguges = [
     ['af-ZA', true, false],
     ['am-ET', true, false],
@@ -290,74 +405,112 @@ const createTranscriptForFlac = (flackUrl, workPackage, callback) => {
         callback("Can't find languages");
     }
 };
-const uploadFlacToGoogleCloud = (flacUrl, callback) => {
-    const splitUrl = flacUrl.split('/');
-    const fileName = splitUrl[splitUrl.length - 1];
-    const fileNameWithPath = '/tmp/' + fileName;
-    const fileUri = 'gs://' + process.env.GOOGLE_TRANSCODING_FLAC_BUCKET + '/' + fileName;
-    downloadFile(flacUrl, { filename: fileName, directory: '/tmp/' }, error => {
-        if (error) {
-            fs.unlink(fileNameWithPath, unlinkError => {
-                callback('Could not download file');
+const uploadFlacToGoogleCloud = (flacSource, callback) => {
+    if (!Storage || !process.env.GOOGLE_TRANSCODING_FLAC_BUCKET) {
+        callback("Speech-to-text is not configured");
+        return;
+    }
+    downloadFlacFile(flacSource).then(({ fileName, fileNameWithPath, size }) => {
+        const fileUri = 'gs://' + process.env.GOOGLE_TRANSCODING_FLAC_BUCKET + '/' + fileName;
+        const storage = new Storage({
+            credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
+            projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID ? process.env.GOOGLE_TRANSLATE_PROJECT_ID : undefined,
+        });
+        const bucket = storage.bucket(process.env.GOOGLE_TRANSCODING_FLAC_BUCKET);
+        if (bucket) {
+            bucket.upload(fileNameWithPath, { destination: fileName }, (error, file, apiResponse) => {
+                if (error) {
+                    log.error("Couldnt upload to Google Cloud bucket", { error, apiResponse });
+                    fs.unlink(fileNameWithPath, unlinkError => {
+                        callback(error);
+                    });
+                }
+                else {
+                    fs.unlink(fileNameWithPath, error => {
+                        if (error) {
+                            callback(error);
+                        }
+                        else {
+                            log.info("uploadFlacToGoogleCloud done", {
+                                ...getFlacSourceLogData(flacSource),
+                                size,
+                            });
+                            callback(null, fileUri);
+                        }
+                    });
+                }
             });
         }
         else {
-            const storage = new Storage({
-                credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
-                projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID ? process.env.GOOGLE_TRANSLATE_PROJECT_ID : undefined,
+            fs.unlink(fileNameWithPath, unlinkError => {
+                callback('Could not find GCloud bucket');
             });
-            const bucket = storage.bucket(process.env.GOOGLE_TRANSCODING_FLAC_BUCKET);
-            if (bucket) {
-                bucket.upload(fileNameWithPath, (error, file, apiResponse) => {
-                    if (error) {
-                        log.error("Couldnt upload to s3 bucket", { error, apiResponse });
-                        fs.unlink(fileNameWithPath, unlinkError => {
-                            callback(error);
-                        });
-                    }
-                    else {
-                        fs.unlink(fileNameWithPath, error => {
-                            if (error) {
-                                callback(error);
-                            }
-                            else {
-                                log.info("uploadFlacToGoogleCloud done", { flacUrl });
-                                callback(null, fileUri);
-                            }
-                        });
-                    }
-                });
-            }
-            else {
-                fs.unlink(fileNameWithPath, unlinkError => {
-                    callback('Could not find GCloud bucket');
-                });
-            }
         }
+    }).catch((error) => {
+        log.warn("Could not download FLAC for transcript", {
+            error: error.message || error,
+            ...getFlacSourceLogData(flacSource),
+        });
+        callback('Could not download file');
     });
 };
 const createTranscriptForVideo = (workPackage, callback) => {
-    log.info("In createTranscriptForVideo");
+    log.info("In createTranscriptForVideo", {
+        videoId: workPackage.videoId,
+        transcriptRetryCount: workPackage.transcriptRetryCount || 0,
+    });
     models.Video.findOne({
-        where: workPackage.videoId
+        where: {
+            id: workPackage.videoId,
+        }
     }).then((video) => {
         if (video) {
             if (!video.meta.transcript)
                 video.set('meta.transcript', {});
+            video.set('meta.transcript.inProgress', true);
             video.set('meta.transcript.inProgressDate', new Date());
+            video.changed("meta", true);
             video.save().then(() => {
-                const videoUrl = video.formats[0];
-                const flacUrl = videoUrl.slice(0, videoUrl.length - 4) + '.flac';
-                uploadFlacToGoogleCloud(flacUrl, (error, gsUri) => {
+                const flacSource = getFlacSourceFromMedia(video);
+                uploadFlacToGoogleCloud(flacSource, (error, gsUri) => {
                     if (error) {
-                        log.warn('createTranscriptForVideo', { warn: 'Found no audio file' });
-                        video.set('meta.transcript.error', 'Found no audio file');
-                        video.save().then(() => {
-                            log.info("createTranscriptForVideo: Video with transcript saved with error", { videoId: workPackage.videoId, error });
-                            callback();
-                        }).catch((error) => {
-                            callback(error);
-                        });
+                        const retryCount = workPackage.transcriptRetryCount || 0;
+                        if (error === "Could not download file" &&
+                            retryCount < maxTranscriptFlacDownloadRetries) {
+                            const delayMs = getTranscriptRetryDelayMs(retryCount);
+                            log.warn("createTranscriptForVideo: FLAC not ready, retrying", {
+                                videoId: workPackage.videoId,
+                                ...getFlacSourceLogData(flacSource),
+                                retryCount,
+                                delayMs,
+                            });
+                            video.set('meta.transcript.inProgress', true);
+                            video.set('meta.transcript.error', null);
+                            video.changed("meta", true);
+                            video.save().then(() => {
+                                retryTranscriptJob(workPackage, retryCount, delayMs);
+                                callback();
+                            }).catch((saveError) => {
+                                callback(saveError);
+                            });
+                        }
+                        else {
+                            const transcriptError = error === "Could not download file" ? "Found no audio file" : error;
+                            log.warn('createTranscriptForVideo', {
+                                warn: 'Could not create transcript',
+                                error: transcriptError,
+                                videoId: workPackage.videoId,
+                            });
+                            video.set('meta.transcript.inProgress', false);
+                            video.set('meta.transcript.error', transcriptError);
+                            video.changed("meta", true);
+                            video.save().then(() => {
+                                log.info("createTranscriptForVideo: Video with transcript saved with error", { videoId: workPackage.videoId, error: transcriptError });
+                                callback();
+                            }).catch((error) => {
+                                callback(error);
+                            });
+                        }
                     }
                     else {
                         log.info("createTranscriptForVideo: have uploaded to Google Cloud");
@@ -365,22 +518,27 @@ const createTranscriptForVideo = (workPackage, callback) => {
                             log.info("createTranscriptForVideo: got transcript", { response });
                             video.set('meta.transcript.googleSpeechResponse', response);
                             if (error) {
+                                video.set('meta.transcript.inProgress', false);
                                 video.set('meta.transcript.error', error);
                                 log.error('createTranscriptForVideo', { error });
                             }
                             else {
+                                video.set('meta.transcript.inProgress', false);
                                 if (response.results && response.results && response.results.length > 0 &&
                                     response.results[0].alternatives && response.results[0].alternatives.length > 0) {
                                     const transcription = response.results
                                         .map(result => result.alternatives[0].transcript)
                                         .join('\n');
                                     video.set('meta.transcript.text', transcription);
+                                    video.set('meta.transcript.error', null);
                                 }
                                 else {
+                                    video.set('meta.transcript.inProgress', false);
                                     video.set('meta.transcript.error', 'Found no text');
                                     log.error('createTranscriptForVideo', { error: 'Found no text' });
                                 }
                             }
+                            video.changed("meta", true);
                             video.save().then(() => {
                                 log.info("createTranscriptForVideo: Video with transcript saved", { videoId: workPackage.videoId, error });
                                 callback();
@@ -402,9 +560,14 @@ const createTranscriptForVideo = (workPackage, callback) => {
     });
 };
 const createTranscriptForAudio = (workPackage, callback) => {
-    log.info("In createTranscriptForAudio");
+    log.info("In createTranscriptForAudio", {
+        audioId: workPackage.audioId,
+        transcriptRetryCount: workPackage.transcriptRetryCount || 0,
+    });
     models.Audio.findOne({
-        where: workPackage.audioId,
+        where: {
+            id: workPackage.audioId,
+        },
         include: [
             {
                 model: models.Point,
@@ -421,13 +584,44 @@ const createTranscriptForAudio = (workPackage, callback) => {
         if (audio) {
             if (!audio.meta.transcript)
                 audio.set('meta.transcript', {});
+            audio.set('meta.transcript.inProgress', true);
             audio.set('meta.transcript.inProgressDate', new Date());
+            audio.changed("meta", true);
             audio.save().then(() => {
-                const audioUrl = audio.formats[0];
-                const flacUrl = audioUrl.slice(0, audioUrl.length - 4) + '.flac';
-                uploadFlacToGoogleCloud(flacUrl, (error, gsUri) => {
+                const flacSource = getFlacSourceFromMedia(audio);
+                uploadFlacToGoogleCloud(flacSource, (error, gsUri) => {
                     if (error) {
-                        callback(error);
+                        const retryCount = workPackage.transcriptRetryCount || 0;
+                        if (error === "Could not download file" &&
+                            retryCount < maxTranscriptFlacDownloadRetries) {
+                            const delayMs = getTranscriptRetryDelayMs(retryCount);
+                            log.warn("createTranscriptForAudio: FLAC not ready, retrying", {
+                                audioId: workPackage.audioId,
+                                ...getFlacSourceLogData(flacSource),
+                                retryCount,
+                                delayMs,
+                            });
+                            audio.set('meta.transcript.inProgress', true);
+                            audio.set('meta.transcript.error', null);
+                            audio.changed("meta", true);
+                            audio.save().then(() => {
+                                retryTranscriptJob(workPackage, retryCount, delayMs);
+                                callback();
+                            }).catch((saveError) => {
+                                callback(saveError);
+                            });
+                        }
+                        else {
+                            const transcriptError = error === "Could not download file" ? "Found no audio file" : error;
+                            audio.set('meta.transcript.inProgress', false);
+                            audio.set('meta.transcript.error', transcriptError);
+                            audio.changed("meta", true);
+                            audio.save().then(() => {
+                                callback();
+                            }).catch((saveError) => {
+                                callback(saveError);
+                            });
+                        }
                     }
                     else {
                         log.info("createTranscriptForAudio: have uploaded to Google Cloud");
@@ -435,22 +629,27 @@ const createTranscriptForAudio = (workPackage, callback) => {
                             log.info("createTranscriptForAudio: got transcript", { response });
                             audio.set('meta.transcript.googleSpeechResponse', response);
                             if (error) {
+                                audio.set('meta.transcript.inProgress', false);
                                 audio.set('meta.transcript.error', error);
                                 log.error("createTranscriptForAudio", { error });
                             }
                             else {
+                                audio.set('meta.transcript.inProgress', false);
                                 if (response.results && response.results && response.results.length > 0 &&
                                     response.results[0].alternatives && response.results[0].alternatives.length > 0) {
                                     const transcription = response.results
                                         .map(result => result.alternatives[0].transcript)
                                         .join('\n');
                                     audio.set('meta.transcript.text', transcription);
+                                    audio.set('meta.transcript.error', null);
                                 }
                                 else {
+                                    audio.set('meta.transcript.inProgress', false);
                                     audio.set('meta.transcript.error', 'Found no text');
                                     log.error("createTranscriptForAudio", { error: 'Found no text' });
                                 }
                             }
+                            audio.changed("meta", true);
                             audio.save().then(() => {
                                 log.info("createTranscriptForAudio: Audio with transcript saved", { audioId: workPackage.audioId, error });
                                 callback();

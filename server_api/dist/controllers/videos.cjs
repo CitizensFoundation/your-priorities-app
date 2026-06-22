@@ -9,10 +9,15 @@ var log = require("../utils/logger.cjs");
 var toJson = require("../utils/to_json.cjs");
 var queue = require("../services/workers/queue.cjs");
 const _ = require("lodash");
+const { getSpeechToTextSupportConfig, hasSpeechToTextSupport, } = require("../utils/speechToTextSupport.cjs");
 router.get("/hasVideoUploadSupport", (req, res) => {
+    const speechToTextConfig = getSpeechToTextSupportConfig();
+    log.info("hasVideoUploadSupport", {
+        hasTranscriptSupport: hasSpeechToTextSupport(),
+        speechToTextConfig,
+    });
     res.send({
-        hasTranscriptSupport: process.env.GOOGLE_TRANSCODING_FLAC_BUCKET != null &&
-            process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON != null,
+        hasTranscriptSupport: hasSpeechToTextSupport(),
         hasVideoUploadSupport: process.env.S3_VIDEO_UPLOAD_BUCKET != null &&
             process.env.S3_VIDEO_PUBLIC_BUCKET != null &&
             process.env.S3_VIDEO_THUMBNAIL_BUCKET != null,

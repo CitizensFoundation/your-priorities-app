@@ -190,8 +190,12 @@ test("post fraud detection counts post rows by id", (t) => {
         "127.0.0.1:fingerprint": postItems,
     };
     const engine = new FraudGetPosts({ collectionType: "posts" });
-    assert.deepEqual(engine.getTopItems(groupedItems, "byIpFingerprint"), []);
-    assert.deepEqual(engine.getTopItems(groupedItems, "byIpAddress"), []);
+    const byIpFingerprint = engine.getTopItems(groupedItems, "byIpFingerprint");
+    const byIpAddress = engine.getTopItems(groupedItems, "byIpAddress");
+    assert.equal(byIpFingerprint.length, 1);
+    assert.equal(byIpFingerprint[0].count, 20);
+    assert.equal(byIpAddress.length, 1);
+    assert.equal(byIpAddress[0].count, 20);
 });
 test("fraud scanner notifier is safe to import", (t) => {
     const originalExit = process.exit;

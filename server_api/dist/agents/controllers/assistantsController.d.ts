@@ -1,7 +1,7 @@
 import express from "express";
 import WebSocket from "ws";
 import { YpAgentAssistant } from "../assistants/agentAssistant.js";
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
     ypDomain?: any;
     ypCommunity?: any;
     sso?: any;

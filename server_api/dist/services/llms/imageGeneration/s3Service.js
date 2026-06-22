@@ -3,7 +3,7 @@ import axios from "axios";
 import log from "../../../utils/loggerTs.js";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import s3Utils from "../../../utils/awsS3Client.cjs";
-const { createS3Client } = s3Utils;
+const { createS3ClientForBucket } = s3Utils;
 const normalizeEndpointHost = (endpoint) => {
     if (!endpoint) {
         return null;
@@ -53,7 +53,7 @@ export class S3Service {
         this.cloudflareZoneId = cloudflareZoneId;
     }
     async uploadImageToS3(bucket, filePath, key) {
-        const s3 = createS3Client();
+        const s3 = await createS3ClientForBucket(bucket);
         const fileContent = fs.readFileSync(filePath);
         const params = {
             Bucket: bucket,
@@ -75,7 +75,7 @@ export class S3Service {
         if (!bucket || !key) {
             throw new Error("Could not parse bucket or key from URL");
         }
-        const s3 = createS3Client();
+        const s3 = await createS3ClientForBucket(bucket);
         const params = {
             Bucket: bucket,
             Key: key,

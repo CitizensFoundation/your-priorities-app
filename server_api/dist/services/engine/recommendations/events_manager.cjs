@@ -8,7 +8,12 @@ let airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
     airbrake = require('../../utils/airbrake.cjs');
 }
+const arePostActionEventsEnabled = () => process.env.AC_ANALYTICS_POST_ACTIONS_ENABLED === "true";
 const createAction = (userAgent, ipAddress, postId, userId, date, action, callback) => {
+    if (!arePostActionEventsEnabled()) {
+        callback();
+        return;
+    }
     var properties = {};
     const esId = `${postId}-${userId}-${action}`;
     properties = _.merge(properties, {
@@ -32,6 +37,10 @@ const createAction = (userAgent, ipAddress, postId, userId, date, action, callba
     });
 };
 const createManyActions = (posts, callback) => {
+    if (!arePostActionEventsEnabled()) {
+        callback();
+        return;
+    }
     const options = {
         url: process.env["AC_ANALYTICS_BASE_URL"] + "addManyPostActions/" + process.env.AC_ANALYTICS_CLUSTER_ID,
         headers: {
@@ -80,7 +89,10 @@ const createEndorsementTypeAction = (model, activity, itemId, type, done) => {
     });
 };
 const generateRecommendationEvent = (activity, callback) => {
-    if (process.env["AC_ANALYTICS_BASE_URL"] && activity) {
+    if (!arePostActionEventsEnabled()) {
+        callback();
+    }
+    else if (process.env["AC_ANALYTICS_BASE_URL"] && activity) {
         log.info('Events Manager generateRecommendationEvent', { type: activity.type, userId: activity.user_id });
         switch (activity.type) {
             case "activity.post.endorsement.new":

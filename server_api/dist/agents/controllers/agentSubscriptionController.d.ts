@@ -1,6 +1,6 @@
 import express from "express";
 import WebSocket from "ws";
-interface YpRequest extends express.Request {
+interface YpRequest extends express.Request<Record<string, string>> {
     ypDomain?: any;
     ypCommunity?: any;
     sso?: any;
