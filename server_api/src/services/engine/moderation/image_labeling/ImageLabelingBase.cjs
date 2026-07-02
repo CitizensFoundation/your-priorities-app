@@ -151,14 +151,6 @@ class ImageLabelingBase {
       await this.collection.save();
       await this.evaluteImageReviews(imageReviews);
       return { imageLabels, imageReviews };
-    } catch (error) {
-      log.error('Vision API annotateImage failed', {
-        error,
-        imageUrl,
-        mediaId,
-        mediaType,
-      });
-      return null;
     } finally {
       if (downloadedFile) {
         fs.unlink(downloadedFile.fileNameWithPath, unlinkErr => {

@@ -1455,6 +1455,7 @@ router.post(
       endpoint: accelEndPoint,
       useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT != null,
       region: process.env.S3_REGION,
+      defaultRegion: "eu-west-1",
       forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false,
     }).then((url) => {
       log.info("Presigned URL:", { url });

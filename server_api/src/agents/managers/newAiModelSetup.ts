@@ -171,6 +171,41 @@ export class NewAiModelSetup {
       anthropicOpus46.changed("configuration", true);
       await anthropicOpus46.save();
     }
+
+    const anthropicFable5 = await PsAiModel.findOne({
+      where: { name: "Anthropic Fable 5" },
+    });
+    const anthropicFable5Config: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "anthropic",
+      prices: {
+        costInTokensPerMillion: 10,
+        costOutTokensPerMillion: 50,
+        costInCachedContextTokensPerMillion: 1,
+        currency: "USD",
+      },
+      maxTokensOut: 128000,
+      maxContextTokens: 1000000,
+      defaultTemperature: 0.7,
+      model: "claude-fable-5",
+      active: true,
+    };
+
+    if (!anthropicFable5) {
+      const createdModel = await PsAiModel.create({
+        name: "Anthropic Fable 5",
+        organization_id: 1,
+        user_id: userId,
+        configuration: anthropicFable5Config,
+      });
+      log.info("Created Anthropic model:", createdModel);
+    } else {
+      log.debug("Anthropic model already exists: Anthropic Fable 5");
+      anthropicFable5.set("configuration", anthropicFable5Config);
+      anthropicFable5.changed("configuration", true);
+      await anthropicFable5.save();
+    }
   }
 
   /**
@@ -1603,6 +1638,7 @@ export class NewAiModelSetup {
       { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "Anthropic Opus 4.6", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Fable 5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
