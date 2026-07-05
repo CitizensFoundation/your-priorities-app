@@ -82,6 +82,7 @@ interface YpCollectionConfiguration {
   customBackURL?: string;
   hideAllTabs?: boolean;
   hideItemCount?: boolean;
+  itemViewMode?: "list" | "grid";
   highlightedLanguages?: string;
   useInfoIconInsteadOfHelpIcon?: boolean;
 }

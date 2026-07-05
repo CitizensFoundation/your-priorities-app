@@ -432,6 +432,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         value="${ifDefined(this.signupTermsPageId)}"
       />
 
+      ${this.renderItemViewModeHiddenInput()}
+
       ${this.renderHiddenAccessSettings()}
     `;
   }
@@ -1080,6 +1082,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           value: this.collection?.configuration.hideItemCount,
           translationToken: "hideItemCount",
         },
+        this._getItemViewModeConfigItem(),
         {
           text: "hideGroupTypeInList",
           type: "checkbox",

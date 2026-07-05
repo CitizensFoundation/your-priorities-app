@@ -103,6 +103,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
             />
           `
         : nothing}
+      ${this.renderItemViewModeHiddenInput()}
     `;
   }
 
@@ -325,6 +326,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           value: this.collection?.configuration.hideItemCount,
           translationToken: "hideItemCount",
         },
+        this._getItemViewModeConfigItem(),
         {
           text: "sortAlphabetically",
           type: "checkbox",

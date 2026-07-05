@@ -35,6 +35,7 @@ import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 import { YpImage } from "../common/yp-image.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
+import "@material/web/select/select-option.js";
 import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
 import { MdCheckbox } from "@material/web/checkbox/checkbox.js";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
@@ -86,6 +87,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   @property({ type: String })
   status: string | undefined;
+
+  @property({ type: String })
+  itemViewMode: string | undefined;
 
   @property({ type: Boolean })
   hasAudioUpload = false;
@@ -273,6 +277,64 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     } else {
       return [];
     }
+  }
+
+  get itemViewModeOptions() {
+    if (this.language) {
+      return [
+        { name: "list", translatedName: this.t("itemViewModeList") },
+        { name: "grid", translatedName: this.t("itemViewModeGrid") },
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  _itemViewModeSelected(event: CustomEvent) {
+    const index = (event.target as MdOutlinedSelect).selectedIndex;
+    this.itemViewMode = this.itemViewModeOptions[index].name;
+    this._configChanged();
+  }
+
+  get itemViewModeIndex() {
+    if (this.itemViewMode) {
+      for (let i = 0; i < this.itemViewModeOptions.length; i++) {
+        if (this.itemViewModeOptions[i].name == this.itemViewMode) return i;
+      }
+    }
+    return 0;
+  }
+
+  _getItemViewModeConfigItem() {
+    return {
+      text: "itemViewMode",
+      type: "html",
+      templateData: html`
+        <md-outlined-select
+          .label="${this.t("itemViewMode")}"
+          @change="${this._itemViewModeSelected}"
+        >
+          ${this.itemViewModeOptions.map(
+            (viewModeOption, index) => html`
+              <md-select-option
+                ?selected="${this.itemViewModeIndex == index}"
+                >${viewModeOption.translatedName}</md-select-option
+              >
+            `
+          )}
+        </md-outlined-select>
+      `,
+    } as YpStructuredConfigData;
+  }
+
+  renderItemViewModeHiddenInput() {
+    return this.itemViewMode
+      ? html`<input
+          type="hidden"
+          name="itemViewMode"
+          value="${this.itemViewMode}"
+        />`
+      : nothing;
   }
 
   _ltpConfigChanged(event: CustomEvent) {
@@ -1162,6 +1224,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     super.updated(changedProperties);
 
     if (changedProperties.has("collection") && this.collection) {
+      this.itemViewMode = this.collection.configuration?.itemViewMode;
       this.configTabs = this.setupConfigTabs();
       //console.error("Collection", this.collection);
     }

@@ -34,6 +34,9 @@ export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Boolean })
   useEvenOddItemLayout = false;
 
+  @property({ type: Boolean, reflect: true })
+  grid = false;
+
   @property({ type: Number })
   index = 0;
 
@@ -243,6 +246,56 @@ export class YpCollectionItemCard extends YpBaseElement {
             margin-bottom: 32px;
             width: 100%;
           }
+        }
+
+        /* Grid tile variant: same stacked layout as the max-width 960px
+           media block above but forced at any viewport with a fixed tile width */
+        :host([grid]) {
+          width: 420px;
+          max-width: 420px;
+          height: 100%;
+          overflow: hidden;
+          padding-top: 0 !important;
+        }
+
+        :host([grid]) .collectionCard {
+          margin: 0;
+          padding: 0 0 8px 0;
+          width: 100%;
+          max-width: 100%;
+          height: 100%;
+        }
+
+        :host([grid]) .collectionCardContent {
+          width: 100%;
+          align-items: stretch;
+        }
+
+        :host([grid]) .informationText {
+          width: 100%;
+          flex: 0 0 100%;
+        }
+
+        :host([grid]) yp-image {
+          display: block;
+          box-sizing: border-box;
+          flex: 0 0 100%;
+          width: 100%;
+          height: auto;
+          aspect-ratio: 16 / 9;
+          max-width: 100%;
+          max-height: 236px;
+          margin-right: 0;
+          margin-left: 0;
+        }
+
+        :host([grid]) .description {
+          width: 100%;
+          margin-bottom: 16px;
+        }
+
+        :host([grid]) .collectionNameHeading {
+          margin-top: 16px;
         }
 
         @media (max-width: 420px) {
@@ -490,7 +543,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         removeUrls
         .content="${this.contentDescription}"
         .contentId="${this.contentId}"
-        truncate="300"
+        truncate="${this.grid ? 140 : 300}"
       >
       </yp-magic-text>
     `;

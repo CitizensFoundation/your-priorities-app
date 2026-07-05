@@ -130,6 +130,11 @@ export class YpPostsList extends YpBaseElement {
           width: 100%;
         }
 
+        :host([grid]) lit-virtualizer {
+          max-width: 1360px !important;
+          min-width: 0 !important;
+        }
+
         yp-posts-filter {
           margin-bottom: 8px;
           margin-left: 8px;
@@ -415,7 +420,14 @@ export class YpPostsList extends YpBaseElement {
                 <lit-virtualizer
                   id="list"
                   .items=${this.posts}
-                  .layout="${flow()}"
+                  .layout="${this.effectiveGrid
+                    ? grid({
+                        itemSize: { width: "420px", height: "442px" },
+                        gap: "64px 32px",
+                        justify: "center",
+                        padding: "0",
+                      })
+                    : flow()}"
                   .scrollTarget="${window}"
                   .renderItem=${this.renderPostItem.bind(this)}
                   @rangeChanged=${this.scrollEvent}
@@ -429,6 +441,21 @@ export class YpPostsList extends YpBaseElement {
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
     const tabindex = index !== undefined ? index + 1 : 0;
+    if (this.effectiveGrid) {
+      return html`
+        <yp-post-card
+          aria-label="${post.name}"
+          role="link"
+          @keydown="${this._postItemKeydown.bind(this)}"
+          @click="${this._selectedItemChanged.bind(this)}"
+          tabindex="0"
+          id="postCard${post.id}"
+          class="card"
+          .post="${post}"
+        >
+        </yp-post-card>
+      `;
+    }
     return this.galleryListFormat
       ? html`
           <yp-post-list-gallery-item
@@ -458,6 +485,10 @@ export class YpPostsList extends YpBaseElement {
           >
           </yp-post-list-item>
         `;
+  }
+
+  get effectiveGrid() {
+    return this.grid && this.wide && !this.galleryListFormat;
   }
 
   get desktopListFormat() {

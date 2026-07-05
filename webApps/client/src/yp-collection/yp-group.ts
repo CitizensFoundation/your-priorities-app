@@ -1101,6 +1101,8 @@ export class YpGroup extends YpCollection {
                 .listRoute="${this.subRoute}"
                 .statusFilter="${statusFilter}"
                 .searchingFor="${this.searchingFor}"
+                ?grid="${this.collection?.configuration?.itemViewMode ===
+                "grid"}"
                 .group="${this.collection as YpGroupData}"
               ></yp-posts-list>
             `}
@@ -1304,6 +1306,7 @@ export class YpGroup extends YpCollection {
             .collectionType="${this.collectionType}"
             .collectionItemType="${this.collectionItemType}"
             .collectionId="${this.collectionId!}"
+            ?grid="${this.collection?.configuration?.itemViewMode === "grid"}"
             ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
           ></yp-collection-items-list>
         </div>

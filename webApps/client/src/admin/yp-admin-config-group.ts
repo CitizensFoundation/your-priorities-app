@@ -416,6 +416,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             />
           `
         : nothing}
+      ${this.renderItemViewModeHiddenInput()}
       ${this.detectedThemeColor
         ? html`<input
             type="hidden"
@@ -841,6 +842,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           text: "hideGroupType",
           type: "checkbox",
         },
+        this._getItemViewModeConfigItem(),
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
   }

@@ -7,8 +7,8 @@ import { ShadowStyles } from "../common/ShadowStyles.js";
 import { YpIronListHelpers } from "../common/YpIronListHelpers.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { LitVirtualizer } from "@lit-labs/virtualizer";
-import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow.js";
-import { GridLayout } from "@lit-labs/virtualizer/layouts/grid.js";
+import { flow } from "@lit-labs/virtualizer/layouts/flow.js";
+import { grid } from "@lit-labs/virtualizer/layouts/grid.js";
 
 import { YpCollectionItemCard } from "./yp-collection-item-card.js";
 import { YpServerApi } from "../common/YpServerApi.js";
@@ -63,6 +63,12 @@ export class YpCollectionItemsList extends YpBaseElement {
           min-width: 888px !important;
         }
 
+        :host([grid]) lit-virtualizer {
+          max-width: 1360px !important;
+          min-width: 0 !important;
+          width: 100%;
+        }
+
         a {
           text-decoration: none;
           width: 100%;
@@ -86,13 +92,24 @@ export class YpCollectionItemsList extends YpBaseElement {
     ];
   }
 
+  get effectiveGrid() {
+    return this.grid && this.wide;
+  }
+
   override render() {
     return this.sortedCollectionItems
       ? html`
           <lit-virtualizer
             id="list"
             role="main"
-            .layout="${this.grid ? GridLayout : FlowLayout}"
+            .layout="${this.effectiveGrid
+              ? grid({
+                  itemSize: { width: "420px", height: "520px" },
+                  gap: "32px",
+                  justify: "center",
+                  padding: "0",
+                })
+              : flow()}"
             aria-label="${this.t(this.pluralItemType)}"
             .items="${this.sortedCollectionItems}"
             .scrollTarget="${window}"
@@ -110,7 +127,10 @@ export class YpCollectionItemsList extends YpBaseElement {
           class="card"
           .index="${index}"
           .parentCollection="${this.collection}"
-          ?useEvenOddItemLayout="${this.useEvenOddItemLayout && this.wide}"
+          ?grid="${this.effectiveGrid}"
+          ?useEvenOddItemLayout="${this.useEvenOddItemLayout &&
+          this.wide &&
+          !this.effectiveGrid}"
           aria-label="${item.name}"
           .item="${item}"
           @click="${this._selectedItemChanged.bind(this)}"

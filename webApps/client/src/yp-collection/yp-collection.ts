@@ -613,6 +613,8 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
                 .collectionType="${this.collectionType}"
                 .collectionItemType="${this.collectionItemType}"
                 .collectionId="${this.collectionId!}"
+                ?grid="${this.collection?.configuration?.itemViewMode ===
+                "grid"}"
                 ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
               ></yp-collection-items-list>`
             : html``;
