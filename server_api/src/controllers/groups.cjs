@@ -544,6 +544,12 @@ var updateGroupConfigParameters = function (req, group) {
     truthValueFromBody(req.body.hideItemCount)
   );
   group.set(
+    "configuration.itemViewMode",
+    req.body.itemViewMode && ["list", "grid"].indexOf(req.body.itemViewMode) > -1
+      ? req.body.itemViewMode
+      : null
+  );
+  group.set(
     "configuration.centerGroupName",
     truthValueFromBody(req.body.centerGroupName)
   );

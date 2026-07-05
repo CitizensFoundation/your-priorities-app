@@ -945,6 +945,12 @@ const updateCommunityConfigParameters = function (req, community) {
     truthValueFromBody(req.body.hideItemCount)
   );
   community.set(
+    "configuration.itemViewMode",
+    req.body.itemViewMode && ["list", "grid"].indexOf(req.body.itemViewMode) > -1
+      ? req.body.itemViewMode
+      : null
+  );
+  community.set(
     "configuration.hideGroupTypeInList",
     truthValueFromBody(req.body.hideGroupTypeInList)
   );

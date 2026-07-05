@@ -891,6 +891,8 @@ function updateDomainProperties(domain, req) {
   domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
   domain.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
   domain.set('configuration.hideItemCount', truthValueFromBody(req.body.hideItemCount));
+  domain.set('configuration.itemViewMode',
+    (req.body.itemViewMode && ["list","grid"].indexOf(req.body.itemViewMode) > -1) ? req.body.itemViewMode : null);
 
   domain.set(
     'configuration.sortAlphabetically',
