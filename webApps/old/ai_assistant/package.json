@@ -142,7 +142,7 @@
     "lit": "^2.3.1",
     "lit-flexbox-literals": "0.0.7",
     "lit-google-map": "^1.0.1",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "marked": "^4.2.12",
     "pwa-helpers": "^0.9.1",
     "rollup-plugin-copy": "^3.4.0",
