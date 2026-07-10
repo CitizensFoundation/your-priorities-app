@@ -43,6 +43,9 @@ export abstract class YpAssistantBase extends YpChatbotBase {
   @property({ type: String })
   currentAgentId: string | undefined;
 
+  @property({ type: Number })
+  currentAgentRunId: number | undefined;
+
   //TODO: Read from agentbundle db object
   @property({ type: String })
   welcomeTextHtml = `I am your assistant for Evoly and I can talk, just <span class="green">click the button</span>`;
@@ -213,16 +216,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     this.sendChatMessage(
       "Please start the next workflow step, I confirm and accept"
     );
-    //TODO: Do this later
-    //await this.serverApi.startNextWorkflowStep(event.detail.agentId);
   }
 
   async stopCurrentWorkflowStep(event: CustomEvent) {
     this.sendChatMessage(
       "Please stop the current workflow step, I confirm and accept"
     );
-    //TODO: Do this later
-    //await this.serverApi.stopCurrentWorkflowStep(event.detail.agentId);
   }
 
   async openMarkdownReport(event: CustomEvent) {
@@ -231,6 +230,7 @@ export abstract class YpAssistantBase extends YpChatbotBase {
     }
     this.currentMarkdownReport = event.detail.markdownReport;
     this.currentAgentId = event.detail.agentId;
+    this.currentAgentRunId = event.detail.runId;
     if (this.currentMarkdownReport) {
       this.markdownReportOpen = true;
       window.scrollTo(0, 0);
@@ -497,9 +497,12 @@ export abstract class YpAssistantBase extends YpChatbotBase {
 
   private async handleDownloadReport() {
     try {
+      if (!this.currentAgentId || !this.currentAgentRunId) {
+        throw new Error("No agent report is selected");
+      }
       this.isDownloading = true;
       const response = await fetch(
-        `/api/assistants/${this.domainId}/${this.currentAgentId}/getDocxReport`,
+        `/api/assistants/${this.domainId}/${this.currentAgentId}/${this.currentAgentRunId}/getDocxReport`,
         {
           mode: "cors",
         }

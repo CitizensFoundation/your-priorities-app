@@ -15,21 +15,6 @@ export class YpAssistantServerApi extends YpServerApi {
     this.clientMemoryUuid = clientMemoryUuid;
   }
 
-  public async startNextWorkflowStep(
-    groupId: number,
-    agentId: string
-  ): Promise<void> {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/startNextWorkflowStep`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          agentId,
-        }),
-      }
-    );
-  }
-
   public sendEmailInvitesForAnons(
     groupId: number,
     agentId: string,
@@ -44,21 +29,6 @@ export class YpAssistantServerApi extends YpServerApi {
           agentId,
           agentRunId,
           emails,
-        }),
-      }
-    );
-  }
-
-  public async stopCurrentWorkflowStep(
-    groupId: number,
-    agentId: string
-  ): Promise<void> {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/stopCurrentWorkflowStep`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          agentId,
         }),
       }
     );

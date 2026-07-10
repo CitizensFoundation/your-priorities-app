@@ -1,11 +1,9 @@
 import { Queue } from "bullmq";
-import { Redis } from "ioredis";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import WebSocket from "ws";
 import { YpAgentProductRun } from "../models/agentProductRun.js";
 export declare class NotificationAgentQueueManager extends AgentQueueManager {
-    redisClient: Redis;
     queues: Map<string, Queue>;
     wsClients: Map<string, WebSocket>;
     constructor(wsClients: Map<string, WebSocket>);

@@ -289,6 +289,9 @@ var updateGroupConfigParameters = function (req, group) {
     group.set("configuration.alwaysHideLogoImage", truthValueFromBody(req.body.alwaysHideLogoImage));
     group.set("configuration.hideStatsAndMembership", truthValueFromBody(req.body.hideStatsAndMembership));
     group.set("configuration.hideItemCount", truthValueFromBody(req.body.hideItemCount));
+    group.set("configuration.itemViewMode", req.body.itemViewMode && ["list", "grid"].indexOf(req.body.itemViewMode) > -1
+        ? req.body.itemViewMode
+        : null);
     group.set("configuration.centerGroupName", truthValueFromBody(req.body.centerGroupName));
     group.set("configuration.noGroupCardShadow", truthValueFromBody(req.body.noGroupCardShadow));
     group.set("configuration.hideNewestFromFilter", truthValueFromBody(req.body.hideNewestFromFilter));
@@ -885,6 +888,7 @@ router.post("/:id/getPresignedAttachmentURL", auth.can("add to group"), function
         endpoint: accelEndPoint,
         useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT != null,
         region: process.env.S3_REGION,
+        defaultRegion: "eu-west-1",
         forcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false,
     }).then((url) => {
         log.info("Presigned URL:", { url });

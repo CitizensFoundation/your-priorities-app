@@ -158,12 +158,46 @@ export class NewAiModelSetup {
             anthropicOpus46.changed("configuration", true);
             await anthropicOpus46.save();
         }
+        const anthropicFable5 = await PsAiModel.findOne({
+            where: { name: "Anthropic Fable 5" },
+        });
+        const anthropicFable5Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "anthropic",
+            prices: {
+                costInTokensPerMillion: 10,
+                costOutTokensPerMillion: 50,
+                costInCachedContextTokensPerMillion: 1,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.7,
+            model: "claude-fable-5",
+            active: true,
+        };
+        if (!anthropicFable5) {
+            const createdModel = await PsAiModel.create({
+                name: "Anthropic Fable 5",
+                organization_id: 1,
+                user_id: userId,
+                configuration: anthropicFable5Config,
+            });
+            log.info("Created Anthropic model:", createdModel);
+        }
+        else {
+            log.debug("Anthropic model already exists: Anthropic Fable 5");
+            anthropicFable5.set("configuration", anthropicFable5Config);
+            anthropicFable5.changed("configuration", true);
+            await anthropicFable5.save();
+        }
     }
     /**
      * Seeds OpenAI models.
      * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
-     * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5, and
-     * GPT-5.5 tier variants.
+     * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5,
+     * GPT-5.5 tier variants, and GPT-5.6 tier variants.
      */
     static async seedOpenAiModels(userId) {
         // GPT-4o
@@ -1050,6 +1084,208 @@ export class NewAiModelSetup {
             await openAiGpt55Flex.save();
             log.debug("OpenAI model already exists: GPT-5.5 Flex");
         }
+        const openAiGpt56Models = [
+            {
+                name: "GPT-5.6 Sol",
+                model: "gpt-5.6-sol",
+                modelSize: PsAiModelSize.Large,
+                maxContextTokens: 1050000,
+                prices: {
+                    costInTokensPerMillion: 5.0,
+                    costOutTokensPerMillion: 30.0,
+                    costInCachedContextTokensPerMillion: 0.5,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 6.25,
+                    longContextCostInCachedContextTokensPerMillion: 0.625,
+                    longContextCostOutTokensPerMillion: 30.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Sol Priority",
+                model: "gpt-5.6-sol-priority",
+                apiModel: "gpt-5.6-sol",
+                inferenceType: "priority",
+                modelSize: PsAiModelSize.Large,
+                maxContextTokens: 1050000,
+                prices: {
+                    costInTokensPerMillion: 10.0,
+                    costOutTokensPerMillion: 60.0,
+                    costInCachedContextTokensPerMillion: 1.0,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 12.5,
+                    longContextCostInCachedContextTokensPerMillion: 1.25,
+                    longContextCostOutTokensPerMillion: 60.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Sol Flex",
+                model: "gpt-5.6-sol-flex",
+                apiModel: "gpt-5.6-sol",
+                inferenceType: "flex",
+                modelSize: PsAiModelSize.Large,
+                maxContextTokens: 1050000,
+                prices: {
+                    costInTokensPerMillion: 2.5,
+                    costOutTokensPerMillion: 15.0,
+                    costInCachedContextTokensPerMillion: 0.25,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 3.125,
+                    longContextCostInCachedContextTokensPerMillion: 0.3125,
+                    longContextCostOutTokensPerMillion: 15.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Terra",
+                model: "gpt-5.6-terra",
+                modelSize: PsAiModelSize.Small,
+                maxContextTokens: 400000,
+                prices: {
+                    costInTokensPerMillion: 2.5,
+                    costOutTokensPerMillion: 15.0,
+                    costInCachedContextTokensPerMillion: 0.25,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 3.125,
+                    longContextCostInCachedContextTokensPerMillion: 0.3125,
+                    longContextCostOutTokensPerMillion: 15.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Terra Priority",
+                model: "gpt-5.6-terra-priority",
+                apiModel: "gpt-5.6-terra",
+                inferenceType: "priority",
+                modelSize: PsAiModelSize.Small,
+                maxContextTokens: 400000,
+                prices: {
+                    costInTokensPerMillion: 5.0,
+                    costOutTokensPerMillion: 30.0,
+                    costInCachedContextTokensPerMillion: 0.5,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 6.25,
+                    longContextCostInCachedContextTokensPerMillion: 0.625,
+                    longContextCostOutTokensPerMillion: 30.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Terra Flex",
+                model: "gpt-5.6-terra-flex",
+                apiModel: "gpt-5.6-terra",
+                inferenceType: "flex",
+                modelSize: PsAiModelSize.Small,
+                maxContextTokens: 400000,
+                prices: {
+                    costInTokensPerMillion: 1.25,
+                    costOutTokensPerMillion: 7.5,
+                    costInCachedContextTokensPerMillion: 0.125,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 1.5625,
+                    longContextCostInCachedContextTokensPerMillion: 0.15625,
+                    longContextCostOutTokensPerMillion: 7.5,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Luna",
+                model: "gpt-5.6-luna",
+                modelSize: PsAiModelSize.Small,
+                maxContextTokens: 400000,
+                prices: {
+                    costInTokensPerMillion: 1.0,
+                    costOutTokensPerMillion: 6.0,
+                    costInCachedContextTokensPerMillion: 0.1,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 1.25,
+                    longContextCostInCachedContextTokensPerMillion: 0.125,
+                    longContextCostOutTokensPerMillion: 6.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Luna Priority",
+                model: "gpt-5.6-luna-priority",
+                apiModel: "gpt-5.6-luna",
+                inferenceType: "priority",
+                modelSize: PsAiModelSize.Small,
+                maxContextTokens: 400000,
+                prices: {
+                    costInTokensPerMillion: 2.0,
+                    costOutTokensPerMillion: 12.0,
+                    costInCachedContextTokensPerMillion: 0.2,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 2.5,
+                    longContextCostInCachedContextTokensPerMillion: 0.25,
+                    longContextCostOutTokensPerMillion: 12.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+            {
+                name: "GPT-5.6 Luna Flex",
+                model: "gpt-5.6-luna-flex",
+                apiModel: "gpt-5.6-luna",
+                inferenceType: "flex",
+                modelSize: PsAiModelSize.Small,
+                maxContextTokens: 400000,
+                prices: {
+                    costInTokensPerMillion: 0.5,
+                    costOutTokensPerMillion: 3.0,
+                    costInCachedContextTokensPerMillion: 0.05,
+                    longContextTokenThreshold: 272000,
+                    longContextCostInTokensPerMillion: 0.625,
+                    longContextCostInCachedContextTokensPerMillion: 0.0625,
+                    longContextCostOutTokensPerMillion: 3.0,
+                    regionalProcessingMargin: 10,
+                    currency: "USD",
+                },
+            },
+        ];
+        for (const gpt56Model of openAiGpt56Models) {
+            const existingModel = await PsAiModel.findOne({
+                where: { name: gpt56Model.name },
+            });
+            const configuration = {
+                type: PsAiModelType.TextReasoning,
+                modelSize: gpt56Model.modelSize,
+                provider: "openai",
+                ...(gpt56Model.inferenceType
+                    ? { inferenceType: gpt56Model.inferenceType }
+                    : {}),
+                prices: gpt56Model.prices,
+                maxTokensOut: 128000,
+                maxContextTokens: gpt56Model.maxContextTokens,
+                defaultTemperature: 0.7,
+                model: gpt56Model.model,
+                ...(gpt56Model.apiModel ? { apiModel: gpt56Model.apiModel } : {}),
+                active: true,
+            };
+            if (!existingModel) {
+                await PsAiModel.create({
+                    name: gpt56Model.name,
+                    organization_id: 1,
+                    user_id: userId,
+                    configuration,
+                });
+                log.info(`Created OpenAI model: ${gpt56Model.name}`);
+            }
+            else {
+                existingModel.set("configuration", configuration);
+                existingModel.changed("configuration", true);
+                await existingModel.save();
+                log.debug(`OpenAI model already exists: ${gpt56Model.name}`);
+            }
+        }
     }
     /**
      * Seeds Google models.
@@ -1515,6 +1751,7 @@ export class NewAiModelSetup {
             { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "Anthropic Opus 4.6", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+            { name: "Anthropic Fable 5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
@@ -1543,6 +1780,15 @@ export class NewAiModelSetup {
             { name: "GPT-5.5 Priority", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.5 Normal", envKey: "OPENAI_API_KEY" },
             { name: "GPT-5.5 Flex", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Sol", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Sol Priority", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Sol Flex", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Terra", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Terra Priority", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Terra Flex", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Luna", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Luna Priority", envKey: "OPENAI_API_KEY" },
+            { name: "GPT-5.6 Luna Flex", envKey: "OPENAI_API_KEY" },
             { name: "Gemini 3 Pro Preview", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 3.1 Pro Preview", envKey: "GEMINI_API_KEY" },
             { name: "Gemini 3.1 Flash Lite", envKey: "GEMINI_API_KEY" },

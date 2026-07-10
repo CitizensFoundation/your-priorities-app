@@ -11,8 +11,8 @@ export declare class NewAiModelSetup {
     /**
      * Seeds OpenAI models.
      * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
-     * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5, and
-     * GPT-5.5 tier variants.
+     * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5,
+     * GPT-5.5 tier variants, and GPT-5.6 tier variants.
      */
     static seedOpenAiModels(userId: number): Promise<void>;
     /**

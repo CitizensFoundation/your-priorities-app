@@ -187,7 +187,7 @@ export class YpAgentRunWidget extends YpBaseElement {
         this.agentId,
         this.runId,
         "completed",
-        this.wsClientId
+        currentStepIndex
       );
       await this.getUpdatedWorkflow();
     }
@@ -703,6 +703,7 @@ export class YpAgentRunWidget extends YpBaseElement {
     this.fire("yp-open-markdown-report", {
       markdownReport: this.latestMessageMarkdown,
       agentId: this.agentId,
+      runId: this.runId,
     });
   }
 

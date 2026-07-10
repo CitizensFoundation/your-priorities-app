@@ -14,9 +14,14 @@ import { YpSubscriptionPlan } from "../models/subscriptionPlan.js";
 import { YpSubscriptionUser } from "../models/subscriptionUser.js";
 import { YpDiscount } from "../models/discount.js";
 import { sequelize } from "@policysynth/agents/dbModels/index.js";
-import { NotificationAgentQueueManager } from "../managers/notificationAgentQueueManager.js";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
 import { WorkflowConversationManager } from "../managers/workflowConversationManager.js";
+import {
+  AssistantAccessService,
+  AssistantRunTransitionStatus,
+  buildAssistantMemoryRedisKey,
+  parsePositiveInteger,
+} from "../services/assistantAccessService.js";
 
 interface YpRequest extends express.Request<Record<string, string>> {
   ypDomain?: any;
@@ -47,13 +52,19 @@ export class AssistantController {
   public wsClients: Map<string, WebSocket>;
   public chatAssistantInstances = new Map<string, YpAgentAssistant>();
   public voiceAssistantInstances = new Map<string, YpAgentAssistant>();
+  private assistantSocketCleanupHandlers = new Map<
+    string,
+    { socket: WebSocket; handler: () => void }
+  >();
   private agentQueueManager!: AgentQueueManager;
   private workflowConversationManager!: WorkflowConversationManager;
+  private assistantAccessService!: AssistantAccessService;
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
     this.agentQueueManager = new AgentQueueManager();
     this.workflowConversationManager = new WorkflowConversationManager();
+    this.assistantAccessService = new AssistantAccessService();
     this.initializeRoutes();
     this.initializeModels();
   }
@@ -102,67 +113,64 @@ export class AssistantController {
       this.clearChatLog.bind(this)
     );
 
-    //TODO: Add auth for below
-
     this.router.put(
       "/:domainId/updateAssistantMemoryLoginStatus",
+      auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.updateAssistantMemoryLoginStatus.bind(this)
     );
 
     this.router.put(
       "/:domainId/:subscriptionId/submitAgentConfiguration",
+      auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.submitAgentConfiguration.bind(this)
     );
 
     this.router.get(
       "/:domainId/:subscriptionId/getConfigurationAnswers",
+      auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.getAgentConfigurationAnswers.bind(this)
-    );
-
-    this.router.put(
-      "/:groupId/:agentId/startWorkflowAgent",
-      this.startWorkflowAgent.bind(this)
     );
 
     this.router.get(
       "/:groupId/:runId/updatedWorkflow",
+      auth.can("view group"),
+      auth.isLoggedInNoAnonymousCheck,
       this.getUpdatedWorkflow.bind(this)
-    );
-
-    this.router.post(
-      "/:groupId/:agentId/startNextWorkflowStep",
-      this.startNextWorkflowStep.bind(this)
-    );
-
-    this.router.post(
-      "/:groupId/:agentId/stopCurrentWorkflowStep",
-      this.stopCurrentWorkflowStep.bind(this)
     );
 
     this.router.put(
       "/:groupId/:agentId/:runId/advanceOrStopWorkflow",
+      auth.can("view group"),
+      auth.isLoggedInNoAnonymousCheck,
       this.advanceOrStopCurrentWorkflowStep.bind(this)
     );
 
     this.router.get(
-      "/:groupId/:agentId/getDocxReport",
+      "/:domainId/:agentId/:runId/getDocxReport",
       auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.getDocxReport.bind(this)
     );
 
     this.router.get(
       "/:domainId/workflowConversations/running",
       auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.getRunningWorkflowConversations.bind(this)
     );
     this.router.get(
       "/:domainId/workflowConversations/all",
       auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.getAllWorkflowConversations.bind(this)
     );
     this.router.put(
       "/:domainId/workflowConversations/connect",
       auth.can("view domain"),
+      auth.isLoggedInNoAnonymousCheck,
       this.connectToWorkflowConversation.bind(this)
     );
   }
@@ -174,16 +182,35 @@ export class AssistantController {
     return status ? status.messages[status.messages.length - 1] : null;
   }
 
-  private getDocxReport = async (req: YpRequest, res: express.Response): Promise<void> => {
+  private getDocxReport = async (
+    req: YpRequest,
+    res: express.Response
+  ): Promise<void> => {
     try {
-      const { agentId } = req.params;
+      const domainId = parsePositiveInteger(req.params.domainId);
+      const agentId = parsePositiveInteger(req.params.agentId);
+      const runId = parsePositiveInteger(req.params.runId);
+      if (!domainId || !agentId || !runId) {
+        res.status(400).json({ error: "Invalid request parameters" });
+        return;
+      }
 
-      let lastStatusMessage = await this.getLastStatusMessageFromDB(
-        parseInt(agentId)
-      );
+      const agentRun = await this.assistantAccessService.getOwnedRun({
+        userId: req.user.id,
+        runId,
+        domainId,
+        agentId,
+      });
+      if (!agentRun) {
+        res.sendStatus(404);
+        return;
+      }
+
+      const lastStatusMessage = await this.getLastStatusMessageFromDB(agentId);
 
       if (!lastStatusMessage) {
         res.status(404).send("No status message found.");
+        return;
       }
 
       const regex = /<markdownReport>([\s\S]*?)<\/markdownReport>/i;
@@ -196,9 +223,10 @@ export class AssistantController {
         res
           .status(400)
           .send("No <markdownReport>...</markdownReport> content found.");
+        return;
       }
 
-      const markdownContent = match ? match[1] : null ;
+      const markdownContent = match[1];
 
       if (!markdownContent) {
         log.error("No markdown content found.");
@@ -232,51 +260,47 @@ export class AssistantController {
     req: YpRequest,
     res: express.Response
   ): Promise<void> => {
-    const { groupId, agentId, runId } = req.params;
-    const { status, wsClientId } = req.body;
+    const groupId = parsePositiveInteger(req.params.groupId);
+    const agentId = parsePositiveInteger(req.params.agentId);
+    const runId = parsePositiveInteger(req.params.runId);
+    const expectedCurrentStepIndex = Number(req.body.currentWorkflowStepIndex);
+    const status = req.body.status as AssistantRunTransitionStatus;
+
+    if (
+      !groupId ||
+      !agentId ||
+      !runId ||
+      !Number.isSafeInteger(expectedCurrentStepIndex) ||
+      expectedCurrentStepIndex < 0 ||
+      (status !== "completed" && status !== "failed")
+    ) {
+      res.status(400).json({ error: "Invalid workflow transition request" });
+      return;
+    }
 
     try {
-      const notificationManager = new NotificationAgentQueueManager(
-        this.wsClients
-      );
-
-      await notificationManager.advanceWorkflowStepOrCompleteAgentRun(
-        parseInt(runId),
+      const result = await this.assistantAccessService.transitionOwnedRun({
+        userId: req.user.id,
+        runId,
+        groupId,
+        agentId,
+        expectedCurrentStepIndex,
         status,
-        wsClientId
-      );
-      res.sendStatus(200);
+      });
+      if (result.outcome === "not_found") {
+        res.sendStatus(404);
+        return;
+      }
+      if (result.outcome === "conflict") {
+        res.status(409).json({ error: "Workflow step has already changed" });
+        return;
+      }
+      res.status(200).json({
+        workflow: result.workflow,
+        status: result.status,
+      });
     } catch (error) {
       log.error("Error advancing or stopping workflow:", error);
-      res.sendStatus(500);
-    }
-  };
-
-  private startNextWorkflowStep = async (
-    req: YpRequest,
-    res: express.Response
-  ): Promise<void> => {
-    const { groupId, agentId } = req.params;
-
-    try {
-      //await this.agentQueueManager.startNextWorkflowStep(parseInt(agentId), parseInt(groupId));
-      res.sendStatus(200);
-    } catch (error) {
-      log.error("Error starting next workflow step:", error);
-      res.sendStatus(500);
-    }
-  };
-
-  private stopCurrentWorkflowStep = async (
-    req: YpRequest,
-    res: express.Response
-  ): Promise<void> => {
-    const { groupId, agentId } = req.params;
-    try {
-      //await this.agentQueueManager.stopCurrentWorkflowStep(parseInt(agentId), parseInt(groupId));
-      res.sendStatus(200);
-    } catch (error) {
-      log.error("Error stopping current workflow step:", error);
       res.sendStatus(500);
     }
   };
@@ -291,18 +315,23 @@ export class AssistantController {
         return;
       }
 
-      const subscriptionId = parseInt(req.params.subscriptionId);
+      const domainId = parsePositiveInteger(req.params.domainId);
+      const subscriptionId = parsePositiveInteger(req.params.subscriptionId);
+      if (!domainId || !subscriptionId) {
+        res.status(400).json({ error: "Invalid request parameters" });
+        return;
+      }
 
-      // Make sure the user can only fetch their own subscription
-      const subscription = await YpSubscription.findOne({
-        where: {
-          id: subscriptionId,
-          user_id: req.user.id,
-        },
-      });
+      const subscription =
+        await this.assistantAccessService.getOwnedSubscription(
+          req.user.id,
+          subscriptionId,
+          domainId
+        );
 
       if (!subscription) {
         res.status(404).json({ error: "Subscription not found" });
+        return;
       }
 
       // Extract the requiredQuestionsAnswered from subscription.configuration
@@ -326,7 +355,6 @@ export class AssistantController {
     req: YpRequest,
     res: express.Response
   ): Promise<void> => {
-    const { runId } = req.params;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -335,48 +363,25 @@ export class AssistantController {
     }
 
     try {
-      const agentRun = await YpAgentProductRun.findOne({
-        where: {
-          id: runId,
-        },
-        attributes: ["workflow", "status"],
-        include: [
-          {
-            model: YpSubscription,
-            as: "Subscription",
-            attributes: ["id"],
-            where: {
-              user_id: userId,
-            },
-            required: true,
-          },
-        ],
+      const groupId = parsePositiveInteger(req.params.groupId);
+      const runId = parsePositiveInteger(req.params.runId);
+      if (!groupId || !runId) {
+        res.status(400).json({ error: "Invalid request parameters" });
+        return;
+      }
+
+      const agentRun = await this.assistantAccessService.getOwnedRun({
+        userId,
+        runId,
+        groupId,
       });
-      res.send({ workflow: agentRun?.workflow, status: agentRun?.status });
+      if (!agentRun) {
+        res.sendStatus(404);
+        return;
+      }
+      res.send({ workflow: agentRun.workflow, status: agentRun.status });
     } catch (error) {
       log.error("Error getting updated workflow:", error);
-      res.sendStatus(500);
-    }
-  };
-
-  private startWorkflowAgent = async (
-    req: YpRequest,
-    res: express.Response
-  ): Promise<void> => {
-    const { groupId, agentId, wsClientId } = req.params;
-
-    try {
-      const notificationManager = new NotificationAgentQueueManager(
-        this.wsClients
-      );
-      await notificationManager.startAgentProcessingWithWsClient(
-        parseInt(agentId),
-        parseInt(groupId),
-        wsClientId
-      );
-      res.sendStatus(200);
-    } catch (error: any) {
-      log.error("Error starting agent:", error);
       res.sendStatus(500);
     }
   };
@@ -390,32 +395,40 @@ export class AssistantController {
     );
 
     const { requiredQuestionsAnswers } = req.body;
-
-    const subscriptionId = parseInt(req.params.subscriptionId);
+    const domainId = parsePositiveInteger(req.params.domainId);
+    const subscriptionId = parsePositiveInteger(req.params.subscriptionId);
+    if (
+      !domainId ||
+      !subscriptionId ||
+      !Array.isArray(requiredQuestionsAnswers)
+    ) {
+      res.status(400).json({ error: "Invalid configuration request" });
+      return;
+    }
 
     try {
-      const memoryId = this.getMemoryRedisKey(req);
-
-      // Get subscription
-      const subscription = await YpSubscription.findOne({
-        where: {
-          id: subscriptionId,
-          user_id: req.user?.id, //TODO: Move to move this access check to the group level
-        },
-      });
+      const subscription =
+        await this.assistantAccessService.getOwnedSubscription(
+          req.user.id,
+          subscriptionId,
+          domainId
+        );
 
       if (!subscription) {
         res.sendStatus(404);
         return;
       }
-      subscription.configuration!.requiredQuestionsAnswered =
-        requiredQuestionsAnswers;
+      subscription.configuration = {
+        ...(subscription.configuration || {}),
+        requiredQuestionsAnswered: requiredQuestionsAnswers,
+      };
       subscription.changed("configuration", true);
 
       await subscription.save();
     } catch (error) {
       log.error("Error saving subscription:", error);
       res.sendStatus(500);
+      return;
     }
 
     res.sendStatus(200);
@@ -446,10 +459,10 @@ export class AssistantController {
 
   private defaultStartAgentMode: YpAssistantMode = "agent_selection_mode";
 
-  private getMemoryRedisKey(req: YpRequest) {
+  private getMemoryRedisKey(req: YpRequest): string | null {
     const userIdentifier =
-      req.body.clientMemoryUuid || req.query.clientMemoryUuid;
-    return `assistant:${/*req.params.domainId*/ 1}:${userIdentifier}`;
+      req.body?.clientMemoryUuid || req.query.clientMemoryUuid;
+    return buildAssistantMemoryRedisKey(req.params.domainId, userIdentifier);
   }
 
   private async loadMemoryWithOwnership(
@@ -466,6 +479,10 @@ export class AssistantController {
       `loadMemoryWithOwnership: ${JSON.stringify(req.body, null, 2)}`
     );
     const redisKey = this.getMemoryRedisKey(req);
+    if (!redisKey) {
+      res.status(400).json({ error: "Invalid assistant memory request" });
+      return;
+    }
     log.debug(`loadMemoryWithOwnership: redisKey: ${redisKey}`);
 
     try {
@@ -581,17 +598,6 @@ export class AssistantController {
 
       await req.redisClient.set(memory.redisKey, JSON.stringify(memory));
 
-      if (req.user) {
-        //TODO: REMOVE THIS when we have multi workflows
-        await YpSubscription.destroy({
-          where: {
-            user_id: req.user?.id,
-          },
-        });
-      } else {
-        log.warn("No user found to clear runs for");
-      }
-
       res.sendStatus(200);
     } catch (error) {
       log.error("Error clearing chat log:", error);
@@ -607,27 +613,87 @@ export class AssistantController {
     res.json(memory);
   };
 
+  private cleanupAssistantForMemory(
+    memoryKey: string,
+    expectedAssistant?: YpAgentAssistant
+  ): void {
+    const currentChatAssistant = this.chatAssistantInstances.get(memoryKey);
+    const currentVoiceAssistant = this.voiceAssistantInstances.get(memoryKey);
+    if (
+      expectedAssistant &&
+      currentChatAssistant !== expectedAssistant &&
+      currentVoiceAssistant !== expectedAssistant
+    ) {
+      return;
+    }
+
+    const cleanupRegistration =
+      this.assistantSocketCleanupHandlers.get(memoryKey);
+    if (cleanupRegistration) {
+      cleanupRegistration.socket.removeListener(
+        "close",
+        cleanupRegistration.handler
+      );
+      cleanupRegistration.socket.removeListener(
+        "error",
+        cleanupRegistration.handler
+      );
+      this.assistantSocketCleanupHandlers.delete(memoryKey);
+    }
+
+    const assistants = new Set([
+      currentChatAssistant,
+      currentVoiceAssistant,
+    ]);
+    this.chatAssistantInstances.delete(memoryKey);
+    this.voiceAssistantInstances.delete(memoryKey);
+
+    for (const assistant of assistants) {
+      if (assistant) {
+        try {
+          assistant.destroy();
+        } catch (error) {
+          log.error("Error cleaning up assistant instance:", error);
+        }
+      }
+    }
+  }
+
+  private registerAssistantSocketCleanup(
+    memoryKey: string,
+    socket: WebSocket
+  ): void {
+    const oldRegistration = this.assistantSocketCleanupHandlers.get(memoryKey);
+    if (oldRegistration) {
+      oldRegistration.socket.removeListener("close", oldRegistration.handler);
+      oldRegistration.socket.removeListener("error", oldRegistration.handler);
+    }
+
+    const handler = () => this.cleanupAssistantForMemory(memoryKey);
+    this.assistantSocketCleanupHandlers.set(memoryKey, { socket, handler });
+    socket.once("close", handler);
+    socket.once("error", handler);
+  }
+
   private async startVoiceSession(req: YpRequest, res: express.Response) {
+    let assistantMemoryKey: string | undefined;
+    let assistantInstance: YpAgentAssistant | undefined;
     try {
       const { wsClientId, currentMode } = req.body;
       const memory = await this.loadMemoryWithOwnership(req, res);
       if (!memory) return;
+      const socket =
+        typeof wsClientId === "string"
+          ? this.wsClients.get(wsClientId)
+          : undefined;
+      if (!socket) {
+        res.status(400).json({ error: "Invalid WebSocket client" });
+        return;
+      }
+      assistantMemoryKey = memory.redisKey;
       log.info(`Starting chat session for client: ${wsClientId}`);
 
-      let oldVoiceAssistant =
-        this.voiceAssistantInstances.get("voiceAssistant");
-
-      if (oldVoiceAssistant) {
-        oldVoiceAssistant.destroy();
-        this.voiceAssistantInstances.delete("voiceAssistant");
-      }
-
-      let oldChatAssistant = this.chatAssistantInstances.get("mainAssistant");
-
-      if (oldChatAssistant) {
-        oldChatAssistant.destroy();
-        this.chatAssistantInstances.delete("mainAssistant");
-      }
+      this.cleanupAssistantForMemory(memory.redisKey);
 
       const assistant = new YpAgentAssistant(
         wsClientId,
@@ -637,8 +703,10 @@ export class AssistantController {
         memory.redisKey,
         parseInt(req.params.domainId)
       );
+      assistantInstance = assistant;
 
-      this.voiceAssistantInstances.set("voiceAssistant", assistant);
+      this.voiceAssistantInstances.set(memory.redisKey, assistant);
+      this.registerAssistantSocketCleanup(memory.redisKey, socket);
 
       await assistant.initialize();
 
@@ -647,32 +715,33 @@ export class AssistantController {
         wsClientId,
       });
     } catch (error) {
+      if (assistantMemoryKey) {
+        this.cleanupAssistantForMemory(assistantMemoryKey, assistantInstance);
+      }
       log.error("Error starting voice session:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   }
 
   private async sendChatMessage(req: YpRequest, res: express.Response) {
+    let assistantMemoryKey: string | undefined;
+    let assistantInstance: YpAgentAssistant | undefined;
     try {
       const memory = await this.loadMemoryWithOwnership(req, res);
       if (!memory) return; // ends early if 401/403
 
       const { wsClientId, chatLog, currentMode } = req.body;
-
-      const oldVoiceAssistant =
-        this.voiceAssistantInstances.get("voiceAssistant");
-
-      if (oldVoiceAssistant) {
-        oldVoiceAssistant.destroy();
-        this.voiceAssistantInstances.delete("voiceAssistant");
+      const socket =
+        typeof wsClientId === "string"
+          ? this.wsClients.get(wsClientId)
+          : undefined;
+      if (!socket) {
+        res.status(400).json({ error: "Invalid WebSocket client" });
+        return;
       }
+      assistantMemoryKey = memory.redisKey;
 
-      const oldAssistant = this.chatAssistantInstances.get("mainAssistant");
-
-      if (oldAssistant) {
-        oldAssistant.destroy();
-        this.chatAssistantInstances.delete("mainAssistant");
-      }
+      this.cleanupAssistantForMemory(memory.redisKey);
 
       const assistant = new YpAgentAssistant(
         wsClientId,
@@ -682,16 +751,24 @@ export class AssistantController {
         memory.redisKey,
         parseInt(req.params.domainId)
       );
+      assistantInstance = assistant;
 
-      this.chatAssistantInstances.set("mainAssistant", assistant);
+      this.chatAssistantInstances.set(memory.redisKey, assistant);
+      this.registerAssistantSocketCleanup(memory.redisKey, socket);
 
-      assistant.conversation(chatLog);
+      void assistant.conversation(chatLog).catch((error) => {
+        log.error("Error initializing chat assistant:", error);
+        this.cleanupAssistantForMemory(memory.redisKey, assistant);
+      });
 
       res.status(200).json({
         message: "Chat session initialized",
         wsClientId,
       });
     } catch (error) {
+      if (assistantMemoryKey) {
+        this.cleanupAssistantForMemory(assistantMemoryKey, assistantInstance);
+      }
       log.error("Error starting chat session:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -757,15 +834,33 @@ export class AssistantController {
     }
     try {
       const { workflowConversationId, connectionData } = req.body;
+      const parsedWorkflowConversationId = parsePositiveInteger(
+        workflowConversationId
+      );
+      if (
+        !parsedWorkflowConversationId ||
+        (connectionData !== undefined &&
+          (typeof connectionData !== "object" ||
+            connectionData === null ||
+            Array.isArray(connectionData)))
+      ) {
+        res.status(400).json({ error: "Invalid workflow connection request" });
+        return;
+      }
       const updatedWorkflowConversation =
         await this.workflowConversationManager.connectToWorkflowConversation(
-          workflowConversationId,
+          parsedWorkflowConversationId,
+          req.user.id,
           connectionData || {}
         );
+      if (!updatedWorkflowConversation) {
+        res.sendStatus(404);
+        return;
+      }
       res.status(200).json({
         success: true,
         data: updatedWorkflowConversation,
-        message: `Connected to workflow conversation ${workflowConversationId} successfully`,
+        message: `Connected to workflow conversation ${parsedWorkflowConversationId} successfully`,
       });
     } catch (error: any) {
       log.error("Error connecting to workflow conversation:", error);

@@ -1,5 +1,5 @@
 import { Queue, QueueEvents } from "bullmq";
-import { Redis, RedisOptions } from "ioredis";
+import { RedisOptions } from "ioredis";
 import { AgentQueueManager } from "@policysynth/agents/operations/agentQueueManager.js";
 import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
@@ -20,7 +20,6 @@ const Community = dbModels.Community as CommunityClass;
 const Domain = dbModels.Domain as DomainClass;
 
 export class NotificationAgentQueueManager extends AgentQueueManager {
-  redisClient!: Redis;
   queues: Map<string, Queue>;
   wsClients: Map<string, WebSocket>;
 

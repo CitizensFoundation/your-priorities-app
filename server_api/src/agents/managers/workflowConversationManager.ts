@@ -56,14 +56,15 @@ export class WorkflowConversationManager {
 
   async connectToWorkflowConversation(
     workflowConversationId: number,
+    userId: number,
     connectionData: Record<string, any>
-  ): Promise<YpWorkflowConversation> {
+  ): Promise<YpWorkflowConversation | null> {
     try {
       const workflowConversation = await (
         YpWorkflowConversation as any
-      ).findByPk(workflowConversationId);
+      ).findOne({ where: { id: workflowConversationId, userId } });
       if (!workflowConversation) {
-        throw new Error("Workflow conversation not found");
+        return null;
       }
       workflowConversation.configuration = {
         ...workflowConversation.configuration,

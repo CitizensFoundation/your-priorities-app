@@ -12,6 +12,17 @@ var queue = require("../services/workers/queue.cjs");
 const { getFingerprintDataFromBody, } = require("../utils/fingerprint_data.cjs");
 const { getSpeechToTextSupportConfig, hasSpeechToTextSupport, } = require("../utils/speechToTextSupport.cjs");
 const transcriptTimeoutMs = 15 * 60 * 1000;
+const getBrowserLanguageFromRequest = (req) => {
+    const browserLanguage = req.headers["accept-language"]
+        ? req.headers["accept-language"].split(",")[0].trim()
+        : null;
+    return browserLanguage || "en-US";
+};
+const getTranscriptAppLanguage = (req, point) => (point && point.language) ||
+    (req.body && req.body.appLanguage) ||
+    (point && point.data && point.data.userLocale) ||
+    (req.body && req.body.userLocale) ||
+    getBrowserLanguageFromRequest(req);
 const getTranscriptStatusLogData = (transcript) => ({
     hasText: Boolean(transcript && transcript.text),
     hasError: Boolean(transcript && transcript.error),
@@ -43,11 +54,10 @@ const queueVideoTranscript = (video, req, appLanguage, callback, pointId) => {
     video.set("meta.transcript.error", null);
     video.changed("meta", true);
     video.save().then(() => {
+        const browserLanguage = getBrowserLanguageFromRequest(req);
         const workPackage = {
-            browserLanguage: req.headers["accept-language"]
-                ? req.headers["accept-language"].split(",")[0]
-                : "en-US",
-            appLanguage,
+            browserLanguage,
+            appLanguage: appLanguage || browserLanguage,
             videoId: video.id,
             type: "create-video-transcript",
         };
@@ -678,11 +688,13 @@ router.get("/:id/videoTranscriptStatus", auth.can("view point"), function (req, 
                     });
                 }
                 else if (!transcript || !transcript.inProgressDate) {
+                    const appLanguage = getTranscriptAppLanguage(req, point);
                     log.info("videoTranscriptStatus queueing missing transcript", {
                         pointId: req.params.id,
                         videoId: video.id,
+                        appLanguage,
                     });
-                    queueVideoTranscript(video, req, undefined, (error, queued) => {
+                    queueVideoTranscript(video, req, appLanguage, (error, queued) => {
                         if (error) {
                             sendPointOrError(res, req.params.id, "videoTranscriptStatus", req.user, error, 500);
                         }
@@ -792,6 +804,7 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
         value: req.body.value,
         user_id: req.user.id,
         status: "published",
+        language: getTranscriptAppLanguage(req),
         user_agent: req.useragent.source,
         ip_address: req.clientIp,
         data: {
@@ -899,7 +912,7 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
                                 pointId: point.id,
                                 videoId: req.body.videoId,
                             });
-                            queueVideoTranscriptById(req.body.videoId, req, req.body.appLanguage, (transcriptError) => {
+                            queueVideoTranscriptById(req.body.videoId, req, getTranscriptAppLanguage(req, point), (transcriptError) => {
                                 parallelCallback(transcriptError);
                             }, point.id);
                         }
@@ -918,10 +931,8 @@ router.post("/:groupId", auth.can("create point"), function (req, res) {
                         else {
                             if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
                                 const workPackage = {
-                                    browserLanguage: req.headers["accept-language"]
-                                        ? req.headers["accept-language"].split(",")[0]
-                                        : "en-US",
-                                    appLanguage: req.body.appLanguage,
+                                    browserLanguage: getBrowserLanguageFromRequest(req),
+                                    appLanguage: getTranscriptAppLanguage(req, point),
                                     audioId: req.body.audioId,
                                     type: "create-audio-transcript",
                                 };

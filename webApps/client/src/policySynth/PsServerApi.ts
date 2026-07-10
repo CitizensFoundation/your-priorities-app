@@ -288,14 +288,14 @@ export class PsServerApi extends YpServerApiBase {
     groupId: number,
     agentId: number,
     runId: number,
-    status: string,
-    wsClientId: string
+    status: "completed" | "failed",
+    currentWorkflowStepIndex: number
   ) {
     return this.fetchWrapper(
       `/api/assistants/${groupId}/${agentId}/${runId}/advanceOrStopWorkflow`,
       {
         method: "PUT",
-        body: JSON.stringify({ status, wsClientId }),
+        body: JSON.stringify({ status, currentWorkflowStepIndex }),
       }
     );
   }
@@ -317,20 +317,6 @@ export class PsServerApi extends YpServerApiBase {
       workflow: YpAgentRunWorkflowConfiguration;
       status: YpAgentProductRunStatus;
     } | null>;
-  }
-
-  async startWorkflowAgent(
-    groupId: number,
-    agentId: number,
-    wsClientId: string
-  ) {
-    return this.fetchWrapper(
-      `/api/agents/${groupId}/${agentId}/startWorkflowAgent`,
-      {
-        method: "PUT",
-        body: JSON.stringify({ wsClientId }),
-      }
-    );
   }
 
   async controlAgent(

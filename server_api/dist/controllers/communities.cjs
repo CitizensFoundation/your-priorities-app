@@ -764,6 +764,9 @@ const updateCommunityConfigParameters = function (req, community) {
     community.set("configuration.hideGroupListCardObjectives", truthValueFromBody(req.body.hideGroupListCardObjectives));
     community.set("configuration.alwaysHideLogoImage", truthValueFromBody(req.body.alwaysHideLogoImage));
     community.set("configuration.hideItemCount", truthValueFromBody(req.body.hideItemCount));
+    community.set("configuration.itemViewMode", req.body.itemViewMode && ["list", "grid"].indexOf(req.body.itemViewMode) > -1
+        ? req.body.itemViewMode
+        : null);
     community.set("configuration.hideGroupTypeInList", truthValueFromBody(req.body.hideGroupTypeInList));
     community.set("configuration.recalculateCountersRecursively", truthValueFromBody(req.body.recalculateCountersRecursively));
     if (req.body.google_analytics_code && req.body.google_analytics_code != "") {
