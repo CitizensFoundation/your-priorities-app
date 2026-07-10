@@ -1,8 +1,14 @@
 import { runLocalMigrations } from './migration.js';
-import { YourPrioritiesApi } from './app.js';
 
-await runLocalMigrations();
+try {
+	await runLocalMigrations();
 
-const app = new YourPrioritiesApi(8000);
+	const { YourPrioritiesApi } = await import('./app.js');
 
-app.listen();
+	const app = new YourPrioritiesApi(8000);
+	await app.initialize();
+	await app.listen();
+} catch (err) {
+	console.error('Failed to start server_api', err);
+	process.exit(1);
+}

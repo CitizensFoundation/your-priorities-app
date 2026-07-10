@@ -1,5 +1,3 @@
-version: '3.9'
-
 x-minio-common: &minio-common
   image: minio/minio
   restart: always
@@ -23,7 +21,6 @@ x-minio-common: &minio-common
       max-size: "25m"
 
 x-your-priorities-app-common: &your-priorities-app-common
-  build: ./your-priorities-app/
   env_file: .env
   restart: always
   build:
@@ -57,7 +54,6 @@ x-your-priorities-app-common: &your-priorities-app-common
       max-size: "25m"
 
 x-your-priorities-worker-common: &your-priorities-worker-common
-  build: ./your-priorities-worker/
   restart: always
   env_file: .env
   build:
@@ -200,7 +196,10 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
+      - POSTGRES_DB=yrpri_dev
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
     networks:
       default:
         aliases:
@@ -238,7 +237,7 @@ services:
     container_name: redis
     restart: always
     ports:
-      - '6379'
+      - "6379:6379"
     command: redis-server --save 20 1 --loglevel warning
     volumes:
       - redis:/data
