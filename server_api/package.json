@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.244",
+  "version": "9.0.245",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -46,6 +46,7 @@
     "docx": "^9.7.1",
     "download-file": "^0.1.5",
     "ejs": "^6.0.1",
+    "encoding-sniffer": "^0.2.1",
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
@@ -56,8 +57,10 @@
     "html-to-docx": "^1.8.0",
     "i18next": "^26.3.1",
     "i18next-fs-backend": "^2.6.6",
+    "iconv-lite": "^0.7.3",
     "image-size": "^2.0.2",
     "ioredis": "5.11.1",
+    "ipaddr.js": "^2.4.0",
     "isbot": "^5.1.43",
     "iso-639-1": "^3.1.5",
     "jsonrepair": "^3.12.0",
@@ -91,6 +94,7 @@
     "sitemap": "^9.0.1",
     "stripe": "^22.2.2",
     "striptags": "^3.2.0",
+    "undici": "^7.28.0",
     "uuid": "^14.0.1",
     "ws": "^8.18.2"
   },

@@ -570,7 +570,10 @@ Vote not found.
 
 ## API Endpoint: `GET /url_preview`
 
-Get Open Graph preview data for a URL.
+Get Open Graph preview data for a public HTTP or HTTPS URL. Preview requests
+allow ports 80 and 443, follow at most three validated redirects, time out after
+10 seconds, and accept HTML responses up to 2 MiB. Private, loopback,
+link-local, reserved, and other non-public destinations are rejected.
 
 ### Request
 
@@ -609,13 +612,27 @@ Get Open Graph preview data for a URL.
 ```
 Open Graph preview data.
 
-#### Error (404, 500)
+#### Error
 
 ```json
-[{}]
+{
+  "error": {
+    "code": "PREVIEW_URL_BLOCKED",
+    "message": "The preview URL is not allowed."
+  }
+}
 ```
-- 404: URL not found or invalid.
-- 500: Open Graph fetch failed.
+
+| Status | Code                               | Meaning                              |
+|--------|------------------------------------|--------------------------------------|
+| 400    | `INVALID_PREVIEW_URL`              | URL, scheme, credentials, or port is invalid. |
+| 403    | `PREVIEW_URL_BLOCKED`              | Destination resolves to a non-public address. |
+| 413    | `PREVIEW_RESPONSE_TOO_LARGE`       | HTML exceeds the response-size limit. |
+| 415    | `UNSUPPORTED_PREVIEW_CONTENT_TYPE` | Upstream response is not HTML.       |
+| 422    | `PREVIEW_REDIRECT_LIMIT`           | Redirect limit was exceeded.         |
+| 429    | `PREVIEW_RATE_LIMITED`             | User exceeded the preview rate limit. |
+| 502    | `PREVIEW_FETCH_FAILED`             | DNS, upstream, or parsing failed.    |
+| 504    | `PREVIEW_FETCH_TIMEOUT`            | The total request timed out.         |
 
 ---
 

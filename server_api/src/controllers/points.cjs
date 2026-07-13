@@ -5,9 +5,13 @@ var auth = require("../authorization.cjs");
 var log = require("../utils/logger.cjs");
 var toJson = require("../utils/to_json.cjs");
 var async = require("async");
-const ogs = require("open-graph-scraper");
 var _ = require("lodash");
 var queue = require("../services/workers/queue.cjs");
+const {
+  UrlPreviewError,
+  getUrlPreview,
+  sanitizeUrlForLogging,
+} = require("../services/urlPreviewService.cjs");
 const {
   getFingerprintDataFromBody,
 } = require("../utils/fingerprint_data.cjs");
@@ -180,12 +184,6 @@ var sendPointOrError = function (
   }
 };
 
-var validateEmbedUrl = function (urlIn) {
-  var urlRegex =
-    /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
-  var urls = urlRegex.exec(urlIn);
-  return urls != null && urls.length > 0;
-};
 
 var loadPointWithAll = function (pointId, callback) {
   let outPoint;
@@ -1543,48 +1541,47 @@ const translateToObsFormat = (json) => {
 router.get(
   "/url_preview",
   auth.isLoggedInNoAnonymousCheck,
-  function (req, res) {
-    if (req.query.url && validateEmbedUrl(req.query.url)) {
-      log.info("Before ogs", { url: req.query.url });
-      const userAgent =
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-      ogs({
-        url: req.query.url,
-        fetchOptions: { headers: { "user-agent": userAgent } },
-      }).then((data) => {
-        const { error, html, result, response } = data;
-        log.info("After ogs", { url: req.query.url });
-        if (error && result && result.error === "Page not found") {
-          res.sendStatus(404);
-        } else if (error) {
-          log.error("Open graph not working", {
-            err: error,
-            url: req.query.url,
-            context: "url_preview"
-          });
-          res.sendStatus(500);
-        } else {
-          log.info("Before translateToObsFormat", {
-            url: req.query.url,
-            result: result,
-          });
-          res.send(translateToObsFormat(result));
-        }
-      }).catch((error) => {
-        log.error("Open graph not working", {
-          err: error,
-          url: req.query.url,
-          context: "url_preview"
-        });
-        res.send([{}]);
-      });
-    } else {
-      log.error("Url not found or not valid", {
-        url: req.params.url,
+  async function (req, res) {
+    const startedAt = Date.now();
+    const safeTarget = sanitizeUrlForLogging(req.query.url);
+
+    try {
+      const preview = await getUrlPreview(req.query.url);
+      log.info("URL preview fetched", {
         context: "url_preview",
-        user: toJson(req.user),
+        userId: req.user ? req.user.id : null,
+        target: safeTarget,
+        finalTarget: sanitizeUrlForLogging(preview.finalUrl),
+        redirectCount: preview.redirectCount,
+        responseBytes: preview.responseBytes,
+        durationMs: Date.now() - startedAt,
       });
-      res.sendStatus(404);
+      res.send(translateToObsFormat(preview.result));
+    } catch (error) {
+      const previewError =
+        error instanceof UrlPreviewError
+          ? error
+          : new UrlPreviewError("PREVIEW_FETCH_FAILED", { cause: error });
+      const logData = {
+        context: "url_preview",
+        userId: req.user ? req.user.id : null,
+        target: previewError.safeTarget || safeTarget,
+        code: previewError.code,
+        redirectCount: previewError.redirectCount,
+        durationMs: Date.now() - startedAt,
+      };
+
+      if (previewError.status >= 500) {
+        log.error("URL preview failed", logData);
+      } else {
+        log.warn("URL preview rejected", logData);
+      }
+      res.status(previewError.status).send({
+        error: {
+          code: previewError.code,
+          message: previewError.message,
+        },
+      });
     }
   }
 );
