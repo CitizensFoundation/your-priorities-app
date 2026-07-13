@@ -46,6 +46,7 @@ import nonSPArouter from "./controllers/nonSpa.cjs";
 import generateSitemap from "./utils/sitemap_generator.cjs";
 import generateManifest from "./utils/manifest_generator.cjs";
 import toJson from "./utils/to_json.cjs";
+import { createUrlPreviewRateLimitOptions } from "./services/urlPreviewRateLimiter.cjs";
 //@ts-ignore
 import sso from "passport-sso";
 import cors from "cors";
@@ -683,6 +684,9 @@ export class YourPrioritiesApi {
             }
         });
     }
+    createUrlPreviewRateLimiter() {
+        return rateLimit(createUrlPreviewRateLimitOptions(this.redisClient));
+    }
     initializeRoutes() {
         this.app.use("/", index);
         this.app.use("/index.html", index);
@@ -700,6 +704,7 @@ export class YourPrioritiesApi {
         this.app.use("/api/communities", communities);
         this.app.use("/api/groups", groups);
         this.app.use("/api/posts", posts);
+        this.app.use("/api/points/url_preview", this.createUrlPreviewRateLimiter());
         this.app.use("/api/points", points);
         this.app.use("/api/images", images);
         this.app.use("/api/videos", videos);

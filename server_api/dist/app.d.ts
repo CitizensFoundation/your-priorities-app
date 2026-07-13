@@ -42,6 +42,7 @@ export declare class YourPrioritiesApi {
     initializeMiddlewares(): void;
     initializeEsControllers(): Promise<void>;
     setupStaticFileServing(): void;
+    createUrlPreviewRateLimiter(): import("express-rate-limit").RateLimitRequestHandler;
     initializeRoutes(): void;
     initializePassportStrategies(): void;
     completeRegisterUserLogin: (user: any, // Replace 'any' with the actual user type

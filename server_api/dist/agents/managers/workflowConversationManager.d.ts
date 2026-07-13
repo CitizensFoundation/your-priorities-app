@@ -8,7 +8,7 @@ export declare class WorkflowConversationManager {
     }): Promise<YpWorkflowConversation>;
     getWorkflowConversation(workflowConversationId: number): Promise<YpWorkflowConversation | null>;
     updateWorkflowConversation(workflowConversationId: number, updates: Record<string, any>): Promise<YpWorkflowConversation>;
-    connectToWorkflowConversation(workflowConversationId: number, connectionData: Record<string, any>): Promise<YpWorkflowConversation>;
+    connectToWorkflowConversation(workflowConversationId: number, userId: number, connectionData: Record<string, any>): Promise<YpWorkflowConversation | null>;
     getWorkflowConversationsForUser(userId: number): Promise<YpWorkflowConversation[]>;
     getRunningWorkflowConversationsForUser(userId: number): Promise<YpWorkflowConversation[]>;
 }

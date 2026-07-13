@@ -37,11 +37,11 @@ export class WorkflowConversationManager {
             throw new Error(`Error updating workflow conversation: ${error.message}`);
         }
     }
-    async connectToWorkflowConversation(workflowConversationId, connectionData) {
+    async connectToWorkflowConversation(workflowConversationId, userId, connectionData) {
         try {
-            const workflowConversation = await YpWorkflowConversation.findByPk(workflowConversationId);
+            const workflowConversation = await YpWorkflowConversation.findOne({ where: { id: workflowConversationId, userId } });
             if (!workflowConversation) {
-                throw new Error("Workflow conversation not found");
+                return null;
             }
             workflowConversation.configuration = {
                 ...workflowConversation.configuration,
