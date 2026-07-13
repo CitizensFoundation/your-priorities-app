@@ -35,7 +35,7 @@
     "@webcomponents/webcomponents-platform": "^1.0.0",
     "babel-preset-minify": "^0.2.0",
     "del": "^3.0.0",
-    "eslint": "^4.19.1",
+    "eslint": "^9.39.1",
     "google-closure-compiler": "^20180805.0.0",
     "gulp": "^3.8.8",
     "gulp-add-src": "^0.2.0",
