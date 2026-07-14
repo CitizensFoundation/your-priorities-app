@@ -1,8 +1,7 @@
 # Local Development Quick Start
 
-
-## 0) Repo-Level Preconditions (Important)
-Copy example environment files to the following locations.
+## 0) Environment variables
+Copy example environment files to correct locations
 
 From repo root:
 
@@ -10,14 +9,6 @@ From repo root:
 cp development/docker/.env-dist development/docker/.env
 cp development/docker/plausible-conf.env.dist development/docker/plausible-conf.env
 ```
-
-Quick verification command:
-
-```bash
-docker compose -f development/docker/docker-compose.yml config -q
-```
-
-Expected: no output and exit code 0.
 
 ## 1) First-Time Setup (Do Once Per Machine/Clone)
 
@@ -43,24 +34,34 @@ cd nesta-your-priorities
 
 ### 1.4 Ensure Required Ports Are Free
 
-Docker needs host ports 5432 and 6379.
+Postgres uses port 5432 and Redis uses port 6379 by default. Ensure nothing is already there:
 
 ```bash
 lsof -nP -iTCP:5432 -sTCP:LISTEN
 lsof -nP -iTCP:6379 -sTCP:LISTEN
 ```
 
-If either port is already bound, stop the conflicting local process before continuing.
-
 Expected output: returns nothing if ports are unbound
 
-### 1.5 Install Dependencies
+If either port is already bound, stop the conflicting local process before continuing.
+
+### 1.5 Install Node Dependencies
 
 ```bash
 cd server_api && npm install --ignore-scripts
 cd ../webApps/client && npm install --ignore-scripts
 cd ../..
 ```
+
+### 1.6 Setup first user
+
+Once you've started both the server and client (see below), run
+
+`YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/users/createUserAddDomain.js 1 your.email@here.com yourusername yourpassword`
+
+to create a new user, and `node server_api/ts-out/scripts/setAdminOnAll.cjs your.email@here.com` with the same environment variables to make that user an admin.
+
+(It appears to be necessary to start the client to create the first domain)
 
 ## 2) Daily Local Run (Normal Development Startup)
 
@@ -71,6 +72,11 @@ Use three terminals.
 ```bash
 cd development/docker
 docker compose up db redis -d
+```
+
+Postgres and redis should respond to healthchecks:
+
+```bash
 docker exec postgres pg_isready -U postgres -d yrpri_dev
 docker exec redis redis-cli ping
 ```
@@ -88,11 +94,8 @@ cd server_api
 ./startWatchWithEnv.sh
 ```
 
-Script behavior:
-- exports local DB credentials and local sync settings
-- exports local runtime defaults used by the API process
-- runs build and asset copy (views/config/templates/locales)
-- starts TypeScript watch + server restart loop
+The script sets up environment variables, builds typescript code and
+watches for changes to files and restarts the server if necessary.
 
 Expected backend startup signal:
 - Your Priorities Platform API Server listening on 0.0.0.0:4242
@@ -176,8 +179,8 @@ cd development/docker
 docker compose down
 ```
 
-## 5) If data persists after removing Docker containers
-The docker setup process creates, which causes database state to persist even after containers are deleted.
+## 5) Clearing database state
+The database is not stored in the postgres container but a named mount (`db`)
 
 To remove, run command below before re-building Docker containers:
 
@@ -185,9 +188,3 @@ To remove, run command below before re-building Docker containers:
 cd development/docker
 docker compose down -v --remove-orphans
 ```
-
-## 6) If Something Still Fails
-
-1. Re-check the preconditions in section 0 (these are the most common repo-level blockers).
-2. Re-run dependency install in both app packages: server_api and webApps/client.
-3. Verify startup-script env defaults in server_api/startWatchWithEnv.sh and server_api/startWorkerWithEnv.sh.
