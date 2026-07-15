@@ -251,6 +251,40 @@ const migrations: LocalMigration[] = [
       );
     },
   },
+  {
+    // Sequelize may have created this column as NOT NULL via sync() before the model was updated to allowNull: true.  
+    // An INSERT never sends a value for itso a NOT NULL constraint causes every group create to fail (23502).
+    name: "groups.private_access_configuration.nullable",
+    isNeeded: async (client) => {
+      if (!(await tableExists(client, "groups"))) return false;
+      if (!(await columnExists(client, "groups", "private_access_configuration"))) return false;
+      const result = await client.query(
+        `SELECT is_nullable FROM information_schema.columns
+         WHERE table_schema='public' AND table_name='groups'
+           AND column_name='private_access_configuration'`
+      );
+      return result.rows[0]?.is_nullable === "NO";
+    },
+    run: async (client) => {
+      await client.query(
+        'ALTER TABLE "groups" ALTER COLUMN private_access_configuration DROP NOT NULL'
+      );
+    },
+  },
+  {
+    // Group.belongsTo(IsoCountry) makes Sequelize include iso_country_id in the RETURNING clause of every INSERT.  
+    // If the column is absent, Postgres returns error 42703 (errorMissingColumn) and every group create fails.
+    name: "groups.iso_country_id",
+    isNeeded: async (client) => {
+      if (!(await tableExists(client, "groups"))) return false;
+      return !(await columnExists(client, "groups", "iso_country_id"));
+    },
+    run: async (client) => {
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS iso_country_id INTEGER'
+      );
+    },
+  },
 ];
 
 export async function runLocalMigrations() {
