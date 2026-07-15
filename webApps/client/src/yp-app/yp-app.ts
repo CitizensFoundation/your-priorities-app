@@ -962,6 +962,24 @@ export class YpApp extends YpBaseElement {
             ></yp-post>
           `);
           break;
+        case "inbound":
+          pageHtml = cache(html`
+            <div style="padding: 24px; max-width: 760px; margin: 0 auto;">
+              <h1>Inbound</h1>
+              <p>This is a static page served from the client app.</p>
+              <p>Visit /inbound to see it.</p>
+            </div>
+          `);
+          break;
+        case "outbound":
+          pageHtml = cache(html`
+            <div style="padding: 24px; max-width: 760px; margin: 0 auto;">
+              <h1>Outbound</h1>
+              <p>This is a static page served from the client app.</p>
+              <p>Visit /outbound to see it.</p>
+            </div>
+          `);
+          break;
         default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;
