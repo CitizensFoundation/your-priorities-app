@@ -100,10 +100,99 @@ async function indexExists(client: PgClient, indexName: string) {
 
 const migrations: LocalMigration[] = [
   {
+    name: "groups.legacy_columns",
+    isNeeded: async (client) => {
+      if (!(await tableExists(client, "groups"))) {
+        return false;
+      }
+
+      const requiredColumns = [
+        "access",
+        "deleted",
+        "google_analytics_code",
+        "objectives",
+        "message_for_new_idea",
+        "message_to_users",
+        "is_group_folder",
+        "in_group_folder_id",
+        "weight",
+        "status",
+        "counter_posts",
+        "counter_points",
+        "counter_users",
+        "counter_flags",
+        "theme_id",
+        "language",
+        "data",
+      ];
+
+      for (const columnName of requiredColumns) {
+        if (!(await columnExists(client, "groups", columnName))) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    run: async (client) => {
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS access INTEGER NOT NULL DEFAULT 0'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS deleted BOOLEAN NOT NULL DEFAULT FALSE'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS google_analytics_code VARCHAR(255)'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS objectives TEXT'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS message_for_new_idea TEXT'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS message_to_users TEXT'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS is_group_folder BOOLEAN NOT NULL DEFAULT FALSE'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS in_group_folder_id INTEGER'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS weight INTEGER NOT NULL DEFAULT 0'
+      );
+      await client.query(
+        "ALTER TABLE \"groups\" ADD COLUMN IF NOT EXISTS status VARCHAR(255) NOT NULL DEFAULT 'active'"
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS counter_posts INTEGER NOT NULL DEFAULT 0'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS counter_points INTEGER NOT NULL DEFAULT 0'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS counter_users INTEGER NOT NULL DEFAULT 0'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS counter_flags INTEGER NOT NULL DEFAULT 0'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS theme_id INTEGER'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS language VARCHAR(255)'
+      );
+      await client.query(
+        'ALTER TABLE "groups" ADD COLUMN IF NOT EXISTS data JSONB'
+      );
+    },
+  },
+  {
     name: "domains.user_id",
     isNeeded: async (client) => {
       if (!(await tableExists(client, "domains"))) {
-        throw new Error('Cannot migrate: table "domains" does not exist');
+        return false;
       }
 
       return !(await columnExists(client, "domains", "user_id"));
@@ -118,7 +207,7 @@ const migrations: LocalMigration[] = [
     name: "domains.only_admins_can_create_communities",
     isNeeded: async (client) => {
       if (!(await tableExists(client, "domains"))) {
-        throw new Error('Cannot migrate: table "domains" does not exist');
+        return false;
       }
 
       return !(await columnExists(
@@ -137,7 +226,7 @@ const migrations: LocalMigration[] = [
     name: "groups.private_access_configuration",
     isNeeded: async (client) => {
       if (!(await tableExists(client, "groups"))) {
-        throw new Error('Cannot migrate: table "groups" does not exist');
+        return false;
       }
 
       const hasColumn = await columnExists(
