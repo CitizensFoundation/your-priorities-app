@@ -71,6 +71,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "anthropic",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 3,
         costOutTokensPerMillion: 15,
         costInCachedContextTokensPerMillion: 0.3,
@@ -106,6 +107,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "anthropic",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 6.0,
         costOutTokensPerMillion: 27.5,
         costInCachedContextTokensPerMillion: 0.55,
@@ -141,6 +143,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "anthropic",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 5,
         costOutTokensPerMillion: 25,
         costInCachedContextTokensPerMillion: 0.5,
@@ -180,6 +183,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "anthropic",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 10,
         costOutTokensPerMillion: 50,
         costInCachedContextTokensPerMillion: 1,
@@ -224,6 +228,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 2.5,
         costOutTokensPerMillion: 10,
         costInCachedContextTokensPerMillion: 1.25,
@@ -260,6 +265,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 0.15,
         costOutTokensPerMillion: 0.6,
         costInCachedContextTokensPerMillion: 0.075,
@@ -295,6 +301,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 1.1,
         costOutTokensPerMillion: 4.4,
         costInCachedContextTokensPerMillion: 0.55,
@@ -330,6 +337,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 15.0,
         costOutTokensPerMillion: 60.0,
         costInCachedContextTokensPerMillion: 7.5,
@@ -366,6 +374,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 15.0,
         costOutTokensPerMillion: 60.0,
         costInCachedContextTokensPerMillion: 7.5,
@@ -402,6 +411,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 1.1,
         costOutTokensPerMillion: 4.4,
         costInCachedContextTokensPerMillion: 0.55,
@@ -437,6 +447,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 75,
         costOutTokensPerMillion: 150,
         costInCachedContextTokensPerMillion: 37.5,
@@ -473,6 +484,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 2.0,
         costOutTokensPerMillion: 8.0,
         costInCachedContextTokensPerMillion: 0.5,
@@ -509,6 +521,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 1.1,
         costOutTokensPerMillion: 4.4,
         costInCachedContextTokensPerMillion: 0.275,
@@ -545,6 +558,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 2,
         costOutTokensPerMillion: 8,
         currency: "USD",
@@ -581,6 +595,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 0.4,
         costOutTokensPerMillion: 1.6,
         costInCachedContextTokensPerMillion: 0.10,
@@ -617,6 +632,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 0.1,
         costOutTokensPerMillion: 0.4,
         costInCachedContextTokensPerMillion: 0.025,
@@ -653,6 +669,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 1.25,
         costOutTokensPerMillion: 10.0,
         costInCachedContextTokensPerMillion: 0.125,
@@ -689,6 +706,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 0.25,
         costOutTokensPerMillion: 2.0,
         costInCachedContextTokensPerMillion: 0.025,
@@ -725,6 +743,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 1.25,
         costOutTokensPerMillion: 10.0,
         costInCachedContextTokensPerMillion: 0.125,
@@ -761,6 +780,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 1.75,
         costOutTokensPerMillion: 14.0,
         costInCachedContextTokensPerMillion: 0.175,
@@ -797,6 +817,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 5.0,
         costOutTokensPerMillion: 30.0,
         costInCachedContextTokensPerMillion: 0.5,
@@ -837,6 +858,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 0.75,
         costOutTokensPerMillion: 4.5,
         costInCachedContextTokensPerMillion: 0.075,
@@ -873,6 +895,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Small,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 0.2,
         costOutTokensPerMillion: 1.25,
         costInCachedContextTokensPerMillion: 0.02,
@@ -909,6 +932,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 30.0,
         costOutTokensPerMillion: 180.0,
         costInCachedContextTokensPerMillion: 0.0,
@@ -949,6 +973,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 12.5,
         costOutTokensPerMillion: 75.0,
         costInCachedContextTokensPerMillion: 1.25,
@@ -988,6 +1013,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 30.0,
         costOutTokensPerMillion: 180.0,
         costInCachedContextTokensPerMillion: 30.0,
@@ -1026,6 +1052,7 @@ export class NewAiModelSetup {
       provider: "openai",
       inferenceType: "priority",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 12.5,
         costOutTokensPerMillion: 75.0,
         costInCachedContextTokensPerMillion: 1.25,
@@ -1064,6 +1091,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "openai",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 5.0,
         costOutTokensPerMillion: 30.0,
         costInCachedContextTokensPerMillion: 0.5,
@@ -1107,6 +1135,7 @@ export class NewAiModelSetup {
       provider: "openai",
       inferenceType: "flex",
       prices: {
+        costPerThousandWebSearches: 0.1,
         costInTokensPerMillion: 2.5,
         costOutTokensPerMillion: 15.0,
         costInCachedContextTokensPerMillion: 0.25,
@@ -1155,6 +1184,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Large,
         maxContextTokens: 1050000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 5.0,
           costOutTokensPerMillion: 30.0,
           costInCachedContextTokensPerMillion: 0.5,
@@ -1174,6 +1204,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Large,
         maxContextTokens: 1050000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 10.0,
           costOutTokensPerMillion: 60.0,
           costInCachedContextTokensPerMillion: 1.0,
@@ -1193,6 +1224,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Large,
         maxContextTokens: 1050000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 2.5,
           costOutTokensPerMillion: 15.0,
           costInCachedContextTokensPerMillion: 0.25,
@@ -1210,6 +1242,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Small,
         maxContextTokens: 400000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 2.5,
           costOutTokensPerMillion: 15.0,
           costInCachedContextTokensPerMillion: 0.25,
@@ -1229,6 +1262,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Small,
         maxContextTokens: 400000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 5.0,
           costOutTokensPerMillion: 30.0,
           costInCachedContextTokensPerMillion: 0.5,
@@ -1248,6 +1282,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Small,
         maxContextTokens: 400000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 1.25,
           costOutTokensPerMillion: 7.5,
           costInCachedContextTokensPerMillion: 0.125,
@@ -1265,6 +1300,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Small,
         maxContextTokens: 400000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 1.0,
           costOutTokensPerMillion: 6.0,
           costInCachedContextTokensPerMillion: 0.1,
@@ -1284,6 +1320,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Small,
         maxContextTokens: 400000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 2.0,
           costOutTokensPerMillion: 12.0,
           costInCachedContextTokensPerMillion: 0.2,
@@ -1303,6 +1340,7 @@ export class NewAiModelSetup {
         modelSize: PsAiModelSize.Small,
         maxContextTokens: 400000,
         prices: {
+          costPerThousandWebSearches: 0.1,
           costInTokensPerMillion: 0.5,
           costOutTokensPerMillion: 3.0,
           costInCachedContextTokensPerMillion: 0.05,
@@ -1367,6 +1405,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 0.1,
         costOutTokensPerMillion: 0.4,
         costInCachedContextTokensPerMillion: 0.07,
@@ -1403,6 +1442,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Large,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 1.25,
         costOutTokensPerMillion: 10,
         costInCachedContextTokensPerMillion: 0.875,
@@ -1444,6 +1484,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 0.30,
         costOutTokensPerMillion: 2.5,
         costInCachedContextTokensPerMillion: 0.15,
@@ -1480,6 +1521,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 0.10,
         costOutTokensPerMillion: 0.4,
         costInCachedContextTokensPerMillion: 0.07,
@@ -1517,6 +1559,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 2,
         costOutTokensPerMillion: 12,
         costInCachedContextTokensPerMillion: 1,
@@ -1557,6 +1600,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 2,
         costOutTokensPerMillion: 12,
         costInCachedContextTokensPerMillion: 1,
@@ -1597,6 +1641,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 0.25,
         costOutTokensPerMillion: 1.5,
         costInCachedContextTokensPerMillion: 0.025,
@@ -1633,6 +1678,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 0.25,
         costOutTokensPerMillion: 1.5,
         costInCachedContextTokensPerMillion: 0.025,
@@ -1669,6 +1715,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 1.5,
         costOutTokensPerMillion: 9.0,
         costInCachedContextTokensPerMillion: 0.15,
@@ -1705,6 +1752,7 @@ export class NewAiModelSetup {
       modelSize: PsAiModelSize.Medium,
       provider: "google",
       prices: {
+        costPerThousandWebSearches: 0.0,
         costInTokensPerMillion: 0.5,
         costOutTokensPerMillion: 3.0,
         costInCachedContextTokensPerMillion: 0.25,
