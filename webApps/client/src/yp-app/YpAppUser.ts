@@ -4,7 +4,6 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpLogin } from "../yp-user/yp-login.js";
 import { YpRegistrationQuestionsDialog } from "../yp-user/yp-registration-questions-dialog.js";
 
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { YpSnackbar } from "./yp-snackbar.js";
 import { YpPostActions } from "../yp-post/yp-post-actions.js";
 import { YpPostRatingsInfo } from "../yp-rating/yp-post-ratings-info.js";
@@ -107,7 +106,6 @@ export class YpAppUser extends YpCodeBase {
   constructor(serverApi: YpServerApi, skipRegularInit = false) {
     super();
     this.serverApi = serverApi;
-    this._setupBrowserFingerprint();
     if (!skipRegularInit) {
       if (!window.location.pathname.startsWith("/survey/")) {
         this.checkLogin();
@@ -146,39 +144,12 @@ export class YpAppUser extends YpCodeBase {
       return this.fallbackBrowserId;
     }
   }
-
-  _setupBrowserFingerprint() {
-    try {
-      this.browserFingerprintPromise = FingerprintJS.load({
-        monitoring: false,
-      })
-        .then((fp) => fp.get())
-        .then((result) => {
-          this.browserFingerprint = result.visitorId;
-          this.browserFingerprintConfidence = result.confidence.score;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async ensureBrowserFingerprint() {
-    if (this.browserFingerprintPromise && !this.browserFingerprint) {
-      await this.browserFingerprintPromise;
-    }
-  }
-
+  
   async getBrowserFingerprintData(prefix: string) {
-    await this.ensureBrowserFingerprint();
-    const browserId = this.getBrowserId() || "";
-
     return {
-      [`${prefix}BaseId`]: browserId,
-      [`${prefix}ValCode`]: this.browserFingerprint,
-      [`${prefix}Conf`]: this.browserFingerprintConfidence ?? 0,
+      [`${prefix}BaseId`]: "",
+      [`${prefix}ValCode`]: undefined,
+      [`${prefix}Conf`]: 0,
     };
   }
 
