@@ -1,19 +1,17 @@
-import { html, nothing } from 'lit';
+import { css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
-import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
+import '../common/yp-image.js';
 import '@material/web/textfield/outlined-text-field.js';
 
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
-import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpEditBase } from '../common/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
-import { TextField } from '@material/web/textfield/internal/text-field.js';
+import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
+import { YpForm } from '../common/yp-form.js';
 
 @customElement('yp-post-user-image-edit')
 export class YpPostUserImageEdit extends YpEditBase {
@@ -35,6 +33,39 @@ export class YpPostUserImageEdit extends YpEditBase {
   @property({ type: Number })
   oldUploadedPostUserImageId: number | undefined;
 
+  @property({ type: Boolean })
+  imageMissing = false;
+
+  static override get styles() {
+    return [
+      super.styles,
+      ShadowStyles,
+      css`
+        .imagePreview {
+          width: min(400px, 100%);
+          height: 300px;
+          margin: 8px 0 16px;
+          background-color: var(--md-sys-color-surface-container);
+        }
+
+        .imageRequiredError {
+          color: var(--md-sys-color-error);
+          font-size: 14px;
+          margin: 0 0 8px;
+        }
+
+        md-outlined-text-field {
+          width: min(432px, calc(100% - 32px));
+          margin: 8px 16px;
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+      `,
+    ];
+  }
+
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
@@ -54,11 +85,12 @@ export class YpPostUserImageEdit extends YpEditBase {
         id="editDialog"
         icon="photo_camera"
         .action="${this.action}"
-        .title="${this.editHeaderText}"
+        .heading="${this.editHeaderText || ''}"
         .method="${this.method}"
         .saveText="${this.saveText}"
         .nextActionText="${this.t('next')}"
-        .toastText="${this.snackbarText}"
+        .snackbarText="${this.snackbarText}"
+        .customValidationFunction="${this._validateForm}"
         .params="${this.params}">
         ${this.image
           ? html`
@@ -69,8 +101,30 @@ export class YpPostUserImageEdit extends YpEditBase {
                   .buttonText="${this.t('image.upload')}"
                   buttonIcon="photo_camera"
                   method="POST"
+                  replaceFilesOnSelect
                   @success="${this._imageUploaded}">
                 </yp-file-upload>
+                <div
+                  class="imageRequiredError"
+                  role="alert"
+                  ?hidden="${!this.imageMissing}">
+                  ${this.t('post.formInvalid')}
+                </div>
+                ${this.imagePreviewUrl
+                  ? html`
+                      <yp-image
+                        class="imagePreview"
+                        sizing="contain"
+                        .alt="${
+                          this.image.description || this.t('post.newPhoto')
+                        }"
+                        .title="${
+                          this.image.description || this.t('post.newPhoto')
+                        }"
+                        src="${this.imagePreviewUrl}">
+                      </yp-image>
+                    `
+                  : nothing}
               </div>
 
               <md-outlined-text-field
@@ -79,33 +133,30 @@ export class YpPostUserImageEdit extends YpEditBase {
                 type="text"
                 .label="${this.t('post.photographerName')}"
                 .value="${this.image.photographer_name || ''}"
-                maxlength="60"
-                char-counter="">
-              </-outlined-text-field>
+                maxlength="60">
+              </md-outlined-text-field>
 
               <md-outlined-text-field
-              type="textarea"
+                type="textarea"
                 id="description"
                 required
                 minlength="1"
                 name="description"
                 .value="${this.image.description || ''}"
                 .label="${this.t('post.description')}"
-                charCounter
                 rows="2"
-                maxrows="5"
                 maxlength="200">
               </md-outlined-text-field>
 
               <input
                 type="hidden"
                 name="uploadedPostUserImageId"
-                .value="${this.uploadedPostUserImageId}" />
+                .value="${this.uploadedPostUserImageId?.toString() || ''}" />
 
               <input
                 type="hidden"
                 name="oldUploadedPostUserImageId"
-                .value="${this.oldUploadedPostUserImageId}" />
+                .value="${this.oldUploadedPostUserImageId?.toString() || ''}" />
             `
           : nothing}
       </yp-edit-dialog>
@@ -114,8 +165,11 @@ export class YpPostUserImageEdit extends YpEditBase {
 
   _postChanged() {
     if (this.post) {
-      (this.$$('#imageFileUpload') as YpFileUpload).target =
-        '/api/images?itemType=post-user-image&postId=' + this.post.id;
+      const imageFileUpload = this.$$('#imageFileUpload') as YpFileUpload | null;
+      if (imageFileUpload) {
+        imageFileUpload.target =
+          '/api/images?itemType=post-user-image&postId=' + this.post.id;
+      }
     }
   }
 
@@ -132,6 +186,12 @@ export class YpPostUserImageEdit extends YpEditBase {
   _imageChanged() {
     if (this.image) {
       this.oldUploadedPostUserImageId = this.image.id;
+      if (this.image.id) {
+        this.imagePreviewUrl = YpMediaHelpers.getImageFormatUrl([this.image]);
+      }
+    } else {
+      this.oldUploadedPostUserImageId = undefined;
+      this.imagePreviewUrl = undefined;
     }
   }
 
@@ -143,11 +203,29 @@ export class YpPostUserImageEdit extends YpEditBase {
   _imageUploaded(event: CustomEvent) {
     const image = JSON.parse(event.detail.xhr.response);
     this.uploadedPostUserImageId = image.id;
+    this.imagePreviewUrl = YpMediaHelpers.getImageFormatUrl([image]);
+    this.imageMissing = false;
   }
+
+  private _validateForm = () => {
+    const editDialog = this.$$('#editDialog') as YpEditDialog;
+    const form = editDialog.getForm() as YpForm | null;
+    const formIsValid = form?.validate() || false;
+    const hasImage = Boolean(
+      this.uploadedPostUserImageId ||
+        (!this.new && this.oldUploadedPostUserImageId)
+    );
+
+    this.imageMissing = !hasImage;
+    return formIsValid && hasImage;
+  };
 
   clear() {
     this.uploadedPostUserImageId = undefined;
-    (this.$$('#imageFileUpload') as YpFileUpload).clear();
+    this.oldUploadedPostUserImageId = undefined;
+    this.imagePreviewUrl = undefined;
+    this.imageMissing = false;
+    (this.$$('#imageFileUpload') as YpFileUpload | null)?.clear();
   }
 
   setup(
@@ -156,8 +234,16 @@ export class YpPostUserImageEdit extends YpEditBase {
     newNotEdit: boolean,
     refreshFunction: Function
   ) {
+    this.uploadedPostUserImageId = undefined;
+    this.oldUploadedPostUserImageId = undefined;
+    this.imagePreviewUrl = undefined;
+    this.imageMissing = false;
+    (this.$$('#imageFileUpload') as YpFileUpload | null)?.clear(true);
+
     if (image) {
       this.image = image;
+      this.oldUploadedPostUserImageId = image.id;
+      this.imagePreviewUrl = YpMediaHelpers.getImageFormatUrl([image]);
     } else {
       this.image = ({
         description: '',

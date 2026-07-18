@@ -66,6 +66,9 @@ export class YpFileUpload extends YpBaseElement {
   multi = false;
 
   @property({ type: Boolean })
+  replaceFilesOnSelect = false;
+
+  @property({ type: Boolean })
   autoChooseFirstVideoFrameAsPost = false;
 
   /**
@@ -445,6 +448,13 @@ export class YpFileUpload extends YpBaseElement {
    * Clears the list of files
    */
   clear(skipEvents = false) {
+    let abortedUploadCount = 0;
+    for (const file of this.files) {
+      if (file.xhr && !file.complete) {
+        file.xhr.abort();
+        abortedUploadCount += 1;
+      }
+    }
     this.files = [];
     this._showDropText();
     this.uploadStatus = undefined;
@@ -462,6 +472,9 @@ export class YpFileUpload extends YpBaseElement {
 
     const fileInput = this.$$("#fileInput") as HTMLInputElement;
     if (fileInput) fileInput.value = "";
+    for (let index = 0; index < abortedUploadCount; index += 1) {
+      this.fire("file-upload-complete");
+    }
     if (!skipEvents) {
       if (this.videoUpload) this.fire("success", { detail: { videoUrl: undefined }, videoId: null });
       else if (this.audioUpload)
@@ -513,13 +526,14 @@ export class YpFileUpload extends YpBaseElement {
       //this.toggleClass('hover', false, uploadBorder);
       event.preventDefault();
       if (event.dataTransfer) {
-        const length = event.dataTransfer.files.length;
-        for (let i = 0; i < length; i++) {
-          const file = event.dataTransfer.files[i] as YpUploadFileData;
+        const files = this._prepareSelectedFiles(
+          Array.from(event.dataTransfer.files) as Array<YpUploadFileData>
+        );
+        for (const file of files) {
           file.progress = 0;
           file.error = false;
           file.complete = false;
-          this.files.push(file);
+          this.files = [...this.files, file];
           this.uploadFile(file);
         }
       }
@@ -599,10 +613,11 @@ export class YpFileUpload extends YpBaseElement {
   }
 
   _dataFromMediaRecorder(file: YpUploadFileData) {
+    this._prepareSelectedFiles([file]);
     file.progress = 0;
     file.error = false;
     file.complete = false;
-    this.files.push(file);
+    this.files = [...this.files, file];
     this.uploadFile(file);
   }
 
@@ -610,15 +625,23 @@ export class YpFileUpload extends YpBaseElement {
    * Called whenever the list of selected files changes
    */
   _fileChange(e: { target: { files: Array<YpUploadFileData> } }) {
-    const length = e.target.files.length;
-    for (let i = 0; i < length; i++) {
-      const file = e.target.files[i];
+    const files = this._prepareSelectedFiles(Array.from(e.target.files));
+    for (const file of files) {
       file.progress = 0;
       file.error = false;
       file.complete = false;
-      this.files.push(file);
+      this.files = [...this.files, file];
       this.uploadFile(file);
     }
+  }
+
+  private _prepareSelectedFiles(files: Array<YpUploadFileData>) {
+    if (!this.replaceFilesOnSelect || this.multi) {
+      return files;
+    }
+
+    this.clear(true);
+    return files.slice(0, 1);
   }
 
   /**
