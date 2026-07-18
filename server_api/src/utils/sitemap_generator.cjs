@@ -1,4 +1,5 @@
 var models = require("../models/index.cjs");
+const { Op } = require("sequelize");
 var _ = require("lodash");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const { Readable } = require("stream");
@@ -83,7 +84,7 @@ var generateSitemap = async function (req, res) {
                   domain_id: domainId,
                   access: models.Community.ACCESS_PUBLIC,
                   status: {
-                    $ne: "hidden",
+                    [Op.ne]: "hidden",
                   },
                 },
               })
@@ -122,7 +123,7 @@ var generateSitemap = async function (req, res) {
                 id: community.id,
                 access: models.Community.ACCESS_PUBLIC,
                 status: {
-                  $ne: "hidden",
+                  [Op.ne]: "hidden",
                 },
               };
             } else {
@@ -130,7 +131,7 @@ var generateSitemap = async function (req, res) {
                 domain_id: domainId,
                 access: models.Community.ACCESS_PUBLIC,
                 status: {
-                  $ne: "hidden",
+                  [Op.ne]: "hidden",
                 },
               };
             }
@@ -138,12 +139,12 @@ var generateSitemap = async function (req, res) {
             models.Group.findAll({
               attributes: ["id"],
               where: {
-                $or: [
+                [Op.or]: [
                   { access: models.Group.ACCESS_PUBLIC },
                   { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
                 ],
                 status: {
-                  $ne: "hidden",
+                  [Op.ne]: "hidden",
                 },
                 configuration: {
                   actAsLinkToCommunityId: null,
@@ -200,7 +201,7 @@ var generateSitemap = async function (req, res) {
                       id: community.id,
                       access: models.Community.ACCESS_PUBLIC,
                       status: {
-                        $ne: "hidden",
+                        [Op.ne]: "hidden",
                       },
                     },
                   },
@@ -214,7 +215,7 @@ var generateSitemap = async function (req, res) {
                     where: {
                       access: models.Community.ACCESS_PUBLIC,
                       status: {
-                        $ne: "hidden",
+                        [Op.ne]: "hidden",
                       },
                     },
                     include: [
@@ -238,7 +239,7 @@ var generateSitemap = async function (req, res) {
                     model: models.Group,
                     attributes: ["id"],
                     where: {
-                      $or: [
+                      [Op.or]: [
                         { access: models.Group.ACCESS_PUBLIC },
                         { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
                       ],

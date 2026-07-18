@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var _ = require('lodash');
 var csvParser = require('csv-parse');
@@ -92,7 +93,7 @@ var fixOnePost = function (groupId, postId, done) {
               name: oldPost.name,
               created_at: oldPost.created_at,
               id: {
-                $ne: oldPost.id
+                [Op.ne]: oldPost.id
               }
             }
           }).then(function (newPostIn) {

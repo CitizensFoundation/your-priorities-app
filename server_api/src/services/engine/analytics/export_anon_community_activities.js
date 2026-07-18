@@ -1,4 +1,5 @@
 const models = require('../../../models/index.cjs');
+const { Op } = require("sequelize");
 const _ = require('lodash');
 const async = require('async');
 const log = require('../../../utils/logger.cjs');
@@ -265,7 +266,7 @@ const sendAllUserActivitiesWithContent = (userId, communityId, collectedPostIds,
       user_id: userId,
       community_id: communityId,
       type: {
-        $in: [
+        [Op.in]: [
           "activity.post.new","activity.post.opposition.new","activity.post.endorsement.new",
           "activity.point.new","activity.point.helpful.new","activity.point.unhelpful.new"
         ]

@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 
 var femalePostCount = 0;
@@ -28,7 +29,7 @@ models.Domain.findOne({where: {id: 1}}).then(function(domain) {
               where: {
                 user_id: user.id,
                 official_status: {
-                  $in: officialStatus
+                  [Op.in]: officialStatus
                 }
               }
             }).then(function (posts) {

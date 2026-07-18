@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var _ = require('lodash');
 var http = require('http');
@@ -149,7 +150,7 @@ var addPost = function (dbIssue, userId, groupImageId, domain, callback) {
 };
 var saveIssueIfNeeded = function (dbIssue, userId, callback) {
     models.Post.findOne({ where: {
-            $and: [
+            [Op.and]: [
                 {
                     "public_data.law_issue.sessionId": SESSION_ID
                 },

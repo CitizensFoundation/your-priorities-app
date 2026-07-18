@@ -1,5 +1,6 @@
 "use strict";
 const models = require('../../../models/index.cjs');
+const { Op } = require("sequelize");
 const _ = require('lodash');
 const async = require('async');
 const log = require('../../../utils/logger.cjs');
@@ -91,17 +92,17 @@ var importAll = function (done) {
             }, ['id', 'user_id', 'created_at', 'ip_address', 'user_agent']);
         },
         function (callback) {
-            importAllActionsFor(models.Endorsement, { value: { $gt: 0 } }, [{ model: models.Post, attributes: ['id'] }], 'endorse', function () {
+            importAllActionsFor(models.Endorsement, { value: { [Op.gt]: 0 } }, [{ model: models.Post, attributes: ['id'] }], 'endorse', function () {
                 callback();
             }, ['id', 'user_id', 'created_at', 'value', 'ip_address', 'user_agent']);
         },
         function (callback) {
-            importAllActionsFor(models.Endorsement, { value: { $lt: 0 } }, [{ model: models.Post, attributes: ['id'] }], 'oppose', function () {
+            importAllActionsFor(models.Endorsement, { value: { [Op.lt]: 0 } }, [{ model: models.Post, attributes: ['id'] }], 'oppose', function () {
                 callback();
             }, ['id', 'user_id', 'created_at', 'value', 'ip_address', 'user_agent']);
         },
         function (callback) {
-            importAllActionsFor(models.Point, { value: { $ne: 0 } }, [{ model: models.Post, attributes: ['id'] }], 'new-point', function () {
+            importAllActionsFor(models.Point, { value: { [Op.ne]: 0 } }, [{ model: models.Post, attributes: ['id'] }], 'new-point', function () {
                 callback();
             }, ['id', 'user_id', 'created_at', 'value', 'ip_address', 'user_agent']);
         },
@@ -111,7 +112,7 @@ var importAll = function (done) {
             }, ['id', 'user_id', 'created_at', 'value', 'ip_address', 'user_agent']);
         },
         function (callback) {
-            importAllActionsFor(models.PointQuality, { value: { $gt: 0 } }, [{
+            importAllActionsFor(models.PointQuality, { value: { [Op.gt]: 0 } }, [{
                     model: models.Point,
                     attributes: ['id', 'value'],
                     include: [{ model: models.Post, attributes: ['id'] }]
@@ -120,7 +121,7 @@ var importAll = function (done) {
             }, ['id', 'user_id', 'created_at', 'value', 'ip_address', 'user_agent']);
         },
         function (callback) {
-            importAllActionsFor(models.PointQuality, { value: { $lt: 0 } }, [{
+            importAllActionsFor(models.PointQuality, { value: { [Op.lt]: 0 } }, [{
                     model: models.Point,
                     attributes: ['id', 'value'],
                     include: [models.Post]

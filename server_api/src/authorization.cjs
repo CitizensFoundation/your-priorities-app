@@ -1,4 +1,5 @@
 var auth = require("authorized");
+const { Op } = require("sequelize");
 var models = require("./models/index.cjs");
 var log = require("./utils/logger.cjs");
 var toJson = require("./utils/to_json.cjs");
@@ -35,7 +36,7 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
                 where: {
                   id: group.Community.configuration.ssnLoginListDataId,
                   "data.ssns::jsonb": {
-                    $contains: '["' + req.user.ssn + '"]',
+                    [Op.contains]: '["' + req.user.ssn + '"]',
                   },
                 },
                 attributes: ["id"],
@@ -194,7 +195,7 @@ auth.hasCommunitySsnLoginListAccess = function (community, req, done) {
       where: {
         id: community.configuration.ssnLoginListDataId,
         "data.ssns::jsonb": {
-          $contains: '["' + req.user.ssn + '"]',
+          [Op.contains]: '["' + req.user.ssn + '"]',
         },
       },
       attributes: ["id"],

@@ -224,10 +224,10 @@ var getCommunityFolder = function (req, communityFolderId, done) {
         models.Community.findAll({
           where: {
             access: {
-              $ne: models.Community.ACCESS_SECRET,
+              [Op.ne]: models.Community.ACCESS_SECRET,
             },
             status: {
-              $ne: "hidden",
+              [Op.ne]: "hidden",
             },
             in_community_folder_id: communityFolderId,
           },
@@ -603,13 +603,13 @@ const getCommunity = function (req, done) {
                 where: {
                   community_id: community.id,
                   access: {
-                    $ne: models.Group.ACCESS_SECRET,
+                    [Op.ne]: models.Group.ACCESS_SECRET,
                   },
                   status: {
-                    $ne: "hidden",
+                    [Op.ne]: "hidden",
                   },
                   in_group_folder_id: {
-                    $eq: null,
+                    [Op.eq]: null,
                   },
                 },
                 attributes: models.Group.defaultAttributesPublic,
@@ -660,7 +660,7 @@ const getCommunity = function (req, done) {
                   where: {
                     community_id: community.id,
                     in_group_folder_id: {
-                      $eq: null,
+                      [Op.eq]: null,
                     },
                   },
                   attributes: models.Group.defaultAttributesPublic,
@@ -699,7 +699,7 @@ const getCommunity = function (req, done) {
                   where: {
                     community_id: community.id,
                     in_group_folder_id: {
-                      $eq: null,
+                      [Op.eq]: null,
                     },
                   },
                   attributes: models.Group.defaultAttributesPublic,
@@ -2272,7 +2272,7 @@ router.get(
           required: true,
           where: {
             access: {
-              $in: [
+              [Op.in]: [
                 models.Group.ACCESS_OPEN_TO_COMMUNITY,
                 models.Group.ACCESS_PUBLIC,
               ],
@@ -2828,7 +2828,7 @@ router.get(
     models.Post.findAll({
       where: {
         location: {
-          $ne: null,
+          [Op.ne]: null,
         },
       },
       attributes: models.Post.defaultAttributesPublic,
@@ -2848,7 +2848,7 @@ router.get(
           attributes: models.Group.defaultAttributesPublic,
           where: {
             access: {
-              $in: [
+              [Op.in]: [
                 models.Group.ACCESS_OPEN_TO_COMMUNITY,
                 models.Group.ACCESS_PUBLIC,
               ],
@@ -3421,7 +3421,7 @@ router.get("/:id/stats_votes", auth.can("edit community"), function (req, res) {
     models.AcActivity,
     {
       type: {
-        $in: [
+        [Op.in]: [
           "activity.post.opposition.new",
           "activity.post.endorsement.new",
           "activity.point.helpful.new",

@@ -1,4 +1,5 @@
 const models = require('../../models/index.cjs');
+const { Op } = require("sequelize");
 const _ = require('lodash');
 const https = require("https");
 const fs = require("fs");
@@ -140,7 +141,7 @@ async function getGroups() {
         const groups = await models.Group.findAll({
             where: {
                 community_id: {
-                    $in: communityIdsToKeep
+                    [Op.in]: communityIdsToKeep
                 }
             },
             attributes: ['id'],
@@ -185,7 +186,7 @@ async function getPosts() {
         const posts = await models.Post.unscoped().findAll({
             where: {
                 group_id: {
-                    $in: groupIdsToKeep
+                    [Op.in]: groupIdsToKeep
                 }
             },
             attributes: ['id', 'user_id'],
@@ -230,7 +231,7 @@ async function getEndorsements() {
         const endorsement = await models.Endorsement.unscoped().findAll({
             where: {
                 post_id: {
-                    $in: postIdsToKeep
+                    [Op.in]: postIdsToKeep
                 }
             },
             attributes: ['id', 'user_id']
@@ -243,7 +244,7 @@ async function getQualities() {
         const qualities = await models.PointQuality.findAll({
             where: {
                 point_id: {
-                    $in: pointIdsToKeep
+                    [Op.in]: pointIdsToKeep
                 }
             },
             attributes: ['id', 'user_id']
@@ -256,7 +257,7 @@ async function getPointRevisions() {
         const revisions = await models.PointRevision.findAll({
             where: {
                 point_id: {
-                    $in: pointIdsToKeep
+                    [Op.in]: pointIdsToKeep
                 }
             },
             attributes: ['id', 'user_id']
@@ -269,7 +270,7 @@ async function getCategories() {
         const categories = await models.Category.findAll({
             where: {
                 group_id: {
-                    $in: groupIdsToKeep
+                    [Op.in]: groupIdsToKeep
                 }
             },
             attributes: ['id']
@@ -282,7 +283,7 @@ async function getPages() {
         const pages = await models.Page.findAll({
             where: {
                 group_id: {
-                    $in: groupIdsToKeep
+                    [Op.in]: groupIdsToKeep
                 }
             },
             attributes: ['id']
@@ -295,7 +296,7 @@ async function getPoints() {
         const points = await models.Point.unscoped().findAll({
             where: {
                 post_id: {
-                    $in: postIdsToKeep
+                    [Op.in]: postIdsToKeep
                 }
             },
             attributes: ['id', 'user_id'],
@@ -322,7 +323,7 @@ async function getUsers() {
         const users = await models.User.unscoped().findAll({
             where: {
                 id: {
-                    $in: userIdsToKeep
+                    [Op.in]: userIdsToKeep
                 }
             },
             attributes: ['id'],
@@ -349,7 +350,7 @@ async function getVideos() {
         const videos = await models.Video.unscoped().findAll({
             where: {
                 id: {
-                    $in: videoIdsToKeep
+                    [Op.in]: videoIdsToKeep
                 }
             },
             attributes: ['id'],
@@ -369,15 +370,15 @@ async function getActivities() {
     return await new Promise(async (resolve, reject) => {
         const activities = await models.AcActivity.findAll({
             where: {
-                $or: [
+                [Op.or]: [
                     {
                         community_id: {
-                            $in: communityIdsToKeep
+                            [Op.in]: communityIdsToKeep
                         }
                     },
                     {
                         group_id: {
-                            $in: groupIdsToKeep
+                            [Op.in]: groupIdsToKeep
                         }
                     },
                     {
@@ -385,17 +386,17 @@ async function getActivities() {
                     },
                     {
                         post_id: {
-                            $in: postIdsToKeep
+                            [Op.in]: postIdsToKeep
                         }
                     },
                     {
                         point_id: {
-                            $in: pointIdsToKeep
+                            [Op.in]: pointIdsToKeep
                         }
                     },
                     {
                         user_id: {
-                            $in: pointIdsToKeep
+                            [Op.in]: pointIdsToKeep
                         }
                     },
                 ]

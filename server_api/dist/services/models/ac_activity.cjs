@@ -1,4 +1,5 @@
 "use strict";
+const { Op } = require("sequelize");
 const log = require('../../utils/logger.cjs');
 const queue = require('../workers/queue.cjs');
 const toJson = require('../utils/to_json.cjs');
@@ -103,7 +104,7 @@ module.exports = (sequelize, DataTypes) => {
                 attributes: ['id', 'created_at'],
                 where: {
                     id: {
-                        $in: userIds
+                        [Op.in]: userIds
                     }
                 },
                 include: [

@@ -1,4 +1,5 @@
 const queue = require('../../workers/queue.cjs');
+const { Op } = require("sequelize");
 const models = require("../../../models/index.cjs");
 const i18n = require('../../utils/i18n.cjs');
 const async = require('async');
@@ -218,10 +219,10 @@ const getModelModeration = (options, callback) => {
   options.model.unscoped().findAll({
     where: {
       deleted: false,
-      $or: [
+      [Op.or]: [
         {
           counter_flags: {
-            $gt: options.allContent ? -1 : 0
+            [Op.gt]: options.allContent ? -1 : 0
           },
         },
         {
@@ -245,10 +246,10 @@ const countModelModeration = (options, callback) => {
   options.model.unscoped().count({
     where: {
       deleted: false,
-      $or: [
+      [Op.or]: [
         {
           counter_flags: {
-            $gt: options.allContent ? -1 : 0
+            [Op.gt]: options.allContent ? -1 : 0
           },
         },
         {

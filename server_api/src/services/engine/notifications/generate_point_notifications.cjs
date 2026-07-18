@@ -1,4 +1,5 @@
 const models = require("../../../models/index.cjs");
+const { Op } = require("sequelize");
 const log = require('../../../utils/logger.cjs');
 const async = require('async');
 const getModelAndUsersByType = require('./notifications_utils.cjs').getModelAndUsersByType;
@@ -31,7 +32,7 @@ const generateNotificationsForNewPoint = (activity, callback) => {
         const userWhere = {};
 
         userWhere["notifications_settings.my_posts.method"] = {
-          $gt: 0
+          [Op.gt]: 0
         };
 
         if (activity.post_id) {
@@ -71,7 +72,7 @@ const generateNotificationsForNewPoint = (activity, callback) => {
         const userWhere = {};
 
         userWhere["notifications_settings.my_points.method"] = {
-          $gt: 0
+          [Op.gt]: 0
         };
 
         if (activity.post_id) {
@@ -90,7 +91,7 @@ const generateNotificationsForNewPoint = (activity, callback) => {
             models.Point.findAll({
               where: {
                 id: {
-                  $in: _.map(pointsIn, (pointIn) => { return pointIn.id })
+                  [Op.in]: _.map(pointsIn, (pointIn) => { return pointIn.id })
                 }
               },
               attributes: ['id'],
@@ -195,7 +196,7 @@ const generateNotificationsForHelpfulness = (activity, callback) => {
         attributes: ['id','notifications_settings','email','name'],
         where: {
           "notifications_settings.my_points_endorsements.method": {
-            $gt: 0
+            [Op.gt]: 0
           }
         }
       }

@@ -1,4 +1,5 @@
 var express = require('express');
+const { Op } = require("sequelize");
 var router = express.Router();
 var models = require("../../models/index.cjs");
 var auth = require('../../authorization.cjs');
@@ -25,7 +26,7 @@ var getNotifications = function (req, options, callback) {
     })
   }
 
-  var where = _.merge({
+  var where = Object.assign({
     user_id: req.user.id
   }, getCommonWhereDateOptions(options));
 
@@ -63,7 +64,7 @@ var getNotifications = function (req, options, callback) {
       models.AcNotification.findAll({
         where: {
           id: {
-            $in: _.map(notifications, (item) => { return item.id })
+            [Op.in]: _.map(notifications, (item) => { return item.id })
           }
         },
         attributes: ['id','type','created_at','updated_at','viewed'],
@@ -206,7 +207,7 @@ router.put('/setIdsViewed', auth.isLoggedInNoAnonymousCheck, function(req, res) 
         where: {
           user_id: req.user.id,
           id: {
-            $in: viewedIds
+            [Op.in]: viewedIds
           }
         },
         silent: true

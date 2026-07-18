@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var _ = require('lodash');
 var moment = require('moment');
@@ -37,7 +38,7 @@ var getNumberOfPosts = function (csv, headerText, communityId, dateRangeFrom, da
     models.Post.findAll({
         where: {
             created_at: {
-                $between: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
+                [Op.between]: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
             }
         },
         include: [
@@ -61,7 +62,7 @@ var getNumberOfPoints = function (csv, headerText, communityId, dateRangeFrom, d
     models.Point.findAll({
         where: {
             created_at: {
-                $between: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
+                [Op.between]: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
             }
         },
         include: [
@@ -90,7 +91,7 @@ var getNumberOfEndorsement = function (csv, headerText, communityId, dateRangeFr
     models.Endorsement.findAll({
         where: {
             created_at: {
-                $between: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
+                [Op.between]: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
             }
         },
         include: [
@@ -126,7 +127,7 @@ var getNumberOfUsers = function (csv, headerText, communityId, dateRangeFrom, da
                 as: 'CommunityUsers',
                 where: {
                     created_at: {
-                        $between: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
+                        [Op.between]: [dateRangeFrom.toDate(), dateRangeTo.toDate()]
                     }
                 }
             }

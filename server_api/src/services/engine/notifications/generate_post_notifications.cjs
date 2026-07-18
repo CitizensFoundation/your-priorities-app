@@ -1,4 +1,5 @@
 const models = require("../../../models/index.cjs");
+const { Op } = require("sequelize");
 const log = require("../../../utils/logger.cjs");
 const async = require("async");
 const getModelAndUsersByType =
@@ -118,7 +119,7 @@ const generateNotificationsForEndorsements = (activity, callback) => {
         required: true,
         where: {
           "notifications_settings.my_posts_endorsements.method": {
-            $gt: 0,
+            [Op.gt]: 0,
           },
         },
       },

@@ -1,5 +1,6 @@
 "use strict";
 const models = require("../../../../models/index.cjs");
+const { Op } = require("sequelize");
 const moment = require("moment");
 const _ = require("lodash");
 const Excel = require("exceljs");
@@ -34,7 +35,7 @@ class FraudAuditReport {
             attributes: ["id", "created_at", "value", "point_id", "user_id", "user_agent", "ip_address", "data"],
             where: {
                 id: {
-                    $in: ids
+                    [Op.in]: ids
                 }
             },
             include: [
@@ -75,7 +76,7 @@ class FraudAuditReport {
             attributes: ["id", "created_at", "value", "post_id", "user_id", "user_agent", "ip_address", "data"],
             where: {
                 id: {
-                    $in: ids
+                    [Op.in]: ids
                 }
             },
             include: [
@@ -114,7 +115,7 @@ class FraudAuditReport {
             attributes: ["id", "created_at", "group_id", "user_id", "user_agent", "ip_address", "data"],
             where: {
                 id: {
-                    $in: ids
+                    [Op.in]: ids
                 }
             },
             include: [

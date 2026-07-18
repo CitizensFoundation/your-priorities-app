@@ -1,4 +1,5 @@
 var express = require('express');
+const { Op } = require("sequelize");
 var router = express.Router();
 var models = require("../models/index.cjs");
 var auth = require('../authorization.cjs');
@@ -161,7 +162,7 @@ var getDomain = function (req, domainId, done) {
             where: {
               domain_id: domain.id,
               access: {
-                $ne: models.Community.ACCESS_SECRET
+                [Op.ne]: models.Community.ACCESS_SECRET
               },
               configuration: {
                 [models.Sequelize.Op.or]: [
@@ -175,10 +176,10 @@ var getDomain = function (req, domainId, done) {
                   }
                 ]
               },
-              $or: [
+              [Op.or]: [
                 {
                   counter_users: {
-                    $gt: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 21
+                    [Op.gt]: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 21
                   },
                 },
                 {
@@ -186,12 +187,12 @@ var getDomain = function (req, domainId, done) {
                 },
                 {
                   is_community_folder: {
-                    $ne: false
+                    [Op.ne]: false
                   }
                 }
               ],
               status: {
-                $ne: 'hidden'
+                [Op.ne]: 'hidden'
               },
               in_community_folder_id: null
             },
@@ -1276,7 +1277,7 @@ router.get('/:id/stats_points', auth.can('edit domain'), function(req, res) {
 router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
   countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_domain", models.AcActivity, {
     type: {
-      $in: [
+      [Op.in]: [
         "activity.post.opposition.new","activity.post.endorsement.new",
         "activity.point.helpful.new","activity.point.unhelpful.new"
       ]

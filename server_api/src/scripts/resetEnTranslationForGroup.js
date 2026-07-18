@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 
 var groupId = process.argv[2];
@@ -8,7 +9,7 @@ models.Post.findAll(
     where: {
       group_id: groupId,
       language: {
-        $in: ['en','sv']
+        [Op.in]: ['en','sv']
       }
     }
   }).then(function(posts) {

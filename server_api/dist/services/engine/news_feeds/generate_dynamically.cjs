@@ -1,5 +1,6 @@
 "use strict";
 var models = require("../../../models/index.cjs");
+const { Op } = require("sequelize");
 var async = require('async');
 var log = require('../../../utils/logger.cjs');
 var _ = require('lodash');
@@ -46,9 +47,9 @@ var getNewsFeedItems = function (options, callback) {
 };
 var getAllActivities = function (options, callback) {
     var where = getCommonWhereOptions(_.merge(options, { dateColumn: 'created_at' }));
-    where = _.merge(where, {
+    where = Object.assign(where, {
         type: {
-            $in: defaultKeyActivities
+            [Op.in]: defaultKeyActivities
         }
     });
     delete where.user_id;
@@ -128,9 +129,9 @@ var filterRecommendations = function (allActivities, options, callback) {
 var removeDuplicates = function (allActivities, options, callback) {
     allActivities = _.uniq(allActivities);
     var currentActivityIds = _.map(allActivities, function (item) { return item.id; });
-    var where = _.merge(getCommonWhereOptions(options), {
+    var where = Object.assign(getCommonWhereOptions(options), {
         ac_activity_id: {
-            $in: currentActivityIds
+            [Op.in]: currentActivityIds
         }
     });
     models.AcNewsFeedItem.findAll({

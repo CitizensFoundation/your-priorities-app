@@ -1,5 +1,6 @@
 "use strict";
 var models = require("../../../models/index.cjs");
+const { Op } = require("sequelize");
 var _ = require('lodash');
 var getCommonWhereDateOptions = function (options) {
     var where = {};
@@ -7,67 +8,67 @@ var getCommonWhereDateOptions = function (options) {
     var dateAtBase = {};
     if (options.beforeFilter && options.afterFilter) {
         dateAtBase[options.dateColumn] = {
-            $or: {
-                $lt: options.beforeFilter,
-                $gt: options.afterFilter
+            [Op.or]: {
+                [Op.lt]: options.beforeFilter,
+                [Op.gt]: options.afterFilter
             }
         };
     }
     else if (options.beforeFilter) {
         dateAtBase[options.dateColumn] = {
-            $lt: options.beforeFilter
+            [Op.lt]: options.beforeFilter
         };
     }
     else if (options.afterFilter) {
         dateAtBase[options.dateColumn] = {
-            $gt: options.afterFilter
+            [Op.gt]: options.afterFilter
         };
     }
     else if (options.beforeOrEqualFilter && options.afterOrEqualFilter) {
         dateAtBase[options.dateColumn] = {
-            $and: {
-                $lte: options.beforeOrEqualFilter,
-                $gte: options.afterOrEqualFilter
+            [Op.and]: {
+                [Op.lte]: options.beforeOrEqualFilter,
+                [Op.gte]: options.afterOrEqualFilter
             }
         };
     }
     else if (options.beforeOrEqualFilter) {
         dateAtBase[options.dateColumn] = {
-            $lte: options.beforeOrEqualFilter
+            [Op.lte]: options.beforeOrEqualFilter
         };
     }
     else if (options.afterOrEqualFilter) {
         dateAtBase[options.dateColumn] = {
-            $gte: options.afterOrEqualFilter
+            [Op.gte]: options.afterOrEqualFilter
         };
     }
     if (!options.afterDate && !options.beforeDate) {
-        _.merge(where, dateAtBase);
+        Object.assign(where, dateAtBase);
     }
     else if (JSON.stringify(dateAtBase) == JSON.stringify({})) {
         if (options.beforeDate) {
             const beforeDate = {};
             beforeDate[options.dateColumn] = {
-                $lt: options.beforeDate
+                [Op.lt]: options.beforeDate
             };
-            _.merge(where, beforeDate);
+            Object.assign(where, beforeDate);
         }
         else if (options.afterDate) {
             afterDate = {};
             afterDate[options.dateColumn] = {
-                $gt: options.afterDate
+                [Op.gt]: options.afterDate
             };
-            _.merge(where, afterDate);
+            Object.assign(where, afterDate);
         }
     }
     else {
         if (options.beforeDate) {
             const beforeDate = {};
             beforeDate[options.dateColumn] = {
-                $lt: options.beforeDate
+                [Op.lt]: options.beforeDate
             };
-            _.merge(where, {
-                $and: [
+            Object.assign(where, {
+                [Op.and]: [
                     beforeDate,
                     dateAtBase
                 ]
@@ -76,10 +77,10 @@ var getCommonWhereDateOptions = function (options) {
         else if (options.afterDate) {
             afterDate = {};
             afterDate[options.dateColumn] = {
-                $gt: options.afterDate
+                [Op.gt]: options.afterDate
             };
-            _.merge(where, {
-                $and: [
+            Object.assign(where, {
+                [Op.and]: [
                     afterDate,
                     dateAtBase
                 ]
@@ -94,7 +95,7 @@ var getCommonWhereOptions = function (options) {
         deleted: false
     };
     if (options.user_id) {
-        where = _.merge(where, {
+        where = Object.assign(where, {
             user_id: options.user_id
         });
     }
@@ -123,16 +124,16 @@ var getCommonWhereOptions = function (options) {
             post_id: options.post_id
         });
     }
-    return _.merge(where, getCommonWhereDateOptions(options));
+    return Object.assign(where, getCommonWhereDateOptions(options));
 };
 var getModelDate = function (model, options, callback) {
     var where = getCommonWhereOptions(options);
     var dateColumn = options.dateColumn;
     if (model == models.AcActivity) {
         delete where.user_id;
-        where = _.merge(where, {
+        where = Object.assign(where, {
             type: {
-                $in: defaultKeyActivities
+                [Op.in]: defaultKeyActivities
             }
         });
     }
@@ -191,6 +192,7 @@ var getProcessedRange = function (options, callback) {
         callback(error);
     });
 };
+/** @returns {import("sequelize").Includeable[]} */
 var activitiesDefaultIncludes = function (options) {
     var community;
     var group;
@@ -206,7 +208,7 @@ var activitiesDefaultIncludes = function (options) {
             required: true,
             attributes: models.Group.defaultAttributesPublic,
             where: {
-                $or: [
+                [Op.or]: [
                     { access: models.Group.ACCESS_PUBLIC },
                     { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
                 ],
@@ -231,7 +233,7 @@ var activitiesDefaultIncludes = function (options) {
             required: true,
             attributes: models.Group.defaultAttributesPublic,
             where: {
-                $or: [
+                [Op.or]: [
                     {
                         access: models.Group.ACCESS_PUBLIC
                     },
@@ -375,19 +377,19 @@ var activitiesDefaultIncludes = function (options) {
 // Example query 1
 //  Get latest
 // If newer activities than latest_processed_range
-// Load latest notification news feed items with created_at $gt oldest_activity being processed
+// Load latest notification news feed items with created_at Op.gt oldest_activity being processed
 // Generate items from activities newer than latest_processed_range_start or Max 30
 // Create processed_range
 // Get more
 // If activities older than last viewed and newer than last_processed_at (older than last viewed also)
 // Generate Items
-// Load latest notification news feed items with created_at $gt oldest_activity being processed
+// Load latest notification news feed items with created_at Op.gt oldest_activity being processed
 // Create processed_range
 // Else load all items in the time range next processed range (older than last viewed)
 //  Get new updated
 // If newer activities than latest_processed_range and newer than last viewed
 // Generate items from activities newer than latest_processed_range_start and newer than the last viewed or Max 30
-// Load latest notification news feed items with created_at $gt oldest_activity being processed
+// Load latest notification news feed items with created_at Op.gt oldest_activity being processed
 // Create processed_range
 // Else if processed_range newer than last viewed
 // load all items in the time range
@@ -397,30 +399,30 @@ var activitiesDefaultIncludes = function (options) {
 //  AcNewsFeed Options
 //    Limit 30
 //  AcActivities
-//    modified_at $gt latest_dynamically_generated_processed_news_feed_ac_activity_modified_at
-//    modified_at $lt oldest_dynamically_generated_processed_news_feed_ac_activity_modified_at
+//    modified_at Op.gt latest_dynamically_generated_processed_news_feed_ac_activity_modified_at
+//    modified_at Op.lt oldest_dynamically_generated_processed_news_feed_ac_activity_modified_at
 // Example query 2
 //  Get latest since last
 //  AcNewsFeed Options
-//    modified_at $gt latest_news_feed_item_at
+//    modified_at Op.gt latest_news_feed_item_at
 //  AcActivities
-//    $and
+//    Op.and
 //      A
-//        modified_at $gt latest_news_feed_item_at
+//        modified_at Op.gt latest_news_feed_item_at
 //      B
-//        modified_at $gt last_dynamically_generated_processed_news_feed_ac_activity_modified_at
-//        modified_at $lt first_dynamically_generated_processed_news_feed_ac_activity_modified_at
+//        modified_at Op.gt last_dynamically_generated_processed_news_feed_ac_activity_modified_at
+//        modified_at Op.lt first_dynamically_generated_processed_news_feed_ac_activity_modified_at
 // Example query 3
 // Get older since last shown item
 //  AcNewsFeed Options
-//    modified_at $lt last_shown_news_feed_item_at
+//    modified_at Op.lt last_shown_news_feed_item_at
 //  AcActivities
-//   $and
+//   Op.and
 //    A
-//      modified_at $lt last_shown_news_feed_item_at
+//      modified_at Op.lt last_shown_news_feed_item_at
 //    B
-//      modified_at $gt last_dynamically_generated_processed_news_feed_ac_activity_modified_at
-//      modified_at $lt first_dynamically_generated_processed_news_feed_ac_activity_modified_at
+//      modified_at Op.gt last_dynamically_generated_processed_news_feed_ac_activity_modified_at
+//      modified_at Op.lt first_dynamically_generated_processed_news_feed_ac_activity_modified_at
 //defaultKeyActivities = ['activity.post.status.change','activity.post.officialStatus.successful',
 //  'activity.point.new','activity.post.new','activity.post.officialStatus.failed',
 //  'activity.post.officialStatus.inProgress'];

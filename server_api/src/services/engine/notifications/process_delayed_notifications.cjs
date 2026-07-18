@@ -1,4 +1,5 @@
 var models = require('../../../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var log = require('../../../utils/logger.cjs');
 var _ = require('lodash');
@@ -439,7 +440,7 @@ var getDelayedNotificationToProcess = function (frequency, callback) {
         frequency: frequency,
         delivered: false,
         created_at: {
-          $lt: beforeDate
+          [Op.lt]: beforeDate
         }
       },
       include: [

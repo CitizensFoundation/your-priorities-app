@@ -1,4 +1,5 @@
 var express = require("express");
+const { Op } = require("sequelize");
 var router = express.Router();
 var models = require("../models/index.cjs");
 var auth = require("../authorization.cjs");
@@ -268,7 +269,6 @@ const getRandomPostNavigationInfo = async (
   categoryId,
   randomSeed
 ) => {
-  const Op = models.Sequelize.Op;
   const PostsByStatus = models.Post.scope(statusFilter);
   const where = {
     group_id: currentPost.group_id,
@@ -1206,7 +1206,7 @@ router.get("/:id/newPoints", auth.can("view post"), function (req, res) {
       where: {
         post_id: req.params.id,
         created_at: {
-          $gt: req.query.latestPointCreatedAt,
+          [Op.gt]: req.query.latestPointCreatedAt,
         },
         status: "published",
       },
@@ -1374,7 +1374,7 @@ const sendPostPoints = (req, res, redisKey) => {
         models.Point.findAll({
           where: {
             id: {
-              $in: _.map(upPointsIn, (pointIn) => {
+              [Op.in]: _.map(upPointsIn, (pointIn) => {
                 return pointIn.id;
               }).concat(
                 _.map(downPointsIn, (pointIn) => {

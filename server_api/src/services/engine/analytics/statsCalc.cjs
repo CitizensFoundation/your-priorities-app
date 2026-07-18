@@ -1,4 +1,5 @@
 const models = require("../../../models/index.cjs");
+const { Op } = require("sequelize");
 const log = require('../../../utils/logger.cjs');
 const moment = require('moment');
 const _ = require('lodash');
@@ -181,7 +182,7 @@ const countModelRowsByTimePeriod = (req, cacheKey, model, whereOptions, includeO
 /*
 countModelRowsByTimePeriod(models.AcActivity, {
   type: {
-    $in: [
+    [Op.in]: [
       "activity.user.login"
     ]
   },

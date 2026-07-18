@@ -1,4 +1,5 @@
 var models = require('../../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var fs = require('fs');
 var trainCategoriesCsv;
@@ -48,7 +49,7 @@ async.series([
                                     model: models.Domain,
                                     required: true,
                                     where: {
-                                        id: { $in: [1, 2] }
+                                        id: { [Op.in]: [1, 2] }
                                     }
                                 }
                             ]

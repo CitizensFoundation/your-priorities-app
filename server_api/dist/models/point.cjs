@@ -1,4 +1,5 @@
 "use strict";
+const { Op } = require("sequelize");
 const async = require('async');
 const queue = require('../services/workers/queue.cjs');
 const log = require('../utils/logger.cjs');
@@ -395,7 +396,7 @@ module.exports = (sequelize, DataTypes) => {
             attributes: ['id', 'created_at'],
             where: {
                 id: {
-                    $in: userIds
+                    [Op.in]: userIds
                 }
             },
             include: [
@@ -477,7 +478,7 @@ module.exports = (sequelize, DataTypes) => {
                     model: sequelize.models.Point,
                     where: {
                         id: {
-                            $in: pointIds
+                            [Op.in]: pointIds
                         }
                     },
                     as: 'PointVideos',

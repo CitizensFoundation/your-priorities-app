@@ -1247,10 +1247,10 @@ const getGroupFolder = function (req, done) {
                 where: {
                   in_group_folder_id: groupFolder.id,
                   access: {
-                    $ne: models.Group.ACCESS_SECRET,
+                    [Op.ne]: models.Group.ACCESS_SECRET,
                   },
                   status: {
-                    $ne: "hidden",
+                    [Op.ne]: "hidden",
                   },
                 },
                 attributes: models.Group.defaultAttributesPublic,
@@ -4109,7 +4109,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
         models.Post.findAll({
           where: {
             id: {
-              $in: collectedIds,
+              [Op.in]: collectedIds,
             },
           },
           attributes: [
@@ -4568,7 +4568,7 @@ router.get("/:id/post_locations", auth.can("view group"), function (req, res) {
   models.Post.findAll({
     where: {
       location: {
-        $ne: null,
+        [Op.ne]: null,
       },
       group_id: req.params.id,
     },
@@ -5474,7 +5474,7 @@ router.get("/:id/stats_votes", auth.can("edit group"), function (req, res) {
     models.AcActivity,
     {
       type: {
-        $in: [
+        [Op.in]: [
           "activity.post.opposition.new",
           "activity.post.endorsement.new",
           "activity.point.helpful.new",

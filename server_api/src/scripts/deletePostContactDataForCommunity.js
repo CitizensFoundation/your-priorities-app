@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 
 var communityId = process.argv[2];
@@ -8,7 +9,7 @@ const log = require('../utils/logger.cjs');
 models.Post.findAll({
   where: {
     data: {
-      $ne: null
+      [Op.ne]: null
     }
   },
   attribute: ['id', 'data'],

@@ -1,5 +1,6 @@
 "use strict";
 var models = require("../models/index.cjs");
+const { Op } = require("sequelize");
 var async = require("async");
 const log = require('./logger.cjs');
 const { cloneTranslationForGroup, } = require("../services/utils/translation_cloning.cjs");
@@ -513,7 +514,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                                         models.AcActivity.findAll({
                                             where: {
                                                 point_id: currentOldPoint.id,
-                                                post_id: { $not: null },
+                                                post_id: { [Op.not]: null },
                                             },
                                         }).then(function (activities) {
                                             async.eachSeries(activities, function (activity, activitesSeriesCallback) {
@@ -563,7 +564,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                 models.AcActivity.findAll({
                     where: {
                         post_id: oldPost.id,
-                        point_id: { $is: null },
+                        point_id: { [Op.is]: null },
                     },
                 })
                     .then(function (activities) {
@@ -1173,7 +1174,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
                                 let whereOptions = {
                                     community_id: oldCommunity.id,
                                     in_group_folder_id: {
-                                        $eq: null,
+                                        [Op.eq]: null,
                                     },
                                 };
                                 if (options.copyOneGroupId) {

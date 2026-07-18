@@ -1,5 +1,6 @@
 "use strict";
 const models = require('../../models/index.cjs');
+const { Op } = require("sequelize");
 const async = require('async');
 const _ = require('lodash');
 const fs = require('fs');
@@ -19,7 +20,7 @@ const getTranslationsForSearch = (textType, id, content, callback) => {
     models.AcTranslationCache.findAll({
         where: {
             index_key: {
-                $like: indexSearch
+                [Op.like]: indexSearch
             }
         }
     }).then(translations => {
@@ -33,7 +34,7 @@ const getTranslationsConfigSearch = (textType, id, callback) => {
     models.AcTranslationCache.findAll({
         where: {
             index_key: {
-                $like: indexSearch
+                [Op.like]: indexSearch
             }
         }
     }).then(translations => {

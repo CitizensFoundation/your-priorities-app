@@ -1,5 +1,6 @@
 "use strict";
 const _ = require("lodash");
+const { Op } = require("sequelize");
 const FraudDeleteBase = require('./FraudDeleteBase.cjs');
 const models = require("../../../../models/index.cjs");
 class FraudDeleteEndorsements extends FraudDeleteBase {
@@ -12,7 +13,7 @@ class FraudDeleteEndorsements extends FraudDeleteBase {
                 }, {
                     where: {
                         id: {
-                            $in: idsToDestroy
+                            [Op.in]: idsToDestroy
                         }
                     },
                     include: [
@@ -61,7 +62,7 @@ class FraudDeleteEndorsements extends FraudDeleteBase {
                 const items = await model.findAll({
                     where: {
                         id: {
-                            $in: this.job.internal_data.idsToDelete
+                            [Op.in]: this.job.internal_data.idsToDelete
                         }
                     },
                     attributes: ["id", "created_at", "value", "post_id", "user_id", "user_agent", "ip_address", "data"],

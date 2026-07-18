@@ -175,10 +175,10 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             models.Community.findAll({
                 where: {
                     access: {
-                        $ne: models.Community.ACCESS_SECRET,
+                        [Op.ne]: models.Community.ACCESS_SECRET,
                     },
                     status: {
-                        $ne: "hidden",
+                        [Op.ne]: "hidden",
                     },
                     in_community_folder_id: communityFolderId,
                 },
@@ -538,13 +538,13 @@ const getCommunity = function (req, done) {
                         where: {
                             community_id: community.id,
                             access: {
-                                $ne: models.Group.ACCESS_SECRET,
+                                [Op.ne]: models.Group.ACCESS_SECRET,
                             },
                             status: {
-                                $ne: "hidden",
+                                [Op.ne]: "hidden",
                             },
                             in_group_folder_id: {
-                                $eq: null,
+                                [Op.eq]: null,
                             },
                         },
                         attributes: models.Group.defaultAttributesPublic,
@@ -586,7 +586,7 @@ const getCommunity = function (req, done) {
                             where: {
                                 community_id: community.id,
                                 in_group_folder_id: {
-                                    $eq: null,
+                                    [Op.eq]: null,
                                 },
                             },
                             attributes: models.Group.defaultAttributesPublic,
@@ -624,7 +624,7 @@ const getCommunity = function (req, done) {
                             where: {
                                 community_id: community.id,
                                 in_group_folder_id: {
-                                    $eq: null,
+                                    [Op.eq]: null,
                                 },
                             },
                             attributes: models.Group.defaultAttributesPublic,
@@ -1770,7 +1770,7 @@ router.get("/:communityId/posts", auth.can("view community"), function (req, res
                 required: true,
                 where: {
                     access: {
-                        $in: [
+                        [Op.in]: [
                             models.Group.ACCESS_OPEN_TO_COMMUNITY,
                             models.Group.ACCESS_PUBLIC,
                         ],
@@ -2173,7 +2173,7 @@ router.get("/:id/post_locations", auth.can("view community"), function (req, res
     models.Post.findAll({
         where: {
             location: {
-                $ne: null,
+                [Op.ne]: null,
             },
         },
         attributes: models.Post.defaultAttributesPublic,
@@ -2193,7 +2193,7 @@ router.get("/:id/post_locations", auth.can("view community"), function (req, res
                 attributes: models.Group.defaultAttributesPublic,
                 where: {
                     access: {
-                        $in: [
+                        [Op.in]: [
                             models.Group.ACCESS_OPEN_TO_COMMUNITY,
                             models.Group.ACCESS_PUBLIC,
                         ],
@@ -2629,7 +2629,7 @@ router.get("/:id/stats_points", auth.can("edit community"), function (req, res) 
 router.get("/:id/stats_votes", auth.can("edit community"), function (req, res) {
     countModelRowsByTimePeriod(req, "stats_votes_" + req.params.id + "_community", models.AcActivity, {
         type: {
-            $in: [
+            [Op.in]: [
                 "activity.post.opposition.new",
                 "activity.post.endorsement.new",
                 "activity.point.helpful.new",

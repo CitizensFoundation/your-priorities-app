@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var _ = require('lodash');
 var moment = require('moment');
@@ -14,15 +15,15 @@ const oldData = true; // process.argv[7] ? true ; false;
 if (oldData) {
   models.AcActivity.findAll({
     where: {
-      $and: [
+      [Op.and]: [
         {
           created_at: {
-            $gt: fromDate
+            [Op.gt]: fromDate
           }
         },
         {
           created_at: {
-            $lt: endDate
+            [Op.lt]: endDate
           }
         }
       ]

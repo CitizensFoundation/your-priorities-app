@@ -1,4 +1,5 @@
 var express = require('express');
+const { Op } = require("sequelize");
 var router = express.Router();
 var models = require("../../models/index.cjs");
 var auth = require('../../authorization.cjs');
@@ -46,7 +47,7 @@ var processRecommendations = function (levelType, req, res, recommendedItemIds, 
     models.Post.findAll({
       where: {
         id: {
-          $in: recommendedItemIds
+          [Op.in]: recommendedItemIds
         }
       },
       order: [
@@ -75,7 +76,7 @@ var processRecommendations = function (levelType, req, res, recommendedItemIds, 
           attributes: models.Group.defaultAttributesPublic,
           where: {
             status: {
-              $in: ['active','featured']
+              [Op.in]: ['active','featured']
             }
           },
           include: [
@@ -162,7 +163,7 @@ var processRecommendationsLight = function (groupId, req, res, recommendedItemId
     models.Post.findAll({
       where: {
         id: {
-          $in: recommendedItemIds
+          [Op.in]: recommendedItemIds
         }
       },
       attributes: ['id','name','description'],

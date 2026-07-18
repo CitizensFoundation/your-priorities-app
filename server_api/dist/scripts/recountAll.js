@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var _ = require('lodash');
 var recountOnePost = function (postId, done) {
@@ -35,7 +36,7 @@ var recountOnePost = function (postId, done) {
         function (parallelCallback) {
             models.Point.count({
                 where: {
-                    $or: [
+                    [Op.or]: [
                         { value: -1 },
                         { value: 1 }
                     ],

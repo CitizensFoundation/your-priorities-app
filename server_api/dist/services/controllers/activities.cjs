@@ -1,5 +1,6 @@
 "use strict";
 var express = require('express');
+const { Op } = require("sequelize");
 var router = express.Router();
 var models = require("../../models/index.cjs");
 var auth = require('../../authorization.cjs');
@@ -23,7 +24,7 @@ var getActivities = function (req, res, options, callback) {
             beforeDate: new Date(req.query.beforeDate)
         });
     }
-    var where = _.merge(getCommonWhereOptions(options), { type: { $in: defaultKeyActivities } });
+    var where = Object.assign(getCommonWhereOptions(options), { type: { [Op.in]: defaultKeyActivities } });
     if (options.noBulkOperations) {
         where = _.merge(where, {
             //TODO: Fix should exclude bulkOperation

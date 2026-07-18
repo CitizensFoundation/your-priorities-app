@@ -1,4 +1,5 @@
 "use strict";
+const { Op } = require("sequelize");
 const async = require("async");
 const queue = require('../services/workers/queue.cjs');
 const log = require('../utils/logger.cjs');
@@ -125,7 +126,7 @@ module.exports = (sequelize, DataTypes) => {
             not_open: {
                 where: {
                     official_status: {
-                        $in: [-2, -1, 1, 2]
+                        [Op.in]: [-2, -1, 1, 2]
                     },
                     deleted: false,
                     status: 'published'
@@ -134,7 +135,7 @@ module.exports = (sequelize, DataTypes) => {
             finished: {
                 where: {
                     official_status: {
-                        $in: [-2, -1, 2]
+                        [Op.in]: [-2, -1, 2]
                     },
                     deleted: false,
                     status: 'published'
@@ -157,7 +158,7 @@ module.exports = (sequelize, DataTypes) => {
             failed: {
                 where: {
                     official_status: {
-                        $in: [-2]
+                        [Op.in]: [-2]
                     },
                     deleted: false,
                     status: 'published'
@@ -166,7 +167,7 @@ module.exports = (sequelize, DataTypes) => {
             in_progress: {
                 where: {
                     official_status: {
-                        $in: [-1, 1]
+                        [Op.in]: [-1, 1]
                     },
                     deleted: false,
                     status: 'published'
@@ -553,7 +554,7 @@ module.exports = (sequelize, DataTypes) => {
                     model: sequelize.models.Post,
                     where: {
                         id: {
-                            $in: postIds
+                            [Op.in]: postIds
                         }
                     },
                     as: 'PostVideos',
@@ -604,7 +605,7 @@ module.exports = (sequelize, DataTypes) => {
                 attributes: ['id', 'created_at'],
                 where: {
                     id: {
-                        $in: posts.map(p => p.User.id)
+                        [Op.in]: posts.map(p => p.User.id)
                     }
                 },
                 include: [

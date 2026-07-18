@@ -1,5 +1,6 @@
 "use strict";
 const async = require('async');
+const { Op } = require("sequelize");
 const models = require('../models/index.cjs');
 const _ = require('lodash');
 const fs = require('fs');
@@ -55,7 +56,7 @@ const recountPost = (postId, done, transaction) => {
         (parallelCallback) => {
             models.Point.count({
                 where: {
-                    $or: [
+                    [Op.or]: [
                         { value: -1 },
                         { value: 1 }
                     ],

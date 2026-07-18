@@ -154,11 +154,13 @@ If no results are found, the callback receives an empty object `{}`.
 #### Example
 
 ```javascript
+const { Op } = require("sequelize");
+
 countModelRowsByTimePeriod(
   req,
   'activity-login-domain-1',
   models.AcActivity,
-  { type: { $in: ["activity.user.login"] }, domain_id: 1 },
+  { type: { [Op.in]: ["activity.user.login"] }, domain_id: 1 },
   [],
   (err, results) => {
     if (err) { /* handle error */ }

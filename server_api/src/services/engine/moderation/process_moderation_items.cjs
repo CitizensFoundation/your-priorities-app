@@ -1,4 +1,5 @@
 const queue = require('../../workers/queue.cjs');
+const { Op } = require("sequelize");
 const models = require("../../../models/index.cjs");
 const async = require('async');
 const log = require('../../../utils/logger.cjs');
@@ -149,7 +150,7 @@ const moderationManyItemsActionMaster = (workPackage, callback) => {
                 where: {
                   deleted: false,
                   id: {
-                    $in: workPackage.itemIds
+                    [Op.in]: workPackage.itemIds
                   }
                 },
                 include: workPackage.includes

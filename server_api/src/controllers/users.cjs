@@ -1,4 +1,5 @@
 var async = require("async");
+const { Op } = require("sequelize");
 var crypto = require("crypto");
 var express = require('express');
 var router = express.Router();
@@ -1560,7 +1561,7 @@ router.get('/reset/:token', function(req, res) {
         {
           reset_password_token: req.params.token,
           reset_password_expires: {
-            $gt: Date.now()
+            [Op.gt]: Date.now()
           }
         }
     }).then(function (user) {
@@ -1633,7 +1634,7 @@ router.post('/reset/:token', function(req, res) {
         {
           reset_password_token: req.params.token,
           reset_password_expires: {
-            $gt: Date.now()
+            [Op.gt]: Date.now()
           }
         }
       }).then(function (user) {

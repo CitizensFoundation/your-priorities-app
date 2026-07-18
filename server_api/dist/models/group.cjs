@@ -1,4 +1,5 @@
 "use strict";
+const { Op } = require("sequelize");
 const async = require("async");
 const queue = require("../services/workers/queue.cjs");
 const _ = require("lodash");
@@ -297,7 +298,7 @@ module.exports = (sequelize, DataTypes) => {
                             model: sequelize.models.Group,
                             where: {
                                 id: {
-                                    $in: collectedGroupIds,
+                                    [Op.in]: collectedGroupIds,
                                 },
                             },
                             as: "GroupLogoVideos",
@@ -342,7 +343,7 @@ module.exports = (sequelize, DataTypes) => {
                 if (linkedCommunityIds.length > 0) {
                     sequelize.models.Community.findAll({
                         where: {
-                            id: { $in: linkedCommunityIds },
+                            id: { [Op.in]: linkedCommunityIds },
                         },
                         attributes: [
                             "id",

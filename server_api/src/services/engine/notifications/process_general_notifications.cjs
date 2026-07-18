@@ -1,4 +1,5 @@
 var queue = require('../../workers/queue.cjs');
+const { Op } = require("sequelize");
 var models = require("../../../models/index.cjs");
 var truncate = require('../../utils/truncate_text.cjs');
 const async = require('async');
@@ -22,9 +23,9 @@ function countProperties(obj) {
 }
 
 const getPointsGroupedByModel = (pointIds, includeModel, whereIn, callback) => {
-  const mergedWhere = _.merge(whereIn, {
+  const mergedWhere = Object.assign(whereIn, {
       id: {
-        $in: pointIds
+        [Op.in]: pointIds
       }
     }
   );
@@ -109,7 +110,7 @@ const getLinkedPostAndPoints = (postIds, pointIds, community, domain, callback) 
       models.Post.findAll({
         where: {
           id: {
-            $in:postIds
+            [Op.in]:postIds
           }
         },
         attributes: ['id', 'name']

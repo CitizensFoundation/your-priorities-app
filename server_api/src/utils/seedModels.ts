@@ -40,26 +40,6 @@ const psModels: {
 const env = process.env.NODE_ENV || "development";
 let mainSequelize: Sequelize;
 
-// Operator aliases from server_api/models/index.cjs
-const mainOperatorsAliases = {
-  $gt: Op.gt,
-  $gte: Op.gte,
-  $lt: Op.lt,
-  $lte: Op.lte,
-  $in: Op.in,
-  $and: Op.and,
-  $or: Op.or,
-  $eq: Op.eq,
-  $ne: Op.ne,
-  $is: Op.is,
-  $not: Op.not,
-  $between: Op.between,
-  $notBetween: Op.notBetween,
-  $like: Op.like,
-  $contains: Op.contains,
-  $any: Op.any,
-};
-
 if (env === "production") {
   if (!process.env.DATABASE_URL) {
     log.error(
@@ -72,7 +52,6 @@ if (env === "production") {
       dialect: "postgres",
       minifyAliases: true,
       logging: false,
-      operatorsAliases: mainOperatorsAliases,
     });
   } else {
     mainSequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -84,7 +63,6 @@ if (env === "production") {
       },
       minifyAliases: true,
       logging: false,
-      operatorsAliases: mainOperatorsAliases,
     });
   }
 } else {
@@ -116,7 +94,6 @@ if (env === "production") {
           rejectUnauthorized: false,
         },
         logging: false, // Set to log.info for verbose output during seeding
-        operatorsAliases: mainOperatorsAliases,
       }
     );
   } catch (error) {

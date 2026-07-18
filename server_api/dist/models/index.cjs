@@ -12,25 +12,6 @@ let sequelize;
 // -----------------------------------------------------------------------------
 // DB bootstrap
 // -----------------------------------------------------------------------------
-const Op = Sequelize.Op;
-const operatorsAliases = {
-    $gt: Op.gt,
-    $gte: Op.gte,
-    $lt: Op.lt,
-    $lte: Op.lte,
-    $in: Op.in,
-    $and: Op.and,
-    $or: Op.or,
-    $eq: Op.eq,
-    $ne: Op.ne,
-    $is: Op.is,
-    $not: Op.not,
-    $between: Op.between,
-    $notBetween: Op.notBetween,
-    $like: Op.like,
-    $contains: Op.contains,
-    $any: Op.any,
-};
 // Pool configuration from environment variables
 const poolConfig = {
     max: parseInt(process.env.DB_POOL_MAX ?? "5", 10),
@@ -50,7 +31,6 @@ if (process.env.NODE_ENV === "production") {
             minifyAliases: true,
             pool: poolConfig,
             logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
-            operatorsAliases,
         });
     }
     else {
@@ -77,7 +57,6 @@ if (process.env.NODE_ENV === "production") {
                 ],
             },
             logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
-            operatorsAliases,
         });
     }
 }
@@ -93,7 +72,6 @@ else {
             dialectOptions: { ssl: false, rejectUnauthorized: false },
             pool: poolConfig,
             logging: process.env.YP_LOG_SQL === "true" ? console.log : false,
-            operatorsAliases,
         });
     }
     catch (error) {

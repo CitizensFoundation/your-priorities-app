@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const { Op } = require("sequelize");
 
 const FraudDeleteEndorsements = require('./FraudDeleteEndorsements.cjs');
 const models = require("../../../../models/index.cjs");
@@ -35,7 +36,7 @@ class FraudDeleteRatings extends FraudDeleteEndorsements {
         const items = await models.Rating.findAll({
           where: {
             id: {
-              $in: this.job.internal_data.idsToDelete
+              [Op.in]: this.job.internal_data.idsToDelete
             }
           },
           attributes: ["id","created_at","value","type_index","post_id","user_id","user_agent","ip_address","data"],

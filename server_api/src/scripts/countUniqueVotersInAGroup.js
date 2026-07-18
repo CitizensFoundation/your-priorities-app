@@ -1,4 +1,5 @@
 var models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 var async = require('async');
 var _ = require('lodash');
 var moment = require('moment');
@@ -19,7 +20,7 @@ models.Endorsement.findAll({
   attributes:["id","user_id"],
   where: {
     value: {
-      $or: [
+      [Op.or]: [
         -1,1
       ]
     }

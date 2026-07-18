@@ -46,28 +46,16 @@ All connections use the `postgres` dialect and have logging disabled.
 
 ---
 
-## Operators Aliases
+## Query Operators
 
-A set of operator aliases is defined for backward compatibility and convenience:
+String-based operator aliases are not enabled. Query modules import `Op` from Sequelize and use computed symbol keys:
 
 ```js
-const operatorsAliases = {
-  $gt: Op.gt,
-  $gte: Op.gte,
-  $lt: Op.lt,
-  $lte: Op.lte,
-  $in: Op.in,
-  $and: Op.and,
-  $or: Op.or,
-  $eq: Op.eq,
-  $ne: Op.ne,
-  $is: Op.is,
-  $not: Op.not,
-  $between: Op.between,
-  $notBetween: Op.notBetween,
-  $like: Op.like,
-  $contains: Op.contains,
-  $any: Op.any,
+const { Op } = require("sequelize");
+
+const where = {
+  status: { [Op.ne]: "hidden" },
+  id: { [Op.in]: allowedIds },
 };
 ```
 

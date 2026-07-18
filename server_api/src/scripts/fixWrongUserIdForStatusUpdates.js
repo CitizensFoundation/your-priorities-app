@@ -1,4 +1,5 @@
 const models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 const async = require('async');
 const moment = require('moment');
 
@@ -28,7 +29,7 @@ if (!domainId || !oldUserId || !newUserId || !beforeDate) {
           type: 'activity.post.status.change',
           user_id: oldUserId,
           created_at: {
-            $lt: beforeDateObject
+            [Op.lt]: beforeDateObject
           }
         }
       }).then(function (activities) {

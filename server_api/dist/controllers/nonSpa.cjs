@@ -1,5 +1,6 @@
 "use strict";
 var express = require('express');
+const { Op } = require("sequelize");
 var router = express.Router();
 var models = require("../models/index.cjs");
 var auth = require('../authorization.cjs');
@@ -225,7 +226,7 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
                     attributes: ['id', 'name'],
                     model: models.Group,
                     where: {
-                        $or: [
+                        [Op.or]: [
                             { access: models.Group.ACCESS_PUBLIC },
                             { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
                         ],
@@ -303,7 +304,7 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
         models.Group.findOne({
             where: {
                 id: id,
-                $or: [
+                [Op.or]: [
                     { access: models.Group.ACCESS_PUBLIC },
                     { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
                 ],
@@ -393,7 +394,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
                 {
                     model: models.Group,
                     where: {
-                        $or: [
+                        [Op.or]: [
                             { access: models.Group.ACCESS_PUBLIC },
                             { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
                         ]

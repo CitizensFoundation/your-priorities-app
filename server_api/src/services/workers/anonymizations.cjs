@@ -1,4 +1,5 @@
 const async = require("async");
+const { Op } = require("sequelize");
 const models = require("../../models/index.cjs");
 const log = require('../../utils/logger.cjs');
 const queue = require('./queue.cjs');
@@ -184,7 +185,7 @@ const anonymizePostContent = (workPackage, callback) => {
             where: {
               id: postId,
               data: {
-                $ne: null
+                [Op.ne]: null
               }
             },
             attribute: ['id', 'data']
@@ -323,7 +324,7 @@ const anonymizeGroupContent = (workPackage, callback) => {
             { user_id: workPackage.anonymousUserId, ip_address: '127.0.0.1' },
             { where: {
                 id: {
-                  $in: pointRevisionsIds
+                  [Op.in]: pointRevisionsIds
                 }
               }
             }
@@ -360,7 +361,7 @@ const anonymizeGroupContent = (workPackage, callback) => {
             { user_id: workPackage.anonymousUserId, ip_address: '127.0.0.1' },
             { where: {
                 id: {
-                  $in: pointQualitiesIds
+                  [Op.in]: pointQualitiesIds
                 }
               }
             }
@@ -575,7 +576,7 @@ const getAllUsers = (groupIds, communityId, callback) => {
       models.Post.findAll({
         where: {
           group_id: {
-            $in: groupIds
+            [Op.in]: groupIds
           }
         },
         attributes: ['id','user_id']
@@ -597,7 +598,7 @@ const getAllUsers = (groupIds, communityId, callback) => {
       models.Point.findAll({
         where: {
           group_id: {
-            $in: groupIds
+            [Op.in]: groupIds
           }
         },
         attributes: ['id','user_id']
@@ -619,7 +620,7 @@ const getAllUsers = (groupIds, communityId, callback) => {
       if (communityId) {
         models.Point.findAll({
           where: {
-            $and: [
+            [Op.and]: [
               { community_id: communityId },
               { group_id: null }
             ],

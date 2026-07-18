@@ -1,4 +1,5 @@
 const models = require("../../../models/index.cjs");
+const { Op } = require("sequelize");
 const async = require('async');
 const _ = require('lodash');
 
@@ -6,7 +7,7 @@ const getModelAndUsersByType = (model, userType, id, notification_setting_type, 
   const userWhere = {};
 
   userWhere["notifications_settings."+notification_setting_type+".method"] = {
-    $gt: 0
+    [Op.gt]: 0
   };
 
   //log.info("getModelAndUsersByType", { type: notification_setting_type, userWhere: userWhere });
@@ -67,8 +68,8 @@ const addOrPossiblyGroupNotification = (model, notification_type, notification_s
       user_id: user.id,
       type: notification_type,
       created_at: {
-        $lt: new Date(),
-        $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
+        [Op.lt]: new Date(),
+        [Op.gt]: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
       }
     },
     attributes: ['id','type','user_id','created_at'],
@@ -93,8 +94,8 @@ const addOrPossiblyGroupNotification = (model, notification_type, notification_s
           user_id: user.id,
           type: notification_type,
           created_at: {
-            $lt: new Date(),
-            $gt: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
+            [Op.lt]: new Date(),
+            [Op.gt]: new Date(new Date() - models.AcNotification.ENDORSEMENT_GROUPING_TTL)
           }
         },
         order: [

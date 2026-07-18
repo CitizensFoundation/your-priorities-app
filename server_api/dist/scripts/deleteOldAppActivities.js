@@ -1,4 +1,5 @@
 const models = require('../models/index.cjs');
+const { Op } = require("sequelize");
 const async = require('async');
 const fromId = parseInt(process.argv[2]);
 const toId = parseInt(process.argv[3]);
@@ -11,15 +12,15 @@ async.whilst(() => { return currentId <= toId; }, (callback) => {
     models.AcActivity.destroy({
         where: {
             type: 'activity.fromApp',
-            $and: [
+            [Op.and]: [
                 {
                     "id": {
-                        $gte: currentFrom
+                        [Op.gte]: currentFrom
                     }
                 },
                 {
                     "id": {
-                        $lte: currentTo
+                        [Op.lte]: currentTo
                     }
                 },
             ]
