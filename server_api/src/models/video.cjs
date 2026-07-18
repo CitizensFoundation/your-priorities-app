@@ -27,7 +27,15 @@ if (redisUrl.startsWith("rediss://")) {
   };
 }
 
-const bullVideoQueue = new Queue("VideoEncoding", { connection: redisConnection });
+let bullVideoQueue;
+
+const getBullVideoQueue = () => {
+  if (!bullVideoQueue) {
+    bullVideoQueue = new Queue("VideoEncoding", { connection: redisConnection });
+  }
+
+  return bullVideoQueue;
+};
 
 module.exports = (sequelize, DataTypes) => {
   const Video = sequelize.define(
@@ -1005,7 +1013,7 @@ module.exports = (sequelize, DataTypes) => {
               acBackgroundJobId: jobId,
             });
 
-            await bullVideoQueue.add('video-encoding', jobPackage);
+            await getBullVideoQueue().add('video-encoding', jobPackage);
             callback(null, { Job: { Id: jobId } });
           }
         }
