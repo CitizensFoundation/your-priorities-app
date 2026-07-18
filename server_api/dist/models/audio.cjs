@@ -20,7 +20,13 @@ if (redisUrl.startsWith("rediss://")) {
         rejectUnauthorized: false,
     };
 }
-const bullAudioQueue = new Queue('AudioEncoding', { connection: redisConnection });
+let bullAudioQueue;
+const getBullAudioQueue = () => {
+    if (!bullAudioQueue) {
+        bullAudioQueue = new Queue('AudioEncoding', { connection: redisConnection });
+    }
+    return bullAudioQueue;
+};
 module.exports = (sequelize, DataTypes) => {
     const Audio = sequelize.define("Audio", {
         name: DataTypes.STRING,
@@ -329,7 +335,7 @@ module.exports = (sequelize, DataTypes) => {
                 jobPackage = _.merge(jobPackage, {
                     acBackgroundJobId: jobId,
                 });
-                await bullAudioQueue.add('audio-encoding', jobPackage);
+                await getBullAudioQueue().add('audio-encoding', jobPackage);
                 callback(null, { Job: { Id: jobId } });
             }
         });
