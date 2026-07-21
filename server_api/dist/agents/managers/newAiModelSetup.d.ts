@@ -16,8 +16,7 @@ export declare class NewAiModelSetup {
      */
     static seedOpenAiModels(userId: number): Promise<void>;
     /**
-     * Seeds Google models.
-     * Currently, this creates Gemini 1.5 Pro 2 and Gemini 1.5 Flash 2.
+     * Seeds Google Gemini models.
      */
     static seedGoogleModels(userId: number): Promise<void>;
     /**
