@@ -24,5 +24,5 @@ export function getUrlPreview(urlIn: any, options?: {}): Promise<{
     responseBytes: number;
 }>;
 export function isPublicAddress(address: any): boolean;
-export function parseAndValidateUrl(urlIn: any): import("url").URL;
+export function parseAndValidateUrl(urlIn: any): import("node:url").URL;
 export function sanitizeUrlForLogging(urlIn: any): string;

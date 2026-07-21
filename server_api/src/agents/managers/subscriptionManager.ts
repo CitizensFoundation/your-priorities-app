@@ -410,7 +410,7 @@ export class SubscriptionManager {
       }
 
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: "2026-05-27.dahlia",
+        apiVersion: "2026-06-24.dahlia",
       });
 
       // Create a PaymentIntent with Stripe
@@ -450,7 +450,7 @@ export class SubscriptionManager {
   ): Promise<YpSubscription[]> {
     try {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: "2026-05-27.dahlia",
+        apiVersion: "2026-06-24.dahlia",
       });
 
       const paymentIntent = await stripe.paymentIntents.retrieve(

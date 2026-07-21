@@ -6,4 +6,4 @@ declare namespace _exports {
     };
 }
 export = _exports;
-import { PassThrough } from "stream";
+import { PassThrough } from "node:stream";
