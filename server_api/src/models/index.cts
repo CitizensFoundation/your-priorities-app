@@ -311,10 +311,16 @@ Object.keys(db).forEach((modelName: string) => {
 
 // Sync & index creation
 if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
-  sequelize.sync().then(async () => {
-    await createCompoundIndexes(compoundIndexCommands);
-    (db.Post as any).addFullTextIndex();
-  });
+  sequelize
+    .sync()
+    .then(async () => {
+      await createCompoundIndexes(compoundIndexCommands);
+      (db.Post as any).addFullTextIndex();
+    })
+    .catch((error: any) => {
+      log.error("Error syncing main Sequelize models", error);
+      process.exit(1);
+    });
 } else if (process.env.FORCE_DB_INDEX_SYNC) {
   createCompoundIndexes(compoundIndexCommands);
 }
