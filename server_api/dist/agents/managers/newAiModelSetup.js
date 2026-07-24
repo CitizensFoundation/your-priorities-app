@@ -161,6 +161,78 @@ export class NewAiModelSetup {
             anthropicOpus46.changed("configuration", true);
             await anthropicOpus46.save();
         }
+        const anthropicOpus5 = await PsAiModel.findOne({
+            where: { name: "Anthropic Opus 5" },
+        });
+        const anthropicOpus5Config = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "anthropic",
+            prices: {
+                costPerThousandWebSearches: 0.1,
+                costInTokensPerMillion: 5,
+                costOutTokensPerMillion: 25,
+                costInCachedContextTokensPerMillion: 0.5,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.7,
+            model: "claude-opus-5",
+            active: true,
+        };
+        if (!anthropicOpus5) {
+            const createdModel = await PsAiModel.create({
+                name: "Anthropic Opus 5",
+                organization_id: 1,
+                user_id: userId,
+                configuration: anthropicOpus5Config,
+            });
+            log.info("Created Anthropic model:", createdModel);
+        }
+        else {
+            log.debug("Anthropic model already exists: Anthropic Opus 5");
+            anthropicOpus5.set("configuration", anthropicOpus5Config);
+            anthropicOpus5.changed("configuration", true);
+            await anthropicOpus5.save();
+        }
+        const anthropicOpus5Fast = await PsAiModel.findOne({
+            where: { name: "Anthropic Opus 5 Fast" },
+        });
+        const anthropicOpus5FastConfig = {
+            type: PsAiModelType.TextReasoning,
+            modelSize: PsAiModelSize.Large,
+            provider: "anthropic",
+            inferenceType: "fast",
+            prices: {
+                costPerThousandWebSearches: 0.1,
+                costInTokensPerMillion: 10,
+                costOutTokensPerMillion: 50,
+                costInCachedContextTokensPerMillion: 1,
+                currency: "USD",
+            },
+            maxTokensOut: 128000,
+            maxContextTokens: 1000000,
+            defaultTemperature: 0.7,
+            model: "claude-opus-5-fast",
+            apiModel: "claude-opus-5",
+            active: true,
+        };
+        if (!anthropicOpus5Fast) {
+            const createdModel = await PsAiModel.create({
+                name: "Anthropic Opus 5 Fast",
+                organization_id: 1,
+                user_id: userId,
+                configuration: anthropicOpus5FastConfig,
+            });
+            log.info("Created Anthropic model:", createdModel);
+        }
+        else {
+            log.debug("Anthropic model already exists: Anthropic Opus 5 Fast");
+            anthropicOpus5Fast.set("configuration", anthropicOpus5FastConfig);
+            anthropicOpus5Fast.changed("configuration", true);
+            await anthropicOpus5Fast.save();
+        }
         const anthropicFable5 = await PsAiModel.findOne({
             where: { name: "Anthropic Fable 5" },
         });
@@ -1868,6 +1940,8 @@ export class NewAiModelSetup {
             { name: "Anthropic Sonnet 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "Anthropic Opus 4.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "Anthropic Opus 4.6", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+            { name: "Anthropic Opus 5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+            { name: "Anthropic Opus 5 Fast", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "Anthropic Fable 5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
             { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
             { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
