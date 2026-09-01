@@ -3,7 +3,7 @@ const moment = require("moment");
 const fs = require("fs");
 const path = require("path");
 const http = require("https");
-const sizeOf = require("image-size");
+const sharp = require("sharp");
 
 const jsonPath =  process.argv[2]; // "/home/robert/Downloads/finalMyndThin.json";
 //TODO: Finna út úr að gera þetta frá URLI!
@@ -44,7 +44,10 @@ const createPost = async (
 
       if (LOCAL_TEST) {
         try {
-          imageDimensions = sizeOf(imageFilePath);
+          imageDimensions = await sharp(imageFilePath).metadata();
+          if (!imageDimensions.width || !imageDimensions.height) {
+            throw new Error(`Could not determine image dimensions for ${imageFilePath}`);
+          }
           log.info(imageDimensions.width, imageDimensions.height);
         } catch (error) {
           resolve();

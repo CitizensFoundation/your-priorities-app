@@ -725,8 +725,9 @@ Loads assistant memory from Redis, ensuring the current user has ownership or up
 
 - `express` (Express.js web framework)
 - `ws` (WebSocket)
-- `marked` (Markdown to HTML converter)
-- `html-to-docx` (HTML to DOCX converter)
+- `marked` (Markdown parser)
+- `docx` (DOCX document generator)
+- `../../utils/markdownToDocx.js` (safe Markdown-to-DOCX renderer)
 - `@policysynth/agents/dbModels/index.js` (Sequelize models)
 - `@policysynth/agents/operations/agentQueueManager.js` ([AgentQueueManager](https://github.com/CitizensFoundation/policy-synth/blob/main/agents/src/operations/agentQueueManager.ts))
 - `../assistants/agentAssistant.js` ([YpAgentAssistant](./agentAssistant.md))
