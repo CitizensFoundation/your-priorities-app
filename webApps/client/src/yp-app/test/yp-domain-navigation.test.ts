@@ -13,6 +13,14 @@ class NavigationTestPage extends LitElement {
 }
 customElements.define("yp-navigation-test-page", NavigationTestPage);
 
+class CachedGroupNavigationTest extends YpGroup {
+  override async refresh() {}
+  override updated() {}
+  override async setupThemeSettings() {}
+  override render() { return html``; }
+}
+customElements.define("yp-cached-group-navigation-test", CachedGroupNavigationTest);
+
 // Keep the real app shell, navigation controls and router, without starting
 // background services or loading collection content from the server.
 class DomainNavigationTestApp extends YpApp {
@@ -164,27 +172,29 @@ describe("domain data during public navigation", () => {
       id: 31803,
       Community: { Domain: partialDomain() },
     } as YpGroupData;
-    // Exercise the real cached-group loader without mounting the group editor,
-    // post list or background refresh timers.
-    const group = {
-      collectionId: 31803,
-      tabCountersLoadId: 0,
-      getCollection: YpGroup.prototype.getCollection,
-      refresh() {},
-    } as unknown as YpGroup;
-    for (let visit = 0; visit < 2; visit++) {
-      YpNavHelpers.redirectTo("/group/31803");
-      await element.updateComplete;
-      await group.getCollection();
+    // Exercise the real connected loader without mounting the post list.
+    const group = document.createElement(
+      "yp-cached-group-navigation-test"
+    ) as CachedGroupNavigationTest;
+    group.collectionId = 31803;
+    document.body.append(group);
+    try {
+      for (let visit = 0; visit < 2; visit++) {
+        YpNavHelpers.redirectTo("/group/31803");
+        await element.updateComplete;
+        await group.getCollection();
 
-      // The real top-left button must change both URL and rendered content.
-      element.shadowRoot!.querySelector<HTMLElement>("#goBackButton")!.click();
-      await element.updateComplete;
-      await aTimeout(0);
-      expect(window.location.pathname).to.equal("/community/10361");
-      expect(element.shadowRoot!.querySelector("#groupPage")).to.be.null;
-      expect(element.shadowRoot!.querySelector("#communityPage")?.textContent)
-        .to.equal("community");
+        // The real top-left button must change both URL and rendered content.
+        element.shadowRoot!.querySelector<HTMLElement>("#goBackButton")!.click();
+        await element.updateComplete;
+        await aTimeout(0);
+        expect(window.location.pathname).to.equal("/community/10361");
+        expect(element.shadowRoot!.querySelector("#groupPage")).to.be.null;
+        expect(element.shadowRoot!.querySelector("#communityPage")?.textContent)
+          .to.equal("community");
+      }
+    } finally {
+      group.remove();
     }
   });
 });

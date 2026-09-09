@@ -32,6 +32,17 @@ export const CollectionTabTypes: Record<string, number> = {
   Assistant: 3,
 };
 
+type CollectionRequest = { id: number; type: string };
+type HelpPagesRequest = CollectionRequest & {
+  helpPagesType: string;
+  helpPagesId: number;
+};
+type CollectionAccessState = {
+  userId: number | undefined;
+  adminRights: YpAdminRights | undefined;
+  memberships: YpMemberships | undefined;
+};
+
 export abstract class YpCollection extends YpBaseElementWithLogin {
   @property({ type: Boolean })
   noHeader = false;
@@ -86,6 +97,17 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   collectionCreateFabIcon: string;
   collectionCreateFabLabel: string;
 
+  protected readonly _boundGetCollection = this.getCollection.bind(this);
+  private readonly _boundLoggedInUserCustom = this.loggedInUserCustom.bind(this);
+  private readonly _boundThemeApplied = this.themeApplied.bind(this);
+  private readonly _boundHideCollectionHeader = this.hideCollectionHeader.bind(this);
+  private _collectionRequest: CollectionRequest | undefined;
+  private _helpPagesRequest: HelpPagesRequest | undefined;
+  private _interruptedHelpPagesRequest: HelpPagesRequest | undefined;
+  private _reloadCollectionOnConnect = false;
+  private _disconnectedAccessState: CollectionAccessState | undefined;
+  protected _collectionAccessChanged = false;
+
   constructor(
     collectionType: string,
     collectionItemType: string | null,
@@ -97,13 +119,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     this.collectionItemType = collectionItemType;
     this.collectionCreateFabIcon = collectionCreateFabIcon;
     this.collectionCreateFabLabel = collectionCreateFabLabel;
-    //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
-    this.addGlobalListener("yp-logged-in", this.loggedInUserCustom.bind(this));
-    this.addGlobalListener(
-      "yp-got-admin-rights",
-      this.getCollection.bind(this)
-    );
-    this.addGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
   }
 
   async loggedInUserCustom() {
@@ -121,34 +136,78 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override connectedCallback() {
     super.connectedCallback();
 
-    if (this.collection) {
-      this.refresh();
+    const accessState = this._getCollectionAccessState();
+    const disconnectedAccessState = this._disconnectedAccessState;
+    this._disconnectedAccessState = undefined;
+    if (disconnectedAccessState && (
+      disconnectedAccessState.userId !== accessState.userId ||
+      disconnectedAccessState.adminRights !== accessState.adminRights ||
+      disconnectedAccessState.memberships !== accessState.memberships
+    )) {
+      this._collectionAccessChanged = true;
+      this._reloadCollectionOnConnect = true;
+    }
+    this.loggedInUser = window.appUser?.user ?? undefined;
+    this.addGlobalListener("yp-logged-in", this._boundLoggedInUserCustom);
+    this.addGlobalListener("yp-got-admin-rights", this._boundGetCollection);
+    this.addGlobalListener("yp-theme-applied", this._boundThemeApplied);
+
+    if (this.collection && this._isCurrentCollection(this.collection.id)) {
+      if (!this._collectionAccessChanged) this.refresh();
 
       if (
         this.collectionType == "domain" &&
         window.appGlobals.domainNeedsRefresh
       ) {
         window.appGlobals.domainNeedsRefresh = false;
-        this.getCollection();
+        this._reloadCollectionOnConnect = true;
       } else if (
         this.collectionType == "community" &&
         window.appGlobals.communityNeedsRefresh
       ) {
         window.appGlobals.communityNeedsRefresh = false;
-        this.getCollection();
+        this._reloadCollectionOnConnect = true;
       } else if (
         this.collectionType == "group" &&
         window.appGlobals.groupNeedsRefresh
       ) {
         window.appGlobals.groupNeedsRefresh = false;
-        this.getCollection();
+        this._reloadCollectionOnConnect = true;
       }
     }
 
     this.addGlobalListener(
       "yp-hide-collection-header-status",
-      this.hideCollectionHeader.bind(this)
+      this._boundHideCollectionHeader
     );
+
+    // Lit caches disconnected pages. Resume interrupted loads when the page
+    // returns, after any newly supplied route has been processed.
+    if (this._reloadCollectionOnConnect || this._interruptedHelpPagesRequest) {
+      void this._resumeRequestsOnConnect();
+    }
+  }
+
+  private async _resumeRequestsOnConnect() {
+    // A sub-route update schedules another update for collectionId. Let that
+    // update start its load before deciding whether a reconnect needs one too.
+    while (this.isConnected && !(await this.updateComplete)) {}
+    if (!this.isConnected) return;
+    if (this._reloadCollectionOnConnect) {
+      this._reloadCollectionOnConnect = false;
+      if (!this._collectionRequest && this.collectionId) {
+        this.collectionIdChanged();
+      }
+    }
+    const helpRequest = this._interruptedHelpPagesRequest;
+    this._interruptedHelpPagesRequest = undefined;
+    if (
+      helpRequest && !this._helpPagesRequest &&
+      this.collectionType === helpRequest.type &&
+      this._isCurrentCollection(helpRequest.id)
+    ) {
+      void this._getHelpPages(helpRequest.helpPagesType, helpRequest.helpPagesId);
+    }
   }
 
   hideCollectionHeader(event: CustomEvent) {
@@ -160,12 +219,65 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   }
 
   override disconnectedCallback(): void {
+    this._disconnectedAccessState = this._getCollectionAccessState();
+    this._reloadCollectionOnConnect ||= !!this._collectionRequest;
+    this._invalidateCollectionRequest();
+    // Help can still be pending after the main collection has finished loading.
+    this._interruptedHelpPagesRequest =
+      this._helpPagesRequest ?? this._interruptedHelpPagesRequest;
+    this._helpPagesRequest = undefined;
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
+    this.removeGlobalListener("yp-logged-in", this._boundLoggedInUserCustom);
+    this.removeGlobalListener("yp-got-admin-rights", this._boundGetCollection);
+    this.removeGlobalListener("yp-theme-applied", this._boundThemeApplied);
     this.removeGlobalListener(
       "yp-hide-collection-header-status",
-      this.hideCollectionHeader.bind(this)
+      this._boundHideCollectionHeader
     );
+    if (window.appGlobals.retryMethodAfter401Login === this._boundGetCollection) {
+      window.appGlobals.retryMethodAfter401Login = undefined;
+    }
+  }
+
+  private _getCollectionAccessState(): CollectionAccessState {
+    // YpAppUser replaces these objects when rights/memberships are fetched.
+    // Compare snapshots on return without keeping detached pages subscribed.
+    return {
+      userId: window.appUser?.user?.id,
+      adminRights: window.appUser?.adminRights,
+      memberships: window.appUser?.memberships,
+    };
+  }
+
+  protected _beginCollectionRequest(): CollectionRequest {
+    // A new route or rights event can already satisfy a pending reconnect load.
+    this._reloadCollectionOnConnect = false;
+    // Object identity also distinguishes overlapping reloads of the same ID.
+    const request = { id: this.collectionId!, type: this.collectionType };
+    this._collectionRequest = request;
+    return request;
+  }
+
+  protected _isCurrentCollection(id: number) {
+    return (
+      this.isConnected && this.collectionId === id &&
+      (!this.subRoute || parseInt(this.subRoute.split("/")[1]) === id)
+    );
+  }
+
+  protected _isCurrentCollectionRequest(request: CollectionRequest) {
+    return (
+      this._collectionRequest === request &&
+      this.collectionType === request.type && this._isCurrentCollection(request.id)
+    );
+  }
+
+  protected _finishCollectionRequest(request: CollectionRequest) {
+    if (this._collectionRequest === request) this._collectionRequest = undefined;
+  }
+
+  protected _invalidateCollectionRequest() {
+    this._collectionRequest = undefined;
   }
 
   refresh(): void {
@@ -207,22 +319,25 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   }
 
   async getCollection() {
+    if (!this.isConnected) return;
     if (this.collectionId) {
-      if (this.collection) {
-        //this.setupTheme();
-      }
+      const request = this._beginCollectionRequest();
       this.collectionItems = undefined;
       //TODO: Look into this if its ok
       if (this.collectionType != "domain") {
         this.collection = undefined;
       }
-      this.collection = (await window.serverApi.getCollection(
-        this.collectionType,
-        this.collectionId
-      )) as YpCollectionData | undefined;
-      this.refresh();
-      if (this.collectionType == "domain") {
-        //this.selectedTab = CollectionTabTypes.Assistant;
+      try {
+        const collection = (await window.serverApi.getCollection(
+          request.type,
+          request.id
+        )) as YpCollectionData | undefined;
+        if (!this._isCurrentCollectionRequest(request)) return;
+        if (collection) this._collectionAccessChanged = false;
+        this.collection = collection;
+        this.refresh();
+      } finally {
+        this._finishCollectionRequest(request);
       }
     } else {
       console.error("No collection id for getCollection");
@@ -233,13 +348,28 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     collectionTypeOverride: string | undefined = undefined,
     collectionIdOverride: number | undefined = undefined
   ) {
+    if (!this.isConnected) return;
     if (this.collectionId) {
-      const helpPages = (await window.serverApi.getHelpPages(
-        collectionTypeOverride ? collectionTypeOverride : this.collectionType,
-        collectionIdOverride ? collectionIdOverride : this.collectionId
-      )) as Array<YpHelpPageData> | undefined;
-      if (helpPages) {
-        this.fire("yp-set-pages", helpPages);
+      const request: HelpPagesRequest = {
+        id: this.collectionId,
+        type: this.collectionType,
+        // Posts use their group's help pages rather than their own type/ID.
+        helpPagesType: collectionTypeOverride ?? this.collectionType,
+        helpPagesId: collectionIdOverride ?? this.collectionId,
+      };
+      this._helpPagesRequest = request;
+      this._interruptedHelpPagesRequest = undefined;
+      try {
+        const helpPages = (await window.serverApi.getHelpPages(
+          request.helpPagesType,
+          request.helpPagesId
+        )) as Array<YpHelpPageData> | undefined;
+        if (helpPages && this._helpPagesRequest === request &&
+          this.collectionType === request.type && this._isCurrentCollection(request.id)) {
+          this.fire("yp-set-pages", helpPages);
+        }
+      } finally {
+        if (this._helpPagesRequest === request) this._helpPagesRequest = undefined;
       }
     } else {
       console.error("Collection id setup for get help pages");
@@ -269,7 +399,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       const splitSubRoute = this.subRoute.split("/");
       this.collectionId = parseInt(splitSubRoute[1]);
       if (splitSubRoute.length > 2) {
-        this._setSelectedTabFromRoute(splitSubRoute[1]);
+        this._setSelectedTabFromRoute(splitSubRoute[2]);
       } else {
         this._setSelectedTabFromRoute("default");
       }
@@ -311,7 +441,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         break;
     }
 
-    if (tabNumber) {
+    if (tabNumber !== undefined) {
       this.selectedTab = tabNumber;
       window.appGlobals.activity(
         "open",

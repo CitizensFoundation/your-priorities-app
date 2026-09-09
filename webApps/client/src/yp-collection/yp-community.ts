@@ -235,7 +235,8 @@ export class YpCommunity extends YpCollection {
 
   override async getCollection() {
     await super.getCollection();
-    if (this.collection && (this.collection as YpCommunityData).Domain) {
+    if (this.collection && this._isCurrentCollection(this.collection.id) &&
+      (this.collection as YpCommunityData).Domain) {
       window.appGlobals.setCurrentDomain(
         (this.collection as YpCommunityData).Domain!
       );

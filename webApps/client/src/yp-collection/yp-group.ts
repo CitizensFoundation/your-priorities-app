@@ -93,6 +93,8 @@ export class YpGroup extends YpCollection {
   hasAutoSelectedDefaultPostStatusTab = false;
   userSelectedPostStatusTab = false;
   configCheckTTL = 45000;
+  private _configCheckGeneration = 0;
+  private _syncingGroupTabSelection = false;
 
   constructor() {
     super("group", "post", "lightbulb_outline", "post.create");
@@ -111,9 +113,11 @@ export class YpGroup extends YpCollection {
       "yp-refresh-activities-scroll-threshold",
       this._clearScrollThreshold
     );
+    this._startConfigCheckTimer();
   }
 
   override disconnectedCallback() {
+    this._cancelConfigCheckTimer();
     super.disconnectedCallback();
     this.removeListener("yp-post-count", this._updateTabPostCount);
     this.removeListener(
@@ -123,6 +127,7 @@ export class YpGroup extends YpCollection {
   }
 
   _cancelConfigCheckTimer() {
+    this._configCheckGeneration += 1;
     if (this.configCheckTimer) {
       clearTimeout(this.configCheckTimer);
       this.configCheckTimer = undefined;
@@ -131,7 +136,7 @@ export class YpGroup extends YpCollection {
 
   _startConfigCheckTimer() {
     this._cancelConfigCheckTimer();
-    if (this.collection) {
+    if (this.collection && this._isCurrentCollection(this.collection.id)) {
       this.configCheckTimer = setTimeout(
         this._getGroupConfig.bind(this),
         this.configCheckTTL
@@ -140,10 +145,16 @@ export class YpGroup extends YpCollection {
   }
 
   async _getGroupConfig() {
-    if (this.collection) {
+    const collection = this.collection;
+    const generation = this._configCheckGeneration;
+    if (collection && this._isCurrentCollection(collection.id)) {
       const groupConfiguration = (await window.serverApi.getGroupConfiguration(
-        this.collection.id
+        collection.id
       )) as YpGroupConfiguration;
+      if (generation !== this._configCheckGeneration ||
+        this.collection !== collection || !this._isCurrentCollection(collection.id)) {
+        return;
+      }
       if (groupConfiguration) {
         if (
           this._doesGroupRequireRefresh(
@@ -261,6 +272,7 @@ export class YpGroup extends YpCollection {
   async _loadTabPostCounts() {
     if (
       !this.collection ||
+      !this._isCurrentCollection(this.collection.id) ||
       !this.hasNonOpenPosts ||
       this._hasLoadedAllTabPostCounts() ||
       this.tabCountersLoadingForGroupId === this.collection.id
@@ -286,6 +298,7 @@ export class YpGroup extends YpCollection {
 
       if (
         !this.collection ||
+        !this._isCurrentCollection(groupId) ||
         this.collection.id !== groupId ||
         this.tabCountersLoadId !== loadId
       ) {
@@ -302,7 +315,7 @@ export class YpGroup extends YpCollection {
     } catch (error) {
       console.error("Error loading group tab counts", error);
     } finally {
-      if (this.tabCountersLoadingForGroupId === groupId) {
+      if (this.tabCountersLoadingForGroupId === groupId && this.tabCountersLoadId === loadId) {
         this.tabCountersLoadingForGroupId = undefined;
       }
     }
@@ -349,84 +362,119 @@ export class YpGroup extends YpCollection {
   }
 
   override async getCollection() {
-    window.appGlobals.retryMethodAfter401Login = this.getCollection.bind(this);
+    if (!this.isConnected || !this.collectionId) return;
+    const bypassCache = this._collectionAccessChanged;
+    const request = this._beginCollectionRequest();
+    this._cancelConfigCheckTimer();
+    window.appGlobals.retryMethodAfter401Login = this._boundGetCollection;
     this.hasNonOpenPosts = false;
     this.tabCounters = {};
     this.tabCountersLoadId += 1;
     this.tabCountersLoadingForGroupId = undefined;
     this.hasAutoSelectedDefaultPostStatusTab = false;
-    this.userSelectedPostStatusTab = false;
+    this.userSelectedPostStatusTab = this._hasExplicitTabRoute;
 
-    if (
-      this.collectionId &&
-      window.appGlobals.cache.groupItemsCache[this.collectionId]
-    ) {
-      this.collection =
-        window.appGlobals.cache.groupItemsCache[this.collectionId];
-      this.refresh();
-    } else if (this.collectionId) {
-      if (this.collection) {
-        //this.setupTheme();
+    try {
+      const cachedGroup = bypassCache ? undefined : window.appGlobals.cache.groupItemsCache[request.id];
+      if (!cachedGroup) {
+        this.collection = undefined;
+        this.collectionItems = undefined;
       }
-      this.collection = undefined;
-      this.collectionItems = undefined;
-      const groupResults = (await window.serverApi.getCollection(
-        this.collectionType,
-        this.collectionId
-      )) as YpGroupResults | undefined;
-      if (groupResults) {
-        this.collection = groupResults.group;
-        if (!this.collection.configuration) {
-          this.collection.configuration = {} as any;
-        }
-        this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
-        if (this.collection.is_group_folder) {
-          this.collection.configuration.groupType = YpGroupType.Folder;
-          this.collectionItemType = "group";
-          this.collectionType = "group";
-          const groupFolder = (await window.serverApi.getGroupFolder(
-            this.collectionId
-          )) as YpGroupResults;
-          this.collectionItems = groupFolder.group.Groups;
-        }
+      const groupResults = cachedGroup ? undefined :
+        (await window.serverApi.getCollection(request.type, request.id)) as
+          YpGroupResults | undefined;
+      if (!this._isCurrentCollectionRequest(request)) return;
+      const group = cachedGroup ?? groupResults?.group;
+      if (!group) return;
+      if (!group.configuration) group.configuration = {} as YpGroupConfiguration;
+
+      let folderItems: YpGroupData[] | undefined;
+      if (group.is_group_folder) {
+        const groupFolder = (await window.serverApi.getGroupFolder(request.id)) as YpGroupResults;
+        if (!this._isCurrentCollectionRequest(request)) return;
+        folderItems = groupFolder.group.Groups;
+      }
+      if (!cachedGroup) {
         if (
           !this.haveLoadedAgentsOps &&
-          this.collection.configuration &&
-          this.collection.configuration.groupType == YpGroupType.PsAgentWorkflow
+          group.configuration.groupType == YpGroupType.PsAgentWorkflow
         ) {
           await import("../policySynth/ps-operations-manager.js");
+          if (!this._isCurrentCollectionRequest(request)) return;
           this.haveLoadedAgentsOps = true;
         } else if (
           !this.haveLoadedAllOurIdeas &&
-          this.collection.configuration &&
-          this.collection.configuration.groupType == YpGroupType.AllOurIdeas
+          group.configuration.groupType == YpGroupType.AllOurIdeas
         ) {
           await import("../allOurIdeas/aoi-survey.js");
+          if (!this._isCurrentCollectionRequest(request)) return;
           this.haveLoadedAllOurIdeas = true;
         }
-        this.refresh();
-        this._loadTabPostCounts();
       }
-    }
-    window.appGlobals.retryMethodAfter401Login = undefined;
 
-    if (
-      this.collection &&
-      (this.collection as YpGroupData).Community &&
-      (this.collection as YpGroupData).Community!.Domain
-    ) {
-      window.appGlobals.setCurrentDomain(
-        (this.collection as YpGroupData).Community!.Domain!
-      );
+      this._collectionAccessChanged = false;
+      this.collection = group;
+      if (groupResults) this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
+      if (group.is_group_folder) {
+        group.configuration.groupType = YpGroupType.Folder;
+        this.collectionItemType = "group";
+        this.collectionItems = folderItems;
+      }
+      this.refresh();
+      if (!cachedGroup) this._loadTabPostCounts();
+      if (this._isCurrentCollectionRequest(request) && group.Community?.Domain) {
+        window.appGlobals.setCurrentDomain(group.Community.Domain);
+      }
+    } finally {
+      if (this._isCurrentCollectionRequest(request) &&
+        window.appGlobals.retryMethodAfter401Login === this._boundGetCollection) {
+        window.appGlobals.retryMethodAfter401Login = undefined;
+      }
+      this._finishCollectionRequest(request);
     }
   }
 
-  _selectGroupTab(event: CustomEvent) {
-    this.userSelectedPostStatusTab = true;
-    this.selectedGroupTab = (event.currentTarget as MdTabs).activeTabIndex;
+  private get _showNonOpenStatusTabs() {
+    // Keep a requested status available even when its post list is empty or
+    // a reload temporarily resets hasNonOpenPosts.
+    return this.hasNonOpenPosts || [
+      GroupTabTypes.InProgress, GroupTabTypes.Successful, GroupTabTypes.Failed,
+    ].includes(this.selectedGroupTab);
+  }
 
-    if (!this.hasNonOpenPosts && this.selectedGroupTab !== 0) {
-      this.selectedGroupTab += 3;
+  _selectGroupTab(event: CustomEvent) {
+    if (this._syncingGroupTabSelection) return;
+    const activeTabIndex = (event.currentTarget as MdTabs).activeTabIndex;
+    // Resolve the index against the current layout before changing selection:
+    // leaving an empty status also removes the status tabs on the next render.
+    const selectedTab = !this._showNonOpenStatusTabs && activeTabIndex > 0
+      ? activeTabIndex + 3 : activeTabIndex;
+    this.userSelectedPostStatusTab = true;
+    this.selectedGroupTab = selectedTab;
+  }
+
+  override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+    void this._syncGroupTabSelection();
+  }
+
+  private async _syncGroupTabSelection() {
+    const tabs = this.$$("#groupTabs") as MdTabs | null;
+    if (!tabs) return;
+    await tabs.updateComplete;
+    if (!this.isConnected || this.isUpdatePending || tabs !== this.$$("#groupTabs")) return;
+
+    // Material applies activeTabIndex immediately. Setting it in the template
+    // would use the old children before Lit inserts/removes the status tabs.
+    const activeTabIndex = !this._showNonOpenStatusTabs &&
+      this.selectedGroupTab >= GroupTabTypes.Newsfeed
+      ? this.selectedGroupTab - 3 : this.selectedGroupTab;
+    if (tabs.activeTabIndex === activeTabIndex) return;
+    this._syncingGroupTabSelection = true;
+    try {
+      tabs.activeTabIndex = activeTabIndex;
+    } finally {
+      this._syncingGroupTabSelection = false;
     }
   }
 
@@ -488,6 +536,11 @@ export class YpGroup extends YpCollection {
     ).clearTriggers();
   }
 
+  private get _hasExplicitTabRoute() {
+    return ["open", "inProgress", "in_progress", "successfull", "successful",
+      "failed", "news", "map"].includes(this.subRoute?.split("/")[2] ?? "");
+  }
+
   override _setSelectedTabFromRoute(routeTabName: string): void {
     let tabNumber;
 
@@ -513,11 +566,14 @@ export class YpGroup extends YpCollection {
         tabNumber = GroupTabTypes.Map;
         break;
       default:
-        tabNumber = GroupTabTypes.Open;
+        tabNumber = this.collection?.id === this.collectionId &&
+          this.collection?.configuration?.makeMapViewDefault
+          ? GroupTabTypes.Map : GroupTabTypes.Open;
         break;
     }
 
-    if (tabNumber) {
+    if (tabNumber !== undefined) {
+      this.userSelectedPostStatusTab = this._hasExplicitTabRoute;
       this.selectedGroupTab = tabNumber;
       window.appGlobals.activity(
         "open",
@@ -756,11 +812,12 @@ export class YpGroup extends YpCollection {
       }
 
       setTimeout(async () => {
+        if (this.collection !== group || !this._isCurrentCollection(group.id)) return;
         const checkResults = (await window.serverApi.getHasNonOpenPosts(
           group.id
         )) as YpGetNonOpenPostsResponse | void;
 
-        if (checkResults) {
+        if (checkResults && this.collection === group && this._isCurrentCollection(group.id)) {
           this.hasNonOpenPosts = checkResults.hasNonOpenPosts;
           if (this.hasNonOpenPosts) {
             this._loadTabPostCounts();
@@ -897,7 +954,8 @@ export class YpGroup extends YpCollection {
         window.appGlobals.currentForceSaml = false;
       }
 
-      if (group.configuration && group.configuration.makeMapViewDefault) {
+      if (group.configuration && group.configuration.makeMapViewDefault &&
+        !this.userSelectedPostStatusTab) {
         this.selectedGroupTab = GroupTabTypes.Map;
       }
 
@@ -1001,15 +1059,15 @@ export class YpGroup extends YpCollection {
       return html`
         <div class="layout vertical center-center">
           <md-tabs
+            id="groupTabs"
             @change="${this._selectGroupTab}"
-            .activeTabIndex="${this.selectedGroupTab}"
           >
             <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
               >${this.tabLabelWithCount("open")}<md-icon slot="icon"
                 >lightbulb_outline</md-icon
               ></md-secondary-tab
             >
-            ${this.hasNonOpenPosts
+            ${this._showNonOpenStatusTabs
               ? html`
                   <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("inProgress")}<md-icon slot="icon"

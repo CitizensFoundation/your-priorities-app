@@ -979,22 +979,29 @@ export class YpPost extends YpCollection {
   }
 
   async _getPost() {
+    if (!this.isConnected) return;
     if (this.collectionId) {
+      const request = this._beginCollectionRequest();
       this.post = undefined;
-      this.post = (await window.serverApi.getCollection(
-        this.collectionType,
-        this.collectionId
-      )) as YpPostData | undefined;
-      if (this.post) {
-        this.setupTheme();
-        this._processIncomingPost();
-        this._getHelpPages("group", this.post.group_id);
+      try {
+        const post = (await window.serverApi.getCollection(
+          request.type,
+          request.id
+        )) as YpPostData | undefined;
+        if (!this._isCurrentCollectionRequest(request)) return;
+        this.post = post;
+        if (post) {
+          this._collectionAccessChanged = false;
+          this.setupTheme();
+          this._processIncomingPost();
+          this._getHelpPages("group", post.group_id);
 
-        if (this.post.Group.Community && this.post.Group.Community.Domain) {
-          window.appGlobals.setCurrentDomain(
-            this.post.Group.Community.Domain!
-          );
+          if (this._isCurrentCollectionRequest(request) && post.Group.Community?.Domain) {
+            window.appGlobals.setCurrentDomain(post.Group.Community.Domain);
+          }
         }
+      } finally {
+        this._finishCollectionRequest(request);
       }
     } else {
       console.error("No collection id for _getPost");
@@ -1002,13 +1009,15 @@ export class YpPost extends YpCollection {
   }
 
   override collectionIdChanged() {
+    this._invalidateCollectionRequest();
+    if (!this.isConnected) return;
     if (this.collectionId) {
-      const cachedItem = window.appGlobals.cache.cachedPostItem;
+      const cachedItem = this._collectionAccessChanged ? undefined : window.appGlobals.cache.cachedPostItem;
       if (cachedItem && cachedItem.id == this.collectionId) {
         this.post = cachedItem;
         this._processIncomingPost();
         console.debug("Got post from single item cache");
-      } else if (window.appGlobals.cache.getPostFromCache(this.collectionId)) {
+      } else if (!this._collectionAccessChanged && window.appGlobals.cache.getPostFromCache(this.collectionId)) {
         this.post = window.appGlobals.cache.getPostFromCache(this.collectionId);
         this._processIncomingPost(true);
         console.debug(
