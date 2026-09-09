@@ -1,7 +1,6 @@
 import express from "express";
-import { marked } from "marked";
-import HTMLtoDOCX from "html-to-docx";
 import log from "../../utils/loggerTs.js";
+import { markdownToDocx } from "../../utils/markdownToDocx.js";
 import auth from "../../authorization.cjs";
 import { YpAgentAssistant } from "../assistants/agentAssistant.js";
 import { YpAgentProductBundle } from "../models/agentProductBundle.js";
@@ -90,8 +89,7 @@ export class AssistantController {
                     res.status(400).send("No markdown content found.");
                     return;
                 }
-                const htmlContent = await marked(markdownContent);
-                const docxBuffer = (await HTMLtoDOCX(htmlContent));
+                const docxBuffer = await markdownToDocx(markdownContent);
                 log.debug(`docxBuffer: ${docxBuffer.length}`);
                 res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                 res.setHeader("Content-disposition", 'attachment; filename="converted.docx"');
