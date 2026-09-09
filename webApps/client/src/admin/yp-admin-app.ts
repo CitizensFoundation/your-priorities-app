@@ -124,6 +124,10 @@ export class YpAdminApp extends YpBaseElement {
 
   communityBackOverride: Record<string, Record<string, string>> | undefined;
 
+  private _boundCheckAdminAccess = this._checkAdminAccess.bind(this);
+  private _boundUpdateLocation = this.updateLocation.bind(this);
+  private _collectionRequest: object | undefined;
+
   static override get styles() {
     return [
       super.styles,
@@ -312,7 +316,6 @@ export class YpAdminApp extends YpBaseElement {
 
   constructor() {
     super();
-    this._setupEventListeners();
     this.updatePageFromPath();
   }
 
@@ -365,11 +368,15 @@ export class YpAdminApp extends YpBaseElement {
   override connectedCallback() {
     super.connectedCallback();
 
+    this._setupEventListeners();
     this.updateLocation();
+    if (this.hasUpdated) this._checkAdminAccess();
   }
 
   updateLocation() {
     let path = window.location.pathname;
+
+    if (!path.startsWith("/admin/")) return;
 
     path = path.replace("/admin", "");
 
@@ -459,7 +466,27 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _setupEventListeners() {
-    this.addGlobalListener("yp-logged-in", this._setAdminFromParent.bind(this));
+    this.addGlobalListener("yp-logged-in", this._boundCheckAdminAccess);
+    this.addGlobalListener("yp-got-admin-rights", this._boundCheckAdminAccess);
+    this.addGlobalListener("yp-boot-from-server", this._boundCheckAdminAccess);
+    window.addEventListener("location-changed", this._boundUpdateLocation);
+    window.addEventListener("popstate", this._boundUpdateLocation);
+  }
+
+  _checkAdminAccess() {
+    if (this.collectionId === "new") {
+      this._setAdminFromParent();
+    } else if (
+      !this.collection &&
+      !this._collectionRequest &&
+      window.appUser.user &&
+      Number.isFinite(this.collectionId) &&
+      this.collectionId > 0
+    ) {
+      this.getCollection();
+    } else {
+      this._setAdminConfirmed();
+    }
   }
 
   _refreshAdminRights() {
@@ -467,7 +494,11 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _removeEventListeners() {
-    this.addGlobalListener("yp-logged-in", this._setAdminFromParent.bind(this));
+    this.removeGlobalListener("yp-logged-in", this._boundCheckAdminAccess);
+    this.removeGlobalListener("yp-got-admin-rights", this._boundCheckAdminAccess);
+    this.removeGlobalListener("yp-boot-from-server", this._boundCheckAdminAccess);
+    window.removeEventListener("location-changed", this._boundUpdateLocation);
+    window.removeEventListener("popstate", this._boundUpdateLocation);
   }
 
   _refreshGroup() {
@@ -500,16 +531,20 @@ export class YpAdminApp extends YpBaseElement {
     }
 
     if (
-      changedProperties.has("collectionType") &&
-      this.collectionId &&
-      this.collectionId != "new"
+      changedProperties.has("collectionType") ||
+      changedProperties.has("collectionId")
     ) {
-      this.getCollection();
-    } else if (
-      changedProperties.has("collectionId") &&
-      this.collectionId == "new"
-    ) {
-      this._setAdminFromParent();
+      this.adminConfirmed = false;
+      this.collection = undefined;
+      this.parentCollection = undefined;
+      if (this.collectionId === "new") {
+        this._setAdminFromParent();
+      } else {
+        this.parentCollectionId = undefined;
+        if (Number.isFinite(this.collectionId) && this.collectionId > 0) {
+          this.getCollection();
+        }
+      }
     }
 
     if (changedProperties.has("collection")) {
@@ -735,64 +770,102 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   async getCollection() {
-    const collectionData = (await window.serverApi.getCollection(
-      this.collectionType,
-      this.collectionId as number
-    )) as YpCollectionData | YpGroupResults;
+    const collectionType = this.collectionType;
+    const collectionId = this.collectionId;
+    const request = {};
+    this._collectionRequest = request;
+    try {
+      const collectionData = (await window.serverApi.getCollection(
+        collectionType,
+        collectionId as number
+      )) as YpCollectionData | YpGroupResults;
 
-    if (this.collectionType == "group") {
-      this.collection = (collectionData as YpGroupResults).group;
-      if (!this.collection.configuration) {
-        this.collection.configuration = {};
+      if (
+        !this.isConnected ||
+        !collectionData ||
+        this._collectionRequest !== request ||
+        collectionType !== this.collectionType ||
+        collectionId !== this.collectionId
+      ) return;
+
+      if (this.collectionType == "group") {
+        this.collection = (collectionData as YpGroupResults).group;
+        if (!this.collection) return;
+        if (!this.collection.configuration) {
+          this.collection.configuration = {};
+        }
+        this.parentCollectionId =
+          (this.collection as YpGroupData).community_id ??
+          (this.collection as YpGroupData).Community?.id;
+      } else {
+        this.collection = collectionData as YpCollectionData;
+        if (this.collectionType === "community") {
+          this.parentCollectionId =
+            (this.collection as YpCommunityData).domain_id ??
+            (this.collection as YpCommunityData).Domain?.id;
+        }
       }
-    } else {
-      this.collection = collectionData as YpCollectionData;
-    }
 
-    this._setAdminConfirmed();
+      this._setAdminConfirmed();
+    } finally {
+      if (this._collectionRequest === request) this._collectionRequest = undefined;
+    }
   }
 
   async _getAdminCollection() {
-    switch (this.collectionType) {
-      case "community":
-      case "domain":
-          const communityParentCollection = await window.serverApi.getCollection(
-          "domain",
-          this.parentCollectionId as number
-        );
-        this._setAdminConfirmedFromParent(communityParentCollection);
-        break;
-      case "group":
-        if (
-          window.appGlobals.originalQueryParameters["createCommunityForGroup"]
-        ) {
-          const groupParentCollection = await window.serverApi.getCollection(
-            "domain",
-            this.parentCollectionId as number
-          );
-          this._setAdminConfirmedFromParent(groupParentCollection);
-        } else {
-          const groupParentCollection = await window.serverApi.getCollection(
-            "community",
-            this.parentCollectionId as number
-          );
-          this._setAdminConfirmedFromParent(groupParentCollection);
-        }
-        break;
-      default:
-        this.fire("yp-network-error", { message: this.t("unauthorized") });
+    const collectionType = this.collectionType;
+    const parentCollectionId = this.parentCollectionId;
+    if (
+      this.collectionId !== "new" ||
+      !parentCollectionId ||
+      !Number.isFinite(parentCollectionId) ||
+      parentCollectionId < 0
+    ) return;
+
+    if (!["community", "domain", "group"].includes(collectionType)) {
+      this.fire("yp-network-error", { message: this.t("unauthorized") });
+      return;
+    }
+
+    const parentCollectionType =
+      collectionType === "group" &&
+      !window.appGlobals.originalQueryParameters["createCommunityForGroup"]
+        ? "community"
+        : "domain";
+    const parentCollection = await window.serverApi.getCollection(
+      parentCollectionType,
+      parentCollectionId
+    );
+    if (
+      this.isConnected &&
+      this.collectionId === "new" &&
+      this.collectionType === collectionType &&
+      this.parentCollectionId === parentCollectionId
+    ) {
+      this._setAdminConfirmedFromParent(parentCollection);
     }
   }
 
   async _setAdminFromParent() {
+    if (this.collectionId !== "new") return;
+
     if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
       this.parentCollectionId = window.appGlobals.domain?.id;
     }
 
     const loggedIn = await window.appUser.ensureLoginChecked();
 
+    if (!this.isConnected || this.collectionId !== "new") return;
+
     if (loggedIn) {
-      this._getAdminCollection();
+      if (
+        this.parentCollection &&
+        this.parentCollection.id === this.parentCollectionId
+      ) {
+        this._setAdminConfirmedFromParent(this.parentCollection);
+      } else {
+        await this._getAdminCollection();
+      }
     } else {
       window.appUser.openUserlogin();
     }
@@ -853,6 +926,7 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _setAdminConfirmed() {
+    this.adminConfirmed = false;
     if (this.collection) {
       switch (this.collectionType) {
         case "domain":
@@ -1126,6 +1200,7 @@ export class YpAdminApp extends YpBaseElement {
   setPage(type: AdminPageOptions) {
     if (this.collectionType === "group") {
       if (type == "back") {
+        if (!this.parentCollectionId) return;
         YpNavHelpers.redirectTo(
           `/admin/community/${this.parentCollectionId}/groups`
         );
@@ -1140,10 +1215,9 @@ export class YpAdminApp extends YpBaseElement {
       }
     } else if (this.collectionType === "community") {
       if (type == "back") {
+        if (!this.parentCollectionId) return;
         YpNavHelpers.redirectTo(
-          `/admin/domain/${
-            (this.collection as YpCommunityData).domain_id
-          }/communities`
+          `/admin/domain/${this.parentCollectionId}/communities`
         );
       } else {
         this.page = type;
