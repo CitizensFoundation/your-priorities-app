@@ -481,8 +481,16 @@ export class YpAppGlobals extends YpCodeBase {
   }
 
   setCurrentDomain(domain: YpDomainData) {
-    this.domain = domain;
-    this.fireGlobal("yp-domain-changed", { domain: domain });
+    // Cached groups can contain only a domain's id, name and theme_id.
+    // Keep the loaded fields for that same domain, especially configuration,
+    // without leaking settings when navigating to a different domain.
+    const currentDomain = this.domain?.id === domain.id ? this.domain : undefined;
+    this.domain = {
+      ...currentDomain,
+      ...domain,
+      configuration: domain.configuration ?? currentDomain?.configuration ?? {},
+    };
+    this.fireGlobal("yp-domain-changed", { domain: this.domain });
   }
 
   async boot() {

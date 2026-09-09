@@ -653,7 +653,7 @@ export class YpApp extends YpBaseElement {
 
   renderNavigation() {
     if (
-      window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation &&
+      window.appGlobals.domain?.configuration?.disableArrowBasedTopNavigation &&
       !this.closePostHeader &&
       !this.keepOpenForGroup
     ) {
@@ -742,7 +742,7 @@ export class YpApp extends YpBaseElement {
         ><md-icon>translate</md-icon>
       </md-icon-button>
 
-      ${window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation
+      ${window.appGlobals.domain?.configuration?.disableArrowBasedTopNavigation
         ? nothing
         : this.renderNonArrowNavigation()}
 
@@ -874,12 +874,12 @@ export class YpApp extends YpBaseElement {
         ?hideTitle="${this.page === "agent_bundle"}"
         aria-label="top navigation"
         ?fixed="${true ||
-        window.appGlobals.domain?.configuration.useFixedTopAppBar}"
+        window.appGlobals.domain?.configuration?.useFixedTopAppBar}"
         ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration
-          .disableArrowBasedTopNavigation}"
+          ?.disableArrowBasedTopNavigation}"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
-        window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
+        window.appGlobals.domain?.configuration?.hideAppBarIfWelcomeHtml}"
       >
         <div slot="navigation">${this.renderNavigation()}</div>
         <div slot="title" ?hidden="${this.page === "agent_bundle"}"></div>
@@ -979,7 +979,7 @@ export class YpApp extends YpBaseElement {
         id="leftDrawer"
         aria-label="${this.t("navigationMenu")}"
         position="${window.appGlobals.domain?.configuration
-          .disableArrowBasedTopNavigation
+          ?.disableArrowBasedTopNavigation
           ? "left"
           : "right"}"
         @closed="${this._closeNavDrawer}"
