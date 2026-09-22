@@ -88,7 +88,7 @@
     "jasmine-core": "^3.1.0",
     "jsdoc": "^3.5.5",
     "jsonlint-cli": "^1.0.1",
-    "karma": "^2.0.5",
+    "karma": "^6.4.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
     "karma-coveralls": "^2.0.0",
