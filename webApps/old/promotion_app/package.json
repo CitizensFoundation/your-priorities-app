@@ -171,7 +171,7 @@
     "lit-flexbox-literals": "0.0.7",
     "lit-google-map": "^1.0.1",
     "lit-html": "^2.3.1",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "luxon": "^3.0.1",
     "picmo": "^5.6.0",
     "pwa-helpers": "^0.9.1",
