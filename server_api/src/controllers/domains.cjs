@@ -1122,6 +1122,17 @@ router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, r
   });
 });
 
+router.get('/:domainId/moderate_all_content_count', auth.can('edit domain'), (req, res) => {
+  countAllModeratedItemsByDomain({ domainId: req.params.domainId, allContent: true }, (error, count) => {
+    if (error) {
+      log.error("Error counting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({ count });
+    }
+  });
+});
+
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {
   queue.add('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many domain admins started', { context: 'remove_many_admins', domainId: req.params.domainId, user: toJson(req.user.simple()) });

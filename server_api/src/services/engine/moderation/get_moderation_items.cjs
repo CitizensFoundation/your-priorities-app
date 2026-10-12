@@ -5,6 +5,7 @@ const async = require('async');
 const moment = require('moment');
 const log = require('../../../utils/logger.cjs');
 const _ = require('lodash');
+const { MODERATION_LIST_LIMIT, newestFirst } = require('../../../utils/moderationOrder.cjs');
 
 const domainIncludes = (domainId) => {
   return [
@@ -230,8 +231,8 @@ const getModelModeration = (options, callback) => {
       ],
     },
     //TODO: Have paging here at some point
-    limit: 7500,
-    order: options.order,
+    limit: MODERATION_LIST_LIMIT,
+    order: newestFirst(options.order),
     include: options.includes,
     attributes: options.attributes
   }).then(items => {

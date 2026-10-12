@@ -4941,6 +4941,24 @@ router.get(
   }
 );
 
+router.get(
+  "/:groupId/moderate_all_content_count",
+  auth.can("edit group"),
+  (req, res) => {
+    countAllModeratedItemsByGroup(
+      { groupId: req.params.groupId, allContent: true },
+      (error, count) => {
+        if (error) {
+          log.error("Error counting items for moderation", { error });
+          res.sendStatus(500);
+        } else {
+          res.send({ count });
+        }
+      }
+    );
+  }
+);
+
 // CAMPAIGNS
 
 router.post(

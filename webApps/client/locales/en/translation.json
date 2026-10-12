@@ -682,6 +682,8 @@
   "deleteImageConfirmation": "Are you sure you want to delete this image?",
   "flaggedContent": "Flagged content",
   "contentItemsFlagged": "items flagged",
+  "moderationShowingNewest": "showing newest",
+  "moderationOf": "of",
   "firstReported": "First at",
   "lastReported": "Last at",
   "content": "Content",

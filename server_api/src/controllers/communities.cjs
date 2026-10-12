@@ -3006,6 +3006,24 @@ router.get(
 );
 
 router.get(
+  "/:communityId/moderate_all_content_count",
+  auth.can("edit community"),
+  (req, res) => {
+    countAllModeratedItemsByCommunity(
+      { communityId: req.params.communityId, allContent: true },
+      (error, count) => {
+        if (error) {
+          log.error("Error counting items for moderation", { error });
+          res.sendStatus(500);
+        } else {
+          res.send({ count });
+        }
+      }
+    );
+  }
+);
+
+router.get(
   "/:communityId/export_users",
   auth.can("edit community"),
   function (req, res) {

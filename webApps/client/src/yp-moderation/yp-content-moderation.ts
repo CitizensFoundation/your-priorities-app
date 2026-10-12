@@ -22,7 +22,7 @@ import "@vaadin/grid/vaadin-grid-filter-column.js";
 import "@vaadin/grid/vaadin-grid-sort-column.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
-import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+import { mayBeCapped, moderationCountLabel } from "./moderationCount.js";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 import "../yp-magic-text/yp-magic-text.js";
 import "../yp-point/yp-point.js";
@@ -98,6 +98,10 @@ export class YpContentModeration extends YpBaseElement {
 
   @property({ type: String })
   itemsCountText: string | undefined;
+
+  // Set only when the list came back at the server's cap; undefined otherwise.
+  @property({ type: Number })
+  totalAvailableCount: number | undefined;
 
   @property({ type: Object })
   resizeTimeout: any | undefined;
@@ -698,7 +702,7 @@ export class YpContentModeration extends YpBaseElement {
           <div class="innerHeader">
             ${this.headerText}
             <span ?hidden="${!this.totalItemsCount}"
-              >(${this.totalItemsCount} ${this.itemsCountText})</span
+              >(${this.totalItemsCount})</span
             >
           </div>
         </div>
@@ -974,13 +978,34 @@ export class YpContentModeration extends YpBaseElement {
 
   async _generateRequest(id: number) {
     try {
+      this.totalAvailableCount = undefined;
       const response = await window.adminServerApi.adminMethod(
         `/api/${this.modelType}/${id}/${this.typeOfModeration}`,
         "GET"
       );
       this.items = response;
+      if (this.items && mayBeCapped(this.items.length)) {
+        await this._loadTotalAvailableCount(id);
+      }
     } catch (error) {
       this._ajaxError(error);
+    }
+  }
+
+  // The list is capped on the server, so ask how many items there are in all.
+  // Users have no count endpoint; their label falls back to "7,500+".
+  async _loadTotalAvailableCount(id: number) {
+    if (this.modelType === "users") return;
+    try {
+      const response = (await window.adminServerApi.adminMethod(
+        `/api/${this.modelType}/${id}/${this.typeOfModeration}_count`,
+        "GET"
+      )) as { count?: number } | undefined;
+      if (response && typeof response.count === "number") {
+        this.totalAvailableCount = response.count;
+      }
+    } catch (error) {
+      console.error("Could not load moderation item count", error);
     }
   }
 
@@ -1175,7 +1200,11 @@ export class YpContentModeration extends YpBaseElement {
 
   get totalItemsCount() {
     if (this.items) {
-      return YpFormattingHelpers.number(this.items.length);
+      return moderationCountLabel(this.items.length, this.totalAvailableCount, {
+        items: this.itemsCountText || "",
+        showingNewest: this.t("moderationShowingNewest"),
+        of: this.t("moderationOf"),
+      });
     } else {
       return null;
     }
