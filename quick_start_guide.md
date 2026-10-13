@@ -149,6 +149,19 @@ cd server_api
 
 Worker env defaults align with backend local values above (including NODE_ENV and YP_DEV_DATABASE_*), but worker startup does not export SESSION_SECRET.
 
+### Using the app
+
+To submit an idea as a member of the public:
+
+1. Visit http://localhost:4444 to see the public homepage.
+2. Follow the "Tell us your idea" link.
+3. Fill in the form and submit it.
+
+To view submitted ideas in the admin site:
+
+1. Visit http://localhost:4444/user/login and log in using the admin email address (your.email@here.com) and password (yourpassword) that you set earlier.
+2. Visit http://localhost:4444/admin/group/1 and then navigate to Moderation → Manage all content.
+
 ## 3) Testing the New vs Legacy Client (`useNewVersion`)
 
 `server_api` actually serves **two independent, separately-built client apps**: an old
