@@ -80,6 +80,14 @@ YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE
 YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/setAdminOnAll.cjs your.email@here.com
 ```
 
+### 1.7 Create the community and group
+
+The landing page's buttons link to the idea submission form of group 1. Run the following to create a correctly-configured community and, within it, a correctly-configured group with that ID, with your user as their admin:
+
+```bash
+YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/custom/createCommunityAndGroup.js 1 your.email@here.com
+```
+
 ## 2) Daily Local Run (Normal Development Startup)
 
 Use three terminals.
