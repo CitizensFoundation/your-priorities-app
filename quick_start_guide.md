@@ -11,7 +11,16 @@ cp development/docker/plausible-conf.env.dist development/docker/plausible-conf.
 cp server_api/startWatchWithEnv.sh-dist server_api/startWatchWithEnv.sh
 ```
 
-Edit server_api/startWatchWithEnv.sh to set your SESSION_SECRET and database variables
+1. Set the following variables in `server_api/startWatchWithEnv.sh`:
+
+   - `YP_DEV_DATABASE_NAME`: yrpri_dev
+   - `YP_DEV_DATABASE_USERNAME`: postgres
+   - `YP_DEV_DATABASE_PASSWORD`: postgres
+   - `YP_DEV_DATABASE_HOST`: localhost
+
+2. Add the following variable to the same file:
+
+   - `SESSION_SECRET`: A random string
 
 ## 1) First-Time Setup (Do Once Per Machine/Clone)
 
@@ -58,14 +67,18 @@ cd ../..
 
 ### 1.6 Setup first user
 
-First, start both the server and client (see [Daily local run](#2-daily-local-run-normal-development-startup)), run
+First, start both the server and client (see [Daily local run](#2-daily-local-run-normal-development-startup)).
 
-`YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/domains/createDomain.js 1 "here.com" "example"`
-`YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/users/createUserAddDomain.js 1 your.email@here.com yourusername yourpassword`
+> [!note]
+> It appears to be necessary to start the client to create the first domain.
 
-to create a new user, and `node server_api/ts-out/scripts/setAdminOnAll.cjs your.email@here.com` with the same environment variables to make that user an admin.
+Then run the following to create a new domain and admin user:
 
-(It appears to be necessary to start the client to create the first domain)
+```bash
+YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/domains/createDomain.js 0 "here.com" "example"
+YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/users/createUserAddDomain.js 1 your.email@here.com yourusername yourpassword
+YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/setAdminOnAll.cjs your.email@here.com
+```
 
 ## 2) Daily Local Run (Normal Development Startup)
 
