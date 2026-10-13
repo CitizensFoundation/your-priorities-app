@@ -22,7 +22,8 @@ export class WebSocketsManager {
   constructor(
     wsClients: Map<string, WebSocket>,
     redisClient: RedisClientType,
-    server: HttpServer
+    server: HttpServer,
+    private readonly acceptConnection?: (socket: WebSocket, request: IncomingMessage) => boolean
   ) {
     this.wsClients = wsClients;
     this.redisClient = redisClient;
@@ -39,6 +40,7 @@ export class WebSocketsManager {
 
     // Convert to async so we can 'await' inside
     this.ws.on("connection", async (ws: WebSocket, req: IncomingMessage) => {
+      if (this.acceptConnection?.(ws, req)) return;
       // 1) Extract ?clientId= from the URL or generate a new one
       const url = new URL(req.url ?? "", "http://dummy");
       let clientId = url.searchParams.get("clientId") || "";

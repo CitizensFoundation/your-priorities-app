@@ -3,3 +3,5 @@ startWatchWithEnv.sh
 startWorkerWithEnv.sh
 ts-out/
 config/config.json
+.live-workflow-data/
+.live-workflow-manual/

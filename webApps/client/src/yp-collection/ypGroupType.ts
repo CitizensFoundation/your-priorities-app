@@ -3,6 +3,7 @@ export enum YpGroupType {
   AllOurIdeas = 1,
   StaticHtml = 2,
   PsAgentWorkflow = 3,
-  Folder = 4
+  Folder = 4,
+  LiveWorkflow = 5
 }
 

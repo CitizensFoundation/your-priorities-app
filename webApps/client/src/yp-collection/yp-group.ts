@@ -387,6 +387,10 @@ export class YpGroup extends YpCollection {
       const group = cachedGroup ?? groupResults?.group;
       if (!group) return;
       if (!group.configuration) group.configuration = {} as YpGroupConfiguration;
+      if (Number(group.configuration.groupType) === YpGroupType.LiveWorkflow) {
+        await import("../live-workflows/yp-live-workflow.js");
+        if (!this._isCurrentCollectionRequest(request)) return;
+      }
 
       let folderItems: YpGroupData[] | undefined;
       if (group.is_group_folder) {
@@ -1422,6 +1426,9 @@ export class YpGroup extends YpCollection {
 
       case YpGroupType.PsAgentWorkflow:
         return this.haveLoadedAgentsOps ? this.renderAgentsOps() : html``;
+
+      case YpGroupType.LiveWorkflow:
+        return html`<yp-live-workflow .groupId=${(this.collection as YpGroupData).id}></yp-live-workflow>`;
 
       default:
         return html``;

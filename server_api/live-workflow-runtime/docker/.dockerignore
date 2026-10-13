@@ -1,0 +1,9 @@
+*
+!Dockerfile
+!versions.json
+!package.json
+!package-lock.json
+!docker-entrypoint.sh
+!install-pinned-r-packages.R
+!patches/
+!patches/background-terminal-progressive-poll.patch

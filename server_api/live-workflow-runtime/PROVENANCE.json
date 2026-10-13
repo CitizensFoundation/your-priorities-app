@@ -1,0 +1,994 @@
+{
+  "strategy": "copy, namespace rename, then custom edits",
+  "sources": {
+    "eidosoma-scientist": "ff2e76ca1ce8830bfc6514fc700e566e0f7187d2",
+    "policy-synth": "6f88b65755e69248c3fa2d0f2614ca1055931c15"
+  },
+  "files": [
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/apiClient.ts",
+      "target": "server_api/src/liveWorkflows/vm/apiClient.ts",
+      "sha256": "ecd8ee672da0b2f596d2127980d6dc5e423c3aed5218e16491e928eacc000a68"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/brokerClient.ts",
+      "target": "server_api/src/liveWorkflows/vm/brokerClient.ts",
+      "sha256": "01c61543c77a4246d27b8589d71e15454e11f497741b64ed6dda0cad37992a8a"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/consoleEvents.ts",
+      "target": "server_api/src/liveWorkflows/vm/consoleEvents.ts",
+      "sha256": "07c3dba5640f6a4c04095cd631404f271de352632a6115e9ecf1efdf19e403d5"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/runtime.ts",
+      "target": "server_api/src/liveWorkflows/vm/runtime.ts",
+      "sha256": "a0692d4d5162749d73560b087edf28ad7926a1447365dbf44e6b36d85ae17a5a"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/controlServer.ts",
+      "target": "server_api/src/liveWorkflows/vm/controlServer.ts",
+      "sha256": "7204529e2010eccc61056e5941a954302de182b06a9ecb9e4532afb85e8f5953"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/cli.ts",
+      "target": "server_api/src/liveWorkflows/vm/cli.ts",
+      "sha256": "21c1b558355b4426c2359b8f82ebf801ec1ff41459dbce785c78976d0ed2d3ad"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/config.ts",
+      "target": "server_api/src/liveWorkflows/vm/config.ts",
+      "sha256": "28869630ef447cbcd3a3e7b1bd4f0bd24ebd677890b917cc6bb35c203cfe1187"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/stateStore.ts",
+      "target": "server_api/src/liveWorkflows/vm/stateStore.ts",
+      "sha256": "41a090bbc5b8e2f89fd624162e05a04eea75a991c24b3e1695592861f2c5904a"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/index.ts",
+      "target": "server_api/src/liveWorkflows/vm/index.ts",
+      "sha256": "57e3008f3c7015f86ea935e17cd2ce396f804156ca10791d728fd001bcf315a6"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/artifacts/artifactCollector.ts",
+      "target": "server_api/src/liveWorkflows/vm/artifacts/artifactCollector.ts",
+      "sha256": "6ffec62830d3ebdc72cf71f0d35e5dccd33c374aa6825b8ba58a26bcf77779af"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/artifacts/artifactLimits.ts",
+      "target": "server_api/src/liveWorkflows/vm/artifacts/artifactLimits.ts",
+      "sha256": "d9084b3ada6d9bb7c75fb2a61c9a157a1613247f9eb8e498fc01d875d1fc32ea"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tools/removeStaleGitHubCredentialHelpers.ts",
+      "target": "server_api/src/liveWorkflows/vm/tools/removeStaleGitHubCredentialHelpers.ts",
+      "sha256": "be32e472a2ac842e4ba759982b25483aeec7ca2536e691ee1ece8bc63d561a97"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/appServerRequests.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/appServerRequests.ts",
+      "sha256": "53ad3e54db9ffedfe92061f8c20989d73a9773454bfe047f0a6e77304cc79456"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/appServerEvents.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/appServerEvents.ts",
+      "sha256": "57e5f695092176da8e2dc6aec52ee4538e9a61954e70f6be40cc692e86957465"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/jsonUtils.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/jsonUtils.ts",
+      "sha256": "48bac2c2a29f9f65ecc10ef75e8f654a8cd1b27282d4513b04e80c0563777538"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/codexAuthMaterial.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/codexAuthMaterial.ts",
+      "sha256": "97229964119ca52648c1c97a29986aad1a89af71f66579bdb0f91d06fed2c2f6"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/codexAuth.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/codexAuth.ts",
+      "sha256": "43016fc5d798691419e286d42b0e56e19468f6ea19593a3113303b0148443809"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/appServerTransport.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/appServerTransport.ts",
+      "sha256": "7928631fa59d8edb708b22c8f696c98594dafaaf4f6e9feb56e680796ef54eff"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/codexAppServerDefaults.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/codexAppServerDefaults.ts",
+      "sha256": "f58b66931de426202a47a0477ef78ac1e58a3c16cfa5bafa635d880b8662933c"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/codexAdapter.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/codexAdapter.ts",
+      "sha256": "c54a691fb52b8657a77d9eaa3c2b0f4c23c77e5d80c2b604bfa95bd7b5405246"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/codexBinary.ts",
+      "target": "server_api/src/liveWorkflows/vm/codex/codexBinary.ts",
+      "sha256": "3411e1ddf1f242a89d6ff1df24fde8d008ea6ee78394102e6e80aaf9ed9cdf8f"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/generated/README.md",
+      "target": "server_api/src/liveWorkflows/vm/codex/generated/README.md",
+      "sha256": "a344664c9c68e1d702fd03ffdda1c69584e53cf7c3ed8f6654f78bfd350b975e"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/codex/generated/codex-app-server-0.146.0.selected.schema.json",
+      "target": "server_api/src/liveWorkflows/vm/codex/generated/codex-app-server-0.146.0.selected.schema.json",
+      "sha256": "79b9f42c3991a850346030cacf1a4ccfd28893148b5e41bd0209873d028da423"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/agent/vmAgentSkeleton.ts",
+      "target": "server_api/src/liveWorkflows/vm/agent/vmAgentSkeleton.ts",
+      "sha256": "d64126b09a6b692a95bf1461f1cc82dc8096e7610047477f63b686b9f12b8039"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/datasets/datasetManager.ts",
+      "target": "server_api/src/liveWorkflows/vm/datasets/datasetManager.ts",
+      "sha256": "6751fbe907ea7a483fdadc7c5dc005d59f4913412332ac448d075fab3c89ffec"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/metrics/metricsReporter.ts",
+      "target": "server_api/src/liveWorkflows/vm/metrics/metricsReporter.ts",
+      "sha256": "b35fd22da06eb1d84cb4e798d1f8059069abd92197b9c8e5af8dd3abb4f75b2b"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/terminal/auxTerminalBridge.ts",
+      "target": "server_api/src/liveWorkflows/vm/terminal/auxTerminalBridge.ts",
+      "sha256": "203daa59d3f0e36732ca888f0ffc7a40a6144da4a78c97ad0708aff911bc96af"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/sessionControlCommandHandlers.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/sessionControlCommandHandlers.ts",
+      "sha256": "543b7bea836e42732b3202dc825767ce49368e5730768473f781ed362d69ee3e"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/runtimeEnsureImageCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/runtimeEnsureImageCommandHandler.ts",
+      "sha256": "96729add5337d1205e93c96a2923ae39b850033f30592d4b6509bb88af1822d0"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/workspacePrepareCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/workspacePrepareCommandHandler.ts",
+      "sha256": "ee2d80e6c3e7d7e84269a6d9433586de4f9db33d6efe0fe4c9e779ae8164fc4b"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/datasetFilePreviewCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/datasetFilePreviewCommandHandler.ts",
+      "sha256": "5d423a42c2d62f7b73e5bc32970a1fe282c8e59ce75b8cff6d05d35ca4d30bb5"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/datasetValidateCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/datasetValidateCommandHandler.ts",
+      "sha256": "970aa26c4158eb35b20d43420fc8e0bc5757edfdda42a249c38c0f8c161f5600"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/artifactCollectCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/artifactCollectCommandHandler.ts",
+      "sha256": "41a691320bdf1665b735be2b23091f57213bf294db99e0754a063721d615c1b0"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/codexAuthCommandHandlers.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/codexAuthCommandHandlers.ts",
+      "sha256": "149c63139ea9ae594174289c6945328e8d2db1106d1bd1fd7ec80c8139e8ba2c"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/datasetOutputNormalizeCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/datasetOutputNormalizeCommandHandler.ts",
+      "sha256": "67faefd53cff14328a96161a1e1fc03b38ff3106beddb0f3ac78981b27dcb25c"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/vmCommandRouter.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/vmCommandRouter.ts",
+      "sha256": "916d09beb46c90d12789c48d2b5a21022aa38febac62052f195a08e31124fd54"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/auxTerminalCommandHandlers.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/auxTerminalCommandHandlers.ts",
+      "sha256": "d49c9733aaf7678b6be70f9b82cbb121f7ce5ae1b10857a61d3be4feb892048e"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/datasetPromoteCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/datasetPromoteCommandHandler.ts",
+      "sha256": "e35d00270c07aaf9cee9c0aa5f3c1fbf13f4e1b91b8fe38d5d224db4b409a8aa"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/workspaceFileReadCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/workspaceFileReadCommandHandler.ts",
+      "sha256": "2b7c29a8a9b7e1bc5a0a80f5c779893c4b6fdef06b91c63eb77d98a4bbb6e3ac"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/commands/sessionStartCommandHandler.ts",
+      "target": "server_api/src/liveWorkflows/vm/commands/sessionStartCommandHandler.ts",
+      "sha256": "b893b61fb4adc890c2c92b4f342e8784834915b243c4a84588f7ad9cffb1efb8"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/smoke/contractsImport.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/smoke/contractsImport.unit.test.ts",
+      "sha256": "73f067f370d138b846895cf89a481f755bd283349657c4ad9ef3ae9a6ee00235"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/runtime.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/runtime.unit.test.ts",
+      "sha256": "c066f92abeec9a82ed8b7f0473f08eee0614d31aa37bd61b797ddd206ec31bbb"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/datasetOutputNormalizeCommandHandler.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/datasetOutputNormalizeCommandHandler.unit.test.ts",
+      "sha256": "f07e8c15e7cb96925364650e1924453cf6be32c6bc7e609d8492bbb547e83364"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/metricsReporter.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/metricsReporter.unit.test.ts",
+      "sha256": "7c8afd1b5e068f74fb85826e33e312aec3b6e63c0e94523d915a7a8832239dfb"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/codexAppServerDockerfile.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/codexAppServerDockerfile.unit.test.ts",
+      "sha256": "616a03d2bee7b203536697bc9a92ff23bd854f17b14ab255c591a71f0bfd631f"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/artifactCollector.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/artifactCollector.unit.test.ts",
+      "sha256": "59572bc22f8fad490b169e0060f46a0518aaaa116571865b7a85cca1d56a38c2"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/datasetFilePreviewCommandHandler.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/datasetFilePreviewCommandHandler.unit.test.ts",
+      "sha256": "e8835bffa3e3d7074cb560a1f0afca9e2484875d2aa28eff01db8ddac35ae7be"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/dockerRuntimeDatasetOutput.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/dockerRuntimeDatasetOutput.unit.test.ts",
+      "sha256": "107b26a670aedca6a279797f0a203a16916569dd8127190d3ffde9e174cb87dc"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/datasetManagerValidation.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/datasetManagerValidation.unit.test.ts",
+      "sha256": "38ab50637a5f8fa8969aecada0b1d84a61bb979c0b18080a214cd986bb5f378f"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/removeStaleGitHubCredentialHelpers.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/removeStaleGitHubCredentialHelpers.unit.test.ts",
+      "sha256": "6c0fa4d01f0f15db50862389e090790a8081bcfb4821f87b4707cffa52b3f4fc"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/datasetPromoteCommandHandler.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/datasetPromoteCommandHandler.unit.test.ts",
+      "sha256": "3789228380a421e31757e6c9f8b07de7e6b51ffbe9b03a6c43c9aaa20b40457c"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/devVmDockerAccessScript.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/devVmDockerAccessScript.unit.test.ts",
+      "sha256": "13756ef791d694f6f3ced0d257e8d41827a236cae527a33e7d975426c1c380e6"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/codexAuthMaterial.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/codexAuthMaterial.unit.test.ts",
+      "sha256": "a321183bb9e04372f5e0639d7d66069ceb7004493ea4fc9ddd42698aef07363c"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/vmCommandRouter.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/vmCommandRouter.unit.test.ts",
+      "sha256": "0b7a1081aa3523fc2595c484e25e64bd845620a4c7ad54de43c59b53f1b04c1b"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/sessionControlCommandHandlers.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/sessionControlCommandHandlers.unit.test.ts",
+      "sha256": "939afee042f94714d0b11c80599c7693ba856fffbfa81ccc88fb5181d4ce4463"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/vmBrokerClient.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/vmBrokerClient.unit.test.ts",
+      "sha256": "3a7a389b47dd423ed0847669be5d5c1ee00d1edb33f77d16e15cfc3f1ed729d6"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/workspaceFileReadCommandHandler.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/workspaceFileReadCommandHandler.unit.test.ts",
+      "sha256": "bcd6725db3a1be43e6002902336180700824ea56a49d23b011138ca486d8fca8"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/codexAuth.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/codexAuth.unit.test.ts",
+      "sha256": "9b496df4dc44426e68307781c246e8f1e999326a252539391df391e2b529a4bd"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/codexAppServerDefaults.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/codexAppServerDefaults.unit.test.ts",
+      "sha256": "8a0d3246503615790a1d9219a578e0389bb817da5a90a3f153277a025e074b1e"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/containerStats.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/containerStats.unit.test.ts",
+      "sha256": "d707534fa500b6882d2de6179569ab3fcaf1ded52d94eefb42452c12808198d0"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/tests/unit/appServerEvents.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/vm/tests/unit/appServerEvents.unit.test.ts",
+      "sha256": "7126e39de3a28f6e2fb9a3629eb34ce7fd1952ebf89c61f15649ecc419ae4aec"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/docker/containerStats.ts",
+      "target": "server_api/src/liveWorkflows/vm/docker/containerStats.ts",
+      "sha256": "0b0ee9303f558634ecc5fcc85e7f65a12d66787353cdf639dae29baec69b9950"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/docker/containerStorage.ts",
+      "target": "server_api/src/liveWorkflows/vm/docker/containerStorage.ts",
+      "sha256": "8ef5f12d74c898099bf56e5c6011bff5347f1aa20c1af6a2543cefaf54d20673"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/docker/dockerRuntimeManager.ts",
+      "target": "server_api/src/liveWorkflows/vm/docker/dockerRuntimeManager.ts",
+      "sha256": "f598c12acdc4ca2be169391a10fbd2c6b8b2790a0041a96596c5e1adcb904ee4"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/host/hostRegistrar.ts",
+      "target": "server_api/src/liveWorkflows/vm/host/hostRegistrar.ts",
+      "sha256": "c8e2b6c056671f3080e3189a6f0f7415891be94b3265a09b834f3616d8c96bb7"
+    },
+    {
+      "source": "eidosoma-scientist/apps/vm-agent/src/workspace/workspaceManager.ts",
+      "target": "server_api/src/liveWorkflows/vm/workspace/workspaceManager.ts",
+      "sha256": "85511cf0f9e2af3bdca13f764a395fc00cae2c3a0c823f60fd34ac5b6a5211bd"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/groupArchive.ts",
+      "target": "server_api/src/liveWorkflows/contracts/groupArchive.ts",
+      "sha256": "fc00072492eb9e1888cf589e7eed3579960918e0ac2a2768b2078db8eddc0f31"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/core.ts",
+      "target": "server_api/src/liveWorkflows/contracts/core.ts",
+      "sha256": "eef0cde4c27f610bdd652f775cb20b4bba36e71237fdc6af9c1d38d3db54d87c"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/pathSafety.ts",
+      "target": "server_api/src/liveWorkflows/contracts/pathSafety.ts",
+      "sha256": "6d075da33d7b84b058a2f10b1edd21f8b9b87732a2972860a82a1672ad0b6c88"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/reportRevision.ts",
+      "target": "server_api/src/liveWorkflows/contracts/reportRevision.ts",
+      "sha256": "a27621cbb5c0b76fdff6b333c59dc063d3a6ab765f0c15ad609c36f3d2c77ff6"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/artifactRoles.ts",
+      "target": "server_api/src/liveWorkflows/contracts/artifactRoles.ts",
+      "sha256": "39b7ef1a0a5a3299e41d5be2c51eea0ec4ca971cf02b60d5e99c96ae98e34d0a"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/legacyImport.ts",
+      "target": "server_api/src/liveWorkflows/contracts/legacyImport.ts",
+      "sha256": "f562553465e37f11d3dd27a36613fc764b520d1499313c0aa45748037b792387"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/review.ts",
+      "target": "server_api/src/liveWorkflows/contracts/review.ts",
+      "sha256": "9cac2317a7fe5d91d68e3d788b2755e961cad330efa0a4b288440ac4f0c5670d"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/science.ts",
+      "target": "server_api/src/liveWorkflows/contracts/science.ts",
+      "sha256": "813064b295c01c53c172d7af995afaeb1b1e17672840cc06f0e3311e89f02296"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/notification.ts",
+      "target": "server_api/src/liveWorkflows/contracts/notification.ts",
+      "sha256": "c7e35c706e9677deab92ee3cd676ed96bb8593c45973e5f3db4c4b9b892721ed"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/protocol.ts",
+      "target": "server_api/src/liveWorkflows/contracts/protocol.ts",
+      "sha256": "ffc81c97e881747b3cedae633777629e2f64f8995b9da8b7a89358d1c0d99867"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/results.ts",
+      "target": "server_api/src/liveWorkflows/contracts/results.ts",
+      "sha256": "7ece5aa789fa98f5bc22b9dd2db002e5841d12ac44d820f88d4701ffa11076c2"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/groupLifecycle.ts",
+      "target": "server_api/src/liveWorkflows/contracts/groupLifecycle.ts",
+      "sha256": "58536eb69a84dc60cb77ceecda801d1ec379270fa7d5f6bc88af8cc46cbf46da"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/session.ts",
+      "target": "server_api/src/liveWorkflows/contracts/session.ts",
+      "sha256": "abfaa596fea8dc59e42e10acc74ad7bb09c82cb2c0323834bdee9a42177f291b"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/live.ts",
+      "target": "server_api/src/liveWorkflows/contracts/live.ts",
+      "sha256": "6b7521be59bb8d5da683c08b8c7dfd1301dc96daa9a95d9ea46ffcfcb30a39fe"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/runMonitor.ts",
+      "target": "server_api/src/liveWorkflows/contracts/runMonitor.ts",
+      "sha256": "28df801591a383360e3c762371ab9e99e26972927bb6c1f0d3e9cf230243b682"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/db.ts",
+      "target": "server_api/src/liveWorkflows/contracts/db.ts",
+      "sha256": "120ab25d7ad29282537c40f06bba06a6ccee9d2657c718b2acb1a0bb68cef9d2"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/execution.ts",
+      "target": "server_api/src/liveWorkflows/contracts/execution.ts",
+      "sha256": "41fe2eb31d65efa4e8616ce484bd36f12844946de681afde6a54ccd9bc5d0476"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/usage.ts",
+      "target": "server_api/src/liveWorkflows/contracts/usage.ts",
+      "sha256": "4eb913091e02357073e681f796c9cf5d62c7e901ebe95d665c7de80a2ed6a229"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/workflow.ts",
+      "target": "server_api/src/liveWorkflows/contracts/workflow.ts",
+      "sha256": "f93880229d5eff000b01c9e7299acbcac7bf8256d19de361827c71ae4899eb98"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/index.ts",
+      "target": "server_api/src/liveWorkflows/contracts/index.ts",
+      "sha256": "54bb0aefe608548fdd03e7c0a1edef9a2c8e0cdfa60b4b499c13230f84386551"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/artifactBrowser.ts",
+      "target": "server_api/src/liveWorkflows/contracts/artifactBrowser.ts",
+      "sha256": "99cfbf30c8da178bdaedc1482b0066c8bf884f50c0d2e7c9e95e84a3148c0e00"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/capabilities.ts",
+      "target": "server_api/src/liveWorkflows/contracts/capabilities.ts",
+      "sha256": "95110ba48185a7ed7661e9bf9bdd67430520711524d7eadac479c1652e9e4a56"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/liveSchemas.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/liveSchemas.unit.test.ts",
+      "sha256": "02a0d6f9400962bbe291ea054f88c3f98bbdcabc9858de054caee5a2d4af5c0c"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/protocolSchemas.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/protocolSchemas.unit.test.ts",
+      "sha256": "e17732e2a113002c6fb7ed150e96fbbcfaa82a069fbe6b2c46b0f666b256161a"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/codeDataReview.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/codeDataReview.unit.test.ts",
+      "sha256": "9df32feae6fedecc743163dc042f053221a5c18dddd614f02ed7a09cba914207"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/groupFinalReviewFixtures.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/groupFinalReviewFixtures.ts",
+      "sha256": "5e50a0bc5cac7ce213d38fecb72ce10aa0f135570c35c7f7958169edc9922ddf"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/reportBundleSelection.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/reportBundleSelection.unit.test.ts",
+      "sha256": "3069946af95f0c93a7cc75b2a661106607fa302278eb915c2271fd2fb2a0f33d"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/byteCount.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/byteCount.unit.test.ts",
+      "sha256": "2086cd1923c72fdae4afe9d189cc461d224f46b1857f8bcea042be2baf7d5315"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/groupFinalReviewSchemas.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/groupFinalReviewSchemas.unit.test.ts",
+      "sha256": "8576006a1d21bf8502b3ab0c1a075ffe5e3be3de2ae8c27db785dea746cbeeba"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/scienceSchemas.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/scienceSchemas.unit.test.ts",
+      "sha256": "22e70fff9c330c5c2412bf24ffe428c2884e4ea6820c86e071847c0eacf1af3b"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/legacyImportEnrichment.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/legacyImportEnrichment.unit.test.ts",
+      "sha256": "91b49ec56d630e667f6667d9896bc59a707471e87ebaf39fa886d0b85cc71d06"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/legacyImport.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/legacyImport.unit.test.ts",
+      "sha256": "63dd28f2ea7163477e5c34e7893c95d42c6d6c56b8a0eeb31173f515c3f3c568"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/artifactBrowser.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/artifactBrowser.unit.test.ts",
+      "sha256": "9f2908545aa6503afcf5d549e915cc57906d2be77290194d282c23b425c94b5d"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/researchGitHubSource.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/researchGitHubSource.unit.test.ts",
+      "sha256": "4b417c86e026f58582044e7970df56635ed7cb31de4bb7312ed09289438692b3"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/resultsSchemas.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/resultsSchemas.unit.test.ts",
+      "sha256": "4f8fe71ecbf6b20ff259e98a8832d175f50c2de364986af8b58fe3c456db1203"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/descriptorTables.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/descriptorTables.unit.test.ts",
+      "sha256": "63d166310499a231b80d48a75a8167ed590863c392c95bef24c9b2a6c668a0ad"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/groupArchive.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/groupArchive.unit.test.ts",
+      "sha256": "5bc87261c6fb3f21343eaaf13358ca52456eea53aaf945bc21bb61ca119182f9"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/legacyImportValidator.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/legacyImportValidator.unit.test.ts",
+      "sha256": "97c9e684819551018a7fa339eefc83b5722632f7acdda3c8e2ac27a64bb08e75"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/pathSafety.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/pathSafety.unit.test.ts",
+      "sha256": "653013a2cb50ea5a681e9c8b58d4bbafc3f085696c8d22fab3379cdf9e92a117"
+    },
+    {
+      "source": "eidosoma-scientist/packages/contracts/src/tests/contracts/statusPredicates.unit.test.ts",
+      "target": "server_api/src/liveWorkflows/contracts/tests/contracts/statusPredicates.unit.test.ts",
+      "sha256": "3147c8ed41073209054de1767886ed4ba04d8536a56fd7101cc5c68e8852196d"
+    },
+    {
+      "source": "eidosoma-scientist/infra/docker/codex-app-server/docker-entrypoint.sh",
+      "target": "server_api/live-workflow-runtime/docker/docker-entrypoint.sh",
+      "sha256": "73957a547b906452702b4f83f0a166079055d4b0cc180ae59c381212132a1473"
+    },
+    {
+      "source": "eidosoma-scientist/infra/docker/codex-app-server/Dockerfile",
+      "target": "server_api/live-workflow-runtime/docker/Dockerfile",
+      "sha256": "534ae8205b2997cfaa5560e00f322b5308a67e6be6bbbb1f384f6584375368c9"
+    },
+    {
+      "source": "eidosoma-scientist/infra/docker/codex-app-server/versions.json",
+      "target": "server_api/live-workflow-runtime/docker/versions.json",
+      "sha256": "977acb79c9be073a09231b28a02e3267189dd5c7f126da8aec20d1f96dc78f9c"
+    },
+    {
+      "source": "eidosoma-scientist/infra/docker/codex-app-server/.dockerignore",
+      "target": "server_api/live-workflow-runtime/docker/.dockerignore",
+      "sha256": "cd6df1b7dc47c3a03c9eef2261b94cb20a0259c04a398afc5215c5bf46bc7979"
+    },
+    {
+      "source": "eidosoma-scientist/infra/docker/codex-app-server/install-pinned-r-packages.R",
+      "target": "server_api/live-workflow-runtime/docker/install-pinned-r-packages.R",
+      "sha256": "0474cf24a664bfd53f19b448ebd370770a09453d6df6f03a4564e114241bf3ba"
+    },
+    {
+      "source": "eidosoma-scientist/infra/docker/codex-app-server/patches/background-terminal-progressive-poll.patch",
+      "target": "server_api/live-workflow-runtime/docker/patches/background-terminal-progressive-poll.patch",
+      "sha256": "dbe02cb2d31f00bd4a3297f1b68c6288c88dd399432e9050a80b46327c3c48ed"
+    },
+    {
+      "source": "eidosoma-scientist/apps/api/src/services/vmBrokerRegistry.ts",
+      "target": "server_api/src/liveWorkflows/services/vmBrokerRegistry.ts",
+      "sha256": "807f43730e89f9fd4993fdf0bb2a59f0bc44b17607270aca6803075216836a44"
+    },
+    {
+      "source": "eidosoma-scientist/apps/api/src/services/errors.ts",
+      "target": "server_api/src/liveWorkflows/services/errors.ts",
+      "sha256": "0b82f10e424d07a7e3d210406818d929679a6fec095adeaab5a3b16e12db01dd"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/types.d.ts",
+      "target": "server_api/workflow-packages/skills-first/source/types.d.ts",
+      "sha256": "12f8903f7efaac61c613c1aac012b59ec905af2c5b4673c7b33efe2f67346c08"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/runAgents.ts",
+      "target": "server_api/workflow-packages/skills-first/source/runAgents.ts",
+      "sha256": "03b81f148a4cad53a0bc613860286b95b5917120ec96e918219603b36988f7b3"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/occupationalCategories.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/occupationalCategories.ts",
+      "sha256": "b7acb178447de14f8bec2ffebbbf3772cdbfd9e5fe793a8b254c89fe9ec17f38"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/educationTypes.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/educationTypes.ts",
+      "sha256": "b3c78b3dfc687710f222965f5ca0d95670d244006d8f9bd2135acd0708424152"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/occupationalCategories.json",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/occupationalCategories.json",
+      "sha256": "ec5d1442bdc42670b9e5f2f432f22c3a34dcf0e5034ec756e7d7713602522546"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/README.md",
+      "sha256": "bd56f3fbe10f06bf02971e1a1c80a328a4fa499b3bd2414a51043e01adc9e1a8"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/analysisAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/analysisAgentQueue.ts",
+      "sha256": "b0c5e11b8fb25cb3b36fb5b3be06b629bd56333e12ab4af4782dce1d64094659"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriteAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriteAgentQueue.ts",
+      "sha256": "718290f4937415e340158c35694305c85617f88e2121d2d7748b0c5670ba88fb"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriterAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriterAgent.ts",
+      "sha256": "b92bc195776cfa203056d3e3ba780c1dce221d1f6cc699824bf3c6e0a5f7951a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/triggerAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/triggerAgentQueue.ts",
+      "sha256": "b7298d9d88cce09f0f4c662aa46f4570fd08fa2a3e13d7e8cb7d14b8f64769c6"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/analysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/analysisAgent.ts",
+      "sha256": "d27ff37cc9ca78e3e47028889871e3492f70905a0f09de1b969641219362d8f5"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/rewriterMasterAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/rewriterMasterAgent.ts",
+      "sha256": "7fd1dd5c2a9b9fb1f7f29818a1cb83a4120c2cfbdd9c711e51ad207583cda4ed"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/differenceAnalysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/differenceAnalysisAgent.ts",
+      "sha256": "78ae3ead0302af4f3ad4d7e76de2bd9917670254b83356560e5234a0abe224c7"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/docExporter.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/docExporter.ts",
+      "sha256": "bb0ef8c5435c6ba5b8e6b81f107a564fc0fe46309ff8ba8a3a46914861df22a6"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/parallelCheckAgents.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/parallelCheckAgents.ts",
+      "sha256": "cb38c9c95651a7dc1fcba2cd6fea2831d6b4d18db510b3b9ea89991f3aa5e031"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/README.md",
+      "sha256": "f04925464db2b088a6165c97c57cdb6639e213cac0914c3f9f731f4365736687"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/rewriteSubAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/rewriteSubAgent.ts",
+      "sha256": "8a96f784a13c6a2d8434845666da88f3988392cf060326046d382ad4a4478f30"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/bucketAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/bucketAgent.ts",
+      "sha256": "75c7d25fef1d63aa50e0a0deed2be973ede16d0d3efe9f8e12ea6a59c03ce920"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/README.md",
+      "sha256": "755976e3ee14fe4006d9a61098e571d9a9bc75e0ae227006af8649ca730d67a8"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareLicenseEducationQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareLicenseEducationQueue.ts",
+      "sha256": "99b5b4aca823e7d7fc2da39df4c8bc5b575db06ae42c0a053027902915e95952"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareAgentQueue.ts",
+      "sha256": "4c53debda031344e59105c64433d8c3c4d7571fdd7688d4fa6df1a4e68afdaee"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareSheets.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareSheets.ts",
+      "sha256": "15e64d116e018d2cffd3c8d76bd43fdd39d4fab3ab85f75e3413332346df2a8f"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareLicenseEducation.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareLicenseEducation.ts",
+      "sha256": "2fbab316318e27f095a6abaec0da690aac474558de1d3df0d4fffdb93a76cc60"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/exports/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/exports/README.md",
+      "sha256": "df5a5c4d5549feb65871f32d34f8a93e3bc0bd51141c4660594e082ea8883a22"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/exports/sheetsExport.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/exports/sheetsExport.ts",
+      "sha256": "8ec300bef7d8e426d3427346eed8f9375f89547a5d96c928c5fb6cfae7673843"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/deduplicateManyToOne.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/deduplicateManyToOne.ts",
+      "sha256": "aa56726535f8ba3cd371ef83cc7014b88f7a056a04b43392ee03be801eb90583"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/webPageScanner.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/webPageScanner.ts",
+      "sha256": "2a37dbdba5bb71977c72458d360db3dc73b69836bc3bd8b12c0ae6745cf1eb0f"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/webPageContentRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/webPageContentRanker.ts",
+      "sha256": "47dbb8049181b828289d6c27df9fa4095a1f807dd6213d34868f43d2a19379f7"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/README.md",
+      "sha256": "9b5a40f3dcad0c44b0a80e8af0c94a9006e3425efd4be26cd263023a630d85d8"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/deduplicateByKeys.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/deduplicateByKeys.ts",
+      "sha256": "a200eadc218646fbfe137fc8da7b92f0a0adf4834f5a544989fabac36f9fb971"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchResultsRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchResultsRanker.ts",
+      "sha256": "f82dd30e4c66243023cd371afaeb285d04e13670a7900f2a7a8e3b9c419d9024"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/baseResearchAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/baseResearchAgent.ts",
+      "sha256": "5e73d507eb265861ad46921434370d45c908a3ff55817d200bb28856d56dfbf3"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchWeb.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchWeb.ts",
+      "sha256": "20fa773f341aaace591dad504aa2bc84797d325f63594b948ab4e4bedb525c67"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/deduplicateObjects.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/deduplicateObjects.ts",
+      "sha256": "f8de5240b8e8584103c2ad42af04fba22be82ff949d7e7eb2f30c0ab5288ed23"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchQueriesRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchQueriesRanker.ts",
+      "sha256": "6b5e528fefd59267f068788cde2496a23dda90e568f51a7349919c85149fd52a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchQueriesGenerator.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchQueriesGenerator.ts",
+      "sha256": "a92615c23f9db33f66fc8df6e9755df413f9179ac85df8249a7684c557b37511"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/imports/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/imports/README.md",
+      "sha256": "10ee658ae14893efba6627c94fdbafb7851e0a639c1e06c30d8f65b3d044c204"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/imports/sheetsImport.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/imports/sheetsImport.ts",
+      "sha256": "45e7448cd44240eebf91bf6f4ff1dd9b009969ba93fa43bbe197e5140a0a8351"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/imports/exampleImport.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/imports/exampleImport.ts",
+      "sha256": "fb6ab6b3e9d38ba6cc6c9bff17a4886697c9585dc7474dda304d024050b9e50b"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/multiLevel/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/multiLevel/README.md",
+      "sha256": "edef888b152f211cf58ae2e9ae6808963f6178ebe30f5c8b875c00aba37814e2"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/multiLevel/splitMultiLevelAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/multiLevel/splitMultiLevelAgent.ts",
+      "sha256": "bdbd1b84ef3e4fc1aefd2aa540e87cf6a58b93139e1ed3b16a145c1466f79b87"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/multiLevel/multiLevelAnalysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/multiLevel/multiLevelAnalysisAgent.ts",
+      "sha256": "fbd65fd7fa222a8757f839d981abbe769a0ab36d4c04e73306924d7985adee99"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/authorativeSourceFinder.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/authorativeSourceFinder.ts",
+      "sha256": "e8c8fb18a73690983aa35b69a7867335857a9e967d652db0d9c8c83d64633507"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/requirementsExtractor.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/requirementsExtractor.ts",
+      "sha256": "9207964d8925dad755264c3193d142b5f6d07a29496eb359dea86ff6aae08894"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/licenceAnalysisQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/licenceAnalysisQueue.ts",
+      "sha256": "57bb30c34a732942f305b3969d5fb288b79719b1aca5fc21fe4168fcb6192de5"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/importSheet.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/importSheet.ts",
+      "sha256": "66cd95fdcac26ed3b0758ed5920475619c9b9dcf056c34428795bb3d4102b2b4"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/README.md",
+      "sha256": "ecc7634a4f58262e0fc45add8daefbf71ca3b136408b861ffd87786ddd93c9bf"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/exportSheet.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/exportSheet.ts",
+      "sha256": "746fa112e2dc20a883ac61fbc20440ffd88a31d18fdc240240e2e459a5d58052"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/rankResults.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/rankResults.ts",
+      "sha256": "1cd225fe1c53ec1d2250add4b46a1010a683d2ac260a7ffd28a439b381752017"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/requirementAnalyzer.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/requirementAnalyzer.ts",
+      "sha256": "11d4e64ee6a6d2320485aa6d3ea6104a1d52aecc7f02078998ca4b5263b1c2fb"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/firecrawlExtractor.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/firecrawlExtractor.ts",
+      "sha256": "34a0ad1a5e76201a667b410a149fb42e004b9f8e32f61c6196dd0a2983bc6c4a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/licenceAnalysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/licenceAnalysisAgent.ts",
+      "sha256": "470fe0e9a2a954faef1771b3604117ec6a9305ac39b269566121e39729afce21"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/licenceDeepResearch.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/licenceDeepResearch.ts",
+      "sha256": "57d32548397aefd9fad1b247cf87ecbf05736ae76883af8ab838c4835dce1b3c"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/dataConsistency.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/dataConsistency.ts",
+      "sha256": "d3535d31f2e837882241e609b5f19dbda421b009265be111e523e5ab84631553"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/README.md",
+      "sha256": "025e953b5ae8a40ec0c35d7d15b25e3079e18f7d1b9d2f73b79045baa1c86639"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/readabilityAnalysisFleshKncaid.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/readabilityAnalysisFleshKncaid.ts",
+      "sha256": "540037181ad068869ea32bfc90d349d3b3962385bf412ff6c9f6380aa8587a76"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/identifyBarriers.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/identifyBarriers.ts",
+      "sha256": "5bea1ff90412f0894c16d8d6e6c6e76fa687b56f4a326303b0c6a5e7b101d76b"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/determineStatus.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/determineStatus.ts",
+      "sha256": "e8815819e030cf1b51fef0a0aed29ee93e99f43ae17f365cf8d494b8a486fad0"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/additionalRequirements.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/additionalRequirements.ts",
+      "sha256": "415f76fc2341ea61192ffc0113bdd7e2a84e3fa21a7fe6802f0a57d4daea2fe2"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/readingLevelAnalysis.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/readingLevelAnalysis.ts",
+      "sha256": "f22cede8bea3fd30e205ec391053ced2a358738156ee3790596cb3f0253f7a89"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/reviewEvidenceAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/reviewEvidenceAgent.ts",
+      "sha256": "3b13963c4c2bf90732e14032c8451253038f30281bddc30922185b4255cfcdad"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/mantatoryStatus.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/mantatoryStatus.ts",
+      "sha256": "8b96ccc87220842920923ada984013c7ce0ff755253c934f411e078b2b0abf4a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationRequirementsQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationRequirementsQueue.ts",
+      "sha256": "27fbe36e7031d284aeb3f2b88714fb9ae11f71fe19e1f72b8568c6833340d1db"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationRequirementAnalyzer.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationRequirementAnalyzer.ts",
+      "sha256": "5f200a13a35fb5ef15dd219ed6ea71f8aee859e05a3f4255d5332d100f8221cc"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationRequirementsBarrierDeepResearchAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationRequirementsBarrierDeepResearchAgent.ts",
+      "sha256": "ec0de858738da106394c71c085c13eff0f3463193e156eb000e2ad1e3316475c"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/types.d.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/types.d.ts",
+      "sha256": "634d27b98cde9b594b80f18d01b06e08caea00d247e9dc9120f33c85204cbd75"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/README.md",
+      "sha256": "5ed7d34047a04f9bd77c1cdd2066b1706583e21baa5890662c6a015e96b8f681"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/jobTitleDeepResearch.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/jobTitleDeepResearch.ts",
+      "sha256": "c8c4132db49f03a8d48a73f301eb5c3fb9e6fe74a02bfbadd1a185885a3abbac"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationExportSheet.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationExportSheet.ts",
+      "sha256": "82f23f326fec6f1359137758f1d07c7f32ad6aa7d444efad2e377df8ef4f2a70"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/processAndScanStatuesAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/processAndScanStatuesAgent.ts",
+      "sha256": "b7d96201739090c8f82a3ed4c0aacf85e6673ac6164ed388d914745151e87e57"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/deduplicateManyToOne.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/deduplicateManyToOne.ts",
+      "sha256": "aa56726535f8ba3cd371ef83cc7014b88f7a056a04b43392ee03be801eb90583"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/webPageScanner.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/webPageScanner.ts",
+      "sha256": "3904e2c92e6f88b1216987aa103ae64281fe25d146cc333a388dfe3ee0723970"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/webPageContentRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/webPageContentRanker.ts",
+      "sha256": "47dbb8049181b828289d6c27df9fa4095a1f807dd6213d34868f43d2a19379f7"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/README.md",
+      "sha256": "e2b38088a9c30892fc8dc188a0098273c8e9366d76af51347e37b219f103ea6b"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/deduplicateByKeys.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/deduplicateByKeys.ts",
+      "sha256": "a200eadc218646fbfe137fc8da7b92f0a0adf4834f5a544989fabac36f9fb971"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchResultsRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchResultsRanker.ts",
+      "sha256": "eaba7534654557cd1113b5627dcdf30647a25181d35a52470ac54216eb98fab3"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/baseResearchAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/baseResearchAgent.ts",
+      "sha256": "58c02213973e5714333b82eb5d7226a3f46479e20be350f63bf315d07e5cec85"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchWeb.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchWeb.ts",
+      "sha256": "20fa773f341aaace591dad504aa2bc84797d325f63594b948ab4e4bedb525c67"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/deduplicateObjects.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/deduplicateObjects.ts",
+      "sha256": "f8de5240b8e8584103c2ad42af04fba22be82ff949d7e7eb2f30c0ab5288ed23"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchQueriesRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchQueriesRanker.ts",
+      "sha256": "7d5915c39c7e9a8cb51473e7cd803c2a1a9b8a2ec6a6ef7cf400b67539cd6682"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchQueriesGenerator.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchQueriesGenerator.ts",
+      "sha256": "d8b871a54580f92fa26edf89df1cebc8e7ffd2a4452a61622787485b0e4061ea"
+    }
+  ],
+  "imageAdaptation": {
+    "profile": "lean development tools with Sysbox and inner Docker",
+    "preserved": "Codex 0.146.0 source, exact patch, bwrap/V8 checksums and generated protocol",
+    "changes": [
+      "Multi-stage Node 24 Debian image; omit science, GPU, R and browser toolchains",
+      "Compile and run all four copied patch test selections for the musl target",
+      "Suppress the musl wrapper dynamic interpreter and assert static PIE at build time",
+      "Keep the original eidosoma patch marker for binary verification"
+    ]
+  }
+}

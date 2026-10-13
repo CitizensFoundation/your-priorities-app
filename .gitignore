@@ -1,6 +1,8 @@
 node_modules
 *node_modules/*
 server_api/config/config.json
+.envForImportOnly
+.envForImportOnly.*
 server_api/test/temp
 server_api/bin/uploads
 .sass-cache
@@ -17,8 +19,11 @@ projectFilesBackup/
 .editorconfig
 server_api/uploads/
 
+.envForAgentDoNotViewOnlyImport
+
 pushSubTreeToHeroku.sh
 startWatchWithEnv.sh
 startWorkerWithEnv.sh
 server_api/ts-out/config/config.json
 server_api/config/config.json
+.playwright-mcp/

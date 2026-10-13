@@ -1,0 +1,36 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "name",
+      "text",
+      "analysis",
+      "status",
+      "citations",
+      "errors"
+    ],
+    "properties": {
+      "status": {
+        "enum": [
+          "pending",
+          "complete",
+          "unknown"
+        ]
+      },
+      "citations": {
+        "type": "array"
+      },
+      "analysis": {
+        "type": "object"
+      },
+      "errors": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

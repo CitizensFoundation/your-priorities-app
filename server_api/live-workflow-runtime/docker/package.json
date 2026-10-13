@@ -1,0 +1,12 @@
+{
+  "name": "@yrpri/workflow-codex-development",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Small, preinstalled dependencies for editing and typechecking workflow packages in Codex",
+  "dependencies": {
+    "@types/node": "26.6.4",
+    "flesch-kincaid": "2.0.1",
+    "syllable": "5.0.1"
+  }
+}

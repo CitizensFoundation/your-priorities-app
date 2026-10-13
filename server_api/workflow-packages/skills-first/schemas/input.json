@@ -1,0 +1,22 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id"],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "text": {
+        "type": "string",
+        "minLength": 1
+      },
+      "jurisdiction": {
+        "type": "string"
+      }
+    }
+  }
+}

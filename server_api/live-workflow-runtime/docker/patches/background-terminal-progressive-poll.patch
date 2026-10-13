@@ -1,0 +1,868 @@
+diff --git a/codex-rs/core/src/unified_exec/mod.rs b/codex-rs/core/src/unified_exec/mod.rs
+index e8dd31c..59e9567 100644
+--- a/codex-rs/core/src/unified_exec/mod.rs
++++ b/codex-rs/core/src/unified_exec/mod.rs
+@@ -67,6 +67,8 @@ pub(crate) const WINDOWS_INITIAL_EXEC_YIELD_TIME_FLOOR_MS: u64 = 2_000;
+ pub(crate) const MIN_EMPTY_YIELD_TIME_MS: u64 = 5_000;
+ pub(crate) const MAX_YIELD_TIME_MS: u64 = 30_000;
+ pub(crate) const DEFAULT_MAX_BACKGROUND_TERMINAL_TIMEOUT_MS: u64 = 300_000;
++pub(crate) const FIRST_BACKGROUND_POLL_YIELD_TIME_MS: u64 = 120_000;
++pub(crate) const SECOND_BACKGROUND_POLL_YIELD_TIME_MS: u64 = 600_000;
+ pub(crate) const DEFAULT_MAX_OUTPUT_TOKENS: usize = 10_000;
+ pub(crate) const UNIFIED_EXEC_OUTPUT_MAX_BYTES: usize = 1024 * 1024; // 1 MiB
+ pub(crate) const UNIFIED_EXEC_OUTPUT_MAX_TOKENS: usize = UNIFIED_EXEC_OUTPUT_MAX_BYTES / 4;
+@@ -175,6 +177,7 @@ struct ProcessEntry {
+     network_approval: Option<DeferredNetworkApproval>,
+     session: Weak<Session>,
+     last_used: tokio::time::Instant,
++    completed_background_polls: u8,
+ }
+
+ pub(crate) fn clamp_yield_time(yield_time_ms: u64) -> u64 {
+diff --git a/codex-rs/core/src/unified_exec/mod_tests.rs b/codex-rs/core/src/unified_exec/mod_tests.rs
+index acf6d7d..a297f48 100644
+--- a/codex-rs/core/src/unified_exec/mod_tests.rs
++++ b/codex-rs/core/src/unified_exec/mod_tests.rs
+@@ -140,6 +140,7 @@ async fn exec_command_with_tty(
+             network_approval: None,
+             session: Arc::downgrade(session),
+             last_used: started_at,
++            completed_background_polls: 0,
+         };
+         manager
+             .process_store
+@@ -331,1 +332,74 @@
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn eidosoma_progressive_poll_resets_stage_after_tty_input() -> anyhow::Result<()> {
++    let (session, turn) = test_session_and_turn().await;
++    let manager = &session.services.unified_exec_manager;
++    let process_id = manager.allocate_process_id().await;
++    let (terminate_started_tx, mut terminate_started_rx) = watch::channel(false);
++    let allow_terminate = Arc::new(Notify::new());
++    let process = blocking_terminate_unified_process(
++        process_id,
++        terminate_started_tx,
++        Arc::clone(&allow_terminate),
++    )
++    .await?;
++    #[allow(deprecated)]
++    let cwd = turn.cwd.clone();
++    manager.process_store.lock().await.processes.insert(
++        process_id,
++        ProcessEntry {
++            process: Arc::clone(&process),
++            call_id: "call".to_string(),
++            process_id,
++            cwd: cwd.into(),
++            initial_exec_command_active: Arc::new(std::sync::atomic::AtomicBool::new(false)),
++            hook_command: "bash -i".to_string(),
++            tty: true,
++            network_approval: None,
++            session: Arc::downgrade(&session),
++            last_used: Instant::now(),
++            completed_background_polls: 9,
++        },
++    );
++
++    write_stdin(
++        &session,
++        process_id,
++        "echo next-command\n",
++        /*yield_time_ms*/ MIN_YIELD_TIME_MS,
++    )
++    .await?;
++
++    assert_eq!(
++        manager
++            .process_store
++            .lock()
++            .await
++            .processes
++            .get(&process_id)
++            .expect("process should remain stored")
++            .completed_background_polls,
++        0
++    );
++
++    manager.release_process_id(process_id).await;
++    let terminate_task = tokio::spawn({
++        let process = Arc::clone(&process);
++        async move { process.terminate_confirmed().await }
++    });
++    tokio::time::timeout(
++        Duration::from_secs(2),
++        terminate_started_rx.wait_for(|started| *started),
++    )
++    .await
++    .expect("terminate should start")
++    .expect("terminate signal sender should stay open");
++    allow_terminate.notify_one();
++    tokio::time::timeout(Duration::from_secs(2), terminate_task)
++        .await
++        .expect("terminate should finish")
++        .expect("terminate task should not panic")?;
++
++    Ok(())
++}
++
+ #[test]
+@@ -623,6 +697,7 @@ async fn terminating_initial_exec_command_rechecks_initial_response_state() -> a
+             network_approval: None,
+             session: Arc::downgrade(&session),
+             last_used: Instant::now(),
++            completed_background_polls: 0,
+         },
+     );
+
+@@ -696,6 +771,7 @@ async fn terminating_during_stdin_poll_returns_exited_response() -> anyhow::Resu
+             network_approval: None,
+             session: Arc::downgrade(&session),
+             last_used,
++            completed_background_polls: 0,
+         },
+     );
+
+diff --git a/codex-rs/core/src/unified_exec/process_manager.rs b/codex-rs/core/src/unified_exec/process_manager.rs
+index 098c70f..b33295e 100644
+--- a/codex-rs/core/src/unified_exec/process_manager.rs
++++ b/codex-rs/core/src/unified_exec/process_manager.rs
+@@ -36,12 +36,14 @@ use crate::tools::sandboxing::SandboxAttempt;
+ use crate::tools::sandboxing::ToolCtx;
+ use crate::tools::sandboxing::ToolError;
+ use crate::unified_exec::ExecCommandRequest;
++use crate::unified_exec::FIRST_BACKGROUND_POLL_YIELD_TIME_MS;
+ use crate::unified_exec::MAX_UNIFIED_EXEC_PROCESSES;
+ use crate::unified_exec::MAX_YIELD_TIME_MS;
+ use crate::unified_exec::MIN_EMPTY_YIELD_TIME_MS;
+ use crate::unified_exec::MIN_YIELD_TIME_MS;
+ use crate::unified_exec::ProcessEntry;
+ use crate::unified_exec::ProcessStore;
++use crate::unified_exec::SECOND_BACKGROUND_POLL_YIELD_TIME_MS;
+ use crate::unified_exec::UnifiedExecContext;
+ use crate::unified_exec::UnifiedExecError;
+ use crate::unified_exec::UnifiedExecProcessManager;
+@@ -222,6 +224,7 @@ struct PreparedProcessHandles {
+     hook_command: String,
+     process_id: i32,
+     tty: bool,
++    completed_background_polls: u8,
+ }
+
+ struct InitialExecCommandGuard {
+@@ -711,6 +714,7 @@ impl UnifiedExecProcessManager {
+             hook_command,
+             process_id,
+             tty,
++            completed_background_polls,
+             ..
+         } = self
+             .prepare_process_handles(process_id, &locked_process)
+@@ -727,6 +731,8 @@ impl UnifiedExecProcessManager {
+             } else {
+                 match process.write(request.input.as_bytes()).await {
+                     Ok(()) => {
++                        self.reset_background_poll_stage(process_id, &process)
++                            .await;
+                         // Give the remote process a brief window to react so that we are
+                         // more likely to capture its output in the poll below.
+                         tokio::time::sleep(Duration::from_millis(100)).await;
+@@ -747,16 +753,24 @@ impl UnifiedExecProcessManager {
+             }
+         }
+
+-        let yield_time_ms = {
+-            // Empty polls use configurable background timeout bounds. Non-empty
+-            // writes keep a fixed max cap so interactive stdin remains responsive.
+-            let time_ms = request.yield_time_ms.max(MIN_YIELD_TIME_MS);
+-            if request.input.is_empty() {
+-                time_ms.clamp(MIN_EMPTY_YIELD_TIME_MS, self.max_write_stdin_yield_time_ms)
+-            } else {
+-                time_ms.min(MAX_YIELD_TIME_MS)
+-            }
+-        };
++        let is_background_poll = request.input.is_empty();
++        let yield_time_ms = write_stdin_yield_time_ms(
++            request.yield_time_ms,
++            request.input.is_empty(),
++            completed_background_polls,
++            self.max_write_stdin_yield_time_ms,
++        );
++        if is_background_poll {
++            tracing::debug!(
++                target: "eidosoma_background_terminal_poll",
++                process_id,
++                completed_background_polls,
++                requested_yield_time_ms = request.yield_time_ms,
++                effective_yield_time_ms = yield_time_ms,
++                configured_max_yield_time_ms = self.max_write_stdin_yield_time_ms,
++                "eidosoma progressive background terminal poll started"
++            );
++        }
+         let start = Instant::now();
+         let deadline = start + Duration::from_millis(yield_time_ms);
+         let collected_output = Self::collect_output_until_deadline(
+@@ -810,6 +824,21 @@ impl UnifiedExecProcessManager {
+         } else {
+             self.refresh_process_state(process_id).await
+         };
++        let process_alive = matches!(&status, ProcessStatus::Alive { .. });
++        if is_background_poll && process_alive {
++            self.advance_background_poll_stage(process_id, &process).await;
++        }
++        if is_background_poll {
++            tracing::debug!(
++                target: "eidosoma_background_terminal_poll",
++                process_id,
++                completed_background_polls,
++                effective_yield_time_ms = yield_time_ms,
++                elapsed_ms = u64::try_from(wall_time.as_millis()).unwrap_or(u64::MAX),
++                process_alive,
++                "eidosoma progressive background terminal poll finished"
++            );
++        }
+         let (process_id, exit_code, event_call_id) = match status {
+             ProcessStatus::Alive {
+                 exit_code,
+@@ -937,9 +966,39 @@ impl UnifiedExecProcessManager {
+             hook_command: entry.hook_command.clone(),
+             process_id: entry.process_id,
+             tty: entry.tty,
++            completed_background_polls: entry.completed_background_polls,
+         })
+     }
+
++    async fn reset_background_poll_stage(
++        &self,
++        process_id: i32,
++        expected_process: &Arc<UnifiedExecProcess>,
++    ) {
++        let mut store = self.process_store.lock().await;
++        let Some(entry) = store.processes.get_mut(&process_id) else {
++            return;
++        };
++        if Arc::ptr_eq(&entry.process, expected_process) && !entry.process.has_exited() {
++            entry.completed_background_polls = 0;
++        }
++    }
++
++    async fn advance_background_poll_stage(
++        &self,
++        process_id: i32,
++        expected_process: &Arc<UnifiedExecProcess>,
++    ) {
++        let mut store = self.process_store.lock().await;
++        let Some(entry) = store.processes.get_mut(&process_id) else {
++            return;
++        };
++        if Arc::ptr_eq(&entry.process, expected_process) && !entry.process.has_exited() {
++            entry.completed_background_polls =
++                entry.completed_background_polls.saturating_add(1);
++        }
++    }
++
+     #[allow(clippy::too_many_arguments)]
+     async fn store_process(
+         &self,
+@@ -968,6 +1027,7 @@ impl UnifiedExecProcessManager {
+             network_approval,
+             session: Arc::downgrade(&context.session),
+             last_used: started_at,
++            completed_background_polls: 0,
+         };
+         let pruned_entry = {
+             let mut store = self.process_store.lock().await;
+@@ -1520,6 +1580,30 @@ impl UnifiedExecProcessManager {
+     }
+ }
+
++pub(super) fn write_stdin_yield_time_ms(
++    requested_yield_time_ms: u64,
++    input_is_empty: bool,
++    completed_background_polls: u8,
++    max_background_yield_time_ms: u64,
++) -> u64 {
++    let max_background_yield_time_ms =
++        max_background_yield_time_ms.max(MIN_EMPTY_YIELD_TIME_MS);
++    let requested_yield_time_ms = requested_yield_time_ms.max(MIN_YIELD_TIME_MS);
++
++    if !input_is_empty {
++        return requested_yield_time_ms.min(MAX_YIELD_TIME_MS);
++    }
++
++    let scheduled_yield_time_ms = match completed_background_polls {
++        0 => FIRST_BACKGROUND_POLL_YIELD_TIME_MS,
++        1 => SECOND_BACKGROUND_POLL_YIELD_TIME_MS,
++        _ => max_background_yield_time_ms,
++    };
++    scheduled_yield_time_ms
++        .min(max_background_yield_time_ms)
++        .max(MIN_EMPTY_YIELD_TIME_MS)
++}
++
+ enum ProcessStatus {
+     Alive {
+         exit_code: Option<i32>,
+diff --git a/codex-rs/app-server/src/models_refresh_worker_tests.rs b/codex-rs/app-server/src/models_refresh_worker_tests.rs
+index 989bfd8..472b37c 100644
+--- a/codex-rs/app-server/src/models_refresh_worker_tests.rs
++++ b/codex-rs/app-server/src/models_refresh_worker_tests.rs
+@@ -81,6 +81,7 @@ async fn refreshes_immediately_periodically_and_stops_when_dropped() {
+         codex_home.path().to_path_buf(),
+         endpoint.clone(),
+         /*auth_manager*/ None,
++        /*is_openai_provider*/ false,
+     ));
+     let worker = spawn_with_interval(
+         &models_manager,
+diff --git a/codex-rs/model-provider-info/src/lib.rs b/codex-rs/model-provider-info/src/lib.rs
+index 82fc5fc..c10b80e 100644
+--- a/codex-rs/model-provider-info/src/lib.rs
++++ b/codex-rs/model-provider-info/src/lib.rs
+@@ -24,6 +24,7 @@ use std::fmt;
+ use std::time::Duration;
+
+ const DEFAULT_STREAM_IDLE_TIMEOUT_MS: u64 = 300_000;
++const EIDOSOMA_OPENAI_STREAM_IDLE_TIMEOUT_MS: u64 = 900_000;
+ const DEFAULT_STREAM_MAX_RETRIES: u64 = 5;
+ const DEFAULT_REQUEST_MAX_RETRIES: u64 = 4;
+ pub const DEFAULT_WEBSOCKET_CONNECT_TIMEOUT_MS: u64 = 15_000;
+@@ -356,10 +357,11 @@ impl ModelProviderInfo {
+                 .into_iter()
+                 .collect(),
+             ),
+-            // Use global defaults for retry/timeout unless overridden in config.toml.
++            // Use global retry defaults. Flex processing can remain silent for longer than
++            // ordinary requests, so the built-in OpenAI provider gets a 15-minute idle timeout.
+             request_max_retries: None,
+             stream_max_retries: None,
+-            stream_idle_timeout_ms: None,
++            stream_idle_timeout_ms: Some(EIDOSOMA_OPENAI_STREAM_IDLE_TIMEOUT_MS),
+             websocket_connect_timeout_ms: None,
+             requires_openai_auth: true,
+             supports_websockets: true,
+diff --git a/codex-rs/model-provider-info/src/model_provider_info_tests.rs b/codex-rs/model-provider-info/src/model_provider_info_tests.rs
+index 354c7fc..17f22bb 100644
+--- a/codex-rs/model-provider-info/src/model_provider_info_tests.rs
++++ b/codex-rs/model-provider-info/src/model_provider_info_tests.rs
+@@ -143,6 +143,24 @@ fn test_supports_remote_compaction_for_openai() {
+     assert!(provider.supports_remote_compaction());
+ }
+
++#[test]
++fn eidosoma_openai_stream_idle_timeout_is_fifteen_minutes() {
++    let openai = ModelProviderInfo::create_openai_provider(/*base_url*/ None);
++    assert_eq!(openai.stream_idle_timeout(), Duration::from_secs(15 * 60));
++
++    let bedrock = ModelProviderInfo::create_amazon_bedrock_provider(/*aws*/ None);
++    assert_eq!(
++        bedrock.stream_idle_timeout(),
++        Duration::from_millis(DEFAULT_STREAM_IDLE_TIMEOUT_MS)
++    );
++
++    let overridden = ModelProviderInfo {
++        stream_idle_timeout_ms: Some(42_000),
++        ..ModelProviderInfo::create_openai_provider(/*base_url*/ None)
++    };
++    assert_eq!(overridden.stream_idle_timeout(), Duration::from_secs(42));
++}
++
+ #[test]
+ fn test_personal_access_token_uses_chatgpt_codex_base_url() {
+     let api_provider = ModelProviderInfo::create_openai_provider(/*base_url*/ None)
+diff --git a/codex-rs/model-provider/src/provider.rs b/codex-rs/model-provider/src/provider.rs
+index 57f950a..b63e853 100644
+--- a/codex-rs/model-provider/src/provider.rs
++++ b/codex-rs/model-provider/src/provider.rs
+@@ -13,6 +13,7 @@ use codex_model_provider_info::ModelProviderInfo;
+ use codex_models_manager::manager::OpenAiModelsManager;
+ use codex_models_manager::manager::SharedModelsManager;
+ use codex_models_manager::manager::StaticModelsManager;
++use codex_models_manager::manager::eidosoma_augment_flex_service_tiers;
+ use codex_protocol::account::ProviderAccount;
+ use codex_protocol::error::CodexErr;
+ use codex_protocol::openai_models::ModelsResponse;
+@@ -255,6 +256,16 @@ impl ConfiguredModelProvider {
+             auth_manager,
+         }
+     }
++
++    fn static_models_manager(&self, mut model_catalog: ModelsResponse) -> SharedModelsManager {
++        if self.info.is_openai() {
++            eidosoma_augment_flex_service_tiers(&mut model_catalog.models);
++        }
++        Arc::new(StaticModelsManager::new(
++            self.auth_manager.clone(),
++            model_catalog,
++        ))
++    }
+ }
+
+ impl ModelProvider for ConfiguredModelProvider {
+@@ -331,10 +342,7 @@ impl ModelProvider for ConfiguredModelProvider {
+         config_model_catalog: Option<ModelsResponse>,
+     ) -> SharedModelsManager {
+         match config_model_catalog {
+-            Some(model_catalog) => Arc::new(StaticModelsManager::new(
+-                self.auth_manager.clone(),
+-                model_catalog,
+-            )),
++            Some(model_catalog) => self.static_models_manager(model_catalog),
+             None => {
+                 let endpoint = Arc::new(OpenAiModelsEndpoint::new(
+                     self.info.clone(),
+@@ -344,6 +352,7 @@ impl ModelProvider for ConfiguredModelProvider {
+                     codex_home,
+                     endpoint,
+                     self.auth_manager.clone(),
++                    self.info.is_openai(),
+                 ))
+             }
+         }
+@@ -354,10 +363,7 @@ impl ModelProvider for ConfiguredModelProvider {
+         config_model_catalog: Option<ModelsResponse>,
+     ) -> SharedModelsManager {
+         match config_model_catalog {
+-            Some(model_catalog) => Arc::new(StaticModelsManager::new(
+-                self.auth_manager.clone(),
+-                model_catalog,
+-            )),
++            Some(model_catalog) => self.static_models_manager(model_catalog),
+             None => {
+                 let endpoint = Arc::new(OpenAiModelsEndpoint::new(
+                     self.info.clone(),
+@@ -366,6 +372,7 @@ impl ModelProvider for ConfiguredModelProvider {
+                 Arc::new(OpenAiModelsManager::new_without_cache(
+                     endpoint,
+                     self.auth_manager.clone(),
++                    self.info.is_openai(),
+                 ))
+             }
+         }
+@@ -507,6 +514,29 @@ mod tests {
+         assert_eq!(provider.capabilities(), ProviderCapabilities::default());
+     }
+
++    #[tokio::test]
++    async fn eidosoma_flex_catalog_augmentation_is_limited_to_openai_provider() {
++        let provider = create_model_provider(
++            ModelProviderInfo::create_openai_provider(/*base_url*/ None),
++            /*auth_manager*/ None,
++        );
++        let manager = provider.models_manager(
++            test_codex_home(),
++            Some(ModelsResponse {
++                models: vec![remote_model("gpt-5.6-sol")],
++            }),
++        );
++
++        let catalog = manager
++            .raw_model_catalog(
++                RefreshStrategy::Online,
++                HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),
++            )
++            .await;
++
++        assert!(catalog.models[0].supports_service_tier("flex"));
++    }
++
+     #[test]
+     fn configured_provider_uses_default_approval_review_preferred_model() {
+         let provider = create_model_provider(
+@@ -759,8 +789,8 @@ mod tests {
+             .expect("bundled models should parse")
+             .models
+             .into_iter()
+-            .find(|model| model.slug == "gpt-5.5")
+-            .expect("bundled models should include GPT-5.5");
++            .find(|model| model.slug == "gpt-5.6-sol")
++            .expect("bundled models should include GPT-5.6 Sol");
+         assert!(!configured_model.additional_speed_tiers.is_empty());
+         assert!(!configured_model.service_tiers.is_empty());
+
+@@ -783,7 +813,7 @@ mod tests {
+             .await;
+
+         assert_eq!(catalog.models.len(), 1);
+-        assert_eq!(catalog.models[0].slug, "gpt-5.5");
++        assert_eq!(catalog.models[0].slug, "gpt-5.6-sol");
+         assert_eq!(
+             catalog.models[0].additional_speed_tiers,
+             Vec::<String>::new()
+@@ -836,4 +866,42 @@ mod tests {
+                 .any(|model| model.slug == "provider-model")
+         );
+     }
++
++    #[tokio::test]
++    async fn eidosoma_flex_remote_catalog_augmentation_is_limited_to_openai_provider() {
++        let server = MockServer::start().await;
++        Mock::given(method("GET"))
++            .and(path("/models"))
++            .respond_with(
++                ResponseTemplate::new(200)
++                    .insert_header("content-type", "application/json")
++                    .set_body_json(ModelsResponse {
++                        models: vec![remote_model("gpt-5.6-sol")],
++                    }),
++            )
++            .expect(1)
++            .mount(&server)
++            .await;
++
++        let provider = create_model_provider(
++            provider_for(server.uri()),
++            Some(AuthManager::from_auth_for_testing(
++                CodexAuth::create_dummy_chatgpt_auth_for_testing(),
++            )),
++        );
++        let manager = provider.models_manager(test_codex_home(), /*config_model_catalog*/ None);
++        let catalog = manager
++            .raw_model_catalog(
++                RefreshStrategy::Online,
++                HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),
++            )
++            .await;
++
++        let model = catalog
++            .models
++            .iter()
++            .find(|model| model.slug == "gpt-5.6-sol")
++            .expect("configured provider model should be returned");
++        assert!(!model.supports_service_tier("flex"));
++    }
+ }
+diff --git a/codex-rs/models-manager/src/manager.rs b/codex-rs/models-manager/src/manager.rs
+index a0a0348..31fe136 100644
+--- a/codex-rs/models-manager/src/manager.rs
++++ b/codex-rs/models-manager/src/manager.rs
+@@ -9,6 +9,7 @@ use codex_protocol::config_types::CollaborationModeMask;
+ use codex_protocol::error::Result as CoreResult;
+ use codex_protocol::openai_models::ModelInfo;
+ use codex_protocol::openai_models::ModelPreset;
++use codex_protocol::openai_models::ModelServiceTier;
+ use codex_protocol::openai_models::ModelVisibility;
+ use codex_protocol::openai_models::ModelsResponse;
+ use std::fmt;
+@@ -25,6 +26,31 @@ use tracing::info;
+
+ const MODEL_CACHE_FILE: &str = "models_cache.json";
+ const DEFAULT_MODEL_CACHE_TTL: Duration = Duration::from_secs(300);
++const EIDOSOMA_FLEX_SERVICE_TIER_ID: &str = "flex";
++const EIDOSOMA_FLEX_MODEL_SLUGS: [&str; 3] =
++    ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"];
++
++/// Add the Eidosoma Flex option to the exact first-party OpenAI model allowlist.
++///
++/// Callers must ensure the catalog belongs to the OpenAI provider. This helper
++/// intentionally does not run inside [`StaticModelsManager`], whose catalogs
++/// can be authoritative for providers that do not support Flex.
++pub fn eidosoma_augment_flex_service_tiers(models: &mut [ModelInfo]) {
++    for model in models {
++        if EIDOSOMA_FLEX_MODEL_SLUGS.contains(&model.slug.as_str())
++            && !model
++                .service_tiers
++                .iter()
++                .any(|tier| tier.id == EIDOSOMA_FLEX_SERVICE_TIER_ID)
++        {
++            model.service_tiers.push(ModelServiceTier {
++                id: EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string(),
++                name: "Flex".to_string(),
++                description: "Flexible processing".to_string(),
++            });
++        }
++    }
++}
+
+ /// Remote endpoint used by the OpenAI-compatible model manager.
+ ///
+@@ -218,6 +244,7 @@ pub struct OpenAiModelsManager {
+     cache_manager: Option<ModelsCacheManager>,
+     endpoint_client: SharedModelsEndpointClient,
+     auth_manager: Option<Arc<AuthManager>>,
++    is_openai_provider: bool,
+ }
+
+ /// Static model manager backed by an authoritative in-process catalog.
+@@ -233,12 +260,14 @@ impl OpenAiModelsManager {
+         codex_home: PathBuf,
+         endpoint_client: Arc<dyn ModelsEndpointClient>,
+         auth_manager: Option<Arc<AuthManager>>,
++        is_openai_provider: bool,
+     ) -> Self {
+         let cache_path = codex_home.join(MODEL_CACHE_FILE);
+         Self::new_with_cache_manager(
+             Some(ModelsCacheManager::new(cache_path, DEFAULT_MODEL_CACHE_TTL)),
+             endpoint_client,
+             auth_manager,
++            is_openai_provider,
+         )
+     }
+
+@@ -246,22 +275,33 @@ impl OpenAiModelsManager {
+     pub fn new_without_cache(
+         endpoint_client: Arc<dyn ModelsEndpointClient>,
+         auth_manager: Option<Arc<AuthManager>>,
++        is_openai_provider: bool,
+     ) -> Self {
+-        Self::new_with_cache_manager(/*cache_manager*/ None, endpoint_client, auth_manager)
++        Self::new_with_cache_manager(
++            /*cache_manager*/ None,
++            endpoint_client,
++            auth_manager,
++            is_openai_provider,
++        )
+     }
+
+     fn new_with_cache_manager(
+         cache_manager: Option<ModelsCacheManager>,
+         endpoint_client: Arc<dyn ModelsEndpointClient>,
+         auth_manager: Option<Arc<AuthManager>>,
++        is_openai_provider: bool,
+     ) -> Self {
+-        let remote_models = load_remote_models_from_file().unwrap_or_default();
++        let mut remote_models = load_remote_models_from_file().unwrap_or_default();
++        if is_openai_provider {
++            eidosoma_augment_flex_service_tiers(&mut remote_models);
++        }
+         Self {
+             remote_models: RwLock::new(remote_models),
+             etag: RwLock::new(None),
+             cache_manager,
+             endpoint_client,
+             auth_manager,
++            is_openai_provider,
+         }
+     }
+ }
+@@ -419,7 +459,10 @@ impl OpenAiModelsManager {
+     }
+
+     /// Replace the cached remote models and rebuild the derived presets list.
+-    async fn apply_remote_models(&self, models: Vec<ModelInfo>) {
++    async fn apply_remote_models(&self, mut models: Vec<ModelInfo>) {
++        if self.is_openai_provider {
++            eidosoma_augment_flex_service_tiers(&mut models);
++        }
+         // Use the remote models list as the source of truth if it contains at least one
+         // non-hidden model and the user is using ChatGPT auth.
+         let should_use_remote_models_only = !models.is_empty()
+@@ -447,6 +490,9 @@ impl OpenAiModelsManager {
+                 existing_models.push(model);
+             }
+         }
++        if self.is_openai_provider {
++            eidosoma_augment_flex_service_tiers(&mut existing_models);
++        }
+         *self.remote_models.write().await = existing_models;
+     }
+
+diff --git a/codex-rs/models-manager/src/manager_tests.rs b/codex-rs/models-manager/src/manager_tests.rs
+index 3344061..6a30eb5 100644
+--- a/codex-rs/models-manager/src/manager_tests.rs
++++ b/codex-rs/models-manager/src/manager_tests.rs
+@@ -202,7 +202,12 @@ fn openai_manager_for_tests_with_auth(
+     endpoint_client: Arc<dyn ModelsEndpointClient>,
+     auth_manager: Option<Arc<AuthManager>>,
+ ) -> OpenAiModelsManager {
+-    OpenAiModelsManager::new(codex_home, endpoint_client, auth_manager)
++    OpenAiModelsManager::new(
++        codex_home,
++        endpoint_client,
++        auth_manager,
++        /*is_openai_provider*/ false,
++    )
+ }
+
+ fn static_manager_for_tests(model_catalog: ModelsResponse) -> StaticModelsManager {
+@@ -218,6 +223,7 @@ async fn manager_without_cache_fetches_on_every_refresh() {
+         Some(AuthManager::from_auth_for_testing(
+             CodexAuth::create_dummy_chatgpt_auth_for_testing(),
+         )),
++        /*is_openai_provider*/ false,
+     );
+
+     let catalog = manager
+@@ -1168,3 +1174,110 @@ fn bundled_models_json_roundtrips() {
+         "bundled models.json should contain at least one model"
+     );
+ }
++
++#[test]
++fn eidosoma_flex_catalog_augmentation_is_allowlisted_and_idempotent() {
++    let mut sol = remote_model("gpt-5.6-sol", "Sol", 1);
++    sol.service_tiers.push(ModelServiceTier {
++        id: "priority".to_string(),
++        name: "Fast".to_string(),
++        description: "Priority processing".to_string(),
++    });
++    let mut terra = remote_model("gpt-5.6-terra", "Terra", 2);
++    terra.service_tiers.push(ModelServiceTier {
++        id: EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string(),
++        name: "Existing Flex".to_string(),
++        description: "Preserve remote metadata".to_string(),
++    });
++    let luna = remote_model("gpt-5.6-luna", "Luna", 3);
++    let namespaced_bedrock = remote_model("openai.gpt-5.6-sol", "Bedrock Sol", 4);
++    let other = remote_model("gpt-5.5", "GPT-5.5", 5);
++    let mut models = vec![sol, terra, luna, namespaced_bedrock, other];
++
++    eidosoma_augment_flex_service_tiers(&mut models);
++    eidosoma_augment_flex_service_tiers(&mut models);
++
++    for slug in EIDOSOMA_FLEX_MODEL_SLUGS {
++        let model = models
++            .iter()
++            .find(|model| model.slug == slug)
++            .expect("allowlisted model should remain in the catalog");
++        assert_eq!(
++            model
++                .service_tiers
++                .iter()
++                .filter(|tier| tier.id == EIDOSOMA_FLEX_SERVICE_TIER_ID)
++                .count(),
++            1,
++            "Flex should be added exactly once to {slug}"
++        );
++        assert_eq!(
++            model.service_tier_for_request(Some(EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string())),
++            Some(EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string())
++        );
++    }
++
++    let terra = models
++        .iter()
++        .find(|model| model.slug == "gpt-5.6-terra")
++        .expect("Terra should remain in the catalog");
++    let terra_flex = terra
++        .service_tiers
++        .iter()
++        .find(|tier| tier.id == EIDOSOMA_FLEX_SERVICE_TIER_ID)
++        .expect("Terra should retain its existing Flex tier");
++    assert_eq!(terra_flex.name, "Existing Flex");
++    assert_eq!(terra_flex.description, "Preserve remote metadata");
++
++    for slug in ["openai.gpt-5.6-sol", "gpt-5.5"] {
++        let model = models
++            .iter()
++            .find(|model| model.slug == slug)
++            .expect("non-allowlisted model should remain in the catalog");
++        assert!(
++            model
++                .service_tiers
++                .iter()
++                .all(|tier| tier.id != EIDOSOMA_FLEX_SERVICE_TIER_ID),
++            "Flex should not be added to {slug}"
++        );
++    }
++}
++
++#[tokio::test]
++async fn eidosoma_flex_catalog_is_limited_to_openai_managers() {
++    let static_manager = StaticModelsManager::new(
++        None,
++        ModelsResponse {
++            models: vec![remote_model("gpt-5.6-sol", "Sol", 1)],
++        },
++    );
++    let static_models = static_manager.get_remote_models().await;
++    assert!(
++        !static_models[0].supports_service_tier(EIDOSOMA_FLEX_SERVICE_TIER_ID),
++        "generic static catalogs must remain authoritative"
++    );
++
++    let endpoint = TestModelsEndpoint::new(vec![vec![remote_model(
++        "custom-model",
++        "Custom",
++        1,
++    )]]);
++    let remote_manager = OpenAiModelsManager::new_without_cache(
++        endpoint,
++        None,
++        /*is_openai_provider*/ true,
++    );
++    remote_manager
++        .refresh_available_models(RefreshStrategy::Online, &DEFAULT_HTTP_CLIENT_FACTORY)
++        .await
++        .expect("remote catalog refresh should succeed");
++    let remote_models = remote_manager.get_remote_models().await;
++    for slug in EIDOSOMA_FLEX_MODEL_SLUGS {
++        let model = remote_models
++            .iter()
++            .find(|model| model.slug == slug)
++            .expect("bundled allowlisted model should survive the fallback merge");
++        assert!(model.supports_service_tier(EIDOSOMA_FLEX_SERVICE_TIER_ID));
++    }
++}
+diff --git a/codex-rs/core/src/unified_exec/process_manager_tests.rs b/codex-rs/core/src/unified_exec/process_manager_tests.rs
+index ced5188..be54776 100644
+--- a/codex-rs/core/src/unified_exec/process_manager_tests.rs
++++ b/codex-rs/core/src/unified_exec/process_manager_tests.rs
+@@ -36,6 +36,60 @@ fn unified_exec_env_overrides_existing_values() {
+     assert_eq!(env.get("PATH"), Some(&"/usr/bin".to_string()));
+ }
+
++#[test]
++fn eidosoma_progressive_poll_uses_server_controlled_schedule() {
++    let maximum = 1_800_000;
++
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 60_000, true, 0, maximum),
++        120_000
++    );
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 60_000, true, 1, maximum),
++        600_000
++    );
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 60_000, true, 2, maximum),
++        maximum
++    );
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ u64::MAX, true, 9, maximum),
++        maximum
++    );
++}
++
++#[test]
++fn eidosoma_progressive_poll_respects_configured_maximum() {
++    let maximum = 60_000;
++
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 5_000, true, 0, maximum),
++        maximum
++    );
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 5_000, true, 1, maximum),
++        maximum
++    );
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 5_000, true, 2, maximum),
++        maximum
++    );
++}
++
++#[test]
++fn eidosoma_progressive_poll_preserves_non_empty_write_bounds() {
++    let maximum = 1_800_000;
++
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ u64::MAX, false, 0, maximum),
++        MAX_YIELD_TIME_MS
++    );
++    assert_eq!(
++        write_stdin_yield_time_ms(/*requested*/ 1, false, 0, maximum),
++        MIN_YIELD_TIME_MS
++    );
++}
++
+ #[test]
+ fn env_overlay_for_exec_server_keeps_runtime_changes_only() {
+     let local_policy_env = HashMap::from([
+@@ -553,6 +607,7 @@ async fn pruning_does_not_evict_live_process_while_exited_process_is_finalizing(
+                 } else {
+                     now
+                 },
++                completed_background_polls: 0,
+             },
+         );
+     }

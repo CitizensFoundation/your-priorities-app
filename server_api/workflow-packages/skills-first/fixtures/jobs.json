@@ -1,0 +1,12 @@
+[
+  {
+    "id": "fixture-1",
+    "name": "Program coordinator",
+    "text": "Coordinate community meetings and maintain records. A bachelor\u2019s degree or four years of relevant experience is required. Salary is $50,000. No professional license is required."
+  },
+  {
+    "id": "fixture-2",
+    "name": "Licensed nurse",
+    "text": "Provide nursing care and maintain clinical records. An active nursing license is required. Consult the licensing board for educational requirements."
+  }
+]
