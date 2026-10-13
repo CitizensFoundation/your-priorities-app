@@ -1,3 +1,8 @@
+> [!important]
+> What follows is the README for the Your Priorities codebase, from which the `nesta-your-priorities` codebase is forked.
+>
+> For local development setup instructions for `nesta-your-priorities`, see [`quick-start-guide.md`](./quick_start_guide.md).
+
 # Your Priorities Version 9
 
 <img width="3819" height="1968" alt="image" src="https://github.com/user-attachments/assets/b91194a4-96c3-4e47-a424-e81beda2e862" />
