@@ -1,15 +1,24 @@
 import { LitElement, html, css, nothing, type PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { keyed } from "lit/directives/keyed.js";
 import { LiveWorkflowApi, LiveWorkflowApiError, dollars } from "./api.js";
+import {
+  agentModelRoles,
+  modelReasoning,
+  modelRoleLabel,
+} from "./modelInfo.js";
 import "./yp-live-workflow-graph.js";
 import "./yp-live-workflow-admin.js";
 import "./yp-live-workflow-results.js";
+import "./yp-live-workflow-message.js";
 
 type ChatItem = {
   id: string;
   role: "user" | "assistant" | "activity";
   text: string;
   completed?: boolean;
+  userId?: number;
+  at?: string;
 };
 type Approval = {
   requestId: string | number;
@@ -27,9 +36,18 @@ export class YpLiveWorkflow extends LitElement {
   @state() private tab: "graph" | "data" | "results" | "usage" | "settings" =
     "graph";
   @state() private selectedNode?: string;
+  @state() private agentEditor?: {
+    graph: YpWorkflowGraph;
+    nodeId: string;
+    revision: number;
+    runId?: string;
+  };
+  @state() private agentError = "";
+  @state() private agentSaving = false;
   @state() private selectedAssets: string[] = [];
   @state() private viewedRunId = "";
   @state() private chat: ChatItem[] = [];
+  @state() private loggedInUser?: YpUserData;
   @state() private approvals: Approval[] = [];
   @state() private auth?: { verificationUrl: string; userCode: string };
   @state() private uploadProgress = 0;
@@ -71,11 +89,18 @@ export class YpLiveWorkflow extends LitElement {
   private stream?: EventSource;
   private cursor = 0;
   private refreshTimer?: ReturnType<typeof setTimeout>;
+  private userChanged = (event: Event) => {
+    this.loggedInUser =
+      (event as CustomEvent<YpUserData | null>).detail ?? undefined;
+  };
   private get api() {
     return new LiveWorkflowApi(this.groupId);
   }
   private get workspace() {
     return this.snapshot?.workspace;
+  }
+  private get assistantName() {
+    return this.snapshot?.assistantName ?? "Workflow Assistant";
   }
   private get operator() {
     return (
@@ -121,41 +146,113 @@ export class YpLiveWorkflow extends LitElement {
       display: grid;
       grid-template-columns: minmax(320px, 38%) minmax(0, 1fr);
       gap: 16px;
+      align-items: start;
     }
     .panel {
       border: 1px solid var(--md-sys-color-outline-variant, #ddd);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 20px;
+      padding: 18px;
       background: var(--md-sys-color-surface, #fff);
       min-width: 0;
+      box-shadow: 0 6px 28px #30234506;
     }
     .chat {
       display: flex;
       flex-direction: column;
       min-height: 630px;
+      background: linear-gradient(
+        165deg,
+        color-mix(
+          in srgb,
+          var(--md-sys-color-primary, #7663a8) 5%,
+          var(--md-sys-color-surface, #fff)
+        ),
+        var(--md-sys-color-surface, #fff) 48%
+      );
+    }
+    .chat-heading {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .chat-heading h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.3px;
+      overflow-wrap: anywhere;
+    }
+    .chat-heading p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: var(--md-sys-color-on-surface-variant, #716b80);
+    }
+    .codex-mark {
+      display: grid;
+      flex-shrink: 0;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #8e7bc6, #574788);
+      color: white;
+      box-shadow: 0 5px 12px #59438d24;
+      font-family: monospace;
+      font-size: 19px;
+      font-weight: 600;
+    }
+    .connection-status {
+      font-size: 12px;
+      margin: 10px 0;
+      color: var(--md-sys-color-on-surface-variant, #716b80);
+    }
+    .connection-status[data-connected]::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #44816e;
+      margin-right: 7px;
     }
     .history {
       flex: 1;
-      max-height: 650px;
+      min-height: 230px;
+      max-height: 580px;
       overflow: auto;
-      padding: 8px 0;
+      padding: 4px 2px 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc4de transparent;
     }
-    .bubble {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 12px;
-      background: var(--md-sys-color-surface-container, #f1f0f5);
+    .composer {
+      padding: 10px 12px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--md-sys-color-outline-variant, #dcd5e9);
+      background: var(--md-sys-color-surface, #fff);
+      box-shadow: 0 4px 16px #30234508;
+    }
+    .composer:focus-within {
+      border-color: var(--md-sys-color-primary, #7663a8);
+      box-shadow: 0 0 0 3px #8e7bc614;
+    }
+    .composer label {
+      margin-top: 0;
+      font-size: 12px;
+    }
+    .composer textarea {
+      min-height: 78px;
+      border: 0;
+      padding: 6px 0;
+      outline: none;
+      font-size: 14px;
       line-height: 1.5;
     }
-    .user {
-      background: var(--md-sys-color-secondary-container, #e8e7f4);
-      margin-left: 20px;
+    .composer .toolbar {
+      justify-content: space-between;
     }
-    .activity {
-      font-size: 12px;
-      opacity: 0.75;
+    .composer .inline {
+      margin: 0;
+      font-size: 11px;
     }
     .toolbar,
     .tabs,
@@ -167,10 +264,22 @@ export class YpLiveWorkflow extends LitElement {
     }
     .tabs {
       margin-bottom: 16px;
+      padding: 4px;
+      border-radius: 12px;
+      background: var(--md-sys-color-surface-container, #f4f1f8);
+      width: fit-content;
+      gap: 4px;
+    }
+    .tabs button {
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
     }
     .tabs button[aria-selected="true"] {
       background: var(--md-sys-color-primary, #65558f);
       color: var(--md-sys-color-on-primary, #fff);
+      box-shadow: 0 2px 6px #46345c24;
     }
     button,
     input,
@@ -186,15 +295,34 @@ export class YpLiveWorkflow extends LitElement {
     }
     button {
       cursor: pointer;
+      transition:
+        background 120ms,
+        border-color 120ms,
+        box-shadow 120ms;
+    }
+    button:hover:not(:disabled) {
+      border-color: var(--md-sys-color-primary, #7663a8);
+      box-shadow: 0 2px 6px #46345c12;
+    }
+    button:focus-visible {
+      outline: 2px solid var(--md-sys-color-primary, #7663a8);
+      outline-offset: 3px;
     }
     button:disabled {
       cursor: default;
       opacity: 0.5;
     }
     button.primary {
-      background: var(--md-sys-color-primary, #65558f);
+      background: linear-gradient(
+        135deg,
+        var(--md-sys-color-primary, #7663a8),
+        color-mix(in srgb, var(--md-sys-color-primary, #7663a8) 80%, #292039)
+      );
       color: var(--md-sys-color-on-primary, #fff);
       border-color: transparent;
+      padding-inline: 20px;
+      font-weight: 600;
+      box-shadow: 0 3px 8px #65558f22;
     }
     textarea {
       width: 100%;
@@ -220,6 +348,92 @@ export class YpLiveWorkflow extends LitElement {
     .table-scroll {
       max-width: 100%;
       overflow-x: auto;
+    }
+    .agent-dialog {
+      width: min(780px, calc(100vw - 32px));
+      max-width: calc(100vw - 32px);
+      max-height: calc(100dvh - 40px);
+      box-sizing: border-box;
+      border: 1px solid var(--md-sys-color-outline-variant, #ddd);
+      border-radius: 20px;
+      padding: 24px;
+      color: inherit;
+      background: var(--md-sys-color-surface, #fff);
+      box-shadow: 0 20px 80px #251b4533;
+      overflow: auto;
+    }
+    .agent-dialog::backdrop {
+      background: #21172c66;
+      backdrop-filter: blur(3px);
+    }
+    .agent-dialog header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .agent-dialog h3 {
+      margin-top: 20px;
+    }
+    .agent-dialog h2 {
+      overflow-wrap: anywhere;
+    }
+    .agent-dialog p {
+      line-height: 1.5;
+    }
+    .agent-dialog .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      align-items: start;
+    }
+    .agent-dialog .row label {
+      margin: 0;
+    }
+    .agent-dialog .model-note {
+      display: block;
+      font-size: 12px;
+      margin-top: 6px;
+      color: var(--md-sys-color-on-surface-variant, #716b80);
+    }
+    .agent-dialog details {
+      margin-block: 12px;
+    }
+    .agent-dialog summary {
+      cursor: pointer;
+    }
+    .agent-dialog td small {
+      display: block;
+      margin-top: 4px;
+    }
+    .agent-dialog .model-role {
+      margin-bottom: 8px;
+    }
+    .agent-dialog .history-run {
+      text-align: left;
+      font-size: 12px;
+    }
+    .agent-dialog .notice {
+      background: var(--md-sys-color-surface-container, #f4f1f8);
+      padding: 12px;
+      border-radius: 10px;
+    }
+    .agent-dialog .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .agent-selection {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--md-sys-color-surface-container, #f4f1f8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
     input,
     select {
@@ -262,10 +476,11 @@ export class YpLiveWorkflow extends LitElement {
       margin-top: 16px;
     }
     .auth {
-      padding: 12px;
-      border: 1px solid #ddd;
+      padding: 10px 12px;
+      border: 1px solid var(--md-sys-color-outline-variant, #e7e2ee);
       border-radius: 10px;
       margin-bottom: 12px;
+      font-size: 12px;
     }
     .auth code {
       font-size: 20px;
@@ -326,6 +541,8 @@ export class YpLiveWorkflow extends LitElement {
       this.storageInfo = undefined;
       this.targetNodeId = "";
       this.selectedNode = undefined;
+      this.agentEditor = undefined;
+      this.agentError = "";
       this.connectionGroups = [];
       this.connectionMessage = "";
       clearTimeout(this.refreshTimer);
@@ -333,8 +550,14 @@ export class YpLiveWorkflow extends LitElement {
       void this.refresh();
     }
   }
+  override connectedCallback() {
+    super.connectedCallback();
+    this.loggedInUser = window.appUser?.user ?? undefined;
+    document.addEventListener("yp-logged-in", this.userChanged);
+  }
   override disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener("yp-logged-in", this.userChanged);
     this.stream?.close();
     this.stream = undefined;
     clearTimeout(this.refreshTimer);
@@ -345,6 +568,13 @@ export class YpLiveWorkflow extends LitElement {
     try {
       const snapshot = await this.api.request<YpWorkflowSnapshot>();
       if (this.groupId !== groupId) return;
+      // Keep the run and its final agent messages visible when it releases the active lock.
+      if (
+        !this.viewedRunId &&
+        this.snapshot?.workspace.activeRunId &&
+        !snapshot.workspace.activeRunId
+      )
+        this.viewedRunId = this.snapshot.workspace.activeRunId;
       this.snapshot = snapshot;
       if (this.tab === "usage") {
         const usage = await this.api.request<typeof this.usage>("/usage");
@@ -414,6 +644,11 @@ export class YpLiveWorkflow extends LitElement {
           id: `user:${event.seq}`,
           role: "user",
           text: String(event.data.text),
+          userId:
+            typeof event.data.userId === "number"
+              ? event.data.userId
+              : undefined,
+          at: event.at,
         },
       ];
     if (event.type === "session.event") {
@@ -449,6 +684,7 @@ export class YpLiveWorkflow extends LitElement {
               role: "assistant",
               text,
               completed: type === "message.completed",
+              at: event.at,
             },
           ];
       } else if (type === "quota.updated")
@@ -485,6 +721,7 @@ export class YpLiveWorkflow extends LitElement {
           {
             id: `activity:${event.seq}`,
             role: "activity",
+            at: event.at,
             text: `${type}: ${String(payload.delta ?? payload.message ?? JSON.stringify(payload))}`,
           },
         ];
@@ -584,23 +821,64 @@ export class YpLiveWorkflow extends LitElement {
       this.draft = undefined;
     });
   }
+  private async openAgentSettings(id: string, run = this.run) {
+    const graph = run?.graph ?? this.workspace?.graph;
+    if (!graph?.nodes.some((node) => node.id === id && node.kind === "agent"))
+      return;
+    this.selectedNode = id;
+    this.agentError = "";
+    this.agentEditor = {
+      nodeId: id,
+      graph: structuredClone(graph),
+      revision: run?.revision ?? this.workspace!.revision,
+      runId: run?.id,
+    };
+    await this.updateComplete;
+    const dialog =
+      this.renderRoot.querySelector<HTMLDialogElement>(".agent-dialog");
+    if (dialog && !dialog.open) dialog.showModal();
+  }
+  private closeAgentSettings() {
+    this.renderRoot.querySelector<HTMLDialogElement>(".agent-dialog")?.close();
+  }
+  private async agentDialogClosed() {
+    const id = this.agentEditor?.nodeId;
+    this.agentEditor = undefined;
+    this.agentError = "";
+    await this.updateComplete;
+    if (id)
+      this.renderRoot
+        .querySelector("yp-live-workflow-graph")
+        ?.shadowRoot?.querySelector<SVGElement>(
+          `[model-id="${CSS.escape(id)}"]`,
+        )
+        ?.focus();
+  }
+  private editAgentDraft() {
+    const id = this.agentEditor?.nodeId;
+    if (!id) return;
+    this.viewedRunId = "draft";
+    this.draft = undefined;
+    void this.openAgentSettings(id);
+  }
   private async saveNode(event: Event) {
     event.preventDefault();
-    if (this.run) return;
+    const editor = this.agentEditor;
+    if (!editor || editor.runId || !this.operator || this.agentSaving) return;
     const form = new FormData(event.target as HTMLFormElement),
-      graph = structuredClone(this.workspace!.graph),
-      node = graph.nodes.find((n) => n.id === this.selectedNode)!;
-    await this.action(async () => {
+      graph = structuredClone(editor.graph),
+      node = graph.nodes.find((n) => n.id === editor.nodeId)!;
+    this.agentSaving = true;
+    this.agentError = "";
+    try {
       node.enabled = form.get("enabled") === "on";
       node.models = Object.fromEntries(
-        [
-          ...(this.snapshot?.modelRoles ?? ["default", "review"]).map(
-            (role) => [
-              role,
-              String(form.get(role === "default" ? "model" : role) ?? ""),
-            ],
-          ),
-        ].filter(([, value]) => value),
+        agentModelRoles(
+          node,
+          this.snapshot?.modelRoles ?? ["default", "review"],
+        )
+          .map((role) => [role, String(form.get(`agent-model:${role}`) ?? "")])
+          .filter(([, value]) => value),
       );
       node.configuration = JSON.parse(
         String(form.get("configuration") ?? "{}"),
@@ -608,6 +886,17 @@ export class YpLiveWorkflow extends LitElement {
       const effort = String(form.get("reasoningEffort") ?? "");
       if (effort) node.reasoningEffort = effort as YpWorkflowReasoningEffort;
       else delete node.reasoningEffort;
+      for (const modelId of Object.values(node.models)) {
+        const model = this.snapshot!.models.find((item) => item.id === modelId);
+        if (!model)
+          throw new Error(
+            `Model ${modelId} is no longer available. Choose an available model.`,
+          );
+        if (effort && (model.provider !== "openai" || !model.reasoning))
+          throw new Error(
+            "Choose Use model default for reasoning effort, or select OpenAI reasoning models for every role.",
+          );
+      }
       const cap = String(form.get("nodeCap") ?? "");
       if (cap) node.budgetMicros = Math.round(Number(cap) * 1e6);
       else delete node.budgetMicros;
@@ -618,9 +907,19 @@ export class YpLiveWorkflow extends LitElement {
         };
       await this.api.request("/graph", "PUT", {
         graph,
-        revision: this.workspace!.revision,
+        revision: editor.revision,
       });
-    });
+      this.draft = undefined;
+      await this.refresh();
+      this.closeAgentSettings();
+    } catch (error) {
+      this.agentError =
+        error instanceof Error
+          ? error.message
+          : "Could not save agent settings";
+    } finally {
+      this.agentSaving = false;
+    }
   }
   private async bindConnector(event: Event) {
     event.preventDefault();
@@ -729,30 +1028,29 @@ export class YpLiveWorkflow extends LitElement {
         class="approval"
         @submit=${(event: Event) => this.answer(event, approval)}
       >
-        <strong>Codex needs your input</strong>${approval.params.questions.map(
-          (value) => {
-            const question = this.record(value);
-            return html`<label
-              >${String(question.question ?? question.header ?? "")}<input
-                name=${String(question.id)}
-                required
-                list=${`choices-${question.id}`}
-              /><datalist id=${`choices-${question.id}`}>
-                ${(Array.isArray(question.options) ? question.options : []).map(
-                  (option) =>
-                    html`<option
-                      value=${String(this.record(option).label ?? "")}
-                    >
-                      ${String(this.record(option).description ?? "")}
-                    </option>`,
-                )}
-              </datalist></label
-            >`;
-          },
-        )}<button ?disabled=${!this.operator || this.busy}>Send answers</button>
+        <strong>${this.assistantName} needs your input</strong
+        >${approval.params.questions.map((value) => {
+          const question = this.record(value);
+          return html`<label
+            >${String(question.question ?? question.header ?? "")}<input
+              name=${String(question.id)}
+              required
+              list=${`choices-${question.id}`}
+            /><datalist id=${`choices-${question.id}`}>
+              ${(Array.isArray(question.options) ? question.options : []).map(
+                (option) =>
+                  html`<option value=${String(this.record(option).label ?? "")}>
+                    ${String(this.record(option).description ?? "")}
+                  </option>`,
+              )}
+            </datalist></label
+          >`;
+        })}<button ?disabled=${!this.operator || this.busy}>
+          Send answers
+        </button>
       </form>`;
     return html`<div class="approval">
-      <strong>Codex requests approval</strong>
+      <strong>${this.assistantName} requests approval</strong>
       <pre>${JSON.stringify(approval.params, null, 2)}</pre>
       <div class="toolbar">
         <button
@@ -838,7 +1136,7 @@ export class YpLiveWorkflow extends LitElement {
                   )}
               >
                 ${state.operator && !this.operator
-                  ? "Take over and stop current Codex session"
+                  ? `Take over and stop the current ${this.assistantName} session`
                   : "Take operator control"}
               </button>`
             : nothing}
@@ -849,7 +1147,13 @@ export class YpLiveWorkflow extends LitElement {
         : nothing}
       <div class="layout">
         <section class="panel chat">
-          <h3>Talk with Codex</h3>
+          <div class="chat-heading">
+            <span class="codex-mark" aria-hidden="true">&lt;/&gt;</span>
+            <div>
+              <h3>Talk with ${this.assistantName}</h3>
+              <p>Plan, build, and run your workflow.</p>
+            </div>
+          </div>
           ${permissions.operate
             ? html`<div class="toolbar">
                 <button ?disabled=${this.busy} @click=${this.login}>
@@ -870,18 +1174,23 @@ export class YpLiveWorkflow extends LitElement {
               </div>`
             : nothing}
           ${permissions.operate
-            ? html` <p role="status">
+            ? html` <p
+                  role="status"
+                  class="connection-status"
+                  ?data-connected=${Boolean(this.snapshot.codexAuthMode)}
+                >
                   ${this.snapshot.codexAuthMode === "api-key"
                     ? "OpenAI API key connected"
                     : this.snapshot.codexAuthMode === "chatgpt"
                       ? "ChatGPT connected"
-                      : "Connect ChatGPT or an OpenAI API key to talk with Codex."}
+                      : `Connect ChatGPT or an OpenAI API key to talk with ${this.assistantName}.`}
                 </p>
                 <details class="auth">
                   <summary>Use an OpenAI API key</summary>
                   <p>
-                    Codex usage is billed to your OpenAI API account. Processing
-                    agents use the workflow's configured provider credentials.
+                    Assistant usage is billed to your OpenAI API account.
+                    Processing agents use the workflow's configured provider
+                    credentials.
                   </p>
                   <form @submit=${this.loginApiKey}>
                     <label
@@ -945,26 +1254,27 @@ export class YpLiveWorkflow extends LitElement {
             ${this.chat.length
               ? this.chat.map(
                   (item) =>
-                    html`<div class="bubble ${item.role}">
-                      <strong
-                        >${item.role === "user"
-                          ? "Group operator"
-                          : item.role === "assistant"
-                            ? "Codex"
-                            : "Activity"}</strong
-                      >
-                      <div>${item.text}</div>
-                    </div>`,
+                    html`<yp-live-workflow-message
+                      .messageRole=${item.role}
+                      .assistantName=${this.assistantName}
+                      .text=${item.text}
+                      .at=${item.at}
+                      .completed=${Boolean(item.completed)}
+                      .sender=${item.userId === this.loggedInUser?.id
+                        ? this.loggedInUser
+                        : undefined}
+                    ></yp-live-workflow-message>`,
                 )
               : html`<p class="empty">
-                  Describe the experiment you want to run. Codex can inspect
-                  data, improve agents, and update the workflow diagram.
+                  Describe the experiment you want to run. ${this.assistantName}
+                  can inspect data, improve agents, and update the workflow
+                  diagram.
                 </p>`}
           </div>
           ${this.approvals.map((approval) => this.renderApproval(approval))}
-          <form @submit=${this.send}>
+          <form class="composer" @submit=${this.send}>
             <label
-              >Message Codex<textarea
+              >Message ${this.assistantName}<textarea
                 name="message"
                 required
                 ?disabled=${!this.operator || !this.snapshot.codexAuthMode}
@@ -1001,7 +1311,7 @@ export class YpLiveWorkflow extends LitElement {
                     this.api.request("/session/terminate", "POST", {}),
                   )}
               >
-                Restart Codex session
+                Restart ${this.assistantName} session
               </button>
             </div>
           </form>
@@ -1012,7 +1322,8 @@ export class YpLiveWorkflow extends LitElement {
                   ChatGPT quotas are separate from processing API charges.
                 </p>
                 <pre>
-${this.quota || "Quota information appears when reported by Codex."}</pre
+${this.quota ||
+                  `Quota information appears when reported by ${this.assistantName}.`}</pre
                 >
               </details>`
             : nothing}
@@ -1066,7 +1377,8 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
                       >${this.renderStorage()}`}
           ${this.renderRuns()}
         </section>
-      </div>`;
+      </div>
+      ${this.renderAgentDialog()}`;
   }
   private renderGraph() {
     const node = (this.run?.graph ?? this.workspace?.graph)?.nodes.find(
@@ -1082,13 +1394,18 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
                 this.run?.status === "awaiting_approval" ? this.run : undefined;
             }}
           >
-            <option value="">
+            <option value="" ?selected=${!this.viewedRunId}>
               ${this.workspace?.activeRunId ? "Active run" : "Current draft"}
             </option>
-            <option value="draft">Current draft</option>
+            <option value="draft" ?selected=${this.viewedRunId === "draft"}>
+              Current draft
+            </option>
             ${this.snapshot!.runs.map(
               (r) =>
-                html`<option value=${r.id}>
+                html`<option
+                  value=${r.id}
+                  ?selected=${this.viewedRunId === r.id}
+                >
                   ${r.mode} · ${r.status} · ${r.createdAt.slice(0, 16)}
                 </option>`,
             )}
@@ -1098,90 +1415,181 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
           @click=${() =>
             this.action(() => this.api.request("/validate", "POST", {}))}
         >
-          Validate Codex changes
+          Validate ${this.assistantName} changes
         </button>
       </div>
       <yp-live-workflow-graph
         .graph=${this.run?.graph ?? this.workspace!.graph}
         .run=${this.run}
-        @select-node=${(e: CustomEvent<{ id: string }>) => {
+        .selectedNode=${this.selectedNode}
+        @select-node=${(
+          e: CustomEvent<{ id?: string; configure?: boolean }>,
+        ) => {
           this.selectedNode = e.detail.id;
+          if (e.detail.configure && e.detail.id)
+            void this.openAgentSettings(e.detail.id);
         }}
       ></yp-live-workflow-graph>
       ${node?.kind === "agent"
-        ? html`<form class="inspector" @submit=${this.saveNode}>
-            <h3>${node.label}</h3>
-            ${node.description ? html`<p>${node.description}</p>` : nothing}
-            ${this.run
-              ? html`<p>This is the saved configuration for this run.</p>
-                  <button
-                    type="button"
-                    @click=${() => {
-                      this.viewedRunId = "draft";
-                    }}
-                  >
-                    Edit current draft
-                  </button>`
-              : html`<p class="muted">
-                  Changes apply to the next run and require a fresh estimate.
-                </p>`}
-            ${this.run?.nodeCosts?.[node.id]
-              ? html`<p>
-                  ${dollars(this.run.nodeCosts[node.id].spentMicros)} settled ·
-                  ${dollars(this.run.nodeCosts[node.id].reservedMicros)}
-                  reserved · ${this.run.nodeCosts[node.id].requests} requests
-                </p>`
-              : nothing}
-            ${this.run?.nodeStates[node.id]?.failedRecords
-              ? html`<p class="error">
-                  ${this.run.nodeStates[node.id].failedRecords} records need
-                  review.
-                </p>`
-              : nothing}
-            <fieldset ?disabled=${Boolean(this.run) || !this.operator}>
-              <label class="inline"
-                ><input
-                  name="enabled"
-                  type="checkbox"
-                  .checked=${node.enabled}
-                />Enabled</label
+        ? html`<div class="agent-selection">
+            <strong>${node.label}</strong
+            ><button @click=${() => this.openAgentSettings(node.id)}>
+              Models &amp; settings
+            </button>
+          </div>`
+        : nothing}
+      ${this.renderHistory()}`;
+  }
+  private renderAgentDialog() {
+    const editor = this.agentEditor;
+    if (!editor || !this.snapshot) return nothing;
+    const node = editor.graph.nodes.find((n) => n.id === editor.nodeId)!;
+    const run = this.snapshot.runs.find((r) => r.id === editor.runId);
+    const catalog = editor.runId
+      ? (run?.modelCatalog ?? [])
+      : this.snapshot.models;
+    const readonly = Boolean(editor.runId) || !this.operator;
+    const stale = !editor.runId && editor.revision !== this.workspace!.revision;
+    return html`<dialog
+      class="agent-dialog"
+      aria-labelledby="agent-dialog-title"
+      @close=${this.agentDialogClosed}
+      @cancel=${(event: Event) => {
+        event.preventDefault();
+        if (!this.agentSaving) this.closeAgentSettings();
+      }}
+    >
+      ${keyed(
+        editor,
+        html`
+          <header>
+            <div>
+              <h2 id="agent-dialog-title">${node.label}</h2>
+              <span class="muted"
+                >Models &amp; settings ·
+                ${editor.runId
+                  ? `Saved run · revision ${editor.revision}`
+                  : `Current draft · revision ${editor.revision}`}</span
               >
+            </div>
+            <button
+              type="button"
+              aria-label="Close agent settings"
+              ?disabled=${this.agentSaving}
+              @click=${this.closeAgentSettings}
+            >
+              ✕
+            </button>
+          </header>
+          ${editor.runId
+            ? html`<div class="notice">
+                <p>
+                  This run keeps its original models and reasoning settings.
+                  Changes to the draft apply to future runs.
+                </p>
+                ${this.operator &&
+                this.workspace!.graph.nodes.some((n) => n.id === node.id)
+                  ? html`<button type="button" @click=${this.editAgentDraft}>
+                      Edit current draft
+                    </button>`
+                  : nothing}
+              </div>`
+            : html`<p class="notice">
+                Choose models for this agent’s next run. Other agents and the
+                chat assistant keep their own model settings. Model changes
+                require a new trial before bulk approval.
+              </p>`}
+          ${!this.operator
+            ? html`<p class="notice">
+                ${this.snapshot.permissions.operate
+                  ? "Take operator control to change models."
+                  : "You can review this agent’s settings and model history."}
+              </p>`
+            : nothing}
+          ${stale
+            ? html`<p class="error" role="alert">
+                The draft changed while this window was open. Reload the current
+                draft before saving.
+                <button type="button" @click=${this.editAgentDraft}>
+                  Reload current draft
+                </button>
+              </p>`
+            : nothing}
+          ${this.agentError
+            ? html`<p class="error" role="alert">${this.agentError}</p>`
+            : nothing}
+          <form @submit=${this.saveNode}>
+            <fieldset ?disabled=${readonly || this.agentSaving}>
               <div class="row">
-                ${[
-                  ...new Set([
-                    ...(this.snapshot?.modelRoles ?? ["default", "review"]),
-                    ...Object.keys(node.models),
-                  ]),
-                ].map(
-                  (role) =>
-                    html`<label>
-                      ${role === "default"
-                        ? "Processing model"
-                        : `${role} model`}
+                ${agentModelRoles(
+                  node,
+                  this.snapshot.modelRoles ?? ["default", "review"],
+                ).map((role) => {
+                  const id = node.models[role] ?? "";
+                  const model = catalog.find(
+                    (item) => item.id === (id || node.models.default),
+                  );
+                  return html`<div>
+                    <label
+                      >${modelRoleLabel(role)} model
                       <select
-                        name=${role === "default" ? "model" : role}
-                        .value=${node.models[role] ?? ""}
+                        name=${`agent-model:${role}`}
+                        .value=${id}
+                        @change=${(event: Event) =>
+                          this.modelChoiceChanged(event, role)}
                       >
-                        <option value="">
+                        <option value="" ?selected=${!id}>
                           ${role === "default"
-                            ? "Choose a model"
+                            ? "No model selected"
                             : "Use processing model"}
                         </option>
-                        ${this.snapshot!.models.map(
-                          (model) =>
+                        ${id && !catalog.some((item) => item.id === id)
+                          ? html`<option value=${id} selected>
+                              ${id}
+                              (${editor.runId ? "saved model" : "unavailable"})
+                            </option>`
+                          : nothing}
+                        ${catalog.map(
+                          (item) =>
                             html`<option
-                              value=${model.id}
-                              ?selected=${node.models[role] === model.id}
+                              value=${item.id}
+                              ?selected=${id === item.id}
                             >
-                              ${model.label}
+                              ${item.label} · ${item.id}
                             </option>`,
                         )}
                       </select></label
-                    >`,
-                )}
+                    >
+                    <span class="model-note"
+                      >${modelReasoning(node, model)}${!id && role !== "default"
+                        ? " · uses processing model"
+                        : ""}</span
+                    >
+                    ${model
+                      ? html`<span class="model-note"
+                          >${dollars(model.inputMicrosPerMillion)} input /
+                          ${dollars(model.outputMicrosPerMillion)} output per 1M
+                          tokens${model.inferenceType
+                            ? ` · ${model.inferenceType}`
+                            : ""}</span
+                        >`
+                      : nothing}
+                  </div>`;
+                })}
               </div>
               <label
-                >Agent reasoning effort<select name="reasoningEffort">
+                >Agent reasoning effort<select
+                  name="reasoningEffort"
+                  .value=${node.reasoningEffort ?? ""}
+                  @change=${(event: Event) => {
+                    const effort = (event.target as HTMLSelectElement).value as
+                      | YpWorkflowReasoningEffort
+                      | "";
+                    if (effort) node.reasoningEffort = effort;
+                    else delete node.reasoningEffort;
+                    this.requestUpdate();
+                  }}
+                >
                   <option value="" ?selected=${!node.reasoningEffort}>
                     Use model default
                   </option>
@@ -1197,15 +1605,10 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
                 </select></label
               >
               <small
-                >Overrides apply to all roles in this agent and require OpenAI
-                reasoning models. Higher effort uses more time and tokens;
-                spending caps still apply. Model defaults:
-                ${Object.entries(node.models)
-                  .map(
-                    ([role, id]) =>
-                      `${role}: ${this.snapshot!.models.find((model) => model.id === id)?.reasoningEffort ?? "provider default"}`,
-                  )
-                  .join(", ")}</small
+                >Reasoning overrides apply to every role and require OpenAI
+                reasoning models. Review and other roles use the processing
+                model unless you choose an override. Only roles requested by the
+                agent make model calls.</small
               >
               <label
                 >Agent spending cap (USD, optional)<input
@@ -1217,36 +1620,167 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
                     ? ""
                     : String(node.budgetMicros / 1e6)}
               /></label>
-              ${node.id === "normalize"
-                ? html`<div class="row">
-                    <label
-                      >Title column<input
-                        name="nameColumn"
-                        .value=${String(
-                          this.record(node.configuration.fields).name ?? "name",
-                        )}
-                    /></label>
-                    <label
-                      >Description column<input
-                        name="textColumn"
-                        .value=${String(
-                          this.record(node.configuration.fields).text ?? "text",
-                        )}
-                    /></label>
-                  </div>`
-                : nothing}
-              <label
-                >Agent settings (JSON)<textarea
-                  name="configuration"
-                  .value=${JSON.stringify(node.configuration, null, 2)}
-                ></textarea></label
-              ><button ?disabled=${!this.operator || this.busy}>
-                Save agent settings
-              </button>
+              <details>
+                <summary>Agent configuration</summary>
+                ${node.description ? html`<p>${node.description}</p>` : nothing}
+                <label class="inline"
+                  ><input
+                    name="enabled"
+                    type="checkbox"
+                    .checked=${node.enabled}
+                  />Enabled</label
+                >
+                ${node.id === "normalize"
+                  ? html`<div class="row">
+                      <label
+                        >Title column<input
+                          name="nameColumn"
+                          .value=${String(
+                            this.record(node.configuration.fields).name ??
+                              "name",
+                          )} /></label
+                      ><label
+                        >Description column<input
+                          name="textColumn"
+                          .value=${String(
+                            this.record(node.configuration.fields).text ??
+                              "text",
+                          )}
+                      /></label>
+                    </div>`
+                  : nothing}
+                <label
+                  >Agent settings (JSON)<textarea
+                    name="configuration"
+                    .value=${JSON.stringify(node.configuration, null, 2)}
+                  ></textarea>
+                </label>
+              </details>
             </fieldset>
-          </form>`
-        : nothing}
-      ${this.renderHistory()}`;
+            ${!readonly
+              ? html`<div class="dialog-actions">
+                  <button
+                    type="button"
+                    ?disabled=${this.agentSaving}
+                    @click=${this.closeAgentSettings}
+                  >
+                    Cancel</button
+                  ><button
+                    class="primary"
+                    ?disabled=${this.agentSaving || stale}
+                  >
+                    ${this.agentSaving ? "Saving…" : "Save agent settings"}
+                  </button>
+                </div>`
+              : nothing}
+          </form>
+          ${run?.nodeCosts?.[node.id]
+            ? html`<p>
+                ${dollars(run.nodeCosts[node.id].spentMicros)} settled ·
+                ${dollars(run.nodeCosts[node.id].reservedMicros)} reserved ·
+                ${run.nodeCosts[node.id].requests} requests
+              </p>`
+            : nothing}
+          ${run?.nodeStates[node.id]?.failedRecords
+            ? html`<p class="error">
+                ${run.nodeStates[node.id].failedRecords} records need review.
+              </p>`
+            : nothing}
+          ${this.renderAgentModelHistory(node.id)}
+        `,
+      )}
+    </dialog>`;
+  }
+  private modelChoiceChanged(event: Event, role: string) {
+    const node = this.agentEditor!.graph.nodes.find(
+      (n) => n.id === this.agentEditor!.nodeId,
+    )!;
+    const id = (event.target as HTMLSelectElement).value;
+    if (id) node.models[role] = id;
+    else delete node.models[role];
+    this.requestUpdate();
+  }
+  private renderAgentModelHistory(nodeId: string) {
+    const runs = this.snapshot!.runs.filter((run) =>
+      run.nodeIds.includes(nodeId),
+    )
+      .slice()
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    return html`<section aria-label="Model history">
+      <h3>Model history</h3>
+      <p class="muted">
+        Saved selections for this agent in each run. Other roles inherit the
+        processing model unless an override is listed.
+      </p>
+      ${runs.length
+        ? html`<div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Run</th>
+                  <th scope="col">Models &amp; reasoning</th>
+                  <th scope="col">Agent cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${runs.map((run) => {
+                  const node = run.graph.nodes.find((n) => n.id === nodeId);
+                  if (!node) return nothing;
+                  const cap = run.nodeBudgets?.[nodeId] ?? node.budgetMicros;
+                  return html`<tr>
+                    <td>
+                      <button
+                        type="button"
+                        class="history-run"
+                        ?disabled=${this.agentSaving}
+                        aria-current=${run.id === this.agentEditor?.runId
+                          ? "true"
+                          : "false"}
+                        @click=${() => {
+                          this.viewedRunId = run.id;
+                          void this.openAgentSettings(nodeId, run);
+                        }}
+                      >
+                        ${run.mode} · ${run.id.slice(0, 8)}</button
+                      ><small>${new Date(run.createdAt).toLocaleString()}</small
+                      ><small>Revision ${run.revision} · ${run.status}</small>
+                    </td>
+                    <td>
+                      ${Object.entries(node.models).length
+                        ? Object.entries(node.models).map(([role, id]) => {
+                            const model = run.modelCatalog?.find(
+                              (item) => item.id === id,
+                            );
+                            return html`<div class="model-role">
+                              <strong>${modelRoleLabel(role)}</strong>:
+                              ${id}<small>${modelReasoning(
+                                node,
+                                model,
+                              )}</small>${model
+                                ? html`<small
+                                    >${dollars(model.inputMicrosPerMillion)} in
+                                    / ${dollars(model.outputMicrosPerMillion)}
+                                    out per 1M · ${model.priceVersion}</small
+                                  >`
+                                : nothing}
+                            </div>`;
+                          })
+                        : "No model selected"}
+                    </td>
+                    <td>
+                      ${run.nodeCosts?.[nodeId]
+                        ? dollars(run.nodeCosts[nodeId].spentMicros)
+                        : "Not recorded"}${cap
+                        ? html`<small>Cap ${dollars(cap)}</small>`
+                        : nothing}
+                    </td>
+                  </tr>`;
+                })}
+              </tbody>
+            </table>
+          </div>`
+        : html`<p>No saved runs for this agent yet.</p>`}
+    </section>`;
   }
   private async compareRevision(hash: string) {
     const groupId = this.groupId;
@@ -1284,8 +1818,8 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
     return html`<details>
       <summary>Package revision history</summary>
       <p>
-        Validate Codex changes to save a revision. Comparisons use the last
-        validated draft.
+        Validate ${this.assistantName} changes to save a revision. Comparisons
+        use the last validated draft.
       </p>
       <button
         ?disabled=${this.busy}
@@ -1333,7 +1867,7 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
               )}
             </details>
             <p>
-              Restore requires an idle Codex and no active run. The current
+              Restore requires an idle assistant and no active run. The current
               draft is retained as a VM backup. New runs require a fresh trial.
             </p>
             <button
@@ -1558,8 +2092,8 @@ ${this.quota || "Quota information appears when reported by Codex."}</pre
                             ></textarea>
                           </label>
                           <p class="muted">
-                            Credentials are stored by the server. Codex does not
-                            receive them.
+                            Credentials are stored by the server.
+                            ${this.assistantName} does not receive them.
                             ${proposal.binding.kind === "firecrawl"
                               ? "Verify the configured credit price and request limit before approving."
                               : "Share the Google file with the service account first."}

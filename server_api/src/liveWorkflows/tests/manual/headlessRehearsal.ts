@@ -4,23 +4,29 @@ import path from "node:path";
 import { socketRequest } from "../../runner/socketClient.js";
 import { parseWorkflowArguments } from "../../runner/cliArguments.js";
 
+export async function offlineWorkflowCli<T>(
+  workspace: string,
+  ...args: string[]
+) {
+  const parsed = parseWorkflowArguments(args);
+  // Match the runtime's short descriptor path: host workspace UUIDs exceed sockaddr_un's limit.
+  const directory = await open(path.join(workspace, ".workflow"), "r");
+  try {
+    return await socketRequest<T>(
+      `/proc/self/fd/${directory.fd}/control.sock`,
+      parsed.route,
+      parsed.body,
+    );
+  } finally {
+    await directory.close();
+  }
+}
+
 export function offlineOperator(adapt: boolean) {
   let turns = 0;
   return async (workspace: string) => {
-    const cli = async <T>(...args: string[]) => {
-      const parsed = parseWorkflowArguments(args);
-      // Match the runtime's short descriptor path: host workspace UUIDs exceed sockaddr_un's limit.
-      const directory = await open(path.join(workspace, ".workflow"), "r");
-      try {
-        return await socketRequest<T>(
-          `/proc/self/fd/${directory.fd}/control.sock`,
-          parsed.route,
-          parsed.body,
-        );
-      } finally {
-        await directory.close();
-      }
-    };
+    const cli = <T>(...args: string[]) =>
+      offlineWorkflowCli<T>(workspace, ...args);
     const snapshot = await cli<YpWorkflowSnapshot>("status");
     if (++turns > 1) {
       const run = snapshot.runs.find(

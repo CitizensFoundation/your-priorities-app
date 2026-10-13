@@ -32,7 +32,13 @@ export const run: Agent = async (context, input) =>
       );
       if (typeof proposal.text !== "string" || !proposal.text.trim())
         throw new RecordError("Empty rewrite");
-      await context.progress(0, 1, "rewrite-validation");
+      await context.progress(
+        0,
+        1,
+        "rewrite-validation",
+        undefined,
+        `Reviewing rewrite for ${job.name} · attempt ${attempt + 1}`,
+      );
       const requiredChecks = [
         "dutyPreservation",
         "legalRequirements",
@@ -65,7 +71,13 @@ export const run: Agent = async (context, input) =>
       ) {
         job.rewrittenText = proposal.text;
         job.analysis.changes = proposal.changes ?? [];
-        await context.progress(1, 1, "rewrite-validation");
+        await context.progress(
+          1,
+          1,
+          "rewrite-validation",
+          undefined,
+          `Rewrite passed review for ${job.name}`,
+        );
         return job;
       }
       feedback = String(review.feedback ?? "Validation failed");

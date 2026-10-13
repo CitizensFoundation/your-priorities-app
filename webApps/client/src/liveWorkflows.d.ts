@@ -145,6 +145,11 @@ interface YpWorkflowNodeCost {
   reservedMicros: number;
   requests: number;
 }
+interface YpWorkflowAgentMessage {
+  nodeId: string;
+  message: string;
+  at: string;
+}
 interface YpWorkflowRun {
   id: string;
   mode: "trial" | "bulk";
@@ -155,6 +160,8 @@ interface YpWorkflowRun {
   fingerprint: string;
   graph: YpWorkflowGraph;
   nodeIds: string[];
+  /** Frozen catalog entries for models selected by this run's processing agents. */
+  modelCatalog?: YpWorkflowModel[];
   assetIds: string[];
   targetNodeId?: string;
   nodeCosts?: Record<string, YpWorkflowNodeCost>;
@@ -174,8 +181,12 @@ interface YpWorkflowRun {
       total: number;
       failedRecords?: number;
       outputCount?: number;
+      message?: string;
+      updatedAt?: string;
     }
   >;
+  /** The 50 most recent agent messages, in delivery order. */
+  agentMessages?: YpWorkflowAgentMessage[];
   childStates?: Record<
     string,
     { nodeId: string; label: string; processed: number; total: number }
@@ -232,6 +243,7 @@ interface YpWorkflowConnector {
 }
 interface YpWorkflowSnapshot {
   workspace: YpWorkflowState;
+  assistantName?: string;
   assets: YpWorkflowAsset[];
   runs: YpWorkflowRun[];
   connectors: YpWorkflowConnector[];

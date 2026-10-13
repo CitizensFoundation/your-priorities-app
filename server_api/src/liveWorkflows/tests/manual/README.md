@@ -2,7 +2,7 @@
 
 ## Interactive browser test (run on command)
 
-The [interactive executable](../skillsFirst.browser.manual.ts) serves the real Lit workflow UI and waits for a person or a browser-control agent to use it. It never opens a browser, submits prompts, uploads files or starts processing automatically, and is excluded from all automatic suites. Its simplest case is **API-key login → hello → upload one job description → ask Codex to run Skills First → download results**.
+The [interactive executable](../skillsFirst.browser.manual.ts) serves the real Lit workflow UI and waits for a person or a browser-control agent to use it. It is excluded from all automatic suites. Unless you explicitly add `--case ui-features --drive`, it never opens a browser, submits prompts, uploads files or starts processing automatically. Its simplest case is **API-key login → hello → upload one job description → ask Codex to run Skills First → download results**.
 
 From `server_api`, in an interactive terminal:
 
@@ -47,6 +47,25 @@ The [batch config](browser-bulk.config.example.json) requests Luna, max reasonin
 The manual harness holds acknowledgement of the batch's durable levels checkpoint, after all ten level calls settle, so the browser operator has time to use the real Pause button. A read-only notice shows when to pause. Refresh the page while paused, review saved chat and progress, then resume using the same approved cap. The harness never pauses/resumes itself or kills the container in this case. This verifies acknowledged UI controls and page refresh, not host restart or uncertain provider billing.
 
 Review and search the final results, inspect quoted evidence and unknown findings, then download and open **adapted-jobs.json and results-0.json for each run** (four JSON documents, named with their run IDs). These targeted analyses do not run the full-pipeline CSV/Markdown export agent. Press Enter only after reviewing the browser-saved files. Verification requires observed browser login/chat/upload, trial review before approval, estimate/start/pause/refresh/resume order, final result search and all four downloads before the verifier's own reads. It checks source preservation, dependencies, both result sets, the generated adapter and graph revision, unchanged approval/checkpoint across resume, 36 accounted model calls, and zero repeated paid calls. Reports, verifier output copies, adapter source and graph are saved under `.live-workflow-manual/results/browser-bulk-<mode>-<random>/`. Save browser screenshots and downloaded files alongside the report when reviewing the case.
+
+### Feature coverage and model comparison
+
+Use `--case ui-features` for two short trials on the same fictional job description. Codex greets you, reads the upload, selects only evidence analysis (including its degree prerequisite), and starts the first trial. The browser operator then changes **Analyze requirements** from Luna to Sol in **Models & settings**, saves, refreshes, and starts the second trial using the UI. Only normalize, level detection, degrees and evidence run: **six processing calls total**, with no retries or bulk approval.
+
+```sh
+npm run test:live-workflows:browser-manual -- --prepare --case ui-features
+sg docker -c 'npm run test:live-workflows:browser-manual -- --offline --case ui-features --drive'
+# Explicit paid execution; imports the key on the server, never into the browser:
+sg docker -c 'YP_WORKFLOW_MANUAL_LIVE=1 npm run test:live-workflows:browser-manual -- --live --case ui-features --drive'
+```
+
+`--drive` runs the [on-demand Chromium driver](browserFeaturesDriver.ts). It operates the real UI and asserts its behavior; it does not mock network responses or change workflow state through direct API calls. Add `--headed` to watch its browser, or omit `--drive` for an interactive session using the page's checklist and terminal completion. The offline driver uses scripted providers with a short response delay to make live progress observable. The live driver uses the real Codex VM and processing providers. Neither invocation is part of `npm test` or the ordinary browser suite.
+
+Coverage includes API-key login, the package's assistant name, chat rendering and replay after refresh, upload/preview/source download, graph Fit/zoom, live messages and agent filtering, keyboard popup access, read-only saved runs, cancelling edits, independent processing/review selections, max reasoning, a $4 agent cap, save/refresh persistence, immutable model history, targeted trial controls, result selection/comparison/model tables, evidence details, search, empty filters, pagination bounds, settled usage, package revision inspection, independent Codex settings, VM storage, both result downloads, and a narrow-screen model popup. The verifier checks actual ledger model IDs, source lineage, task dependencies, quoted evidence, frozen catalog prices, six settled calls and no outstanding reservations. The driver additionally opens and parses browser-saved documents and checks their byte counts and checksums. Interactive mode records operator confirmation of visual/file review separately from HTTP delivery evidence.
+
+The [feature config](browser-features.config.example.json) keeps Codex and initial agents on Luna, with Sol exposed as `comparisonProcessingModel`. Both choices use max reasoning and fast service. The two trials share a **$5 processing ceiling**; Codex remains bounded to two user turns with separate usage/cost reporting. The alternative must be a different priced OpenAI model from the backend catalog. Existing simple/batch configs still expose one processing model.
+
+Evidence is saved in `.live-workflow-manual/results/browser-features-<mode>-<random>/`: `report.json`, `codex-usage.json`, incremental `browser-checks.json`, five screenshots, `browser-downloads/`, and independent verifier copies under `trial-1/` and `trial-2/`. A driver failure writes `failure.png` and `browser-error.json`, stops without paid retries, and cleans up the disposable VM/database. This case focuses on comparing agent configurations; the existing approved-bulk case covers approval and pause/resume, and external connections and ChatGPT sign-in remain separate scenarios.
 
 ## Browser-free scenarios
 

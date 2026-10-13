@@ -69,9 +69,11 @@ export async function runManualScenario(
       );
       await page.reload();
     }
+    const { assistantName = "Workflow Assistant" } =
+      await harness.request<YpWorkflowSnapshot>("");
     step("1/4: Say hello to Codex");
     await page
-      .getByRole("textbox", { name: "Message Codex" })
+      .getByRole("textbox", { name: `Message ${assistantName}`, exact: true })
       .fill(
         "Hello! Briefly say hello and that you are ready for Skills First job descriptions. Do not use tools, inspect files, change code, or start a run.",
       );

@@ -7,6 +7,7 @@ export const manifestSchema = z
   .object({
     id: identifier,
     name: z.string().min(1).max(160),
+    assistantName: z.string().trim().min(1).max(80).optional(),
     version: z.string().min(1).max(80),
     runtime: z.literal("yp-live-workflow-v1"),
     sdkVersion: z.literal(1).default(1),

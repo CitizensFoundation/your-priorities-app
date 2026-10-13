@@ -92,7 +92,14 @@ export const run: Agent = async (context, input) => {
   return processJobs(context, input, async (job) => {
     for (const [name, criteria] of tasks) {
       if (!selected.includes(name)) continue;
-      await context.progress(0, 1, name);
+      const taskLabel = name.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
+      await context.progress(
+        0,
+        1,
+        name,
+        undefined,
+        `Checking ${taskLabel} for ${job.name}`,
+      );
       const result = object(
         await context.model(
           `${job.id}:${name}`,
@@ -112,7 +119,13 @@ export const run: Agent = async (context, input) => {
       if (!result.evidence.length) result.status = "unknown";
       object(result.findings);
       job.analysis[name] = result;
-      await context.progress(1, 1, name);
+      await context.progress(
+        1,
+        1,
+        name,
+        undefined,
+        `Checked ${taskLabel} for ${job.name} · ${result.status}`,
+      );
     }
     job.analysis.fleschKincaidGrade = readability(job.text);
     job.status = Object.values(job.analysis).some(

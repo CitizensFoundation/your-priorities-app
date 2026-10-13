@@ -27,16 +27,13 @@ function strings(value: Json, label: string, max = 30): string[] {
   if (
     !Array.isArray(value) ||
     value.length > max ||
-    value.some(
-      (v) => typeof v !== "string" || !v.trim() || v.length > 4000,
-    )
+    value.some((v) => typeof v !== "string" || !v.trim() || v.length > 4000)
   )
     throw new RecordError(`Invalid research ${label}`);
   return value as string[];
 }
 function url(value: Json): string {
-  if (typeof value !== "string")
-    throw new RecordError("Invalid source URL");
+  if (typeof value !== "string") throw new RecordError("Invalid source URL");
   try {
     const parsed = new URL(value);
     if (
@@ -82,12 +79,7 @@ export const run: Agent = async (context, input) => {
     4,
   );
   const maxPages = boundedInteger(context.configuration.maxPages, 3, 1, 5);
-  const maxSources = boundedInteger(
-    context.configuration.maxSources,
-    4,
-    1,
-    10,
-  );
+  const maxSources = boundedInteger(context.configuration.maxSources, 4, 1, 10);
   const followups = boundedInteger(
     context.configuration.maxFollowupRounds,
     1,
@@ -122,7 +114,13 @@ export const run: Agent = async (context, input) => {
         "professional license and education requirements",
     );
     const current = promptJob(job);
-    await context.progress(0, 1, "research-planning");
+    await context.progress(
+      0,
+      1,
+      "research-planning",
+      undefined,
+      `Planning research for ${job.name}`,
+    );
     const plan = object(
       await context.model(
         `${job.id}:plan`,
@@ -131,9 +129,14 @@ export const run: Agent = async (context, input) => {
       ),
     );
     let pending = queries(plan.queries, perRound);
-    if (!pending.length)
-      throw new RecordError("Research plan has no queries");
-    await context.progress(1, 1, "research-planning");
+    if (!pending.length) throw new RecordError("Research plan has no queries");
+    await context.progress(
+      1,
+      1,
+      "research-planning",
+      undefined,
+      `Research plan ready for ${job.name}`,
+    );
     const sources = new Map<string, Source>();
     const searched = new Set<string>();
     const trace: Json[] = [];
@@ -155,9 +158,7 @@ export const run: Agent = async (context, input) => {
           title: String(item.title ?? "Supplied statute"),
           text: item.text.slice(0, 60_000),
           retrievedAt:
-            typeof item.retrievedAt === "string"
-              ? item.retrievedAt
-              : "unknown",
+            typeof item.retrievedAt === "string" ? item.retrievedAt : "unknown",
           truncated: item.text.length > 60_000,
         });
       }
@@ -206,6 +207,8 @@ export const run: Agent = async (context, input) => {
           index + 1,
           roundQueries.length,
           "research-search",
+          undefined,
+          `Searched ${index + 1}/${roundQueries.length} queries for ${job.name}`,
         );
       }
       const candidates = [...sources.values()].filter(
@@ -283,8 +286,7 @@ export const run: Agent = async (context, input) => {
               );
             source.text = document.markdown.slice(0, maxDocumentChars);
             source.truncated =
-              document.truncated ||
-              document.markdown.length > maxDocumentChars;
+              document.truncated || document.markdown.length > maxDocumentChars;
             source.coverage = document.coverage;
             source.retrievedAt = String(document.retrievedAt ?? "unknown");
             trace.push(
@@ -317,10 +319,7 @@ export const run: Agent = async (context, input) => {
             )
               throw new RecordError("Missing extracted requirement");
             const quotes = strings(requirement.quotes, "evidence quotes");
-            if (
-              !quotes.length ||
-              quotes.some((q) => !source.text.includes(q))
-            )
+            if (!quotes.length || quotes.some((q) => !source.text.includes(q)))
               throw new RecordError(
                 "Research citation is not supported by the retrieved source",
               );
@@ -333,13 +332,15 @@ export const run: Agent = async (context, input) => {
             selected.length,
             maxSources,
             "research-extraction",
+            undefined,
+            `Extracted source ${selected.length}/${maxSources} for ${job.name}`,
           );
         }
       }
       const criteria =
-        originalPrompts[
-          "legalResearch/educationRequirementAnalyzer"
-        ]?.join("\n") ?? "";
+        originalPrompts["legalResearch/educationRequirementAnalyzer"]?.join(
+          "\n",
+        ) ?? "";
       result = object(
         await context.model(
           `${job.id}:synthesis:${round}`,
@@ -411,7 +412,13 @@ export const run: Agent = async (context, input) => {
         break;
       }
     }
-    await context.progress(0, 1, "research-review");
+    await context.progress(
+      0,
+      1,
+      "research-review",
+      undefined,
+      `Reviewing research evidence for ${job.name}`,
+    );
     const review = object(
       await context.model(
         `${job.id}:research-review`,
@@ -430,9 +437,7 @@ export const run: Agent = async (context, input) => {
       result.status = "unknown";
     for (const c of citations)
       if (
-        !job.citations.some(
-          (old) => old.url === c.url && old.quote === c.quote,
-        )
+        !job.citations.some((old) => old.url === c.url && old.quote === c.quote)
       )
         job.citations.push({
           ...c,
@@ -457,7 +462,13 @@ export const run: Agent = async (context, input) => {
       },
     });
     if (result.status === "unknown") job.status = "unknown";
-    await context.progress(1, 1, "research-review");
+    await context.progress(
+      1,
+      1,
+      "research-review",
+      undefined,
+      `Research review finished for ${job.name} · ${result.status}`,
+    );
     await context.progress(
       selected.length,
       selected.length,

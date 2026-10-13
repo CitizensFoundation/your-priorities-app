@@ -10,12 +10,7 @@ export interface WorkflowContext {
   nodeId: string;
   mode: "trial" | "bulk";
   configuration: Record<string, Json>;
-  model(
-    key: string,
-    system: string,
-    input: Json,
-    role?: string,
-  ): Promise<Json>;
+  model(key: string, system: string, input: Json, role?: string): Promise<Json>;
   connector(
     key: string,
     binding: string,
@@ -27,14 +22,11 @@ export interface WorkflowContext {
     total: number,
     child?: string,
     failedRecords?: number,
+    message?: string,
   ): Promise<void>;
   checkpoint(key: string, value: Json): Promise<void>;
   restore(key: string): Promise<Json | undefined>;
-  artifact(
-    name: string,
-    content: string,
-    contentType: string,
-  ): Promise<void>;
+  artifact(name: string, content: string, contentType: string): Promise<void>;
   withRecord?<T>(id: string, work: () => Promise<T>): Promise<T>;
   cancelled(): Promise<boolean>;
 }
@@ -54,10 +46,7 @@ export interface Job {
   rewrittenText?: string;
   errors: string[];
 }
-export type Agent = (
-  context: WorkflowContext,
-  input: Json,
-) => Promise<Json>;
+export type Agent = (context: WorkflowContext, input: Json) => Promise<Json>;
 export class RecordError extends Error {
   readonly code = "record_invalid";
 }
@@ -124,53 +113,54 @@ export async function processJobs(
     complete = 0,
     failedRecords = 0;
   await Promise.all(
-    Array.from(
-      { length: Math.min(concurrency, items.length) },
-      async () => {
-        while (cursor < items.length) {
-          const index = cursor++;
-          const item = items[index];
-          if (await context.cancelled())
-            throw new Error("Run is paused or cancelled");
-          const checkpoint = await context.restore(item.id);
-          if (checkpoint) output[index] = checkpoint as unknown as Job;
-          else {
-            try {
-              output[index] = item.errors.length
-                ? structuredClone(item)
-                : context.withRecord
-                  ? await context.withRecord(
-                      item.parentId ?? item.id,
-                      () => process(structuredClone(item)),
-                    )
-                  : await process(structuredClone(item));
-            } catch (error) {
-              // Provider/network/budget errors must pause the run, never become
-              // successful records. Only explicit data-validation failures are isolated.
-              if (
-                !(error instanceof Error) ||
-                (error as Error & { code?: string }).code !==
-                  "record_invalid"
-              )
-                throw error;
-              output[index] = structuredClone(item);
-              output[index].status = "unknown";
-              output[index].errors.push(
-                `${context.nodeId}: ${error.message}`,
-              );
-            }
-            await context.checkpoint(item.id, asJson(output[index]));
-          }
-          if (output[index].errors.length) failedRecords++;
+    Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+      while (cursor < items.length) {
+        const index = cursor++;
+        const item = items[index];
+        if (await context.cancelled())
+          throw new Error("Run is paused or cancelled");
+        const checkpoint = await context.restore(item.id);
+        if (checkpoint) output[index] = checkpoint as unknown as Job;
+        else {
           await context.progress(
-            ++complete,
+            complete,
             items.length,
             undefined,
             failedRecords,
+            `Processing ${item.name}`,
           );
+          try {
+            output[index] = item.errors.length
+              ? structuredClone(item)
+              : context.withRecord
+                ? await context.withRecord(item.parentId ?? item.id, () =>
+                    process(structuredClone(item)),
+                  )
+                : await process(structuredClone(item));
+          } catch (error) {
+            // Provider/network/budget errors must pause the run, never become
+            // successful records. Only explicit data-validation failures are isolated.
+            if (
+              !(error instanceof Error) ||
+              (error as Error & { code?: string }).code !== "record_invalid"
+            )
+              throw error;
+            output[index] = structuredClone(item);
+            output[index].status = "unknown";
+            output[index].errors.push(`${context.nodeId}: ${error.message}`);
+          }
+          await context.checkpoint(item.id, asJson(output[index]));
         }
-      },
-    ),
+        if (output[index].errors.length) failedRecords++;
+        await context.progress(
+          ++complete,
+          items.length,
+          undefined,
+          failedRecords,
+          `${checkpoint ? "Restored saved result for" : output[index].errors.length ? "Needs review:" : "Processed"} ${item.name}`,
+        );
+      }
+    }),
   );
   return asJson(output);
 }

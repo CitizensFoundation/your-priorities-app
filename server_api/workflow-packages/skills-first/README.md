@@ -4,6 +4,8 @@ Skills First analyzes job descriptions, researches qualifications, rewrites unne
 
 [AGENTS.md](AGENTS.md) tells Codex how to inspect data, change these agents, maintain the graph, validate changes and request trials. [The runtime guide](../../live-workflow-runtime/README.md) covers installation, authentication, allowances and recovery.
 
+Set `assistantName` in [manifest.json](manifest.json) to choose the assistant's display name (1–80 characters). This template uses `"Skills First Assistant"`. The chat heading, messages and assistant controls use this name. Packages without the field default to their package name followed by "Assistant". In an existing workspace, edit `package/manifest.json` and validate the package to publish the change; restoring a saved revision also restores its assistant name.
+
 ## Initial logical diagram
 
 ```mermaid
@@ -51,6 +53,8 @@ For a nested or unfamiliar source format, Codex can add a deterministic adapter 
 Missing evidence produces `unknown`, not a finding that a requirement does not exist. Analysis quotes must occur in the original text. Research citations must occur in the supplied source content and point to the matching URL. Rewrites that fail validation retain the original text, errors and unknown status. Malformed responses receive local JSON syntax repair before validation; no extra paid request is issued for that repair. Invalid per-record outputs are checkpointed with review notes and skipped by subsequent model stages. A trial with failed records cannot authorize a bulk run. Provider/network failures pause the run for recovery. Research retrieval timestamps are persisted with search results so replay uses identical model inputs. These checks establish traceability; they do not replace a human review of employment or legal policy.
 
 New workspaces assign `gpt-6-luna` to agents without an explicit model selection. Change each model-calling node's `default` model in the graph independently of the group's Codex model. `rewrite` and comparison nodes can also select a separate `review` model; an empty review selection uses the default. Normalize and export do not call a model. The package template keeps model IDs configurable; the backend supplies prices from its shared model definitions.
+
+Click an agent in the live graph to open **Models & settings**. When viewing a saved run, choose **Edit current draft**, select the processing/review models and reasoning effort, then save. Changes apply to future runs and require a new trial before bulk approval. The popup's **Model history** lists each run's model IDs, reasoning settings, saved token prices and agent cost. **Results → Models by agent** shows the same saved selections alongside run comparisons. Run settings and catalog defaults remain frozen even when the draft or available model catalog changes.
 
 ## Inputs
 

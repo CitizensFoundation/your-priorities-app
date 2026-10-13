@@ -68,6 +68,10 @@ test("new workspaces default both models to Luna; changing Codex leaves agent se
   );
   assert.equal(state.config.codexModel, "gpt-6-luna");
   assert.equal(state.config.codexReasoningEffort, "max");
+  assert.equal(
+    (await service.snapshot(2, { userId: 10, admin: true })).assistantName,
+    "Skills First Assistant",
+  );
   assert.ok(
     state.graph.nodes
       .filter((node) => node.kind === "agent")
@@ -464,6 +468,10 @@ async function approvalFixture() {
       return { data: { files: structuredClone(files), runtimeImage } };
     if (command.messageType === "workflow.inputs")
       return { data: { inputCount: 1000 } };
+    if (command.messageType === "workflow.graph")
+      files["graph.json"] = JSON.stringify(
+        (command.data as { graph: YpWorkflowGraph }).graph,
+      );
     sent.push({
       messageType: command.messageType,
       data: command.data as Record<string, unknown>,
@@ -561,6 +569,67 @@ test("source, model prices, reasoning effort and concurrency changes invalidate 
   }
 });
 
+test("model changes apply to future runs while prior selections, default reasoning and prices stay frozen", async () => {
+  const f = await approvalFixture();
+  const primary = f.service.models.definitions[0];
+  primary.reasoning = true;
+  primary.reasoningEffort = "max";
+  f.service.models.definitions.push({
+    ...primary,
+    id: "alternative-model",
+    label: "Alternative",
+    reasoningEffort: "high",
+  });
+  const first = await f.finishTrial();
+  const savedModel = structuredClone(first.modelCatalog![0]);
+  assert.equal(savedModel.reasoningEffort, "max");
+
+  primary.reasoningEffort = "low";
+  primary.priceVersion = "updated";
+  const state = await f.store.transact(1, async (tx) => tx.state);
+  const graph = structuredClone(state.graph);
+  graph.nodes[0].models = {
+    default: "alternative-model",
+    review: "test-model",
+  };
+  graph.nodes[0].reasoningEffort = "high";
+  await f.service.updateGraph(1, f.actor, graph, state.revision);
+  await assert.rejects(
+    f.service.updateGraph(1, f.actor, graph, state.revision),
+    /Graph changed/,
+  );
+  await assert.rejects(
+    f.service.draftRun(1, f.actor, "bulk", [f.asset.id]),
+    /Run a successful trial/,
+  );
+  const next = await f.service.draftRun(1, f.actor, "trial", [f.asset.id]);
+  assert.deepEqual(next.graph.nodes[0].models, {
+    default: "alternative-model",
+    review: "test-model",
+  });
+  assert.equal(next.graph.nodes[0].reasoningEffort, "high");
+
+  const snapshot = await f.service.snapshot(1, f.actor);
+  const old = snapshot.runs.find((run) => run.id === first.id)!;
+  assert.deepEqual(old.graph.nodes[0].models, { default: "test-model" });
+  assert.equal(old.graph.nodes[0].reasoningEffort, undefined);
+  assert.deepEqual(old.modelCatalog, [savedModel]);
+  assert.equal(snapshot.workspace.config.codexModel, state.config.codexModel);
+  assert.equal(
+    snapshot.models.find((model) => model.id === "test-model")!.reasoningEffort,
+    "low",
+  );
+
+  // Runs created before the UI metadata field still have an immutable catalog in storage.
+  delete first.modelCatalog;
+  await f.store.transact(1, (tx) => tx.put("run", first.id, first));
+  assert.deepEqual(
+    (await f.service.snapshot(1, f.actor)).runs.find(
+      (run) => run.id === first.id,
+    )!.modelCatalog,
+    [savedModel],
+  );
+});
 test("new input versions require a fresh trial while existing approvals retain the original inputs", async () => {
   const f = await approvalFixture();
   await f.finishTrial();
@@ -828,6 +897,94 @@ test("execution failures retain the active run and resume with the same paid req
   assert.equal(resumed.sourceHash, failed.sourceHash);
   assert.equal(resumed.id, failed.id);
 });
+test("agent messages persist with timestamps and bounded history without replacing parent progress", async () => {
+  const { store, service } = await setup();
+  const send = (data: Record<string, YpWorkflowJson>, key: string) =>
+    service.runnerEvent(
+      1,
+      hostId,
+      runId,
+      "node.progress",
+      { nodeId: "analyze", executionId: "current", ...data },
+      key,
+    );
+  const read = async () =>
+    (await store.transact(1, (tx) => tx.get<YpWorkflowRun>("run", runId)))!;
+  await service.runnerEvent(
+    1,
+    hostId,
+    runId,
+    "run.started",
+    { executionId: "current" },
+    "started",
+  );
+  await send({ processed: 2, total: 5, failedRecords: 1 }, "parent");
+  await send(
+    {
+      processed: 0,
+      total: 1,
+      child: "evidence",
+      message: "Checking evidence for Records Clerk",
+    },
+    "child",
+  );
+  const initial = await read();
+  assert.equal(initial.nodeStates.analyze.processed, 2);
+  assert.equal(initial.nodeStates.analyze.total, 5);
+  assert.equal(initial.nodeStates.analyze.failedRecords, 1);
+  assert.equal(
+    initial.nodeStates.analyze.message,
+    "Checking evidence for Records Clerk",
+  );
+  assert.ok(Number.isFinite(Date.parse(initial.nodeStates.analyze.updatedAt!)));
+  assert.equal(initial.childStates?.["analyze:evidence"].processed, 0);
+  assert.equal(initial.agentMessages?.length, 2);
+  assert.equal(
+    (await store.events(1, 0)).at(-1)?.data.message,
+    initial.nodeStates.analyze.message,
+  );
+  await send(
+    { processed: 1, total: 1, message: "Duplicate delivery" },
+    "child",
+  );
+  await send(
+    { processed: 1, total: 1, message: "Old execution", executionId: "old" },
+    "old",
+  );
+  await send(
+    { nodeId: "unrelated", processed: 1, total: 1, message: "Other node" },
+    "other",
+  );
+  assert.deepEqual((await read()).nodeStates, initial.nodeStates);
+  assert.deepEqual((await read()).agentMessages, initial.agentMessages);
+  for (let i = 0; i < 55; i++)
+    await send(
+      { processed: 0, total: 1, child: "evidence", message: `Update ${i}` },
+      `update:${i}`,
+    );
+  assert.equal((await read()).agentMessages?.length, 50);
+  assert.equal((await read()).agentMessages?.[0].message, "Update 5");
+  await send({ processed: 5, total: 5, complete: true }, "done");
+  const completed = await read();
+  assert.equal(completed.nodeStates.analyze.status, "completed");
+  assert.equal(
+    completed.nodeStates.analyze.message,
+    "Completed · 5/5 records processed",
+  );
+  assert.equal(completed.nodeStates.analyze.failedRecords, 1);
+  assert.equal(completed.spentMicros, 0);
+  await service.runnerEvent(
+    1,
+    hostId,
+    runId,
+    "run.completed",
+    { executionId: "current" },
+    "finish",
+  );
+  await send({ processed: 0, total: 5, message: "Late update" }, "late");
+  assert.deepEqual((await read()).agentMessages, completed.agentMessages);
+});
+
 test("failed records stay visible after final progress and cannot support a bulk estimate", async () => {
   const f = await approvalFixture();
   const trial = await f.service.draftRun(1, f.actor, "trial", [f.asset.id]);
@@ -940,8 +1097,20 @@ test("a targeted trial cannot approve a broader set of agents", async () => {
 test("revision restore checks operator, draft version and active work, preserving saved sources", async () => {
   const f = await approvalFixture();
   const original = await f.service.packageSnapshot(1);
+  assert.equal(
+    (await f.service.snapshot(1, f.actor)).assistantName,
+    "Fixture Assistant",
+  );
   f.files["source/analysis.ts"] += "\n// updated";
+  f.files["manifest.json"] = JSON.stringify({
+    ...JSON.parse(f.files["manifest.json"]),
+    assistantName: "Evidence Guide",
+  });
   const edited = await f.service.packageSnapshot(1);
+  assert.equal(
+    (await f.service.snapshot(1, f.actor)).assistantName,
+    "Evidence Guide",
+  );
   const history = await f.service.revisions(1);
   assert.equal(history.currentHash, edited.hash);
   assert.equal(history.revisions.length, 2);
@@ -999,6 +1168,10 @@ test("revision restore checks operator, draft version and active work, preservin
     return { data: { hash: original.hash, backup: ".package-backup-fixture" } };
   };
   await f.service.restoreRevision(1, f.actor, original.hash, revision);
+  assert.equal(
+    (await f.service.snapshot(1, f.actor)).assistantName,
+    "Fixture Assistant",
+  );
   assert.equal((await f.service.revisions(1)).currentHash, original.hash);
   assert.deepEqual(
     (await f.service.revision(1, edited.hash)).files,

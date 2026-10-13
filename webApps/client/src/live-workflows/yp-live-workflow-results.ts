@@ -1,6 +1,7 @@
 import { LitElement, html, css, nothing, type PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { LiveWorkflowApi, dollars } from "./api.js";
+import { modelReasoning, modelRoleLabel } from "./modelInfo.js";
 
 @customElement("yp-live-workflow-results")
 export class YpLiveWorkflowResults extends LitElement {
@@ -62,6 +63,26 @@ export class YpLiveWorkflowResults extends LitElement {
     }
     h4 {
       margin: 4px 0 12px;
+    }
+    .table-scroll {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+    }
+    th,
+    td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #8886;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+    summary {
+      cursor: pointer;
     }
   `;
   protected override updated(changed: PropertyValues) {
@@ -136,13 +157,52 @@ export class YpLiveWorkflowResults extends LitElement {
       ),
     ];
     return html`<p>
-      ${run.mode} · ${run.inputCount} sampled/input parents ·
-      ${dollars(run.spentMicros)} settled · ${dollars(run.reservedMicros)}
-      reserved<br />Models: ${models.join(", ") || "none"}<br /><span
-        class="muted"
-        >Source ${run.sourceHash.slice(0, 12)} · ${run.status}</span
-      >
-    </p>`;
+        ${run.mode} · ${run.inputCount} sampled/input parents ·
+        ${dollars(run.spentMicros)} settled · ${dollars(run.reservedMicros)}
+        reserved<br />Models: ${models.join(", ") || "none"}<br /><span
+          class="muted"
+          >Source ${run.sourceHash.slice(0, 12)} · ${run.status}</span
+        >
+      </p>
+      <details>
+        <summary>Models by agent</summary>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Agent</th>
+                <th scope="col">Role</th>
+                <th scope="col">Model</th>
+                <th scope="col">Reasoning</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${run.graph.nodes
+                .filter((node) => run.nodeIds.includes(node.id))
+                .map((node) =>
+                  Object.entries(node.models).map(
+                    ([role, id]) =>
+                      html`<tr>
+                        <td>${node.label}</td>
+                        <td>${modelRoleLabel(role)}</td>
+                        <td>${id}</td>
+                        <td>
+                          ${modelReasoning(
+                            node,
+                            run.modelCatalog?.find((model) => model.id === id),
+                          )}
+                        </td>
+                      </tr>`,
+                  ),
+                )}
+            </tbody>
+          </table>
+        </div>
+        <p class="muted">
+          Saved run settings. Other roles inherit the processing model unless
+          listed here.
+        </p>
+      </details>`;
   }
   private record(row: Record<string, YpWorkflowJson>) {
     return html`<h4>${String(row.name ?? row.id ?? "Result")}</h4>

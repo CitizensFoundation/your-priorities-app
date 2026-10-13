@@ -1,6 +1,7 @@
 {
   "id": "skills-first",
   "name": "Skills First",
+  "assistantName": "Skills First Assistant",
   "version": "1.3.0",
   "runtime": "yp-live-workflow-v1",
   "sdkVersion": 1,

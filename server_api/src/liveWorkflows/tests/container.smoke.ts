@@ -41,8 +41,7 @@ seed.graph.nodes.forEach((node) => {
 seed.graph.nodes.find(
   (node) => node.id === "compare",
 )!.configuration.reference = [{ text: "Fixture reference" }];
-seed.files["source/isolation.ts"] =
-  `import {readFile} from "node:fs/promises";
+seed.files["source/isolation.ts"] = `import {readFile} from "node:fs/promises";
 import {Agent} from "./sdk.js";
 export const run:Agent=async(context,input)=>{
   for(const name of ["OPENAI_API_KEY","ANTHROPIC_API_KEY","YP_LIVE_WORKFLOW_VM_AGENT_TOKEN"])if(process.env[name])throw new Error("credential leaked");
@@ -152,9 +151,7 @@ const server = createServer(async (req, res) => {
                   levels: [
                     {
                       name: "Technician I",
-                      evidenceQuotes: [
-                        "Technician I: A license is required.",
-                      ],
+                      evidenceQuotes: ["Technician I: A license is required."],
                     },
                     {
                       name: "Technician II",
@@ -199,18 +196,14 @@ const server = createServer(async (req, res) => {
           missingEvidence: [],
           metrics: {},
         };
-      const gateway = new ModelGateway(
-        store,
-        fixtureModelsJson,
-        async () => {
-          calls++;
-          return {
-            content: JSON.stringify(content),
-            tokensIn: 100,
-            tokensOut: 20,
-          };
-        },
-      );
+      const gateway = new ModelGateway(store, fixtureModelsJson, async () => {
+        calls++;
+        return {
+          content: JSON.stringify(content),
+          tokensIn: 100,
+          tokensOut: 20,
+        };
+      });
       result = await gateway.call(1, body);
     } else if (req.url?.endsWith("/connector")) {
       if (body.operation === "write") connectorWrites++;
@@ -264,9 +257,7 @@ const server = createServer(async (req, res) => {
     res.end(JSON.stringify({ error: String(error) }));
   }
 });
-await new Promise<void>((resolve) =>
-  server.listen(0, "127.0.0.1", resolve),
-);
+await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
 const address = server.address();
 assert.ok(address && typeof address !== "string");
 const { WorkflowVmRuntime: Runtime } = (await import(
@@ -330,10 +321,7 @@ try {
   assert.ok(
     (
       await readFile(
-        path.join(
-          location.rootPath,
-          "workspace/.workflow/cliArguments.js",
-        ),
+        path.join(location.rootPath, "workspace/.workflow/cliArguments.js"),
         "utf8",
       )
     ).includes("propose-connection"),
@@ -404,8 +392,7 @@ try {
     ),
   );
   assert.equal(
-    exported.filter((row: any) => row.parentId === `${asset.id}:two`)
-      .length,
+    exported.filter((row: any) => row.parentId === `${asset.id}:two`).length,
     2,
   );
   assert.ok(
@@ -427,6 +414,13 @@ try {
       (e) => e.nodeId === "analyze" && e.complete && e.total === 3,
     ),
   );
+  assert.ok(
+    progressEvents.some(
+      (e) =>
+        e.nodeId === "analyze" && e.message === "Checking evidence for Analyst",
+    ),
+    "Readable agent messages must cross the container gateway",
+  );
   assert.deepEqual(JSON.parse(artifacts.get("isolation.json")!), {
     networkBlocked: true,
     credentialsAbsent: true,
@@ -436,10 +430,7 @@ try {
     state: tx.state,
     usage: await tx.list<UsageReservation>("usage"),
   }));
-  assert.equal(
-    firstLedger.state.spentMicros,
-    calls * 360 + searches * 100,
-  );
+  assert.equal(firstLedger.state.spentMicros, calls * 360 + searches * 100);
   assert.equal(
     firstLedger.state.trialSpentMicros,
     calls * 360 + searches * 100,
@@ -551,20 +542,13 @@ try {
     /active execution marker/,
   );
   await rm(marker);
-  assert.equal(
-    (await command("prune", { runIds: [run.id] })).data.removed,
-    1,
-  );
+  assert.equal((await command("prune", { runIds: [run.id] })).data.removed, 1);
   await assert.rejects(
-    readFile(
-      path.join(root, ".processing", state.id, run.id, "data/run.json"),
-    ),
+    readFile(path.join(root, ".processing", state.id, run.id, "data/run.json")),
     /ENOENT/,
   );
   const previousFloor = process.env.YP_LIVE_WORKFLOW_MIN_FREE_BYTES;
-  process.env.YP_LIVE_WORKFLOW_MIN_FREE_BYTES = String(
-    Number.MAX_SAFE_INTEGER,
-  );
+  process.env.YP_LIVE_WORKFLOW_MIN_FREE_BYTES = String(Number.MAX_SAFE_INTEGER);
   try {
     await assert.rejects(
       command("inputs", { assets: [asset] }),

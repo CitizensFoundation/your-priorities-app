@@ -24,9 +24,7 @@ test("a non-job package parses numeric data, executes and enforces input and out
     new URL("./fixtures/numeric-package", import.meta.url),
   );
   const snapshot = await readPackage(root);
-  const dir = await mkdtemp(
-    path.join(os.tmpdir(), "yp-package-contract-"),
-  );
+  const dir = await mkdtemp(path.join(os.tmpdir(), "yp-package-contract-"));
   try {
     const file = path.join(dir, "numbers.json");
     await writeFile(file, JSON.stringify([{ value: 4 }, { value: 7 }]));
@@ -41,12 +39,11 @@ test("a non-job package parses numeric data, executes and enforces input and out
     };
     const artifacts: unknown[] = [];
     const requests: string[] = [];
-    const request = async <T>(
-      route: string,
-      data: unknown,
-    ): Promise<T> => {
+    const progress: unknown[] = [];
+    const request = async <T>(route: string, data: unknown): Promise<T> => {
       requests.push(route);
       if (route === "/artifact") artifacts.push(data);
+      if (route === "/progress") progress.push(data);
       assert.ok(["/status", "/progress", "/artifact"].includes(route));
       return { status: "running" } as T;
     };
@@ -59,6 +56,13 @@ test("a non-job package parses numeric data, executes and enforces input and out
       request,
     };
     await runPackage(options);
+    assert.ok(
+      progress.some(
+        (item) =>
+          (item as { message?: string }).message ===
+          "Adding the imported numbers",
+      ),
+    );
     assert.equal(artifacts.length, 2);
     assert.equal((artifacts[1] as { resultPart: number }).resultPart, 0);
     assert.deepEqual(
@@ -83,11 +87,7 @@ test("a non-job package parses numeric data, executes and enforces input and out
     const validators = packageValidators(snapshot.files);
     assert.throws(
       () =>
-        validateData(
-          validators.output,
-          { count: 2, total: "bad" },
-          "Output",
-        ),
+        validateData(validators.output, { count: 2, total: "bad" }, "Output"),
       /Output.*schema/,
     );
     await assert.rejects(
@@ -106,6 +106,8 @@ test("package contracts reject unsupported SDKs, missing schemas and invalid mod
     { inputSchema: "schemas/missing.json" },
     { modelRoles: ["review"] },
     { modelRoles: ["default", "default"] },
+    { assistantName: " " },
+    { assistantName: "x".repeat(81) },
   ])
     assert.throws(() =>
       packageManifest({
@@ -121,14 +123,8 @@ test("targeted experiments include upstream agents and exclude unrelated branche
     "levels",
     "analyze",
   ]);
-  assert.throws(
-    () => selectedAgents(snapshot.graph, "licenses"),
-    /enabled/,
-  );
-  assert.throws(
-    () => selectedAgents(snapshot.graph, "unknown"),
-    /enabled/,
-  );
+  assert.throws(() => selectedAgents(snapshot.graph, "licenses"), /enabled/);
+  assert.throws(() => selectedAgents(snapshot.graph, "unknown"), /enabled/);
 });
 test("local JSON repair preserves model data and tags unrecoverable responses", () => {
   assert.deepEqual(
@@ -137,7 +133,6 @@ test("local JSON repair preserves model data and tags unrecoverable responses", 
   );
   assert.throws(
     () => modelJson('{"a": } {{'),
-    (error: unknown) =>
-      (error as { code?: string }).code === "record_invalid",
+    (error: unknown) => (error as { code?: string }).code === "record_invalid",
   );
 });

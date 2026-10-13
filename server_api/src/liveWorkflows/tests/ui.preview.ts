@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { workspace, run as runFixture } from "./memoryStore.js";
 import { skillsFirstPackage } from "../packages.js";
+import { packageManifest } from "../runner/packageContract.js";
 
 const temp = await mkdtemp(path.join(os.tmpdir(), "yp-live-ui-"));
 const entry = fileURLToPath(
@@ -38,18 +39,45 @@ state.graph = seed.graph;
 state.config.budgetMicros = 500_000_000;
 for (const node of state.graph.nodes)
   if (node.kind === "agent") node.models = { default: "fixture-model" };
+const initialGraph = structuredClone(state.graph);
 const run = {
   ...runFixture(state),
   inputCount: 5,
+  nodeIds: ["normalize", "levels", "analyze"],
   budgetMicros: 5_000_000,
   spentMicros: 120_000,
   nodeCosts: {
     analyze: { spentMicros: 120_000, reservedMicros: 80_000, requests: 4 },
   },
   nodeStates: {
-    normalize: { status: "completed", processed: 5, total: 5 },
-    analyze: { status: "running", processed: 2, total: 5 },
+    levels: { status: "completed", processed: 5, total: 5 },
+    normalize: {
+      status: "completed",
+      processed: 5,
+      total: 5,
+      message: "Normalized 5 job descriptions",
+      updatedAt: new Date(Date.now() - 2000).toISOString(),
+    },
+    analyze: {
+      status: "running",
+      processed: 2,
+      total: 5,
+      message: "Checking degrees for Technician 2",
+      updatedAt: new Date(Date.now() - 1000).toISOString(),
+    },
   },
+  agentMessages: [
+    {
+      nodeId: "normalize",
+      message: "Normalized 5 job descriptions",
+      at: new Date(Date.now() - 2000).toISOString(),
+    },
+    {
+      nodeId: "analyze",
+      message: "Checking degrees for Technician 2",
+      at: new Date(Date.now() - 1000).toISOString(),
+    },
+  ],
   childStates: {
     degrees: {
       nodeId: "analyze",
@@ -58,8 +86,13 @@ const run = {
       total: 1,
     },
   },
-  edgeStates: { "flow-1": { records: 5, at: new Date().toISOString() } },
+  edgeStates: {
+    "flow-1": { records: 5, at: new Date().toISOString() },
+    "flow-levels": { records: 5, at: new Date().toISOString() },
+  },
 } as YpWorkflowRun;
+const initialNodeStates = structuredClone(run.nodeStates);
+const initialMessages = structuredClone(run.agentMessages);
 state.activeRunId = run.id;
 state.spentMicros = run.spentMicros;
 state.reservedMicros = 80_000;
@@ -67,12 +100,23 @@ const model: YpWorkflowModel = {
   id: "fixture-model",
   label: "Fixture processing model",
   provider: "openai",
+  reasoning: true,
+  reasoningEffort: "max",
   inputMicrosPerMillion: 1_000_000,
   outputMicrosPerMillion: 1_000_000,
   maxOutputTokens: 2048,
   contextTokens: 200000,
   priceVersion: "fixture",
 };
+const alternativeModel: YpWorkflowModel = {
+  ...model,
+  id: "fixture-alternative",
+  label: "Alternative processing model",
+  reasoningEffort: "high",
+  inputMicrosPerMillion: 3_000_000,
+  outputMicrosPerMillion: 9_000_000,
+};
+run.modelCatalog = [structuredClone(model)];
 const comparison = {
   ...structuredClone(run),
   id: "77777777-7777-4777-8777-777777777777",
@@ -80,6 +124,19 @@ const comparison = {
   createdAt: "2026-10-01T10:00:00Z",
   spentMicros: 200_000,
 };
+comparison.graph.nodes.find((node) => node.id === "analyze")!.models = {
+  default: "fixture-previous-model",
+};
+comparison.modelCatalog = [
+  ...comparison.modelCatalog!,
+  {
+    ...model,
+    id: "fixture-previous-model",
+    label: "Previous processing model",
+    reasoningEffort: "xhigh",
+    priceVersion: "previous",
+  },
+];
 let addedAssets: YpWorkflowAsset[] = [],
   member = false;
 const connector: YpWorkflowConnector = {
@@ -94,6 +151,7 @@ let connected = false,
   proposalStatus: YpWorkflowConnectionProposal["status"] = "pending";
 const snapshot = (): YpWorkflowSnapshot => ({
   workspace: state,
+  assistantName: packageManifest(seed.files).assistantName,
   runs: [run, comparison],
   assets: [
     ...addedAssets,
@@ -120,7 +178,7 @@ const snapshot = (): YpWorkflowSnapshot => ({
       status: proposalStatus,
     },
   ],
-  models: [model],
+  models: [model, alternativeModel],
   hosts: [{ id: state.config.hostId, name: "Fixture VM", connected: true }],
   permissions: member
     ? { userId: 20, admin: false, operate: false }
@@ -184,13 +242,14 @@ const emit = (type: string, data: Record<string, YpWorkflowJson>) => {
 };
 emit("chat.user", {
   text: "Review these job descriptions and propose a small trial.",
+  userId: 10,
 });
 emit("session.event", {
   sessionId: "fixture",
   eventType: "message.completed",
   itemId: "welcome",
   payload: {
-    text: "I found five records. The first trial is analyzing qualifications and checking the evidence in each description.",
+    text: "I found **five job descriptions**. Your first trial is underway.\n\n1. Normalize the source records\n2. Verify job levels\n3. **Analyze requirements** and check the evidence\n\nYou can follow each agent’s progress in the graph.",
   },
 });
 const requests: { url: string; body: unknown }[] = [];
@@ -200,13 +259,20 @@ const server = createServer(async (req, res) => {
     if (url.pathname === "/") {
       res.setHeader("content-type", "text/html");
       res.end(
-        '<!doctype html><meta name="viewport" content="width=device-width, initial-scale=1"><title>Live workflow fixture</title><style>body{margin:24px;background:#faf9fc;font-family:system-ui;color:#24202b}</style><yp-live-workflow groupid="1"></yp-live-workflow><script type="module" src="/ui.js"></script>',
+        `<!doctype html><meta name="viewport" content="width=device-width, initial-scale=1"><title>Live workflow fixture</title><style>body{margin:24px;background:#faf9fc;font-family:system-ui;color:#24202b}</style><yp-live-workflow groupid="1"></yp-live-workflow><script>window.appUser = ${JSON.stringify({ user: { id: 10, name: "Alex Morgan", UserProfileImages: [{ formats: JSON.stringify(["/fixture-avatar.svg"]) }] } })}</script><script type="module" src="/ui.js"></script>`,
       );
       return;
     }
     if (url.pathname === "/ui.js") {
       res.setHeader("content-type", "text/javascript");
       res.end(await readFile(path.join(temp, "ui.js")));
+      return;
+    }
+    if (url.pathname === "/fixture-avatar.svg") {
+      res.setHeader("content-type", "image/svg+xml");
+      res.end(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#d7e6e0"/><circle cx="32" cy="25" r="12" fill="#698b7e"/><path d="M9 64v-9a23 23 0 0 1 46 0v9" fill="#698b7e"/></svg>',
+      );
       return;
     }
     if (url.pathname.endsWith("/stream")) {
@@ -250,19 +316,60 @@ const server = createServer(async (req, res) => {
         run.status = "running";
         run.mode = "bulk";
         run.id = "33333333-3333-4333-8333-333333333333";
+        run.nodeStates = structuredClone(initialNodeStates);
+        run.agentMessages = structuredClone(initialMessages);
         state.activeRunId = run.id;
+        state.graph = structuredClone(initialGraph);
+        state.revision = 1;
+        run.graph = structuredClone(initialGraph);
         addedAssets = [];
         connected = false;
         member = false;
         proposalStatus = "pending";
+        history.splice(2);
         requests.length = 0;
       }
       if (url.pathname === "/__fixture/complete") {
         run.status = "completed";
+        run.nodeStates.analyze = {
+          status: "completed",
+          processed: 5,
+          total: 5,
+          message: "Completed · 5/5 records processed",
+          updatedAt: new Date().toISOString(),
+        };
         state.activeRunId = null;
         emit("run.completed", { runId: run.id });
       }
+      if (url.pathname === "/__fixture/agent-message") {
+        const at = new Date().toISOString();
+        run.nodeStates.analyze = {
+          ...run.nodeStates.analyze,
+          message: body.message,
+          updatedAt: at,
+        };
+        run.agentMessages = [
+          ...(run.agentMessages ?? []),
+          { nodeId: "analyze", message: body.message, at },
+        ].slice(-50);
+        emit("node.progress", {
+          runId: run.id,
+          nodeId: "analyze",
+          message: body.message,
+        });
+      }
       if (url.pathname === "/__fixture/member") member = true;
+      if (url.pathname === "/__fixture/draft-change") {
+        state.revision++;
+        emit("graph.updated", { revision: state.revision });
+      }
+      if (url.pathname === "/__fixture/chat-message")
+        emit("session.event", {
+          sessionId: "fixture",
+          itemId: "formatted-message",
+          eventType: "message.completed",
+          payload: { text: body.text },
+        });
       if (url.pathname === "/__fixture/late-message") {
         for (const [eventType, payload] of [
           ["message.delta", { delta: "The trial " }],
@@ -329,7 +436,7 @@ const server = createServer(async (req, res) => {
         if (body.budgetMicros) run.budgetMicros = body.budgetMicros;
       }
       if (url.pathname.endsWith("/chat")) {
-        emit("chat.user", { text: body.text });
+        emit("chat.user", { text: body.text, userId: 10 });
         emit("session.event", {
           sessionId: "fixture",
           eventType: "approval.requested",
@@ -362,6 +469,13 @@ const server = createServer(async (req, res) => {
           payload: { requestId: body.requestId },
         });
       if (url.pathname.endsWith("/graph")) {
+        if (body.revision !== state.revision) {
+          res.writeHead(409, { "content-type": "application/json" });
+          res.end(
+            JSON.stringify({ error: "Graph changed; reload before saving" }),
+          );
+          return;
+        }
         state.graph = body.graph;
         state.revision++;
         emit("graph.updated", { revision: state.revision });

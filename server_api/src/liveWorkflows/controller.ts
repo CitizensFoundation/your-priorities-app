@@ -789,6 +789,7 @@ export class LiveWorkflowsController {
               processed: z.number().int().nonnegative(),
               total: z.number().int().nonnegative(),
               child: z.string().max(160).nullable().optional(),
+              message: z.string().max(1000).optional(),
               complete: z.boolean().optional(),
               failedRecords: z.number().int().nonnegative().optional(),
               outputCount: z.number().int().nonnegative().optional(),

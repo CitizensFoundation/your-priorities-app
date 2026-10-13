@@ -66,11 +66,16 @@ test("targeted evidence analysis runs degree extraction first; consistency inclu
     ],
   ] as const) {
     const calls: string[] = [];
+    const messages: string[] = [];
     const output = (await analyze(
       context({
         configuration: { tasks: [requested] },
+        progress: async (_processed, _total, _child, _failed, message) => {
+          if (message) messages.push(message);
+        },
         model: async (key, _system, input) => {
           const name = key.split(":").at(-1)!;
+          assert.equal(messages.at(-1), `Checking ${name} for ${job.name}`);
           const current = input as { analysis: Record<string, unknown> };
           if (name === "evidence") assert.ok(current.analysis.degrees);
           if (name === "consistency")
@@ -83,6 +88,9 @@ test("targeted evidence analysis runs degree extraction first; consistency inclu
       [job],
     )) as { analysis: Record<string, unknown> }[];
     assert.deepEqual(calls, expected);
+    assert.ok(
+      messages.includes(`Checked ${requested} for ${job.name} · known`),
+    );
     assert.equal(output[0].analysis.readingLevel, undefined);
   }
   for (const tasks of [[], ["not-a-task"], "evidence", ["__proto__"]])

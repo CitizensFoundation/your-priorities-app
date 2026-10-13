@@ -72,6 +72,7 @@ export const manualConfigSchema = z
   .object({
     codexModel: configured.default(workflowModelDefaults.codexModel),
     processingModel: configured.default(workflowModelDefaults.processingModel),
+    comparisonProcessingModel: configured.optional(),
     codexServiceTier: z.enum(["regular", "fast"]).default("regular"),
     processingServiceTier: z.enum(["regular", "fast"]).default("regular"),
     codexReasoningEffort: reasoningEffortSchema.default(
@@ -96,6 +97,7 @@ export interface ManualConfig {
   codexReasoningEffort: YpWorkflowReasoningEffort;
   processingReasoningEffort: YpWorkflowReasoningEffort;
   processingModel: ModelDefinition;
+  comparisonProcessingModel?: ModelDefinition;
   trialBudgetMicros: number;
 }
 
@@ -104,32 +106,41 @@ export function resolveManualConfig(
   definitions = processingModelDefinitions(),
 ): ManualConfig {
   const config = manualConfigSchema.parse(value);
-  const model = (
+  const catalog =
     config.processingServiceTier === "fast"
       ? builtinProcessingModels("fast")
-      : definitions
-  ).find((entry) => entry.id === config.processingModel);
-  if (
-    !model ||
-    model.provider !== "openai" ||
-    model.inputMicrosPerMillion <= 0 ||
-    model.outputMicrosPerMillion <= 0 ||
-    model.maxOutputTokens < 1024 ||
-    model.contextTokens < 32768
-  )
-    throw new Error(
-      "Select an OpenAI processing model with positive prices from the backend model catalog.",
-    );
-  return {
-    ...config,
-    processingModel: {
+      : definitions;
+  const resolve = (id: string) => {
+    const model = catalog.find((entry) => entry.id === id);
+    if (
+      !model ||
+      model.provider !== "openai" ||
+      model.inputMicrosPerMillion <= 0 ||
+      model.outputMicrosPerMillion <= 0 ||
+      model.maxOutputTokens < 1024 ||
+      model.contextTokens < 32768
+    )
+      throw new Error(
+        "Select an OpenAI processing model with positive prices from the backend model catalog.",
+      );
+    return {
       ...model,
       keyEnv: manualKeyName,
       maxOutputTokens: Math.min(
         model.maxOutputTokens,
         workflowModelOutputTokens,
       ),
-    },
+    };
+  };
+  const { comparisonProcessingModel, ...base } = config;
+  if (comparisonProcessingModel === config.processingModel)
+    throw new Error("Choose two different processing models for comparison");
+  return {
+    ...base,
+    processingModel: resolve(config.processingModel),
+    ...(comparisonProcessingModel
+      ? { comparisonProcessingModel: resolve(comparisonProcessingModel) }
+      : {}),
   };
 }
 export async function readManualConfig(

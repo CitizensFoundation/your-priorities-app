@@ -33,6 +33,7 @@ export interface Context {
     total: number,
     child?: string,
     failedRecords?: number,
+    message?: string,
   ): Promise<void>;
   checkpoint(key: string, value: YpWorkflowJson): Promise<void>;
   restore(key: string): Promise<YpWorkflowJson | undefined>;
@@ -138,13 +139,14 @@ export async function runPackage(options: {
           operation,
           input,
         }),
-      progress: async (processed, total, child, failedRecords) => {
+      progress: async (processed, total, child, failedRecords, message) => {
         await send("/progress", {
           nodeId: node.id,
           processed,
           total,
           child: child ?? null,
           ...(failedRecords === undefined ? {} : { failedRecords }),
+          ...(message === undefined ? {} : { message: message.slice(0, 1000) }),
         });
       },
       checkpoint: async (key, value) => {

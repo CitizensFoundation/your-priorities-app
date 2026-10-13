@@ -228,13 +228,37 @@ export class WorkflowService {
       const codexAuthMode = account?.sealed
         ? (account.authMode ?? "chatgpt")
         : null;
+      const manifest =
+        (await tx.get<ReturnType<typeof packageManifest>>(
+          "workspace",
+          "manifest",
+        )) ??
+        packageManifest(
+          (await tx.get<PackageSnapshot>("seed", "initial"))?.files ??
+            (await loadPackage(tx.state.config.packageId)).files,
+        );
       return {
         workspace: tx.state,
+        assistantName: manifest.assistantName ?? `${manifest.name} Assistant`,
         assets: await tx.list<YpWorkflowAsset>("asset"),
-        runs: (await tx.list<YpWorkflowRun>("run")).map((run) => ({
-          ...run,
-          forecast: remainingForecast(run),
-        })),
+        runs: await Promise.all(
+          (await tx.list<YpWorkflowRun>("run")).map(async (run) => {
+            // Older runs already saved their catalog separately; never substitute today's defaults.
+            const models =
+              run.modelCatalog ??
+              (await tx.get<YpWorkflowModel[]>("run-models", run.id));
+            const selected = new Set(
+              run.graph.nodes
+                .filter((node) => run.nodeIds.includes(node.id))
+                .flatMap((node) => Object.values(node.models)),
+            );
+            return {
+              ...run,
+              modelCatalog: models?.filter((model) => selected.has(model.id)),
+              forecast: remainingForecast(run),
+            };
+          }),
+        ),
         connectors: (
           await tx.list<{ binding: YpWorkflowConnector }>("connector")
         ).map((c) => c.binding),
@@ -242,13 +266,7 @@ export class WorkflowService {
           "connection-proposal",
         ),
         models: this.models.catalog(),
-        modelRoles:
-          (await tx.get<{ modelRoles: string[] }>("workspace", "manifest"))
-            ?.modelRoles ??
-          packageManifest(
-            (await tx.get<PackageSnapshot>("seed", "initial"))?.files ??
-              (await loadPackage(tx.state.config.packageId)).files,
-          ).modelRoles,
+        modelRoles: manifest.modelRoles,
         hosts: this.hosts.hosts.map((h) => ({
           id: h.id,
           name: h.name,
@@ -1283,6 +1301,12 @@ export class WorkflowService {
       if (!nodes.length)
         throw new ValidationError("Enable at least one processing agent");
       const nodeIds = selectedAgents(snapshot.graph, targetNodeId);
+      const modelCatalog = this.models.catalog();
+      const selectedModels = new Set(
+        snapshot.graph.nodes
+          .filter((node) => nodeIds.includes(node.id))
+          .flatMap((node) => Object.values(node.models)),
+      );
       const hash = fingerprint({
         source: snapshot.hash,
         runtimeImage: snapshot.runtimeImage,
@@ -1290,7 +1314,7 @@ export class WorkflowService {
         nodeIds,
         concurrency: tx.state.config.concurrency,
         assets: assets.map((a) => ({ id: a.id, checksum: a.checksum })),
-        models: this.models.catalog(),
+        models: modelCatalog,
         connectors: connectorSnapshots.map((c) => ({
           binding: c.binding,
           readSnapshot: c.readSnapshot,
@@ -1323,6 +1347,9 @@ export class WorkflowService {
         fingerprint: hash,
         graph: snapshot.graph,
         nodeIds,
+        modelCatalog: modelCatalog.filter((model) =>
+          selectedModels.has(model.id),
+        ),
         assetIds,
         ...(targetNodeId ? { targetNodeId } : {}),
         nodeCosts: {},
@@ -1364,7 +1391,7 @@ export class WorkflowService {
           `${run.id}:${connector.binding.id}`,
           connector,
         );
-      await tx.put("run-models", run.id, this.models.catalog());
+      await tx.put("run-models", run.id, modelCatalog);
       await tx.put("run-inputs", run.id, assets);
       await tx.emit("run.created", {
         runId: run.id,
@@ -1660,6 +1687,32 @@ export class WorkflowService {
                 ? data.outputCount
                 : undefined,
           };
+        const at = new Date().toISOString();
+        const counts = `${Number(data.processed ?? 0)}/${Number(data.total ?? 0)}`;
+        const message = (
+          (typeof data.message === "string" && data.message.trim()) ||
+          (typeof data.child === "string"
+            ? `${data.child.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/[-_]/g, " ")} · ${counts}`
+            : data.complete
+              ? `Completed · ${counts} records processed`
+              : `${counts} records processed`)
+        ).slice(0, 1000);
+        // Child updates describe current work without replacing parent record counts.
+        run.nodeStates[data.nodeId] = {
+          ...(run.nodeStates[data.nodeId] ?? {
+            status: "running",
+            processed: 0,
+            total: run.inputCount,
+          }),
+          message,
+          updatedAt: at,
+        };
+        const previous = run.agentMessages?.at(-1);
+        if (previous?.nodeId !== data.nodeId || previous.message !== message)
+          run.agentMessages = [
+            ...(run.agentMessages ?? []),
+            { nodeId: data.nodeId, message, at },
+          ].slice(-50);
         if (Array.isArray(data.upstream))
           for (const edge of run.graph.edges.filter(
             (e) =>

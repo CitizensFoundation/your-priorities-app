@@ -33,6 +33,8 @@ export type BrowserObservation = {
   status: number;
   order: number;
   searched?: boolean;
+  compared?: boolean;
+  filtered?: boolean;
 };
 export class BrowserEvidence {
   readonly requests: BrowserObservation[] = [];
@@ -40,7 +42,7 @@ export class BrowserEvidence {
   readonly observe: RequestHandler = (req, res, next) => {
     if (
       req.path === "/" ||
-      /^\/api\/live-workflows\/groups\/1\/(chat|assets(?:\/[^/]+)?|account\/(login|complete|api-key)|runs(?:\/[^/]+\/(start|pause|resume|results))?)$/.test(
+      /^\/api\/live-workflows\/groups\/1\/(chat|graph|usage|storage|revisions(?:\/[^/]+)?|assets(?:\/[^/]+(?:\/preview)?)?|account\/(login|complete|api-key)|runs(?:\/[^/]+\/(start|pause|resume|results))?)$/.test(
         req.path,
       )
     ) {
@@ -56,6 +58,12 @@ export class BrowserEvidence {
                 searched:
                   typeof req.query.search === "string" &&
                   req.query.search.trim().length > 0,
+                compared:
+                  typeof req.query.compare === "string" &&
+                  req.query.compare.length > 0,
+                filtered:
+                  typeof req.query.filter === "string" &&
+                  req.query.filter !== "all",
               }
             : {}),
         }),

@@ -98,11 +98,19 @@ export async function startManualHarness(
     port?: number;
     browserLogin?: boolean;
     browserBatch?: boolean;
+    offlineProcessingDelayMs?: number;
     observeBrowserRequest?: RequestHandler;
     manualPage?: { instructions: string; fixture: string; filename: string };
   } = {},
 ) {
-  if (mode !== "offline") validateProviderEnvironment(config.processingModel);
+  const processingModels = [
+    config.processingModel,
+    ...(config.comparisonProcessingModel
+      ? [config.comparisonProcessingModel]
+      : []),
+  ];
+  if (mode !== "offline")
+    processingModels.forEach((model) => validateProviderEnvironment(model));
   // Ignore deployment URLs and DB credentials. This harness always owns its local database.
   for (const image of [
     postgresImage,
@@ -244,8 +252,14 @@ export async function startManualHarness(
     const registry = new VmBrokerRegistry();
     const models = new ModelGateway(
       store,
-      JSON.stringify([config.processingModel]),
-      mode === "offline" ? offlineProcessing : undefined,
+      JSON.stringify(processingModels),
+      mode === "offline"
+        ? async (...args) => {
+            if (options.offlineProcessingDelayMs)
+              await sleep(options.offlineProcessingDelayMs);
+            return offlineProcessing(...args);
+          }
+        : undefined,
     );
     // The upload-only case has no external connections. Unexpected connector use fails closed.
     const connectors = new Proxy(
