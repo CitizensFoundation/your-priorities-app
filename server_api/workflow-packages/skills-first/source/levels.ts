@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { canonicalJob, emptyDegreeAnalysis } from "./memory.js";
 import {
   asJson,
   boundedInteger,
@@ -17,9 +18,7 @@ function quotes(value: Json, text: string, required = false): string[] {
     !Array.isArray(value) ||
     (required && !value.length) ||
     value.length > 100 ||
-    value.some(
-      (q) => typeof q !== "string" || !q.trim() || !text.includes(q),
-    )
+    value.some((q) => typeof q !== "string" || !q.trim() || !text.includes(q))
   )
     throw new RecordError(
       "Level evidence must contain exact quotes from the original text",
@@ -29,12 +28,7 @@ function quotes(value: Json, text: string, required = false): string[] {
 
 /** Checkpoint the parent decision first; child identities remain identical on replay. */
 export const run: Agent = async (context, input) => {
-  const maxLevels = boundedInteger(
-    context.configuration.maxLevels,
-    8,
-    2,
-    20,
-  );
+  const maxLevels = boundedInteger(context.configuration.maxLevels, 8, 2, 20);
   const parents = jobs(
     await processJobs(context, input, async (job) => {
       if (job.level) return job;
@@ -53,12 +47,11 @@ export const run: Agent = async (context, input) => {
       if (!result.isMultiLevel) {
         if (result.levels.length)
           throw new RecordError("Inconsistent single-level extraction");
+        job.multiLevelJob = false;
         return job;
       }
       if (result.levels.length < 2 || result.levels.length > maxLevels)
-        throw new RecordError(
-          "Level count is outside the configured limit",
-        );
+        throw new RecordError("Level count is outside the configured limit");
       const shared = quotes(result.sharedQuotes, job.text);
       const names = new Set<string>();
       const levels = result.levels.map((value) => {
@@ -104,15 +97,12 @@ export const run: Agent = async (context, input) => {
           "Independent level review failed; original record retained",
         );
       job.analysis.levelSplit = asJson({ levels });
+      job.multiLevelJob = true;
       return job;
     }),
   );
   const output: Job[] = parents.flatMap((parent) => {
-    if (
-      parent.errors.length ||
-      !parent.analysis.levelSplit ||
-      parent.level
-    )
+    if (parent.errors.length || !parent.analysis.levelSplit || parent.level)
       return [parent];
     const levels = object(parent.analysis.levelSplit).levels as Json[];
     return levels.map((value, index) => {
@@ -120,7 +110,7 @@ export const run: Agent = async (context, input) => {
       const id = `level-${createHash("sha256")
         .update(JSON.stringify([parent.id, level.name, index]))
         .digest("hex")}`;
-      return {
+      return canonicalJob({
         ...parent,
         id,
         parentId: parent.id,
@@ -135,8 +125,16 @@ export const run: Agent = async (context, input) => {
         },
         analysis: {},
         citations: [],
+        multiLevelJob: true,
+        classification: null,
+        degreeAnalysis: emptyDegreeAnalysis(),
+        readingLevelGradeAnalysis: undefined,
+        readabilityAnalysisTextTSNPM: undefined,
+        validationScore: null,
+        licenseComparisons: [],
+        rewrittenText: undefined,
         status: "pending" as const,
-      };
+      });
     });
   });
   if (new Set(output.map((job) => job.id)).size !== output.length)

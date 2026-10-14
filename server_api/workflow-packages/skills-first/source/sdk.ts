@@ -1,3 +1,4 @@
+import type { SkillsFirstJobDescription } from "./memoryTypes.js";
 /** The runner supplies this capability interface. Packages never receive credentials. */
 export type Json =
   | null
@@ -30,8 +31,9 @@ export interface WorkflowContext {
   withRecord?<T>(id: string, work: () => Promise<T>): Promise<T>;
   cancelled(): Promise<boolean>;
 }
-export interface Job {
+export interface Job extends Partial<SkillsFirstJobDescription> {
   id: string;
+  agentId?: string | number | null;
   name: string;
   text: string;
   originalText?: string;
@@ -45,10 +47,23 @@ export interface Job {
   citations: { url: string; quote: string; retrievedAt: string }[];
   rewrittenText?: string;
   errors: string[];
+  metadata?: Record<string, Json>;
 }
 export type Agent = (context: WorkflowContext, input: Json) => Promise<Json>;
 export class RecordError extends Error {
   readonly code = "record_invalid";
+  /** Only explicitly supplied, already validated findings survive a failed task. */
+  constructor(
+    message: string,
+    readonly partialJob?: Job,
+  ) {
+    super(message);
+  }
+}
+export function record(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 }
 export function object(value: Json): Record<string, Json> {
   if (!value || typeof value !== "object" || Array.isArray(value))
@@ -75,8 +90,41 @@ export function asJson(value: unknown): Json {
 }
 /** Keep lineage in artifacts, but never expose sibling qualifications to a child agent. */
 export function promptJob(job: Job) {
-  const { originalText: _original, parentName: _parent, ...current } = job;
-  return current;
+  const {
+    id,
+    name,
+    text,
+    source,
+    jurisdiction,
+    status,
+    analysis,
+    citations,
+    errors,
+    parentId,
+    level,
+    titleCode,
+    variant,
+    cscRevised,
+    rewrittenText,
+  } = job;
+  // A whitelist also excludes arbitrary original CSV columns carried on legacy records.
+  return {
+    id,
+    name,
+    text,
+    source,
+    jurisdiction,
+    status,
+    analysis,
+    citations,
+    errors,
+    parentId,
+    level,
+    titleCode,
+    variant,
+    cscRevised,
+    rewrittenText,
+  };
 }
 export function boundedInteger(
   value: Json | undefined,
@@ -145,7 +193,10 @@ export async function processJobs(
               (error as Error & { code?: string }).code !== "record_invalid"
             )
               throw error;
-            output[index] = structuredClone(item);
+            const partial = (error as RecordError).partialJob;
+            if (partial && partial.id !== item.id)
+              throw new Error("Partial analysis changed the record identity");
+            output[index] = structuredClone(partial ?? item);
             output[index].status = "unknown";
             output[index].errors.push(`${context.nodeId}: ${error.message}`);
           }

@@ -1,4 +1,8 @@
 import { randomUUID } from "node:crypto";
+import {
+  analysisResponse,
+  analysisTaskFromPrompt,
+} from "../analysisFixture.js";
 import type {
   CodexAppServerTransport,
   JsonRpcMessage,
@@ -168,24 +172,11 @@ export async function offlineProcessing(
     };
   else if (system.includes("findings")) {
     const missing = String(record.text).includes("does not state education");
-    content = {
-      status: missing ? "unknown" : "known",
-      findings: system.includes("Task: Determine whether degrees")
-        ? {
-            isDegreeMandatory: missing
-              ? null
-              : /degree in .+ is required/.test(record.text),
-            hasAlternativeQualifications: missing
-              ? null
-              : record.text.includes("instead of a degree"),
-          }
-        : system.includes("Task: Identify explicit professional license")
-          ? {
-              isLicenseRequired: null,
-            }
-          : { note: "Offline fixture; no semantic evaluation" },
-      evidence: missing ? [] : [record.text],
-    };
+    content = analysisResponse(
+      analysisTaskFromPrompt(system),
+      record.text,
+      missing,
+    );
   } else if (system.includes("changes") && system.includes("text"))
     content = { text: record.text, changes: [] };
   else throw new Error("Unrecognized offline processing prompt");

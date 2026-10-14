@@ -1,3 +1,4 @@
+/// <reference path="./skillsFirst.d.ts" />
 /** Shared Live Workflows API types. Currency is integer millionths of one USD. */
 interface YpPostRevision {
   id: number;
@@ -24,6 +25,25 @@ type YpWorkflowStatus =
   | "failed"
   | "cancelled";
 type YpWorkflowReasoningEffort = "low" | "medium" | "high" | "xhigh" | "max";
+type YpWorkflowCodexReasoningEffort =
+  | YpWorkflowReasoningEffort
+  | "none"
+  | "minimal";
+interface YpWorkflowAssistantSettings {
+  model: string;
+  reasoningEffort: YpWorkflowCodexReasoningEffort;
+  serviceTier: "regular" | "fast";
+}
+interface YpWorkflowCodexModel {
+  id: string;
+  model?: string;
+  displayName?: string;
+  defaultReasoningEffort?: YpWorkflowCodexReasoningEffort;
+  supportedReasoningEfforts?: {
+    reasoningEffort: YpWorkflowCodexReasoningEffort;
+    description: string;
+  }[];
+}
 interface YpWorkflowNode {
   id: string;
   kind: "agent" | "connector" | "artifact";
@@ -45,7 +65,9 @@ interface YpWorkflowConfiguration {
   packageId: string;
   hostId: string;
   codexModel: string;
-  codexReasoningEffort: YpWorkflowReasoningEffort;
+  codexReasoningEffort: YpWorkflowCodexReasoningEffort;
+  /** Older saved workspaces default to the standard tier. */
+  codexServiceTier?: YpWorkflowAssistantSettings["serviceTier"];
   operatorIds: number[];
   budgetMicros: number;
   trialBudgetMicros: number;
@@ -254,6 +276,11 @@ interface YpWorkflowSnapshot {
   chatgptConnected: boolean;
   codexAuthMode: "chatgpt" | "api-key" | null;
   modelRoles?: string[];
+  assistantSession?: {
+    active: boolean;
+    /** Settings requested when the current/last turn started, not next-turn defaults. */
+    turnSettings?: YpWorkflowAssistantSettings;
+  };
 }
 interface YpWorkflowRevision {
   hash: string;

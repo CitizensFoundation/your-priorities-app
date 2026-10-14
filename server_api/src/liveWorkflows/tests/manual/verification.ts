@@ -16,10 +16,22 @@ export interface ManualJob {
   name: string;
   text: string;
 }
+export function exportedJobs(value: unknown): unknown[] {
+  const rows = Array.isArray(value)
+    ? value
+    : value && typeof value === "object"
+      ? (value as { jobDescriptions?: unknown }).jobDescriptions
+      : undefined;
+  assert.ok(
+    Array.isArray(rows),
+    "Expected a Skills First memory export or result array",
+  );
+  return rows;
+}
 
 /** Structural acceptance, not a claim that a model's employment advice is correct. */
 export function verifySkillsFirstOutput(input: ManualJob[], output: unknown) {
-  assert.ok(Array.isArray(output), "The downloaded result must be a job array");
+  output = exportedJobs(output);
   const rows = z
     .array(
       z.object({

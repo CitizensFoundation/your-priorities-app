@@ -11,6 +11,7 @@ export class YpLiveWorkflowMessage extends LitElement {
   @property() assistantName = "Workflow Assistant";
   @property() text = "";
   @property() at?: string;
+  @property() modelDetails?: string;
   @property({ type: Boolean }) completed = false;
   @property({ attribute: false }) sender?: YpUserData;
   @state() private failedAvatar?: string;
@@ -348,6 +349,9 @@ export class YpLiveWorkflowMessage extends LitElement {
               : "Workflow assistant"}</span
           >${this.time()}
         </div>
+        ${this.modelDetails
+          ? html`<p class="caption">${this.modelDetails}</p>`
+          : nothing}
         <div class="bubble ${this.formatted === undefined ? "" : "markdown"}">
           ${this.formatted === undefined
             ? html`<span class="plain">${this.text}</span>`

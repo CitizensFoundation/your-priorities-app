@@ -23,7 +23,7 @@ export const browserInstructions = `<details><summary>Browser test steps and pro
 <li>Send this greeting and wait for Codex's reply:<pre>${browserGreeting}</pre></li>
 <li><a href="/manual/fixture" download>Download the sample job description</a>, then use Data → Upload files to upload it. Or select the fixture path printed in the terminal.</li>
 <li>Send this message to Codex:<pre>${browserExperiment}</pre></li>
-<li>Watch the graph and cost. After the trial completes, open Results, then download and open all three skills-first files (.json, .csv and .md) from Data.</li>
+<li>Watch the graph and cost. After the trial completes, open Results, then download and open all four skills-first files (.json, .csv, .xlsx and .md) from Data.</li>
 <li>Return to the terminal and press Enter to verify and finish. Ctrl+C stops and cleans up an unfinished test.</li></ol>
 <p>There are two Codex turns in this test. Nothing sends chat, uploads data, starts processing or approves spending automatically.</p></details>`;
 
@@ -42,7 +42,7 @@ export class BrowserEvidence {
   readonly observe: RequestHandler = (req, res, next) => {
     if (
       req.path === "/" ||
-      /^\/api\/live-workflows\/groups\/1\/(chat|graph|usage|storage|revisions(?:\/[^/]+)?|assets(?:\/[^/]+(?:\/preview)?)?|account\/(login|complete|api-key)|runs(?:\/[^/]+\/(start|pause|resume|results))?)$/.test(
+      /^\/api\/live-workflows\/groups\/1\/(chat|codex-models|assistant-settings|graph|usage|storage|revisions(?:\/[^/]+)?|assets(?:\/[^/]+(?:\/preview)?)?|account\/(login|complete|api-key)|runs(?:\/[^/]+\/(start|pause|resume|results))?)$/.test(
         req.path,
       )
     ) {
@@ -171,7 +171,7 @@ export function verifyBrowserActions(
       ),
       batch
         ? "Download both runs' adapted inputs and analysis results in the browser before finishing"
-        : "Download all three exported documents in the browser before finishing",
+        : "Download all required exported documents in the browser before finishing",
     );
   if (mode === "chatgpt") {
     const login = successful.find(
@@ -253,7 +253,7 @@ export async function verifyInteractiveBrowser(
     name: uploads[0].name,
     text: original.toString(),
   };
-  const exports = ["json", "csv", "md"].map((extension) => {
+  const exports = ["json", "csv", "xlsx", "md"].map((extension) => {
     const asset = snapshot.assets.find(
       (item) => item.name === `${run.id}-skills-first.${extension}`,
     );
@@ -301,20 +301,24 @@ export async function verifyInteractiveBrowser(
     const bytes = Buffer.from(await response.arrayBuffer());
     verifyDownload(asset, bytes);
     if (extension === "json") {
-      const output: unknown = JSON.parse(bytes.toString());
+      const output: unknown = JSON.parse(bytes.toString()).jobDescriptions;
       quality = verifySkillsFirstOutput([job], output);
       verifyReviewedRewrites(resultRows.parse(output));
     } else if (extension === "csv") {
-      const rows = parse(bytes, { columns: true }) as {
-        id: string;
-        original: string;
-        rewritten: string;
+      const rows = parse(bytes, { columns: true, from_line: 2 }) as {
+        name: string;
       }[];
       assert.equal(rows.length, 1);
-      assert.equal(rows[0].id, job.id);
-      assert.equal(rows[0].original, job.text);
-      assert.ok(rows[0].rewritten.trim());
-    } else assert.ok(bytes.toString().includes(job.name));
+      assert.equal(rows[0].name, job.name);
+      assert.equal(Object.keys(rows[0]).length, 74);
+    } else if (extension === "md")
+      assert.ok(bytes.toString().includes(job.name));
+    else
+      assert.equal(
+        bytes.subarray(0, 2).toString(),
+        "PK",
+        "Expected an Excel ZIP artifact",
+      );
     await writeFile(path.join(outputDir, `skills-first.${extension}`), bytes, {
       mode: 0o600,
     });

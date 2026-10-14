@@ -14,6 +14,7 @@ import { build } from "esbuild";
 import { workspace, run as runFixture } from "./memoryStore.js";
 import { skillsFirstPackage } from "../packages.js";
 import { packageManifest } from "../runner/packageContract.js";
+import { assistantSettings, workflowModelDefaults } from "../modelDefaults.js";
 
 const temp = await mkdtemp(path.join(os.tmpdir(), "yp-live-ui-"));
 const entry = fileURLToPath(
@@ -37,6 +38,10 @@ const seed = await skillsFirstPackage(),
   state = workspace();
 state.graph = seed.graph;
 state.config.budgetMicros = 500_000_000;
+const initialConfig = structuredClone(state.config);
+let assistantSession: NonNullable<YpWorkflowSnapshot["assistantSession"]> = {
+  active: false,
+};
 for (const node of state.graph.nodes)
   if (node.kind === "agent") node.models = { default: "fixture-model" };
 const initialGraph = structuredClone(state.graph);
@@ -185,26 +190,46 @@ const snapshot = (): YpWorkflowSnapshot => ({
     : { userId: 10, admin: true, operate: true },
   chatgptConnected: true,
   codexAuthMode: "chatgpt",
+  assistantSession,
 });
 const resultStore = new MemoryWorkflowStore();
 await resultStore.create(state);
 const resultAssets = new AssetService(resultStore, path.join(temp, "assets"));
 const resultService = new ResultService(resultStore, resultAssets);
-const resultRows = Array.from({ length: 25 }, (_, i) => ({
-  id: `job-${i}`,
-  name: `Technician ${i}`,
-  text: "Original description",
-  rewrittenText: "Proposed skills-based wording",
-  status: i === 1 ? "unknown" : "complete",
-  errors: i === 2 ? ["Unsupported evidence"] : [],
-  ...(i < 2
-    ? {
-        parentId: "parent-one",
-        parentName: "Technician series",
-        level: { name: i === 0 ? "Junior" : "Senior", index: i, count: 2 },
-      }
-    : {}),
-}));
+const { canonicalJob } = await import(
+  new URL(
+    "../../../workflow-packages/skills-first/source/memory.ts",
+    import.meta.url,
+  ).href
+);
+const resultRows = Array.from({ length: 25 }, (_, i) =>
+  canonicalJob({
+    id: `job-${i}`,
+    name: `Technician ${i}`,
+    text: "Original description",
+    titleCode: `00${i}`,
+    source: "UI fixture",
+    jurisdiction: "Fixture jurisdiction",
+    citations: [],
+    analysis: {
+      mandatory: {
+        status: "unknown",
+        findings: { isDegreeMandatory: false },
+        evidence: [],
+      },
+    },
+    rewrittenText: "Proposed skills-based wording",
+    status: i === 1 ? "unknown" : "complete",
+    errors: i === 2 ? ["Unsupported evidence"] : [],
+    ...(i < 2
+      ? {
+          parentId: "parent-one",
+          parentName: "Technician series",
+          level: { name: i === 0 ? "Junior" : "Senior", index: i, count: 2 },
+        }
+      : {}),
+  }),
+);
 for (const r of [run, comparison]) {
   await resultStore.transact(1, (tx) => tx.put("run", r.id, r));
   const rows =
@@ -321,6 +346,8 @@ const server = createServer(async (req, res) => {
         state.activeRunId = run.id;
         state.graph = structuredClone(initialGraph);
         state.revision = 1;
+        state.config = structuredClone(initialConfig);
+        assistantSession = { active: false };
         run.graph = structuredClone(initialGraph);
         addedAssets = [];
         connected = false;
@@ -359,6 +386,23 @@ const server = createServer(async (req, res) => {
         });
       }
       if (url.pathname === "/__fixture/member") member = true;
+      if (url.pathname === "/__fixture/assistant-active") {
+        assistantSession = {
+          active: true,
+          turnSettings: assistantSettings(state.config),
+        };
+        emit("session.event", { eventType: "turn.started", payload: {} });
+      }
+      if (url.pathname === "/__fixture/assistant-complete") {
+        assistantSession.active = false;
+        emit("session.event", { eventType: "turn.completed", payload: {} });
+      }
+      if (url.pathname === "/__fixture/assistant-settings") {
+        Object.assign(state.config, body);
+        emit("assistant.settings.updated", {
+          settings: { ...assistantSettings(state.config) },
+        });
+      }
       if (url.pathname === "/__fixture/draft-change") {
         state.revision++;
         emit("graph.updated", { revision: state.revision });
@@ -436,7 +480,15 @@ const server = createServer(async (req, res) => {
         if (body.budgetMicros) run.budgetMicros = body.budgetMicros;
       }
       if (url.pathname.endsWith("/chat")) {
-        emit("chat.user", { text: body.text, userId: 10 });
+        if (!body.steer)
+          assistantSession.turnSettings = assistantSettings(state.config);
+        assistantSession.active = true;
+        emit("chat.user", {
+          text: body.text,
+          userId: 10,
+          steer: Boolean(body.steer),
+          assistantSettings: { ...assistantSession.turnSettings! },
+        });
         emit("session.event", {
           sessionId: "fixture",
           eventType: "approval.requested",
@@ -481,8 +533,49 @@ const server = createServer(async (req, res) => {
         emit("graph.updated", { revision: state.revision });
       }
       if (url.pathname.endsWith("/configuration")) {
-        state.config = body;
+        const { expectedAssistantSettings, ...config } = body;
+        if (
+          expectedAssistantSettings &&
+          JSON.stringify(expectedAssistantSettings) !==
+            JSON.stringify(assistantSettings(state.config))
+        ) {
+          res.writeHead(409, { "content-type": "application/json" });
+          res.end(
+            JSON.stringify({
+              error:
+                "Assistant settings changed; reload saved settings before saving",
+            }),
+          );
+          return;
+        }
+        state.config = config;
         state.revision++;
+      }
+      if (url.pathname === "/api/live-workflows/groups/1/assistant-settings") {
+        if (
+          member ||
+          JSON.stringify(body.expected) !==
+            JSON.stringify(assistantSettings(state.config))
+        ) {
+          res.writeHead(member ? 403 : 409, {
+            "content-type": "application/json",
+          });
+          res.end(
+            JSON.stringify({
+              error: member
+                ? "Forbidden"
+                : "Assistant settings changed; reload before saving",
+            }),
+          );
+          return;
+        }
+        state.config.codexModel = body.settings.model;
+        state.config.codexReasoningEffort = body.settings.reasoningEffort;
+        state.config.codexServiceTier = body.settings.serviceTier;
+        result = assistantSettings(state.config);
+        emit("assistant.settings.updated", {
+          settings: { ...assistantSettings(state.config) },
+        });
       }
       if (url.pathname.endsWith("/pause")) run.status = "paused";
       if (url.pathname.endsWith("/resume")) {
@@ -505,11 +598,30 @@ const server = createServer(async (req, res) => {
         ],
         hosts: snapshot().hosts,
         models: [model],
+        modelDefaults: workflowModelDefaults,
       };
     else if (url.pathname.endsWith("/codex-models"))
       result = {
         data: {
-          models: [{ id: "fixture-codex", displayName: "Fixture Codex" }],
+          models: [
+            {
+              id: "test-codex",
+              displayName: "Current assistant",
+              supportedReasoningEfforts: [
+                { reasoningEffort: "high", description: "High effort" },
+                { reasoningEffort: "max", description: "Maximum effort" },
+              ],
+            },
+            {
+              id: "fixture-codex",
+              displayName: "Alternative assistant",
+              defaultReasoningEffort: "medium",
+              supportedReasoningEfforts: [
+                { reasoningEffort: "medium", description: "Medium effort" },
+                { reasoningEffort: "high", description: "High effort" },
+              ],
+            },
+          ],
         },
       };
     else if (url.pathname.endsWith("/preview"))

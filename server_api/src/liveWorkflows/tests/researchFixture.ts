@@ -1,8 +1,5 @@
 /** Deterministic provider substitute; no network or legal accuracy claims. */
-export function researchResponse(
-  system: string,
-  input: any,
-): YpWorkflowJson {
+export function researchResponse(system: string, input: any): YpWorkflowJson {
   if (system.startsWith("Plan authoritative"))
     return { queries: ["fixture statute", "fixture regulator"] };
   if (system.startsWith("Select the strongest"))
@@ -50,6 +47,23 @@ export function researchResponse(
         ]
       : [],
     comparisons: [],
+    educationRequirementResearchResults: input.sources.length
+      ? [
+          {
+            jobTitle: input.job.name,
+            statedDegreeRequirement: null,
+            degreeRequirementType: null,
+            typeOfOfficialDocument: "statute",
+            matchTypeForJobTitle: "exact",
+            typeOfDegreeRequirement: null,
+            mandatoryDegreeRequirementStatus: null,
+            reasoning:
+              "Fixture evidence establishes a license, not its education prerequisites.",
+            sourceUrl: input.sources[0].url,
+            evidenceQuote: "A license is required.",
+          },
+        ]
+      : [],
     conflicts: [],
     gaps: input.sources.length ? [] : ["No evidence"],
     followUpQueries: [],

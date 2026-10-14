@@ -10,7 +10,14 @@ import {
 } from "./services/errors.js";
 import type { WorkflowStore, WorkflowTransaction } from "./store.js";
 import { HostDirectory, SecretBox } from "./secrets.js";
-import { configSchema, fingerprint, graphSchema, money } from "./schemas.js";
+import {
+  assistantSettingsUpdateSchema,
+  configSchema,
+  configurationUpdateSchema,
+  fingerprint,
+  graphSchema,
+  money,
+} from "./schemas.js";
 import {
   loadPackage,
   validatePackage,
@@ -18,7 +25,7 @@ import {
   selectedAgents,
   withDefaultAgentModel,
 } from "./packages.js";
-import { workflowModelDefaults } from "./modelDefaults.js";
+import { assistantSettings, workflowModelDefaults } from "./modelDefaults.js";
 import { apiKeyMaterialSchema, type ApiKeyMaterial } from "./apiKeyAuth.js";
 import { packageManifest } from "./runner/packageContract.js";
 import { codexAuthMaterialFingerprintSha256 } from "./vm/codex/codexAuthMaterial.js";
@@ -61,6 +68,7 @@ interface Session {
   streamId?: string;
   sourceSeq?: number;
   startedAt?: number;
+  turnSettings?: YpWorkflowAssistantSettings;
 }
 export class WorkflowService {
   readonly workspaceGroups = new Map<string, number>();
@@ -228,6 +236,9 @@ export class WorkflowService {
       const codexAuthMode = account?.sealed
         ? (account.authMode ?? "chatgpt")
         : null;
+      const session = tx.state.sessionId
+        ? await tx.get<Session>("session", tx.state.sessionId)
+        : undefined;
       const manifest =
         (await tx.get<ReturnType<typeof packageManifest>>(
           "workspace",
@@ -279,6 +290,12 @@ export class WorkflowService {
         },
         chatgptConnected: codexAuthMode === "chatgpt",
         codexAuthMode,
+        assistantSession: session
+          ? {
+              active: session.active,
+              turnSettings: session.turnSettings,
+            }
+          : undefined,
       };
     });
   }
@@ -322,8 +339,17 @@ export class WorkflowService {
   }
   async configure(groupId: number, actor: WorkflowActor, value: unknown) {
     if (!actor.admin) throw new ForbiddenError();
-    const config = configSchema.parse(value);
+    const { expectedAssistantSettings, ...config } =
+      configurationUpdateSchema.parse(value);
     await this.store.transact(groupId, async (tx) => {
+      if (
+        expectedAssistantSettings &&
+        fingerprint(expectedAssistantSettings) !==
+          fingerprint(assistantSettings(tx.state.config))
+      )
+        throw new ConflictError(
+          "Assistant settings changed; reload saved settings before saving",
+        );
       if (
         config.hostId !== tx.state.config.hostId ||
         config.packageId !== tx.state.config.packageId
@@ -347,6 +373,34 @@ export class WorkflowService {
       await tx.emit("configuration.updated", {
         revision: tx.state.revision,
       });
+    });
+  }
+  async updateAssistantSettings(
+    groupId: number,
+    actor: WorkflowActor,
+    value: unknown,
+  ) {
+    const { settings, expected } = assistantSettingsUpdateSchema.parse(value);
+    return this.store.transact(groupId, async (tx) => {
+      this.requireOperator(tx, actor);
+      if (await tx.get("lease", "transition"))
+        throw new ConflictError("Operator transition in progress");
+      if (
+        fingerprint(assistantSettings(tx.state.config)) !==
+        fingerprint(expected)
+      )
+        throw new ConflictError(
+          "Assistant settings changed; reload before saving",
+        );
+      tx.state.config.codexModel = settings.model;
+      tx.state.config.codexReasoningEffort = settings.reasoningEffort;
+      tx.state.config.codexServiceTier = settings.serviceTier;
+      // Chat settings do not revise the processing graph or invalidate trial estimates.
+      await tx.emit("assistant.settings.updated", {
+        userId: actor.userId,
+        settings: { ...settings },
+      });
+      return settings;
     });
   }
   async claim(groupId: number, actor: WorkflowActor, takeover: boolean) {
@@ -790,12 +844,7 @@ export class WorkflowService {
           runtimeSnapshot: {
             dockerPolicy: { gpus: "none" },
             containerImage: this.hosts.get(state.config.hostId).image,
-            modelDefaults: {
-              model: state.config.codexModel,
-              reasoningEffort:
-                state.config.codexReasoningEffort ??
-                workflowModelDefaults.codexReasoningEffort,
-            },
+            modelDefaults: { ...assistantSettings(state.config) },
             codexConfig: {
               model: state.config.codexModel,
               approvalPolicy: "on-request",
@@ -861,14 +910,30 @@ export class WorkflowService {
         throw new ConflictError("Operator transition in progress");
       if (tx.state.sessionId !== session.id)
         throw new ConflictError("Codex session changed");
+      const activeSession = (await tx.get<Session>("session", session.id))!;
+      if (!steer && activeSession.active)
+        throw new ConflictError(
+          "The assistant is working. Wait for completion or steer the current turn.",
+        );
+      if (steer && (!activeSession.active || !activeSession.turnId))
+        throw new ConflictError(
+          "Wait for an active assistant turn before steering.",
+        );
+      if (!steer) {
+        activeSession.turnSettings = assistantSettings(tx.state.config);
+        delete activeSession.turnId;
+      }
       await tx.emit("chat.user", {
         text,
         userId: actor.userId,
         sessionId: session.id,
+        steer,
+        ...(activeSession.turnSettings
+          ? { assistantSettings: { ...activeSession.turnSettings } }
+          : {}),
       });
       // Reserve the turn before releasing the workspace lock. In particular,
       // restore must not race an accepted turn whose started event is still in flight.
-      const activeSession = (await tx.get<Session>("session", session.id))!;
       activeSession.active = true;
       await tx.put("session", session.id, activeSession);
       try {
@@ -881,14 +946,9 @@ export class WorkflowService {
               codexThreadId: session.threadId,
               input: [{ type: "text", text }],
               ...(steer
-                ? { codexTurnId: session.turnId }
+                ? { codexTurnId: activeSession.turnId }
                 : {
-                    overrides: {
-                      model: tx.state.config.codexModel,
-                      reasoningEffort:
-                        tx.state.config.codexReasoningEffort ??
-                        workflowModelDefaults.codexReasoningEffort,
-                    },
+                    overrides: { ...activeSession.turnSettings! },
                   }),
             },
           ),
@@ -949,7 +1009,7 @@ export class WorkflowService {
     });
   }
   async codexModels(groupId: number, actor: WorkflowActor) {
-    if (!actor.admin) throw new ForbiddenError();
+    // The current operator selects the assistant; group defaults remain admin-only.
     const session = await this.ensureSession(groupId, actor);
     const state = await this.store.transact(groupId, async (tx) => tx.state);
     return this.command(state.config.hostId, "workflow.models", {

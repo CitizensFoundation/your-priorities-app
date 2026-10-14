@@ -12,6 +12,11 @@ import { z } from "zod";
 import { WorkflowService, type WorkflowActor } from "./workflowService.js";
 import { ResultService } from "./results.js";
 import { AssetService } from "./assets.js";
+import {
+  renderWorkbook,
+  WORKBOOK_SPEC_CONTENT_TYPE,
+  XLSX_CONTENT_TYPE,
+} from "./workbooks.js";
 import { ModelGateway } from "./modelGateway.js";
 import { CodexWorkflowTools } from "./codexTools.js";
 import { HostDirectory, SecretBox, type WorkflowHost } from "./secrets.js";
@@ -286,6 +291,13 @@ export class LiveWorkflowsController {
     });
     this.route("get", "/groups/:groupId/codex-models", async (req) =>
       this.service.codexModels(this.group(req), await this.actor(req)),
+    );
+    this.route("put", "/groups/:groupId/assistant-settings", async (req) =>
+      this.service.updateAssistantSettings(
+        this.group(req),
+        await this.actor(req),
+        req.body,
+      ),
     );
     this.route("post", "/groups/:groupId/chat", async (req) => {
       const body = z
@@ -829,6 +841,15 @@ export class LiveWorkflowsController {
           })
           .parse(req.body);
         let resultSet: YpWorkflowAsset["resultSet"];
+        const isWorkbook = body.contentType === WORKBOOK_SPEC_CONTENT_TYPE;
+        if (
+          isWorkbook &&
+          (body.resultPart !== undefined ||
+            !body.name.toLowerCase().endsWith(".xlsx"))
+        )
+          throw new ValidationError(
+            "Workbook artifacts require an .xlsx name and cannot be result chunks",
+          );
         if (body.resultPart !== undefined) {
           if (Buffer.byteLength(body.content) > 1_048_576)
             throw new ValidationError("Result chunk exceeds 1 MiB");
@@ -843,10 +864,12 @@ export class LiveWorkflowsController {
             count: rows.length,
           };
         }
-        const contents = Buffer.from(body.content),
+        const contents = isWorkbook
+            ? await renderWorkbook(body.content)
+            : Buffer.from(body.content),
           asset = await this.assets.upload(groupId, Readable.from(contents), {
             name: `${runId}-${body.name}`,
-            contentType: body.contentType,
+            contentType: isWorkbook ? XLSX_CONTENT_TYPE : body.contentType,
             length: contents.length,
             source: "artifact",
             resultSet,

@@ -200,6 +200,61 @@ export async function driveBrowserFeatures(
     await send(browserGreeting, 1);
     await check("API-key login, named assistant and rendered chat replies");
 
+    const assistant = page.locator("yp-live-workflow-assistant-settings");
+    const assistantSettings = assistant.getByRole("button", {
+      name: "Assistant settings",
+      exact: true,
+    });
+    await expect(assistant.getByRole("dialog")).toBeHidden();
+    await assistantSettings.click();
+    const assistantModel = assistant.getByRole("combobox", {
+      name: "Assistant model",
+      exact: true,
+    });
+    const assistantEffort = assistant.getByRole("combobox", {
+      name: "Reasoning effort",
+      exact: true,
+    });
+    const assistantSpeed = assistant.getByRole("combobox", {
+      name: "Response speed",
+      exact: true,
+    });
+    const sessionId = (await state()).workspace.sessionId;
+    await assistant
+      .getByRole("button", { name: "Load models", exact: true })
+      .click();
+    await expect(assistant.locator("datalist option").first()).toBeAttached();
+    await expect(assistantModel).toHaveValue(config.codexModel);
+    const changedEffort =
+      config.codexReasoningEffort === "high" ? "medium" : "high";
+    const changedSpeed =
+      config.codexServiceTier === "fast" ? "regular" : "fast";
+    await assistantModel.fill(alternative);
+    await assistantEffort.selectOption(changedEffort);
+    await assistantSpeed.selectOption(changedSpeed);
+    await assistant
+      .getByRole("button", { name: "Apply to next turn", exact: true })
+      .click();
+    await expect(assistant.getByText(/Saved for the next turn/)).toBeVisible();
+    await page.reload();
+    await assistantSettings.click();
+    await expect(assistantModel).toHaveValue(alternative);
+    await expect(assistantEffort).toHaveValue(changedEffort);
+    await expect(assistantSpeed).toHaveValue(changedSpeed);
+    assert.equal((await state()).workspace.sessionId, sessionId);
+    // Exercise persistence without adding paid turns or changing the experiment's configured model.
+    await assistantModel.fill(config.codexModel);
+    await assistantEffort.selectOption(config.codexReasoningEffort);
+    await assistantSpeed.selectOption(config.codexServiceTier);
+    await assistant
+      .getByRole("button", { name: "Apply to next turn", exact: true })
+      .click();
+    await expect(assistant.getByText(/Saved for the next turn/)).toBeVisible();
+    assert.equal((await state()).workspace.sessionId, sessionId);
+    await check(
+      "Assistant model, reasoning and speed save, survive reload and restore without restarting the conversation",
+    );
+
     await button("Data").click();
     await page
       .getByLabel("Upload documents or tables (250 MiB per file)", {

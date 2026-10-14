@@ -1,12 +1,20 @@
 import { jobs, asJson, type Agent, type Job } from "./sdk.js";
+import { canonicalJob, skillsFirstMemory } from "./memory.js";
+import { masterTable, workbook, workbookContentType } from "./workbook.js";
 
 export function csvCell(value: string): string {
   // CSVs are often opened in spreadsheets; prevent formula execution from source data.
-  const safe = /^[=+@\-\t\r]/.test(value) ? `'${value}` : value;
+  const safe = /^(?:\s*[=+@\-]|[\t\r])/.test(value) ? `'${value}` : value;
   return `"${safe.replaceAll('"', '""')}"`;
 }
 export const run: Agent = async (context, input) => {
-  const items = jobs(input);
+  const items = jobs(input).map(canonicalJob);
+  const configuredAgentId = context.configuration.agentId;
+  const agentId =
+    typeof configuredAgentId === "string" ||
+    typeof configuredAgentId === "number"
+      ? configuredAgentId
+      : null;
   const parts: Job[][] = [];
   let part: Job[] = [],
     bytes = 0;
@@ -30,41 +38,26 @@ export const run: Agent = async (context, input) => {
       parts.length === 1
         ? "skills-first"
         : `skills-first-${String(index + 1).padStart(4, "0")}`;
-    const header = [
-      "id",
-      "title",
-      "status",
-      "original",
-      "rewritten",
-      "citations",
-      "errors",
-      "parentId",
-      "level",
-      "levelText",
-    ];
-    const rows = records.map((j) => [
-      j.id,
-      j.name,
-      j.status,
-      j.originalText ?? j.text,
-      j.rewrittenText ?? "",
-      JSON.stringify(j.citations),
-      j.errors.join("; "),
-      j.parentId ?? "",
-      j.level?.name ?? "",
-      j.text,
-    ]);
+    const memory = skillsFirstMemory(records, agentId);
+    const rows = masterTable(memory);
     await context.artifact(
       `${stem}.json`,
-      JSON.stringify(records, null, 2),
+      JSON.stringify(memory, null, 2),
       "application/json",
     );
     await context.artifact(
       `${stem}.csv`,
-      [header, ...rows]
-        .map((row) => row.map(csvCell).join(","))
+      rows
+        .map((row) =>
+          row.map((value) => csvCell(String(value ?? ""))).join(","),
+        )
         .join("\r\n"),
       "text/csv",
+    );
+    await context.artifact(
+      `${stem}.xlsx`,
+      JSON.stringify(workbook(memory)),
+      workbookContentType,
     );
     await context.artifact(
       `${stem}.md`,
@@ -84,13 +77,9 @@ export const run: Agent = async (context, input) => {
       Array.isArray(context.configuration.outputBindings) &&
       eligible.length
     ) {
-      const exportRows = rows.filter(
-        (_, index) =>
-          records[index].status === "complete" &&
-          !records[index].errors.length,
-      );
+      const eligibleTable = masterTable(skillsFirstMemory(eligible, agentId));
       const outgoingRows =
-        exportRowOffset === 0 ? [header, ...exportRows] : exportRows;
+        exportRowOffset === 0 ? eligibleTable : eligibleTable.slice(2);
       for (const binding of context.configuration.outputBindings)
         await context.connector(
           `export:${binding}:${index}`,
@@ -104,8 +93,8 @@ export const run: Agent = async (context, input) => {
         );
       exportRowOffset += outgoingRows.length;
     }
-    rowOffset += rows.length + (index === 0 ? 1 : 0);
-    await context.progress(rowOffset - 1, items.length);
+    rowOffset += records.length;
+    await context.progress(rowOffset, items.length);
   }
   if (parts.length > 1)
     await context.artifact(
@@ -113,6 +102,8 @@ export const run: Agent = async (context, input) => {
       JSON.stringify(
         {
           records: items.length,
+          schemaVersion: "skills-first-memory-v1",
+          formats: ["json", "csv", "xlsx", "md"],
           parts: parts.map((records, index) => ({
             stem: `skills-first-${String(index + 1).padStart(4, "0")}`,
             records: records.length,

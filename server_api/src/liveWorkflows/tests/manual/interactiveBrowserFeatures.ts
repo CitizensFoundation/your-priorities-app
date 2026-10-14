@@ -21,6 +21,7 @@ export const browserFeaturesExperiment =
 export const browserFeaturesInstructions = `<details><summary>UI feature test steps and prompts</summary>
 <p>Two one-job trials, with six processing calls expected. Codex only greets you and starts the first trial. All later actions use the workflow UI.</p>
 <ol><li>Choose Use imported test key and send:<pre>${browserGreeting}</pre></li>
+<li>Open the compact Settings button beside the chat composer, then Load models. Select the comparison model, high reasoning (medium if already high) and the other response speed. Apply to next turn; the dialog closes. Refresh, reopen Settings and verify the saved values. Restore the original assistant model, reasoning and speed and apply again before sending another message. The conversation must keep the same session. This adds no model calls.</li>
 <li>Upload <a href="/manual/fixture" download>the sample job description</a> in Data. Preview and download it. Send:<pre>${browserFeaturesExperiment}</pre></li>
 <li>Use Agents → Fit/zoom; watch Agent activity. After completion, open Results, inspect the original and quoted evidence, search for Library, and try the failed filter.</li>
 <li>Open Analyze requirements from the graph. Its saved run must be read only. Choose Edit current draft, select the alternative processing model, then Cancel. Reopen and confirm the first model remains.</li>
@@ -94,6 +95,29 @@ export function verifyBrowserFeatureActions(
   assert.ok(
     chats[0].order < uploads[0].order && uploads[0].order < chats[1].order,
     "Use hello → upload → experiment order",
+  );
+  const assistantEdits = matches("PUT", "/assistant-settings");
+  assert.equal(
+    assistantEdits.length,
+    2,
+    "Save and restore the assistant settings once each",
+  );
+  assert.ok(
+    chats[0].order < assistantEdits[0].order &&
+      assistantEdits[1].order < uploads[0].order,
+    "Exercise assistant settings after hello and restore before the experiment",
+  );
+  assert.ok(
+    matches("GET", "/codex-models").length,
+    "Load assistant model choices",
+  );
+  assert.ok(
+    matches("GET", "/").some(
+      (item) =>
+        item.order > assistantEdits[0].order &&
+        item.order < assistantEdits[1].order,
+    ),
+    "Refresh to verify assistant settings before restoring them",
   );
   const edits = matches("PUT", "/graph"),
     runs = matches("POST", "/runs");
@@ -192,6 +216,10 @@ export async function verifyInteractiveFeaturesBrowser(
   assert.equal(
     snapshot.workspace.config.codexReasoningEffort,
     config.codexReasoningEffort,
+  );
+  assert.equal(
+    snapshot.workspace.config.codexServiceTier,
+    config.codexServiceTier,
   );
   const uploads = snapshot.assets.filter((asset) => asset.source === "upload");
   assert.equal(uploads.length, 1);

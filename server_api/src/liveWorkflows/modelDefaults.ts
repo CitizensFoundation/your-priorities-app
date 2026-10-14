@@ -5,3 +5,14 @@ export const workflowModelDefaults: YpWorkflowModelDefaults = {
   codexReasoningEffort: "max",
   processingReasoningEffort: "max",
 };
+
+export function assistantSettings(
+  config: YpWorkflowConfiguration,
+): YpWorkflowAssistantSettings {
+  return {
+    model: config.codexModel,
+    reasoningEffort:
+      config.codexReasoningEffort ?? workflowModelDefaults.codexReasoningEffort,
+    serviceTier: config.codexServiceTier ?? "regular",
+  };
+}

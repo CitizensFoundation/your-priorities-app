@@ -2795,15 +2795,22 @@ test("Codex adapter preserves permission settings on continuation turn starts", 
   });
 });
 
-test("Codex adapter preserves null overrides on continuation turn starts", async () => {
+test("Codex adapter preserves null overrides on continuation turn starts", async (t) => {
+  const rootPath = await fs.mkdtemp(path.join(os.tmpdir(), "yp-codex-turn-overrides-"));
   const transport = new FakeCodexTransport();
   const events: VmSessionEventPayload[] = [];
   const adapter = new CodexAdapter({
-    env: { OPENAI_API_KEY: "test-key" },
+    env: {},
     transportFactory: () => transport,
   });
   const payload = vmSessionStartPayload({
     initialTurnMode: "deferred",
+    layout: sessionLayout(rootPath),
+    auth: {
+      provider: "openai",
+      authMode: "openai_api_key",
+      metadata: { openAiApiKeyMaterial: { apiKey: "sk-fake-turn-overrides-only" } },
+    },
     runtimeSnapshot: {
       modelDefaults: {
         model: "gpt-fast",
@@ -2815,6 +2822,10 @@ test("Codex adapter preserves null overrides on continuation turn starts", async
         approvalsReviewer: "reviewer-1",
       },
     },
+  });
+  t.after(async () => {
+    await adapter.closeAll();
+    await fs.rm(rootPath, { recursive: true, force: true });
   });
   const started = await adapter.startSession(payload, {
     onEvent: (event) => {
@@ -3462,18 +3473,22 @@ test("Codex adapter switches from ChatGPT auth to API key on reached quota witho
   assert.equal(authMaterialUpdates.length, 0);
 });
 
-test("Codex adapter pins billing context per turn and changes lanes only before the next turn", async (t) => {
+test("Codex adapter pins API billing context per turn as model and tier change", async (t) => {
   const rootPath = await fs.mkdtemp(path.join(os.tmpdir(), "yp-live-workflow-codex-billing-context-"));
   const transport = new FakeCodexTransport();
   const events: VmSessionEventPayload[] = [];
   const adapter = new CodexAdapter({
-    env: { OPENAI_API_KEY: "fallback-key" },
+    env: {},
     transportFactory: () => transport,
   });
   const payload = vmSessionStartPayload({
     initialTurnMode: "deferred",
     layout: sessionLayout(rootPath),
-    auth: chatGptWithApiFallbackAuth(),
+    auth: {
+      provider: "openai",
+      authMode: "openai_api_key",
+      metadata: { openAiApiKeyMaterial: { apiKey: "sk-fake-turn-billing-test-only" } },
+    },
   });
   t.after(async () => {
     await adapter.closeSession(payload.sessionId);
@@ -3486,23 +3501,11 @@ test("Codex adapter pins billing context per turn and changes lanes only before 
   });
 
   await adapter.startTurn({
-    commandId: "turn-start-chatgpt",
+    commandId: "turn-start-standard",
     sessionId: payload.sessionId,
     codexThreadId: started.codexThreadId,
     input: [{ type: "text", text: "First turn" }],
-    overrides: { model: "gpt-chat-turn", serviceTier: "regular" },
-  });
-  transport.rateLimitsResponse = {
-    rateLimitsByLimitId: {
-      codex: {
-        primary: { usedPercent: 100, windowDurationMins: 300, resetsAt: 1_779_000_000 },
-        rateLimitReachedType: "usage_limit",
-      },
-    },
-  };
-  transport.emit({
-    method: "account/rateLimits/updated",
-    params: transport.rateLimitsResponse,
+    overrides: { model: "gpt-standard-turn", serviceTier: "regular" },
   });
   transport.emit({
     method: "thread/tokenUsage/updated",
@@ -3516,14 +3519,6 @@ test("Codex adapter pins billing context per turn and changes lanes only before 
     params: { threadId: started.codexThreadId, turnId: "turn-1", turn: { id: "turn-1", status: "completed" } },
   });
 
-  transport.rateLimitsResponse = {
-    rateLimitsByLimitId: {
-      codex: {
-        primary: { usedPercent: 100, windowDurationMins: 300, resetsAt: 1_779_000_000 },
-        rateLimitReachedType: "usage_limit",
-      },
-    },
-  };
   const secondTurnRequestOffset = transport.requests.length;
   await adapter.startTurn({
     commandId: "turn-start-api",
@@ -3543,8 +3538,8 @@ test("Codex adapter pins billing context per turn and changes lanes only before 
   const metrics = events.filter((event) => event.eventType === "metrics.updated");
   const firstBilling = metrics[0]?.payload.billingContext as Record<string, Json> | undefined;
   const secondBilling = metrics[1]?.payload.billingContext as Record<string, Json> | undefined;
-  assert.equal(firstBilling?.lane, "chatgpt_plan");
-  assert.equal(firstBilling?.model, "gpt-chat-turn");
+  assert.equal(firstBilling?.lane, "openai_api");
+  assert.equal(firstBilling?.model, "gpt-standard-turn");
   assert.equal(firstBilling?.serviceTier, "regular");
   assert.equal(firstBilling?.inferenceType, "normal");
   assert.equal(firstBilling?.turnId, "turn-1");
@@ -3555,7 +3550,7 @@ test("Codex adapter pins billing context per turn and changes lanes only before 
   assert.equal(secondBilling?.turnId, "turn-2");
 
   const secondTurnRequests = transport.requests.slice(secondTurnRequestOffset).map((request) => request.method);
-  assert.deepEqual(secondTurnRequests, ["account/rateLimits/read", "account/login/start", "turn/start"]);
+  assert.deepEqual(secondTurnRequests, ["turn/start"]);
   const physicalTurnParams = transport.requests
     .filter((request) => request.method === "turn/start")
     .map((request) => request.params as Record<string, unknown>);

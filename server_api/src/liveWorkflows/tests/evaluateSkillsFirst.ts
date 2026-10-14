@@ -18,9 +18,10 @@ const dataset = JSON.parse(
 const outputs = (
   await Promise.all(
     files.map(async (file) => {
-      const data = JSON.parse(await readFile(file, "utf8"));
+      const parsed = JSON.parse(await readFile(file, "utf8"));
+      const data = Array.isArray(parsed) ? parsed : parsed.jobDescriptions;
       if (!Array.isArray(data))
-        throw new Error(`${file}: expected an exported record array`);
+        throw new Error(`${file}: expected a memory export or record array`);
       return data;
     }),
   )

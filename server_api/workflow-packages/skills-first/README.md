@@ -24,13 +24,13 @@ flowchart LR
   REF[Bound reference dataset] --> C
   C --> LC[Optional license / education comparison]
   LC --> X[Export]
-  X --> FILES[Versioned JSON / CSV / Markdown]
+  X --> FILES[Versioned JSON / CSV / Excel / Markdown]
   X -->|Approved bulk runs only| OUT[Write-enabled Your Priorities / Sheets / Docs targets]
 ```
 
 Disabled processing stages pass the preceding enabled stage's result through. The default is normalize → split levels → analyze → rewrite → export. [graph.json](graph.json) is the executable graph and the source for the live UI; keep it current when adding or changing agents. The diagram above is the initial overview, not a separate execution engine. Live node progress and child tasks are reported by the runtime.
 
-Each processing node's `description` explains its prerequisites. Edges enforce the order between agents. Inside `analyze`, tasks execute as degrees → evidence → mandatory → licenses → barriers → consistency → readingLevel by default. Evidence review consumes degree findings; consistency consumes degrees, evidence, mandatory, licenses and barriers. The other tasks read the job independently. These internal prerequisites are enforced in `source/analysis.ts`.
+Each processing node's `description` explains its prerequisites. Edges enforce the order between agents. Inside `analyze`, tasks execute as degrees → evidence → mandatory → licenses → barriers → consistency → readingLevel by default. Evidence review consumes degree findings; consistency consumes degrees, evidence, mandatory, licenses and barriers. Reading-level comparison also requires degree extraction; the other tasks read the job independently. These internal prerequisites are enforced in `source/analysis.ts`.
 
 For an early, small experiment, set `analyze.configuration.tasks` to `["evidence"]` and request `trial --target analyze --sample 2`. The runtime includes normalize and levels, then the analysis agent runs degrees before evidence and stops. A consistency-only selection includes all five prerequisite tasks automatically. Invalid or empty selections fail before model calls. Omit `tasks` to run all seven. Partial analysis remains suitable for targeted experiments; restore the full selection before evaluating the whole rewrite pipeline. The last selected stage still has downloadable JSON results without invoking the export node.
 
@@ -48,7 +48,7 @@ For a nested or unfamiliar source format, Codex can add a deterministic adapter 
 | `rewrite` | `source/rewrite.ts` | Rewrites using analysis and evidence, then independently checks duties, legal requirements, inclusion, readability and facts; at most three attempts |
 | `compare` | `source/compare.ts` | Optional comparison against an immutable reference dataset snapshot |
 | `compare-license` | `source/compare.ts` | Optional comparison between license and education findings |
-| `export` | `source/export.ts` | JSON, formula-safe CSV and Markdown; bounded multipart output for larger runs; explicitly bound bulk exports |
+| `export` | `source/export.ts` | Original memory JSON, 74-column CSV, Excel and Markdown; bounded multipart output for larger runs; explicitly bound bulk exports |
 
 Missing evidence produces `unknown`, not a finding that a requirement does not exist. Analysis quotes must occur in the original text. Research citations must occur in the supplied source content and point to the matching URL. Rewrites that fail validation retain the original text, errors and unknown status. Malformed responses receive local JSON syntax repair before validation; no extra paid request is issued for that repair. Invalid per-record outputs are checkpointed with review notes and skipped by subsequent model stages. A trial with failed records cannot authorize a bulk run. Provider/network failures pause the run for recovery. Research retrieval timestamps are persisted with search results so replay uses identical model inputs. These checks establish traceability; they do not replace a human review of employment or legal policy.
 
@@ -120,7 +120,7 @@ For an output, create a separate binding with `writeEnabled:true`, and add its I
 {"outputBindings":["results-sheet","results-group"]}
 ```
 
-Your Priorities output requires administration of the target group. Google Sheets output should bind an explicit A1 range large enough for ten columns and all records plus a header, such as `Results!A1:J10001`; chunked writes remain inside that rectangle and use RAW values. Google Docs output appends. Trials always keep exports local, even if output bindings are configured. External exports include only complete records without errors; local artifacts retain all records for review. Bulk exports use stable request IDs so an ambiguous external write must be reconciled before it can be retried. Large local exports use numbered files and a `skills-first-manifest.json` index.
+Your Priorities output requires administration of the target group. Google Sheets output should bind an explicit A1 range large enough for 74 columns and all joined records plus two header rows, such as `Results!A1:BV10002`; chunked writes remain inside that rectangle and use RAW values. Google Docs output appends. Trials always keep exports local, even if output bindings are configured. External exports include only complete records without errors; local artifacts retain all records for review. Bulk exports use stable request IDs so an ambiguous external write must be reconciled before it can be retried. Large local exports use numbered files and a `skills-first-manifest.json` index.
 
 ## Evolving the package with Codex
 
@@ -155,3 +155,33 @@ Use targeted trials to evaluate an individual stage together with its dependenci
 Version 1.3 adds node dependency descriptions and targeted internal analysis tasks. Rebuild the processing runtime image with the current server modules when upgrading, so its graph validator accepts the descriptions and shares the API's dependency ordering.
 
 From `server_api`, run `npm run typecheck:live-workflows`, `npm run test:live-workflows` and the fixture-backed processing container smoke test described in the runtime guide. Fixtures exercise all nine stages, including the optional research and comparison paths, without charging provider accounts. This package ships under the copied MIT license in [LICENSE](LICENSE).
+
+## Memory and spreadsheet compatibility (1.4)
+
+`source/memoryTypes.d.ts` is the shared Skills First data contract. New agent responses populate the original nested fields as well as cited task findings: mandatory-status explanations, license type, all nine consistency checks and reading-level explanations are retained. Unknowns are null; the score counts only `pass`, with `n/a`, `unknown` and failed checks kept separately. Existing source snapshots and saved runs remain immutable. To use this version in an existing workspace, copy the updated package files into its draft and validate; new trials use the revised contract.
+
+The downloaded JSON is the original memory wrapper with `jobDescriptions` and `rewrittenJobDescriptions`, plus research collections and a schema version. Internal Results chunks remain arrays. `schemas/memory.json` describes downloads; `schemas/output.json` describes the runner output. The scorer accepts either representation.
+
+The Excel export uses the reference master’s 74-column order and four named sheets: `merged (master + legal)`, `Master sheet old`, `license info`, `legal research`. It adds `Documents` and `Review and provenance` for source text, accepted rewrites, stable IDs and review details. Description/header rows are frozen and filterable; multiple legal findings expand the merged rows. Unknown reference/manual values stay blank. Formula-like source strings remain text; long cells continue on `Long cell text`. JSON retains the complete structured record. The host renders the bounded table description using its existing Excel dependency, keeping the VM image small.
+
+Optional license comparison accepts normalized `licenseComparisons` on jobs or reference rows using the 13 workbook headers in `configuration.reference` or `referenceBinding`. Shared reference rows match the exact license type. WVU/manual fields stay supplied inputs; generated comparisons require source/quote pairs from the research agent and remain unknown when evidence is incomplete.
+
+## Original-agent comparison (1.4.1)
+
+Compared with `policy-synth/projects/skillsFirst/agents/src` before the October 2026 Idaho pilot:
+
+| Original capability | Current implementation and difference |
+| --- | --- |
+| Degree extraction and education taxonomy | All seven education types and phrase lists retained; explicit preferred/alternative/mandatory status and exact quotes added. |
+| Evidence review, mandatory flags and explanations | Seven-task analysis retains the evidence review, five flags, alternative qualifications and three explanation fields. Calls are combined; unsupported values can be null. |
+| License description, type and authority | All fields retained. Authority and educational prerequisites require supplied evidence; the original's general-knowledge inference is deliberately excluded. |
+| Barriers and nine consistency checks | All fields and pass-count scoring retained. One model review replaces the original mix of seven JavaScript checks and model checks; applicability judgments can vary and need calibration. Checks distinguish unknown from false. The original rule that treated a required degree without alternatives as inherently contradictory is not copied. |
+| Reading-level assessment and difference analysis | Original six reading categories restored. Reading-level comparison consumes degree findings and is saved in memory, Results and the Documents sheet. Flesch–Kincaid remains a local calculation. Source text is not overwritten during readability analysis. |
+| Multi-level handling | Runs before analysis, creates stable children and independently checks coverage; the original relied on supplied multi-level flags and title codes. |
+| Rewriting | Every requested record is eligible for a bounded, independently reviewed rewrite. Occupational bucketing and the original high-school-only mismatch gate are not used. |
+| Research and reference comparison | Optional bounded Firecrawl research replaces the old search/Elo orchestration; exact license matching replaces fuzzy cross-sheet matching. These paths need separate live tests with research and reference inputs. |
+| Memory and spreadsheet export | Original nested fields and the reference's 74 columns retained, with private downloadable files and provenance. No Google connector is needed for a local trial. |
+
+The comparison found and fixed loss of completed findings when a later model response failed, an always-empty `llmErrors` export, unconstrained reading-level labels, and a missing readable display/export of the education/reading-level comparison. A rejected response stays in `analysis.rejectedAnalysis`; validated earlier fields and computed readability remain available. Provider/network errors still pause runs. Errors remain explicit and block downstream paid processing and bulk approval.
+
+The Idaho browser pilot now checks settled provider responses against nested memory, the Results UI, all CSV/Excel master columns, document fields and review details. It writes `value-verification.json`, reporting model-returned nulls separately from dropped or changed values. This verifies preservation and exact quotations, not the semantic correctness of every model conclusion.

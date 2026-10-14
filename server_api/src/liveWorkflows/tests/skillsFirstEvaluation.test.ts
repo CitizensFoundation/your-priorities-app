@@ -11,17 +11,13 @@ type Json = YpWorkflowJson;
 const asJson = (value: unknown): Json => JSON.parse(JSON.stringify(value));
 const [normalize, levels, analyze, research, rewrite, exportResults] =
   await Promise.all(
-    [
-      "normalize",
-      "levels",
-      "analysis",
-      "research",
-      "rewrite",
-      "export",
-    ].map(loadAgent),
+    ["normalize", "levels", "analysis", "research", "rewrite", "export"].map(
+      loadAgent,
+    ),
   );
 const evaluate = await loadEvaluator();
 import { researchResponse } from "./researchFixture.js";
+import { analysisResponse } from "./analysisFixture.js";
 const dataset = JSON.parse(
   await readFile(
     new URL(
@@ -127,7 +123,7 @@ test("versioned synthetic benchmark exercises normalization, split, analysis, re
                 "An engineering degree is required.",
               ),
             );
-          return { status: "known", findings: {}, evidence: [job.text] };
+          return analysisResponse(_key.split(":").at(-1)!, job.text);
         },
       }),
       current,
@@ -193,7 +189,7 @@ test("versioned synthetic benchmark exercises normalization, split, analysis, re
       current,
     );
     const artifacts = new Map<string, string>();
-    await exportResults(
+    current = await exportResults(
       context("export", {
         mode: "bulk",
         configuration: { outputBindings: ["fixture"] },
@@ -208,7 +204,7 @@ test("versioned synthetic benchmark exercises normalization, split, analysis, re
       current,
     );
     assert.deepEqual(
-      JSON.parse(artifacts.get("skills-first.json")!),
+      JSON.parse(artifacts.get("skills-first.json")!).jobDescriptions,
       current,
     );
     outputs.push(...(current as any[]));
@@ -227,9 +223,7 @@ test("versioned synthetic benchmark exercises normalization, split, analysis, re
         ...row,
         source: "fixture-asset",
         id: row.parentId ? row.id : `fixture-asset:${row.id}`,
-        ...(row.parentId
-          ? { parentId: `fixture-asset:${row.parentId}` }
-          : {}),
+        ...(row.parentId ? { parentId: `fixture-asset:${row.parentId}` } : {}),
       })),
     ).success,
     true,
@@ -265,9 +259,7 @@ test("versioned synthetic benchmark exercises normalization, split, analysis, re
       [
         "--import",
         "tsx",
-        fileURLToPath(
-          new URL("./evaluateSkillsFirst.ts", import.meta.url),
-        ),
+        fileURLToPath(new URL("./evaluateSkillsFirst.ts", import.meta.url)),
         file,
       ],
       { encoding: "utf8" },
@@ -281,12 +273,7 @@ test("splitting preserves lineage and stable IDs after checkpoint loss; invalid 
   const example = dataset.cases.find((c: any) => c.id === "two-levels");
   const input = await normalize(context("normalize"), [example.input]);
   const requests: Json[] = [];
-  const model: WorkflowContext["model"] = async (
-    key,
-    system,
-    value,
-    role,
-  ) => {
+  const model: WorkflowContext["model"] = async (key, system, value, role) => {
     requests.push(asJson({ key, system, value, role }));
     return role === "review" ? levelReview : extraction;
   };
@@ -298,8 +285,7 @@ test("splitting preserves lineage and stable IDs after checkpoint loss; invalid 
   assert.equal(new Set(rows.map((r) => r.id)).size, 2);
   assert.ok(
     rows.every(
-      (r) =>
-        r.parentId === example.id && r.originalText === example.input.text,
+      (r) => r.parentId === example.id && r.originalText === example.input.text,
     ),
   );
   for (const bad of [
@@ -367,9 +353,7 @@ test("research enforces query/source/follow-up bounds and records uncertainty in
   assert.equal(result[0].analysis.licenses.researchTrace.length, 2);
 });
 test("research rejects invented source URLs before accepting a finding", async () => {
-  const input = await normalize(context("normalize"), [
-    dataset.cases[0].input,
-  ]);
+  const input = await normalize(context("normalize"), [dataset.cases[0].input]);
   const result = (await research(
     context("licenses", {
       model: async (_key, system, input) => {

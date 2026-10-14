@@ -15,6 +15,8 @@ import { codexAuthMaterialFingerprintSha256 } from "../vm/codex/codexAuthMateria
 import { fixtureModelsJson } from "./modelFixture.js";
 import { randomUUID } from "node:crypto";
 import { fingerprint } from "../schemas.js";
+import { assistantSettings } from "../modelDefaults.js";
+import { turnStartParams } from "../vm/codex/appServerRequests.js";
 import { resolveAuthEnvironment } from "../vm/codex/codexAuth.js";
 import type { VmSessionStartPayload } from "../contracts/index.js";
 import type { PackageSnapshot } from "../packages.js";
@@ -678,7 +680,223 @@ test("chat uses the active thread and the group administrator's selected Codex m
   assert.deepEqual(sent?.overrides, {
     model: "test-codex",
     reasoningEffort: "max",
+    serviceTier: "regular",
   });
+});
+test("live assistant settings apply on the next turn, preserve steering and reuse the thread", async () => {
+  const commands: { messageType: string; data: Record<string, unknown> }[] = [];
+  const { store, service } = await setup(async (command) => {
+    commands.push(command);
+    if (command.messageType === "session.turn.start")
+      VmSessionTurnStartPayloadSchema.parse(command.data);
+    return {};
+  });
+  const actor = { userId: 10, admin: false };
+  const state = await store.transact(1, async (tx) => {
+    tx.state.sessionId = runId;
+    await tx.put("session", runId, {
+      id: runId,
+      ownerId: 10,
+      status: "ready",
+      active: false,
+      threadId: "thread-1",
+    });
+    return tx.state;
+  });
+  service.workspaceGroups.set(state.id, 1);
+  const original = assistantSettings(state.config);
+  const selected: YpWorkflowAssistantSettings = {
+    model: "gpt-6-sol",
+    reasoningEffort: "high",
+    serviceTier: "fast",
+  };
+  const runBefore = await store.transact(1, (tx) => tx.get("run", runId));
+  const event = (
+    seq: number,
+    eventType: "turn.started" | "turn.completed",
+    turnId: string,
+  ) =>
+    service.ingestSession(hostId, {
+      seq,
+      eventType,
+      sessionId: runId,
+      workspaceId: state.id,
+      vmHostId: hostId,
+      codexThreadId: "thread-1",
+      codexTurnId: turnId,
+      payload: {},
+    });
+  await service.chat(1, actor, "First message", false);
+  await event(1, "turn.started", "turn-one");
+  await service.updateAssistantSettings(1, actor, {
+    settings: selected,
+    expected: original,
+  });
+  const running = await service.snapshot(1, actor);
+  assert.deepEqual(running.assistantSession, {
+    active: true,
+    turnSettings: original,
+  });
+  assert.equal(running.workspace.revision, state.revision);
+  assert.deepEqual(running.workspace.graph, state.graph);
+  assert.deepEqual(
+    await store.transact(1, (tx) => tx.get("run", runId)),
+    runBefore,
+  );
+  assert.equal(
+    running.workspace.config.budgetMicros,
+    state.config.budgetMicros,
+  );
+  await service.chat(1, actor, "Focus on the first record", true);
+  assert.equal(commands.at(-1)!.messageType, "session.turn.steer");
+  assert.equal(commands.at(-1)!.data.codexTurnId, "turn-one");
+  assert.equal(commands.at(-1)!.data.overrides, undefined);
+  await assert.rejects(
+    service.chat(1, actor, "Do not overlap turns", false),
+    /assistant is working/,
+  );
+  // Discovery is available to the active operator, including a non-admin.
+  await service.codexModels(1, actor);
+  assert.equal(commands.at(-1)!.messageType, "workflow.models");
+  await event(2, "turn.completed", "turn-one");
+  await assert.rejects(
+    service.chat(1, actor, "No active turn", true),
+    /active assistant turn/,
+  );
+  await service.chat(1, actor, "Second message", false);
+  assert.deepEqual(commands.at(-1)!.data.overrides, selected);
+  assert.equal(commands.at(-1)!.data.codexThreadId, "thread-1");
+  assert.deepEqual((await service.snapshot(1, actor)).assistantSession, {
+    active: true,
+    turnSettings: selected,
+  });
+  await event(3, "turn.started", "turn-two");
+  await event(4, "turn.completed", "turn-two");
+  const standard: YpWorkflowAssistantSettings = {
+    ...selected,
+    serviceTier: "regular",
+  };
+  await service.updateAssistantSettings(1, actor, {
+    settings: standard,
+    expected: selected,
+  });
+  await service.chat(1, actor, "Third message", false);
+  // Verify the actual app-server request clears a previous Fast override.
+  const params = turnStartParams(
+    {
+      commandId: "test-command",
+      sessionId: runId,
+      runId: state.id,
+      runStepId: "test-step",
+      nodeId: "test-node",
+      workspaceId: state.id,
+      vmHostId: hostId,
+      runtimeProfileId: state.id,
+      inputPayload: {},
+      runtimeSnapshot: { modelDefaults: { ...selected } },
+      layout: {
+        rootPath: "/tmp/workflow",
+        workspacePath: "/tmp/workflow/workspace",
+        codexHomePath: "/tmp/workflow/codex-home",
+        artifactsPath: "/tmp/workflow/artifacts",
+        cachePath: "/tmp/workflow/cache",
+      },
+    },
+    [{ type: "text", text: "Third message" }],
+    commands.at(-1)!.data.overrides as Record<string, string>,
+  );
+  assert.equal(params.model, selected.model);
+  assert.equal(params.effort, selected.reasoningEffort);
+  assert.equal(params.serviceTier, null);
+  assert.ok(
+    !commands.some((c) =>
+      ["session.start", "session.terminate", "session.interrupt"].includes(
+        c.messageType,
+      ),
+    ),
+  );
+  const messages = (await store.events(1, 0)).filter(
+    (e) => e.type === "chat.user",
+  );
+  assert.deepEqual(
+    messages.map((e) => e.data.assistantSettings),
+    [original, original, selected, standard],
+  );
+  assert.deepEqual(
+    messages.map((e) => e.data.steer),
+    [false, true, false, false],
+  );
+});
+test("assistant settings reject stale edits, invalid values, and operators without current control", async () => {
+  const { store, service } = await setup();
+  const actor = { userId: 10, admin: false };
+  const expected = assistantSettings(
+    (await service.snapshot(1, actor)).workspace.config,
+  );
+  const settings: YpWorkflowAssistantSettings = {
+    ...expected,
+    model: "gpt-6-sol",
+    reasoningEffort: "high",
+    serviceTier: "fast",
+  };
+  for (const invalid of [
+    { ...settings, model: "  " },
+    { ...settings, reasoningEffort: "auto" },
+    { ...settings, serviceTier: "unlimited" },
+    { ...settings, budgetMicros: 500 },
+  ])
+    await assert.rejects(
+      service.updateAssistantSettings(1, actor, {
+        settings: invalid,
+        expected,
+      }),
+    );
+  for (const unauthorized of [
+    { userId: 11, admin: true },
+    { userId: 99, admin: false },
+  ]) {
+    await assert.rejects(
+      service.updateAssistantSettings(1, unauthorized, { settings, expected }),
+      /operator/,
+    );
+    await assert.rejects(service.codexModels(1, unauthorized), /operator/);
+  }
+  await store.transact(1, (tx) =>
+    tx.put("lease", "transition", { id: "fixture" }),
+  );
+  await assert.rejects(
+    service.updateAssistantSettings(1, actor, { settings, expected }),
+    /transition/,
+  );
+  await store.transact(1, (tx) => tx.remove("lease", "transition"));
+  await service.updateAssistantSettings(1, actor, { settings, expected });
+  const current = (await service.snapshot(1, actor)).workspace.config;
+  await assert.rejects(
+    service.configure(
+      1,
+      { ...actor, admin: true },
+      {
+        ...current,
+        codexModel: expected.model,
+        expectedAssistantSettings: expected,
+      },
+    ),
+    /settings changed/,
+  );
+  await assert.rejects(
+    service.updateAssistantSettings(1, actor, { settings: expected, expected }),
+    /settings changed/,
+  );
+  assert.deepEqual(
+    assistantSettings((await service.snapshot(1, actor)).workspace.config),
+    settings,
+  );
+  assert.equal(
+    (await store.events(1, 0)).filter(
+      (e) => e.type === "assistant.settings.updated",
+    ).length,
+    1,
+  );
 });
 test("disconnect serializes account replacement and takeover until the old session has stopped", async () => {
   let finish!: () => void, entered!: () => void;

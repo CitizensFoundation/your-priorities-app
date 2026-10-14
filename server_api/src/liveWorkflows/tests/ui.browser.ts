@@ -12,6 +12,311 @@ test.beforeEach(async ({ request, page }) => {
     page.getByRole("button", { name: "Results", exact: true }),
   ).toBeVisible();
 });
+test("assistant controls discover capabilities, save independently, and persist after reload", async ({
+  page,
+  request,
+}) => {
+  const controls = page.locator("yp-live-workflow-assistant-settings");
+  const settings = controls.getByRole("button", {
+    name: "Assistant settings",
+    exact: true,
+  });
+  const model = controls.getByRole("combobox", {
+    name: "Assistant model",
+    exact: true,
+  });
+  const effort = controls.getByRole("combobox", {
+    name: "Reasoning effort",
+    exact: true,
+  });
+  const speed = controls.getByRole("combobox", {
+    name: "Response speed",
+    exact: true,
+  });
+  await expect(controls.getByRole("dialog")).toBeHidden();
+  await expect(settings).toContainText("test-codex · max");
+  expect((await controls.boundingBox())!.height).toBeLessThan(44);
+  await page
+    .getByRole("textbox", {
+      name: "Message Skills First Assistant",
+      exact: true,
+    })
+    .fill("Keep this message while I choose a model.");
+  await settings.click();
+  await expect(model).toHaveValue("test-codex");
+  await expect(effort).toHaveValue("max");
+  await expect(speed).toHaveValue("regular");
+  await controls
+    .getByRole("button", { name: "Load models", exact: true })
+    .click();
+  await expect(controls.locator("datalist option")).toHaveCount(2);
+  await model.fill("fixture-codex");
+  await expect(controls.getByRole("alert")).toContainText(
+    "Choose a reasoning effort",
+  );
+  await expect(page.locator(".composer button.primary")).toBeDisabled();
+  await effort.selectOption("high");
+  await expect(effort.locator("option")).toHaveCount(2);
+  await speed.selectOption("fast");
+  const before = (await (await request.get("/__fixture")).json()).snapshot;
+  await controls
+    .getByRole("button", { name: "Apply to next turn", exact: true })
+    .click();
+  await expect(controls.getByRole("status")).toContainText(
+    "Saved for the next turn",
+  );
+  await expect(controls.getByRole("dialog")).toBeHidden();
+  await expect(settings).toBeFocused();
+  await expect(
+    page.getByRole("button", { name: "Send", exact: true }),
+  ).toBeEnabled();
+  await expect(
+    page.getByRole("textbox", {
+      name: "Message Skills First Assistant",
+      exact: true,
+    }),
+  ).toHaveValue("Keep this message while I choose a model.");
+  const after = await (await request.get("/__fixture")).json();
+  const saved = after.requests.find((r: { url: string }) =>
+    r.url.endsWith("/assistant-settings"),
+  );
+  expect(saved.body).toEqual({
+    settings: {
+      model: "fixture-codex",
+      reasoningEffort: "high",
+      serviceTier: "fast",
+    },
+    expected: {
+      model: "test-codex",
+      reasoningEffort: "max",
+      serviceTier: "regular",
+    },
+  });
+  expect(after.snapshot.workspace.revision).toBe(before.workspace.revision);
+  expect(after.snapshot.workspace.graph).toEqual(before.workspace.graph);
+  expect(after.snapshot.runs).toEqual(before.runs);
+  await page.reload();
+  await expect(controls.getByRole("dialog")).toBeHidden();
+  await settings.click();
+  await expect(model).toHaveValue("fixture-codex");
+  await expect(effort).toHaveValue("high");
+  await expect(speed).toHaveValue("fast");
+  await controls
+    .getByRole("button", { name: "Close assistant settings", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  const admin = page.locator("yp-live-workflow-admin");
+  await expect(
+    admin.getByRole("combobox", { name: "Codex model", exact: true }),
+  ).toHaveValue("fixture-codex");
+  await expect(
+    admin.getByRole("combobox", {
+      name: "Codex reasoning effort",
+      exact: true,
+    }),
+  ).toHaveValue("high");
+  await expect(
+    admin.getByRole("combobox", { name: "Codex response speed", exact: true }),
+  ).toHaveValue("fast");
+  // An admin form opened before a chat-side change must not overwrite it.
+  await settings.click();
+  await model.fill("test-codex");
+  await controls
+    .getByRole("button", { name: "Apply to next turn", exact: true })
+    .click();
+  await expect(controls.getByRole("status")).toContainText(
+    "Saved for the next turn",
+  );
+  await admin
+    .getByRole("button", { name: "Save workflow settings", exact: true })
+    .click();
+  await expect(admin.getByRole("alert")).toContainText(
+    "Assistant settings changed",
+  );
+  await admin
+    .getByRole("button", { name: "Reload saved settings", exact: true })
+    .click();
+  await expect(
+    admin.getByRole("combobox", { name: "Codex model", exact: true }),
+  ).toHaveValue("test-codex");
+});
+test("assistant settings change during a live turn without relabeling steering or previous messages", async ({
+  page,
+  request,
+}) => {
+  const controls = page.locator("yp-live-workflow-assistant-settings");
+  const settings = controls.getByRole("button", {
+    name: "Assistant settings",
+    exact: true,
+  });
+  await request.post("/__fixture/assistant-active");
+  await settings.click();
+  await expect(controls.getByRole("status")).toContainText(
+    "Running: test-codex · max reasoning · Standard",
+  );
+  await controls
+    .getByRole("combobox", { name: "Assistant model", exact: true })
+    .fill("fixture-codex");
+  await controls
+    .getByRole("combobox", { name: "Reasoning effort", exact: true })
+    .selectOption("high");
+  await controls
+    .getByRole("combobox", { name: "Response speed", exact: true })
+    .selectOption("fast");
+  await controls
+    .getByRole("button", { name: "Apply to next turn", exact: true })
+    .click();
+  await expect(settings).toHaveAttribute("title", /Running: test-codex/);
+  await expect(settings).toContainText("Next turn");
+  await expect(controls.getByRole("dialog")).toBeHidden();
+  await expect(controls.getByText(/Saved for the next turn/)).toBeVisible();
+  await controls.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: "/tmp/skills-first-assistant-settings-compact.png",
+    fullPage: true,
+  });
+  await settings.click();
+  await expect(controls.getByText(/Running: test-codex/)).toBeVisible();
+  await page.screenshot({
+    path: "/tmp/skills-first-assistant-settings-dialog.png",
+    fullPage: true,
+  });
+  await page.keyboard.press("Escape");
+  await expect(controls.getByRole("dialog")).toBeHidden();
+  await expect(settings).toBeFocused();
+  const message = page.getByRole("textbox", {
+    name: "Message Skills First Assistant",
+    exact: true,
+  });
+  await message.fill("Steer with the original settings.");
+  await page
+    .getByRole("checkbox", { name: "Steer current turn", exact: true })
+    .check();
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(
+    page.getByText("Steering: test-codex · max reasoning · Standard", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await request.post("/__fixture/assistant-complete");
+  await expect(settings).not.toHaveAttribute("title", /Running:/);
+  await message.fill("Use the new settings for this message.");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(
+    page.getByText("Requested: fixture-codex · high reasoning · Fast", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.reload();
+  await settings.click();
+  await expect(controls.getByText(/Running: fixture-codex/)).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByText("Steering: test-codex · max reasoning · Standard", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Requested: fixture-codex · high reasoning · Fast", {
+      exact: true,
+    }),
+  ).toBeVisible();
+});
+test("assistant settings preserve edits on failure, detect competing changes and support cancel", async ({
+  page,
+  request,
+}) => {
+  const controls = page.locator("yp-live-workflow-assistant-settings");
+  const settings = controls.getByRole("button", {
+    name: "Assistant settings",
+    exact: true,
+  });
+  await settings.click();
+  const model = controls.getByRole("combobox", {
+    name: "Assistant model",
+    exact: true,
+  });
+  const apply = controls.getByRole("button", {
+    name: "Apply to next turn",
+    exact: true,
+  });
+  await model.fill("fixture-codex");
+  await page.route(
+    "**/assistant-settings",
+    (route) =>
+      route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Settings temporarily unavailable" }),
+      }),
+    { times: 1 },
+  );
+  await apply.click();
+  await expect(controls.getByRole("alert")).toHaveText(
+    "Settings temporarily unavailable",
+  );
+  await expect(model).toHaveValue("fixture-codex");
+  await expect(page.locator(".composer button.primary")).toBeDisabled();
+  await request.post("/__fixture/assistant-settings", {
+    data: { codexModel: "another-tab-model", codexReasoningEffort: "low" },
+  });
+  await expect(
+    controls.getByText(/Assistant settings changed elsewhere/),
+  ).toBeVisible();
+  await expect(model).toHaveValue("fixture-codex");
+  await expect(apply).toBeDisabled();
+  await controls
+    .getByRole("button", { name: "Reload settings", exact: true })
+    .click();
+  await expect(model).toHaveValue("another-tab-model");
+  await expect(
+    controls.getByRole("combobox", { name: "Reasoning effort", exact: true }),
+  ).toHaveValue("low");
+  await model.fill("cancel-me");
+  await controls.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(controls.getByRole("dialog")).toBeHidden();
+  await expect(settings).toContainText("another-tab-model");
+  await expect(settings).toBeFocused();
+  await settings.click();
+  await model.fill("discard-with-escape");
+  await page.keyboard.press("Escape");
+  await expect(settings).toContainText("another-tab-model");
+  await expect(
+    page.getByRole("button", { name: "Send", exact: true }),
+  ).toBeEnabled();
+});
+test("members can see assistant settings but cannot edit or load models", async ({
+  page,
+  request,
+}) => {
+  await request.post("/__fixture/member");
+  await page.reload();
+  const controls = page.locator("yp-live-workflow-assistant-settings");
+  await controls
+    .getByRole("button", { name: "Assistant settings", exact: true })
+    .click();
+  await expect(
+    controls.getByRole("combobox", { name: "Assistant model", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    controls.getByRole("combobox", { name: "Reasoning effort", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    controls.getByRole("combobox", { name: "Response speed", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    controls.getByRole("button", { name: "Apply to next turn", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    controls.getByRole("button", { name: "Load models", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    controls.getByRole("button", {
+      name: "Close assistant settings",
+      exact: true,
+    }),
+  ).toBeEnabled();
+});
 test("review results: pagination, search, unknowns, children and trial comparison", async ({
   page,
 }) => {
@@ -22,6 +327,28 @@ test("review results: pagination, search, unknowns, children and trial compariso
     .selectOption("33333333-3333-4333-8333-333333333333");
   await expect(panel.getByText("25 matching results")).toBeVisible();
   await expect(panel.locator("article")).toHaveCount(20);
+  const findings = panel
+    .getByRole("region", { name: "Skills First findings" })
+    .first();
+  await expect(findings).toBeVisible();
+  await expect(findings).toContainText("Not checked");
+  await expect(
+    findings.getByText("Degree mandatory", { exact: true }).locator(".."),
+  ).toContainText("No");
+  await expect(
+    findings.locator("dl > div").filter({ hasText: "License required" }),
+  ).toContainText("Unknown");
+  await findings
+    .getByText("Degree paths and evidence", { exact: true })
+    .click();
+  await expect(findings).toContainText("Degree explanation unavailable");
+  await findings
+    .getByText("License and legal research", { exact: true })
+    .click();
+  await expect(findings.getByText(/No legal research results/)).toBeVisible();
+  await panel.locator("article").first().screenshot({
+    path: "/tmp/skills-first-format-review/results-findings.png",
+  });
   await panel.getByRole("button", { name: "Next results" }).click();
   await expect(panel.locator("article")).toHaveCount(5);
   await panel

@@ -99,10 +99,17 @@ export async function startManualHarness(
     browserLogin?: boolean;
     browserBatch?: boolean;
     offlineProcessingDelayMs?: number;
+    processingConcurrency?: number;
     observeBrowserRequest?: RequestHandler;
     manualPage?: { instructions: string; fixture: string; filename: string };
   } = {},
 ) {
+  const processingConcurrency = options.processingConcurrency ?? 1;
+  assert.ok(
+    Number.isInteger(processingConcurrency) &&
+      processingConcurrency >= 1 &&
+      processingConcurrency <= 8,
+  );
   const processingModels = [
     config.processingModel,
     ...(config.comparisonProcessingModel
@@ -566,11 +573,12 @@ export async function startManualHarness(
       hostId: host.id,
       codexModel: config.codexModel,
       codexReasoningEffort: config.codexReasoningEffort,
+      codexServiceTier: config.codexServiceTier,
       operatorIds: [actor.userId],
       budgetMicros: config.trialBudgetMicros,
       trialBudgetMicros: config.trialBudgetMicros,
       quotaBytes: 16 * 1024 ** 2,
-      concurrency: 1,
+      concurrency: processingConcurrency,
     });
     await request("/operator", "POST", { takeover: false });
     const state = (await request<YpWorkflowSnapshot>("")).workspace;
@@ -594,7 +602,7 @@ export async function startManualHarness(
       );
     for (const node of state.graph.nodes)
       if (node.kind === "agent") {
-        node.configuration.concurrency = 1;
+        node.configuration.concurrency = processingConcurrency;
         node.models = { default: config.processingModel.id };
         node.reasoningEffort = config.processingReasoningEffort;
       }

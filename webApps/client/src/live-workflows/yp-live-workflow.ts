@@ -11,6 +11,7 @@ import "./yp-live-workflow-graph.js";
 import "./yp-live-workflow-admin.js";
 import "./yp-live-workflow-results.js";
 import "./yp-live-workflow-message.js";
+import { assistantSettingsLabel } from "./yp-live-workflow-assistant-settings.js";
 
 type ChatItem = {
   id: string;
@@ -19,6 +20,7 @@ type ChatItem = {
   completed?: boolean;
   userId?: number;
   at?: string;
+  modelDetails?: string;
 };
 type Approval = {
   requestId: string | number;
@@ -31,6 +33,7 @@ export class YpLiveWorkflow extends LitElement {
   @state() private snapshot?: YpWorkflowSnapshot;
   @state() private error = "";
   @state() private busy = false;
+  @state() private assistantSettingsPending = false;
   @state() private missing = false;
   @state() private mayCreate = false;
   @state() private tab: "graph" | "data" | "results" | "usage" | "settings" =
@@ -528,6 +531,7 @@ export class YpLiveWorkflow extends LitElement {
       this.stream = undefined;
       this.cursor = 0;
       this.chat = [];
+      this.assistantSettingsPending = false;
       this.approvals = [];
       this.snapshot = undefined;
       this.selectedAssets = [];
@@ -637,7 +641,8 @@ export class YpLiveWorkflow extends LitElement {
       )
     )
       this.approvals = [];
-    if (event.type === "chat.user")
+    if (event.type === "chat.user") {
+      const settings = this.record(event.data.assistantSettings);
       this.chat = [
         ...this.chat,
         {
@@ -649,8 +654,13 @@ export class YpLiveWorkflow extends LitElement {
               ? event.data.userId
               : undefined,
           at: event.at,
+          modelDetails:
+            typeof settings.model === "string"
+              ? `${event.data.steer ? "Steering" : "Requested"}: ${assistantSettingsLabel(settings as unknown as YpWorkflowAssistantSettings)}`
+              : undefined,
         },
       ];
+    }
     if (event.type === "session.event") {
       const type = String(event.data.eventType),
         payload = this.record(event.data.payload),
@@ -769,6 +779,7 @@ export class YpLiveWorkflow extends LitElement {
   }
   private async send(event: Event) {
     event.preventDefault();
+    if (this.assistantSettingsPending) return;
     const form = event.target as HTMLFormElement,
       text = String(new FormData(form).get("message") ?? "");
     await this.action(async () => {
@@ -1259,6 +1270,7 @@ export class YpLiveWorkflow extends LitElement {
                       .assistantName=${this.assistantName}
                       .text=${item.text}
                       .at=${item.at}
+                      .modelDetails=${item.modelDetails}
                       .completed=${Boolean(item.completed)}
                       .sender=${item.userId === this.loggedInUser?.id
                         ? this.loggedInUser
@@ -1272,6 +1284,33 @@ export class YpLiveWorkflow extends LitElement {
                 </p>`}
           </div>
           ${this.approvals.map((approval) => this.renderApproval(approval))}
+          <yp-live-workflow-assistant-settings
+            .groupId=${this.groupId}
+            .settings=${{
+              model: state.config.codexModel,
+              reasoningEffort: state.config.codexReasoningEffort,
+              serviceTier: state.config.codexServiceTier ?? "regular",
+            }}
+            .session=${this.snapshot.assistantSession}
+            .canEdit=${permissions.operate && this.operator}
+            .connected=${Boolean(this.snapshot.codexAuthMode)}
+            @assistant-settings-pending=${(event: CustomEvent<boolean>) => {
+              this.assistantSettingsPending = event.detail;
+            }}
+            @workflow-updated=${(
+              event: CustomEvent<YpWorkflowAssistantSettings | undefined>,
+            ) => {
+              if (event.detail) {
+                state.config = {
+                  ...state.config,
+                  codexModel: event.detail.model,
+                  codexReasoningEffort: event.detail.reasoningEffort,
+                  codexServiceTier: event.detail.serviceTier,
+                };
+              }
+              void this.refresh();
+            }}
+          ></yp-live-workflow-assistant-settings>
           <form class="composer" @submit=${this.send}>
             <label
               >Message ${this.assistantName}<textarea
@@ -1285,6 +1324,7 @@ export class YpLiveWorkflow extends LitElement {
               <button
                 class="primary"
                 ?disabled=${this.busy ||
+                this.assistantSettingsPending ||
                 !this.operator ||
                 !this.snapshot.codexAuthMode}
               >

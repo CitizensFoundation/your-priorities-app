@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { researchResponse } from "./researchFixture.js";
+import { analysisResponse } from "./analysisFixture.js";
 import type { Context } from "../runner/run.js";
 
 type Agent = (
@@ -82,7 +83,7 @@ test("targeted evidence analysis runs degree extraction first; consistency inclu
             for (const prerequisite of expected.slice(0, -1))
               assert.ok(current.analysis[prerequisite]);
           calls.push(name);
-          return { status: "known", findings: {}, evidence: [job.text] };
+          return analysisResponse(name, job.text);
         },
       }),
       [job],
@@ -121,7 +122,17 @@ test("legacy analysis responses and unsupported quotes stay failed records rathe
     )) as Record<string, YpWorkflowJson>[];
     assert.equal(analyzed[0].status, "unknown");
     assert.equal((analyzed[0].errors as string[]).length, 1);
-    assert.deepEqual(analyzed[0].analysis, {});
+    const analysis = analyzed[0].analysis as Record<string, YpWorkflowJson>;
+    assert.equal(
+      analysis.degrees,
+      undefined,
+      "Rejected fields must not become accepted findings",
+    );
+    assert.deepEqual(
+      (analysis.rejectedAnalysis as Record<string, YpWorkflowJson>).response,
+      response,
+    );
+    assert.equal(typeof analysis.fleschKincaidGrade, "number");
     const rewritten = await rewrite(context(), analyzed);
     assert.deepEqual(
       rewritten,
@@ -377,7 +388,7 @@ test("trial exports stay local and escape spreadsheet formulas", async () => {
     }),
     [{ ...job, name: '=HYPERLINK("https://example.com")' }],
   );
-  assert.equal(artifacts.size, 3);
+  assert.equal(artifacts.size, 4);
   assert.ok(artifacts.get("skills-first.csv")?.includes("'=HYPERLINK"));
 });
 test("large exports preserve every record in bounded parts and advance external sheet rows", async () => {
@@ -409,7 +420,7 @@ test("large exports preserve every record in bounded parts and advance external 
   assert.equal(parts.length, 4);
   assert.deepEqual(
     parts.flatMap(([, content]) =>
-      JSON.parse(content).map((row: { id: string }) => row.id),
+      JSON.parse(content).jobDescriptions.map((row: { id: string }) => row.id),
     ),
     ["0", "1", "2", "3"],
   );
@@ -420,9 +431,9 @@ test("large exports preserve every record in bounded parts and advance external 
   );
   assert.deepEqual(
     writes.map((write) => write.rowOffset),
-    [0, 2, 3, 4],
+    [0, 3, 4, 5],
   );
-  assert.equal((writes[0].rows as unknown[]).length, 2);
+  assert.equal((writes[0].rows as unknown[]).length, 3);
   assert.equal((writes[1].rows as unknown[]).length, 1);
   assert.equal(
     JSON.parse(artifacts.get("skills-first-manifest.json")!).records,
@@ -465,14 +476,14 @@ test("external exports omit failed and unknown records while local artifacts ret
     0,
     "the first eligible part gets a header at the original output row",
   );
-  assert.equal((writes[0].rows as unknown[]).length, 2);
+  assert.equal((writes[0].rows as unknown[]).length, 3);
   assert.deepEqual(
     (writes[0].documents as { id: string }[]).map((row) => row.id),
     ["valid"],
   );
   const local = [...artifacts]
     .filter(([name]) => /^skills-first-\d+\.json$/.test(name))
-    .flatMap(([, content]) => JSON.parse(content));
+    .flatMap(([, content]) => JSON.parse(content).jobDescriptions);
   assert.deepEqual(
     local.map((row) => row.id),
     ["invalid", "uncertain", "valid"],

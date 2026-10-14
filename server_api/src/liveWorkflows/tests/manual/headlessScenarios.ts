@@ -317,6 +317,7 @@ export async function results(
       "skills-first.json",
       "skills-first.csv",
       "skills-first.md",
+      "skills-first.xlsx",
     ]) {
       // Each scenario has one completed full run in a fresh workspace.
       const asset = snapshot.assets.find(
@@ -327,9 +328,12 @@ export async function results(
       const bytes = await download(harness, asset, signal);
       await save(directory, name, bytes);
       if (name.endsWith(".json"))
-        assert.deepEqual(JSON.parse(bytes.toString()), rows);
+        assert.deepEqual(JSON.parse(bytes.toString()).jobDescriptions, rows);
       if (name.endsWith(".csv"))
-        assert.equal(parse(bytes, { columns: true }).length, rows.length);
+        assert.equal(
+          parse(bytes, { columns: true, from_line: 2 }).length,
+          rows.length,
+        );
       downloads.push({
         name: asset.name,
         checksum: asset.checksum,

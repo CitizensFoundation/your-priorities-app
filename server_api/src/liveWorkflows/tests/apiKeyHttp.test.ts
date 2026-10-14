@@ -17,7 +17,7 @@ import {
   importedBrowserKey,
 } from "./manual/browserKeyImport.js";
 
-test("API-key HTTP login enforces origin, membership and operator permission and exposes no key in replies", async (t) => {
+test("API-key login and assistant settings enforce HTTP origin, membership and operator permission", async (t) => {
   const { store } = await fixture();
   const previousOrigin = process.env.YP_LIVE_WORKFLOW_PUBLIC_ORIGIN;
   delete process.env.YP_LIVE_WORKFLOW_PUBLIC_ORIGIN;
@@ -91,7 +91,9 @@ test("API-key HTTP login enforces origin, membership and operator permission and
           "x-test-user": String(userId),
           "content-type": "application/json",
         },
-        body: method === "POST" ? JSON.stringify(body) : undefined,
+        body: ["POST", "PUT"].includes(method)
+          ? JSON.stringify(body)
+          : undefined,
         signal: AbortSignal.timeout(5000),
       },
     );
@@ -122,6 +124,63 @@ test("API-key HTTP login enforces origin, membership and operator permission and
     null,
   );
   assert.ok(!JSON.stringify(await store.events(1, 0)).includes(key));
+  const next = {
+    model: "gpt-6-sol",
+    reasoningEffort: "high",
+    serviceTier: "fast",
+  };
+  const change = {
+    settings: next,
+    expected: {
+      model: "test-codex",
+      reasoningEffort: "max",
+      serviceTier: "regular",
+    },
+  };
+  assert.equal(
+    (
+      await request(
+        "/assistant-settings",
+        "PUT",
+        10,
+        "https://example.invalid",
+        change,
+      )
+    ).status,
+    403,
+  );
+  assert.equal(
+    (await request("/assistant-settings", "PUT", 11, base, change)).status,
+    403,
+  );
+  assert.equal(
+    (await request("/assistant-settings", "PUT", 99, base, change)).status,
+    403,
+  );
+  assert.equal(
+    (
+      await request("/assistant-settings", "PUT", 10, base, {
+        ...change,
+        budgetMicros: 500,
+      })
+    ).status,
+    400,
+  );
+  const updated = await request("/assistant-settings", "PUT", 10, base, change);
+  assert.equal(updated.status, 200);
+  assert.deepEqual(JSON.parse(updated.text), next);
+  assert.equal(
+    (await request("/assistant-settings", "PUT", 10, base, change)).status,
+    409,
+  );
+  const saved = JSON.parse((await request("", "GET")).text);
+  assert.equal(saved.workspace.config.codexModel, next.model);
+  assert.equal(
+    saved.workspace.config.codexReasoningEffort,
+    next.reasoningEffort,
+  );
+  assert.equal(saved.workspace.config.codexServiceTier, next.serviceTier);
+  assert.equal(saved.workspace.revision, 1);
   assert.equal((await request("/account", "DELETE")).status, 200);
   assert.equal(JSON.parse((await request("", "GET")).text).codexAuthMode, null);
 });

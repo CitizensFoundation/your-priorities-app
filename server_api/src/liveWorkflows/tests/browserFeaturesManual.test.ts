@@ -36,6 +36,10 @@ test("feature browser evidence requires a saved edit, refresh, comparison, filte
   const actions = [
     ["POST", "account/api-key"],
     ["POST", "chat"],
+    ["GET", "codex-models"],
+    ["PUT", "assistant-settings"],
+    ["GET", "/"],
+    ["PUT", "assistant-settings"],
     ["POST", "assets"],
     ["GET", "assets/source/preview"],
     ["GET", "assets/source"],
@@ -80,6 +84,8 @@ test("feature browser evidence requires a saved edit, refresh, comparison, filte
     "/second-result",
     "/first/results",
     "/start",
+    "/assistant-settings",
+    "/codex-models",
   ])
     assert.throws(
       () => verify(observed.filter((item) => !item.route.endsWith(suffix))),
@@ -103,7 +109,14 @@ test("feature browser evidence requires a saved edit, refresh, comparison, filte
     /Save one/,
   );
   assert.throws(
-    () => verify([...observed, { ...observed[7], order: 30 }]),
+    () =>
+      verify([
+        ...observed,
+        {
+          ...observed.find((item) => item.route.endsWith("/graph"))!,
+          order: 30,
+        },
+      ]),
     /cancelling/,
   );
   assert.throws(

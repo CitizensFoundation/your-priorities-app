@@ -208,7 +208,8 @@
     "test:live-workflows:codex-image": "node --import tsx src/liveWorkflows/tests/codexImage.smoke.ts",
     "test:live-workflows:manual": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.manual.ts",
     "test:live-workflows:headless": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.headless.manual.ts",
-    "test:live-workflows:browser-manual": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.browser.manual.ts"
+    "test:live-workflows:browser-manual": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.browser.manual.ts",
+    "test:live-workflows:browser-idaho": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.idaho.browser.manual.ts"
   },
   "cacheDirectories": [
     "node_modules"

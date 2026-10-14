@@ -1,17 +1,122 @@
 {
+  "description": "Internal runner results remain an array. Downloaded memory is described by memory.json.",
   "type": "array",
   "items": {
     "type": "object",
     "required": [
+      "titleCode",
+      "variant",
+      "classOfService",
+      "workWeek",
+      "bargainUnit",
+      "classCode",
+      "salaryRange",
+      "workMonth",
+      "deptCode",
+      "url",
+      "notes",
       "id",
       "name",
       "text",
-      "analysis",
+      "source",
+      "jurisdiction",
       "status",
+      "analysis",
       "citations",
-      "errors"
+      "errors",
+      "classification",
+      "error",
+      "multiLevelJob",
+      "cscRevised",
+      "occupationalCategory",
+      "degreeAnalysis",
+      "readingLevelGradeAnalysis",
+      "readabilityAnalysisTextTSNPM",
+      "validationScore",
+      "licenseComparisons"
     ],
     "properties": {
+      "titleCode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "variant": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "classOfService": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "workWeek": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "bargainUnit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "classCode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "salaryRange": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "workMonth": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "deptCode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "url": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "text": {
+        "type": "string"
+      },
+      "source": {
+        "type": "string"
+      },
+      "jurisdiction": {
+        "type": "string"
+      },
       "status": {
         "enum": [
           "pending",
@@ -19,16 +124,612 @@
           "unknown"
         ]
       },
-      "citations": {
-        "type": "array"
-      },
       "analysis": {
         "type": "object"
+      },
+      "citations": {
+        "type": "array"
       },
       "errors": {
         "type": "array",
         "items": {
           "type": "string"
+        }
+      },
+      "classification": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "multiLevelJob": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "cscRevised": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "occupationalCategory": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "object",
+          "required": [
+            "mainCategory",
+            "subCategory"
+          ],
+          "properties": {
+            "mainCategory": {
+              "type": "string"
+            },
+            "subCategory": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "degreeAnalysis": {
+        "type": "object",
+        "required": [
+          "needsCollegeDegree",
+          "maximumDegreeRequirement",
+          "includesMultipleJobLevelsWithDifferentEducationalRequirements",
+          "educationRequirements",
+          "degreeRequirementStatus",
+          "mandatoryStatusExplanations",
+          "degreePreferenceQuote",
+          "professionalLicenseRequirement",
+          "barriersToNonDegreeApplicants",
+          "validationChecks",
+          "deepResearchResults"
+        ],
+        "properties": {
+          "needsCollegeDegree": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "maximumDegreeRequirement": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "includesMultipleJobLevelsWithDifferentEducationalRequirements": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "educationRequirements": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "evidenceQuote",
+                "isMandatory"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "evidenceQuote": {
+                  "type": "string"
+                },
+                "isMandatory": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "degreeRequirementStatus": {
+            "type": "object",
+            "required": [
+              "isDegreeMandatory",
+              "hasAlternativeQualifications",
+              "alternativeQualifications",
+              "multipleQualificationPaths",
+              "isDegreeAbsolutelyRequired",
+              "substitutionPossible"
+            ],
+            "properties": {
+              "isDegreeMandatory": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "hasAlternativeQualifications": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "alternativeQualifications": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "multipleQualificationPaths": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "isDegreeAbsolutelyRequired": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "substitutionPossible": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "mandatoryStatusExplanations": {
+            "type": "object",
+            "required": [
+              "degreeRequirementExplanation",
+              "bothTrueExplanation",
+              "bothFalseExplanation"
+            ],
+            "properties": {
+              "degreeRequirementExplanation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bothTrueExplanation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bothFalseExplanation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "degreePreferenceQuote": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "professionalLicenseRequirement": {
+            "type": "object",
+            "required": [
+              "isLicenseRequired",
+              "licenseType",
+              "licenseDescription",
+              "issuingAuthority",
+              "includesDegreeRequirement"
+            ],
+            "properties": {
+              "isLicenseRequired": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "licenseType": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "licenseDescription": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "issuingAuthority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "includesDegreeRequirement": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "barriersToNonDegreeApplicants": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validationChecks": {
+            "type": "object",
+            "required": [
+              "cscRevisedConsistency",
+              "requiredAlternativeExplanationConsistency",
+              "barriersToNonDegreeApplicantsConsistency",
+              "licenseIncludesDegreeRequirementConsistency",
+              "alternativesIfTrueConsistency",
+              "degreeMandatoryConsistency",
+              "alternativeQualificationsConsistency",
+              "educationRequirementsConsistency",
+              "needsCollegeDegreeConsistency"
+            ],
+            "properties": {
+              "cscRevisedConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "requiredAlternativeExplanationConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "barriersToNonDegreeApplicantsConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "licenseIncludesDegreeRequirementConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "alternativesIfTrueConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "degreeMandatoryConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "alternativeQualificationsConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "educationRequirementsConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              },
+              "needsCollegeDegreeConsistency": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unknown",
+                  "n/a",
+                  null
+                ]
+              }
+            }
+          },
+          "deepResearchResults": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "titleCode",
+                "jobTitle",
+                "statedDegreeRequirement",
+                "degreeRequirementType",
+                "typeOfOfficialDocument",
+                "matchTypeForJobTitle",
+                "typeOfDegreeRequirement",
+                "mandatoryDegreeRequirementStatus",
+                "reasoning",
+                "sourceUrl",
+                "evidenceQuote",
+                "status"
+              ],
+              "properties": {
+                "titleCode": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "jobTitle": {
+                  "type": "string"
+                },
+                "statedDegreeRequirement": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "degreeRequirementType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "typeOfOfficialDocument": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "matchTypeForJobTitle": {
+                  "enum": [
+                    "exact",
+                    "partial",
+                    null
+                  ]
+                },
+                "typeOfDegreeRequirement": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "mandatoryDegreeRequirementStatus": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reasoning": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sourceUrl": {
+                  "type": "string"
+                },
+                "evidenceQuote": {
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "known",
+                    "unknown"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "readingLevelGradeAnalysis": {
+        "type": "object",
+        "required": [
+          "readabilityLevelExplanation",
+          "readabilityLevel",
+          "difficultPassages",
+          "readingLevelMatchesDegreeRequirement"
+        ],
+        "properties": {
+          "readabilityLevelExplanation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "readabilityLevel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "difficultPassages": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "readingLevelMatchesDegreeRequirement": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      },
+      "readabilityAnalysisTextTSNPM": {
+        "type": "object",
+        "required": [
+          "fleschKincaidGrade"
+        ],
+        "properties": {
+          "fleschKincaidGrade": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "validationScore": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 0,
+        "maximum": 9
+      },
+      "licenseComparisons": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "licenseType",
+            "matchingWvuProfession",
+            "wvuEducationRequirement",
+            "researchEducationRequirement",
+            "researchMatchesWvu",
+            "researchComparisonExplanation",
+            "manualMinimumEducationRequirement",
+            "combinedManualAndResearch",
+            "researchMatchesManual",
+            "requiresManualReview",
+            "recommendedAction",
+            "sourceUrl",
+            "notes"
+          ],
+          "properties": {
+            "licenseType": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "matchingWvuProfession": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "wvuEducationRequirement": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "researchEducationRequirement": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "researchMatchesWvu": {
+              "enum": [
+                true,
+                false,
+                "N/A",
+                null
+              ]
+            },
+            "researchComparisonExplanation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "manualMinimumEducationRequirement": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "combinedManualAndResearch": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "researchMatchesManual": {
+              "enum": [
+                true,
+                false,
+                "N/A",
+                null
+              ]
+            },
+            "requiresManualReview": {
+              "enum": [
+                true,
+                false,
+                "N/A",
+                null
+              ]
+            },
+            "recommendedAction": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sourceUrl": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
         }
       }
     }

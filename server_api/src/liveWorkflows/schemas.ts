@@ -10,6 +10,28 @@ export const reasoningEffortSchema = z.enum([
   "xhigh",
   "max",
 ]);
+export const codexReasoningEffortSchema = z.enum([
+  "none",
+  "minimal",
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+]);
+export const assistantSettingsSchema = z
+  .object({
+    model: z.string().trim().min(1).max(160),
+    reasoningEffort: codexReasoningEffortSchema,
+    serviceTier: z.enum(["regular", "fast"]),
+  })
+  .strict();
+export const assistantSettingsUpdateSchema = z
+  .object({
+    settings: assistantSettingsSchema,
+    expected: assistantSettingsSchema,
+  })
+  .strict();
 export const identifier = z
   .string()
   .regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,127}$/);
@@ -103,12 +125,14 @@ export const configSchema = z
     hostId: z.string().uuid(),
     codexModel: z
       .string()
+      .trim()
       .min(1)
       .max(160)
       .default(workflowModelDefaults.codexModel),
-    codexReasoningEffort: reasoningEffortSchema.default(
+    codexReasoningEffort: codexReasoningEffortSchema.default(
       workflowModelDefaults.codexReasoningEffort,
     ),
+    codexServiceTier: z.enum(["regular", "fast"]).default("regular"),
     operatorIds: z.array(z.number().int().positive()).max(100),
     budgetMicros: money,
     trialBudgetMicros: money.default(5_000_000),
@@ -121,6 +145,9 @@ export const configSchema = z
     concurrency: z.number().int().min(1).max(16).default(2),
   })
   .strict();
+export const configurationUpdateSchema = configSchema.extend({
+  expectedAssistantSettings: assistantSettingsSchema.optional(),
+});
 export const connectorSchema = z
   .object({
     id: identifier,

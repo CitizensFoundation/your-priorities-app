@@ -67,6 +67,7 @@ test("manual acceptance requires login, ordered browser actions and every downlo
     ["GET", "assets/json"],
     ["GET", "assets/csv"],
     ["GET", "assets/md"],
+    ["GET", "assets/xlsx"],
   ].map(([method, route], index) => ({
     method,
     route: `/api/live-workflows/groups/1/${route}`,
@@ -74,10 +75,13 @@ test("manual acceptance requires login, ordered browser actions and every downlo
     order: index + 1,
   }));
   const verify = (events: BrowserObservation[]) =>
-    verifyBrowserActions(events, ["json", "csv", "md"], "api-key");
+    verifyBrowserActions(events, ["json", "csv", "md", "xlsx"], "api-key");
   verify(observations);
   assert.throws(() => verify(observations.slice(1)), /Connect an API key/);
-  assert.throws(() => verify(observations.slice(0, -1)), /Download all three/);
+  assert.throws(
+    () => verify(observations.slice(0, -1)),
+    /Download all required/,
+  );
   assert.throws(
     () =>
       verify(

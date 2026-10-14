@@ -84,6 +84,43 @@ export class YpLiveWorkflowResults extends LitElement {
     summary {
       cursor: pointer;
     }
+    .findings {
+      border: 1px solid #7293aa55;
+      border-radius: 12px;
+      background: #7293aa0c;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .findings dl {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 12px 0;
+    }
+    .findings dt {
+      font-size: 12px;
+      opacity: 0.75;
+    }
+    .findings dd {
+      margin: 4px 0 0;
+      overflow-wrap: anywhere;
+    }
+    .findings details {
+      margin-top: 12px;
+    }
+    .findings blockquote {
+      border-left: 3px solid #7293aa66;
+      margin: 10px 0;
+      padding: 4px 12px;
+      white-space: pre-wrap;
+    }
+    .findings p {
+      overflow-wrap: anywhere;
+    }
+    .findings a {
+      color: inherit;
+      overflow-wrap: anywhere;
+    }
   `;
   protected override updated(changed: PropertyValues) {
     if (changed.has("groupId")) {
@@ -215,6 +252,7 @@ export class YpLiveWorkflowResults extends LitElement {
             )}`
           : nothing}
       </p>
+      ${this.skillsFirst(row)}
       ${row.rewrittenText
         ? html`<p><strong>Proposed rewrite</strong></p>
             <pre>${String(row.rewrittenText)}</pre>`
@@ -226,6 +264,186 @@ export class YpLiveWorkflowResults extends LitElement {
         <summary>Original, evidence and full record</summary>
         <pre>${JSON.stringify(row, null, 2)}</pre>
       </details>`;
+  }
+  private skillsFirst(row: Record<string, YpWorkflowJson>) {
+    if (
+      !row.degreeAnalysis ||
+      typeof row.degreeAnalysis !== "object" ||
+      Array.isArray(row.degreeAnalysis)
+    )
+      return nothing;
+    const job = row as unknown as Partial<YpSkillsFirstJobDescription>;
+    const degree = job.degreeAnalysis!,
+      status = degree.degreeRequirementStatus;
+    const license = degree.professionalLicenseRequirement;
+    const value = (item: unknown) =>
+      item === null || item === undefined || item === ""
+        ? "Unknown"
+        : typeof item === "boolean"
+          ? item
+            ? "Yes"
+            : "No"
+          : String(item);
+    const fields = (items: [string, unknown][]) =>
+      html`<dl>
+        ${items.map(
+          ([label, item]) =>
+            html`<div>
+              <dt>${label}</dt>
+              <dd>${value(item)}</dd>
+            </div>`,
+        )}
+      </dl>`;
+    const source = (url: string) =>
+      /^https?:\/\//i.test(url)
+        ? html`<a href=${url} target="_blank" rel="noopener noreferrer"
+            >${url}</a
+          >`
+        : url;
+    return html`<section class="findings" aria-label="Skills First findings">
+      <strong>Skills First findings</strong>
+      ${fields([
+        ["Title code", job.titleCode],
+        ["Highest stated education", degree.maximumDegreeRequirement],
+        ["Degree mandatory", status?.isDegreeMandatory],
+        ["Alternative qualifications", status?.hasAlternativeQualifications],
+        ["License required", license?.isLicenseRequired],
+        [
+          "Consistency checks",
+          job.validationScore === null || job.validationScore === undefined
+            ? "Not checked"
+            : `${job.validationScore}/9 passed`,
+        ],
+      ])}
+      <details>
+        <summary>Degree paths and evidence</summary>
+        ${fields([
+          ["Needs college degree", degree.needsCollegeDegree],
+          ["Multiple qualification paths", status?.multipleQualificationPaths],
+          ["Degree absolutely required", status?.isDegreeAbsolutelyRequired],
+          ["Substitution possible", status?.substitutionPossible],
+        ])}
+        ${degree.educationRequirements?.map(
+          (requirement) =>
+            html`<p>
+                <strong>${requirement.type}</strong> ·
+                ${requirement.requirementStatus ??
+                (requirement.isMandatory === true
+                  ? "mandatory"
+                  : "Status unknown")}
+              </p>
+              <blockquote>${requirement.evidenceQuote}</blockquote>`,
+        )}
+        <p>
+          <strong>Alternatives:</strong>
+          ${status?.alternativeQualifications?.join("\n") || "Unknown"}
+        </p>
+        <p>
+          ${degree.mandatoryStatusExplanations?.degreeRequirementExplanation ??
+          "Degree explanation unavailable."}
+        </p>
+        ${[
+          degree.mandatoryStatusExplanations?.bothTrueExplanation,
+          degree.mandatoryStatusExplanations?.bothFalseExplanation,
+        ]
+          .filter(Boolean)
+          .map((explanation) => html`<p>${explanation}</p>`)}
+        ${degree.degreePreferenceQuote
+          ? html`<blockquote>${degree.degreePreferenceQuote}</blockquote>`
+          : nothing}
+        <p>
+          <strong>Barriers:</strong> ${degree.barriersToNonDegreeApplicants ??
+          "Unknown"}
+        </p>
+      </details>
+      <details>
+        <summary>Consistency and readability</summary>
+        ${fields(
+          Object.entries(degree.validationChecks ?? {}).map(([key, check]) => [
+            key.replace(/Consistency$/, "").replace(/([A-Z])/g, " $1"),
+            check ?? "Not checked",
+          ]),
+        )}
+        <p class="muted">
+          The score counts pass results only. Unknown, failed and inapplicable
+          checks are shown individually.
+        </p>
+        ${fields([
+          [
+            "Estimated reading level",
+            job.readingLevelGradeAnalysis?.readabilityLevel,
+          ],
+          [
+            "Flesch–Kincaid grade",
+            job.readabilityAnalysisTextTSNPM?.fleschKincaidGrade,
+          ],
+          [
+            "Reading level matches education",
+            job.readingLevelGradeAnalysis?.readingLevelMatchesDegreeRequirement,
+          ],
+        ])}
+        <p>
+          ${job.readingLevelGradeAnalysis?.readabilityLevelExplanation ??
+          "Reading level explanation unavailable."}
+        </p>
+        ${job.readingLevelGradeAnalysis?.difficultPassages?.map(
+          (quote) => html`<blockquote>${quote}</blockquote>`,
+        )}
+      </details>
+      <details>
+        <summary>License and legal research</summary>
+        ${fields([
+          ["License type", license?.licenseType],
+          ["Issuing authority", license?.issuingAuthority],
+          ["License requires a degree", license?.includesDegreeRequirement],
+        ])}
+        <p>${license?.licenseDescription ?? "License details unavailable."}</p>
+        ${job.licenseComparisons?.length
+          ? job.licenseComparisons.map(
+              (comparison) => html`
+                ${fields([
+                  ["WVU profession", comparison.matchingWvuProfession],
+                  ["WVU education", comparison.wvuEducationRequirement],
+                  [
+                    "Researched education",
+                    comparison.researchEducationRequirement,
+                  ],
+                  [
+                    "Manual minimum education",
+                    comparison.manualMinimumEducationRequirement,
+                  ],
+                  ["Manual review required", comparison.requiresManualReview],
+                ])}
+                <p>${comparison.researchComparisonExplanation}</p>
+                <p>${comparison.recommendedAction}</p>
+                ${comparison.sourceUrl ? source(comparison.sourceUrl) : nothing}
+              `,
+            )
+          : html`<p class="muted">No license comparison data supplied.</p>`}
+        ${degree.deepResearchResults?.length
+          ? degree.deepResearchResults.map(
+              (research) => html`
+                <p>
+                  <strong>${research.jobTitle}</strong> ·
+                  ${research.status === "known"
+                    ? "Evidence reviewed"
+                    : "Needs review"}
+                </p>
+                <p>
+                  ${research.statedDegreeRequirement ??
+                  "Degree requirement unknown"}
+                </p>
+                <p>${research.reasoning}</p>
+                <blockquote>${research.evidenceQuote}</blockquote>
+                ${source(research.sourceUrl)}
+              `,
+            )
+          : html`<p class="muted">
+              No legal research results. Missing research does not establish
+              that a requirement is absent.
+            </p>`}
+      </details>
+    </section>`;
   }
   override render() {
     return html`<h3>Review results</h3>

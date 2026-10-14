@@ -26,7 +26,24 @@ export async function parseInput(
     for await (const record of parser) values.push(record);
   } else if (extension === ".json") {
     const input: unknown = JSON.parse(await read(file, "utf8"));
-    values = Array.isArray(input) ? input : [input];
+    // Original Skills First memory exports wrap jobs in jobDescriptions.
+    // Keep their row fields intact; the package handles domain normalization.
+    const memory =
+      input && typeof input === "object" && !Array.isArray(input)
+        ? (input as Record<string, unknown>)
+        : undefined;
+    values =
+      memory && Array.isArray(memory.jobDescriptions)
+        ? memory.jobDescriptions.map((value) => ({
+            ...z.record(z.string(), z.unknown()).parse(value),
+            ...(typeof memory.agentId === "string" ||
+            typeof memory.agentId === "number"
+              ? { agentId: memory.agentId }
+              : {}),
+          }))
+        : Array.isArray(input)
+          ? input
+          : [input];
   } else {
     let text: string;
     if (extension === ".pdf") {
@@ -59,7 +76,7 @@ export async function parseInput(
     const row = schema.parse(value);
     return {
       ...(row as Record<string, YpWorkflowJson>),
-      id: `${source}:${row.id ?? row.titleCode ?? index + 1}`,
+      id: `${source}:${row.id ?? index + 1}`,
       source,
     };
   });

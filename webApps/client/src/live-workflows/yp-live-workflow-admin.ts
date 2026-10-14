@@ -1,6 +1,7 @@
 import { LitElement, html, css, type PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { LiveWorkflowApi } from "./api.js";
+import { LiveWorkflowApi, LiveWorkflowApiError } from "./api.js";
+import { assistantEfforts } from "./yp-live-workflow-assistant-settings.js";
 
 @customElement("yp-live-workflow-admin")
 export class YpLiveWorkflowAdmin extends LitElement {
@@ -8,6 +9,7 @@ export class YpLiveWorkflowAdmin extends LitElement {
   @state() private snapshot?: YpWorkflowSnapshot;
   @state() private error = "";
   @state() private busy = false;
+  @state() private conflict = false;
   @state() private defaultCodexModel = "";
   @state() private defaultCodexReasoningEffort: YpWorkflowReasoningEffort =
     "max";
@@ -100,6 +102,7 @@ export class YpLiveWorkflowAdmin extends LitElement {
     event.preventDefault();
     this.busy = true;
     this.error = "";
+    this.conflict = false;
     try {
       const form = new FormData(event.target as HTMLFormElement),
         current = this.snapshot?.workspace.config;
@@ -109,7 +112,10 @@ export class YpLiveWorkflowAdmin extends LitElement {
         codexModel: String(form.get("model")),
         codexReasoningEffort: String(
           form.get("reasoningEffort"),
-        ) as YpWorkflowReasoningEffort,
+        ) as YpWorkflowCodexReasoningEffort,
+        codexServiceTier: String(
+          form.get("serviceTier"),
+        ) as YpWorkflowAssistantSettings["serviceTier"],
         operatorIds: String(form.get("operators") ?? "")
           .split(",")
           .filter((v) => v.trim())
@@ -122,13 +128,26 @@ export class YpLiveWorkflowAdmin extends LitElement {
       await new LiveWorkflowApi(this.groupId).request(
         current ? "/configuration" : "",
         current ? "PUT" : "POST",
-        config,
+        {
+          ...config,
+          ...(current
+            ? {
+                expectedAssistantSettings: {
+                  model: current.codexModel,
+                  reasoningEffort: current.codexReasoningEffort,
+                  serviceTier: current.codexServiceTier ?? "regular",
+                },
+              }
+            : {}),
+        },
       );
       await this.load();
       this.dispatchEvent(
         new CustomEvent("workflow-updated", { bubbles: true, composed: true }),
       );
     } catch (error) {
+      this.conflict =
+        error instanceof LiveWorkflowApiError && error.status === 409;
       this.error =
         error instanceof Error
           ? error.message
@@ -161,6 +180,18 @@ export class YpLiveWorkflowAdmin extends LitElement {
         use separately budgeted provider models.
       </p>
       ${this.error ? html`<p class="error" role="alert">${this.error}</p>` : ""}
+      ${this.conflict
+        ? html`<button
+            type="button"
+            @click=${async () => {
+              this.error = "";
+              this.conflict = false;
+              await this.load();
+            }}
+          >
+            Reload saved settings
+          </button>`
+        : ""}
       <form @submit=${this.save}>
         <label
           >Package<select name="package">
@@ -205,7 +236,7 @@ export class YpLiveWorkflowAdmin extends LitElement {
         >
         <label
           >Codex reasoning effort<select name="reasoningEffort">
-            ${["low", "medium", "high", "xhigh", "max"].map(
+            ${assistantEfforts.map(
               (effort) =>
                 html`<option
                   value=${effort}
@@ -216,6 +247,22 @@ export class YpLiveWorkflowAdmin extends LitElement {
                   ${effort}
                 </option>`,
             )}
+          </select></label
+        >
+        <label
+          >Codex response speed<select name="serviceTier">
+            <option
+              value="regular"
+              ?selected=${config?.codexServiceTier !== "fast"}
+            >
+              Standard
+            </option>
+            <option
+              value="fast"
+              ?selected=${config?.codexServiceTier === "fast"}
+            >
+              Fast
+            </option>
           </select></label
         >
         <small

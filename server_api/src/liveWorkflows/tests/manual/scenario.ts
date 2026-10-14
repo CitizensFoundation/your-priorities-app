@@ -241,10 +241,12 @@ export async function runManualScenario(
       run.spentMicros,
     );
 
-    step("4/4: Download and validate JSON, CSV and Markdown results");
+    step(
+      "4/4: Download and validate memory JSON, CSV, Excel and Markdown results",
+    );
     const downloaded: { name: string; bytes: number; checksum: string }[] = [];
     let output: unknown;
-    for (const extension of ["json", "csv", "md"]) {
+    for (const extension of ["json", "csv", "xlsx", "md"]) {
       const name = `${run.id}-skills-first.${extension}`;
       const asset = snapshot.assets.find(
         (asset) => asset.name === name && asset.source === "artifact",
@@ -267,16 +269,15 @@ export async function runManualScenario(
         verifySkillsFirstOutput(importedJobs, output);
       }
       if (extension === "csv") {
-        const rows = parse(bytes, { columns: true }) as {
-          id: string;
-          original: string;
-          rewritten: string;
+        const rows = parse(bytes, { columns: true, from_line: 2 }) as {
+          name: string;
+          educationRequirements: string;
         }[];
         assert.equal(rows.length, jobs.length);
         for (const job of importedJobs) {
-          const row = rows.find((row) => row.id === job.id);
-          assert.equal(row?.original, job.text);
-          assert.ok(row?.rewritten.trim());
+          const row = rows.find((row) => row.name === job.name);
+          assert.ok(row);
+          assert.equal(Object.keys(row).length, 74);
         }
       }
       if (extension === "md")

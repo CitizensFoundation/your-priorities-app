@@ -1,5 +1,6 @@
 import { socketRequest } from "../runner/socketClient.js";
 import { researchResponse } from "./researchFixture.js";
+import { analysisResponse, analysisTaskFromPrompt } from "./analysisFixture.js";
 /** Paid providers are replaced by a local fixture gateway; this test never uses real credentials. */
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
@@ -163,11 +164,10 @@ const server = createServer(async (req, res) => {
                 }
               : { isMultiLevel: false, sharedQuotes: [], levels: [] };
       else if (body.nodeId === "analyze")
-        content = {
-          status: "known",
-          findings: {},
-          evidence: [body.input.text],
-        };
+        content = analysisResponse(
+          analysisTaskFromPrompt(body.system),
+          body.input.text,
+        );
       else if (["licenses", "education"].includes(body.nodeId))
         content = researchResponse(body.system, body.input);
       else if (body.nodeId === "rewrite")
@@ -195,6 +195,24 @@ const server = createServer(async (req, res) => {
           disagreements: [],
           missingEvidence: [],
           metrics: {},
+          ...(body.nodeId === "compare-license"
+            ? {
+                licenseComparisons: body.input.reference.references.map(
+                  (_row: unknown, referenceIndex: number) => ({
+                    referenceIndex,
+                    researchEducationRequirement: null,
+                    researchComparisonExplanation:
+                      "Fixture has no external manual reference",
+                    researchMatchesWvu: null,
+                    researchMatchesManual: null,
+                    requiresManualReview: true,
+                    recommendedAction: null,
+                    sourceUrl: null,
+                    evidenceQuote: null,
+                  }),
+                ),
+              }
+            : {}),
         };
       const gateway = new ModelGateway(store, fixtureModelsJson, async () => {
         calls++;
@@ -379,7 +397,10 @@ try {
   assert.ok(artifacts.has("skills-first.json"));
   assert.ok(artifacts.has("skills-first.csv"));
   assert.ok(artifacts.has("skills-first.md"));
-  const exported = JSON.parse(artifacts.get("skills-first.json")!);
+  assert.ok(artifacts.has("skills-first.xlsx"));
+  const exported = JSON.parse(
+    artifacts.get("skills-first.json")!,
+  ).jobDescriptions;
   assert.equal(
     exported.length,
     3,
@@ -397,7 +418,10 @@ try {
   );
   assert.ok(
     exported.every(
-      (row: any) => row.errors.length === 0 && row.status === "complete",
+      (row: any) =>
+        row.errors.length === 0 &&
+        row.status === "unknown" &&
+        row.analysis["compare-license"].status === "unknown",
     ),
   );
   assert.ok(
