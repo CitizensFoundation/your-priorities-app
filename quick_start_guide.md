@@ -80,6 +80,14 @@ YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE
 YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/setAdminOnAll.cjs your.email@here.com
 ```
 
+### 1.7 Create the community and group
+
+The landing page's buttons link to the idea submission form of group 1. Run the following to create a correctly-configured community and, within it, a correctly-configured group with that ID, with your user as their admin:
+
+```bash
+YP_DEV_DATABASE_NAME=yrpri_dev YP_DEV_DATABASE_USERNAME=postgres YP_DEV_DATABASE_PASSWORD=postgres node server_api/ts-out/scripts/custom/createCommunityAndGroup.js 1 your.email@here.com
+```
+
 ## 2) Daily Local Run (Normal Development Startup)
 
 Use three terminals.
@@ -140,6 +148,19 @@ cd server_api
 ```
 
 Worker env defaults align with backend local values above (including NODE_ENV and YP_DEV_DATABASE_*), but worker startup does not export SESSION_SECRET.
+
+### Using the app
+
+To submit an idea as a member of the public:
+
+1. Visit http://localhost:4444 to see the public homepage.
+2. Follow the "Tell us your idea" link.
+3. Fill in the form and submit it.
+
+To view submitted ideas in the admin site:
+
+1. Visit http://localhost:4444/user/login and log in using the admin email address (your.email@here.com) and password (yourpassword) that you set earlier.
+2. Visit http://localhost:4444/admin/group/1 and then navigate to Moderation → Manage all content.
 
 ## 3) Testing the New vs Legacy Client (`useNewVersion`)
 
