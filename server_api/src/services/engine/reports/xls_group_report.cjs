@@ -3,14 +3,17 @@ const async = require("async");
 const moment = require("moment");
 const log = require("../../../utils/logger.cjs");
 const _ = require("lodash");
-const Excel = require("exceljs");
+const { promisify } = require("util");
+const { writeStreamingWorkbook } = require("../../../utils/xlsStreamWorkbook.cjs");
+const { streamIntoUpload } = require("../../../utils/streamIntoUpload.cjs");
+const { orderPostsForExport } = require("../../../utils/xlsExportOrder.cjs");
 
 const getPointsUp = require("./common_utils.cjs").getPointsUp;
 const getPointsDown = require("./common_utils.cjs").getPointsDown;
 
-const getOrderedPosts = require("./common_utils.cjs").getOrderedPosts;
-const updateJobStatusIfNeeded = require("./common_utils.cjs")
-  .updateJobStatusIfNeeded;
+const updateJobStatus = promisify(
+  require("./common_utils.cjs").updateJobStatusIfNeeded
+);
 const setJobError = require("./common_utils.cjs").setJobError;
 
 const preparePosts = require("./common_utils.cjs").preparePosts;
@@ -483,39 +486,17 @@ const getRatingHeaders = (customRatings) => {
   return out;
 };
 
-const setWrapping = (worksheet) => {
-  for (let rowIndex = 0; rowIndex <= worksheet.rowCount; rowIndex++) {
-    const row = worksheet.getRow(rowIndex);
-    row.eachCell({ includeEmpty: true }, (cell) => {
-      if (
-        cell._column._key === "pointsFor" ||
-        cell._column._key === "pointsAgainst"
-      ) {
-        cell.alignment = { vertical: "top", wrapText: true };
-      }
-    });
-  }
-
-  worksheet.getRow(1).font = { bold: true };
-  //  worksheet.properties.defaultRowHeight = 20;
-};
-
-async function exportToXls(options, callback) {
+async function exportToXls(options, stream) {
   const jobId = options.jobId;
   const groupId = options.groupId;
   const group = options.group;
   const posts = options.posts;
-  let categories = options.categories;
+  const categories = options.categories;
   const customRatings = options.customRatings;
 
   const title = "Export for Group Id: " + group.id;
 
   const ratingsHeaders = getRatingHeaders(customRatings);
-
-  const workbook = new Excel.Workbook();
-
-  workbook.creator = "Your Priorities - Automated";
-  workbook.created = new Date();
 
   let name = group.translatedName ? group.translatedName : group.name;
 
@@ -527,12 +508,7 @@ async function exportToXls(options, callback) {
   name = name.replace(/\[/g,'');
   name = name.replace(/\]/g,'');
 
-  const worksheet = workbook.addWorksheet(`Posts - ${name}`
-  );
-
-  const worksheetPoints = workbook.addWorksheet(`Points - ${name}`);
-
-  worksheetPoints.columns = [
+  const pointColumns = [
     { header: "Group Id", key: "groupId", width: 15 },
     { header: "Post Id", key: "postId", width: 15 },
     { header: "Post Name", key: "postName", width: 30 },
@@ -667,132 +643,49 @@ async function exportToXls(options, callback) {
     }
   }
 
-  worksheet.columns = columns;
-
+  const orderedPosts = orderPostsForExport(posts, categories);
+  const totalRowCount = orderedPosts.length * 2;
   let processedCount = 0;
   let lastReportedCount = 0;
-  const totalPostCount = posts.length;
-  if (categories.length === 0) {
-    async.eachSeries(
-      getOrderedPosts(posts),
-      (post, eachCallback) => {
-        addPostToSheet(worksheet, post, group);
-        addPostPointsToSheet(worksheetPoints, post, group);
-        processedCount += 1;
-        updateJobStatusIfNeeded(
-          jobId,
-          totalPostCount,
-          processedCount,
-          lastReportedCount,
-          (error, haveSent) => {
-            if (haveSent) lastReportedCount = processedCount;
-            eachCallback(error);
-          }
-        );
-      },
-      async (error) => {
-        if (error) {
-          callback(error);
-        } else {
-          setWrapping(worksheet);
-          const buffer = await workbook.xlsx.writeBuffer();
-          callback(null, buffer);
-        }
-      }
-    );
-  } else {
-    async.series(
-      [
-        (seriesCallback) => {
-          categories = _.orderBy(categories, [(category) => category]);
-          async.eachSeries(
-            categories,
-            (category, categoryCallback) => {
-              async.eachSeries(
-                getOrderedPosts(posts),
-                (post, eachCallback) => {
-                  if (post.category === category) {
-                    addPostToSheet(worksheet, post, group);
-                    addPostPointsToSheet(worksheetPoints, post, group);
-                    processedCount += 1;
-                    updateJobStatusIfNeeded(
-                      jobId,
-                      totalPostCount,
-                      processedCount,
-                      lastReportedCount,
-                      (error, haveSent) => {
-                        if (haveSent) {
-                          lastReportedCount = processedCount;
-                        }
-                        eachCallback(error);
-                      }
-                    );
-                  } else {
-                    eachCallback();
-                  }
-                },
-                (error) => {
-                  categoryCallback(error);
-                }
-              );
-            },
-            (error) => {
-              seriesCallback(error);
-            }
-          );
-        },
-        (seriesCallback) => {
-          const postsWithoutCategories = [];
-          posts.forEach((post) => {
-            if (!post.category) {
-              postsWithoutCategories.push(post);
-            }
-          });
 
-          if (postsWithoutCategories.length > 0) {
-            async.eachSeries(
-              getOrderedPosts(postsWithoutCategories),
-              (post, eachCallback) => {
-                addPostToSheet(worksheet, post, group);
-                addPostPointsToSheet(worksheetPoints, post, group);
-                processedCount += 1;
-                updateJobStatusIfNeeded(
-                  jobId,
-                  totalPostCount,
-                  processedCount,
-                  lastReportedCount,
-                  (error, haveSent) => {
-                    if (haveSent) {
-                      lastReportedCount = processedCount;
-                    }
-                    eachCallback(error);
-                  }
-                );
-              },
-              (error) => {
-                seriesCallback(error);
-              }
-            );
-          } else {
-            seriesCallback();
-          }
-        },
-      ],
-      async (error) => {
-        if (error) {
-          callback(error);
-        } else {
-          setWrapping(worksheet);
-          const buffer = await workbook.xlsx.writeBuffer();
-          callback(null, buffer);
-        }
-      }
-    );
-  }
+  const addPostRows = async (worksheet, commit, addRowsForPost) => {
+    for (const post of orderedPosts) {
+      addRowsForPost(worksheet, post, group);
+      await commit();
+      processedCount += 1;
+      const haveSent = await updateJobStatus(
+        jobId,
+        totalRowCount,
+        processedCount,
+        lastReportedCount
+      );
+      if (haveSent) lastReportedCount = processedCount;
+    }
+  };
+
+  return writeStreamingWorkbook(
+    stream,
+    [
+      {
+        name: `Posts - ${name}`,
+        columns,
+        wrapKeys: ["pointsFor", "pointsAgainst"],
+        addRows: (worksheet, commit) =>
+          addPostRows(worksheet, commit, addPostToSheet),
+      },
+      {
+        name: `Points - ${name}`,
+        columns: pointColumns,
+        addRows: (worksheet, commit) =>
+          addPostRows(worksheet, commit, addPostPointsToSheet),
+      },
+    ],
+    { creator: "Your Priorities - Automated" }
+  );
 }
 
 const createXlsReport = (workPackage, callback) => {
-  let exportOptions, exportedData, filename;
+  let exportOptions;
 
   async.series(
     [
@@ -868,18 +761,19 @@ const createXlsReport = (workPackage, callback) => {
           });
       },
       (seriesCallback) => {
-        exportToXls(exportOptions, (error, data) => {
-          exportedData = data;
-          seriesCallback(error);
-        });
-      },
-      (seriesCallback) => {
-        uploadToS3(
-          workPackage.jobId,
-          workPackage.userId,
-          workPackage.filename,
-          workPackage.exportType,
-          exportedData,
+        streamIntoUpload(
+          {
+            write: (stream) => exportToXls(exportOptions, stream),
+            upload: (stream, done) =>
+              uploadToS3(
+                workPackage.jobId,
+                workPackage.userId,
+                workPackage.filename,
+                workPackage.exportType,
+                stream,
+                done
+              ),
+          },
           (error, reportUrl) => {
             if (error) {
               seriesCallback(error);
