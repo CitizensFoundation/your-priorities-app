@@ -1,5 +1,5 @@
 x-minio-common: &minio-common
-  image: minio/minio
+  image: pgsty/silo
   restart: always
   env_file: .env
   volumes:
@@ -162,7 +162,7 @@ services:
         max-size: "25m"
 
   mc:
-    image: minio/mc:latest
+    image: pgsty/mc:latest
     container_name: minio_command_line
     depends_on:
      - minio
