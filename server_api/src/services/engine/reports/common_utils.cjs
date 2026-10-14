@@ -4,6 +4,7 @@ var _ = require('lodash');
 const moment = require('moment');
 const skipEmail = false;
 const log = require('../../../utils/logger.cjs');
+const { orderPostsByVotes } = require('../../../utils/xlsExportOrder.cjs');
 const request = require("../../../utils/requestCompat.cjs");
 const fs = require('fs');
 const { Upload } = require('@aws-sdk/lib-storage');
@@ -198,9 +199,7 @@ async function preparePosts(workPackage, callback) {
 };
 
 
-const getOrderedPosts = (posts) => {
-  return _.orderBy(posts,[post=> { return post.endorsementsUp-post.endorsementsDown }], ['desc']);
-};
+const getOrderedPosts = orderPostsByVotes;
 
 
 
