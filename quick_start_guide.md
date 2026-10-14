@@ -9,9 +9,10 @@ From repo root:
 cp development/docker/.env-dist development/docker/.env
 cp development/docker/plausible-conf.env.dist development/docker/plausible-conf.env
 cp server_api/startWatchWithEnv.sh-dist server_api/startWatchWithEnv.sh
+cp server_api/startWorkerWithEnv.sh-dist server_api/startWorkerWithEnv.sh
 ```
 
-1. Set the following variables in `server_api/startWatchWithEnv.sh`:
+1. Set the following variables in `server_api/startWatchWithEnv.sh` and `server_api/startWorkerWithEnv.sh`:
 
    - `YP_DEV_DATABASE_NAME`: yrpri_dev
    - `YP_DEV_DATABASE_USERNAME`: postgres
@@ -146,8 +147,6 @@ Start only when needed for worker features.
 cd server_api
 ./startWorkerWithEnv.sh
 ```
-
-Worker env defaults align with backend local values above (including NODE_ENV and YP_DEV_DATABASE_*), but worker startup does not export SESSION_SECRET.
 
 ### Using the app
 
