@@ -23,6 +23,22 @@ cp server_api/startWorkerWithEnv.sh-dist server_api/startWorkerWithEnv.sh
 
    - `SESSION_SECRET`: A random string
 
+3. Set the following variables in `development/docker/.env`:
+
+   - `MINIO_ROOT_USER`: minio
+   - `MINIO_ROOT_PASSWORD`: minio123
+
+4. Set the following variables in `server_api/startWorkerWithEnv.sh`:
+
+   - `AWS_ACCESS_KEY_ID`: minio
+   - `AWS_SECRET_ACCESS_KEY`: minio123
+   - `S3_REPORTS_BUCKET`: minio.yrpri.reports
+
+5. Add the following variables to the same file:
+
+   - `S3_ENDPOINT`: http://localhost:9012
+   - `S3_FORCE_PATH_STYLE`: true
+
 ## 1) First-Time Setup (Do Once Per Machine/Clone)
 
 ### 1.1 Verify Required Tools
