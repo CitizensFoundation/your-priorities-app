@@ -134,7 +134,7 @@ Both Luna roles explicitly default to `max` reasoning. Set `codexReasoningEffort
 
 ## Original browser smoke case
 
-This is the first real-account test case, adapted from Eidosoma's `sessionRealtimeA4RealCodex.manual.ts` and dataset/attachment manual tests. It tests **hello → upload two job descriptions → Skills First trial → download results**. The executable is [skillsFirst.manual.ts](../skillsFirst.manual.ts); it is excluded from the ordinary unit suite.
+This is the first real-account test case. It tests **hello → upload two job descriptions → Skills First trial → download results**. The executable is [skillsFirst.manual.ts](../skillsFirst.manual.ts); it is excluded from the ordinary unit suite.
 
 [The fixture](fixtures/skills-first-jobs.json) contains two fictional, single-level jobs: Library Program Assistant and IT Support Technician. It uses the Skills First input fields `id`, `name`, `text`, `jurisdiction`, and `source`. These are test records, not vacancies or legal guidance. The unmodified package runs normalize → split levels → seven analyses → rewrite and independent review → export. Research, Firecrawl, comparison and external writes remain disabled for this first case.
 
@@ -165,7 +165,7 @@ sg docker -c 'YP_WORKFLOW_MANUAL_LIVE=1 npm run test:live-workflows:manual -- --
 
 Both `--live` and the opt-in variable are required before any credential import. `--env /absolute/path` and `--config /absolute/path` override file locations. `--headed` displays the automated Chromium window when a graphical session is available. The harness also prints a loopback URL that can be opened while the test runs.
 
-As requested, the default live test uses an API-key profile for **both Codex chat and processing**, following Eidosoma's manual-test approach. This profile is constructed only in the test executable through an in-process adapter dependency. For the interactive test above, the normal application login route and VM resolver handle the supplied key without this injection. A separate `--auth chatgpt` option waits up to ten minutes for the normal device-code login using the printed local URL; processing still uses the imported API key. API-key mode does not verify ChatGPT login.
+The default live test uses an API-key profile for **both Codex chat and processing**. This profile is constructed only in the test executable through an in-process adapter dependency. For the interactive test above, the normal application login route and VM resolver handle the supplied key without this injection. A separate `--auth chatgpt` option waits up to ten minutes for the normal device-code login using the printed local URL; processing still uses the imported API key. API-key mode does not verify ChatGPT login.
 
 ## Cost and acceptance
 

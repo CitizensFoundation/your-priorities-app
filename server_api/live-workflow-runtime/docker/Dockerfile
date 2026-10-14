@@ -26,8 +26,8 @@ ARG CODEX_VERSION=0.146.0
 ARG CODEX_SOURCE_COMMIT=e363b08c9175ac1cbe5893615dd2cb9ddf95043b
 ARG CODEX_SOURCE_URL=https://github.com/openai/codex/archive/e363b08c9175ac1cbe5893615dd2cb9ddf95043b.tar.gz
 ARG CODEX_SOURCE_SHA256=0b789281dc96d60f05c28ddaabc3108a7c3e2f99a9be6cae68bb1c03d5db01c6
-ARG CODEX_PATCH_REVISION=poll4-flex1
-ARG CODEX_PATCH_SHA256=dbe02cb2d31f00bd4a3297f1b68c6288c88dd399432e9050a80b46327c3c48ed
+ARG CODEX_PATCH_REVISION=poll4-flex1-yp1
+ARG CODEX_PATCH_SHA256=d2f54083d6cf211ddcd836d80cd58bfd509028c5212c8a32b21e28b6ba74cd10
 ARG CODEX_BUNDLED_BWRAP_SHA256=77360cb751ccedc5971391444ac86a8a33c15b04d6b4a6fe45f5d25496e62c4c
 ARG CODEX_RUST_VERSION=1.95.0
 ARG CODEX_RESOLVED_CARGO_LOCK_SHA256=3e0b9e5c99696ec6a3595e641dfbce227cb1105e3509055ec43f62ec305afdef
@@ -101,7 +101,7 @@ RUN --mount=type=cache,id=yp-live-workflow-codex-cargo-registry,target=/usr/loca
   resolved_cargo_lock_sha256="$(sha256sum Cargo.lock | cut -d ' ' -f 1)"; \
   test "${resolved_cargo_lock_sha256}" = "${CODEX_RESOLVED_CARGO_LOCK_SHA256}"; \
   cargo "+${CODEX_RUST_VERSION}" test --lib --locked --target x86_64-unknown-linux-musl \
-    -p codex-core -p codex-model-provider-info -p codex-models-manager -p codex-model-provider eidosoma_; \
+    -p codex-core -p codex-model-provider-info -p codex-models-manager -p codex-model-provider yp_live_workflow_; \
   cargo "+${CODEX_RUST_VERSION}" build --locked --release --target x86_64-unknown-linux-musl -p codex-cli --bin codex; \
   patched_codex_path="${CARGO_TARGET_DIR}/x86_64-unknown-linux-musl/release/codex"; \
   if readelf -l "${patched_codex_path}" | grep -q INTERP; then echo "Codex must be static PIE without a dynamic interpreter" >&2; exit 1; fi; \
@@ -124,7 +124,7 @@ RUN --mount=type=cache,id=yp-live-workflow-codex-cargo-registry,target=/usr/loca
     --argjson openAiStreamIdleTimeoutMs "${OPENAI_STREAM_IDLE_TIMEOUT_MS}" \
     '{codexVersion: $codexVersion, sourceCommit: $sourceCommit, sourceSha256: $sourceSha256, patchRevision: $patchRevision, patchSha256: $patchSha256, rustToolchain: $rustToolchain, resolvedCargoLockSha256: $resolvedCargoLockSha256, bundledBwrapSha256: $bundledBwrapSha256, rustyV8Version: $rustyV8Version, rustyV8ArchiveSha256: $rustyV8ArchiveSha256, rustyV8BindingSha256: $rustyV8BindingSha256, backgroundTerminalMaxTimeoutMs: $backgroundTerminalMaxTimeoutMs, openAiStreamIdleTimeoutMs: $openAiStreamIdleTimeoutMs, flexServiceTierModels: ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"]}' \
     > /opt/yp-live-workflow/codex-patches.json; \
-  grep -a -q "eidosoma progressive background terminal poll started" "${codex_native_path}"; \
+  grep -a -q "yp_live_workflow progressive background terminal poll started" "${codex_native_path}"; \
   grep -a -q "${installed_bwrap_sha256}" "${codex_native_path}"; \
   codex --version | grep -F "codex-cli ${CODEX_VERSION}"; \
   rm -rf /tmp/codex-source /tmp/codex-source.tar.gz /tmp/codex-rusty-v8 /tmp/background-terminal-progressive-poll.patch
@@ -152,8 +152,8 @@ ARG CODEX_VERSION=0.146.0
 ARG CODEX_SOURCE_COMMIT=e363b08c9175ac1cbe5893615dd2cb9ddf95043b
 ARG CODEX_SOURCE_URL=https://github.com/openai/codex/archive/e363b08c9175ac1cbe5893615dd2cb9ddf95043b.tar.gz
 ARG CODEX_SOURCE_SHA256=0b789281dc96d60f05c28ddaabc3108a7c3e2f99a9be6cae68bb1c03d5db01c6
-ARG CODEX_PATCH_REVISION=poll4-flex1
-ARG CODEX_PATCH_SHA256=dbe02cb2d31f00bd4a3297f1b68c6288c88dd399432e9050a80b46327c3c48ed
+ARG CODEX_PATCH_REVISION=poll4-flex1-yp1
+ARG CODEX_PATCH_SHA256=d2f54083d6cf211ddcd836d80cd58bfd509028c5212c8a32b21e28b6ba74cd10
 ARG CODEX_BUNDLED_BWRAP_SHA256=77360cb751ccedc5971391444ac86a8a33c15b04d6b4a6fe45f5d25496e62c4c
 ARG CODEX_RUST_VERSION=1.95.0
 ARG CODEX_RESOLVED_CARGO_LOCK_SHA256=3e0b9e5c99696ec6a3595e641dfbce227cb1105e3509055ec43f62ec305afdef
@@ -165,7 +165,7 @@ ARG CODEX_RUSTY_V8_BINDING_SHA256=5db3ec0783531d12862a3f38dd5a679273550e67962260
 ARG BACKGROUND_TERMINAL_MAX_TIMEOUT_MS=1800000
 ARG OPENAI_STREAM_IDLE_TIMEOUT_MS=900000
 
-ARG IMAGE_VERSION=20261013.1
+ARG IMAGE_VERSION=20261014.1
 
 LABEL org.opencontainers.image.version="${IMAGE_VERSION}"
 LABEL ai.yp-live-workflow.codex.version="${CODEX_VERSION}"

@@ -689,20 +689,20 @@ test("Codex app-server version pins stay aligned with the generated schema", asy
   assert.match(requiredString(versions.codexSourceUrl), new RegExp(requiredString(versions.codexSourceCommit), "u"));
   assert.match(patch, /FIRST_BACKGROUND_POLL_YIELD_TIME_MS: u64 = 120_000/u);
   assert.match(patch, /SECOND_BACKGROUND_POLL_YIELD_TIME_MS: u64 = 600_000/u);
-  assert.match(patch, /eidosoma_progressive_poll_uses_server_controlled_schedule/u);
+  assert.match(patch, /yp_live_workflow_progressive_poll_uses_server_controlled_schedule/u);
   assert.match(patch, /YP_LIVE_WORKFLOW_OPENAI_STREAM_IDLE_TIMEOUT_MS: u64 = 900_000/u);
-  assert.match(patch, /eidosoma_openai_stream_idle_timeout_is_fifteen_minutes/u);
-  assert.match(patch, /eidosoma_flex_catalog_augmentation_is_allowlisted_and_idempotent/u);
-  assert.match(patch, /eidosoma_flex_catalog_is_limited_to_openai_managers/u);
-  assert.match(patch, /eidosoma_flex_catalog_augmentation_is_limited_to_openai_provider/u);
-  assert.match(patch, /eidosoma_flex_remote_catalog_augmentation_is_limited_to_openai_provider/u);
-  assert.match(patch, /eidosoma_augment_flex_service_tiers\(&mut existing_models\)/u);
+  assert.match(patch, /yp_live_workflow_openai_stream_idle_timeout_is_fifteen_minutes/u);
+  assert.match(patch, /yp_live_workflow_flex_catalog_augmentation_is_allowlisted_and_idempotent/u);
+  assert.match(patch, /yp_live_workflow_flex_catalog_is_limited_to_openai_managers/u);
+  assert.match(patch, /yp_live_workflow_flex_catalog_augmentation_is_limited_to_openai_provider/u);
+  assert.match(patch, /yp_live_workflow_flex_remote_catalog_augmentation_is_limited_to_openai_provider/u);
+  assert.match(patch, /yp_live_workflow_augment_flex_service_tiers\(&mut existing_models\)/u);
   assert.match(patch, /if self\.info\.is_openai\(\)/u);
   assert.match(patch, /is_openai_provider: bool/u);
   assert.match(patch, /if self\.is_openai_provider/u);
   assert.doesNotMatch(
     patch,
-    /impl StaticModelsManager[\s\S]{0,500}eidosoma_augment_flex_service_tiers/u
+    /impl StaticModelsManager[\s\S]{0,500}yp_live_workflow_augment_flex_service_tiers/u
   );
   assert.match(patch, /\["gpt-5\.6-sol", "gpt-5\.6-terra", "gpt-5\.6-luna"\]/u);
   assert.match(dockerfile, /git apply --check \/tmp\/background-terminal-progressive-poll\.patch/u);
@@ -740,19 +740,19 @@ test("Codex app-server version pins stay aligned with the generated schema", asy
   );
   assert.match(
     dockerfile,
-    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked --target x86_64-unknown-linux-musl -p codex-core eidosoma_progressive_poll/u
+    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked --target x86_64-unknown-linux-musl -p codex-core yp_live_workflow_progressive_poll/u
   );
   assert.match(
     dockerfile,
-    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked -p codex-model-provider-info eidosoma_openai_stream_idle_timeout/u
+    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked -p codex-model-provider-info yp_live_workflow_openai_stream_idle_timeout/u
   );
   assert.match(
     dockerfile,
-    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked -p codex-models-manager eidosoma_flex_catalog/u
+    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked -p codex-models-manager yp_live_workflow_flex_catalog/u
   );
   assert.match(
     dockerfile,
-    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked -p codex-model-provider eidosoma_flex_/u
+    /cargo "\+\$\{CODEX_RUST_VERSION\}" test --locked -p codex-model-provider yp_live_workflow_flex_/u
   );
   assert.match(
     dockerfile,

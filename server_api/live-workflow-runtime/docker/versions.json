@@ -3,9 +3,9 @@
   "codexSourceCommit": "e363b08c9175ac1cbe5893615dd2cb9ddf95043b",
   "codexSourceUrl": "https://github.com/openai/codex/archive/e363b08c9175ac1cbe5893615dd2cb9ddf95043b.tar.gz",
   "codexSourceSha256": "0b789281dc96d60f05c28ddaabc3108a7c3e2f99a9be6cae68bb1c03d5db01c6",
-  "codexPatchRevision": "poll4-flex1",
+  "codexPatchRevision": "poll4-flex1-yp1",
   "codexPatchFile": "patches/background-terminal-progressive-poll.patch",
-  "codexPatchSha256": "dbe02cb2d31f00bd4a3297f1b68c6288c88dd399432e9050a80b46327c3c48ed",
+  "codexPatchSha256": "d2f54083d6cf211ddcd836d80cd58bfd509028c5212c8a32b21e28b6ba74cd10",
   "codexBundledBwrapSha256": "77360cb751ccedc5971391444ac86a8a33c15b04d6b4a6fe45f5d25496e62c4c",
   "codexRustVersion": "1.95.0",
   "codexResolvedCargoLockSha256": "3e0b9e5c99696ec6a3595e641dfbce227cb1105e3509055ec43f62ec305afdef",
@@ -19,7 +19,7 @@
   "flexServiceTierModels": ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"],
   "nodeMajor": "24",
   "nodeImage": "node:24.14.0-bookworm-slim",
-  "imageVersion": "20261013.1",
+  "imageVersion": "20261014.1",
   "architecture": "amd64",
   "profile": "development"
 }

@@ -33,7 +33,7 @@ index acf6d7d..a297f48 100644
              .process_store
 @@ -331,1 +332,74 @@
 +#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn eidosoma_progressive_poll_resets_stage_after_tty_input() -> anyhow::Result<()> {
++async fn yp_live_workflow_progressive_poll_resets_stage_after_tty_input() -> anyhow::Result<()> {
 +    let (session, turn) = test_session_and_turn().await;
 +    let manager = &session.services.unified_exec_manager;
 +    let process_id = manager.allocate_process_id().await;
@@ -189,13 +189,13 @@ index 098c70f..b33295e 100644
 +        );
 +        if is_background_poll {
 +            tracing::debug!(
-+                target: "eidosoma_background_terminal_poll",
++                target: "yp_live_workflow_background_terminal_poll",
 +                process_id,
 +                completed_background_polls,
 +                requested_yield_time_ms = request.yield_time_ms,
 +                effective_yield_time_ms = yield_time_ms,
 +                configured_max_yield_time_ms = self.max_write_stdin_yield_time_ms,
-+                "eidosoma progressive background terminal poll started"
++                "yp_live_workflow progressive background terminal poll started"
 +            );
 +        }
          let start = Instant::now();
@@ -211,13 +211,13 @@ index 098c70f..b33295e 100644
 +        }
 +        if is_background_poll {
 +            tracing::debug!(
-+                target: "eidosoma_background_terminal_poll",
++                target: "yp_live_workflow_background_terminal_poll",
 +                process_id,
 +                completed_background_polls,
 +                effective_yield_time_ms = yield_time_ms,
 +                elapsed_ms = u64::try_from(wall_time.as_millis()).unwrap_or(u64::MAX),
 +                process_alive,
-+                "eidosoma progressive background terminal poll finished"
++                "yp_live_workflow progressive background terminal poll finished"
 +            );
 +        }
          let (process_id, exit_code, event_call_id) = match status {
@@ -322,7 +322,7 @@ index 82fc5fc..c10b80e 100644
  use std::time::Duration;
 
  const DEFAULT_STREAM_IDLE_TIMEOUT_MS: u64 = 300_000;
-+const EIDOSOMA_OPENAI_STREAM_IDLE_TIMEOUT_MS: u64 = 900_000;
++const YP_LIVE_WORKFLOW_OPENAI_STREAM_IDLE_TIMEOUT_MS: u64 = 900_000;
  const DEFAULT_STREAM_MAX_RETRIES: u64 = 5;
  const DEFAULT_REQUEST_MAX_RETRIES: u64 = 4;
  pub const DEFAULT_WEBSOCKET_CONNECT_TIMEOUT_MS: u64 = 15_000;
@@ -336,7 +336,7 @@ index 82fc5fc..c10b80e 100644
              request_max_retries: None,
              stream_max_retries: None,
 -            stream_idle_timeout_ms: None,
-+            stream_idle_timeout_ms: Some(EIDOSOMA_OPENAI_STREAM_IDLE_TIMEOUT_MS),
++            stream_idle_timeout_ms: Some(YP_LIVE_WORKFLOW_OPENAI_STREAM_IDLE_TIMEOUT_MS),
              websocket_connect_timeout_ms: None,
              requires_openai_auth: true,
              supports_websockets: true,
@@ -349,7 +349,7 @@ index 354c7fc..17f22bb 100644
  }
 
 +#[test]
-+fn eidosoma_openai_stream_idle_timeout_is_fifteen_minutes() {
++fn yp_live_workflow_openai_stream_idle_timeout_is_fifteen_minutes() {
 +    let openai = ModelProviderInfo::create_openai_provider(/*base_url*/ None);
 +    assert_eq!(openai.stream_idle_timeout(), Duration::from_secs(15 * 60));
 +
@@ -377,7 +377,7 @@ index 57f950a..b63e853 100644
  use codex_models_manager::manager::OpenAiModelsManager;
  use codex_models_manager::manager::SharedModelsManager;
  use codex_models_manager::manager::StaticModelsManager;
-+use codex_models_manager::manager::eidosoma_augment_flex_service_tiers;
++use codex_models_manager::manager::yp_live_workflow_augment_flex_service_tiers;
  use codex_protocol::account::ProviderAccount;
  use codex_protocol::error::CodexErr;
  use codex_protocol::openai_models::ModelsResponse;
@@ -388,7 +388,7 @@ index 57f950a..b63e853 100644
 +
 +    fn static_models_manager(&self, mut model_catalog: ModelsResponse) -> SharedModelsManager {
 +        if self.info.is_openai() {
-+            eidosoma_augment_flex_service_tiers(&mut model_catalog.models);
++            yp_live_workflow_augment_flex_service_tiers(&mut model_catalog.models);
 +        }
 +        Arc::new(StaticModelsManager::new(
 +            self.auth_manager.clone(),
@@ -443,7 +443,7 @@ index 57f950a..b63e853 100644
      }
 
 +    #[tokio::test]
-+    async fn eidosoma_flex_catalog_augmentation_is_limited_to_openai_provider() {
++    async fn yp_live_workflow_flex_catalog_augmentation_is_limited_to_openai_provider() {
 +        let provider = create_model_provider(
 +            ModelProviderInfo::create_openai_provider(/*base_url*/ None),
 +            /*auth_manager*/ None,
@@ -494,7 +494,7 @@ index 57f950a..b63e853 100644
      }
 +
 +    #[tokio::test]
-+    async fn eidosoma_flex_remote_catalog_augmentation_is_limited_to_openai_provider() {
++    async fn yp_live_workflow_flex_remote_catalog_augmentation_is_limited_to_openai_provider() {
 +        let server = MockServer::start().await;
 +        Mock::given(method("GET"))
 +            .and(path("/models"))
@@ -547,25 +547,25 @@ index a0a0348..31fe136 100644
 
  const MODEL_CACHE_FILE: &str = "models_cache.json";
  const DEFAULT_MODEL_CACHE_TTL: Duration = Duration::from_secs(300);
-+const EIDOSOMA_FLEX_SERVICE_TIER_ID: &str = "flex";
-+const EIDOSOMA_FLEX_MODEL_SLUGS: [&str; 3] =
++const YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID: &str = "flex";
++const YP_LIVE_WORKFLOW_FLEX_MODEL_SLUGS: [&str; 3] =
 +    ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"];
 +
-+/// Add the Eidosoma Flex option to the exact first-party OpenAI model allowlist.
++/// Add the Your Priorities Flex option to the exact first-party OpenAI model allowlist.
 +///
 +/// Callers must ensure the catalog belongs to the OpenAI provider. This helper
 +/// intentionally does not run inside [`StaticModelsManager`], whose catalogs
 +/// can be authoritative for providers that do not support Flex.
-+pub fn eidosoma_augment_flex_service_tiers(models: &mut [ModelInfo]) {
++pub fn yp_live_workflow_augment_flex_service_tiers(models: &mut [ModelInfo]) {
 +    for model in models {
-+        if EIDOSOMA_FLEX_MODEL_SLUGS.contains(&model.slug.as_str())
++        if YP_LIVE_WORKFLOW_FLEX_MODEL_SLUGS.contains(&model.slug.as_str())
 +            && !model
 +                .service_tiers
 +                .iter()
-+                .any(|tier| tier.id == EIDOSOMA_FLEX_SERVICE_TIER_ID)
++                .any(|tier| tier.id == YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID)
 +        {
 +            model.service_tiers.push(ModelServiceTier {
-+                id: EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string(),
++                id: YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID.to_string(),
 +                name: "Flex".to_string(),
 +                description: "Flexible processing".to_string(),
 +            });
@@ -622,7 +622,7 @@ index a0a0348..31fe136 100644
 -        let remote_models = load_remote_models_from_file().unwrap_or_default();
 +        let mut remote_models = load_remote_models_from_file().unwrap_or_default();
 +        if is_openai_provider {
-+            eidosoma_augment_flex_service_tiers(&mut remote_models);
++            yp_live_workflow_augment_flex_service_tiers(&mut remote_models);
 +        }
          Self {
              remote_models: RwLock::new(remote_models),
@@ -641,7 +641,7 @@ index a0a0348..31fe136 100644
 -    async fn apply_remote_models(&self, models: Vec<ModelInfo>) {
 +    async fn apply_remote_models(&self, mut models: Vec<ModelInfo>) {
 +        if self.is_openai_provider {
-+            eidosoma_augment_flex_service_tiers(&mut models);
++            yp_live_workflow_augment_flex_service_tiers(&mut models);
 +        }
          // Use the remote models list as the source of truth if it contains at least one
          // non-hidden model and the user is using ChatGPT auth.
@@ -651,7 +651,7 @@ index a0a0348..31fe136 100644
              }
          }
 +        if self.is_openai_provider {
-+            eidosoma_augment_flex_service_tiers(&mut existing_models);
++            yp_live_workflow_augment_flex_service_tiers(&mut existing_models);
 +        }
          *self.remote_models.write().await = existing_models;
      }
@@ -688,7 +688,7 @@ index 3344061..6a30eb5 100644
  }
 +
 +#[test]
-+fn eidosoma_flex_catalog_augmentation_is_allowlisted_and_idempotent() {
++fn yp_live_workflow_flex_catalog_augmentation_is_allowlisted_and_idempotent() {
 +    let mut sol = remote_model("gpt-5.6-sol", "Sol", 1);
 +    sol.service_tiers.push(ModelServiceTier {
 +        id: "priority".to_string(),
@@ -697,7 +697,7 @@ index 3344061..6a30eb5 100644
 +    });
 +    let mut terra = remote_model("gpt-5.6-terra", "Terra", 2);
 +    terra.service_tiers.push(ModelServiceTier {
-+        id: EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string(),
++        id: YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID.to_string(),
 +        name: "Existing Flex".to_string(),
 +        description: "Preserve remote metadata".to_string(),
 +    });
@@ -706,10 +706,10 @@ index 3344061..6a30eb5 100644
 +    let other = remote_model("gpt-5.5", "GPT-5.5", 5);
 +    let mut models = vec![sol, terra, luna, namespaced_bedrock, other];
 +
-+    eidosoma_augment_flex_service_tiers(&mut models);
-+    eidosoma_augment_flex_service_tiers(&mut models);
++    yp_live_workflow_augment_flex_service_tiers(&mut models);
++    yp_live_workflow_augment_flex_service_tiers(&mut models);
 +
-+    for slug in EIDOSOMA_FLEX_MODEL_SLUGS {
++    for slug in YP_LIVE_WORKFLOW_FLEX_MODEL_SLUGS {
 +        let model = models
 +            .iter()
 +            .find(|model| model.slug == slug)
@@ -718,14 +718,14 @@ index 3344061..6a30eb5 100644
 +            model
 +                .service_tiers
 +                .iter()
-+                .filter(|tier| tier.id == EIDOSOMA_FLEX_SERVICE_TIER_ID)
++                .filter(|tier| tier.id == YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID)
 +                .count(),
 +            1,
 +            "Flex should be added exactly once to {slug}"
 +        );
 +        assert_eq!(
-+            model.service_tier_for_request(Some(EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string())),
-+            Some(EIDOSOMA_FLEX_SERVICE_TIER_ID.to_string())
++            model.service_tier_for_request(Some(YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID.to_string())),
++            Some(YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID.to_string())
 +        );
 +    }
 +
@@ -736,7 +736,7 @@ index 3344061..6a30eb5 100644
 +    let terra_flex = terra
 +        .service_tiers
 +        .iter()
-+        .find(|tier| tier.id == EIDOSOMA_FLEX_SERVICE_TIER_ID)
++        .find(|tier| tier.id == YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID)
 +        .expect("Terra should retain its existing Flex tier");
 +    assert_eq!(terra_flex.name, "Existing Flex");
 +    assert_eq!(terra_flex.description, "Preserve remote metadata");
@@ -750,14 +750,14 @@ index 3344061..6a30eb5 100644
 +            model
 +                .service_tiers
 +                .iter()
-+                .all(|tier| tier.id != EIDOSOMA_FLEX_SERVICE_TIER_ID),
++                .all(|tier| tier.id != YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID),
 +            "Flex should not be added to {slug}"
 +        );
 +    }
 +}
 +
 +#[tokio::test]
-+async fn eidosoma_flex_catalog_is_limited_to_openai_managers() {
++async fn yp_live_workflow_flex_catalog_is_limited_to_openai_managers() {
 +    let static_manager = StaticModelsManager::new(
 +        None,
 +        ModelsResponse {
@@ -766,7 +766,7 @@ index 3344061..6a30eb5 100644
 +    );
 +    let static_models = static_manager.get_remote_models().await;
 +    assert!(
-+        !static_models[0].supports_service_tier(EIDOSOMA_FLEX_SERVICE_TIER_ID),
++        !static_models[0].supports_service_tier(YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID),
 +        "generic static catalogs must remain authoritative"
 +    );
 +
@@ -785,12 +785,12 @@ index 3344061..6a30eb5 100644
 +        .await
 +        .expect("remote catalog refresh should succeed");
 +    let remote_models = remote_manager.get_remote_models().await;
-+    for slug in EIDOSOMA_FLEX_MODEL_SLUGS {
++    for slug in YP_LIVE_WORKFLOW_FLEX_MODEL_SLUGS {
 +        let model = remote_models
 +            .iter()
 +            .find(|model| model.slug == slug)
 +            .expect("bundled allowlisted model should survive the fallback merge");
-+        assert!(model.supports_service_tier(EIDOSOMA_FLEX_SERVICE_TIER_ID));
++        assert!(model.supports_service_tier(YP_LIVE_WORKFLOW_FLEX_SERVICE_TIER_ID));
 +    }
 +}
 diff --git a/codex-rs/core/src/unified_exec/process_manager_tests.rs b/codex-rs/core/src/unified_exec/process_manager_tests.rs
@@ -802,7 +802,7 @@ index ced5188..be54776 100644
  }
 
 +#[test]
-+fn eidosoma_progressive_poll_uses_server_controlled_schedule() {
++fn yp_live_workflow_progressive_poll_uses_server_controlled_schedule() {
 +    let maximum = 1_800_000;
 +
 +    assert_eq!(
@@ -824,7 +824,7 @@ index ced5188..be54776 100644
 +}
 +
 +#[test]
-+fn eidosoma_progressive_poll_respects_configured_maximum() {
++fn yp_live_workflow_progressive_poll_respects_configured_maximum() {
 +    let maximum = 60_000;
 +
 +    assert_eq!(
@@ -842,7 +842,7 @@ index ced5188..be54776 100644
 +}
 +
 +#[test]
-+fn eidosoma_progressive_poll_preserves_non_empty_write_bounds() {
++fn yp_live_workflow_progressive_poll_preserves_non_empty_write_bounds() {
 +    let maximum = 1_800_000;
 +
 +    assert_eq!(
