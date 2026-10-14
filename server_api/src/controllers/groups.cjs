@@ -2380,6 +2380,7 @@ router.put(
             translateLanguage: req.query.translateLanguage,
             jobId: jobId,
             groupId: req.params.groupId,
+			hostname: req.ypDomain.domain_name,
           },
           "critical"
         );
