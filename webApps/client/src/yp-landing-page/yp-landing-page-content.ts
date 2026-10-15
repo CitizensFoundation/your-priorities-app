@@ -344,5 +344,5 @@ export const FOOTER_CONTENT = {
   emailAddress: "smallideas@nesta.org.uk",
   copyrightHolder: "The Small Ideas Initiative",
   privacyPolicyLabel: "Privacy Policy",
-  privacyPolicyUrl: "https://www.nesta.org.uk/privacy/",
+  privacyPolicyUrl: "https://www.nesta.org.uk/project/small-ideas-initiative/privacy-policy/",
 };
