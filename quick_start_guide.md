@@ -23,6 +23,22 @@ cp server_api/startWorkerWithEnv.sh-dist server_api/startWorkerWithEnv.sh
 
    - `SESSION_SECRET`: A random string
 
+3. Set the following variables in `development/docker/.env`:
+
+   - `MINIO_ROOT_USER`: minio
+   - `MINIO_ROOT_PASSWORD`: minio123
+
+4. Set the following variables in `server_api/startWorkerWithEnv.sh`:
+
+   - `AWS_ACCESS_KEY_ID`: minio
+   - `AWS_SECRET_ACCESS_KEY`: minio123
+   - `S3_REPORTS_BUCKET`: minio.yrpri.reports
+
+5. Add the following variables to the same file:
+
+   - `S3_ENDPOINT`: http://localhost:9012
+   - `S3_FORCE_PATH_STYLE`: true
+
 ## 1) First-Time Setup (Do Once Per Machine/Clone)
 
 ### 1.1 Verify Required Tools
@@ -97,23 +113,26 @@ Use three terminals.
 
 ```bash
 cd development/docker
-docker compose up db redis -d
+docker compose up db redis minio mc -d
 ```
 
-Postgres and redis should respond to healthchecks:
+Postgres, Redis, and MinIO should respond to healthchecks, and `mc` should have completed successfully:
 
 ```bash
-docker exec postgres pg_isready -U postgres -d yrpri_dev
-docker exec redis redis-cli ping
+docker exec postgres pg_isready -U postgres -d yrpri_dev # Should show "/var/run/postgresql:5432 - accepting connections"
+docker exec redis redis-cli ping # Should show "PONG"
+curl -I http://localhost:9012/minio/health/live # Should show "HTTP/1.1 200 OK"
+docker compose ps -a mc # Should show STATUS of "Exited (0)"
 ```
+
+> [!note]
+> MinIO provides a local S3, and `mc` configures it to have the right buckets (probably only needed once).
 
 Optional full local stack:
 
 ```bash
 docker compose up db redis minio mc elasticsearch mail -d
 ```
-
-Minio provides a local S3, and mc configures it to have the right buckets (probably only needed once).
 
 ### Terminal 2: Backend API
 

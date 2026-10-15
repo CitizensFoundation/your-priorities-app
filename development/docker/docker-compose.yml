@@ -165,7 +165,8 @@ services:
     image: pgsty/mc:latest
     container_name: minio_command_line
     depends_on:
-     - minio
+      minio:
+        condition: service_healthy
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set local http://minio:9012 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
