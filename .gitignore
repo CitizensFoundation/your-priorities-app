@@ -1,3 +1,8 @@
+.envForAgentDoNotViewOnlyImport
+.playwright-mcp/
+server_api/.live-workflow-manual/
+server_api/live-workflow-runtime/
+
 node_modules
 *node_modules/*
 server_api/config/config.json

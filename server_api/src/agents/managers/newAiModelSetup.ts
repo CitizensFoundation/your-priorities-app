@@ -321,13 +321,97 @@ export class NewAiModelSetup {
       anthropicFable5.changed("configuration", true);
       await anthropicFable5.save();
     }
+
+    // https://platform.claude.com/docs/en/about-claude/pricing
+    const currentAnthropicModels: {
+      name: string;
+      model: string;
+      modelSize: PsAiModelSize;
+      prices: PsAiModelConfiguration["prices"];
+    }[] = [
+      {
+        name: "Anthropic Fable 5.1",
+        model: "claude-fable-5-1",
+        modelSize: PsAiModelSize.Large,
+        prices: {
+          costPerThousandWebSearches: 10,
+          costInTokensPerMillion: 10,
+          costOutTokensPerMillion: 50,
+          costInCachedContextTokensPerMillion: 0.25,
+          cacheWriteInputCostMultiplier: 1.25,
+          currency: "USD",
+        },
+      },
+      {
+        name: "Anthropic Sonnet 5.5",
+        model: "claude-sonnet-5-5",
+        modelSize: PsAiModelSize.Medium,
+        prices: {
+          costPerThousandWebSearches: 10,
+          costInTokensPerMillion: 2,
+          costOutTokensPerMillion: 10,
+          costInCachedContextTokensPerMillion: 0.1,
+          cacheWriteInputCostMultiplier: 1.25,
+          currency: "USD",
+        },
+      },
+      {
+        name: "Anthropic Haiku 5.5",
+        model: "claude-haiku-5-5",
+        modelSize: PsAiModelSize.Small,
+        prices: {
+          costPerThousandWebSearches: 10,
+          costInTokensPerMillion: 0.1,
+          costOutTokensPerMillion: 0.5,
+          costInCachedContextTokensPerMillion: 0.01,
+          cacheWriteInputCostMultiplier: 1.25,
+          longContextTokenThreshold: 100_000,
+          longContextCostInTokensPerMillion: 0.5,
+          longContextCostInCachedContextTokensPerMillion: 0.05,
+          longContextCostOutTokensPerMillion: 2.5,
+          currency: "USD",
+        },
+      },
+    ];
+
+    for (const model of currentAnthropicModels) {
+      const existingModel = await PsAiModel.findOne({
+        where: { name: model.name },
+      });
+      const configuration: PsAiModelConfiguration = {
+        type: PsAiModelType.TextReasoning,
+        modelSize: model.modelSize,
+        provider: "anthropic",
+        prices: model.prices,
+        maxTokensOut: 128000,
+        maxContextTokens: 1000000,
+        defaultTemperature: 1,
+        model: model.model,
+        active: true,
+      };
+
+      if (!existingModel) {
+        await PsAiModel.create({
+          name: model.name,
+          organization_id: 1,
+          user_id: userId,
+          configuration,
+        });
+        log.info(`Created Anthropic model: ${model.name}`);
+      } else {
+        existingModel.set("configuration", configuration);
+        existingModel.changed("configuration", true);
+        await existingModel.save();
+        log.debug(`Anthropic model already exists: ${model.name}`);
+      }
+    }
   }
 
   /**
    * Seeds OpenAI models.
    * This currently creates several models including GPT-4o, GPT-4o Mini, o1 Mini,
    * o1 Preview, o1 24, o3 mini, GPT-5.4 variants, GPT-5.5,
-   * GPT-5.5 tier variants, GPT-5.6 tier variants, and GPT-6 tier variants.
+   * GPT-5.5 tier variants, GPT-5.6 tier variants, and GPT-6 / GPT-6.1 tier variants.
    */
   static async seedOpenAiModels(userId: number): Promise<void> {
     // GPT-4o
@@ -1528,6 +1612,15 @@ export class NewAiModelSetup {
         outputPrice: 10,
       },
       {
+        // https://developers.openai.com/api/docs/models/gpt-6.1-sol
+        name: "GPT-6.1 Sol",
+        model: "gpt-6.1-sol",
+        modelSize: PsAiModelSize.Large,
+        inputPrice: 2,
+        cachedInputPrice: 0.1,
+        outputPrice: 10,
+      },
+      {
         name: "GPT-6 Luna",
         model: "gpt-6-luna",
         modelSize: PsAiModelSize.Small,
@@ -2079,6 +2172,47 @@ export class NewAiModelSetup {
       log.debug("Google model already exists: Gemini 3.8 Flash");
     }
 
+    const gemini4Argon = await PsAiModel.findOne({
+      where: { name: "Gemini 4 Argon" },
+    });
+    // Re-evaluate introductory pricing on each seed; it ends on 2026-11-30 UTC.
+    // https://ai.google.dev/gemini-api/docs/pricing#gemini-4-argon
+    const gemini4IntroductoryPricing = Date.now() < Date.UTC(2026, 11, 1);
+    const gemini4ArgonConfig: PsAiModelConfiguration = {
+      type: PsAiModelType.TextReasoning,
+      modelSize: PsAiModelSize.Large,
+      provider: "google",
+      prices: {
+        costPerThousandWebSearches: 14,
+        costInTokensPerMillion: gemini4IntroductoryPricing ? 2 : 4,
+        costOutTokensPerMillion: gemini4IntroductoryPricing ? 10 : 20,
+        costInCachedContextTokensPerMillion: gemini4IntroductoryPricing ? 0.1 : 0.2,
+        currency: "USD",
+      },
+      model: "gemini-4-argon",
+      active: true,
+      // The synchronous API supports 64K output within the unified 1M window.
+      maxTokensOut: 65536,
+      maxContextTokens: 1048576,
+      defaultTemperature: 1,
+      timeoutMs: 15 * 60 * 1000,
+    };
+
+    if (!gemini4Argon) {
+      await PsAiModel.create({
+        name: "Gemini 4 Argon",
+        organization_id: 1,
+        user_id: userId,
+        configuration: gemini4ArgonConfig,
+      });
+      log.info("Created Google model: Gemini 4 Argon");
+    } else {
+      gemini4Argon.set("configuration", gemini4ArgonConfig);
+      gemini4Argon.changed("configuration", true);
+      await gemini4Argon.save();
+      log.debug("Google model already exists: Gemini 4 Argon");
+    }
+
     const gemini35FlashLite = await PsAiModel.findOne({
       where: { name: "Gemini 3.5 Flash Lite" },
     });
@@ -2276,6 +2410,9 @@ export class NewAiModelSetup {
       { name: "Anthropic Opus 5 Fast", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "Anthropic Opus 5.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "Anthropic Fable 5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Fable 5.1", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Sonnet 5.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
+      { name: "Anthropic Haiku 5.5", envKey: "ANTHROPIC_CLAUDE_API_KEY" },
       { name: "GPT-4o", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4o Mini", envKey: "OPENAI_API_KEY" },
       { name: "GPT-4.5 Preview", envKey: "OPENAI_API_KEY" },
@@ -2319,6 +2456,9 @@ export class NewAiModelSetup {
       { name: "GPT-6 Sol", envKey: "OPENAI_API_KEY" },
       { name: "GPT-6 Sol Priority", envKey: "OPENAI_API_KEY" },
       { name: "GPT-6 Sol Flex", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-6.1 Sol", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-6.1 Sol Priority", envKey: "OPENAI_API_KEY" },
+      { name: "GPT-6.1 Sol Flex", envKey: "OPENAI_API_KEY" },
       { name: "GPT-6 Luna", envKey: "OPENAI_API_KEY" },
       { name: "GPT-6 Luna Priority", envKey: "OPENAI_API_KEY" },
       { name: "GPT-6 Luna Flex", envKey: "OPENAI_API_KEY" },
@@ -2330,6 +2470,7 @@ export class NewAiModelSetup {
       { name: "Gemini 3.6 Flash", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.7 Flash", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.8 Flash", envKey: "GEMINI_API_KEY" },
+      { name: "Gemini 4 Argon", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.5 Flash Lite", envKey: "GEMINI_API_KEY" },
       { name: "Gemini 3.0 Flash", envKey: "GEMINI_API_KEY" },
     ];
