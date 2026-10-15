@@ -49,6 +49,7 @@ import { ManualOperatorAdapter } from "./operatorAdapter.js";
 import { ManualCodexUsage } from "./codexUsage.js";
 import { ManualCheckpointGate } from "./checkpointGate.js";
 import { BrowserBatchCheckpoint } from "./browserBatchCheckpoint.js";
+import type { GroupCreationFixture } from "./groupCreationFixture.js";
 
 const execute = promisify(execFile);
 const codexImage = "yp-live-workflow/codex-runtime:1";
@@ -98,12 +99,17 @@ export async function startManualHarness(
     port?: number;
     browserLogin?: boolean;
     browserBatch?: boolean;
+    groupCreation?: boolean;
     offlineProcessingDelayMs?: number;
     processingConcurrency?: number;
     observeBrowserRequest?: RequestHandler;
     manualPage?: { instructions: string; fixture: string; filename: string };
   } = {},
 ) {
+  if (options.groupCreation)
+    assert.ok(
+      options.browserLogin && !options.headless && options.codex !== "operator",
+    );
   const processingConcurrency = options.processingConcurrency ?? 1;
   assert.ok(
     Number.isInteger(processingConcurrency) &&
@@ -141,6 +147,7 @@ export async function startManualHarness(
   const sockets = new WebSocketServer({ noServer: true });
   let database: Sequelize | undefined,
     controller: LiveWorkflowsController | undefined;
+  let groupCreation: GroupCreationFixture | undefined;
   let vm: WorkflowVmRuntime | undefined,
     codex: CodexAdapter | undefined,
     broker: VmAgentBrokerClient | undefined;
@@ -178,6 +185,7 @@ export async function startManualHarness(
     } catch {
       failures.push("database connection");
     }
+    groupCreation?.close();
     try {
       if (databaseStarted)
         await docker(["rm", "--force", "--volumes", databaseContainer]);
@@ -238,12 +246,22 @@ export async function startManualHarness(
         return false;
       }
     });
-    await database.getQueryInterface().createTable("groups", {
-      id: { type: DataTypes.INTEGER, primaryKey: true },
-    });
-    await database
-      .getQueryInterface()
-      .bulkInsert("groups", [{ id: 1 }, { id: 2 }]);
+    if (options.groupCreation) {
+      // The legacy authorization logger includes this unrelated setting; do not
+      // import or expose any development account's master key in a manual test.
+      setEnv("PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY", "");
+      setEnv("S3_BUCKET", "unused-manual-browser-test");
+      const { groupCreationFixture } =
+        await import("./groupCreationFixture.js");
+      groupCreation = await groupCreationFixture(database, actor.userId);
+    } else {
+      await database.getQueryInterface().createTable("groups", {
+        id: { type: DataTypes.INTEGER, primaryKey: true },
+      });
+      await database
+        .getQueryInterface()
+        .bulkInsert("groups", [{ id: 1 }, { id: 2 }]);
+    }
     await migrateLiveWorkflows(database);
     const store = new SequelizeWorkflowStore(database);
     const secrets = new SecretBox(randomBytes(32).toString("base64"));
@@ -295,12 +313,16 @@ export async function startManualHarness(
     controller = new LiveWorkflowsController({
       service,
       assets,
-      groupAccess: async (groupId, userId) => {
-        if (groupId !== 1 || userId !== actor.userId)
-          throw new ForbiddenError();
-        return actor;
-      },
-      groupChoices: async () => [{ id: 1, name: "Skills First manual test" }],
+      groupAccess:
+        groupCreation?.groupAccess ??
+        (async (groupId, userId) => {
+          if (groupId !== 1 || userId !== actor.userId)
+            throw new ForbiddenError();
+          return actor;
+        }),
+      groupChoices:
+        groupCreation?.groupChoices ??
+        (async () => [{ id: 1, name: "Skills First manual test" }]),
     });
     await controller.ready;
     const ui = path.join(temp, "ui.js");
@@ -311,7 +333,9 @@ export async function startManualHarness(
         entryPoints: [
           path.resolve(
             apiRoot,
-            "../webApps/client/src/live-workflows/yp-live-workflow.ts",
+            options.groupCreation
+              ? "../webApps/client/src/live-workflows/test/group-creation-manual.ts"
+              : "../webApps/client/src/live-workflows/yp-live-workflow.ts",
           ),
         ],
         bundle: true,
@@ -336,6 +360,7 @@ export async function startManualHarness(
         ? next()
         : express.json({ limit: "32mb" })(req, res, next),
     );
+    if (options.groupCreation) app.use(express.urlencoded({ extended: false }));
     // Record only capability names/statuses: never request bodies, credentials or provider payloads.
     const codexCalls: { operation: string; status: number }[] = [];
     const processingCalls: {
@@ -354,25 +379,28 @@ export async function startManualHarness(
       : undefined;
     app.use((req, res, next) => {
       const processing =
-        /^\/api\/live-workflows\/vm\/groups\/1\/runs\/([^/]+)\/model$/.exec(
+        /^\/api\/live-workflows\/vm\/groups\/(\d+)\/runs\/([^/]+)\/model$/.exec(
           req.path,
         );
-      if (processing)
+      if (
+        processing &&
+        Number(processing[1]) === (groupCreation?.groupId() ?? 1)
+      )
         res.once("finish", () =>
           processingCalls.push({
-            runId: processing[1],
+            runId: processing[2],
             nodeId: String(req.body?.nodeId),
             id: String(req.body?.id),
             status: res.statusCode,
           }),
         );
       const match =
-        /^\/api\/live-workflows\/vm\/groups\/1\/codex\/([a-z-]+)$/.exec(
+        /^\/api\/live-workflows\/vm\/groups\/(\d+)\/codex\/([a-z-]+)$/.exec(
           req.path,
         );
-      if (match)
+      if (match && Number(match[1]) === (groupCreation?.groupId() ?? 1))
         res.once("finish", () =>
-          codexCalls.push({ operation: match[1], status: res.statusCode }),
+          codexCalls.push({ operation: match[2], status: res.statusCode }),
         );
       next();
     });
@@ -389,9 +417,11 @@ export async function startManualHarness(
           () =>
             mode === "offline" ? offlineBrowserKey : process.env[manualKeyName],
           () => process.env.YP_LIVE_WORKFLOW_PUBLIC_ORIGIN,
+          options.groupCreation ? () => groupCreation?.groupId() : undefined,
         ),
       );
     if (options.observeBrowserRequest) app.use(options.observeBrowserRequest);
+    groupCreation?.mount(app);
     app.use(controller.path, controller.router);
     if (!options.headless) {
       app.get("/favicon.ico", (_req, res) => res.sendStatus(204));
@@ -403,13 +433,37 @@ export async function startManualHarness(
             options.manualPage!.filename,
           ),
         );
-      app.get("/", (_req, res) =>
-        res
-          .type("html")
-          .send(
-            `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skills First manual test</title><style>body{margin:24px;font-family:system-ui}pre{white-space:pre-wrap}summary{cursor:pointer}</style><h1>Skills First manual test</h1><p>${mode === "offline" ? "Offline rehearsal — fixture model responses." : mode === "api-key" ? "Isolated test — Codex uses API-key authentication. This does not test ChatGPT sign-in." : "Real ChatGPT sign-in and API-backed processing."} Total processing cap: $${config.trialBudgetMicros / 1e6}. Codex cost is separate. No external connectors.</p>${options.manualPage?.instructions ?? ""}${options.browserLogin ? browserKeyImportButton : ""}<yp-live-workflow groupid="1"></yp-live-workflow><script type="module" src="/ui.js"></script>`,
+      if (options.groupCreation) {
+        app.get("/locales/en/translation.json", (_req, res) =>
+          res.sendFile(
+            path.resolve(
+              apiRoot,
+              "../webApps/client/locales/en/translation.json",
+            ),
           ),
-      );
+        );
+        app.get(
+          [
+            "/",
+            "/admin/group/new/:communityId",
+            "/admin/group/:groupId",
+            "/group/:groupId",
+          ],
+          (_req, res) =>
+            res
+              .type("html")
+              .send(
+                `<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Live workflow group creation test</title><style>body{margin:24px;font-family:system-ui;background:#f6f8fc;color:#17213b}main{max-width:1440px;margin:auto}a{color:#234cb5}</style><main><h1>Live workflow group creation</h1><p>${mode === "offline" ? "Offline rehearsal: scripted Codex response, no provider calls." : "Live test: one API-key Codex greeting. Processing is disabled."} Signed in as a disposable test administrator.</p><div id="manual-app"></div></main><script type="module" src="/ui.js"></script></html>`,
+              ),
+        );
+      } else
+        app.get("/", (_req, res) =>
+          res
+            .type("html")
+            .send(
+              `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skills First manual test</title><style>body{margin:24px;font-family:system-ui}pre{white-space:pre-wrap}summary{cursor:pointer}</style><h1>Skills First manual test</h1><p>${mode === "offline" ? "Offline rehearsal — fixture model responses." : mode === "api-key" ? "Isolated test — Codex uses API-key authentication. This does not test ChatGPT sign-in." : "Real ChatGPT sign-in and API-backed processing."} Total processing cap: $${config.trialBudgetMicros / 1e6}. Codex cost is separate. No external connectors.</p>${options.manualPage?.instructions ?? ""}${options.browserLogin ? browserKeyImportButton : ""}<yp-live-workflow groupid="1"></yp-live-workflow><script type="module" src="/ui.js"></script>`,
+            ),
+        );
     }
     server.on("request", app);
     server.on("upgrade", (request, socket, head) => {
@@ -551,8 +605,11 @@ export async function startManualHarness(
       method = "GET",
       body?: unknown,
     ): Promise<T> => {
+      const groupId = groupCreation ? groupCreation.groupId() : 1;
+      if (!groupId)
+        throw new Error("Create the group through the browser first");
       const response = await fetch(
-        `${baseUrl}/api/live-workflows/groups/1${route}`,
+        `${baseUrl}/api/live-workflows/groups/${groupId}${route}`,
         {
           method,
           headers: { origin: baseUrl, "content-type": "application/json" },
@@ -568,62 +625,64 @@ export async function startManualHarness(
       }
       return (await response.json()) as T;
     };
-    await request("", "POST", {
-      packageId: "skills-first",
-      hostId: host.id,
-      codexModel: config.codexModel,
-      codexReasoningEffort: config.codexReasoningEffort,
-      codexServiceTier: config.codexServiceTier,
-      operatorIds: [actor.userId],
-      budgetMicros: config.trialBudgetMicros,
-      trialBudgetMicros: config.trialBudgetMicros,
-      quotaBytes: 16 * 1024 ** 2,
-      concurrency: processingConcurrency,
-    });
-    await request("/operator", "POST", { takeover: false });
-    const state = (await request<YpWorkflowSnapshot>("")).workspace;
-    const cliLoads = await execute(
-      process.execPath,
-      [
-        path.join(rootPath, state.id, "workspace/.workflow/cli.js"),
-        "invalid-command",
-      ],
-      { timeout: 15_000, env: { PATH: process.env.PATH } },
-    ).then(
-      () => false,
-      (error: { code?: number; stderr?: string }) =>
-        error.code === 1 &&
-        Boolean(error.stderr?.includes("Usage: yp-workflow")) &&
-        !error.stderr?.includes("ERR_MODULE_NOT_FOUND"),
-    );
-    if (!cliLoads)
-      throw new Error(
-        "The materialized workflow CLI cannot load; rebuild the runtime before starting a paid Codex session",
+    if (!options.groupCreation) {
+      await request("", "POST", {
+        packageId: "skills-first",
+        hostId: host.id,
+        codexModel: config.codexModel,
+        codexReasoningEffort: config.codexReasoningEffort,
+        codexServiceTier: config.codexServiceTier,
+        operatorIds: [actor.userId],
+        budgetMicros: config.trialBudgetMicros,
+        trialBudgetMicros: config.trialBudgetMicros,
+        quotaBytes: 16 * 1024 ** 2,
+        concurrency: processingConcurrency,
+      });
+      await request("/operator", "POST", { takeover: false });
+      const state = (await request<YpWorkflowSnapshot>("")).workspace;
+      const cliLoads = await execute(
+        process.execPath,
+        [
+          path.join(rootPath, state.id, "workspace/.workflow/cli.js"),
+          "invalid-command",
+        ],
+        { timeout: 15_000, env: { PATH: process.env.PATH } },
+      ).then(
+        () => false,
+        (error: { code?: number; stderr?: string }) =>
+          error.code === 1 &&
+          Boolean(error.stderr?.includes("Usage: yp-workflow")) &&
+          !error.stderr?.includes("ERR_MODULE_NOT_FOUND"),
       );
-    for (const node of state.graph.nodes)
-      if (node.kind === "agent") {
-        node.configuration.concurrency = processingConcurrency;
-        node.models = { default: config.processingModel.id };
-        node.reasoningEffort = config.processingReasoningEffort;
+      if (!cliLoads)
+        throw new Error(
+          "The materialized workflow CLI cannot load; rebuild the runtime before starting a paid Codex session",
+        );
+      for (const node of state.graph.nodes)
+        if (node.kind === "agent") {
+          node.configuration.concurrency = processingConcurrency;
+          node.models = { default: config.processingModel.id };
+          node.reasoningEffort = config.processingReasoningEffort;
+        }
+      await request("/graph", "PUT", {
+        graph: state.graph,
+        revision: state.revision,
+      });
+      if (mode !== "chatgpt" && !options.browserLogin) {
+        const id = randomUUID();
+        await store.transact(1, (tx) =>
+          tx.put("account", String(actor.userId), {
+            id,
+            userId: actor.userId,
+            hostId: host.id,
+            // No real key in the account fixture or its serialized material.
+            sealed: secrets.seal(
+              { format: "codex_home_files_v1", files: [] },
+              `account:${actor.userId}:${id}`,
+            ),
+          }),
+        );
       }
-    await request("/graph", "PUT", {
-      graph: state.graph,
-      revision: state.revision,
-    });
-    if (mode !== "chatgpt" && !options.browserLogin) {
-      const id = randomUUID();
-      await store.transact(1, (tx) =>
-        tx.put("account", String(actor.userId), {
-          id,
-          userId: actor.userId,
-          hostId: host.id,
-          // No real key in the account fixture or its serialized material.
-          sealed: secrets.seal(
-            { format: "codex_home_files_v1", files: [] },
-            `account:${actor.userId}:${id}`,
-          ),
-        }),
-      );
     }
     const checkpoint = async (runId: string, nodeId: string) => {
       const snapshot = await request<YpWorkflowSnapshot>("");
@@ -706,10 +765,12 @@ export async function startManualHarness(
       baseUrl,
       request,
       service,
+      assets,
       codexCalls,
       codexUsage,
       processingCalls,
       browserBatch,
+      groupCreation,
       close,
       checkpoint,
       armCheckpoint: (runId: string, nodeId: string) =>

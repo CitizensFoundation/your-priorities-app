@@ -503,6 +503,17 @@ export class WorkflowVmRuntime {
             "node",
             "/opt/yp-workflow/runner/parse.js",
           ]);
+          const inputError = await readFile(
+            path.join(parsed, "input-error.json"), "utf8",
+          ).catch((error: NodeJS.ErrnoException) => {
+            if (error.code === "ENOENT") return undefined;
+            throw error;
+          });
+          if (inputError) {
+            const failure = z.object({ message: z.string().max(1000) })
+              .parse(JSON.parse(inputError));
+            throw new Error(failure.message);
+          }
           const records = await open(
             path.join(parsed, "records.json"),
             constants.O_RDONLY | constants.O_NOFOLLOW,

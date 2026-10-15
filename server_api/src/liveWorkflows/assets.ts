@@ -45,6 +45,8 @@ export class AssetService {
     if (!name || name === "." || name === "..")
       throw new ValidationError("File name is required");
     const reservation = input.length ?? maximumUploadBytes;
+    if (reservation === 0)
+      throw new ValidationError("Empty files cannot be uploaded");
     if (
       !Number.isSafeInteger(reservation) ||
       reservation < 1 ||

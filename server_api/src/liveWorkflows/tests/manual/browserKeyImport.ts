@@ -7,11 +7,15 @@ export const offlineBrowserKey = "sk-offline-browser-fixture-only";
 export function importedBrowserKey(
   getKey: () => string | undefined,
   getOrigin: () => string | undefined,
+  getGroupId: () => number | undefined = () => 1,
 ): RequestHandler {
   return (req, res, next) => {
+    const groupId = getGroupId();
     if (
       req.method === "POST" &&
-      req.path === "/api/live-workflows/groups/1/account/api-key" &&
+      Number.isSafeInteger(groupId) &&
+      groupId! > 0 &&
+      req.path === `/api/live-workflows/groups/${groupId}/account/api-key` &&
       req.body?.apiKey === browserKeyMarker
     ) {
       if (!getOrigin() || req.headers.origin !== getOrigin()) {

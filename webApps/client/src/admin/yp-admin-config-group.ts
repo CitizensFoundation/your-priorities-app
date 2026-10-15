@@ -276,7 +276,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   override renderBeforeTabPages() {
-    if (this.groupTypeIndex === 5 && this.group?.id) {
+    if (this.groupTypeIndex === 5 && this.group?.id > 0) {
       void import("../live-workflows/yp-live-workflow-admin.js");
       return html`<yp-live-workflow-admin .groupId=${this.group.id}></yp-live-workflow-admin>`;
     }
@@ -520,7 +520,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         ).allOurIdeas!.earl!.question!.name;
       }
 
-      this.groupTypeIndex = this.group.configuration.groupType || 0;
+      this.groupTypeIndex = Number(this.group.configuration.groupType) || 0;
 
       this.endorsementButtons = this.group.configuration.endorsementButtons;
 

@@ -67,6 +67,7 @@ export class YpLiveWorkflow extends LitElement {
   @state() private sampleCount = 5;
   @state() private targetNodeId = "";
   @state() private preview?: {
+    assetId: string;
     name: string;
     inputCount: number;
     rows: Record<string, YpWorkflowJson>[];
@@ -635,6 +636,8 @@ export class YpLiveWorkflow extends LitElement {
       : {};
   }
   private event(event: YpWorkflowEvent) {
+    if (event.type === "asset.deleted")
+      this.forgetAsset(String(event.data.assetId));
     if (
       ["operator.changed", "host.restarted", "session.closed"].includes(
         event.type,
@@ -791,18 +794,24 @@ export class YpLiveWorkflow extends LitElement {
     });
   }
   private async upload(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
     if (!files) return;
     await this.action(async () => {
-      for (const file of files) {
-        if (file.size > 250 * 1024 ** 2)
-          throw new Error("Each file must be 250 MiB or smaller");
-        const asset = await this.api.upload(file, (p) => {
-          this.uploadProgress = p;
-        });
-        this.selectedAssets = [...this.selectedAssets, asset.id];
+      try {
+        for (const file of files) {
+          if (file.size > 250 * 1024 ** 2)
+            throw new Error("Each file must be 250 MiB or smaller");
+          const asset = await this.api.upload(file, (p) => {
+            this.uploadProgress = p;
+          });
+          this.selectedAssets = [...this.selectedAssets, asset.id];
+        }
+      } finally {
+        this.uploadProgress = 0;
+        // A failed file can be selected again after correcting the error.
+        input.value = "";
       }
-      this.uploadProgress = 0;
     });
   }
   private async draftRun(mode: "trial" | "bulk") {
@@ -952,6 +961,7 @@ export class YpLiveWorkflow extends LitElement {
   }
   private async previewAsset(asset: YpWorkflowAsset) {
     const groupId = this.groupId;
+    this.preview = undefined;
     await this.action(async () => {
       const result = await this.api.request<{
         inputCount: number;
@@ -959,10 +969,23 @@ export class YpLiveWorkflow extends LitElement {
       }>(`/assets/${asset.id}/preview`);
       if (this.groupId === groupId)
         this.preview = {
+          assetId: asset.id,
           name: asset.name,
           inputCount: result.inputCount,
           rows: result.preview,
         };
+    });
+  }
+  private forgetAsset(id: string) {
+    this.selectedAssets = this.selectedAssets.filter(
+      (selected) => selected !== id,
+    );
+    if (this.preview?.assetId === id) this.preview = undefined;
+  }
+  private async deleteAsset(asset: YpWorkflowAsset) {
+    await this.action(async () => {
+      await this.api.request(`/assets/${asset.id}`, "DELETE");
+      this.forgetAsset(asset.id);
     });
   }
   private async connectGroup(event: Event) {
@@ -2028,10 +2051,7 @@ ${this.quota ||
                   <td>
                     <button
                       ?disabled=${!this.operator || this.busy}
-                      @click=${() =>
-                        this.action(() =>
-                          this.api.request(`/assets/${asset.id}`, "DELETE"),
-                        )}
+                      @click=${() => this.deleteAsset(asset)}
                     >
                       Delete
                     </button>

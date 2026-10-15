@@ -116,3 +116,31 @@ test("manual acceptance requires login, ordered browser actions and every downlo
     /Connect an API key/,
   );
 });
+
+test("manual key import follows the browser-created group and rejects unsaved or other group IDs", () => {
+  let createdGroupId: number | undefined;
+  const origin = "http://127.0.0.1:9876";
+  const key = "sk-fake-group-creation-secret";
+  const middleware = importedBrowserKey(
+    () => key,
+    () => origin,
+    () => createdGroupId,
+  );
+  const request = (id: number) => {
+    const req = {
+      method: "POST",
+      path: `/api/live-workflows/groups/${id}/account/api-key`,
+      headers: { origin },
+      body: { apiKey: browserKeyMarker },
+    } as Request;
+    middleware(req, {} as Response, () => {});
+    return req.body.apiKey;
+  };
+  assert.equal(request(42), browserKeyMarker);
+  createdGroupId = -1;
+  assert.equal(request(-1), browserKeyMarker);
+  createdGroupId = 42;
+  assert.equal(request(1), browserKeyMarker);
+  assert.equal(request(41), browserKeyMarker);
+  assert.equal(request(42), key);
+});

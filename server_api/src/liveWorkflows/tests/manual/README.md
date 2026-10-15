@@ -1,5 +1,47 @@
 # Skills First manual test
 
+## Automated regressions without provider credentials
+
+From `server_api`, run:
+
+```sh
+sg docker -c 'npm run test:live-workflows:regression'
+```
+
+This runs two deterministic Chromium integration tests in sequence, each in a separate Node process and with its own disposable PostgreSQL database and workspace. Both use the production group form, group router, workflow controller, VM broker, processing/parser containers, event stream and download endpoints. Codex and processing providers return local fixture responses; no credential file is imported, no paid provider is called, and no external connector is enabled. Your Priorities sign-in remains a seeded administrator fixture. These cases are separate from `npm test` because they require Docker and installed browser/runtime images; they can be run unattended on a suitably provisioned CI worker. Paid manual tests still require explicit live opt-in.
+
+1. **New group to workbook:** create and configure Skills First through the normal UI, connect a fake key, exchange one scripted greeting, upload and preview two jobs, run the full default trial, and download JSON/CSV/Excel/Markdown. Verify all five stages, exactly 20 processing calls, per-agent ledger totals, source preservation, all seven analysis responses per job and all 74 master columns. Reload and verify saved results, immutable run settings, identical workbook bytes and no duplicate calls.
+2. **Documents and upload failures:** upload and download actual PDF and DOCX fixtures, multiline/quoted Unicode CSV with leading-zero IDs, TSV, text and HTML. Check parsing in the real constrained container, immutable versions, deletion and VM cache removal. Malformed CSV/JSON/PDF/DOCX must fail preview and trial preparation with a useful error and no run or model charge. Empty and oversized uploads, a genuine mid-upload socket disconnect and storage-quota exhaustion must leave accurate storage accounting; freeing space must allow retry. The quota boundary is configured through the production API with tiny files because the admin UI uses whole GiB. All other normal file actions use the browser; raw HTTP requests test a declared size above 250 MiB without sending a body, and a disconnect while the server holds an upload reservation.
+
+Each case prints its own directory under `/tmp/skills-first-regression/run-*/`, containing screenshots, browser checks and `report.json`. The lifecycle case also saves the browser-downloaded `skills-first.xlsx`, its copy downloaded after reload, `costs.json` and `value-verification.json`. All reported processing costs are explicitly simulated. The fixtures prove plumbing and invariants, not real-model analysis quality. Errors retain a screenshot and diagnostics; the harness removes its disposable resources on success and failure.
+
+Prerequisites are the same as the offline manual harness: installed npm dependencies, Chromium, `postgres:16-alpine` and `yp-live-workflow/processing-runtime:1`. Rebuild the processing image after parser/runtime changes:
+
+```sh
+npm run build:live-workflows
+sg docker -c 'docker build -t yp-live-workflow/processing-runtime:1 -f live-workflow-runtime/Dockerfile.processing live-workflow-runtime'
+```
+
+## Create a group and greet its assistant
+
+The [group-creation executable](../groupCreation.browser.manual.ts) is an on-demand Chromium test of the normal **Create group → Live Workflow → Create live workspace → connect API key → chat** path. Unlike the other fixtures, it starts with no workflow group or workspace. It uses the production group form, group creation router, Sequelize models, authorization, group view and live-workflow UI. The test seeds a disposable administrator and parent community; Your Priorities sign-in, the full application shell and ChatGPT sign-in are separate tests. Unrelated moderation/analytics queue jobs are recorded locally without running workers.
+
+```sh
+# From server_api. Preparation reads no credentials and makes no provider calls.
+npm run test:live-workflows:browser-create-group -- --prepare
+sg docker -c 'npm run test:live-workflows:browser-create-group -- --offline'
+# Explicitly request one paid Codex greeting:
+sg docker -c 'YP_WORKFLOW_MANUAL_LIVE=1 npm run test:live-workflows:browser-create-group -- --live'
+```
+
+Add `--headed` to watch the browser. `--output` overrides `/tmp/skills-first-group-creation`; each invocation creates its own directory with six key screenshots, `browser-checks.json`, `chat.txt`, `codex-usage.json` and `report.json`. Failures preserve a screenshot and sanitized diagnostics. The command is never included in `npm test` or the ordinary browser suite.
+
+The browser selects Live Workflow before saving and verifies that an unsaved group cannot create a workspace. It then configures Skills First on the connected test host, reloads the new group, takes operator control, connects the server-imported key and sends one greeting with a unique expected reply. A final reload verifies persisted chat, model, effort and speed; reopening group administration checks the saved group type and existing workspace. Independent checks verify the actual group row, creator membership/admin rights, the group's VM instructions, one workspace, an inaccessible unrelated group, zero processing calls and no duplicate Codex turns. Browser traffic stays local; the empty-logo placeholder is supplied locally, and no application API response is mocked.
+
+Live mode defaults to **GPT-6 Luna, max reasoning, fast service**, configurable in [the example](group-creation.config.example.json). The greeting adapter allows one turn, uses a 4,096-token response bound, disables web search and uses a read-only sandbox; the driver allows five minutes for the reply. Both processing budgets are explicitly **$0**, and no agents or external connectors are run. Codex usage is reported separately at backend catalog prices; this is an estimate, not a combined dollar cap. The whole test has a 15-minute deadline and removes its disposable database and VM workspaces afterward.
+
+The imported API key stays in the local test server. The browser submits only a public test marker, substituted solely on the same-origin login route for the newly created group's ID. `--env` overrides `.envForAgentDoNotViewOnlyImport`; only opted-in live mode imports it. Offline mode uses a scripted Codex transport, so it proves the UI/backend path without claiming model execution. Images must already be installed; rebuild the Codex image after changes to its pinned patch before live runs.
+
 ## Idaho CSV: five-job browser trial and 100-record estimate
 
 The [Idaho executable](../skillsFirst.idaho.browser.manual.ts) is a separate, explicitly invoked browser test. It copies a local public Idaho classification CSV into `.live-workflow-manual/data/idaho/` (git-ignored), preserves the original bytes, and creates `idaho-first-100.csv` from the first 100 parsed records in their original order. Quoted multiline cells, Unicode, repeated class codes and leading zeros survive; the runner's row identities prevent repeated class codes from merging. `selection.json` records both checksums and the selected class codes. Actual Idaho data is never committed or required by the ordinary unit suite.
