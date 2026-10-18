@@ -12,6 +12,7 @@ import { redactManualText } from "./environment.js";
 import { sha256, type IdahoRow } from "./idahoData.js";
 import { partnerStageCoverage, type PartnerData } from "./idahoPartner.js";
 import { idahoQuality, type saveIdahoCosts } from "./idahoReport.js";
+import { idahoInputReport } from "./idahoInputReport.js";
 
 const columns = JSON.parse(
   await readFile(
@@ -174,7 +175,7 @@ export function auditPartnerCsv(csv: Buffer | string) {
     ...new Set(rows.map((row) => row[licenseIndex]).filter(Boolean)),
   ];
   const driverSpellings = licenseSpellings.filter((value) =>
-    /^drivers?['’]?\s+licen[cs]e$/i.test(value),
+    /^driver(?:s|['’]s|s['’])?\s+licen[cs]e$/i.test(value.trim()),
   );
   return {
     columns: 74,
@@ -220,6 +221,7 @@ export async function writePartnerBundle(options: {
   };
   await copy("input/idaho-first-10.csv", "idaho-first-10-input.csv");
   await copy("input/selection.json", "input-selection.json");
+  await copy("input/source-profile.json", "input-source-profile.json");
   for (const filename of [
     "idaho-trial-results.xlsx",
     "idaho-trial-results.csv",
@@ -264,6 +266,17 @@ export async function writePartnerBundle(options: {
   } | null;
   const coverage = run ? partnerStageCoverage(run, records) : [];
   const quality = idahoQuality(records);
+  await writeFile(
+    path.join(directory, "IDAHO-INPUT-ANALYSIS.md"),
+    idahoInputReport({
+      data,
+      mode: options.mode,
+      run,
+      records,
+      filterReady: audit?.filterReady ?? false,
+    }),
+    { mode: 0o600 },
+  );
   const summary = {
     mode: options.mode,
     simulated: options.mode === "offline",
@@ -358,7 +371,19 @@ export async function writePartnerBundle(options: {
         ? "idaho-trial-results.xlsx and .csv consolidate all production parts using the production formatter. Unchanged browser-downloaded originals are in production-exports/; see export-delivery.json. The consolidated files have"
         : "idaho-trial-results.xlsx and .csv are the exact production artifacts downloaded in the browser, with";
   const readme = `Idaho Skills First — first ten records\n\n${options.mode === "offline" ? "OFFLINE REHEARSAL: MODEL RESULTS AND COSTS ARE SIMULATED.\n\n" : "Live model and Firecrawl run.\n\n"}Execution: ${options.executionPassed ? "passed" : "incomplete / failed"}. Partner filter compatibility: ${audit?.filterReady ? "passed the supplied checks" : "NEEDS REVIEW — see contract-issues.csv"}.\n\nInput: exactly the first ten CSV data records, preserving original order and repeated class codes. These contain ${new Set(data.rows.map((row: IdahoRow) => row["Class Code"])).size} distinct class codes; repeated codes are distinct source rows, not duplicates to discard. Levels may create additional output records. Research/license joins may create additional spreadsheet rows.\n\nScope: adaptation, normalization, level splitting/verification, all seven analysis tasks, license research, education/statute research, rewriting with independent review, dataset comparison, license/education comparison, and export. stage-coverage.json records what actually completed and each job's missing evidence. Running a stage does not establish a legal conclusion.\n\nThe original Idaho CSV has only Class Code, Class Title, Pay Schedule, Pay Grade, FLSA Code, Summary, Duties and Responsibilities, and Qualifications. It does not supply work week, bargaining unit, department, source URL, CSC revisions, occupational categories or manual notes. Pay grade is not a dollar salary range. No WVU/manual reference dataset was supplied: comparison stages may report missing evidence. Unknown booleans have NOT been replaced with FALSE, and unresolved consistency checks have NOT been relabelled n/a. Those are filter-contract issues requiring resolution before import.\n\nOutputs: ${exportDescription}${csv ? " 74 master columns and two header rows (descriptions, then field names)." : ""} JSON retains original texts, findings, reviews, citations and research gaps. field-completeness.csv covers all 74 columns; contract-issues.csv lists disallowed values and blank required booleans. The workbook includes Documents, legal research and review/provenance sheets. Screenshots record the UI states reached during this run.\n\nCosts: settled processing ${usd(costs?.totals.settledMicros)}; unresolved reservations ${usd(costs?.totals.reservedMicros)}; Codex estimated ${usd(costs?.totalCodexEstimatedMicros)}. Firecrawl credits ${costs?.firecrawl.credits ?? "unavailable"}; their allocated plan cost is included in processing, not an additional charge. Agent breakdown: agent-costs.csv. Hard processing cap $5; no bulk run or automatic paid retry.\n\n${options.error ? `Run issue: ${redactManualText(String(options.error))}\n\n` : ""}Share this for-partners folder. Private harness diagnostics and the resumable run archive are kept in its parent directory. SHA256SUMS.json lists every included artifact.\n`;
-  await writeFile(path.join(directory, "README.txt"), readme, { mode: 0o600 });
+  const clarifiedReadme =
+    summary.allAgentsCompleted && !options.executionPassed
+      ? readme.replace(
+          "Execution: incomplete / failed.",
+          "Pipeline: all configured stages completed. Acceptance test: FAILED; inspect record errors and verification reports.",
+        )
+      : readme;
+  await writeFile(
+    path.join(directory, "README.txt"),
+    clarifiedReadme +
+      "\nInput-data assessment: IDAHO-INPUT-ANALYSIS.md documents source completeness, missing context and the distinction between description findings and external requirements.\n",
+    { mode: 0o600 },
+  );
   const checksums: Record<string, string> = {};
   for (const name of (await readdir(directory)).sort()) {
     if (name === "screenshots" || name === "production-exports") {

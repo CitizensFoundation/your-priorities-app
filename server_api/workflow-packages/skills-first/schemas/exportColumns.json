@@ -243,7 +243,7 @@
     {
       "header": "readabilityLevel",
       "path": "readingLevelGradeAnalysis.readabilityLevel",
-      "description": "Based on the most difficult passages and the entire job description, what reading level must an individual have attained in order to fully comprehend the job description? Choose only from the Grade Levels listed:\n     \"No Education Requirement\",\n      \"High School\",\n      \"Some College (but no degree)\",\n      \"Associate’s Degree\",\n      \"Bachelor’s Degree\",\n      \"Master’s or Doctoral Degree\","
+      "description": "Based on the most difficult passages and the entire job description, what reading level must an individual have attained in order to fully comprehend the job description? Choose only from the Grade Levels listed:\n     \"No Education Requirement\",\n      \"High School\",\n      \"Some College (but no degree)\",\n      \"Associate's Degree\",\n      \"Bachelor's Degree\",\n      \"Master's or Doctoral Degree\","
     },
     {
       "header": "fleschKincaidGrade",

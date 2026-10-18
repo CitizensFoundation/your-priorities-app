@@ -200,6 +200,11 @@ export function workbook(
           "Degree preference quote",
           "Reading level explanation",
           "Reading level matches degree requirement",
+          "Degree statement in supplied description",
+          "Degree statement explanation",
+          "License statement in supplied description",
+          "License statement explanation",
+          "Assessment scope",
         ],
         ...memory.jobDescriptions.map((job) => [
           job.id,
@@ -210,9 +215,20 @@ export function workbook(
           job.degreeAnalysis.degreePreferenceQuote,
           job.readingLevelGradeAnalysis.readabilityLevelExplanation,
           job.readingLevelGradeAnalysis.readingLevelMatchesDegreeRequirement,
+          (record(record(job.analysis.documentRequirements).degree)
+            .statement as Cell) ?? null,
+          (record(record(job.analysis.documentRequirements).degree)
+            .explanation as Cell) ?? null,
+          (record(record(job.analysis.documentRequirements).license)
+            .statement as Cell) ?? null,
+          (record(record(job.analysis.documentRequirements).license)
+            .explanation as Cell) ?? null,
+          job.analysis.documentRequirements
+            ? "Supplied description only. Not stated does not establish that no external requirement applies."
+            : null,
         ]),
       ],
-      widths: [42, 40, 100, 100, 100, 60, 60, 30],
+      widths: [42, 40, 100, 100, 100, 60, 60, 30, 32, 70, 32, 70, 70],
     },
   ];
   return { version: 1, sheets };

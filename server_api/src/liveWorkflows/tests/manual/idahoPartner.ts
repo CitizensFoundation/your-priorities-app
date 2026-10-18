@@ -17,6 +17,7 @@ import { offlineWorkflowCli } from "./headlessRehearsal.js";
 import { analysisNames } from "./verification.js";
 import type { ManualHarness } from "./harness.js";
 import type { BrowserObservation } from "./interactiveBrowser.js";
+import { profileIdahoInput } from "./idahoInputReport.js";
 
 export const partnerRecords = 10;
 export const partnerFirecrawlLimit = 160;
@@ -73,7 +74,12 @@ export async function preparePartnerData(
     path.join(directory, "selection.json"),
     JSON.stringify(selection, null, 2),
   );
-  return { fixture, rows, selection };
+  const profile = profileIdahoInput(parsed);
+  await writeFile(
+    path.join(directory, "source-profile.json"),
+    JSON.stringify(profile, null, 2),
+  );
+  return { fixture, rows, selection, profile };
 }
 export type PartnerData = Awaited<ReturnType<typeof preparePartnerData>>;
 

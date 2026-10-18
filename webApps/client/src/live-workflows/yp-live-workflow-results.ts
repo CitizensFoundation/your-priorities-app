@@ -346,6 +346,46 @@ export class YpLiveWorkflowResults extends LitElement {
         </details>`;
       })}`;
   }
+  private documentFindings(row: Record<string, YpWorkflowJson>) {
+    const object = (
+      value: YpWorkflowJson | undefined,
+    ): Record<string, YpWorkflowJson> =>
+      value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    const assessment = object(object(row.analysis).documentRequirements);
+    if (assessment.scope !== "supplied_description_only") return nothing;
+    const labels: Record<string, string> = {
+      required: "Stated as required",
+      preferred: "Stated as preferred",
+      alternative: "Stated as an alternative",
+      conditional: "Conditional on the position or specialty",
+      explicitly_not_required: "Explicitly stated as not required",
+      not_stated: "Not stated in this description",
+      unclear: "Unclear from this description",
+    };
+    return html`<details>
+      <summary>What the supplied description states</summary>
+      <p>
+        This assessment describes the uploaded text. External requirements and
+        their applicability are reviewed separately under License and legal
+        research.
+      </p>
+      ${[
+        ["degree", "Education"],
+        ["license", "Licensing"],
+      ].map(([key, title]) => {
+        const finding = object(assessment[key]);
+        return html`<p>
+            <strong>${title}:</strong> ${labels[String(finding.statement)] ??
+            "Not assessed"}
+          </p>
+          <p>
+            ${typeof finding.explanation === "string"
+              ? finding.explanation
+              : ""}
+          </p>`;
+      })}
+    </details>`;
+  }
   private skillsFirst(row: Record<string, YpWorkflowJson>) {
     if (
       !row.degreeAnalysis ||
@@ -383,6 +423,7 @@ export class YpLiveWorkflowResults extends LitElement {
         : url;
     return html`<section class="findings" aria-label="Skills First findings">
       <strong>Skills First findings</strong>
+      ${this.documentFindings(row)}
       ${fields([
         ["Title code", job.titleCode],
         ["Highest stated education", degree.maximumDegreeRequirement],

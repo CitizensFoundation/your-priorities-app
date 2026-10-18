@@ -99,6 +99,20 @@ export async function verifySkillsFirstValues(input: {
   xlsx: Buffer;
   usage: UsageReservation[];
 }) {
+  // API rootDir excludes package sources. Verify the ID binding contract and
+  // independently check exact source bytes, projections and exported values.
+  const { resolveDocumentEvidence } = await import(
+    new URL(
+      "../../../../workflow-packages/skills-first/source/documentEvidence.ts",
+      import.meta.url,
+    ).href
+  );
+  const { licenseLabel, readingLevelLabel } = await import(
+    new URL(
+      "../../../../workflow-packages/skills-first/source/labels.ts",
+      import.meta.url,
+    ).href
+  );
   const issues: {
     recordId: string | null;
     field: string;
@@ -176,7 +190,9 @@ export async function verifySkillsFirstValues(input: {
       analysis = object(job.analysis);
     for (const task of analysisNames) {
       const entry = ledger.get(
-        stableRequestId(`${input.analysisRunId ?? input.runId}:analyze:${id}:${task}`),
+        stableRequestId(
+          `${input.analysisRunId ?? input.runId}:analyze:${id}:${task}`,
+        ),
       );
       if (!entry) {
         equal(
@@ -223,17 +239,18 @@ export async function verifySkillsFirstValues(input: {
         );
         continue;
       }
+      const resolvedRaw = resolveDocumentEvidence(raw, String(job.text), task);
       equal(
         id,
         `analysis.${task}.findingsFromProvider`,
         result.findings,
-        raw.findings,
+        resolvedRaw.findings,
       );
       equal(
         id,
         `analysis.${task}.evidenceFromProvider`,
         result.evidence,
-        raw.evidence,
+        resolvedRaw.evidence,
       );
       for (const quote of result.evidence ?? []) {
         equal(
@@ -247,7 +264,13 @@ export async function verifySkillsFirstValues(input: {
         verifiedQuotes++;
       }
       for (const [field, target] of Object.entries(projections[task] ?? {})) {
-        const value = at(raw.findings, field);
+        let value = at(resolvedRaw.findings, field);
+        if (typeof value === "string") {
+          if (task === "licenses" && field === "licenseType")
+            value = licenseLabel(value);
+          if (task === "readingLevel" && field === "readabilityLevel")
+            value = readingLevelLabel(value);
+        }
         equal(id, `${task}.${field}→${target}`, at(job, target), value);
         if (value === null || value === undefined)
           unknownFindings.push({
@@ -384,6 +407,13 @@ export async function verifySkillsFirstValues(input: {
       at(job, "degreeAnalysis.degreePreferenceQuote"),
       at(job, "readingLevelGradeAnalysis.readabilityLevelExplanation"),
       at(job, "readingLevelGradeAnalysis.readingLevelMatchesDegreeRequirement"),
+      at(job, "analysis.documentRequirements.degree.statement"),
+      at(job, "analysis.documentRequirements.degree.explanation"),
+      at(job, "analysis.documentRequirements.license.statement"),
+      at(job, "analysis.documentRequirements.license.explanation"),
+      at(job, "analysis.documentRequirements")
+        ? "Supplied description only. Not stated does not establish that no external requirement applies."
+        : null,
     ];
     expected.forEach((value, i) => {
       const actual = readCell(documents, row, i + 1);

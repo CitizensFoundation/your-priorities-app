@@ -1,5 +1,6 @@
 import columns from "../schemas/exportColumns.json" with { type: "json" };
 import { record, RecordError } from "./sdk.js";
+import { licenseLabel } from "./labels.js";
 import type {
   SkillsFirstJobDescription,
   SkillsFirstLicenseComparison,
@@ -40,7 +41,9 @@ export function licenseComparison(
         booleanFields.has(column.path)
           ? referenceFlag(value)
           : typeof value === "string"
-            ? value
+            ? column.path === "licenseType"
+              ? licenseLabel(value)
+              : value
             : null,
       ];
     }),

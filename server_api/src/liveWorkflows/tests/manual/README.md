@@ -121,6 +121,8 @@ Each execution prints a directory under `/tmp/skills-first-idaho-partner/`. Zip 
 
 Execution success and partner-filter compatibility are separate results. The contract audit catches blank required degree/license decisions, disallowed consistency values and category spellings without substituting false or n/a for unknown evidence. Missing source metadata, conditional explanations, and absent WVU/manual comparison datasets are explained. All agents being enabled does not guarantee that web evidence supports a legal conclusion. Read `summary.json`, `README.txt`, `field-completeness.csv` and `contract-issues.csv` before importing the exports. The two header rows remain descriptions followed by the exact 74 field names.
 
+The share folder also includes `IDAHO-INPUT-ANALYSIS.md` and `input-source-profile.json`. The report profiles all source CSV records, identifies repeated qualifications in the ten selected rows, lists missing inputs that would improve analysis, and distinguishes those gaps from processing defects and unresolved research. Results and the workbook's Documents sheet separately show what the uploaded description states about degrees and licenses; "not stated" does not establish that an external requirement is absent. Evidence IDs preserve exact source quotations, while label normalization standardizes only reading-level and driver-license category spellings.
+
 ## Interactive browser test (run on command)
 
 ### Research rerun with saved analysis

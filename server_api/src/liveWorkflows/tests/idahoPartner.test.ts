@@ -206,6 +206,19 @@ test("contract audit flags the partner's unknown checks, invalid categories and 
     audit.fields.find((field) => field.field === "licenseType")?.filled,
     1,
   );
+  const mixedLabels = auditPartnerCsv(
+    csv([
+      ...parse(table({ licenseType: "Drivers License" })),
+      ...parse(table({ licenseType: "driver's license" })).slice(2),
+      ...parse(table({ licenseType: "driver’s licence" })).slice(2),
+    ]),
+  );
+  assert.equal(mixedLabels.warnings.length, 1);
+  assert.deepEqual(mixedLabels.licenseSpellings, [
+    "Drivers License",
+    "driver's license",
+    "driver’s licence",
+  ]);
   assert.throws(
     () =>
       auditPartnerCsv(

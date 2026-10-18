@@ -413,6 +413,25 @@ export async function driveBrowserIdahoPartner(
       JSON.stringify(valueVerification, null, 2),
       { mode: 0o600 },
     );
+    await button("Results").click();
+    const descriptionSummaries = results.getByText(
+      "What the supplied description states",
+      { exact: true },
+    );
+    const descriptionsExpected = rows.filter((row) =>
+      Boolean(
+        (row.analysis as Record<string, unknown> | undefined)
+          ?.documentRequirements,
+      ),
+    ).length;
+    await expect(descriptionSummaries).toHaveCount(descriptionsExpected);
+    if (descriptionsExpected) {
+      await descriptionSummaries.first().click();
+      await page.screenshot({
+        path: path.join(output, "04-description-findings.png"),
+        fullPage: true,
+      });
+    }
     // Preserve both diagnostics even when a research record failed. Downloading
     // an Excel file does not establish that its research or values are correct.
     assert.deepEqual(

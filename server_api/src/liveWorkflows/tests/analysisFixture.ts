@@ -7,6 +7,7 @@ export function analysisTaskFromPrompt(system: string): string {
     "Review the education findings": "evidence",
     "Identify stated degree requirements": "barriers",
     "Compare prior education": "consistency",
+    "Check the fidelity": "consistency",
     "Estimate the reading grade": "readingLevel",
   };
   const match = Object.entries(prefixes).find(([prefix]) =>

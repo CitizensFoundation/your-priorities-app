@@ -3,6 +3,7 @@ import { licenseComparison } from "./licenseComparisons.js";
 export { record } from "./sdk.js";
 import { EducationType } from "./educationTypes.js";
 import { readingLevels } from "./readingLevels.js";
+import { licenseLabel, readingLevelLabel } from "./labels.js";
 import type {
   SkillsFirstJobDescription,
   SkillsFirstMemory,
@@ -335,6 +336,10 @@ export function projectFindings(
       "issuingAuthority",
     ] as const)
       degree.professionalLicenseRequirement[key] = text(f[key]);
+    if (degree.professionalLicenseRequirement.licenseType)
+      degree.professionalLicenseRequirement.licenseType = licenseLabel(
+        degree.professionalLicenseRequirement.licenseType,
+      );
   } else if (task === "barriers") {
     degree.barriersToNonDegreeApplicants = text(
       f.barriersToNonDegreeApplicants,
@@ -374,7 +379,10 @@ export function projectFindings(
   } else if (task === "readingLevel") {
     job.readingLevelGradeAnalysis = {
       ...job.readingLevelGradeAnalysis,
-      readabilityLevel: text(f.readabilityLevel),
+      readabilityLevel:
+        typeof f.readabilityLevel === "string"
+          ? readingLevelLabel(f.readabilityLevel)
+          : null,
       readabilityLevelExplanation: text(f.readabilityLevelExplanation),
       difficultPassages: strings(f.difficultPassages),
       readingLevelMatchesDegreeRequirement: boolean(
@@ -479,7 +487,11 @@ export function validateFindings(
     require("readingLevelMatchesDegreeRequirement", "boolean");
     if (
       f.readabilityLevel !== null &&
-      !(readingLevels as readonly unknown[]).includes(f.readabilityLevel)
+      !(readingLevels as readonly unknown[]).includes(
+        typeof f.readabilityLevel === "string"
+          ? readingLevelLabel(f.readabilityLevel)
+          : f.readabilityLevel,
+      )
     )
       throw new RecordError("Unknown reading-level category");
     for (const passage of (f.difficultPassages as string[] | null) ?? [])
