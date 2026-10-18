@@ -265,6 +265,87 @@ export class YpLiveWorkflowResults extends LitElement {
         <pre>${JSON.stringify(row, null, 2)}</pre>
       </details>`;
   }
+  private researchCoverage(value: unknown) {
+    const object = (item: unknown): Record<string, unknown> =>
+      item && typeof item === "object" && !Array.isArray(item)
+        ? (item as Record<string, unknown>)
+        : {};
+    const strings = (item: unknown) =>
+      Array.isArray(item)
+        ? item.filter((text): text is string => typeof text === "string")
+        : [];
+    const stages = Object.entries(object(object(value).research));
+    if (!stages.length) return nothing;
+    return html`<h5>Research coverage</h5>
+      ${stages.map(([id, raw]) => {
+        const stage = object(raw),
+          review = object(stage.review);
+        const label =
+          id === "licenses"
+            ? "License and degree research"
+            : id === "education"
+              ? "Education and statute research"
+              : id;
+        const gaps = [
+          ...new Set([
+            ...strings(stage.gaps),
+            ...strings(stage.conflicts),
+            ...strings(review.issues),
+          ]),
+        ];
+        const sources = Array.isArray(stage.sources)
+          ? stage.sources.map(object)
+          : [];
+        const citations = Array.isArray(stage.citations)
+          ? stage.citations.length
+          : 0;
+        return html`<details>
+          <summary>
+            ${label} ·
+            ${stage.status === "known" ? "Evidence reviewed" : "Needs review"}
+          </summary>
+          <p>
+            ${sources.length} ${sources.length === 1 ? "source" : "sources"}
+            checked · ${citations}
+            ${citations === 1 ? "cited excerpt" : "cited excerpts"}
+          </p>
+          ${object(stage.limits).exhausted === true
+            ? html`<p class="muted">
+                Configured research limit reached. Unresolved findings need
+                further research or review.
+              </p>`
+            : nothing}
+          ${gaps.length
+            ? html`<ul>
+                ${gaps.map((gap) => html`<li>${gap}</li>`)}
+              </ul>`
+            : nothing}
+          ${sources.map(
+            (source) =>
+              html`<p>
+                ${typeof source.url === "string" &&
+                /^https?:\/\//i.test(source.url)
+                  ? html`<a
+                      href=${source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >${String(source.title || source.url)}</a
+                    >`
+                  : String(source.title ?? "Source")}
+                ${source.truncated === true
+                  ? " · Incomplete document"
+                  : nothing}
+                ${source.jurisdictionMatches === false
+                  ? " · Different jurisdiction"
+                  : nothing}
+                ${source.authority === "secondary"
+                  ? " · Secondary source"
+                  : nothing}
+              </p>`,
+          )}
+        </details>`;
+      })}`;
+  }
   private skillsFirst(row: Record<string, YpWorkflowJson>) {
     if (
       !row.degreeAnalysis ||
@@ -442,6 +523,7 @@ export class YpLiveWorkflowResults extends LitElement {
               No legal research results. Missing research does not establish
               that a requirement is absent.
             </p>`}
+        ${this.researchCoverage(row.analysis)}
       </details>
     </section>`;
   }

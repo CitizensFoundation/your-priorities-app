@@ -130,6 +130,7 @@ export function canonicalJob(input: Job): Job & SkillsFirstJobDescription {
         : null);
   // Idaho's source code is a business reference, never the runner's row identity.
   job.titleCode ??= text(metadata["Class Code"]) ?? text(raw["Class Code"]);
+  job.classCode ??= text(metadata["Class Code"]) ?? text(raw["Class Code"]);
   job.classification =
     strings(raw.classification) ??
     (typeof raw.classification === "string" ? [raw.classification] : null);

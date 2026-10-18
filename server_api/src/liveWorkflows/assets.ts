@@ -35,6 +35,7 @@ export class AssetService {
       length?: number;
       source?: YpWorkflowAsset["source"];
       resultSet?: YpWorkflowAsset["resultSet"];
+      stagePart?: YpWorkflowAsset["stagePart"];
       request?: { id: string; fingerprint: string; runId: string };
     },
   ): Promise<YpWorkflowAsset> {
@@ -68,14 +69,9 @@ export class AssetService {
               "Artifact request ID was reused with different contents",
             );
           if (previous.asset) return previous.asset;
-          throw new ConflictError(
-            "Artifact upload is already in progress",
-          );
+          throw new ConflictError("Artifact upload is already in progress");
         }
-        const run = await tx.get<YpWorkflowRun>(
-          "run",
-          input.request.runId,
-        );
+        const run = await tx.get<YpWorkflowRun>("run", input.request.runId);
         if (run?.status !== "running")
           throw new ConflictError("Run is not running");
         await tx.put("upload-request", input.request.id, {
@@ -86,9 +82,7 @@ export class AssetService {
         tx.state.storedBytes + tx.state.uploadReservedBytes + reservation >
         tx.state.config.quotaBytes
       )
-        throw new ConflictError(
-          "Workspace storage quota would be exceeded",
-        );
+        throw new ConflictError("Workspace storage quota would be exceeded");
       tx.state.uploadReservedBytes += reservation;
       await tx.put("upload", id, {
         id,
@@ -104,9 +98,7 @@ export class AssetService {
     const hash = createHash("sha256");
     const timeout = setTimeout(
       () =>
-        stream.destroy(
-          new Error("Upload exceeded the 15 minute time limit"),
-        ),
+        stream.destroy(new Error("Upload exceeded the 15 minute time limit")),
       900_000,
     );
     timeout.unref();
@@ -118,9 +110,7 @@ export class AssetService {
           transform(chunk: Buffer, _encoding, callback) {
             bytes += chunk.length;
             if (bytes > reservation) {
-              callback(
-                new ValidationError("Upload exceeds its reserved size"),
-              );
+              callback(new ValidationError("Upload exceeds its reserved size"));
               return;
             }
             hash.update(chunk);
@@ -149,6 +139,7 @@ export class AssetService {
           contentType: input.contentType.slice(0, 120),
           source: input.source ?? "upload",
           ...(input.resultSet ? { resultSet: input.resultSet } : {}),
+          ...(input.stagePart ? { stagePart: input.stagePart } : {}),
           createdAt: new Date().toISOString(),
         };
         tx.state.storedBytes += bytes;
@@ -207,7 +198,11 @@ export class AssetService {
       if (
         (await tx.list<YpWorkflowRun>("run")).some(
           (run) =>
-            run.assetIds.includes(id) &&
+            (run.assetIds.includes(id) ||
+              asset.stagePart?.runId === run.id ||
+              Object.values(run.stageOutputs ?? {}).some((output) =>
+                output.assets.some((a) => a.id === id),
+              )) &&
             [
               "draft",
               "trial",
@@ -236,8 +231,7 @@ export class AssetService {
         createdAt: string;
         requestId?: string;
       }>("upload")) {
-        if (Date.now() - Date.parse(upload.createdAt) < 3_600_000)
-          continue;
+        if (Date.now() - Date.parse(upload.createdAt) < 3_600_000) continue;
         await unlink(`${this.path(groupId, upload.id)}.upload`).catch(
           () => undefined,
         );

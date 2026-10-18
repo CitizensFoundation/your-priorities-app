@@ -1,9 +1,109 @@
 import { test, expect } from "@playwright/test";
-test.beforeEach(async ({ request, page }) => {
+
+test("Firecrawl usage keeps unknown credits visible and account balances admin-only", async ({
+  page,
+  request,
+}) => {
+  await page.route("**/api/live-workflows/groups/1", async (route) => {
+    const response = await route.fetch();
+    const snapshot = (await response.json()) as YpWorkflowSnapshot;
+    snapshot.connectors = [
+      {
+        id: "firecrawl",
+        kind: "firecrawl",
+        label: "Research web",
+        resourceId: "web",
+        writeEnabled: false,
+        settings: { creditMicros: 1000, maxCreditsPerRequest: 5 },
+      },
+    ];
+    await route.fulfill({ response, json: snapshot });
+  });
+  const usage: YpWorkflowUsage = {
+    id: "first",
+    runId: "first-run",
+    nodeId: "licenses",
+    description: "firecrawl:search",
+    status: "settled",
+    actualMicros: 2000,
+    maximumMicros: 5000,
+    creditUsage: {
+      provider: "firecrawl",
+      bindingId: "firecrawl",
+      operation: "search",
+      creditMicros: 1000,
+      maximumCredits: 5,
+      actualCredits: 2,
+    },
+  };
+  await page.route("**/api/live-workflows/groups/1/usage", (route) =>
+    route.fulfill({
+      json: [
+        usage,
+        {
+          ...usage,
+          id: "pending",
+          status: "unknown",
+          actualMicros: undefined,
+          creditUsage: { ...usage.creditUsage, actualCredits: undefined },
+        },
+        { ...usage, id: "legacy", creditUsage: undefined },
+      ],
+    }),
+  );
+  let calls = 0;
+  await page.route("**/connectors/firecrawl/credits", (route) => {
+    calls++;
+    return route.fulfill(
+      calls === 1
+        ? {
+            status: 502,
+            json: { error: "Account balance temporarily unavailable" },
+          }
+        : {
+            json: {
+              remainingCredits: 0,
+              planCredits: 100000,
+              billingPeriodStart: null,
+              billingPeriodEnd: null,
+              checkedAt: "2026-10-15T00:00:00Z",
+            },
+          },
+    );
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Usage", exact: true }).click();
+  const panel = page.getByRole("region", { name: "Firecrawl usage" });
+  await expect(panel).toContainText(
+    "2 credits used · 5 credits reserved · 1 unresolved requests",
+  );
+  await expect(panel).toContainText("1 older requests lack credit tracking");
+  await panel.getByRole("button", { name: "Refresh account credits" }).click();
+  await expect(page.getByRole("alert")).toContainText(
+    "Account balance temporarily unavailable",
+  );
+  await expect(panel).not.toContainText("account credits remaining");
+  expect(calls).toBe(1);
+  await panel.getByRole("button", { name: "Refresh account credits" }).click();
+  await expect(panel).toContainText(
+    "0 account credits remaining · 100,000 plan credits",
+  );
+  expect(calls).toBe(2);
+  await request.post("/__fixture/member");
+  await page.reload();
+  await page.getByRole("button", { name: "Usage", exact: true }).click();
+  await expect(panel).toContainText("2 credits used");
+  await expect(
+    panel.getByRole("button", { name: "Refresh account credits" }),
+  ).toHaveCount(0);
+  await expect(panel).not.toContainText("account credits remaining");
+  expect(calls).toBe(2);
+});
+test.beforeEach(async ({ request, page, baseURL }) => {
   await request.post("/__fixture/reset");
   // The fixture suite may contact only the local server, never an account or provider.
   await page.route("**/*", (route) =>
-    new URL(route.request().url()).origin === "http://127.0.0.1:54822"
+    new URL(route.request().url()).origin === new URL(baseURL!).origin
       ? route.continue()
       : route.abort(),
   );
@@ -317,6 +417,75 @@ test("members can see assistant settings but cannot edit or load models", async 
     }),
   ).toBeEnabled();
 });
+test("research coverage explains empty findings, limits and source quality without opening raw JSON", async ({
+  page,
+}) => {
+  await page.route("**/runs/*/results?*", async (route) => {
+    const response = await route.fetch();
+    const results = (await response.json()) as YpWorkflowResultPage;
+    results.rows[0].value.analysis = {
+      research: {
+        licenses: {
+          status: "unknown",
+          citations: [],
+          gaps: ["The retrieved page describes a different occupation."],
+          conflicts: [],
+          review: { issues: ["No applicable requirement quote is available."] },
+          limits: { exhausted: true },
+          sources: [
+            {
+              title: "Retrieved classification",
+              url: "https://example.gov/classification",
+              authority: "secondary",
+              jurisdictionMatches: false,
+              truncated: true,
+            },
+          ],
+        },
+      },
+    };
+    await route.fulfill({ response, json: results });
+  });
+  await page.getByRole("button", { name: "Results", exact: true }).click();
+  const panel = page.locator("yp-live-workflow-results");
+  await panel
+    .getByRole("combobox", { name: "Result run", exact: true })
+    .selectOption("33333333-3333-4333-8333-333333333333");
+  const card = panel.locator("article").first();
+  await card.getByText("License and legal research", { exact: true }).click();
+  await card
+    .getByText("License and degree research · Needs review", { exact: true })
+    .click();
+  await expect(
+    card.getByText("The retrieved page describes a different occupation.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    card.getByText("No applicable requirement quote is available.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    card.getByText(/Configured research limit reached/),
+  ).toBeVisible();
+  await expect(
+    card.getByText("1 source checked · 0 cited excerpts", { exact: true }),
+  ).toBeVisible();
+  const source = card.getByRole("link", {
+    name: "Retrieved classification",
+    exact: true,
+  });
+  await expect(source).toHaveAttribute(
+    "href",
+    "https://example.gov/classification",
+  );
+  await expect(source.locator("..")).toContainText("Incomplete document");
+  await expect(source.locator("..")).toContainText("Different jurisdiction");
+  await expect(source.locator("..")).toContainText("Secondary source");
+  await expect(card.locator("pre").last()).toBeHidden();
+  await card.screenshot({ path: "/tmp/skills-first-research-coverage.png" });
+});
 test("review results: pagination, search, unknowns, children and trial comparison", async ({
   page,
 }) => {
@@ -551,6 +720,12 @@ test("agent model popup edits only the draft and keeps model history across runs
       exact: true,
     })
     .fill("12.50");
+  await dialog
+    .getByRole("spinbutton", {
+      name: "Per-parent record cap (USD, optional)",
+      exact: true,
+    })
+    .fill("0.50");
   await request.post("/__fixture/complete");
   await expect(
     history.getByRole("row").filter({ hasText: "33333333" }),
@@ -576,6 +751,7 @@ test("agent model popup edits only the draft and keeps model history across runs
     models: { default: "fixture-alternative", review: "fixture-model" },
     reasoningEffort: "high",
     budgetMicros: 12_500_000,
+    recordBudgetMicros: 500_000,
   });
   expect(
     update.body.graph.nodes.find((n: any) => n.id === "levels").models.default,
@@ -601,6 +777,76 @@ test("agent model popup edits only the draft and keeps model history across runs
   await dialog.getByRole("button", { name: "Close agent settings" }).click();
   await expect(analyze).toBeFocused();
 });
+test("bulk reuse controls keep the original inputs and require a separate estimate and approval", async ({
+  page,
+}) => {
+  let original: YpWorkflowRun | undefined;
+  await page.route("**/api/live-workflows/groups/1", async (route) => {
+    const response = await route.fetch();
+    const snapshot = (await response.json()) as YpWorkflowSnapshot;
+    snapshot.workspace.activeRunId = null;
+    original = snapshot.runs[0];
+    original.mode = "bulk";
+    original.status = "completed";
+    original.reservedMicros = 0;
+    original.stageOutputs = {};
+    original.assetIds = [
+      snapshot.assets.find((a) => a.source === "upload")!.id,
+    ];
+    await route.fulfill({ response, json: snapshot });
+  });
+  let requested: unknown;
+  let starts = 0;
+  page.on("request", (request) => {
+    if (request.url().endsWith("/start")) starts++;
+  });
+  await page.route("**/api/live-workflows/groups/1/runs", async (route) => {
+    requested = route.request().postDataJSON();
+    await route.fulfill({
+      json: {
+        ...original!,
+        id: "99999999-9999-4999-8999-999999999999",
+        status: "awaiting_approval",
+        approvedAt: undefined,
+        spentMicros: 0,
+        estimate: {
+          trialRunId: "fresh-trial",
+          sampleCount: 5,
+          populationCount: original!.inputCount,
+          expectedMicros: 100000,
+          upperMicros: 200000,
+          notes: ["Remaining stages only; fresh full trial required"],
+          fingerprint: "fixture",
+        },
+      },
+    });
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Data", exact: true }).click();
+  await page.getByText("Reuse completed analysis", { exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Completed run", exact: true })
+    .selectOption(original!.id);
+  await page
+    .getByRole("combobox", { name: "Restart from agent", exact: true })
+    .selectOption("rewrite");
+  await expect(
+    page.getByRole("button", { name: /Run \d+-record trial/ }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", { name: "Estimate full run", exact: true })
+    .click();
+  expect(requested).toMatchObject({
+    mode: "bulk",
+    assetIds: original!.assetIds,
+    reuse: { runId: original!.id, fromNodeId: "rewrite" },
+  });
+  await expect(
+    page.getByRole("heading", { name: "Approve bulk processing", exact: true }),
+  ).toBeVisible();
+  expect(starts).toBe(0);
+});
+
 test("agent popup preserves edits during live refresh and rejects stale draft saves", async ({
   page,
   request,

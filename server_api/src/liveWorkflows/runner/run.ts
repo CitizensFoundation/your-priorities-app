@@ -11,6 +11,7 @@ export { orderedAgents } from "../graph.js";
 import { modelJson } from "./modelJson.js";
 import { readPackage } from "../packages.js";
 import { packageValidators, validateData } from "./packageContract.js";
+import { stageChunks } from "./stageOutput.js";
 
 export interface Context {
   nodeId: string;
@@ -47,6 +48,7 @@ export async function runPackage(options: {
   socket: string;
   run: YpWorkflowRun;
   inputs: YpWorkflowJson[];
+  reusedOutputs?: Record<string, YpWorkflowJson>;
   request?: <T>(route: string, data: unknown) => Promise<T>;
 }) {
   const { run } = options;
@@ -60,12 +62,25 @@ export async function runPackage(options: {
     (<T>(route: string, data: unknown) =>
       socketRequest<T>(options.socket, route, data));
   const initial: YpWorkflowJson =
-    run.mode === "trial"
-      ? stratifiedSample(
-          options.inputs as Record<string, YpWorkflowJson>[],
-          run.inputCount,
-        )
-      : options.inputs;
+    run.reuse && run.sample
+      ? run.sample.recordIds.map((id) => {
+          const row = options.inputs.find(
+            (row) =>
+              row &&
+              typeof row === "object" &&
+              !Array.isArray(row) &&
+              row.id === id,
+          );
+          if (!row)
+            throw new Error("The reused sample no longer matches the inputs");
+          return row;
+        })
+      : run.mode === "trial"
+        ? stratifiedSample(
+            options.inputs as Record<string, YpWorkflowJson>[],
+            run.inputCount,
+          )
+        : options.inputs;
   const scope = new AsyncLocalStorage<string>();
   let current: YpWorkflowJson = initial;
   const sampleRows = initial as Record<string, YpWorkflowJson>[];
@@ -207,7 +222,12 @@ export async function runPackage(options: {
       upstream,
       ...(outputs.size === 0 && sample ? { sample } : {}),
     });
-    const completed = await context.restore("__node_output");
+    const reused = run.reuse?.nodeIds.includes(node.id);
+    const completed = reused
+      ? options.reusedOutputs?.[node.id]
+      : await context.restore("__node_output");
+    if (reused && completed === undefined)
+      throw new Error(`Missing verified reused output for ${node.id}`);
     if (completed !== undefined) current = completed;
     else {
       const target = path.resolve(options.root, node.entrypoint!);
@@ -225,12 +245,35 @@ export async function runPackage(options: {
       await context.checkpoint("__node_output", current);
     }
     outputs.set(node.id, current);
+    let stageOutput: { checksum: string; assetIds: string[] } | undefined;
+    if (run.nodeFingerprints && !reused) {
+      const saved = stageChunks(current);
+      const assetIds: string[] = [];
+      for (const [part, content] of saved.chunks.entries()) {
+        const asset = await send<YpWorkflowAsset>("/artifact", {
+          nodeId: node.id,
+          id: requestId(`stage:${part}`),
+          name: `stage-${node.id}-${part}.json.part`,
+          content,
+          contentType: "text/plain",
+          stagePart: { part, parts: saved.chunks.length },
+        });
+        assetIds.push(asset.id);
+      }
+      stageOutput = { checksum: saved.checksum, assetIds };
+    }
     await send("/progress", {
       nodeId: node.id,
       processed: Array.isArray(input) ? input.length : run.inputCount,
       total: Array.isArray(input) ? input.length : run.inputCount,
       outputCount: Array.isArray(current) ? current.length : undefined,
       complete: true,
+      ...(stageOutput ? { stageOutput } : {}),
+      ...(reused
+        ? {
+            message: `Reused completed output from ${run.mode} ${run.reuse!.runId.slice(0, 8)} · no new calls`,
+          }
+        : {}),
     });
   }
   if (orderedAgents(run.graph).every((n) => run.nodeIds.includes(n.id)))
@@ -272,5 +315,8 @@ if (
     socket: "/gateway/control.sock",
     run,
     inputs,
+    reusedOutputs: run.reuse
+      ? JSON.parse(await readFile("/run-data/reused.json", "utf8"))
+      : undefined,
   });
 }

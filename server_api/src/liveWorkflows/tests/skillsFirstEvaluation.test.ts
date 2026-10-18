@@ -349,8 +349,8 @@ test("research enforces query/source/follow-up bounds and records uncertainty in
   assert.equal(requests.filter((k) => k.includes(":extract:")).length, 3);
   assert.equal(new Set(requests).size, requests.length);
   assert.equal(result[0].status, "unknown");
-  assert.equal(result[0].analysis.licenses.limits.exhausted, true);
-  assert.equal(result[0].analysis.licenses.researchTrace.length, 2);
+  assert.equal(result[0].analysis.research.licenses.limits.exhausted, true);
+  assert.equal(result[0].analysis.research.licenses.researchTrace.length, 2);
 });
 test("research rejects invented source URLs before accepting a finding", async () => {
   const input = await normalize(context("normalize"), [dataset.cases[0].input]);
@@ -374,4 +374,393 @@ test("research rejects invented source URLs before accepting a finding", async (
   )) as any[];
   assert.equal(result[0].status, "unknown");
   assert.match(result[0].errors.join(), /observed URLs/);
+});
+
+test("research citation IDs preserve exact Unicode spacing and punctuation and reject invented IDs", async () => {
+  const input = await normalize(context("normalize"), [dataset.cases[0].input]);
+  const quote = "A license\u00a0is required (or a supervised alternative).";
+  for (const invalid of [false, true]) {
+    const result = (await research(
+      context("licenses", {
+        configuration: {
+          queriesPerRound: 1,
+          maxSources: 1,
+          maxFollowupRounds: 0,
+        },
+        connector: async () => ({
+          pages: [{ url: "https://example.gov/license", markdown: quote }],
+        }),
+        model: async (_key, system, value) => {
+          const data = value as any;
+          if (system.startsWith("Extract only requirements")) {
+            assert.equal(data.source.passages[0].text, quote);
+            assert.equal(data.source.text, undefined);
+            return {
+              status: "known",
+              requirements: [
+                {
+                  statement: "A license or supervised alternative is required.",
+                  quoteIds: [invalid ? "invented" : data.source.passages[0].id],
+                },
+              ],
+              gaps: [],
+            };
+          }
+          const response = researchResponse(system, data) as any;
+          if (system.includes("Synthesize only the extracted")) {
+            assert.equal(data.evidence[0].quote, quote);
+            response.requirements = [
+              {
+                statement: "A license or supervised alternative is required.",
+                evidenceIds: [data.evidence[0].id],
+              },
+            ];
+            response.educationRequirementResearchResults[0].evidenceId =
+              data.evidence[0].id;
+            delete response.educationRequirementResearchResults[0].sourceUrl;
+            delete response.educationRequirementResearchResults[0]
+              .evidenceQuote;
+          }
+          return response;
+        },
+      }),
+      input,
+    )) as any[];
+    if (invalid)
+      assert.match(result[0].errors.join(), /Unknown research passage IDs/);
+    else {
+      assert.deepEqual(result[0].errors, []);
+      assert.equal(
+        result[0].analysis.research.licenses.citations[0].quote,
+        quote,
+      );
+      assert.equal(
+        result[0].degreeAnalysis.deepResearchResults[0].evidenceQuote,
+        quote,
+      );
+    }
+  }
+});
+
+test("research compacts an overlong plan once before searching and rejects a still-invalid correction", async (t) => {
+  for (const repaired of [
+    "Idaho Technician official qualifications",
+    "x".repeat(501),
+  ]) {
+    await t.test(
+      repaired.length > 200 ? "invalid correction" : "valid correction",
+      async () => {
+        const input = await normalize(context("normalize"), [
+          dataset.cases[0].input,
+        ]);
+        const searches: string[] = [],
+          repairs: string[] = [];
+        const result = (await research(
+          context("licenses", {
+            configuration: { queriesPerRound: 1, maxFollowupRounds: 0 },
+            connector: async (_key, _binding, _operation, value) => {
+              searches.push(String(value.query));
+              return { pages: [] };
+            },
+            model: async (key, system, value) => {
+              if (system.startsWith("Plan authoritative")) {
+                assert.equal((value as any).maxQueryChars, 200);
+                assert.match(system, /search-engine keyword string/);
+                return {
+                  queries: [
+                    "Research all the laws and qualifications. ".repeat(20),
+                  ],
+                };
+              }
+              if (key.endsWith(":compact")) {
+                repairs.push(key);
+                return { queries: [repaired] };
+              }
+              return researchResponse(system, value);
+            },
+          }),
+          input,
+        )) as any[];
+        assert.equal(repairs.length, 1);
+        if (repaired.length > 200) {
+          assert.equal(searches.length, 0);
+          assert.match(result[0].errors.join(), /query is too long/);
+        } else {
+          assert.deepEqual(searches, [repaired]);
+          assert.deepEqual(result[0].errors, []);
+          assert.equal(result[0].analysis.research.licenses.status, "unknown");
+        }
+      },
+    );
+  }
+});
+
+test("research retains retrieved evidence when unusable follow-ups exceed the exhausted search budget", async () => {
+  const input = await normalize(
+    context("normalize", {
+      configuration: { jurisdiction: "Idaho, USA" },
+    }),
+    [dataset.cases[0].input],
+  );
+  const requests: string[] = [];
+  const result = (await research(
+    context("education", {
+      configuration: { queriesPerRound: 1, maxFollowupRounds: 0 },
+      model: async (key, system, value) => {
+        requests.push(key);
+        const response = researchResponse(system, value) as any;
+        if (system.includes("Synthesize only the extracted")) {
+          assert.doesNotMatch(system, /New Jersey|JSON array/);
+          assert.match(system, /Implicit Associate's/);
+          assert.match(system, /silence is not such a statement/);
+          assert.equal((value as any).followupRoundsRemaining, 0);
+          response.followUpQueries = [
+            "Find more official sources. ".repeat(30),
+          ];
+        }
+        return response;
+      },
+    }),
+    input,
+  )) as any[];
+  assert.ok(!requests.some((key) => key.endsWith(":compact")));
+  assert.deepEqual(result[0].errors, []);
+  assert.ok(result[0].degreeAnalysis.deepResearchResults.length);
+  assert.equal(result[0].analysis.research.education.limits.exhausted, true);
+  assert.equal(result[0].analysis.research.education.status, "unknown");
+});
+
+test("research gives an overlong follow-up one correction within the remaining search limits", async () => {
+  const input = await normalize(context("normalize"), [dataset.cases[0].input]);
+  let searches = 0,
+    repairs = 0;
+  const result = (await research(
+    context("education", {
+      configuration: {
+        queriesPerRound: 1,
+        maxSources: 2,
+        maxFollowupRounds: 1,
+      },
+      connector: async () => ({
+        pages: [
+          {
+            url: `https://fixture.example/${++searches}`,
+            markdown: "A license is required.",
+          },
+        ],
+      }),
+      model: async (key, system, value) => {
+        if (key.endsWith(":compact")) {
+          repairs++;
+          assert.match(key, /:follow-up:0:compact$/);
+          return { queries: ["Idaho Technician official license exceptions"] };
+        }
+        const response = researchResponse(system, value) as any;
+        if (system.includes("Synthesize only the extracted")) {
+          response.gaps = ["Unresolved exception"];
+          response.followUpQueries = [
+            "Find more official sources. ".repeat(30),
+          ];
+        }
+        return response;
+      },
+    }),
+    input,
+  )) as any[];
+  assert.equal(searches, 2);
+  assert.equal(repairs, 1);
+  assert.deepEqual(result[0].errors, []);
+  assert.equal(result[0].analysis.research.education.limits.exhausted, true);
+});
+
+test("no applicable web evidence stays unknown without synthesizing upload citations or paying for an empty review", async () => {
+  const input = await normalize(context("normalize"), [dataset.cases[0].input]);
+  const requests: string[] = [];
+  const result = (await research(
+    context("licenses", {
+      configuration: { queriesPerRound: 1, maxFollowupRounds: 0 },
+      model: async (key, system, value) => {
+        requests.push(key);
+        assert.ok(
+          !key.includes(":synthesis:") && !key.endsWith(":research-review"),
+        );
+        if (system.startsWith("Extract only requirements"))
+          return {
+            status: "unknown",
+            requirements: [],
+            gaps: [
+              "The search result concerns a different job; the upload has no web source URL.",
+            ],
+          };
+        return researchResponse(system, value);
+      },
+    }),
+    input,
+  )) as any[];
+  const finding = result[0].analysis.research.licenses;
+  assert.deepEqual(result[0].errors, []);
+  assert.equal(finding.status, "unknown");
+  assert.deepEqual(finding.citations, []);
+  assert.deepEqual(result[0].degreeAnalysis.deepResearchResults, []);
+  assert.equal(finding.review.supported, false);
+  assert.equal(finding.review.performed, false);
+  assert.equal(finding.review.jurisdictionCorrect, false);
+  assert.ok(finding.gaps.some((gap: string) => gap.includes("different job")));
+  assert.equal(
+    requests.length,
+    3,
+    "Only planning, selection and extraction are needed",
+  );
+});
+
+test("research reserves follow-up capacity and follows an observed official document within the same caps", async () => {
+  const input = await normalize(context("normalize"), [dataset.cases[0].input]);
+  let searches = 0,
+    documents = 0;
+  const result = (await research(
+    context("education", {
+      configuration: {
+        queriesPerRound: 1,
+        maxSources: 2,
+        maxFollowupRounds: 1,
+        maxDocuments: 2,
+      },
+      connector: async (_key, _binding, operation, value): Promise<Json> => {
+        if (operation === "search") {
+          searches++;
+          return {
+            requestId: "search",
+            pages: [
+              {
+                url: "https://agency.gov/jobs",
+                markdown: "General careers page.",
+              },
+            ],
+          };
+        }
+        documents++;
+        if (documents === 1)
+          return {
+            requestId: "document",
+            markdown: "General careers page.",
+            truncated: false,
+            links: [
+              {
+                url: "https://agency.gov/classification",
+                title: "Official classification",
+              },
+            ],
+          };
+        assert.equal(value.url, "https://agency.gov/classification");
+        assert.equal(value.sourceRequestId, "document");
+        return {
+          requestId: "classification",
+          markdown: "A license is required.",
+          truncated: false,
+          links: [],
+        };
+      },
+      model: async (_key, system, value) => {
+        const data = value as any;
+        if (
+          system.startsWith("Extract only") &&
+          data.source.passages?.some(
+            (p: any) => p.text === "General careers page.",
+          )
+        )
+          return {
+            status: "unknown",
+            requirements: [],
+            gaps: ["Need specific classification"],
+          };
+        if (system.includes("Synthesize only"))
+          return researchResponse(system, {
+            ...data,
+            sources: data.sources.filter(
+              (s: any) => s.extraction.requirements.length,
+            ),
+          });
+        return researchResponse(system, value);
+      },
+    }),
+    input,
+  )) as any[];
+  assert.equal(
+    searches,
+    1,
+    "Do not repeat the same search just to follow a known link",
+  );
+  assert.equal(documents, 2);
+  assert.deepEqual(result[0].errors, []);
+  assert.equal(
+    result[0].analysis.research.education.sources[1].linkedFrom,
+    "https://agency.gov/jobs",
+  );
+  assert.equal(
+    result[0].analysis.research.education.citations[0].url,
+    "https://agency.gov/classification",
+  );
+});
+
+test("empty research can use its remaining follow-up budget and synthesis sees only retrieved evidence", async () => {
+  const input = await normalize(context("normalize"), [dataset.cases[0].input]);
+  let searches = 0,
+    followups = 0;
+  const result = (await research(
+    context("education", {
+      configuration: {
+        queriesPerRound: 1,
+        maxSources: 2,
+        maxFollowupRounds: 1,
+      },
+      connector: async () => ({
+        pages: [
+          {
+            url: `https://fixture.example/${++searches}`,
+            markdown:
+              searches === 1 ? "Unrelated role." : "A license is required.",
+          },
+        ],
+      }),
+      model: async (key, system, value) => {
+        const data = value as any;
+        if (key.includes(":follow-up-plan:")) {
+          followups++;
+          assert.equal(data.searched.length, 1);
+          return { queries: ["Different official source"] };
+        }
+        if (
+          system.startsWith("Extract only requirements") &&
+          data.source.passages?.some((p: any) => p.text === "Unrelated role.")
+        )
+          return {
+            status: "unknown",
+            requirements: [],
+            gaps: ["Different job"],
+          };
+        if (system.includes("Synthesize only the extracted")) {
+          assert.equal(data.job.text, undefined);
+          assert.equal(data.job.analysis, undefined);
+          assert.equal(data.job.citations, undefined);
+          assert.match(system, /Never cite the uploaded job/);
+          return researchResponse(system, {
+            ...data,
+            sources: data.sources.filter(
+              (source: any) => source.extraction.requirements.length,
+            ),
+          });
+        }
+        return researchResponse(system, value);
+      },
+    }),
+    input,
+  )) as any[];
+  assert.equal(searches, 2);
+  assert.equal(followups, 1);
+  assert.deepEqual(result[0].errors, []);
+  assert.equal(result[0].analysis.research.education.status, "known");
+  assert.equal(
+    result[0].degreeAnalysis.deepResearchResults[0].sourceUrl,
+    "https://fixture.example/2",
+  );
 });

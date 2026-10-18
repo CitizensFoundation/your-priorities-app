@@ -26,13 +26,20 @@ import {
   withDefaultAgentModel,
 } from "./packages.js";
 import { assistantSettings, workflowModelDefaults } from "./modelDefaults.js";
+import { reconnectEnabledTemplateAgents } from "./graph.js";
 import { apiKeyMaterialSchema, type ApiKeyMaterial } from "./apiKeyAuth.js";
 import { packageManifest } from "./runner/packageContract.js";
 import { codexAuthMaterialFingerprintSha256 } from "./vm/codex/codexAuthMaterial.js";
-import { estimateFromTrial, remainingForecast, requireRun } from "./budget.js";
+import {
+  estimateFromTrial,
+  estimateRemainingStages,
+  remainingForecast,
+  requireRun,
+} from "./budget.js";
 import type { ModelGateway } from "./modelGateway.js";
 import type { ConnectorService } from "./connectors.js";
 import { proposeConnection } from "./connectionSetup.js";
+import { planReuse, stageFingerprints } from "./reuse.js";
 import {
   type VmCommand,
   type CodexAuthMaterial,
@@ -1092,11 +1099,24 @@ export class WorkflowService {
     graph: unknown,
     revision: number,
   ) {
-    const parsed = graphSchema.parse(graph);
+    let parsed = graphSchema.parse(graph);
     await this.store.transact(groupId, async (tx) => {
       this.requireOperator(tx, actor);
       if (tx.state.revision !== revision)
         throw new ConflictError("Graph changed; reload before saving");
+      const requested = parsed;
+      if (
+        parsed.nodes.some(
+          (n) =>
+            n.enabled &&
+            tx.state.graph.nodes.find((p) => p.id === n.id)?.enabled === false,
+        )
+      )
+        parsed = reconnectEnabledTemplateAgents(
+          parsed,
+          tx.state.graph,
+          (await loadPackage(tx.state.config.packageId)).graph,
+        );
       await this.command(tx.state.config.hostId, "workflow.graph", {
         groupId,
         workspaceId: tx.state.id,
@@ -1106,6 +1126,12 @@ export class WorkflowService {
       tx.state.graph = parsed;
       tx.state.revision++;
       await tx.emit("graph.updated", { revision: tx.state.revision });
+      if (fingerprint(requested.edges) !== fingerprint(parsed.edges))
+        await tx.emit("graph.dependencies_restored", {
+          revision: tx.state.revision,
+          message:
+            "Restored the optional template agent connections and removed their direct bypass.",
+        });
     });
   }
   async packageSnapshot(groupId: number): Promise<PackageSnapshot> {
@@ -1300,6 +1326,7 @@ export class WorkflowService {
     assetIds: string[],
     sampleCount = 5,
     targetNodeId?: string,
+    reuse?: { runId: string; fromNodeId: string },
   ) {
     const state = await this.store.transact(groupId, async (tx) => {
       this.requireOperator(tx, actor);
@@ -1386,6 +1413,7 @@ export class WorkflowService {
           (r) =>
             r.mode === "trial" &&
             r.status === "completed" &&
+            !r.reuse &&
             r.fingerprint === hash &&
             !r.reservedMicros &&
             !Object.values(r.nodeStates).some((n) => n.failedRecords),
@@ -1407,6 +1435,15 @@ export class WorkflowService {
         fingerprint: hash,
         graph: snapshot.graph,
         nodeIds,
+        nodeFingerprints: stageFingerprints(snapshot, {
+          assets,
+          models: modelCatalog,
+          concurrency: tx.state.config.concurrency,
+          connectors: connectorSnapshots.map((c) => ({
+            binding: c.binding,
+            readSnapshot: c.readSnapshot,
+          })),
+        }),
         modelCatalog: modelCatalog.filter((model) =>
           selectedModels.has(model.id),
         ),
@@ -1444,6 +1481,15 @@ export class WorkflowService {
             }
           : {}),
       };
+      if (reuse) {
+        await planReuse(tx, run, reuse);
+        if (mode === "bulk")
+          run.estimate = estimateRemainingStages(
+            trials[0],
+            run.inputCount,
+            run.reuse!.nodeIds,
+          );
+      }
       await tx.put("run", run.id, run);
       for (const connector of connectorSnapshots)
         await tx.put(
@@ -1504,6 +1550,12 @@ export class WorkflowService {
         }
         if (run.budgetMicros <= 0)
           throw new ConflictError("No trial or workflow allowance remains");
+        for (const id of run.reuse?.nodeIds ?? [])
+          for (const asset of run.stageOutputs![id].assets)
+            if (!(await tx.get("asset", asset.id)))
+              throw new ConflictError(
+                "A reused stage snapshot was removed; create a new trial",
+              );
         run.status = "queued";
         tx.state.activeRunId = id;
         await tx.put("run", id, run);
@@ -1543,6 +1595,7 @@ export class WorkflowService {
     operation: "pause" | "resume" | "cancel",
     approvedBudget?: number,
     approvedNodeBudgets?: Record<string, number>,
+    approvedRecordBudgets?: Record<string, number>,
   ) {
     const transition = { id: randomUUID(), at: Date.now() };
     const state = await this.store.transact(groupId, async (tx) => {
@@ -1614,6 +1667,46 @@ export class WorkflowService {
           }
           run.nodeBudgets = { ...run.nodeBudgets, ...caps };
           await tx.emit("run.agent_allowances.approved", {
+            runId: id,
+            userId: actor.userId,
+            caps,
+          });
+        }
+        if (approvedRecordBudgets) {
+          const caps = z
+            .record(z.string(), money.positive())
+            .parse(approvedRecordBudgets);
+          const usage = await tx.list<{
+            runId: string;
+            nodeId: string;
+            recordId?: string;
+            actualMicros?: number;
+            maximumMicros: number;
+            status: string;
+          }>("usage");
+          for (const [nodeId, cap] of Object.entries(caps)) {
+            const records = new Map<string, number>();
+            for (const entry of usage.filter(
+              (u) => u.runId === id && u.nodeId === nodeId && u.recordId,
+            ))
+              records.set(
+                entry.recordId!,
+                (records.get(entry.recordId!) ?? 0) +
+                  (entry.status === "settled"
+                    ? (entry.actualMicros ?? 0)
+                    : entry.maximumMicros),
+              );
+            if (
+              !run.nodeIds.includes(nodeId) ||
+              cap > run.budgetMicros ||
+              [...records.values()].some((cost) => cost > cap)
+            )
+              throw new ConflictError(
+                "Record allowance must cover committed parent spending and stay within the run cap",
+              );
+          }
+          run.nodeRecordBudgets = { ...run.nodeRecordBudgets, ...caps };
+          await tx.emit("run.record_allowances.approved", {
             runId: id,
             userId: actor.userId,
             caps,
@@ -1709,6 +1802,40 @@ export class WorkflowService {
         typeof data.nodeId === "string" &&
         run.nodeIds.includes(data.nodeId)
       ) {
+        if (
+          data.stageOutput &&
+          data.complete &&
+          !run.reuse?.nodeIds.includes(data.nodeId)
+        ) {
+          const output = data.stageOutput as unknown as {
+            checksum: string;
+            assetIds: string[];
+          };
+          const assets: YpWorkflowAsset[] = [];
+          for (const [part, id] of output.assetIds.entries()) {
+            const asset = await tx.get<YpWorkflowAsset>("asset", id);
+            if (
+              !asset ||
+              asset.stagePart?.runId !== run.id ||
+              asset.stagePart.nodeId !== data.nodeId ||
+              asset.stagePart.part !== part ||
+              asset.stagePart.parts !== output.assetIds.length
+            )
+              throw new ConflictError(
+                "Incomplete or mismatched stage snapshot",
+              );
+            assets.push(asset);
+          }
+          run.stageOutputs ??= {};
+          run.stageOutputs[data.nodeId] = {
+            checksum: output.checksum,
+            assets,
+            originRunId: run.id,
+            spentMicros: run.nodeCosts?.[data.nodeId]?.spentMicros ?? 0,
+            sourceHash: run.sourceHash,
+            fingerprint: run.nodeFingerprints?.[data.nodeId] ?? "",
+          };
+        }
         if (
           data.sample &&
           run.mode === "trial" &&

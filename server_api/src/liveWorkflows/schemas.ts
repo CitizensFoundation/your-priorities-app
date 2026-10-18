@@ -58,6 +58,7 @@ export const nodeSchema = z
       .optional(),
     enabled: z.boolean(),
     budgetMicros: money.positive().optional(),
+    recordBudgetMicros: money.positive().optional(),
     models: z.record(identifier, z.string().min(1).max(160)),
     reasoningEffort: reasoningEffortSchema.optional(),
     configuration: z.record(z.string(), json),

@@ -12,6 +12,7 @@ import "./yp-live-workflow-admin.js";
 import "./yp-live-workflow-results.js";
 import "./yp-live-workflow-message.js";
 import { assistantSettingsLabel } from "./yp-live-workflow-assistant-settings.js";
+import { summarizeFirecrawlUsage } from "./firecrawlUsage.js";
 
 type ChatItem = {
   id: string;
@@ -55,17 +56,16 @@ export class YpLiveWorkflow extends LitElement {
   @state() private auth?: { verificationUrl: string; userCode: string };
   @state() private uploadProgress = 0;
   @state() private draft?: YpWorkflowRun;
-  @state() private usage: {
-    id: string;
-    runId: string;
-    description: string;
-    status: string;
-    maximumMicros: number;
-    actualMicros?: number;
-  }[] = [];
+  @state() private usage: YpWorkflowUsage[] = [];
+  @state() private firecrawlBalances: Record<
+    string,
+    YpWorkflowFirecrawlBalance
+  > = {};
   @state() private quota = "";
   @state() private sampleCount = 5;
   @state() private targetNodeId = "";
+  @state() private reuseRunId = "";
+  @state() private restartNodeId = "";
   @state() private preview?: {
     assetId: string;
     name: string;
@@ -535,6 +535,8 @@ export class YpLiveWorkflow extends LitElement {
       this.assistantSettingsPending = false;
       this.approvals = [];
       this.snapshot = undefined;
+      this.usage = [];
+      this.firecrawlBalances = {};
       this.selectedAssets = [];
       this.viewedRunId = "";
       this.draft = undefined;
@@ -545,6 +547,8 @@ export class YpLiveWorkflow extends LitElement {
       this.comparedRevision = undefined;
       this.storageInfo = undefined;
       this.targetNodeId = "";
+      this.reuseRunId = "";
+      this.restartNodeId = "";
       this.selectedNode = undefined;
       this.agentEditor = undefined;
       this.agentError = "";
@@ -573,6 +577,8 @@ export class YpLiveWorkflow extends LitElement {
     try {
       const snapshot = await this.api.request<YpWorkflowSnapshot>();
       if (this.groupId !== groupId) return;
+      if (snapshot.workspace.revision !== this.snapshot?.workspace.revision)
+        this.firecrawlBalances = {};
       // Keep the run and its final agent messages visible when it releases the active lock.
       if (
         !this.viewedRunId &&
@@ -821,6 +827,11 @@ export class YpLiveWorkflow extends LitElement {
         assetIds: this.selectedAssets,
         sampleCount: this.sampleCount,
         ...(this.targetNodeId ? { targetNodeId: this.targetNodeId } : {}),
+        ...(this.reuseRunId
+          ? {
+              reuse: { runId: this.reuseRunId, fromNodeId: this.restartNodeId },
+            }
+          : {}),
       });
       if (mode === "trial") {
         await this.api.request(`/runs/${run.id}/start`, "POST", {});
@@ -920,6 +931,10 @@ export class YpLiveWorkflow extends LitElement {
       const cap = String(form.get("nodeCap") ?? "");
       if (cap) node.budgetMicros = Math.round(Number(cap) * 1e6);
       else delete node.budgetMicros;
+      const recordCap = form.get("recordCap");
+      if (recordCap)
+        node.recordBudgetMicros = Math.round(Number(recordCap) * 1e6);
+      else delete node.recordBudgetMicros;
       if (node.id === "normalize")
         node.configuration.fields = {
           name: String(form.get("nameColumn") || "name"),
@@ -943,7 +958,8 @@ export class YpLiveWorkflow extends LitElement {
   }
   private async bindConnector(event: Event) {
     event.preventDefault();
-    const form = new FormData(event.target as HTMLFormElement);
+    const element = event.target as HTMLFormElement;
+    const form = new FormData(element);
     await this.action(async () => {
       await this.api.request("/connectors", "POST", {
         binding: {
@@ -956,7 +972,7 @@ export class YpLiveWorkflow extends LitElement {
         },
         credential: JSON.parse(String(form.get("credential") || "{}")),
       });
-      (event.target as HTMLFormElement).reset();
+      element.reset();
     });
   }
   private async previewAsset(asset: YpWorkflowAsset) {
@@ -1111,10 +1127,17 @@ export class YpLiveWorkflow extends LitElement {
         return value ? [[id, Math.round(Number(value) * 1e6)]] : [];
       }),
     );
+    const nodeRecordBudgets = Object.fromEntries(
+      run.nodeIds.flatMap((id) => {
+        const value = fields.get(`record:${id}`);
+        return value ? [[id, Math.round(Number(value) * 1e6)]] : [];
+      }),
+    );
     await this.action(() =>
       this.api.request(`/runs/${run.id}/resume`, "POST", {
         budgetMicros,
         nodeBudgets,
+        nodeRecordBudgets,
       }),
     );
   }
@@ -1508,6 +1531,8 @@ ${this.quota ||
     if (!editor || !this.snapshot) return nothing;
     const node = editor.graph.nodes.find((n) => n.id === editor.nodeId)!;
     const run = this.snapshot.runs.find((r) => r.id === editor.runId);
+    const recordCap =
+      run?.nodeRecordBudgets?.[node.id] ?? node.recordBudgetMicros;
     const catalog = editor.runId
       ? (run?.modelCatalog ?? [])
       : this.snapshot.models;
@@ -1683,6 +1708,20 @@ ${this.quota ||
                     ? ""
                     : String(node.budgetMicros / 1e6)}
               /></label>
+              <label
+                >Per-parent record cap (USD, optional)<input
+                  name="recordCap"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  .value=${recordCap === undefined
+                    ? ""
+                    : String(recordCap / 1e6)}
+              /></label>
+              <p class="muted">
+                Includes model and connector requests, with outstanding
+                reservations. Applies to future runs.
+              </p>
               <details>
                 <summary>Agent configuration</summary>
                 ${node.description ? html`<p>${node.description}</p>` : nothing}
@@ -1693,6 +1732,13 @@ ${this.quota ||
                     .checked=${node.enabled}
                   />Enabled</label
                 >
+                ${!node.enabled
+                  ? html`<p class="muted">
+                      Enabling a disconnected template agent restores its
+                      template connections when the path is unambiguous. Custom
+                      paths need a graph edit.
+                    </p>`
+                  : nothing}
                 ${node.id === "normalize"
                   ? html`<div class="row">
                       <label
@@ -1831,10 +1877,28 @@ ${this.quota ||
                         : "No model selected"}
                     </td>
                     <td>
-                      ${run.nodeCosts?.[nodeId]
-                        ? dollars(run.nodeCosts[nodeId].spentMicros)
-                        : "Not recorded"}${cap
+                      ${run.reuse?.nodeIds.includes(nodeId)
+                        ? html`${dollars(0)} new<small
+                              >Reused from
+                              ${(
+                                run.stageOutputs?.[nodeId]?.originRunId ??
+                                run.reuse.runId
+                              ).slice(0, 8)}</small
+                            >`
+                        : run.nodeCosts?.[nodeId]
+                          ? dollars(run.nodeCosts[nodeId].spentMicros)
+                          : "Not recorded"}${cap
                         ? html`<small>Cap ${dollars(cap)}</small>`
+                        : nothing}
+                      ${(run.nodeRecordBudgets?.[nodeId] ??
+                        node.recordBudgetMicros) !== undefined
+                        ? html`<small
+                            >Per parent
+                            ${dollars(
+                              (run.nodeRecordBudgets?.[nodeId] ??
+                                node.recordBudgetMicros)!,
+                            )}</small
+                          >`
                         : nothing}
                     </td>
                   </tr>`;
@@ -2024,7 +2088,7 @@ ${this.quota ||
             </tr>
           </thead>
           <tbody>
-            ${this.snapshot!.assets.map(
+            ${this.snapshot!.assets.filter((asset) => !asset.stagePart).map(
               (asset) =>
                 html`<tr>
                   <td>
@@ -2067,6 +2131,35 @@ ${this.quota ||
           </tbody>
         </table>
       </div>
+      <details>
+        <summary>
+          Saved agent outputs
+          (${this.snapshot!.assets.filter((asset) => asset.stagePart).length}
+          parts)
+        </summary>
+        <p class="muted">
+          These snapshots allow completed analysis to be reused. Removing a part
+          prevents reuse of that stage; existing final downloads remain
+          available.
+        </p>
+        ${this.snapshot!.assets.filter((asset) => asset.stagePart).map(
+          (asset) =>
+            html`<div class="row">
+              <a href=${`${this.api.base}/assets/${asset.id}`} download
+                >${asset.stagePart!.nodeId} ·
+                ${asset.stagePart!.runId.slice(0, 8)} · part
+                ${asset.stagePart!.part + 1}/${asset.stagePart!.parts}</a
+              >
+              <span>${(asset.bytes / 1024).toFixed(1)} KiB</span>
+              <button
+                ?disabled=${!this.operator || this.busy}
+                @click=${() => this.deleteAsset(asset)}
+              >
+                Delete snapshot part
+              </button>
+            </div>`,
+        )}
+      </details>
       ${this.preview
         ? html`<section class="inspector">
             <h3>${this.preview.name}</h3>
@@ -2202,7 +2295,7 @@ ${this.quota ||
             ${this.connectionGroups.length
               ? html`<form @submit=${this.connectGroup}>
                   <label
-                    >Group<select name="group">
+                    >Group<select name="group" aria-label="Group">
                       ${this.connectionGroups.map(
                         (group) =>
                           html`<option value=${group.id}>
@@ -2284,7 +2377,7 @@ ${this.quota ||
                 ><label>Label<input name="label" required /></label>
               </div>
               <label
-                >Connector<select name="kind">
+                >Connector<select name="kind" aria-label="Connector">
                   <option>your-priorities</option>
                   <option>google-sheets</option>
                   <option>google-docs</option>
@@ -2311,6 +2404,124 @@ ${this.quota ||
           </details>`
         : nothing}`;
   }
+  private renderFirecrawlUsage() {
+    const usage = summarizeFirecrawlUsage(this.usage);
+    const selected = usage.rows.filter((row) => row.runId === this.run?.id);
+    const bindings = this.snapshot!.connectors.filter(
+      (binding) => binding.kind === "firecrawl",
+    );
+    if (!bindings.length && !usage.rows.length && !usage.legacyRequests)
+      return nothing;
+    return html`<section class="inspector" aria-label="Firecrawl usage">
+      <h3>Firecrawl credits</h3>
+      <p>
+        ${usage.credits.toLocaleString()} credits used ·
+        ${usage.reservedCredits.toLocaleString()} credits reserved ·
+        ${usage.unknownRequests} unresolved requests
+      </p>
+      <p class="muted">
+        Workspace totals across all runs. Dollar estimates use each request’s
+        saved credit price and are already included in processing costs.
+      </p>
+      ${selected.length
+        ? html`<p>
+            Selected run: ${selected.reduce((sum, row) => sum + row.credits, 0)}
+            credits used ·
+            ${selected.reduce((sum, row) => sum + row.reservedCredits, 0)}
+            reserved ·
+            ${dollars(selected.reduce((sum, row) => sum + row.costMicros, 0))}
+            estimated cost.
+          </p>`
+        : nothing}
+      ${usage.legacyRequests
+        ? html`<p>
+            ${usage.legacyRequests} older requests lack credit tracking; their
+            dollar costs remain in the ledger.
+          </p>`
+        : nothing}
+      ${usage.rows.length
+        ? html`<div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Run / agent / connection</th>
+                  <th>Searches / documents</th>
+                  <th>Credits used / reserved</th>
+                  <th>Estimated cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${usage.rows.map(
+                  (row) =>
+                    html`<tr>
+                      <td>
+                        ${row.runId.slice(0, 8)} · ${row.nodeId} ·
+                        ${row.bindingId}
+                      </td>
+                      <td>${row.searches} / ${row.scrapes}</td>
+                      <td>
+                        ${row.credits} /
+                        ${row.reservedCredits}${row.unknownRequests
+                          ? html` · ${row.unknownRequests} unresolved`
+                          : nothing}
+                      </td>
+                      <td>${dollars(row.costMicros)}</td>
+                    </tr>`,
+                )}
+              </tbody>
+            </table>
+          </div>`
+        : nothing}
+      ${this.snapshot!.permissions.admin
+        ? bindings.map((binding) => {
+            const balance = this.firecrawlBalances[binding.id];
+            return html`<div class="panel">
+              <strong>${binding.label}</strong>
+              <button
+                ?disabled=${this.busy}
+                @click=${() =>
+                  this.action(async () => {
+                    const groupId = this.groupId;
+                    const revision = this.workspace!.revision;
+                    const balance =
+                      await this.api.request<YpWorkflowFirecrawlBalance>(
+                        `/connectors/${binding.id}/credits`,
+                      );
+                    if (
+                      groupId !== this.groupId ||
+                      revision !== this.workspace?.revision
+                    )
+                      return;
+                    this.firecrawlBalances = {
+                      ...this.firecrawlBalances,
+                      [binding.id]: balance,
+                    };
+                  })}
+              >
+                Refresh account credits
+              </button>
+              ${balance
+                ? html`<p>
+                      ${balance.remainingCredits.toLocaleString()} account
+                      credits remaining ·
+                      ${balance.planCredits.toLocaleString()} plan credits
+                    </p>
+                    <p class="muted">
+                      Checked ${new Date(balance.checkedAt).toLocaleString()}.
+                      Billing period: ${balance.billingPeriodStart ?? "unknown"}
+                      – ${balance.billingPeriodEnd ?? "unknown"}.
+                    </p>`
+                : nothing}
+              <p class="muted">
+                Account balance includes other groups and applications using
+                this Firecrawl team. It is not this workflow’s spending
+                allowance.
+              </p>
+            </div>`;
+          })
+        : nothing}
+    </section>`;
+  }
   private renderUsage() {
     return html`<h3>Processing costs</h3>
       ${this.run?.forecast
@@ -2335,6 +2546,7 @@ ${this.quota ||
         ${dollars(this.workspace!.config.trialBudgetMicros)}. Infrastructure
         charges are separate.
       </p>
+      ${this.renderFirecrawlUsage()}
       <div class="table-scroll">
         <table>
           <thead>
@@ -2361,6 +2573,14 @@ ${this.quota ||
                           <form
                             @submit=${(e: Event) => this.reconcile(e, u.id)}
                           >
+                            ${u.creditUsage
+                              ? html`<p>
+                                  Include verified <code>creditsUsed</code> in
+                                  the result JSON. The charge must equal credits
+                                  × ${dollars(u.creditUsage.creditMicros)} (the
+                                  saved price per credit).
+                                </p>`
+                              : nothing}
                             <label
                               >Verified charge (USD)<input
                                 name="cost"
@@ -2395,6 +2615,9 @@ null</textarea
   }
   private renderRuns() {
     const run = this.run;
+    const reuseSource = this.snapshot!.runs.find(
+      (r) => r.id === this.reuseRunId,
+    );
     return html`<section class="run">
       <div class="row">
         <label
@@ -2433,11 +2656,71 @@ null</textarea
           </select></label
         >
       </div>
+      <details class="reuse-settings">
+        <summary>Reuse completed analysis</summary>
+        <p>
+          Keep the same inputs and records. Saved stages before the restart
+          agent must have matching code, dependencies and models. Reused work is
+          not charged again. Bulk reruns need a fresh complete trial for the
+          remaining-work estimate and a new explicit spending approval. Trials
+          reuse the same sampled parents.
+        </p>
+        <label
+          >Completed run<select
+            .value=${this.reuseRunId}
+            @change=${(event: Event) => {
+              this.reuseRunId = (event.target as HTMLSelectElement).value;
+              const previous = this.snapshot!.runs.find(
+                (r) => r.id === this.reuseRunId,
+              );
+              if (previous) {
+                this.sampleCount = Math.min(20, previous.inputCount);
+                this.selectedAssets = [...previous.assetIds];
+              }
+              this.restartNodeId = "";
+            }}
+          >
+            <option value="">Start fresh</option>
+            ${this.snapshot!.runs.filter(
+              (r) =>
+                r.status === "completed" && r.stageOutputs && !r.reservedMicros,
+            ).map(
+              (r) =>
+                html`<option value=${r.id}>
+                  ${r.mode} · ${r.id.slice(0, 8)} · ${r.inputCount} records
+                </option>`,
+            )}
+          </select></label
+        >
+        <label
+          >Restart from agent<select
+            .value=${this.restartNodeId}
+            @change=${(event: Event) => {
+              this.restartNodeId = (event.target as HTMLSelectElement).value;
+            }}
+          >
+            <option value="">Select agent</option>
+            ${this.workspace!.graph.nodes.filter(
+              (n) => n.kind === "agent" && n.enabled,
+            ).map((n) => html`<option value=${n.id}>${n.label}</option>`)}
+          </select></label
+        >
+      </details>
+      ${run?.reuse
+        ? html`<p class="muted">
+            Reused ${run.reuse.nodeIds.join(", ")} from run
+            ${run.reuse.runId.slice(0, 8)}. Historical processing cost
+            ${dollars(run.reuse.historicalMicros)}; new usage is recorded
+            separately.
+          </p>`
+        : nothing}
       <div class="toolbar">
         <button
           ?disabled=${!this.operator ||
           this.busy ||
           !this.selectedAssets.length ||
+          Boolean(this.reuseRunId && !this.restartNodeId) ||
+          reuseSource?.mode === "bulk" ||
           Boolean(this.workspace!.activeRunId)}
           @click=${() => this.draftRun("trial")}
         >
@@ -2446,6 +2729,10 @@ null</textarea
           ?disabled=${!this.operator ||
           this.busy ||
           !this.selectedAssets.length ||
+          Boolean(
+            this.reuseRunId &&
+            (!this.restartNodeId || reuseSource?.mode !== "bulk"),
+          ) ||
           Boolean(this.workspace!.activeRunId)}
           @click=${() => this.draftRun("bulk")}
         >
@@ -2570,15 +2857,28 @@ null</textarea
                     const node = run.graph.nodes.find((n) => n.id === id)!;
                     const cap = run.nodeBudgets?.[id] ?? node.budgetMicros;
                     return html`<label
-                      >${node.label} total cap (USD, optional)
-                      <input
-                        name=${`node:${id}`}
-                        type="number"
-                        step="0.000001"
-                        min="0.000001"
-                        .value=${cap === undefined ? "" : String(cap / 1e6)}
-                        placeholder="Run cap applies"
-                    /></label>`;
+                        >${node.label} total cap (USD, optional)
+                        <input
+                          name=${`node:${id}`}
+                          type="number"
+                          step="0.000001"
+                          min="0.000001"
+                          .value=${cap === undefined ? "" : String(cap / 1e6)}
+                          placeholder="Run cap applies" /></label
+                      ><label
+                        >${node.label} per-parent cap (USD, optional)<input
+                          name=${`record:${id}`}
+                          type="number"
+                          min="0.000001"
+                          step="0.000001"
+                          .value=${(run.nodeRecordBudgets?.[id] ??
+                            node.recordBudgetMicros) === undefined
+                            ? ""
+                            : String(
+                                (run.nodeRecordBudgets?.[id] ??
+                                  node.recordBudgetMicros)! / 1e6,
+                              )}
+                      /></label>`;
                   })}
                   <button ?disabled=${!this.operator || this.busy}>
                     Approve allowance and resume

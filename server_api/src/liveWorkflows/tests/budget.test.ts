@@ -1,9 +1,67 @@
+import { workflowSocketTimeoutMs } from "../runner/modelLimits.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { BudgetService, estimateFromTrial } from "../budget.js";
 import { tokenCost } from "../schemas.js";
 import { fixture, runId } from "./memoryStore.js";
+
+test("parent-record caps combine model and connector spend with concurrent reservations and cannot charge reused stages", async () => {
+  const { store } = await fixture(),
+    budget = new BudgetService(store);
+  await store.transact(1, async (tx) => {
+    const run = (await tx.get<YpWorkflowRun>("run", runId))!;
+    run.graph.nodes.find((n) => n.id === "analyze")!.recordBudgetMicros = 1000;
+    await tx.put("run", runId, run);
+  });
+  const request = (recordId: string) => ({
+    id: randomUUID(),
+    runId,
+    nodeId: "analyze",
+    recordId,
+    maximumMicros: 600,
+    request: { recordId },
+    description: "model",
+  });
+  const model = request("parent");
+  await budget.reserve(1, model);
+  await budget.settle(1, model.id, 400, {});
+  const web = {
+    ...request("parent"),
+    description: "firecrawl:search",
+    creditUsage: {
+      provider: "firecrawl" as const,
+      bindingId: "web",
+      operation: "search" as const,
+      maximumCredits: 6,
+      creditMicros: 100,
+    },
+  };
+  await budget.reserve(1, web);
+  await assert.rejects(budget.reserve(1, request("parent")), /limit/);
+  await budget.settle(1, web.id, 300, { creditsUsed: 3 });
+  await store.transact(1, async (tx) => {
+    const run = (await tx.get<YpWorkflowRun>("run", runId))!;
+    run.status = "running";
+    await tx.put("run", runId, run);
+  });
+  await budget.reserve(1, request("another-parent"));
+  await assert.rejects(
+    budget.reserve(1, { ...request("parent"), recordId: undefined }),
+    /attribution/,
+  );
+  await store.transact(1, async (tx) => {
+    const run = (await tx.get<YpWorkflowRun>("run", runId))!;
+    run.reuse = {
+      runId: randomUUID(),
+      fromNodeId: "next",
+      nodeIds: ["analyze"],
+      historicalMicros: 700,
+    };
+    await tx.put("run", runId, run);
+  });
+  await assert.rejects(budget.reserve(1, request("fresh-id")), /Reused/);
+});
 
 test("parallel $3,000 requests cannot exceed an approved $5,000 run", async () => {
   const { store } = await fixture(),
@@ -50,6 +108,13 @@ test("starting another API process leaves recent requests alone and recovers onl
     "reserved",
   );
   await budget.recover(1, Date.now() + 301_000);
+  assert.equal(
+    (await store.transact(1, (tx) => tx.get<{ status: string }>("usage", id)))
+      ?.status,
+    "reserved",
+    "A new API process must not abandon a live long reasoning call",
+  );
+  await budget.recover(1, Date.now() + workflowSocketTimeoutMs + 1000);
   assert.equal(
     (await store.transact(1, (tx) => tx.get<{ status: string }>("usage", id)))
       ?.status,

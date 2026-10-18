@@ -6,6 +6,7 @@ import type { ConnectorService } from "./connectors.js";
 import { identifier } from "./schemas.js";
 import { codexOperations } from "./runner/cliArguments.js";
 import { NotFoundError } from "./services/errors.js";
+import { reuseRequest } from "./reuse.js";
 
 const assetsBody = z.object({
   assetIds: z.array(z.string().uuid()).min(1).max(100).optional(),
@@ -87,6 +88,7 @@ export class CodexWorkflowTools {
         ? assetsBody.extend({
             sampleCount: z.number().int().min(1).max(20).default(5),
             targetNodeId: identifier.optional(),
+            reuse: reuseRequest.optional(),
           })
         : assetsBody
     )
@@ -126,7 +128,11 @@ export class CodexWorkflowTools {
         })),
       };
     }
-    const trial = body as { sampleCount: number; targetNodeId?: string };
+    const trial = body as {
+      sampleCount: number;
+      targetNodeId?: string;
+      reuse?: { runId: string; fromNodeId: string };
+    };
     const run = await this.service.draftRun(
       groupId,
       actor,
@@ -134,6 +140,7 @@ export class CodexWorkflowTools {
       selected,
       trial.sampleCount,
       trial.targetNodeId,
+      trial.reuse,
     );
     await this.service.startRun(groupId, actor, run.id);
     // Return the accepted execution state, not the pre-start draft that would tell Codex it never ran.

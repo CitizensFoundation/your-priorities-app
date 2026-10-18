@@ -18,6 +18,7 @@ import {
 import { analysisNames } from "./manual/verification.js";
 import {
   idahoCosts,
+  idahoQuality,
   workbookTextParts,
   informationalIdahoProjection,
   writeIdahoWorkbook,
@@ -29,6 +30,11 @@ import { fixture as workflowFixture } from "./memoryStore.js";
 import { stableRequestId } from "../runner/socketClient.js";
 import type { UsageReservation } from "../budget.js";
 import type { BrowserObservation } from "./manual/interactiveBrowser.js";
+import {
+  boundedIdahoFirecrawl,
+  idahoMaximumFirecrawlRequests,
+  verifyIdahoResearch,
+} from "./manual/idahoResearch.js";
 
 const fixture = () => {
   const rows = Array.from({ length: 101 }, (_, index) =>
@@ -55,6 +61,139 @@ const fixture = () => {
       .join("\r\n");
   return { rows, csv };
 };
+
+test("Idaho research evidence must belong to the same run, record and agent; incomplete sources cannot become known", async () => {
+  const { run } = await workflowFixture();
+  const source = {
+    url: "https://example.gov/idaho",
+    markdown: "An Idaho license is required.",
+  };
+  const citation = { url: source.url, quote: source.markdown };
+  const stage = {
+    status: "known",
+    sources: [
+      {
+        url: source.url,
+        jurisdictionMatches: true,
+        authority: "statute",
+        truncated: false,
+        extraction: { status: "known", gaps: [] },
+      },
+    ],
+    citations: [citation],
+    gaps: [],
+    conflicts: [],
+    review: {
+      supported: true,
+      jurisdictionCorrect: true,
+      conflictsResolved: true,
+      issues: [],
+    },
+  };
+  const records = [
+    {
+      id: "job-1",
+      name: "Idaho job",
+      analysis: {
+        research: {
+          licenses: structuredClone(stage),
+          education: structuredClone(stage),
+        },
+      },
+      degreeAnalysis: {
+        deepResearchResults: [
+          { sourceUrl: source.url, evidenceQuote: source.markdown },
+        ],
+      },
+    },
+  ];
+  const usage: UsageReservation[] = ["licenses", "education"].map((nodeId) => ({
+    id: nodeId,
+    runId: run.id,
+    nodeId,
+    recordId: "job-1",
+    description: "firecrawl:search",
+    status: "settled",
+    maximumMicros: 10000,
+    actualMicros: 2000,
+    fingerprint: nodeId,
+    createdAt: new Date().toISOString(),
+    creditUsage: {
+      provider: "firecrawl",
+      bindingId: "firecrawl",
+      operation: "search",
+      maximumCredits: 10,
+      actualCredits: 2,
+      creditMicros: 1000,
+    },
+    result: { pages: [source], creditsUsed: 2 },
+  }));
+  assert.equal(verifyIdahoResearch(records, usage, run.id).quotesVerified, 2);
+  assert.equal(verifyIdahoResearch(records, usage, run.id).passed, true);
+  assert.equal(verifyIdahoResearch(records, usage, "other-run").passed, false);
+  assert.equal(
+    verifyIdahoResearch(
+      records,
+      usage.map((entry) => ({ ...entry, recordId: "other-job" })),
+      run.id,
+    ).passed,
+    false,
+  );
+  assert.equal(
+    verifyIdahoResearch(
+      records,
+      usage.map((entry) => ({ ...entry, nodeId: "other-agent" })),
+      run.id,
+    ).passed,
+    false,
+  );
+  records[0].analysis.research.licenses.sources[0].truncated = true;
+  assert.equal(verifyIdahoResearch(records, usage, run.id).passed, false);
+  records[0].analysis.research.licenses.sources[0].truncated = false;
+  records[0].analysis.research.licenses.sources[0].extraction.status =
+    "unknown";
+  assert.equal(verifyIdahoResearch(records, usage, run.id).passed, false);
+  records[0].analysis.research.licenses.status = "unknown";
+  assert.equal(verifyIdahoResearch(records, usage, run.id).passed, true);
+  const quality = idahoQuality(records);
+  assert.equal(quality.researchChecks, 2);
+  assert.equal(quality.unresolvedResearchChecks, 1);
+  assert.equal(quality.recordsWithResearchGaps, 1);
+});
+
+test("Idaho Firecrawl limit blocks additional paid requests and never retries ambiguous failures", async () => {
+  let calls = 0;
+  const bounded = boundedIdahoFirecrawl(async () => {
+    calls++;
+    return Response.json({ success: true });
+  });
+  for (let i = 0; i < idahoMaximumFirecrawlRequests; i++)
+    await bounded.firecrawlFetch("https://api.firecrawl.dev/v2/search", {
+      method: "POST",
+    });
+  await assert.rejects(
+    bounded.firecrawlFetch("https://api.firecrawl.dev/v2/scrape", {
+      method: "POST",
+    }),
+    /ceiling/,
+  );
+  assert.equal(calls, idahoMaximumFirecrawlRequests);
+  await bounded.firecrawlFetch(
+    "https://api.firecrawl.dev/v2/team/credit-usage",
+  );
+  let attempts = 0;
+  const failed = boundedIdahoFirecrawl(async () => {
+    attempts++;
+    throw new Error("Unknown provider outcome");
+  });
+  await assert.rejects(
+    failed.firecrawlFetch("https://api.firecrawl.dev/v2/search", {
+      method: "POST",
+    }),
+    /Unknown provider/,
+  );
+  assert.equal(attempts, 1);
+});
 
 test("Excel text parts preserve long and untrusted source text without oversized or clipped cells", () => {
   const text = "=DO_NOT_EXECUTE()\n" + "quoted Idaho text 🏔️\n".repeat(4000);
@@ -131,6 +270,8 @@ test("a failed-review trial still produces Excel output and a clearly ineligible
       ...idahoCosts([run], [call]),
       simulated: true,
       codex: new ManualCodexUsage(resolveManualConfig({}), "offline").report(),
+      historicalCodex: null,
+      totalCodexEstimatedMicros: 0,
       combinedSettledAndEstimatedMicros: 100_000,
       estimate: null,
       informationalProjection: projection,
@@ -391,4 +532,50 @@ test("Idaho costs reconcile zero-cost stages, settled and unresolved calls, and 
   assert.equal(costs.unmatchedAnalysisRequests, 1);
   assert.ok(!JSON.stringify(costs).includes("Private model content"));
   assert.throws(() => idahoCosts([run], [call, call]), /Duplicate ledger/);
+  const web: UsageReservation = {
+    ...call,
+    id: "web",
+    description: "firecrawl:search",
+    maximumMicros: 11880,
+    actualMicros: 1980,
+    result: { creditsUsed: 2 },
+    creditUsage: {
+      provider: "firecrawl",
+      bindingId: "firecrawl",
+      operation: "search",
+      maximumCredits: 12,
+      actualCredits: 2,
+      creditMicros: 990,
+    },
+  };
+  const mixed = idahoCosts(
+    [run],
+    [
+      call,
+      web,
+      {
+        ...web,
+        id: "uncertain-web",
+        status: "unknown",
+        actualMicros: undefined,
+        result: undefined,
+        creditUsage: { ...web.creditUsage!, actualCredits: undefined },
+      },
+    ],
+  );
+  assert.equal(mixed.totals.modelMicros, 1234);
+  assert.equal(mixed.totals.firecrawlMicros, 1980);
+  assert.equal(
+    mixed.totals.settledMicros,
+    3214,
+    "Firecrawl is included exactly once",
+  );
+  assert.equal(mixed.totals.firecrawlCredits, 2);
+  assert.equal(mixed.totals.firecrawlReservedCredits, 12);
+  assert.equal(mixed.totals.reservedMicros, 11880);
+  assert.equal(
+    mixed.totals.tokensOut,
+    200,
+    "Credits must not be counted as model tokens",
+  );
 });

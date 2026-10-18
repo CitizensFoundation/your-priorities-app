@@ -91,6 +91,8 @@ const projections: Record<string, Record<string, string>> = {
 
 export async function verifySkillsFirstValues(input: {
   runId: string;
+  /** Original analysis receipt scope when a new trial reuses that exact stage. */
+  analysisRunId?: string;
   records: Record<string, unknown>[];
   memory: unknown;
   csv: Buffer;
@@ -174,7 +176,7 @@ export async function verifySkillsFirstValues(input: {
       analysis = object(job.analysis);
     for (const task of analysisNames) {
       const entry = ledger.get(
-        stableRequestId(`${input.runId}:analyze:${id}:${task}`),
+        stableRequestId(`${input.analysisRunId ?? input.runId}:analyze:${id}:${task}`),
       );
       if (!entry) {
         equal(

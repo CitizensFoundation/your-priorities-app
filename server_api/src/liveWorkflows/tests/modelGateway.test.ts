@@ -7,14 +7,17 @@ import { fixtureModel as definition } from "./modelFixture.js";
 import { builtinProcessingModels } from "../modelCatalog.js";
 import { tokenCost } from "../schemas.js";
 import type { UsageReservation } from "../budget.js";
-import { OpenAiResponses } from "@policysynth/agents/aiModels/openAiResponses.js";
+import {
+  openAiProcessingReply,
+  generateOpenAiProcessing,
+} from "../openAiProcessing.js";
 import {
   workflowProviderTimeoutMs,
   workflowGatewayTimeoutMs,
   workflowSocketTimeoutMs,
 } from "../runner/modelLimits.js";
 
-test("reasoning effort reaches Policy Synth from the immutable run and model defaults without changing Codex", async (t) => {
+test("reasoning effort reaches the bounded provider adapter from the immutable run without changing Codex", async (t) => {
   const { store } = await fixture();
   const model = {
     ...builtinProcessingModels("fast").find(
@@ -41,29 +44,38 @@ test("reasoning effort reaches Policy Synth from the immutable run and model def
   );
   const efforts: string[] = [];
   t.mock.method(
-    OpenAiResponses.prototype,
-    "generate",
-    async function (
-      this: OpenAiResponses,
-      ...args: Parameters<OpenAiResponses["generate"]>
-    ) {
-      const provider = this as unknown as {
-        cfg: { reasoningEffort: string; maxTokensOut: number };
-        buildReasoningOptionsForResponses(): { effort: string };
-        getRequestedServiceTier(): string;
-      };
-      efforts.push(provider.buildReasoningOptionsForResponses().effort);
-      assert.equal(provider.cfg.maxTokensOut, 32768);
-      assert.equal(provider.getRequestedServiceTier(), "priority");
-      assert.equal(args[7]?.timeoutMs, workflowProviderTimeoutMs);
+    globalThis,
+    "fetch",
+    async (url: string | URL | Request, init?: RequestInit) => {
+      assert.equal(String(url), "https://api.openai.com/v1/responses");
+      const body = JSON.parse(String(init?.body));
+      efforts.push(body.reasoning.effort);
+      assert.equal(body.max_output_tokens, 65536);
+      assert.equal(body.service_tier, "priority");
+      assert.equal(body.store, false);
+      assert.ok(init?.signal);
       assert.ok(workflowGatewayTimeoutMs > workflowProviderTimeoutMs);
       assert.ok(workflowSocketTimeoutMs > workflowGatewayTimeoutMs);
-      return {
-        content: "{}",
-        tokensIn: 100,
-        tokensOut: 500,
-        usageItemData: { providerMetadata: { appliedServiceTier: "priority" } },
-      };
+      return Response.json({
+        id: "resp_fixture",
+        status: "completed",
+        service_tier: "priority",
+        usage: { input_tokens: 100, output_tokens: 500 },
+        output: [
+          {
+            type: "message",
+            phase: "commentary",
+            content: [
+              { type: "output_text", text: "Commentary must not become JSON" },
+            ],
+          },
+          {
+            type: "message",
+            phase: "final_answer",
+            content: [{ type: "output_text", text: "{}" }],
+          },
+        ],
+      });
     },
   );
   const gateway = new ModelGateway(store, JSON.stringify([model]));
@@ -100,6 +112,19 @@ test("reasoning effort reaches Policy Synth from the immutable run and model def
     await store.transact(1, async (tx) => tx.state.config.codexReasoningEffort),
     "low",
   );
+});
+
+test("the actual OpenAI transport makes only one attempt on an ambiguous connection failure", async (t) => {
+  let calls = 0;
+  t.mock.method(globalThis, "fetch", async () => {
+    calls++;
+    throw new TypeError("connection reset");
+  });
+  await assert.rejects(
+    generateOpenAiProcessing(definition, "fixture-only", "", "record"),
+    /Connection error/,
+  );
+  assert.equal(calls, 1);
 });
 test("a priority reservation settles standard prices when the provider reports a downgrade", async () => {
   const { store } = await fixture();
@@ -322,4 +347,71 @@ test("a provider timeout never silently retries or releases the money reservatio
   assert.ok(
     (await store.transact(1, async (tx) => tx.state.reservedMicros)) > 0,
   );
+});
+
+test("incomplete model output settles its verified usage, stays blocked on replay and cannot become a successful result", async () => {
+  const { store } = await fixture();
+  let calls = 0;
+  const raw = {
+    id: "resp_incomplete",
+    status: "incomplete",
+    incomplete_details: { reason: "max_output_tokens" },
+    service_tier: "default",
+    usage: {
+      input_tokens: 1000,
+      output_tokens: 100,
+      input_tokens_details: { cached_tokens: 200, cache_write_tokens: 0 },
+    },
+    output: [
+      {
+        type: "message",
+        content: [{ type: "output_text", text: '{"truncated":' }],
+      },
+    ],
+  };
+  const gateway = new ModelGateway(
+    store,
+    JSON.stringify([definition]),
+    async () => {
+      calls++;
+      return openAiProcessingReply(raw);
+    },
+  );
+  await store.transact(1, (tx) =>
+    tx.put("run-models", runId, gateway.catalog()),
+  );
+  const request = {
+    id: randomUUID(),
+    runId,
+    nodeId: "analyze",
+    system: "",
+    input: "record",
+  };
+  await assert.rejects(
+    gateway.call(1, request),
+    /output-token limit.*Usage was recorded/,
+  );
+  const receipt = (await store.transact(1, (tx) =>
+    tx.get<UsageReservation>("usage", request.id),
+  ))!;
+  assert.equal(receipt.status, "settled");
+  assert.equal(receipt.actualMicros, 2500);
+  assert.deepEqual(receipt.result, {
+    content: '{"truncated":',
+    tokensIn: 1000,
+    tokensOut: 100,
+    costMicros: 2500,
+    providerResponseId: "resp_incomplete",
+    incompleteReason: "max_output_tokens",
+    requestedServiceTier: "default",
+    appliedServiceTier: "default",
+  });
+  assert.equal(
+    await store.transact(1, async (tx) => tx.state.reservedMicros),
+    0,
+  );
+  await assert.rejects(gateway.call(1, request), /output-token limit/);
+  assert.equal(calls, 1);
+  assert.throws(() => openAiProcessingReply({ ...raw, usage: null }), /usage/);
+  assert.throws(() => openAiProcessingReply({ ...raw, status: "in_progress" }));
 });

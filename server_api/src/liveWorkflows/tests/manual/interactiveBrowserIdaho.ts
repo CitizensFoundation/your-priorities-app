@@ -15,6 +15,7 @@ import {
   verifyReviewedRewrites,
 } from "./headlessVerification.js";
 import type { BrowserObservation } from "./interactiveBrowser.js";
+import { idahoResearchNodes } from "./idahoResearch.js";
 
 export const idahoStages = [
   "adapt-import",
@@ -28,11 +29,24 @@ export const idahoStages = [
 ];
 export const idahoExperiment =
   "Please process everything using these agents: Normalize records, Split and verify job levels, Analyze requirements, Rewrite and validate, Compare datasets, Compare license and education, Export results.";
+export const idahoResearchStages = [
+  ...idahoStages.slice(0, 4),
+  ...idahoResearchNodes,
+  ...idahoStages.slice(4),
+];
+export const idahoResearchExperiment = idahoExperiment.replace(
+  "Rewrite and validate",
+  "License and degree research, Education and statute research, Rewrite and validate",
+);
 
 export const idahoInstructions = `<details><summary>Idaho trial and estimate</summary><p>Upload idaho-first-100.csv in Data first. Then use the imported test key and send the experiment below. The trial samples five source records across input lengths, including both extremes. All non-web stages run; missing comparison evidence stays unknown. Review Results, download the artifacts, and estimate the whole 100-record run. Do not approve bulk spending.</p><pre>${idahoExperiment}</pre></details>`;
+export const idahoResearchInstructions = `<details><summary>Idaho research pilot</summary><p>Upload idaho-first-100.csv first, connect the imported test key, and send the experiment. Five sampled records run through both web research stages before rewriting and export. Firecrawl is connected on the server; its cost is included in the $5 processing cap. Review exact citations, coverage warnings and the downloaded workbook. Missing reference comparisons and incomplete research remain unknown. No bulk spending is approved.</p><pre>${idahoResearchExperiment}</pre></details>`;
 
 /** Scripted operator is only used by the offline rehearsal; live Codex writes its own adapter. */
-export function offlineIdahoOperator() {
+export function offlineIdahoOperator(
+  research = false,
+  detachedResearch = false,
+) {
   return async (workspace: string) => {
     const cli = <T>(...args: string[]) =>
       offlineWorkflowCli<T>(workspace, ...args);
@@ -58,8 +72,9 @@ export const run: Agent = async (context, input) => {
 };\n`,
     );
     const graph = snapshot.workspace.graph;
+    const stages = research ? idahoResearchStages : idahoStages;
     for (const node of graph.nodes) {
-      if (node.kind === "agent") node.enabled = idahoStages.includes(node.id);
+      if (node.kind === "agent") node.enabled = stages.includes(node.id);
       if (node.id === "normalize")
         node.configuration.jurisdiction = "Idaho, USA";
       if (node.id === "analyze") delete node.configuration.tasks;
@@ -83,6 +98,16 @@ export const run: Agent = async (context, input) => {
       source: "adapt-import",
       target: "normalize",
     });
+    if (detachedResearch) {
+      graph.edges = graph.edges.filter(
+        (e) => !["flow-2", "flow-3", "flow-4"].includes(e.id),
+      );
+      graph.edges.push({
+        id: "detached-research-bypass",
+        source: "analyze",
+        target: "rewrite",
+      });
+    }
     await writeFile(
       path.join(root, "graph.json"),
       JSON.stringify(graph, null, 2),
@@ -94,7 +119,7 @@ export const run: Agent = async (context, input) => {
       String(idahoSample),
       asset.id,
     );
-    return `Offline rehearsal: Idaho trial ${run.id} started through ${idahoStages.join(" → ")}. All seven analysis tasks are included; reference comparisons will remain unknown. No bulk work approved.`;
+    return `Offline rehearsal: Idaho trial ${run.id} started through ${stages.join(" → ")}. All seven analysis tasks are included; missing reference comparisons will remain unknown. No bulk work approved.`;
   };
 }
 
@@ -146,6 +171,7 @@ export function verifyIdahoResults(
   sampled: string[],
   adapted: unknown,
   output: unknown,
+  research = false,
 ) {
   assert.ok(Array.isArray(adapted));
   assert.equal(adapted.length, idahoSample);
@@ -208,7 +234,9 @@ export function verifyIdahoResults(
       row.originalText,
       idahoText(expected.get(row.parentId ?? row.id)!),
     );
-    for (const stage of ["compare", "compare-license"]) {
+    for (const stage of research
+      ? ["compare"]
+      : ["compare", "compare-license"]) {
       const comparison = row.analysis[stage] as {
         status?: string;
         missingEvidence?: unknown[];

@@ -55,6 +55,7 @@ async function scenario(
     signal: AbortSignal,
   ) => GroupCreationContinuation,
   signal: AbortSignal,
+  options: Parameters<typeof startManualHarness>[2] = {},
 ) {
   const output = path.join(directory, name);
   await mkdir(output, { mode: 0o700 });
@@ -76,6 +77,7 @@ async function scenario(
       codex: "greeting",
       offlineTurn: async () => marker,
       usageDirectory: output,
+      ...options,
     });
     Object.assign(
       report,
@@ -117,8 +119,9 @@ async function scenario(
 export function regressionCase(
   name: string,
   factory: Parameters<typeof scenario>[1],
+  options: Parameters<typeof startManualHarness>[2] = {},
 ) {
   test(name, { timeout: 600_000 }, async (t) => {
-    await scenario(name, factory, t.signal);
+    await scenario(name, factory, t.signal, options);
   });
 }

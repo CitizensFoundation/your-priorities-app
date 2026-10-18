@@ -7,6 +7,8 @@ import path from "node:path";
 import {
   fixturePath,
   importManualKey,
+  importManualFirecrawlKey,
+  manualFirecrawlKeyName,
   manualKeyName,
   manualConfigSchema,
   resolveManualConfig,
@@ -119,6 +121,38 @@ test("manual paid runs require opt-in, a priced catalog model and a small cap", 
     }),
     "error [credential redacted] and [credential redacted]",
   );
+});
+
+test("Firecrawl import installs only its key and redacts credential material", async () => {
+  assert.equal(
+    redactManualText("b41129fc-1234-4000-a000-123456789012", {}),
+    "b41129fc-1234-4000-a000-123456789012",
+  );
+  const temp = await mkdtemp(path.join(os.tmpdir(), "yp-firecrawl-import-"));
+  try {
+    const filename = path.join(temp, "fixture.env");
+    await writeFile(
+      filename,
+      'FIRECRAWL_API_KEY="fc-fixture-$(never-execute)"\nOPENAI_API_KEY=do-not-import\nDATABASE_URL=do-not-import\n',
+    );
+    const env: NodeJS.ProcessEnv = {};
+    await importManualFirecrawlKey(filename, env);
+    assert.deepEqual(env, {
+      [manualFirecrawlKeyName]: "fc-fixture-$(never-execute)",
+    });
+    assert.equal(
+      redactManualText(`key=${env[manualFirecrawlKeyName]}`, env),
+      "key=[credential redacted]",
+    );
+    await importManualFirecrawlKey("/missing", env);
+    await symlink(filename, path.join(temp, "link"));
+    await assert.rejects(
+      importManualFirecrawlKey(path.join(temp, "link"), {}),
+      /regular file/,
+    );
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
 });
 
 test("manual Codex and agent selections default independently and get prices from the backend catalog", async () => {
@@ -262,4 +296,38 @@ test("Skills First manual fixture matches the default graph and verifier rejects
     () => verifyDownload({ ...asset, checksum: "0".repeat(64) }, bytes),
     /bytes differ/,
   );
+});
+import { ManualRequestDrain } from "./manual/requestDrain.js";
+
+test("manual cleanup drains complete gateway settlements and rejects new paid work", async () => {
+  const drain = new ManualRequestDrain();
+  let settle!: () => void;
+  let recorded = false;
+  const request = drain.wrap(async () => {
+    await new Promise<void>((resolve) => {
+      settle = resolve;
+    });
+    recorded = true;
+  });
+  const pending = request();
+  await Promise.resolve();
+  const closing = drain.drain();
+  await assert.rejects(request(), /draining/);
+  assert.equal(recorded, false);
+  settle();
+  await Promise.all([pending, closing]);
+  assert.equal(recorded, true);
+  const slow = new ManualRequestDrain();
+  let release!: () => void;
+  const held = slow.wrap(
+    async () =>
+      new Promise<void>((resolve) => {
+        release = resolve;
+      }),
+  )();
+  await Promise.resolve();
+  await assert.rejects(slow.drain(1), /keep the disposable database/);
+  release();
+  await held;
+  await slow.drain();
 });

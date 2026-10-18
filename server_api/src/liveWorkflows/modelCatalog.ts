@@ -21,7 +21,7 @@ export const processingModelSchema = z
     inferenceType: z.enum(["priority"]).optional(),
     // A priority request may be served and billed at the standard tier.
     standardPrices: modelPrices.optional(),
-    maxOutputTokens: z.number().int().min(256).max(32768),
+    maxOutputTokens: z.number().int().min(256).max(128000),
     contextTokens: z.number().int().min(1024).max(2_000_000),
     priceVersion: z.string().min(1),
     keyEnv: z.string().regex(/^[A-Z][A-Z0-9_]+$/),

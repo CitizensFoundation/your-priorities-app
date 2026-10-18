@@ -19,7 +19,17 @@ export function researchResponse(system: string, input: any): YpWorkflowJson {
       requirements: [
         {
           statement: "A license is required.",
-          quotes: ["A license is required."],
+          ...(input.source.passages?.find(
+            (p: any) => p.text === "A license is required.",
+          )
+            ? {
+                quoteIds: [
+                  input.source.passages.find(
+                    (p: any) => p.text === "A license is required.",
+                  ).id,
+                ],
+              }
+            : { quotes: ["A license is required."] }),
         },
       ],
       gaps: [],
@@ -37,12 +47,16 @@ export function researchResponse(system: string, input: any): YpWorkflowJson {
       ? [
           {
             statement: "A license is required.",
-            citations: [
-              {
-                url: input.sources[0].url,
-                quote: "A license is required.",
-              },
-            ],
+            ...(input.evidence?.length
+              ? { evidenceIds: [input.evidence[0].id] }
+              : {
+                  citations: [
+                    {
+                      url: input.sources[0].url,
+                      quote: "A license is required.",
+                    },
+                  ],
+                }),
           },
         ]
       : [],
@@ -59,8 +73,12 @@ export function researchResponse(system: string, input: any): YpWorkflowJson {
             mandatoryDegreeRequirementStatus: null,
             reasoning:
               "Fixture evidence establishes a license, not its education prerequisites.",
-            sourceUrl: input.sources[0].url,
-            evidenceQuote: "A license is required.",
+            ...(input.evidence?.length
+              ? { evidenceId: input.evidence[0].id }
+              : {
+                  sourceUrl: input.sources[0].url,
+                  evidenceQuote: "A license is required.",
+                }),
           },
         ]
       : [],

@@ -11,6 +11,8 @@ import { idahoSample, type prepareIdahoData } from "./idahoData.js";
 import {
   idahoExperiment,
   idahoStages,
+  idahoResearchExperiment,
+  idahoResearchStages,
   verifyIdahoActions,
   verifyIdahoResults,
 } from "./interactiveBrowserIdaho.js";
@@ -19,6 +21,11 @@ import type { BrowserEvidence } from "./interactiveBrowser.js";
 import { saveIdahoCosts, writeIdahoWorkbook } from "./idahoReport.js";
 import { verifySkillsFirstValues } from "./skillsFirstValues.js";
 import type { UsageReservation } from "../../budget.js";
+import {
+  idahoResearchLimits,
+  idahoResearchNodes,
+  verifyIdahoResearch,
+} from "./idahoResearch.js";
 
 const expect = playwrightExpect.configure({ timeout: 30_000 });
 export async function driveBrowserIdaho(
@@ -29,7 +36,10 @@ export async function driveBrowserIdaho(
   output: string,
   headed: boolean,
   signal: AbortSignal,
+  research = false,
 ) {
+  const experiment = research ? idahoResearchExperiment : idahoExperiment;
+  const stages = research ? idahoResearchStages : idahoStages;
   const browser = await chromium.launch({ headless: !headed });
   const context = await browser.newContext({
     acceptDownloads: true,
@@ -49,6 +59,7 @@ export async function driveBrowserIdaho(
   const errors: string[] = [],
     screenshots = new Set<string>();
   const checks: string[] = [];
+  const missingResearchCalls: string[] = [];
   const check = (label: string) => {
     checks.push(label);
     console.info(`[idaho-browser] PASS: ${label}`);
@@ -155,6 +166,20 @@ export async function driveBrowserIdaho(
     check(
       "First UI step uploads exactly 100 Idaho records, previews them and downloads identical bytes",
     );
+    if (research) {
+      await expect(
+        page.getByText("Idaho web research", { exact: true }),
+      ).toBeVisible();
+      await button("Usage").click();
+      await button("Refresh account credits").click();
+      await expect(
+        page.getByRole("region", { name: "Firecrawl usage" }),
+      ).toContainText("account credits remaining");
+      await screenshot("01-firecrawl-connected");
+      check(
+        "Server-imported Firecrawl connection and account credits are visible without sending its key through the browser",
+      );
+    }
 
     await button("Use imported test key").click();
     await expect(
@@ -170,7 +195,7 @@ export async function driveBrowserIdaho(
         name: "Message Skills First Assistant",
         exact: true,
       })
-      .fill(idahoExperiment);
+      .fill(experiment);
     await button("Send").click();
     await screenshot("02-chat-request");
     await waitFor(
@@ -214,7 +239,7 @@ export async function driveBrowserIdaho(
     await writeFile(
       path.join(output, "chat.txt"),
       redactManualText(
-        `USER\n${idahoExperiment}\n\nASSISTANT\n${replies.join("\n\n")}`,
+        `USER\n${experiment}\n\nASSISTANT\n${replies.join("\n\n")}`,
       ),
       { mode: 0o600 },
     );
@@ -235,14 +260,14 @@ export async function driveBrowserIdaho(
     );
     assert.equal(trial.inputCount, idahoSample);
     assert.equal(trial.sample?.populationCount, 100);
-    assert.deepEqual(trial.nodeIds, idahoStages);
+    assert.deepEqual(trial.nodeIds, stages);
     assert.equal(trial.targetNodeId, undefined);
     await writeFile(
       path.join(output, "trial-run.json"),
       JSON.stringify(trial, null, 2),
       { mode: 0o600 },
     );
-    for (const id of idahoStages)
+    for (const id of stages)
       assert.equal(trial.nodeStates[id]?.status, "completed");
     for (const node of trial.graph.nodes.filter(
       (node) => node.kind === "agent" && node.id !== "adapt-import",
@@ -250,11 +275,29 @@ export async function driveBrowserIdaho(
       assert.equal(node.models.default, config.processingModel.id);
       assert.equal(node.reasoningEffort, config.processingReasoningEffort);
     }
-    assert.ok(
-      !harness.processingCalls.some((call) =>
-        ["licenses", "education"].includes(call.nodeId),
-      ),
-    );
+    if (research) {
+      for (const id of idahoResearchNodes) {
+        if (!harness.processingCalls.some((call) => call.nodeId === id))
+          missingResearchCalls.push(id);
+        const node = trial.graph.nodes.find((node) => node.id === id)!;
+        for (const [key, value] of Object.entries(idahoResearchLimits))
+          assert.equal(
+            node.configuration[key],
+            value,
+            `Codex changed the research limit ${id}.${key}`,
+          );
+        assert.ok(
+          trial.graph.edges.some(
+            (edge) => edge.source === "firecrawl" && edge.target === id,
+          ),
+        );
+      }
+    } else
+      assert.ok(
+        !harness.processingCalls.some((call) =>
+          idahoResearchNodes.includes(call.nodeId),
+        ),
+      );
     assert.equal(harness.codexUsage.report().turns, 1);
     await expect(
       page
@@ -263,7 +306,9 @@ export async function driveBrowserIdaho(
     ).toContainText("Run completed.");
     await screenshot("03-trial-complete");
     check(
-      "All non-web stages finish with the configured model and reasoning settings",
+      research
+        ? "All configured stages report completion with the selected models and limits; record validation follows"
+        : "All non-web stages finish with the configured model and reasoning settings",
     );
 
     await button("Results").click();
@@ -274,15 +319,50 @@ export async function driveBrowserIdaho(
       .first()
       .click();
     await screenshot("04-trial-results");
+    if (research) {
+      await results
+        .getByText("Original, evidence and full record", { exact: true })
+        .first()
+        .click();
+      await results
+        .getByText("License and legal research", { exact: true })
+        .first()
+        .click();
+      for (const label of [
+        "License and degree research",
+        "Education and statute research",
+      ]) {
+        const summary = results
+          .locator("summary")
+          .filter({ hasText: `${label} ·` })
+          .first();
+        if (await summary.count()) {
+          await summary.click();
+          await expect(summary.locator("..")).toHaveAttribute("open", "");
+        }
+      }
+      await results
+        .locator("article")
+        .first()
+        .screenshot({ path: path.join(output, "04-research-coverage.png") });
+    }
     await button("Usage").click();
     await expect(
       page.getByRole("heading", { name: "Processing costs", exact: true }),
     ).toBeVisible();
     await screenshot("05-settled-usage");
+    if (research) {
+      await button("Refresh account credits").click();
+      const usage = page.getByRole("region", { name: "Firecrawl usage" });
+      await expect(usage).toContainText("account credits remaining");
+      await usage.screenshot({
+        path: path.join(output, "05-firecrawl-usage.png"),
+      });
+    }
     await button("Data").click();
     const snapshot = await state();
     const assets = snapshot.assets.filter((asset) =>
-      asset.name.startsWith(`${trial.id}-`),
+      asset.name.startsWith(`${trial.id}-`) && !asset.stagePart,
     );
     assert.ok(assets.length >= 6, "Missing trial artifacts");
     const rows: Record<string, unknown>[] = [];
@@ -325,6 +405,19 @@ export async function driveBrowserIdaho(
       ),
       workbookBytes,
     );
+    let researchVerification;
+    if (research) {
+      researchVerification = verifyIdahoResearch(
+        rows,
+        await harness.request<UsageReservation[]>("/usage"),
+        trial.id,
+      );
+      await writeFile(
+        path.join(output, "research-verification.json"),
+        JSON.stringify(researchVerification, null, 2),
+        { mode: 0o600 },
+      );
+    }
     assert.ok(
       csvBytes && memory,
       "Missing canonical Skills First JSON/CSV artifacts",
@@ -342,6 +435,27 @@ export async function driveBrowserIdaho(
       JSON.stringify(valueVerification, null, 2),
       { mode: 0o600 },
     );
+    // Preserve both diagnostics even when a research record failed. Downloading
+    // an Excel file does not establish that its research or values are correct.
+    assert.deepEqual(
+      missingResearchCalls,
+      [],
+      "Some research agents made no model calls",
+    );
+    if (researchVerification) {
+      assert.equal(
+        researchVerification.passed,
+        true,
+        JSON.stringify(researchVerification.issues),
+      );
+      assert.ok(
+        researchVerification.quotesVerified > 0,
+        "No exact web evidence reached the pilot output",
+      );
+      check(
+        "Research citations match settled retrievals for the same record and agent; incomplete evidence retains uncertainty",
+      );
+    }
     assert.equal(
       valueVerification.passed,
       true,
@@ -525,6 +639,7 @@ export async function driveBrowserIdaho(
       trial.sample!.recordIds,
       adapted,
       rows,
+      research,
     );
     assert.equal(costs.totals.unresolvedRequests, 0);
     assert.equal(costs.unmatchedAnalysisRequests, 0);
@@ -539,6 +654,7 @@ export async function driveBrowserIdaho(
       estimatedRunId: estimated.id,
       quality,
       valueVerification,
+      researchVerification,
       trialRecords: idahoSample,
       population: 100,
       bulkApproved: false,

@@ -4,8 +4,6 @@ import { docs_v1 } from "googleapis/build/src/apis/docs/v1.js";
 import { drive_v3 } from "googleapis/build/src/apis/drive/v3.js";
 import { z } from "zod";
 import { col, where, Op } from "sequelize";
-import models from "../models/index.cjs";
-import { groupAccess } from "./access.js";
 import { SecretBox } from "./secrets.js";
 import type { WorkflowStore } from "./store.js";
 import {
@@ -13,6 +11,7 @@ import {
   documentRequest,
   firecrawlBody,
   normalizeFirecrawl,
+  normalizeFirecrawlBalance,
   requireObservedDocument,
 } from "./firecrawl.js";
 import { BudgetService, type UsageReservation } from "./budget.js";
@@ -47,6 +46,7 @@ export class ConnectorService {
   constructor(
     private readonly store: WorkflowStore,
     private readonly secrets: SecretBox,
+    private readonly firecrawlFetch: typeof fetch = fetch,
   ) {
     this.budget = new BudgetService(store);
   }
@@ -59,6 +59,7 @@ export class ConnectorService {
   ) {
     const binding = connectorSchema.parse(value);
     if (binding.kind === "your-priorities") {
+      const { groupAccess } = await import("./access.js");
       const access = await groupAccess(Number(binding.resourceId), userId);
       if (binding.writeEnabled && !access.admin)
         throw new ForbiddenError("You must administer the output group");
@@ -167,10 +168,7 @@ export class ConnectorService {
     );
     if (!run || !connector || !run.nodeIds.includes(request.nodeId))
       throw new ForbiddenError("Connector is not bound to this run");
-    if (
-      request.operation === "read" &&
-      connector.readSnapshot === undefined
-    )
+    if (request.operation === "read" && connector.readSnapshot === undefined)
       throw new ForbiddenError(
         "Import or bind a reference snapshot before starting this run",
       );
@@ -197,9 +195,7 @@ export class ConnectorService {
       if (connector.binding.kind === "google-sheets") {
         const rows = z
           .array(
-            z.array(
-              z.union([z.string(), z.number(), z.boolean(), z.null()]),
-            ),
+            z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
           )
           .parse(request.input.rows);
         sheetsWriteRange(
@@ -224,14 +220,13 @@ export class ConnectorService {
           .parse(request.input.documents);
     }
     if (connector.binding.kind === "your-priorities") {
+      const { groupAccess } = await import("./access.js");
       const access = await groupAccess(
         Number(connector.binding.resourceId),
         run.ownerId,
       );
       if (request.operation === "write" && !access.admin)
-        throw new ForbiddenError(
-          "Output group administrator access required",
-        );
+        throw new ForbiddenError("Output group administrator access required");
     }
     let requestLimit: { key: string; maximum: number } | undefined;
     if (
@@ -248,6 +243,7 @@ export class ConnectorService {
         request.nodeId,
         request.binding,
         input.url,
+        request.recordId,
       );
       const configuration = run.graph.nodes.find(
         (n) => n.id === request.nodeId,
@@ -298,6 +294,19 @@ export class ConnectorService {
       maximumMicros,
       request: { ...request, bindingConfig: connector.binding },
       description: `${connector.binding.kind}:${request.operation}`,
+      ...(connector.binding.kind === "firecrawl"
+        ? {
+            creditUsage: {
+              provider: "firecrawl" as const,
+              bindingId: request.binding,
+              operation: request.operation as "search" | "scrape",
+              maximumCredits: Number(
+                connector.binding.settings.maxCreditsPerRequest,
+              ),
+              creditMicros: Number(connector.binding.settings.creditMicros),
+            },
+          }
+        : {}),
     });
     if (cached) return reservation.result ?? null;
     try {
@@ -349,6 +358,9 @@ export class ConnectorService {
     if (binding.kind === "firecrawl")
       return this.firecrawl(binding, credential.apiKey, operation, input);
     if (binding.kind === "your-priorities") {
+      // Firecrawl/upload-only workflows do not need the application DB bootstrap.
+      const { groupAccess } = await import("./access.js");
+      const { default: models } = await import("../models/index.cjs");
       const access = await groupAccess(Number(binding.resourceId), userId);
       if (operation === "read") {
         const posts = await models.Post.findAll({
@@ -371,9 +383,7 @@ export class ConnectorService {
         }));
       }
       if (operation !== "write" || !access.admin)
-        throw new ForbiddenError(
-          "Output group administrator access required",
-        );
+        throw new ForbiddenError("Output group administrator access required");
       const documents = z
         .array(
           z.object({
@@ -457,10 +467,7 @@ export class ConnectorService {
             headers
               .map((header, i) => [String(header), String(row[i] ?? "")])
               .concat([
-                [
-                  "source",
-                  `google-sheets:${binding.resourceId}:${index + 2}`,
-                ],
+                ["source", `google-sheets:${binding.resourceId}:${index + 2}`],
               ]),
           ),
         ) as YpWorkflowJson;
@@ -469,19 +476,13 @@ export class ConnectorService {
         throw new ForbiddenError();
       const values = z
         .array(
-          z.array(
-            z.union([z.string(), z.number(), z.boolean(), z.null()]),
-          ),
+          z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
         )
         .parse(input.rows);
       const result = await sheets.spreadsheets.values.update(
         {
           spreadsheetId: binding.resourceId,
-          range: sheetsWriteRange(
-            range,
-            Number(input.rowOffset ?? 0),
-            values,
-          ),
+          range: sheetsWriteRange(range, Number(input.rowOffset ?? 0), values),
           valueInputOption: "RAW",
           requestBody: { values },
         },
@@ -614,7 +615,7 @@ export class ConnectorService {
     input: Record<string, YpWorkflowJson>,
   ): Promise<YpWorkflowJson> {
     const body = firecrawlBody(binding, operation, input);
-    const response = await fetch(
+    const response = await this.firecrawlFetch(
       `https://api.firecrawl.dev/v2/${operation}`,
       {
         method: "POST",
@@ -632,11 +633,35 @@ export class ConnectorService {
       input,
     );
   }
+
+  /** Admin-only HTTP caller. Account totals may include other groups/applications. */
+  async creditUsage(
+    groupId: number,
+    bindingId: string,
+  ): Promise<YpWorkflowFirecrawlBalance> {
+    const connector = await this.store.transact(groupId, (tx) =>
+      tx.get<StoredConnector>("connector", bindingId),
+    );
+    if (!connector || connector.binding.kind !== "firecrawl")
+      throw new ValidationError("Select a connected Firecrawl binding");
+    const { apiKey } = this.secrets.open<{ apiKey: string }>(
+      connector.secret,
+      `connector:${groupId}:${bindingId}`,
+    );
+    const response = await this.firecrawlFetch(
+      "https://api.firecrawl.dev/v2/team/credit-usage",
+      {
+        headers: { authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(30_000),
+      },
+    );
+    return normalizeFirecrawlBalance(
+      await boundedFirecrawlJson(response, 64 * 1024),
+    );
+  }
 }
 
-function documentText(
-  contents: docs_v1.Schema$StructuralElement[],
-): string {
+function documentText(contents: docs_v1.Schema$StructuralElement[]): string {
   return contents
     .map(
       (item) =>

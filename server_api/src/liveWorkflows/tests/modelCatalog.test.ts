@@ -43,7 +43,7 @@ test("workflow models use backend seeding prices and stay below its long-context
     assert.ok(model.maxOutputTokens <= configuration.maxTokensOut);
     assert.equal(model.reasoning, true);
     assert.equal(model.reasoningEffort, "max");
-    assert.equal(model.maxOutputTokens, 32768);
+    assert.equal(model.maxOutputTokens, 65536);
   }
   const gateway = new ModelGateway(
     new MemoryWorkflowStore(),

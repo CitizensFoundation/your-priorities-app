@@ -19,6 +19,7 @@ export const fixturePath = fileURLToPath(
 );
 export const importFile = path.resolve(apiRoot, "../.envForImportOnly");
 export const manualKeyName = "YP_WORKFLOW_MANUAL_OPENAI_KEY";
+export const manualFirecrawlKeyName = "YP_WORKFLOW_MANUAL_FIRECRAWL_KEY";
 
 /** Called only after explicit live opt-in. Never source shell code or import DB/host settings. */
 export async function importManualKey(
@@ -30,6 +31,32 @@ export async function importManualKey(
     env[manualKeyName] = supplied;
     return;
   }
+  const values = await readManualCredentialAssignments(filename);
+  const key = values.OPENAI_API_KEY || values.PS_AGENT_OVERRIDE_OPENAI_API_KEY;
+  if (!key?.trim())
+    throw new Error(
+      "The import file needs OPENAI_API_KEY (or PS_AGENT_OVERRIDE_OPENAI_API_KEY).",
+    );
+  env[manualKeyName] = key;
+}
+
+/** Imports only Firecrawl; no unrelated values are installed or returned. */
+export async function importManualFirecrawlKey(
+  filename: string,
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  const supplied = env[manualFirecrawlKeyName] || env.FIRECRAWL_API_KEY;
+  if (supplied) {
+    env[manualFirecrawlKeyName] = supplied;
+    return;
+  }
+  const values = await readManualCredentialAssignments(filename);
+  if (!values.FIRECRAWL_API_KEY?.trim())
+    throw new Error("The import file needs FIRECRAWL_API_KEY.");
+  env[manualFirecrawlKeyName] = values.FIRECRAWL_API_KEY;
+}
+
+async function readManualCredentialAssignments(filename: string) {
   let contents: string;
   try {
     const file = await open(
@@ -56,12 +83,7 @@ export async function importManualKey(
       "The manual credentials file must contain dotenv assignments.",
     );
   }
-  const key = values.OPENAI_API_KEY || values.PS_AGENT_OVERRIDE_OPENAI_API_KEY;
-  if (!key?.trim())
-    throw new Error(
-      "The import file needs OPENAI_API_KEY (or PS_AGENT_OVERRIDE_OPENAI_API_KEY).",
-    );
-  env[manualKeyName] = key;
+  return values;
 }
 
 const configured = z
@@ -170,7 +192,12 @@ export function redactManualText(
     env[manualKeyName],
     env.OPENAI_API_KEY,
     env.PS_AGENT_OVERRIDE_OPENAI_API_KEY,
+    env[manualFirecrawlKeyName],
+    env.FIRECRAWL_API_KEY,
   ])
     if (key) text = text.replaceAll(key, "[credential redacted]");
-  return text.replace(/sk-[A-Za-z0-9_-]{8,}/g, "[credential redacted]");
+  return text.replace(
+    /\b(?:sk|fc)-[A-Za-z0-9_-]{8,}/g,
+    "[credential redacted]",
+  );
 }

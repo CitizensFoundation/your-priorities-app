@@ -31,6 +31,7 @@ import { json, money, fingerprint } from "./schemas.js";
 import { requireRun, type UsageReservation } from "./budget.js";
 import { packageCatalog } from "./packages.js";
 import { workflowModelDefaults } from "./modelDefaults.js";
+import { reuseRequest } from "./reuse.js";
 import {
   YP_LIVE_WORKFLOW_VM_PROTOCOL,
   VmBrokerHelloEnvelopeSchema,
@@ -602,6 +603,7 @@ export class LiveWorkflowsController {
           assetIds: z.array(z.string().uuid()).min(1).max(100),
           sampleCount: z.number().int().min(1).max(20).default(5),
           targetNodeId: z.string().min(1).max(128).optional(),
+          reuse: reuseRequest.optional(),
         })
         .strict()
         .parse(req.body);
@@ -612,6 +614,7 @@ export class LiveWorkflowsController {
         body.assetIds,
         body.sampleCount,
         body.targetNodeId,
+        body.reuse,
       );
     });
     this.route("post", "/groups/:groupId/runs/:id/start", async (req) => {
@@ -631,6 +634,7 @@ export class LiveWorkflowsController {
         z.enum(["pause", "resume", "cancel"]).parse(req.params.operation),
         req.body.budgetMicros,
         req.body.nodeBudgets,
+        req.body.nodeRecordBudgets,
       );
       return { ok: true };
     });
@@ -640,6 +644,18 @@ export class LiveWorkflowsController {
         tx.list<UsageReservation>("usage"),
       );
     });
+    this.route(
+      "get",
+      "/groups/:groupId/connectors/:id/credits",
+      async (req) => {
+        const actor = await this.actor(req);
+        if (!actor.admin) throw new ForbiddenError();
+        return this.connectors.creditUsage(
+          this.group(req),
+          String(req.params.id),
+        );
+      },
+    );
     this.route("post", "/groups/:groupId/usage/:id/reconcile", async (req) => {
       const actor = await this.actor(req);
       if (!actor.admin) throw new ForbiddenError();
@@ -806,6 +822,12 @@ export class LiveWorkflowsController {
               failedRecords: z.number().int().nonnegative().optional(),
               outputCount: z.number().int().nonnegative().optional(),
               upstream: z.array(z.string()).max(200).optional(),
+              stageOutput: z
+                .object({
+                  checksum: z.string().regex(/^[a-f0-9]{64}$/),
+                  assetIds: z.array(z.string().uuid()).min(1).max(1000),
+                })
+                .optional(),
               sample: z
                 .object({
                   recordIds: z.array(z.string().max(600)).max(20),
@@ -838,10 +860,24 @@ export class LiveWorkflowsController {
             content: z.string().max(10_000_000),
             contentType: z.string().max(120),
             resultPart: z.number().int().min(0).max(1_000_000).optional(),
+            stagePart: z
+              .object({
+                part: z.number().int().min(0).max(999),
+                parts: z.number().int().min(1).max(1000),
+              })
+              .optional(),
           })
           .parse(req.body);
         let resultSet: YpWorkflowAsset["resultSet"];
         const isWorkbook = body.contentType === WORKBOOK_SPEC_CONTENT_TYPE;
+        if (
+          body.stagePart &&
+          (isWorkbook ||
+            body.resultPart !== undefined ||
+            body.stagePart.part >= body.stagePart.parts ||
+            Buffer.byteLength(body.content) > 1_048_576)
+        )
+          throw new ValidationError("Invalid stage snapshot chunk");
         if (
           isWorkbook &&
           (body.resultPart !== undefined ||
@@ -873,6 +909,15 @@ export class LiveWorkflowsController {
             length: contents.length,
             source: "artifact",
             resultSet,
+            ...(body.stagePart
+              ? {
+                  stagePart: {
+                    ...body.stagePart,
+                    runId,
+                    nodeId: req.body.nodeId,
+                  },
+                }
+              : {}),
             request: {
               id: body.id,
               fingerprint: fingerprint({

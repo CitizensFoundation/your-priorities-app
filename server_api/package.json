@@ -107,6 +107,7 @@
     "stripe": "^22.6.2",
     "striptags": "^3.2.0",
     "syllable": "^5.0.1",
+    "typescript": "^5.9.3",
     "undici": "^8.11.2",
     "uuid": "^14.0.2",
     "ws": "^8.21.3",
@@ -146,7 +147,6 @@
     "temp": "^0.9.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.15",
-    "typescript": "^5.9.3",
     "wordwrap": "^1.0.0",
     "ws": "^8.21.3",
     "yamljs": "^0.3.0"
@@ -210,8 +210,11 @@
     "test:live-workflows:headless": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.headless.manual.ts",
     "test:live-workflows:browser-manual": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.browser.manual.ts",
     "test:live-workflows:browser-idaho": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.idaho.browser.manual.ts",
+    "test:live-workflows:browser-idaho-partner": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/skillsFirst.idahoPartner.browser.manual.ts",
     "test:live-workflows:browser-create-group": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/groupCreation.browser.manual.ts",
-    "test:live-workflows:regression": "npm run build:live-workflows && node --import tsx --test --test-concurrency=1 src/liveWorkflows/tests/workflowRegression.browser.ts src/liveWorkflows/tests/documentsRegression.browser.ts"
+    "test:live-workflows:regression": "npm run build:live-workflows && node --import tsx --test --test-concurrency=1 src/liveWorkflows/tests/workflowRegression.browser.ts src/liveWorkflows/tests/documentsRegression.browser.ts src/liveWorkflows/tests/connectorsRegression.browser.ts",
+    "test:live-workflows:connectors": "npm run build:live-workflows && node --import tsx --test src/liveWorkflows/tests/connectorsRegression.browser.ts",
+    "test:live-workflows:firecrawl-manual": "npm run build:live-workflows && node --import tsx src/liveWorkflows/tests/firecrawl.manual.ts"
   },
   "cacheDirectories": [
     "node_modules"

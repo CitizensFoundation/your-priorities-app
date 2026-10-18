@@ -108,6 +108,11 @@ test("API-key login and assistant settings enforce HTTP origin, membership and o
   assert.equal((await request(undefined, undefined, 99)).status, 403);
   assert.equal((await request(undefined, undefined, 11)).status, 403);
   assert.equal(
+    (await request("/connectors/firecrawl/credits", "GET", 10)).status,
+    403,
+    "A non-admin operator cannot inspect a shared Firecrawl account balance",
+  );
+  assert.equal(
     (await request(undefined, undefined, 10, base, { apiKey: "invalid" }))
       .status,
     400,

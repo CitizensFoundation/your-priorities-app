@@ -1,18 +1,12 @@
 import type { WorkflowStore, WorkflowTransaction } from "./store.js";
 import { ConflictError, NotFoundError } from "./services/errors.js";
 import { fingerprint, safeMicros } from "./schemas.js";
+import { workflowSocketTimeoutMs } from "./runner/modelLimits.js";
 
-export interface UsageReservation {
-  id: string;
-  runId: string;
-  nodeId: string;
+export interface UsageReservation extends YpWorkflowUsage {
   recordId?: string;
   fingerprint: string;
-  status: "reserved" | "settled" | "unknown";
-  maximumMicros: number;
-  actualMicros?: number;
   result?: YpWorkflowJson;
-  description: string;
   createdAt: string;
 }
 export class BudgetService {
@@ -27,6 +21,7 @@ export class BudgetService {
       maximumMicros: number;
       request: unknown;
       description: string;
+      creditUsage?: Omit<YpWorkflowCreditUsage, "actualCredits">;
       requestLimit?: { key: string; maximum: number };
     },
   ): Promise<{ reservation: UsageReservation; cached: boolean }> {
@@ -66,11 +61,33 @@ export class BudgetService {
       const nodeLimit =
         run.nodeBudgets?.[input.nodeId] ??
         run.graph.nodes.find((n) => n.id === input.nodeId)?.budgetMicros;
+      const recordLimit =
+        run.nodeRecordBudgets?.[input.nodeId] ??
+        run.graph.nodes.find((n) => n.id === input.nodeId)?.recordBudgetMicros;
+      if (recordLimit !== undefined && !input.recordId)
+        throw new ConflictError(
+          "This agent requires parent-record attribution for its spending cap",
+        );
+      if (run.reuse?.nodeIds.includes(input.nodeId))
+        throw new ConflictError("Reused stages cannot issue new paid requests");
+      const recordKey = input.recordId
+        ? fingerprint([input.nodeId, input.recordId])
+        : undefined;
+      const recordCost = recordKey
+        ? ((run.recordNodeCosts ??= {})[recordKey] ??= {
+            spentMicros: 0,
+            reservedMicros: 0,
+            requests: 0,
+          })
+        : undefined;
       const exceeds =
-        (nodeLimit !== undefined &&
-          nodeCost.spentMicros +
-            nodeCost.reservedMicros +
+        (recordLimit !== undefined &&
+          recordCost!.spentMicros +
+            recordCost!.reservedMicros +
             input.maximumMicros >
+            recordLimit) ||
+        (nodeLimit !== undefined &&
+          nodeCost.spentMicros + nodeCost.reservedMicros + input.maximumMicros >
             nodeLimit) ||
         run.spentMicros + run.reservedMicros + input.maximumMicros >
           run.budgetMicros ||
@@ -84,7 +101,7 @@ export class BudgetService {
       if (exceeds) {
         run.status = "paused";
         run.error =
-          "The next request would exceed an agent, run, or workspace spending limit. Review the approved allowances or cancel this run.";
+          "The next request would exceed a parent-record, agent, run, or workspace spending limit. Review the approved allowances or cancel this run.";
         await tx.put("run", run.id, run);
         await tx.emit("run.budget_paused", {
           runId: run.id,
@@ -104,6 +121,10 @@ export class BudgetService {
       run.reservedMicros += input.maximumMicros;
       nodeCost.reservedMicros += input.maximumMicros;
       nodeCost.requests++;
+      if (recordCost) {
+        recordCost.reservedMicros += input.maximumMicros;
+        recordCost.requests++;
+      }
       state.reservedMicros += input.maximumMicros;
       if (run.mode === "trial")
         state.trialReservedMicros += input.maximumMicros;
@@ -117,6 +138,7 @@ export class BudgetService {
         status: "reserved",
         description: input.description,
         createdAt: new Date().toISOString(),
+        ...(input.creditUsage ? { creditUsage: { ...input.creditUsage } } : {}),
       };
       await tx.put("run", run.id, run);
       await tx.put("usage", reservation.id, reservation);
@@ -152,6 +174,22 @@ export class BudgetService {
           "Only requests with an unknown outcome can be reconciled",
         );
       if (item.status === "settled") return;
+      if (item.creditUsage) {
+        const credits =
+          result && typeof result === "object" && !Array.isArray(result)
+            ? result.creditsUsed
+            : undefined;
+        if (
+          typeof credits !== "number" ||
+          !Number.isSafeInteger(credits) ||
+          credits < 0 ||
+          credits * item.creditUsage.creditMicros !== actualMicros
+        )
+          throw new ConflictError(
+            "Firecrawl settlement requires verified creditsUsed matching the frozen credit price",
+          );
+        item.creditUsage.actualCredits = credits;
+      }
       const run = (await tx.get<YpWorkflowRun>("run", item.runId))!;
       item.status = "settled";
       item.actualMicros = actualMicros;
@@ -168,6 +206,13 @@ export class BudgetService {
           (run.recordCosts[item.recordId] ?? 0) + actualMicros;
       }
       const nodeCost = run.nodeCosts?.[item.nodeId];
+      const recordCost = item.recordId
+        ? run.recordNodeCosts?.[fingerprint([item.nodeId, item.recordId])]
+        : undefined;
+      if (recordCost) {
+        recordCost.reservedMicros -= item.maximumMicros;
+        recordCost.spentMicros += actualMicros;
+      }
       if (nodeCost) {
         nodeCost.reservedMicros -= item.maximumMicros;
         nodeCost.spentMicros += actualMicros;
@@ -212,10 +257,12 @@ export class BudgetService {
     const pending = await this.store.transact(groupId, (tx) =>
       tx.list<UsageReservation>("usage"),
     );
-    // Other API processes may still be serving requests. All providers have a timeout below five minutes.
+    // Another API process may still be serving a long reasoning request.
+    // Allow the provider, gateway and settlement grace periods before recovery.
     for (const item of pending.filter(
       (i) =>
-        i.status === "reserved" && now - Date.parse(i.createdAt) > 300_000,
+        i.status === "reserved" &&
+        now - Date.parse(i.createdAt) > workflowSocketTimeoutMs,
     ))
       await this.unknown(groupId, item.id);
   }
@@ -227,13 +274,12 @@ export function estimateFromTrial(
 ): YpWorkflowEstimate {
   if (
     trial.mode !== "trial" ||
+    trial.reuse ||
     trial.status !== "completed" ||
     trial.inputCount < 1 ||
     trial.reservedMicros
   )
-    throw new ConflictError(
-      "A completed and reconciled trial is required",
-    );
+    throw new ConflictError("A completed and reconciled trial is required");
   const expectedMicros = safeMicros(
     Math.ceil((trial.spentMicros * populationCount) / trial.inputCount),
   );
@@ -259,9 +305,7 @@ export function estimateFromTrial(
   const deviation = Math.sqrt(variance);
   const needsMoreEvidence =
     coverage < 1 &&
-    (ids.length < 5 ||
-      attributedCostFraction < 0.95 ||
-      deviation > mean * 0.5);
+    (ids.length < 5 || attributedCostFraction < 0.95 || deviation > mean * 0.5);
   const recommendedSampleCount = Math.min(
     populationCount,
     20,
@@ -273,10 +317,7 @@ export function estimateFromTrial(
   );
   const upperMicros = safeMicros(
     Math.ceil(
-      Math.max(
-        expectedMicros * 2,
-        (mean + deviation * 2) * populationCount,
-      ),
+      Math.max(expectedMicros * 2, (mean + deviation * 2) * populationCount),
     ),
   );
   return {
@@ -289,9 +330,7 @@ export function estimateFromTrial(
     evidence: {
       coverage,
       attributedCostFraction,
-      minRecordMicros: Math.floor(
-        costs.length ? Math.min(...costs) : mean,
-      ),
+      minRecordMicros: Math.floor(costs.length ? Math.min(...costs) : mean),
       maxRecordMicros: Math.ceil(costs.length ? Math.max(...costs) : mean),
       standardDeviationMicros: Math.ceil(deviation),
       recommendedSampleCount,
@@ -300,12 +339,9 @@ export function estimateFromTrial(
     ...(trial.nodeCosts
       ? {
           agents: trial.nodeIds.map((nodeId) => {
-            const sampleMicros =
-              trial.nodeCosts?.[nodeId]?.spentMicros ?? 0;
+            const sampleMicros = trial.nodeCosts?.[nodeId]?.spentMicros ?? 0;
             const expectedMicros = safeMicros(
-              Math.ceil(
-                (sampleMicros * populationCount) / trial.inputCount,
-              ),
+              Math.ceil((sampleMicros * populationCount) / trial.inputCount),
             );
             return {
               nodeId,
@@ -369,6 +405,57 @@ export function remainingForecast(
     basis:
       "Higher of trial projection and observed agent progress; includes outstanding reservations. Not a spending authorization.",
   };
+}
+
+/** Forecast only remaining work on an already-processed bulk population. The
+ * evidence still comes from a fresh full trial, never a discounted reused trial. */
+export function estimateRemainingStages(
+  trial: YpWorkflowRun,
+  population: number,
+  reusedNodeIds: string[],
+) {
+  if (trial.reuse)
+    throw new ConflictError(
+      "A fresh complete trial is required for a bulk rerun estimate",
+    );
+  const remaining = trial.nodeIds.filter((id) => !reusedNodeIds.includes(id));
+  if (!trial.nodeCosts)
+    throw new ConflictError(
+      "Per-agent trial costs are required to estimate a bulk rerun",
+    );
+  const evidence = structuredClone(trial);
+  evidence.nodeIds = remaining;
+  evidence.nodeCosts = Object.fromEntries(
+    remaining.map((id) => [
+      id,
+      trial.nodeCosts![id] ?? {
+        spentMicros: 0,
+        reservedMicros: 0,
+        requests: 0,
+      },
+    ]),
+  );
+  evidence.spentMicros = Object.values(evidence.nodeCosts).reduce(
+    (sum, cost) => sum + cost.spentMicros,
+    0,
+  );
+  evidence.recordCosts = Object.fromEntries(
+    (trial.sample?.recordIds ?? []).map((recordId) => [
+      recordId,
+      remaining.reduce(
+        (sum, nodeId) =>
+          sum +
+          (trial.recordNodeCosts?.[fingerprint([nodeId, recordId])]
+            ?.spentMicros ?? 0),
+        0,
+      ),
+    ]),
+  );
+  const estimate = estimateFromTrial(evidence, population);
+  estimate.notes.unshift(
+    `Incremental estimate for the same previously processed inputs. Reuses ${reusedNodeIds.join(", ")}; historical costs remain on the original run. Based on fresh full trial ${trial.id}.`,
+  );
+  return estimate;
 }
 
 export async function requireRun(

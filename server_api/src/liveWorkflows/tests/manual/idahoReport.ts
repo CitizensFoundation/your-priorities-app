@@ -9,10 +9,16 @@ import { stableRequestId } from "../../runner/socketClient.js";
 import { analysisNames } from "./verification.js";
 import type { ManualHarness } from "./harness.js";
 import { redactManualText } from "./environment.js";
+import { summarizeIdahoFirecrawl } from "./idahoResearch.js";
 
 /** Cost arithmetic only. Failed-record trials remain ineligible for product bulk approval. */
 export function informationalIdahoProjection(trial: YpWorkflowRun | undefined) {
-  if (!trial || trial.status !== "completed" || trial.reservedMicros)
+  if (
+    !trial ||
+    trial.status !== "completed" ||
+    trial.reservedMicros ||
+    trial.reuse
+  )
     return null;
   const failedRecords = Math.max(
     0,
@@ -31,6 +37,14 @@ export function informationalIdahoProjection(trial: YpWorkflowRun | undefined) {
 export function idahoQuality(records: Record<string, unknown>[]) {
   const rows = records.map((row) => {
     const analysis = (row.analysis ?? {}) as Record<string, unknown>;
+    const research =
+      analysis.research &&
+      typeof analysis.research === "object" &&
+      !Array.isArray(analysis.research)
+        ? Object.values(
+            analysis.research as Record<string, { status?: string }>,
+          )
+        : [];
     const review = analysis.rewriteValidation as
       | {
           allChecksPassed?: boolean;
@@ -49,6 +63,10 @@ export function idahoQuality(records: Record<string, unknown>[]) {
         review?.allChecksPassed === true && Boolean(row.rewrittenText),
       feedback: review?.feedback ?? null,
       failedChecks: review?.checks?.filter((check) => !check.passed) ?? [],
+      researchChecks: research.length,
+      unresolvedResearchChecks: research.filter(
+        (stage) => stage?.status !== "known",
+      ).length,
     };
   });
   return {
@@ -56,6 +74,15 @@ export function idahoQuality(records: Record<string, unknown>[]) {
     analyzed: rows.filter((row) => row.allSevenAnalysesPresent).length,
     acceptedRewrites: rows.filter((row) => row.rewriteAccepted).length,
     needsReview: rows.filter((row) => !row.rewriteAccepted).length,
+    researchChecks: rows.reduce((total, row) => total + row.researchChecks, 0),
+    unresolvedResearchChecks: rows.reduce(
+      (total, row) => total + row.unresolvedResearchChecks,
+      0,
+    ),
+    recordsWithResearchGaps: rows.filter(
+      (row) => row.unresolvedResearchChecks > 0,
+    ).length,
+    note: "needsReview counts rejected rewrites. Research uncertainty is reported separately; an accepted rewrite does not establish legal requirements.",
     rows,
   };
 }
@@ -84,6 +111,24 @@ export function idahoCosts(
     ),
     unresolvedRequests: items.filter((item) => item.status !== "settled")
       .length,
+    modelMicros: items.reduce(
+      (sum, item) =>
+        sum +
+        (!item.creditUsage && item.status === "settled"
+          ? (item.actualMicros ?? 0)
+          : 0),
+      0,
+    ),
+    firecrawlMicros: items.reduce(
+      (sum, item) =>
+        sum +
+        (item.creditUsage && item.status === "settled"
+          ? (item.actualMicros ?? 0)
+          : 0),
+      0,
+    ),
+    firecrawlCredits: summarizeIdahoFirecrawl(items).credits,
+    firecrawlReservedCredits: summarizeIdahoFirecrawl(items).reservedCredits,
     tokensIn: items.reduce(
       (total, item) =>
         total +
@@ -147,6 +192,7 @@ export function idahoCosts(
     agents,
     analysisTasks: tasks,
     totals,
+    firecrawl: summarizeIdahoFirecrawl(usage),
     taskNote:
       "Analysis task costs are a breakdown of Analyze requirements, not additional charges. Unmatched requests stay included in agent totals.",
     unmatchedAnalysisRequests:
@@ -185,14 +231,22 @@ export async function saveIdahoCosts(
     snapshot.workspace.reservedMicros,
   );
   const codex = harness.codexUsage.report();
+  const historicalCodex = harness.historicalCodexUsage ?? null;
+  const totalCodexEstimatedMicros =
+    codex.estimatedCostMicros === null ||
+    historicalCodex?.estimatedCostMicros === null
+      ? null
+      : codex.estimatedCostMicros + (historicalCodex?.estimatedCostMicros ?? 0);
   const report = {
     ...processing,
     simulated: codex.simulated,
     codex,
+    historicalCodex,
+    totalCodexEstimatedMicros,
     combinedSettledAndEstimatedMicros:
-      codex.estimatedCostMicros === null
+      totalCodexEstimatedMicros === null
         ? null
-        : processing.totals.settledMicros + codex.estimatedCostMicros,
+        : processing.totals.settledMicros + totalCodexEstimatedMicros,
     estimate:
       snapshot.runs.find((run) => run.mode === "bulk")?.estimate ?? null,
     informationalProjection: snapshot.runs.some((run) => run.mode === "bulk")
@@ -203,7 +257,7 @@ export async function saveIdahoCosts(
     bulkApproved: snapshot.runs.some(
       (run) => run.mode === "bulk" && run.approvedAt,
     ),
-    note: "Processing uses settled gateway charges and backend model prices. Codex is an estimate at the requested tier. Infrastructure is excluded. A 100-record estimate is not spending approval.",
+    note: "Processing includes settled model charges at backend catalog prices and Firecrawl credits allocated at the frozen binding rate. Firecrawl costs are included, not added again. Codex is a separate estimate at the requested tier. Infrastructure is excluded. A 100-record estimate is not spending approval.",
   };
   await writeFile(
     path.join(output, "costs.json"),
@@ -211,15 +265,20 @@ export async function saveIdahoCosts(
     { mode: 0o600 },
   );
   const rows = [
-    "Agent,Requests,Settled USD,Unresolved reserved USD,Input tokens,Output tokens",
+    "Agent,Run ID,Requests,Settled USD,Unresolved reserved USD,Input tokens,Output tokens,Model USD,Firecrawl USD,Firecrawl credits,Reserved credits",
     ...report.agents.map((agent) =>
       [
         `"${(/^[=+@\-\t\r]/.test(agent.agent) ? "'" : "") + agent.agent.replaceAll('"', '""')}"`,
+        agent.runId,
         agent.requests,
         (agent.settledMicros / 1e6).toFixed(6),
         (agent.reservedMicros / 1e6).toFixed(6),
         agent.tokensIn,
         agent.tokensOut,
+        (agent.modelMicros / 1e6).toFixed(6),
+        (agent.firecrawlMicros / 1e6).toFixed(6),
+        agent.firecrawlCredits,
+        agent.firecrawlReservedCredits,
       ].join(","),
     ),
   ];
@@ -318,16 +377,20 @@ async function writeIdahoDiagnostics(
     ["Bulk execution", "NOT APPROVED / NOT RUN"],
     [
       "Research",
-      "Disabled. No external reference dataset; comparison evidence remains unknown.",
+      costs.agents.some((agent) =>
+        ["licenses", "education"].includes(agent.nodeId),
+      )
+        ? "Firecrawl license/education research enabled. Exact citations and coverage are retained. Missing reference/manual inputs remain unknown; see research-report.json."
+        : "Disabled. No external reference dataset; comparison evidence remains unknown.",
     ],
     ["Result records (may include job levels)", records.length],
     ["Processing settled USD", costs.totals.settledMicros / 1e6],
     ["Processing unresolved reserved USD", costs.totals.reservedMicros / 1e6],
     [
       "Codex estimated USD",
-      costs.codex.estimatedCostMicros === null
+      costs.totalCodexEstimatedMicros === null
         ? "Unavailable"
-        : costs.codex.estimatedCostMicros / 1e6,
+        : costs.totalCodexEstimatedMicros / 1e6,
     ],
     [
       "Combined actual processing + estimated Codex USD",
@@ -358,12 +421,14 @@ async function writeIdahoDiagnostics(
       "Idaho Classification CSV.csv; see selection.json for checksums and row identities",
     ],
     ["Accepted rewrites", quality.acceptedRewrites],
-    ["Records needing review", quality.needsReview],
+    ["Records needing rewrite review", quality.needsReview],
     [
       "Projection status",
       costs.informationalProjection?.basis ??
         "Unapproved product estimate. No bulk execution.",
     ],
+    ["Research checks needing review", quality.unresolvedResearchChecks],
+    ["Records with unresolved research", quality.recordsWithResearchGaps],
   ]);
   for (let row = 8; row <= 13; row++)
     overview.getCell(row, 2).numFmt = '"$"#,##0.000000';
@@ -444,6 +509,9 @@ async function writeIdahoDiagnostics(
       "Settled micro USD",
       "Settled USD",
       "Reserved USD",
+      "Model USD",
+      "Firecrawl USD",
+      "Firecrawl credits",
     ],
     [38, 12, 18, 18, 22, 20, 20],
   );
@@ -457,6 +525,9 @@ async function writeIdahoDiagnostics(
       agent.settledMicros,
       { formula: `E${row}/1000000`, result: agent.settledMicros / 1e6 },
       agent.reservedMicros / 1e6,
+      agent.modelMicros / 1e6,
+      agent.firecrawlMicros / 1e6,
+      agent.firecrawlCredits,
     ]);
   });
   agentCosts.getColumn(6).numFmt = agentCosts.getColumn(7).numFmt =

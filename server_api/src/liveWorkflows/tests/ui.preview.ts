@@ -686,8 +686,9 @@ const server = createServer(async (req, res) => {
     res.end(JSON.stringify({ error: String(error) }));
   }
 });
-server.listen(54822, "127.0.0.1", () =>
-  console.log("Live workflow fixture: http://127.0.0.1:54822"),
+const port = Number(process.env.YP_WORKFLOW_UI_TEST_PORT ?? 54822);
+server.listen(port, "127.0.0.1", () =>
+  console.log(`Live workflow fixture: http://127.0.0.1:${port}`),
 );
 process.on("SIGTERM", () => {
   server.closeAllConnections();

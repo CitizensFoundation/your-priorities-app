@@ -182,15 +182,36 @@ test("bounded document retrieval upgrades complete PDF evidence and preserves pa
           };
         },
       }),
-      [job],
+      [
+        {
+          ...job,
+          analysis: {
+            licenses: {
+              status: "known",
+              findings: { licenseType: "Original license finding" },
+            },
+          },
+        },
+      ],
     )) as any[];
     assert.equal(documents.length, 1);
     assert.equal(documents[0].maxPages, 5);
     assert.equal(
-      result[0].analysis.licenses.status,
+      result[0].analysis.research.licenses.status,
       truncated ? "unknown" : "known",
     );
-    assert.equal(result[0].analysis.licenses.limits.fetchedDocuments, 1);
+    assert.equal(
+      result[0].analysis.research.licenses.limits.fetchedDocuments,
+      1,
+    );
+    assert.deepEqual(
+      result[0].analysis.licenses,
+      {
+        status: "known",
+        findings: { licenseType: "Original license finding" },
+      },
+      "Research must preserve the original license extraction",
+    );
     assert.equal(result[0].citations[0].retrievedAt, "2026-10-02");
   }
 });

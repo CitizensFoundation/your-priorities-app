@@ -60,6 +60,27 @@ test("Codex CLI accepts targeted samples and rejects spending or approval option
   assert.deepEqual(
     parseWorkflowArguments([
       "trial",
+      "--reuse",
+      "saved-run",
+      "--from",
+      "licenses",
+      "--sample",
+      "5",
+      "input",
+    ]).body,
+    {
+      assetIds: ["input"],
+      sampleCount: 5,
+      reuse: { runId: "saved-run", fromNodeId: "licenses" },
+    },
+  );
+  assert.throws(
+    () => parseWorkflowArguments(["trial", "--reuse", "saved-run"]),
+    /together/,
+  );
+  assert.deepEqual(
+    parseWorkflowArguments([
+      "trial",
       "--target",
       "licenses",
       "--sample",
@@ -295,8 +316,26 @@ test("Codex tools scope discovery, imports and trials to the operator and privat
     "running",
     "Codex must see the current run state, not the draft",
   );
-  assert.deepEqual(drafted!, [1, actor, "trial", [second.id], 7, "licenses"]);
+  assert.deepEqual(drafted!, [
+    1,
+    actor,
+    "trial",
+    [second.id],
+    7,
+    "licenses",
+    undefined,
+  ]);
   assert.deepEqual(started!, [1, actor, "trial"]);
+  const reuse = {
+    runId: "99999999-9999-4999-8999-999999999999",
+    fromNodeId: "licenses",
+  };
+  await tools.execute(1, actor, "trial", {
+    sampleCount: 7,
+    targetNodeId: "licenses",
+    reuse,
+  });
+  assert.deepEqual(drafted!.at(-1), reuse);
   for (const [command, body] of [
     ["trial", { mode: "bulk" }],
     ["trial", { sampleCount: 21 }],

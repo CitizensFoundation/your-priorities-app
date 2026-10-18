@@ -1,12 +1,8 @@
 import { z } from "zod";
-import { OpenAiResponses } from "@policysynth/agents/aiModels/openAiResponses.js";
-import {
-  PsAiModelSize,
-  PsAiModelType,
-} from "@policysynth/agents/aiModelTypes.js";
 import { partitionModelInputUsage } from "@policysynth/agents/base/modelUsageAccounting.js";
 import { BudgetService } from "./budget.js";
 import { workflowProviderTimeoutMs } from "./runner/modelLimits.js";
+import { generateOpenAiProcessing } from "./openAiProcessing.js";
 import type { WorkflowStore } from "./store.js";
 import { ConflictError, ValidationError } from "./services/errors.js";
 import { json, tokenCost, fingerprint } from "./schemas.js";
@@ -33,6 +29,24 @@ export interface ProviderReply {
   cachedInTokens?: number;
   cacheWriteInTokens?: number;
   appliedServiceTier?: string;
+  providerResponseId?: string;
+  incompleteReason?: string;
+}
+
+function requireCompleteResult(result: YpWorkflowJson): YpWorkflowJson {
+  if (
+    result &&
+    typeof result === "object" &&
+    !Array.isArray(result) &&
+    result.incompleteReason
+  )
+    throw new ConflictError(
+      result.incompleteReason === "max_output_tokens"
+        ? "The processing model reached its output-token limit. Usage was recorded; the response is incomplete. Increase token headroom and request a new trial; this request will not be repeated."
+        : "The processing model did not complete its response. Usage was recorded. Review the saved request before starting a new trial.",
+      "model_response_incomplete",
+    );
+  return result;
 }
 export class ModelGateway {
   readonly definitions: ModelDefinition[];
@@ -112,7 +126,7 @@ export class ModelGateway {
       request: { ...request, model: effectiveModel },
       description: `Model ${model.id}`,
     });
-    if (cached) return reservation.result ?? null;
+    if (cached) return requireCompleteResult(reservation.result ?? null);
     try {
       const reply = await this.generate(effectiveModel, request.system, input);
       const usage = partitionModelInputUsage(
@@ -145,9 +159,15 @@ export class ModelGateway {
         costMicros: actualMicros,
         requestedServiceTier: model.inferenceType ?? "default",
         appliedServiceTier: reply.appliedServiceTier ?? null,
+        ...(reply.providerResponseId
+          ? { providerResponseId: reply.providerResponseId }
+          : {}),
+        ...(reply.incompleteReason
+          ? { incompleteReason: reply.incompleteReason }
+          : {}),
       };
       await this.budget.settle(groupId, request.id, actualMicros, result);
-      return result;
+      return requireCompleteResult(result);
     } catch (error) {
       await this.budget.unknown(groupId, request.id);
       throw error;
@@ -187,51 +207,8 @@ async function generateWithProvider(
     throw new Error(
       `Processing credential is not configured for ${model.provider}`,
     );
-  if (model.provider === "openai") {
-    const client = new OpenAiResponses({
-      apiKey,
-      modelName: model.id,
-      maxTokensOut: model.maxOutputTokens,
-      maxContextTokens: model.contextTokens,
-      reasoningEffort: model.reasoningEffort,
-      inferenceType: model.inferenceType,
-      modelType: model.reasoning
-        ? PsAiModelType.TextReasoning
-        : PsAiModelType.Text,
-      modelSize: PsAiModelSize.Medium,
-      prices: {
-        costInTokensPerMillion: model.inputMicrosPerMillion / 1e6,
-        costOutTokensPerMillion: model.outputMicrosPerMillion / 1e6,
-        costInCachedContextTokensPerMillion:
-          (model.cachedInputMicrosPerMillion ?? model.inputMicrosPerMillion) /
-          1e6,
-        cacheWriteInputCostMultiplier: model.inputMicrosPerMillion
-          ? (model.cacheWriteInputMicrosPerMillion ??
-              model.inputMicrosPerMillion) / model.inputMicrosPerMillion
-          : 1,
-        currency: "USD",
-      },
-      accountingVersion: 2,
-    });
-    const reply = await client.generate(
-      [
-        { role: "system", message: system },
-        { role: "user", message: input },
-      ],
-      false,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      { timeoutMs: workflowProviderTimeoutMs, store: false },
-    );
-    const tier = reply.usageItemData?.providerMetadata?.appliedServiceTier;
-    return {
-      ...reply,
-      ...(typeof tier === "string" ? { appliedServiceTier: tier } : {}),
-    };
-  }
+  if (model.provider === "openai")
+    return generateOpenAiProcessing(model, apiKey, system, input);
   // Single HTTP attempts: SDK automatic retries would bypass individual reservations.
   if (model.provider === "anthropic") {
     const response = await fetch("https://api.anthropic.com/v1/messages", {

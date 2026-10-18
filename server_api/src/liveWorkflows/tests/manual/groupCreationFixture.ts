@@ -191,6 +191,33 @@ export async function groupCreationFixture(
       groupId: () => createdGroupId,
       groupAccess: access.groupAccess,
       groupChoices: access.groupChoices,
+      /** An external source owned by another user; membership can really be revoked. */
+      async sourceGroup() {
+        const source = await models.Group.create({
+          name: "Research source jobs",
+          access: 2,
+          configuration: { groupType: 0 },
+          user_id: outsider.id,
+          community_id: otherCommunity.id,
+        });
+        await source.addGroupUsers(user);
+        const post = await models.Post.create({
+          group_id: source.id,
+          user_id: outsider.id,
+          name: "Records Officer",
+          description:
+            "A license is required. A bachelor's degree or equivalent work experience is required. Maintain public records.",
+          status: "published",
+          content_type: 0,
+          ip_address: "127.0.0.1",
+          user_agent: "connector-fixture",
+        });
+        return {
+          id: Number(source.id),
+          postId: Number(post.id),
+          revoke: () => source.removeGroupUser(user),
+        };
+      },
       async verify() {
         assert.ok(
           createdGroupId,

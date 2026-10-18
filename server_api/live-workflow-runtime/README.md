@@ -18,7 +18,7 @@ flowchart LR
   HOST --> RUN[Isolated processing container]
   RUN -->|Run-scoped Unix socket| HOST
   HOST -->|Reserve before each paid request| API
-  API --> PS[Policy Synth model gateway]
+  API --> PS[Budgeted model gateway]
   API --> CONNECT[Your Priorities / Google / Firecrawl]
 ```
 
@@ -72,15 +72,15 @@ After copying the built runtime and installing dependencies, run `npm run check`
 
 Set these in the API service environment, using your normal secret manager:
 
-| Variable | Value |
-| --- | --- |
-| `YP_LIVE_WORKFLOW_ENABLED` | `true` to mount the feature |
-| `YP_LIVE_WORKFLOW_AUTH_ENCRYPTION_KEY` | A stable base64-encoded 32-byte random key; back it up separately |
-| `YP_LIVE_WORKFLOW_DATA_ROOT` | Absolute private, persistent directory for uploaded inputs and artifacts |
-| `YP_LIVE_WORKFLOW_HOSTS` | JSON host registry, example below |
-| `YP_LIVE_WORKFLOW_MODELS` | Optional replacement JSON processing-model registry; otherwise uses the backend's standard GPT-6 model definitions |
-| `YP_LIVE_WORKFLOW_PACKAGE_ROOT` | Optional absolute package catalog path; defaults to the bundled `workflow-packages` |
-| `YP_LIVE_WORKFLOW_PUBLIC_ORIGIN` | Optional external UI origin for same-origin checks behind a reverse proxy |
+| Variable                               | Value                                                                                                              |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `YP_LIVE_WORKFLOW_ENABLED`             | `true` to mount the feature                                                                                        |
+| `YP_LIVE_WORKFLOW_AUTH_ENCRYPTION_KEY` | A stable base64-encoded 32-byte random key; back it up separately                                                  |
+| `YP_LIVE_WORKFLOW_DATA_ROOT`           | Absolute private, persistent directory for uploaded inputs and artifacts                                           |
+| `YP_LIVE_WORKFLOW_HOSTS`               | JSON host registry, example below                                                                                  |
+| `YP_LIVE_WORKFLOW_MODELS`              | Optional replacement JSON processing-model registry; otherwise uses the backend's standard GPT-6 model definitions |
+| `YP_LIVE_WORKFLOW_PACKAGE_ROOT`        | Optional absolute package catalog path; defaults to the bundled `workflow-packages`                                |
+| `YP_LIVE_WORKFLOW_PUBLIC_ORIGIN`       | Optional external UI origin for same-origin checks behind a reverse proxy                                          |
 
 Example host record; replace the ID and token, and create the private root owned by the coordinator account:
 
@@ -175,7 +175,7 @@ The graph inspector displays the selected run's saved settings as read-only. Swi
 
 ## Spending and recovery
 
-The gateway reserves a conservative cost bound atomically before every paid request and settles it using returned usage. The workspace row lock serializes concurrent reservations against agent, run, workspace and cumulative trial allowances. Optional agent caps are set in the graph; the graph and Usage panels show per-agent settled and reserved spending. When a paused run needs more allowance, the operator can explicitly approve new run and agent caps without changing its immutable sources or repeating completed requests. Models have bounded inputs and outputs; Firecrawl has an explicit credit bound. The OpenAI adapter uses Policy Synth's Responses model and usage accounting; provider requests have automatic paid retries disabled.
+The gateway reserves a conservative cost bound atomically before every paid request and settles it using returned usage. The workspace row lock serializes concurrent reservations against agent, run, workspace and cumulative trial allowances. Optional agent caps are set in the graph; the graph and Usage panels show per-agent settled and reserved spending. When a paused run needs more allowance, the operator can explicitly approve new run and agent caps without changing its immutable sources or repeating completed requests. Models have bounded inputs and outputs; Firecrawl has an explicit credit bound. The OpenAI gateway reads raw Responses receipts through the OpenAI SDK and uses Policy Synth's cache-usage accounting. This preserves billed usage on terminal incomplete responses before rejecting their output. Such responses settle their charge and pause with a specific error; cached replay remains blocked. Unknown outcomes retain their reservations. Provider requests have automatic paid retries disabled. Built-in processing models allow 65,536 output tokens (including reasoning), with a twelve-minute provider deadline and additional gateway/settlement grace time. Rebuild the processing image when changing these runtime limits. See [OpenAI's incomplete-response guidance](https://developers.openai.com/api/docs/guides/reasoning#allocating-space-for-reasoning).
 
 Estimates extrapolate the trial's observed cost and report sample coverage, per-parent cost range, standard deviation and the fraction of cost attributed to records. Skills First aggregates child-level work under the sampled parent using the optional SDK `withRecord` scope; zero-cost records remain in the sample. Shared/unattributed costs are spread evenly and flagged when material. The upper projection is the larger of 2x the mean and the mean plus two observed standard deviations, extrapolated to the population. This is a heuristic, not a confidence interval or statistical guarantee. Small, variable or poorly attributed trials recommend a larger sample (up to 20), or closer review with a smaller approved bulk allowance at that limit. Historical trials without attribution are labeled accordingly. Usage shows a live remaining/total forecast using trial per-agent projections, observed progress and outstanding reservations; crossing the forecast never raises an allowance. The approved cap is enforced independently. Configured rates must remain conservative: a provider that changes its prices, exceeds its stated token/credit bound, or bills outside the returned usage cannot be controlled by a local ledger alone. Provider account limits remain useful for large runs. ChatGPT subscriptions, VM hosting and storage are outside the processing dollar ledger.
 
@@ -184,6 +184,22 @@ Pause/cancel prevents new reservations and asks the VM to stop the container. Re
 VM events use a durable ordered outbox and API event keys deduplicate replay. After a VM restart, previously active containers are stopped and their runs pause for reconciliation. PostgreSQL, the API asset directory, the VM workspace and coordinator state/outbox directory all need durable storage and backups. Keep the encryption key available across restarts; rotating it requires re-encrypting stored credentials. Preserve processing image IDs while runs may be resumed.
 
 ## Current boundaries and verification
+
+### Follow-up implementation plan
+
+The next scope is connector/research verification and Firecrawl search/credit reporting. Remaining work is planned separately:
+
+- [ ] Two-user/two-group browser isolation, operator takeover and membership revocation during an open event stream.
+- [ ] API/coordinator process crashes during accepted provider requests: durable reservations, unknown-outcome reconciliation, restart/replay without duplicate charges.
+- [x] Connector/research integration: Your Priorities imports/revocation, Firecrawl search and document evidence through workbook export, credit accounting and a bounded live smoke test.
+- [ ] Browser journey for agent edits, dependency changes, failed validation and revision restore, including stale approval rejection.
+- [ ] Fixture-provider load tests at 100 and 1,000 records, plus a repeatable, separately opted-in real-model quality benchmark.
+- [ ] Persistent API-key Codex usage/cost reporting and a separate chat allowance; distinguish ChatGPT subscription usage.
+- [ ] Per-group VM disk accounting/limits and retention for draft backups and Codex workspaces.
+- [ ] Docker-capable CI worker running credential-free browser regressions with retained failure artifacts.
+- [ ] Installation smoke tests for Your Priorities sign-in, ChatGPT device login and streaming through the deployed HTTPS proxy.
+
+Only the connector/research item is in the current implementation scope. The others remain queued; live tests and larger paid batches remain explicit opt-ins.
 
 The [Skills First manual test](../src/liveWorkflows/tests/manual/README.md) covers hello, a two-job upload, the default package trial and browser downloads. Its offline rehearsal joins the real controller, disposable PostgreSQL, VM broker and processing container without importing credentials. The explicit live mode uses the supplied OpenAI key for Codex and processing in the test harness, with processing caps and saved result checks; product login also supports an explicit per-user API key. The separate on-demand `test:live-workflows:browser-manual` command leaves all interaction to a person or browser-control agent and tests API-key login through the production route using a server-side key import.
 

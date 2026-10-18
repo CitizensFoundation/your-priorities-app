@@ -14,6 +14,32 @@ type YpWorkflowJson =
   | string
   | YpWorkflowJson[]
   | { [key: string]: YpWorkflowJson };
+/** Frozen provider units and price; never inferred from a team's shared balance. */
+interface YpWorkflowCreditUsage {
+  provider: "firecrawl";
+  bindingId: string;
+  operation: "search" | "scrape";
+  maximumCredits: number;
+  creditMicros: number;
+  actualCredits?: number;
+}
+interface YpWorkflowUsage {
+  id: string;
+  runId: string;
+  nodeId: string;
+  description: string;
+  status: "reserved" | "settled" | "unknown";
+  maximumMicros: number;
+  actualMicros?: number;
+  creditUsage?: YpWorkflowCreditUsage;
+}
+interface YpWorkflowFirecrawlBalance {
+  remainingCredits: number;
+  planCredits: number;
+  billingPeriodStart: string | null;
+  billingPeriodEnd: string | null;
+  checkedAt: string;
+}
 type YpWorkflowStatus =
   | "draft"
   | "trial"
@@ -51,6 +77,8 @@ interface YpWorkflowNode {
   description?: string;
   entrypoint?: string;
   enabled: boolean;
+  /** Maximum spend plus reservations for one parent record at this agent. */
+  recordBudgetMicros?: number;
   models: Record<string, string>;
   reasoningEffort?: YpWorkflowReasoningEffort;
   configuration: Record<string, YpWorkflowJson>;
@@ -105,6 +133,8 @@ interface YpWorkflowEvent {
   data: Record<string, YpWorkflowJson>;
 }
 interface YpWorkflowAsset {
+  /** Internal, durable stage snapshot chunk; never an uploaded input or final result. */
+  stagePart?: { runId: string; nodeId: string; part: number; parts: number };
   id: string;
   name: string;
   version: number;
@@ -182,12 +212,22 @@ interface YpWorkflowRun {
   fingerprint: string;
   graph: YpWorkflowGraph;
   nodeIds: string[];
+  nodeFingerprints?: Record<string, string>;
+  stageOutputs?: Record<string, YpWorkflowStageOutput>;
+  reuse?: {
+    runId: string;
+    fromNodeId: string;
+    nodeIds: string[];
+    historicalMicros: number;
+  };
+  recordNodeCosts?: Record<string, YpWorkflowNodeCost>;
   /** Frozen catalog entries for models selected by this run's processing agents. */
   modelCatalog?: YpWorkflowModel[];
   assetIds: string[];
   targetNodeId?: string;
   nodeCosts?: Record<string, YpWorkflowNodeCost>;
   nodeBudgets?: Record<string, number>;
+  nodeRecordBudgets?: Record<string, number>;
   inputCount: number;
   concurrency?: number;
   runtimeImage?: string;
@@ -227,6 +267,14 @@ interface YpWorkflowRun {
   approvedAt?: string;
   completedAt?: string;
   error?: string;
+}
+interface YpWorkflowStageOutput {
+  spentMicros?: number;
+  checksum: string;
+  assets: YpWorkflowAsset[];
+  originRunId: string;
+  sourceHash: string;
+  fingerprint: string;
 }
 interface YpWorkflowModel {
   id: string;

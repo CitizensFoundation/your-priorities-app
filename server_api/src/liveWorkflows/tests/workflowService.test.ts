@@ -534,6 +534,109 @@ test("bulk approval requires a matching completed trial and an explicit cap; con
   assert.ok(approved.approvedAt);
 });
 
+test("a discounted reused trial cannot understate a fresh bulk estimate", async () => {
+  const f = await approvalFixture();
+  const trial = await f.finishTrial();
+  trial.reuse = {
+    runId: randomUUID(),
+    fromNodeId: "analyze",
+    nodeIds: ["normalize"],
+    historicalMicros: 1_000_000,
+  };
+  await f.store.transact(1, (tx) => tx.put("run", trial.id, trial));
+  await assert.rejects(
+    f.service.draftRun(1, f.actor, "bulk", [f.asset.id]),
+    /successful trial/,
+  );
+});
+
+test("bulk reuse needs a fresh matching trial, estimates remaining stages, and waits for new approval", async () => {
+  const f = await approvalFixture();
+  const graph = JSON.parse(f.files["graph.json"]) as YpWorkflowGraph;
+  graph.nodes.push({
+    ...graph.nodes[0],
+    id: "research",
+    label: "Research",
+    configuration: { depth: 1 },
+  });
+  graph.edges.push({
+    id: "research-edge",
+    source: "analyze",
+    target: "research",
+  });
+  f.files["graph.json"] = JSON.stringify(graph);
+  await f.finishTrial();
+  const original = await f.service.draftRun(1, f.actor, "bulk", [f.asset.id]);
+  original.status = "completed";
+  original.nodeStates.analyze = {
+    status: "completed",
+    processed: 1000,
+    total: 1000,
+  };
+  const asset = {
+    id: randomUUID(),
+    checksum: "saved-output",
+    stagePart: { runId: original.id, nodeId: "analyze", part: 0, parts: 1 },
+  } as YpWorkflowAsset;
+  original.stageOutputs = {
+    analyze: {
+      assets: [asset],
+      checksum: "output",
+      originRunId: original.id,
+      sourceHash: original.sourceHash,
+      fingerprint: original.nodeFingerprints!.analyze,
+      spentMicros: 10_000_000,
+    },
+  };
+  await f.store.transact(1, async (tx) => {
+    await tx.put("asset", asset.id, asset);
+    await tx.put("run", original.id, original);
+  });
+  graph.nodes.find((n) => n.id === "research")!.configuration.depth = 2;
+  f.files["graph.json"] = JSON.stringify(graph);
+  const reuse = { runId: original.id, fromNodeId: "research" };
+  await assert.rejects(
+    f.service.draftRun(1, f.actor, "bulk", [f.asset.id], 5, undefined, reuse),
+    /successful trial/,
+  );
+  const trial = await f.finishTrial();
+  trial.nodeCosts!.research = {
+    spentMicros: 20_000,
+    reservedMicros: 0,
+    requests: 5,
+  };
+  trial.spentMicros += 20_000;
+  await f.store.transact(1, (tx) => tx.put("run", trial.id, trial));
+  const rerun = await f.service.draftRun(
+    1,
+    f.actor,
+    "bulk",
+    [f.asset.id],
+    5,
+    undefined,
+    reuse,
+  );
+  assert.equal(rerun.status, "awaiting_approval");
+  assert.equal(rerun.approvedAt, undefined);
+  assert.equal(rerun.budgetMicros, 0);
+  assert.equal(rerun.estimate!.expectedMicros, 4_000_000);
+  assert.deepEqual(
+    rerun.estimate!.agents!.map((a) => a.nodeId),
+    ["research"],
+  );
+  assert.equal(rerun.estimate!.trialRunId, trial.id);
+  assert.equal(rerun.reuse!.historicalMicros, 10_000_000);
+  await assert.rejects(f.service.startRun(1, f.actor, rerun.id));
+  await f.service.startRun(1, f.actor, rerun.id, 5_000_000);
+  const dispatched = f.sent.find(
+    (command) => command.messageType === "workflow.run",
+  )!;
+  assert.ok(dispatched);
+  assert.deepEqual((dispatched.data.run as YpWorkflowRun).reuse!.nodeIds, [
+    "analyze",
+  ]);
+});
+
 test("source, model prices, reasoning effort and concurrency changes invalidate prior trial approvals", async (t) => {
   for (const change of ["source", "prices", "effort", "concurrency"] as const) {
     await t.test(change, async () => {
@@ -1280,6 +1383,46 @@ test("agent caps can only be raised explicitly within the run allowance when res
     ),
   );
 });
+test("record cap increases require approval, cover parent spend, and preserve the frozen graph", async () => {
+  const { store, service } = await setup();
+  await store.transact(1, async (tx) => {
+    tx.state.activeRunId = runId;
+    const run = (await tx.get<YpWorkflowRun>("run", runId))!;
+    run.status = "paused";
+    run.graph.nodes[0].recordBudgetMicros = 60_000;
+    await tx.put("run", runId, run);
+    await tx.put("usage", "paid", {
+      runId,
+      nodeId: "analyze",
+      recordId: "parent",
+      status: "settled",
+      actualMicros: 50_000,
+      maximumMicros: 60_000,
+    });
+  });
+  const actor = { userId: 10, admin: false };
+  for (const cap of [49_000, 6_000_000_000])
+    await assert.rejects(
+      service.controlRun(1, actor, runId, "resume", undefined, undefined, {
+        analyze: cap,
+      }),
+      /Record allowance/,
+    );
+  await service.controlRun(1, actor, runId, "resume", undefined, undefined, {
+    analyze: 100_000,
+  });
+  const resumed = (await store.transact(1, (tx) =>
+    tx.get<YpWorkflowRun>("run", runId),
+  ))!;
+  assert.equal(resumed.nodeRecordBudgets?.analyze, 100_000);
+  assert.equal(resumed.graph.nodes[0].recordBudgetMicros, 60_000);
+  assert.ok(
+    (await store.events(1, 0)).some(
+      (e) => e.type === "run.record_allowances.approved",
+    ),
+  );
+});
+
 test("a targeted trial cannot approve a broader set of agents", async () => {
   const f = await approvalFixture();
   const graph = JSON.parse(f.files["graph.json"]) as YpWorkflowGraph;

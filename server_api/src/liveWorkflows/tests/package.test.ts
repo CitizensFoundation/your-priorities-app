@@ -9,6 +9,62 @@ import { graphSchema, fingerprint } from "../schemas.js";
 import { orderedAgents } from "../runner/run.js";
 import { stratifiedSample } from "../runner/inputs.js";
 import { workspace } from "./memoryStore.js";
+import { reconnectEnabledTemplateAgents } from "../graph.js";
+
+test("enabling detached optional research restores its template path without reordering upstream adapters", async () => {
+  const { graph: template } = await skillsFirstPackage();
+  const previous = structuredClone(template);
+  previous.nodes.unshift({
+    ...previous.nodes[0],
+    id: "adapter",
+    entrypoint: "source/custom.ts",
+  });
+  const research = new Set(["licenses", "education"]);
+  previous.edges = previous.edges.filter(
+    (e) =>
+      !(
+        previous.nodes.find((n) => n.id === e.source)?.kind === "agent" &&
+        (research.has(e.source) || research.has(e.target))
+      ),
+  );
+  previous.edges.push(
+    { id: "bypass", source: "analyze", target: "rewrite" },
+    { id: "custom", source: "adapter", target: "normalize" },
+  );
+  const next = structuredClone(previous);
+  next.nodes.find((n) => n.id === "licenses")!.enabled = true;
+  const repaired = reconnectEnabledTemplateAgents(next, previous, template);
+  assert.deepEqual(
+    orderedAgents(repaired).map((n) => n.id),
+    [
+      "adapter",
+      "normalize",
+      "levels",
+      "analyze",
+      "licenses",
+      "rewrite",
+      "export",
+    ],
+  );
+  assert.ok(
+    repaired.edges.some(
+      (e) => e.source === "licenses" && e.target === "education",
+    ),
+  );
+  assert.ok(!repaired.edges.some((e) => e.id === "bypass"));
+  const enabled = structuredClone(repaired);
+  enabled.nodes.find((n) => n.id === "education")!.enabled = true;
+  assert.deepEqual(
+    reconnectEnabledTemplateAgents(enabled, repaired, template),
+    enabled,
+  );
+  const custom = structuredClone(next);
+  custom.edges.find((e) => e.id === "bypass")!.target = "export";
+  assert.throws(
+    () => reconnectEnabledTemplateAgents(custom, previous, template),
+    /custom graph/,
+  );
+});
 
 test("Skills First seed includes the complete suite, provenance prompts and deterministic graph", async () => {
   const seed = await skillsFirstPackage();

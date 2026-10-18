@@ -50,6 +50,7 @@ import { ManualCodexUsage } from "./codexUsage.js";
 import { ManualCheckpointGate } from "./checkpointGate.js";
 import { BrowserBatchCheckpoint } from "./browserBatchCheckpoint.js";
 import type { GroupCreationFixture } from "./groupCreationFixture.js";
+import { ManualRequestDrain } from "./requestDrain.js";
 
 const execute = promisify(execFile);
 const codexImage = "yp-live-workflow/codex-runtime:1";
@@ -101,6 +102,11 @@ export async function startManualHarness(
     browserBatch?: boolean;
     groupCreation?: boolean;
     offlineProcessingDelayMs?: number;
+    connectors?: {
+      firecrawlFetch: typeof fetch;
+      live?: boolean;
+      processing?: typeof offlineProcessing;
+    };
     processingConcurrency?: number;
     observeBrowserRequest?: RequestHandler;
     manualPage?: { instructions: string; fixture: string; filename: string };
@@ -144,6 +150,7 @@ export async function startManualHarness(
   const databaseContainer = `yp-manual-pg-${randomUUID()}`;
   const server = createServer();
   const checkpointGate = new ManualCheckpointGate();
+  const paidRequests = new ManualRequestDrain();
   const sockets = new WebSocketServer({ noServer: true });
   let database: Sequelize | undefined,
     controller: LiveWorkflowsController | undefined;
@@ -160,6 +167,9 @@ export async function startManualHarness(
     databaseStarted = false;
   const close = async () => {
     if (closed) return;
+    // Drain the whole gateway method, including its database settlement, before
+    // killing clients or destroying the ledger. A timeout leaves local state intact.
+    await paidRequests.drain();
     closed = true;
     checkpointGate.release();
     // Keep the API alive while the VM drains acknowledged status events.
@@ -282,25 +292,38 @@ export async function startManualHarness(
         ? async (...args) => {
             if (options.offlineProcessingDelayMs)
               await sleep(options.offlineProcessingDelayMs);
-            return offlineProcessing(...args);
+            return (options.connectors?.processing ?? offlineProcessing)(
+              ...args,
+            );
           }
         : undefined,
     );
-    // The upload-only case has no external connections. Unexpected connector use fails closed.
-    const connectors = new Proxy(
-      {},
-      {
-        get: (_target, name) => {
-          if (name === "snapshotBindings" || name === "list")
-            return async () => [];
-          return async () => {
-            throw new Error(
-              "External connectors are not enabled in the upload-only manual test",
-            );
-          };
-        },
-      },
-    ) as ConnectorService;
+    models.call = paidRequests.wrap(models.call.bind(models));
+    // External connections are opt-in; upload-only rehearsals still fail closed.
+    const connectors = options.connectors
+      ? new (await import("../../connectors.js")).ConnectorService(
+          store,
+          secrets,
+          options.connectors.firecrawlFetch,
+        )
+      : (new Proxy(
+          {},
+          {
+            get: (_target, name) => {
+              if (name === "snapshotBindings" || name === "list")
+                return async () => [];
+              return async () => {
+                throw new Error(
+                  "External connectors are not enabled in the upload-only manual test",
+                );
+              };
+            },
+          },
+        ) as ConnectorService);
+    if (options.connectors)
+      connectors.request = paidRequests.wrap(
+        connectors.request.bind(connectors),
+      );
     const service = new WorkflowService(
       store,
       registry,
@@ -453,7 +476,7 @@ export async function startManualHarness(
             res
               .type("html")
               .send(
-                `<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Live workflow group creation test</title><style>body{margin:24px;font-family:system-ui;background:#f6f8fc;color:#17213b}main{max-width:1440px;margin:auto}a{color:#234cb5}</style><main><h1>Live workflow group creation</h1><p>${mode === "offline" ? "Offline rehearsal: scripted Codex response, no provider calls." : "Live test: one API-key Codex greeting. Processing is disabled."} Signed in as a disposable test administrator.</p><div id="manual-app"></div></main><script type="module" src="/ui.js"></script></html>`,
+                `<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Live workflow group creation test</title><style>body{margin:24px;font-family:system-ui;background:#f6f8fc;color:#17213b}main{max-width:1440px;margin:auto}a{color:#234cb5}</style><main><h1>Live workflow group creation</h1><p>${mode === "offline" ? (options.connectors?.live ? "Live Firecrawl smoke; Codex and processing models are scripted fixtures." : "Offline rehearsal: scripted Codex response, no provider calls.") : "Live test: one API-key Codex greeting. Processing is disabled."} Signed in as a disposable test administrator.</p><div id="manual-app"></div></main><script type="module" src="/ui.js"></script></html>`,
               ),
         );
       } else
@@ -461,7 +484,7 @@ export async function startManualHarness(
           res
             .type("html")
             .send(
-              `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skills First manual test</title><style>body{margin:24px;font-family:system-ui}pre{white-space:pre-wrap}summary{cursor:pointer}</style><h1>Skills First manual test</h1><p>${mode === "offline" ? "Offline rehearsal — fixture model responses." : mode === "api-key" ? "Isolated test — Codex uses API-key authentication. This does not test ChatGPT sign-in." : "Real ChatGPT sign-in and API-backed processing."} Total processing cap: $${config.trialBudgetMicros / 1e6}. Codex cost is separate. No external connectors.</p>${options.manualPage?.instructions ?? ""}${options.browserLogin ? browserKeyImportButton : ""}<yp-live-workflow groupid="1"></yp-live-workflow><script type="module" src="/ui.js"></script>`,
+              `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skills First manual test</title><style>body{margin:24px;font-family:system-ui}pre{white-space:pre-wrap}summary{cursor:pointer}</style><h1>Skills First manual test</h1><p>${mode === "offline" ? "Offline rehearsal — fixture model responses." : mode === "api-key" ? "Isolated test — Codex uses API-key authentication. This does not test ChatGPT sign-in." : "Real ChatGPT sign-in and API-backed processing."} Total processing cap: $${config.trialBudgetMicros / 1e6}. Codex cost is separate. ${options.connectors ? (options.connectors.live ? "Live Firecrawl research is enabled and included in the processing cap." : "Firecrawl uses offline fixtures.") : "No external connectors."}</p>${options.manualPage?.instructions ?? ""}${options.browserLogin ? browserKeyImportButton : ""}<yp-live-workflow groupid="1"></yp-live-workflow><script type="module" src="/ui.js"></script>`,
             ),
         );
     }
@@ -765,13 +788,19 @@ export async function startManualHarness(
       baseUrl,
       request,
       service,
+      connectors,
+      store,
       assets,
       codexCalls,
       codexUsage,
+      historicalCodexUsage: undefined as
+        | ReturnType<ManualCodexUsage["report"]>
+        | undefined,
       processingCalls,
       browserBatch,
       groupCreation,
       close,
+      drainPaidRequests: () => paidRequests.drain(),
       checkpoint,
       armCheckpoint: (runId: string, nodeId: string) =>
         checkpointGate.arm(runId, nodeId),

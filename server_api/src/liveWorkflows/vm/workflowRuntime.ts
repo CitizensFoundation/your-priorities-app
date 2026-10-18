@@ -32,6 +32,7 @@ import type { VmAgentConfig } from "./config.js";
 import type { CodexAdapter } from "./codex/codexAdapter.js";
 import type { VmCommandHandler } from "./commands/vmCommandRouter.js";
 import { YP_LIVE_WORKFLOW_VM_PROTOCOL } from "../contracts/index.js";
+import { decodeStage } from "../runner/stageOutput.js";
 
 const locationSchema = z.object({
   groupId: z.number().int().positive(),
@@ -356,6 +357,49 @@ export class WorkflowVmRuntime {
         path.join(directory, "data/inputs.json"),
         JSON.stringify(inputs),
       );
+      if (run.reuse) {
+        const reused: Record<string, YpWorkflowJson> = {};
+        for (const id of run.reuse.nodeIds) {
+          const stage = run.stageOutputs?.[id];
+          if (!stage || stage.fingerprint !== run.nodeFingerprints?.[id])
+            throw new Error("Unverified reuse snapshot");
+          const chunks: string[] = [];
+          let total = 0;
+          for (const asset of stage.assets) {
+            z.string().uuid().parse(asset.id);
+            if (
+              asset.bytes > 1_048_576 ||
+              (total += asset.bytes) > 128 * 1024 ** 2
+            )
+              throw new Error("Stage snapshot exceeds transfer limit");
+            const response = await fetch(
+              `${this.config.apiBaseUrl}/api/live-workflows/vm/groups/${location.groupId}/assets/${asset.id}`,
+              {
+                headers: { authorization: `Bearer ${this.config.token}` },
+                signal: AbortSignal.timeout(60_000),
+              },
+            );
+            if (!response.ok || !response.body)
+              throw new Error("Saved stage output is unavailable");
+            const parts: Buffer[] = [];
+            let bytes = 0;
+            for await (const part of Readable.fromWeb(response.body as never)) {
+              const chunk = Buffer.from(part);
+              bytes += chunk.length;
+              if (bytes > asset.bytes)
+                throw new Error("Stage snapshot transfer exceeds manifest");
+              parts.push(chunk);
+            }
+            chunks.push(Buffer.concat(parts).toString("utf8"));
+          }
+          reused[id] = decodeStage(chunks, stage);
+        }
+        await writeFile(
+          path.join(directory, "data/reused.json"),
+          JSON.stringify(reused),
+          { mode: 0o600 },
+        );
+      }
       await writeFile(
         path.join(directory, "location.json"),
         JSON.stringify(location),
@@ -504,13 +548,15 @@ export class WorkflowVmRuntime {
             "/opt/yp-workflow/runner/parse.js",
           ]);
           const inputError = await readFile(
-            path.join(parsed, "input-error.json"), "utf8",
+            path.join(parsed, "input-error.json"),
+            "utf8",
           ).catch((error: NodeJS.ErrnoException) => {
             if (error.code === "ENOENT") return undefined;
             throw error;
           });
           if (inputError) {
-            const failure = z.object({ message: z.string().max(1000) })
+            const failure = z
+              .object({ message: z.string().max(1000) })
               .parse(JSON.parse(inputError));
             throw new Error(failure.message);
           }

@@ -13,29 +13,51 @@ export function requireObservedDocument(
   nodeId: string,
   binding: string,
   url: string,
+  recordId?: string,
 ) {
   const result = source?.result as
-    | { pages?: { url: string }[]; binding?: string }
+    | { pages?: { url: string }[]; links?: { url: string }[]; binding?: string }
     | undefined;
   const target = publicDocumentUrl(url);
-  const observed = result?.pages?.some((page) => {
-    try {
-      return publicDocumentUrl(page.url) === target;
-    } catch {
-      return false;
-    }
-  });
+  const observed = [...(result?.pages ?? []), ...(result?.links ?? [])].some(
+    (page) => {
+      try {
+        return publicDocumentUrl(page.url) === target;
+      } catch {
+        return false;
+      }
+    },
+  );
   if (
     source?.runId !== runId ||
     source.nodeId !== nodeId ||
     source.status !== "settled" ||
-    source.description !== "firecrawl:search" ||
+    !["firecrawl:search", "firecrawl:scrape"].includes(source.description) ||
+    (recordId !== undefined && source.recordId !== recordId) ||
     result?.binding !== binding ||
     !observed
   )
     throw new ForbiddenError(
-      "Documents must come from a completed search in this run, node and binding",
+      "Documents must come from a completed search or observed document link in this run, node, record and binding",
     );
+}
+
+/** Explicit links from paid page text guide selection, never supply evidence for the linked page. */
+export function observedLinks(markdown: string, base: string) {
+  const links = new Map<string, { url: string; title: string }>();
+  for (const match of markdown.matchAll(
+    /\[([^\]\n]{1,200})\]\(([^\s)]+)(?:\s+"[^"]*")?\)/g,
+  )) {
+    try {
+      const address = publicDocumentUrl(new URL(match[2], base).href);
+      if (address !== base)
+        links.set(address, { url: address, title: match[1] });
+      if (links.size === 50) break;
+    } catch {
+      /* Private or invalid links confer no capability. */
+    }
+  }
+  return [...links.values()];
 }
 
 export const documentRequest = z
@@ -127,9 +149,7 @@ function page(value: unknown, maxChars: number, maxPages: number) {
   const data = object.parse(value);
   const metadata = object.parse(data.metadata ?? {});
   const markdown = z.string().parse(data.markdown ?? "");
-  let address = String(
-    data.url ?? metadata.sourceURL ?? metadata.url ?? "",
-  );
+  let address = String(data.url ?? metadata.sourceURL ?? metadata.url ?? "");
   try {
     const normalized = new URL(address);
     normalized.hash = "";
@@ -161,8 +181,7 @@ function page(value: unknown, maxChars: number, maxPages: number) {
       ? ["page-limit"]
       : []),
     ...(data.warning || metadata.error ? ["provider-warning"] : []),
-    ...(status !== null &&
-    !((status >= 200 && status < 300) || status === 304)
+    ...(status !== null && !((status >= 200 && status < 300) || status === 304)
       ? ["source-status"]
       : []),
     ...(!markdown.trim() ? ["empty-document"] : []),
@@ -210,24 +229,54 @@ export function normalizeFirecrawl(
       pages: web.map((p) => page(p, 60000, 1)),
       creditsUsed: credits,
       retrievedAt,
+      ...(typeof result.id === "string"
+        ? { providerRequestId: result.id }
+        : {}),
     };
   }
   const request = documentRequest.parse(input);
+  const document = page(
+    { ...data, url: request.url },
+    request.maxChars,
+    request.maxPages,
+  );
   return {
-    ...page(
-      { ...data, url: request.url },
-      request.maxChars,
-      request.maxPages,
-    ),
+    ...document,
+    links: observedLinks(document.markdown, request.url),
     creditsUsed: credits,
     retrievedAt,
+    ...(typeof result.id === "string" ? { providerRequestId: result.id } : {}),
+  };
+}
+
+/** https://docs.firecrawl.dev/api-reference/endpoint/credit-usage */
+export function normalizeFirecrawlBalance(
+  value: unknown,
+): YpWorkflowFirecrawlBalance {
+  const response = z
+    .object({
+      success: z.literal(true),
+      data: z.object({
+        remainingCredits: z.number().int().nonnegative(),
+        planCredits: z.number().int().nonnegative(),
+        billingPeriodStart: z.string().nullable().optional(),
+        billingPeriodEnd: z.string().nullable().optional(),
+      }),
+    })
+    .parse(value);
+  return {
+    ...response.data,
+    billingPeriodStart: response.data.billingPeriodStart ?? null,
+    billingPeriodEnd: response.data.billingPeriodEnd ?? null,
+    checkedAt: new Date().toISOString(),
   };
 }
 
 /** Bound bytes while receiving, not after Response.json has allocated them. */
+export const maximumFirecrawlResponseBytes = 16 * 1024 ** 2;
 export async function boundedFirecrawlJson(
   response: Response,
-  maximumBytes = 2 * 1024 ** 2,
+  maximumBytes = maximumFirecrawlResponseBytes,
 ) {
   if (!response.ok)
     throw new Error(`Firecrawl request failed (${response.status})`);
