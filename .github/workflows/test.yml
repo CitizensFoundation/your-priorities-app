@@ -49,6 +49,8 @@ jobs:
           cache-dependency-path: webApps/client/package-lock.json
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npx tsc --noEmit -p .
+      - name: Run tests
+        run: npx wtr
 
   docker:
     runs-on: ubuntu-latest
