@@ -798,12 +798,13 @@ export class YpLogin extends YpBaseElement {
 
   renderLoginInput() {
     return html`<label class="fieldLabel" for="email">
-        ${this.t("user.email")}
+        <span aria-hidden="true">${this.t("user.email")}</span>
       </label>
       <md-outlined-text-field
         id="email"
         type="email"
         label=""
+        aria-label="${this.t("user.email")}"
         name="username"
         pattern="^.+@.+$"
         minLength="5"
@@ -815,12 +816,13 @@ export class YpLogin extends YpBaseElement {
         .errorText="${ifDefined(this.emailErrorMessage)}"
       ></md-outlined-text-field>
       <label class="fieldLabel" for="password">
-        ${this.t("user.password")}
+        <span aria-hidden="true">${this.t("user.password")}</span>
       </label>
       <md-outlined-text-field
         id="password"
         type="password"
         label=""
+        aria-label="${this.t("user.password")}"
         autocomplete="current-password"
         class="loginField"
         minLength="1"
@@ -977,11 +979,12 @@ export class YpLogin extends YpBaseElement {
 
   renderCreateUserSurface() {
     return html`<div class="create-user-content">
-      <label class="fieldLabel" for="fullname">${this.userNameText}</label>
+      <label class="fieldLabel" for="fullname"><span aria-hidden="true">${this.userNameText}</span></label>
       <md-outlined-text-field
         id="fullname"
         type="text"
         label=""
+        aria-label="${this.userNameText}"
         maxLength="50"
         minLength="2"
         class="createUserInputField"
@@ -991,11 +994,12 @@ export class YpLogin extends YpBaseElement {
         ?error="${!!this.registrationNameErrorMessage}"
         .errorText="${ifDefined(this.registrationNameErrorMessage)}"
       ></md-outlined-text-field>
-      <label class="fieldLabel" for="regEmail">${this.t("user.email")}</label>
+      <label class="fieldLabel" for="regEmail"><span aria-hidden="true">${this.t("user.email")}</span></label>
       <md-outlined-text-field
         id="regEmail"
         type="email"
         label=""
+        aria-label="${this.t("user.email")}"
         name="username"
         class="createUserInputField"
         pattern=".+@.+"
@@ -1006,7 +1010,7 @@ export class YpLogin extends YpBaseElement {
         .errorText="${ifDefined(this.registrationEmailErrorMessage)}"
       ></md-outlined-text-field>
       <label class="fieldLabel" for="regPassword">
-        ${this.t("user.password")}
+        <span aria-hidden="true">${this.t("user.password")}</span>
       </label>
       <md-outlined-text-field
         id="regPassword"
@@ -1014,6 +1018,7 @@ export class YpLogin extends YpBaseElement {
         minLength="5"
         class="createUserInputField"
         label=""
+        aria-label="${this.t("user.password")}"
         autocomplete="current-password"
         @keyup="${this.onEnterRegistration}"
         @input="${this._onRegistrationPasswordInput}"
@@ -1124,12 +1129,13 @@ export class YpLogin extends YpBaseElement {
         <div slot="headline">[[t('oneTimeLoginWithName')]]</div>
         <div slot="content">
           <label class="fieldLabel" for="oneTimeLoginWithNameId">
-            ${this.userNameText}
+            <span aria-hidden="true">${this.userNameText}</span>
           </label>
           <md-filled-text-field
             id="oneTimeLoginWithNameId"
             type="text"
             label=""
+            aria-label="${this.userNameText}"
             maxlength="50"
             @keyup="${this._updateOneTimeLoginName}"
             autocomplete="off"
