@@ -15,7 +15,6 @@ describe('YpPostEdit', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-edit
         .group="${YpTestHelpers.getGroup()}"
         .post="${YpTestHelpers.getPost()}"
@@ -79,9 +78,6 @@ describe('YpPostEdit thank you screen', () => {
   });
 
   beforeEach(async () => {
-    // Fixture intentionally omits YpTestHelpers.renderCommonHeader() so the
-    // fixture root is the <yp-post-edit> element itself, not one of the
-    // header's <link> tags.
     element = await fixture(html`
       <yp-post-edit
         .group="${YpTestHelpers.getGroup()}"

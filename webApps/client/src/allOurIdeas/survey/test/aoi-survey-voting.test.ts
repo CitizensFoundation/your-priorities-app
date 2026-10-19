@@ -15,7 +15,6 @@ describe('AoiSurveyVoting', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <aoi-survey-voting></aoi-survey-voting>
     `);
 

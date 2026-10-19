@@ -15,7 +15,6 @@ describe('YpImage', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-image></yp-image>
     `);
 

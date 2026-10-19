@@ -15,7 +15,6 @@ describe('PlausibleHistorical', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-historical></pl-historical>
     `);
 

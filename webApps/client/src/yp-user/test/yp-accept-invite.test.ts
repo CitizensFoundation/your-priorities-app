@@ -22,7 +22,6 @@ describe('YpAcceptInvite', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-accept-invite> </yp-accept-invite>
       `);
         await aTimeout(100);

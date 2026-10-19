@@ -17,7 +17,6 @@ describe('YpUserImage', () => {
   beforeEach(async () => {
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-user-image .user="${YpTestHelpers.getUser()}"></yp-user-image>
       `);
       await aTimeout(100);

@@ -15,7 +15,6 @@ describe('YpAssistantItemBase', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-assistant-item-base></yp-assistant-item-base>
     `);
 

@@ -15,7 +15,6 @@ describe('PlausibleDatePicker', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-date-picker></pl-date-picker>
     `);
 

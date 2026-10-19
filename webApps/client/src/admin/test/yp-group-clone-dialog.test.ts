@@ -15,7 +15,6 @@ describe('YpGroupCloneDialog', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-group-clone-dialog></yp-group-clone-dialog>
     `);
 

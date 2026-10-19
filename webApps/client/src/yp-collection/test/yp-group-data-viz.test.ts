@@ -15,7 +15,6 @@ describe('YpGroupDataViz', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-group-data-viz></yp-group-data-viz>
     `);
 

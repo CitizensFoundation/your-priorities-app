@@ -29,7 +29,6 @@ describe('AcActivityPostStatusUpdate', () => {
     } as AcActivityData
 
     element = await fixture(html`
-    ${YpTestHelpers.renderCommonHeader()}
       <ac-activity-post-status-update
        .activity="${activity}">
       </ac-activity-post-status-update

@@ -23,7 +23,6 @@ describe('YpPostUserImageCard', () => {
     } as YpImageData
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-user-image-card
         .post="${YpTestHelpers.getPost()}"
         .image="${image}"

@@ -15,7 +15,6 @@ describe('YpUserDeleteOrAnonymize', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-user-delete-or-anonymize></yp-user-delete-or-anonymize>
     `);
     await aTimeout(100);

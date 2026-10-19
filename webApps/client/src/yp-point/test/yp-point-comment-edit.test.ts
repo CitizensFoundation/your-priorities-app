@@ -16,7 +16,6 @@ describe('YpPointCommentEdit', () => {
   beforeEach(async () => {
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-point-comment-edit
         .point="${YpTestHelpers.getPoint()}"
         .comment="${YpTestHelpers.getPoint()}"

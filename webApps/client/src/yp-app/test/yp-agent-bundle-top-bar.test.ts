@@ -15,7 +15,6 @@ describe('YpAgentBundleTopBar', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-agent-bundle-top-bar></yp-agent-bundle-top-bar>
     `);
 

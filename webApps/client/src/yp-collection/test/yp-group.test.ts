@@ -55,7 +55,6 @@ describe('YpGroup', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-group
         collectionId="1">
       </yp-group>

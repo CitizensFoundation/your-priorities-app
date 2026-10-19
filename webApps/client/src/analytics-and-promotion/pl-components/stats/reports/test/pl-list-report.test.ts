@@ -15,7 +15,6 @@ describe('PlausableListReport', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-list-report></pl-list-report>
     `);
 

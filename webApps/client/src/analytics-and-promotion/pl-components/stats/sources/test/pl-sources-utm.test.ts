@@ -15,7 +15,6 @@ describe('PlausibleSourcesUtm', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-sources-utm></pl-sources-utm>
     `);
 

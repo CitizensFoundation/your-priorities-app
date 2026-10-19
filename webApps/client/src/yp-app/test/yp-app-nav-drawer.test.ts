@@ -14,11 +14,8 @@ describe('YpAppNavDrawer', () => {
   });
 
   beforeEach(async () => {
-    // <yp-app-nav-drawer> must render first: fixture() returns wrapper.firstElementChild,
-    // so a header rendered before it would silently become `element` instead.
     element = await fixture(html`
       <yp-app-nav-drawer></yp-app-nav-drawer>
-      ${YpTestHelpers.renderCommonHeader()}
     `);
 
     await aTimeout(100);

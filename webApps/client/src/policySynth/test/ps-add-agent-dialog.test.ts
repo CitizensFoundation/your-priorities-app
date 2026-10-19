@@ -15,7 +15,6 @@ describe('PsAddAgentDialog', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <ps-add-agent-dialog></ps-add-agent-dialog>
     `);
 

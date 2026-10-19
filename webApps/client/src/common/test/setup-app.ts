@@ -2,7 +2,6 @@ import { YpServerApi } from '../YpServerApi.js';
 import { YpAppGlobals } from '../../yp-app/YpAppGlobals.js';
 import { YpAppUser } from '../../yp-app/YpAppUser.js';
 import i18next from 'i18next';
-import { html } from 'lit';
 import fetchMock from 'fetch-mock';
 
 export class YpTestHelpers {
@@ -179,39 +178,5 @@ export class YpTestHelpers {
       get('/api/users/has/AutoTranslation', { hasAutoTranslation: true }, YpTestHelpers.fetchMockConfig).
       get('/api/users/loggedInUser/promoterRights', 0, YpTestHelpers.fetchMockConfig).
       get('/api/users/loggedInUser/adminRights', 0, YpTestHelpers.fetchMockConfig)
-  }
-
-  static renderCommonHeader() {
-    return html`
-      <link
-        href="https://fonts.googleapis.com/css?family=Material+Icons&display=block"
-        rel="stylesheet"
-      />
-      <link
-        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
-        rel="stylesheet"
-      />
-      <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
-      <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
-
-      <base href="/" />
-
-      <style>
-        html,
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: Atkinson Hyperlegible, serif;
-        }
-
-          :root {
-            --md-ref-typeface-brand: Bebas Neue, serif;
-            --md-ref-typeface-plain: Bebas Neue, serif;
-
-            --md-sys-typescale-headline-font: "Bebas Neue";
-            --md-sys-typescale-title-font: "Bebas Neue";
-        }
-      </style>
-    `;
   }
 }

@@ -15,7 +15,6 @@ describe('PlausibleConversions', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-conversions></pl-conversions>
     `);
 

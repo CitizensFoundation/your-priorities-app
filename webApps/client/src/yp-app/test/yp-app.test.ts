@@ -22,7 +22,6 @@ describe('YpApp', () => {
     localStorage.setItem(cookieNoticeKey, '1');
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-app
 
       ></yp-app>

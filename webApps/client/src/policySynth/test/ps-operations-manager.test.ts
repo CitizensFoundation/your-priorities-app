@@ -15,7 +15,6 @@ describe('PsOperationsManager', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <ps-operations-manager></ps-operations-manager>
     `);
 

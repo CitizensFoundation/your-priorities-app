@@ -15,7 +15,6 @@ describe('YpAdminApp', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-admin-app></yp-admin-app>
     `);
 

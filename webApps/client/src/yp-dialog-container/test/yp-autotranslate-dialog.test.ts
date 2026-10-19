@@ -19,7 +19,6 @@ describe('YpAutoTranslateDialog', () => {
     }
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-autotranslate-dialog
         confirmationText="ALEXOSS">
       </yp-autotranslate-dialog>

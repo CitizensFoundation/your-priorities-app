@@ -15,7 +15,6 @@ describe('YpContentModeration', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-content-moderation></yp-content-moderation>
     `);
 

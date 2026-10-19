@@ -18,7 +18,6 @@ describe('YpDialogRatings', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-dialog-ratings
         .post="${YpTestHelpers.getPost()}"
       ></yp-dialog-ratings>

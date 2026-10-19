@@ -15,7 +15,6 @@ describe('YpCategoryEdit', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-category-edit></yp-category-edit>
     `);
 

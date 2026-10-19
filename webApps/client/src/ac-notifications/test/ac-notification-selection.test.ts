@@ -20,7 +20,6 @@ describe('AcNotificationSelection', () => {
       } as AcNotificationSettingsDataItem
 
       element = await fixture(html`
-        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-selection
           .settings="${settings}"
         ></ac-notification-selection>

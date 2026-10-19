@@ -46,7 +46,6 @@ describe('YpApp /user/login route', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-app></yp-app>
-      ${YpTestHelpers.renderCommonHeader()}
     `);
     await aTimeout(100);
     originalAppUser = window.appUser;

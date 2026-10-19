@@ -15,7 +15,6 @@ describe('YpAudkenniLogin', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-audkenni-login></yp-audkenni-login>
     `);
 

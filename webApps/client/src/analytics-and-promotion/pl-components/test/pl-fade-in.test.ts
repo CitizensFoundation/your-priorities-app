@@ -15,7 +15,6 @@ describe('PlausibleFadeIn', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-fade-in></pl-fade-in>
     `);
 

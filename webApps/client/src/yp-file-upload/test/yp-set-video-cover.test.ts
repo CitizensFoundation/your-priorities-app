@@ -24,7 +24,6 @@ describe('YpSetVideoCover', () => {
     ];
 
     element = await fixture(html`
-        ${YpTestHelpers.renderCommonHeader()}
         <yp-set-video-cover
           .video="${video}"
           .videoImages="${videoImages}">

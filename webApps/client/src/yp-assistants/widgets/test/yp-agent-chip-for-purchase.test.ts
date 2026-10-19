@@ -15,7 +15,6 @@ describe('YpAgentChipForPurchase', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-agent-chip-for-purchase></yp-agent-chip-for-purchase>
     `);
 

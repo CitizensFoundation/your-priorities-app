@@ -15,7 +15,6 @@ describe('YpCollectionItemsList', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-items-list></yp-collection-items-list>
     `);
 

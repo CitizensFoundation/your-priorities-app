@@ -15,7 +15,6 @@ describe('YpCampaign', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-campaign></yp-campaign>
     `);
 

@@ -15,7 +15,6 @@ describe('YpFraudManagement', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-fraud-management></yp-fraud-management>
     `);
 

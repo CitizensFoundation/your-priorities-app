@@ -54,7 +54,6 @@ describe('AcNotificationSettings', () => {
 
 
       element = await fixture(html`
-        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-settings
           .notificationsSettings="${settings}"
         ></ac-notification-settings>

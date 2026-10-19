@@ -15,7 +15,6 @@ describe('PlausibleDashboard', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-dashboard></pl-dashboard>
     `);
 

@@ -15,7 +15,6 @@ describe('YpRegistrationQuestions', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-registration-questions></yp-registration-questions>
     `);
 

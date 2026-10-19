@@ -15,7 +15,6 @@ describe('YpFileUploadIcon', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-file-upload-icon></yp-file-upload-icon>
     `);
 

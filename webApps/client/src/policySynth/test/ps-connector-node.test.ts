@@ -15,7 +15,6 @@ describe('PsAgentConnector', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <ps-connector-node></ps-connector-node>
     `);
 

@@ -16,13 +16,10 @@ describe('YpDomain', () => {
   });
 
   beforeEach(async () => {
-    // <yp-domain> must render first: fixture() returns wrapper.firstElementChild,
-    // so a header rendered before it would silently become `element` instead.
     element = await fixture(html`
       <yp-domain
         collectionId="1">
       </yp-domain>
-      ${YpTestHelpers.renderCommonHeader()}
     `);
     await aTimeout(100);
   });

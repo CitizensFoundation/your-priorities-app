@@ -15,7 +15,6 @@ describe('PlausableExitPages', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-exit-pages></pl-exit-pages>
     `);
 

@@ -15,7 +15,6 @@ describe('YpPostUserImageEdit', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-user-image-edit
         .post="${YpTestHelpers.getPost()}"
       ></yp-post-user-image-edit>

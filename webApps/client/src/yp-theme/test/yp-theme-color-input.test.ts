@@ -15,7 +15,6 @@ describe('YpThemeColorInput', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-theme-color-input></yp-theme-color-input>
     `);
 

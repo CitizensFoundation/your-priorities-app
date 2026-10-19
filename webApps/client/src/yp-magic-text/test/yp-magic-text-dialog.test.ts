@@ -15,7 +15,6 @@ describe('YpMagicTextDialog', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-magic-text-dialog
         content='ALXOEz'>
       </yp-magic-text-dialog>

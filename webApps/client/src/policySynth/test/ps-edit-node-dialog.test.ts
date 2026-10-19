@@ -15,7 +15,6 @@ describe('PsEditNodeDialog', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <ps-edit-node-dialog></ps-edit-node-dialog>
     `);
 

@@ -15,7 +15,6 @@ describe('PlausibleMoreLink', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-more-link></pl-more-link>
     `);
 

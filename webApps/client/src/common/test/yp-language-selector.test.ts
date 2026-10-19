@@ -16,7 +16,6 @@ describe('YpLanguageSelector', () => {
   beforeEach(async () => {
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-language-selector
       selectedLocale="en"
       ></yp-language-selector>

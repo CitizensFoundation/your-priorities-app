@@ -15,7 +15,6 @@ describe('PlausibleSourcesAll', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <pl-sources-all></pl-sources-all>
     `);
 

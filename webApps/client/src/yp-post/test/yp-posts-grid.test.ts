@@ -15,7 +15,6 @@ describe('YpPostsGrid', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-posts-grid></yp-posts-grid>
     `);
 

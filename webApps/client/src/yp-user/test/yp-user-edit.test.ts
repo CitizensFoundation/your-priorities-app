@@ -52,7 +52,6 @@ describe('YpUserEdit', () => {
     } as AcNotificationSettingsData;
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-user-edit .settings="${settings}" .user="${YpTestHelpers.getUser()}"></yp-user-edit>
     `);
     await aTimeout(100);

@@ -15,7 +15,6 @@ describe('YpFileUpload', () => {
 
   beforeEach(async () => {
       element = await fixture(html`
-        ${YpTestHelpers.renderCommonHeader()}
         <yp-file-upload
           .group="${YpTestHelpers.getGroup()}"
           subText="Test">
