@@ -63,7 +63,7 @@
     "knuth-shuffle-seeded": "^1.0.6",
     "lodash": "^4.18.1",
     "marked": "^18.0.5",
-    "moment": "^2.30.1",
+    "moment": "^2.31.0",
     "morgan": "^1.12.1",
     "multer": "^2.4.0",
     "multer-s3": "^3.0.1",
