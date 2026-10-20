@@ -15,7 +15,6 @@ describe('AcNotificationToast', () => {
 
     beforeEach(async () => {
       element = await fixture(html`
-        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-toast
           .user="${YpTestHelpers.getUser()}"
         ></ac-notification-toast>

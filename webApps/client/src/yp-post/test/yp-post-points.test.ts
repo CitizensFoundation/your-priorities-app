@@ -70,7 +70,6 @@ describe('YpPostPoints', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-points
         .post="${YpTestHelpers.getPost()}"
       ></yp-post-points>

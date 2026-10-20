@@ -24,7 +24,6 @@ describe('AcActivityPointNewsStory', () => {
     } as AcActivityData
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <ac-activity-point-news-story
         .activity="${activity}">
       </ac-activity-point-news-story

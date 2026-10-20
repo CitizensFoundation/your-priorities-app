@@ -47,7 +47,6 @@ describe('YpPostRatingsInfo', () => {
     } as YpPostData;
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-ratings-info
         .post="${post}"
       ></yp-post-ratings-info>

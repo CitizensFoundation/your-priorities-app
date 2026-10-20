@@ -15,7 +15,6 @@ describe('YpPostCardAdd', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-card-add
         .post="${YpTestHelpers.getPost()}"
       ></yp-post-card-add>

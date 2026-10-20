@@ -16,13 +16,10 @@ describe('YpCommunity', () => {
   });
 
   beforeEach(async () => {
-    // <yp-community> must render first: fixture() returns wrapper.firstElementChild,
-    // so a header rendered before it would silently become `element` instead.
     element = await fixture(html`
       <yp-community
         collectionId="1"
       ></yp-community>
-      ${YpTestHelpers.renderCommonHeader()}
     `);
     await aTimeout(100);
   });

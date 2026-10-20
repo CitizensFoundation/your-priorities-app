@@ -15,7 +15,6 @@ describe('YpUserWithOrganization', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-user-with-organization
         .user="${YpTestHelpers.getUser()}">
       </yp-user-with-organization>

@@ -15,7 +15,6 @@ describe('YpPostCoverMedia', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-cover-media
         .post="${YpTestHelpers.getPost()}"
       ></yp-post-cover-media>

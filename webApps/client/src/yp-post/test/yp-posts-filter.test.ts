@@ -15,7 +15,6 @@ describe('YpPostsFilter', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-posts-filter
         .group="${YpTestHelpers.getGroup()}"
       ></yp-posts-filter>

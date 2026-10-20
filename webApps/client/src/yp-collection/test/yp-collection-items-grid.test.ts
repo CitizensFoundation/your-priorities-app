@@ -23,7 +23,6 @@ describe('YpCollectionItemsList', () => {
 
 
     element = await fixture(html`
-    ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-items-list
         .collection="${YpTestHelpers.getDomain()}"
         .collectionItems="${collectionItems}"

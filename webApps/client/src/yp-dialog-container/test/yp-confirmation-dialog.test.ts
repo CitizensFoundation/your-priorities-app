@@ -16,7 +16,6 @@ describe('YpConfirmationDialog', () => {
   beforeEach(async () => {
 
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-confirmation-dialog
         confirmationText="good morning">
       </yp-confirmation-dialog>

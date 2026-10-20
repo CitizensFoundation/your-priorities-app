@@ -15,7 +15,6 @@ describe('YpPoint', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()}
       <yp-point
         .point="${YpTestHelpers.getPoint()}"
       ></yp-point>
