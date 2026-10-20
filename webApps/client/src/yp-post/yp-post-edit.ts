@@ -840,7 +840,7 @@ export class YpPostEdit extends YpEditBase {
       <p class="contactInfoExplanation">
         ${this.t("contactInformationExplanation")}
       </p>
-      <label class="fieldLabel required">${this.t("user.name")}</label>
+      <label for="contactName" class="fieldLabel required"><span aria-hidden="true">${this.t("user.name")}</span></label>
       <md-outlined-text-field
         class="contactInfoField"
         id="contactName"
@@ -854,7 +854,7 @@ export class YpPostEdit extends YpEditBase {
         charCounter
       >
       </md-outlined-text-field>
-      <label class="fieldLabel required">${this.t("user.email")}</label>
+      <label for="contactEmail" class="fieldLabel required"><span aria-hidden="true">${this.t("user.email")}</span></label>
       <md-outlined-text-field
         class="contactInfoField"
         id="contactEmail"
@@ -868,11 +868,11 @@ export class YpPostEdit extends YpEditBase {
         charCounter
       >
       </md-outlined-text-field>
-      <label
+      <label for="contactAddress"
         class="fieldLabel"
         ?hidden="${!this.group!.configuration.moreContactInformationAddress}"
       >
-        ${this.t("contactAddress")}
+        <span aria-hidden="true">${this.t("contactAddress")}</span>
       </label>
       <md-outlined-text-field
         class="contactInfoField"
@@ -1018,8 +1018,8 @@ export class YpPostEdit extends YpEditBase {
                 `
               : this.post
               ? html`
-                  <label class="fieldLabel required">
-                    ${this.titleQuestionText}
+                  <label for="name" class="fieldLabel required">
+                    <span aria-hidden="true">${this.titleQuestionText}</span>
                   </label>
                   <md-outlined-text-field
                     id="name"
@@ -1072,8 +1072,8 @@ export class YpPostEdit extends YpEditBase {
             this.group.configuration &&
             this.group.configuration.usePostTags
               ? html`
-                  <label class="fieldLabel">
-                    ${this.t("commaSeperatedTags")}
+                  <label for="tags" class="fieldLabel">
+                    <span aria-hidden="true">${this.t("commaSeperatedTags")}</span>
                   </label>
                   <md-outlined-text-field
                     id="tags"
@@ -1088,11 +1088,11 @@ export class YpPostEdit extends YpEditBase {
               : nothing}
             ${this.postDescriptionLimit
               ? html`
-                  <label
+                  <label for="description"
                     ?class="fieldLabel ${this.structuredQuestions == null ? 'required' : ''}"
                     ?hidden="${this.structuredQuestions != null}"
                   >
-                    ${this.t("post.description")}
+                    <span aria-hidden="true">${this.t("post.description")}</span>
                   </label>
                   <md-outlined-text-field
                     type="textarea"
@@ -1190,8 +1190,8 @@ export class YpPostEdit extends YpEditBase {
     return this.newPointShown
       ? html`
           <div class="subContainer">
-            <label class="fieldLabel ${!this.group!.configuration.newPointOptional ? 'required' : ''}">
-              ${this.t("point.for")}
+            <label for="pointFor" class="fieldLabel ${!this.group!.configuration.newPointOptional ? 'required' : ''}">
+              <span aria-hidden="true">${this.t("point.for")}</span>
             </label>
             <md-outlined-text-field
               id="pointFor"
