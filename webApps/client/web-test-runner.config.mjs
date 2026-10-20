@@ -12,9 +12,8 @@ export default {
   preserveSymlinks: true,
   files: [
     'src/**/*.test.ts',
-    // TODO: These test modules, inherited from upstream, fail to load. Fix
-    // them and remove these exclusions.
-    '!src/common/test/yp-language-selector.test.ts',
+    // TODO: This test module, inherited from upstream, fails to load. Fix it
+    // and remove this exclusion.
     '!src/yp-point/test/yp-point-comment-list.test.ts',
   ],
   // Run one test file at a time. Some tests pass when their file runs on
