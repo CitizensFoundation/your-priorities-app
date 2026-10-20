@@ -10,12 +10,7 @@ export default {
     browser: true,
   },
   preserveSymlinks: true,
-  files: [
-    'src/**/*.test.ts',
-    // TODO: This test module, inherited from upstream, fails to load. Fix it
-    // and remove this exclusion.
-    '!src/yp-point/test/yp-point-comment-list.test.ts',
-  ],
+  files: 'src/**/*.test.ts',
   // Run one test file at a time. Some tests pass when their file runs on
   // its own but fail when it runs in parallel with other files, and we
   // haven't established why.
