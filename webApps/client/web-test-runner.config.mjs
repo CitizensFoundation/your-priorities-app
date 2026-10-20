@@ -11,6 +11,10 @@ export default {
   },
   preserveSymlinks: true,
   files: 'src/**/*.test.ts',
+  // Run one test file at a time. Some tests pass when their file runs on
+  // its own but fail when it runs in parallel with other files, and we
+  // haven't established why.
+  concurrency: 1,
   // fetch-mock's browser build pulls in `globrex`, which reads `process.platform`.
   // Shim a minimal `process` global before any test module loads.
   testRunnerHtml: (testFramework) => `
