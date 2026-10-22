@@ -10,7 +10,10 @@ const tlsOptions = process.env.REDIS_MEMORY_URL?.startsWith("rediss://")
 
 export class ExplainAnswersAssistant extends YpBaseChatBot {
   openaiClient: OpenAI;
-  override llmModel = "gpt-5.3-chat-latest";
+  override llmModel =
+    process.env.AOI_EXPLAIN_ANSWERS_MODEL_NAME ||
+    process.env.AOI_MODEL_NAME ||
+    "chat-latest";
   maxTokens = 4000;
   temperature = 0.8;
   languageName: string;

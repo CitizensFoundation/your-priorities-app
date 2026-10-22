@@ -7,6 +7,33 @@ The `AiHelper` class provides a set of methods for interacting with the OpenAI A
 ### `new AiHelper(wsClientSocket?: WebSocket)`
 Creates a new instance of `AiHelper`.
 
+Idea generation and analysis default to `chat-latest`, the current ChatGPT Instant
+model. Set these environment variables on the API and worker processes to override
+the models, then restart those processes:
+
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `AOI_MODEL_NAME` | Shared model for ideas, analysis, and answer explanations | `chat-latest` |
+| `AOI_ANSWER_IDEAS_MODEL_NAME` | Idea generation; takes precedence over `AOI_MODEL_NAME` | Shared model |
+| `AOI_ANALYSIS_MODEL_NAME` | Analysis; takes precedence over `AOI_MODEL_NAME` | Shared model |
+| `AOI_EXPLAIN_ANSWERS_MODEL_NAME` | Answer explanations; takes precedence over `AOI_MODEL_NAME` | Shared model |
+
+These settings do not change the moderation model. `OPENAI_STREAMING_MODEL_NAME`
+controls other assistant classes and does not override these AOI settings.
+
+```sh
+AOI_MODEL_NAME=chat-latest
+OPENAI_IMAGE_MODEL_NAME=gpt-image-2.5-flare
+```
+
+The image setting also applies to AOI icons. See
+[CollectionImageGenerator](../../llms/imageGeneration/collectionImageGenerator.md)
+for image model configuration. `chat-latest` follows OpenAI's Instant snapshot and
+can change over time; use an explicit supported model ID in an override when
+you need a fixed model.
+
+[Official Chat Latest documentation](https://developers.openai.com/api/docs/models/chat-latest)
+
 | Name           | Type      | Description                                 |
 |----------------|-----------|---------------------------------------------|
 | wsClientSocket | WebSocket \| undefined | Optional WebSocket client for streaming responses to the client. |

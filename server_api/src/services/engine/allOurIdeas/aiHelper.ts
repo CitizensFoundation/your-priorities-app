@@ -6,8 +6,14 @@ export class AiHelper {
   openaiClient: OpenAI;
   wsClientSocket: WebSocket | undefined;
   modelName = "gpt-4o";
-  answerIdeasModelName = "gpt-5.3-chat-latest";
-  analysisModelName = "gpt-5.3-chat-latest";
+  answerIdeasModelName =
+    process.env.AOI_ANSWER_IDEAS_MODEL_NAME ||
+    process.env.AOI_MODEL_NAME ||
+    "chat-latest";
+  analysisModelName =
+    process.env.AOI_ANALYSIS_MODEL_NAME ||
+    process.env.AOI_MODEL_NAME ||
+    "chat-latest";
   maxTokens = 2048;
   temperature = 0.7;
   cacheExpireTime = 60 * 60;
@@ -16,7 +22,11 @@ export class AiHelper {
   cacheKeyForFullResponse?: string;
 
   usesMaxCompletionTokens(modelName: string) {
-    return modelName.startsWith("gpt-5");
+    return (
+      modelName === "chat-latest" ||
+      modelName.startsWith("gpt-5") ||
+      modelName.startsWith("gpt-6")
+    );
   }
 
   constructor(wsClientSocket: WebSocket | undefined = undefined) {

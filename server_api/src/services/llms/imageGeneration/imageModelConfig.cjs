@@ -1,6 +1,6 @@
 "use strict";
 
-const defaultOpenAiImageModel = "gpt-image-2";
+const defaultOpenAiImageModel = "gpt-image-2.5-flare";
 const defaultImagenImageModel = "imagen-4.0-generate-001";
 const defaultGptImage2LandscapeSize = "2048x1152";
 const defaultAoiIconProfileName = "aoiIcon";
@@ -8,13 +8,21 @@ const defaultRegularAiImageProfileName = "regularAiImage";
 
 const imageProviders = ["openai", "azureOpenai", "flux", "imagen"];
 const openAiGptImageModels = [
+  "gpt-image-2.5-flare",
+  "gpt-image-2.5-sunburst",
   "gpt-image-2",
   "gpt-image-1.5",
-  "gpt-image-1",
   "gpt-image-1-mini",
 ];
-const openAiDalleImageModels = ["dall-e-3"];
+// DALL-E is retired on OpenAI; Azure uses its own configured deployment.
+const openAiDalleImageModels = [];
+const openAiCustomSizeImageModels = [
+  "gpt-image-2.5-flare",
+  "gpt-image-2.5-sunburst",
+  "gpt-image-2",
+];
 const openAiGptImageQualities = ["auto", "low", "medium", "high"];
+const openAiGptImage25Qualities = [...openAiGptImageQualities, "xhigh", "max"];
 const openAiDalleImageQualities = ["standard", "hd"];
 const openAiLegacyGptImageSizes = [
   "auto",
@@ -61,7 +69,7 @@ const supportedAspectRatioSizes = [
 const imageGenerationProfiles = {
   [defaultAoiIconProfileName]: {
     imageProvider: "openai",
-    imageModel: "gpt-image-2",
+    imageModel: defaultOpenAiImageModel,
     imageSize: "1024x1024",
     imageQuality: "low",
     imageType: "icon",
@@ -69,7 +77,7 @@ const imageGenerationProfiles = {
   },
   [defaultRegularAiImageProfileName]: {
     imageProvider: "openai",
-    imageModel: "gpt-image-2",
+    imageModel: defaultOpenAiImageModel,
     imageSize: defaultGptImage2LandscapeSize,
     imageQuality: "medium",
     imageType: "logo",
@@ -125,7 +133,8 @@ const isValidGptImage2Size = (imageSize) => {
 };
 
 const isValidAspectRatioSize = (imageSize) =>
-  supportedAspectRatioSizes.includes(imageSize) || Boolean(parsePixelSize(imageSize));
+  supportedAspectRatioSizes.includes(imageSize) ||
+  Boolean(parsePixelSize(imageSize));
 const isValidImagenImageSize = (imageSize) => {
   const aspectRatio = getAspectRatioForImageSize(imageSize);
   return Boolean(aspectRatio && imagenAspectRatios.includes(aspectRatio));
@@ -136,7 +145,9 @@ const getAllowedImageModels = (imageProvider) => {
     case "openai":
       return [...openAiGptImageModels, ...openAiDalleImageModels];
     case "azureOpenai":
-      return uniqueDefined([process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME]);
+      return uniqueDefined([
+        process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME,
+      ]);
     case "flux":
       return uniqueDefined([process.env.FLUX_PRO_MODEL_NAME]);
     case "imagen":
@@ -149,7 +160,7 @@ const getAllowedImageModels = (imageProvider) => {
 const getDefaultImageModelForProvider = (imageProvider) => {
   switch (imageProvider) {
     case "openai":
-      return defaultOpenAiImageModel;
+      return process.env.OPENAI_IMAGE_MODEL_NAME || defaultOpenAiImageModel;
     case "azureOpenai":
       return process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME;
     case "flux":
@@ -161,8 +172,15 @@ const getDefaultImageModelForProvider = (imageProvider) => {
   }
 };
 
-const getDefaultImageSizeForOptions = (imageProvider, imageModel, imageType) => {
-  if (imageProvider === "openai" && imageModel === "gpt-image-2") {
+const getDefaultImageSizeForOptions = (
+  imageProvider,
+  imageModel,
+  imageType,
+) => {
+  if (
+    imageProvider === "openai" &&
+    openAiCustomSizeImageModels.includes(imageModel)
+  ) {
     return imageType === "icon" ? "1024x1024" : defaultGptImage2LandscapeSize;
   }
 
@@ -171,7 +189,8 @@ const getDefaultImageSizeForOptions = (imageProvider, imageModel, imageType) => 
   }
 
   if (
-    (imageProvider === "openai" && openAiDalleImageModels.includes(imageModel)) ||
+    (imageProvider === "openai" &&
+      openAiDalleImageModels.includes(imageModel)) ||
     imageProvider === "azureOpenai"
   ) {
     return imageType === "icon" ? "1024x1024" : "1792x1024";
@@ -186,7 +205,8 @@ const getDefaultImageQualityForOptions = (imageProvider, imageModel) => {
   }
 
   if (
-    (imageProvider === "openai" && openAiDalleImageModels.includes(imageModel)) ||
+    (imageProvider === "openai" &&
+      openAiDalleImageModels.includes(imageModel)) ||
     imageProvider === "azureOpenai"
   ) {
     return "standard";
@@ -198,7 +218,10 @@ const getDefaultImageQualityForOptions = (imageProvider, imageModel) => {
 const validateImageSize = (imageProvider, imageModel, imageSize) => {
   if (!imageSize) return undefined;
 
-  if (imageProvider === "openai" && imageModel === "gpt-image-2") {
+  if (
+    imageProvider === "openai" &&
+    openAiCustomSizeImageModels.includes(imageModel)
+  ) {
     return isValidGptImage2Size(imageSize)
       ? undefined
       : `Unsupported image size for ${imageModel}: ${imageSize}`;
@@ -211,7 +234,8 @@ const validateImageSize = (imageProvider, imageModel, imageSize) => {
   }
 
   if (
-    (imageProvider === "openai" && openAiDalleImageModels.includes(imageModel)) ||
+    (imageProvider === "openai" &&
+      openAiDalleImageModels.includes(imageModel)) ||
     imageProvider === "azureOpenai"
   ) {
     return openAiDalleImageSizes.includes(imageSize)
@@ -236,13 +260,17 @@ const validateImageQuality = (imageProvider, imageModel, imageQuality) => {
   if (!imageQuality) return undefined;
 
   if (imageProvider === "openai" && openAiGptImageModels.includes(imageModel)) {
-    return openAiGptImageQualities.includes(imageQuality)
+    const qualities = imageModel.startsWith("gpt-image-2.5-")
+      ? openAiGptImage25Qualities
+      : openAiGptImageQualities;
+    return qualities.includes(imageQuality)
       ? undefined
       : `Unsupported image quality for ${imageModel}: ${imageQuality}`;
   }
 
   if (
-    (imageProvider === "openai" && openAiDalleImageModels.includes(imageModel)) ||
+    (imageProvider === "openai" &&
+      openAiDalleImageModels.includes(imageModel)) ||
     imageProvider === "azureOpenai"
   ) {
     return openAiDalleImageQualities.includes(imageQuality)
@@ -257,7 +285,7 @@ const normalizeImageGenerationOptions = (
   imageProvider,
   imageModel,
   imageSize,
-  imageQuality
+  imageQuality,
 ) => {
   const normalizedProvider = imageProvider || "openai";
 
@@ -285,7 +313,7 @@ const normalizeImageGenerationOptions = (
   const imageSizeError = validateImageSize(
     normalizedProvider,
     normalizedModel,
-    imageSize
+    imageSize,
   );
   if (imageSizeError) {
     return { error: imageSizeError };
@@ -294,7 +322,7 @@ const normalizeImageGenerationOptions = (
   const imageQualityError = validateImageQuality(
     normalizedProvider,
     normalizedModel,
-    imageQuality
+    imageQuality,
   );
   if (imageQualityError) {
     return { error: imageQualityError };
@@ -323,10 +351,11 @@ const getDefaultImageGenerationProfileName = (generationContext) => {
 const normalizeImageGenerationProfileOptions = (
   imageGenerationProfile,
   generationContext,
-  imageType
+  imageType,
 ) => {
   const profileName =
-    imageGenerationProfile || getDefaultImageGenerationProfileName(generationContext);
+    imageGenerationProfile ||
+    getDefaultImageGenerationProfileName(generationContext);
   const profile = imageGenerationProfiles[profileName];
 
   if (!profile) {
@@ -347,11 +376,27 @@ const normalizeImageGenerationProfileOptions = (
     };
   }
 
+  const imageModel =
+    (profile.imageProvider === "openai" &&
+      process.env.OPENAI_IMAGE_MODEL_NAME) ||
+    profile.imageModel;
+  const imageSize = validateImageSize(
+    profile.imageProvider,
+    imageModel,
+    profile.imageSize,
+  )
+    ? getDefaultImageSizeForOptions(
+        profile.imageProvider,
+        imageModel,
+        profile.imageType,
+      )
+    : profile.imageSize;
+
   const options = normalizeImageGenerationOptions(
     profile.imageProvider,
-    profile.imageModel,
-    profile.imageSize,
-    profile.imageQuality
+    imageModel,
+    imageSize,
+    profile.imageQuality,
   );
 
   if (options.error) return options;

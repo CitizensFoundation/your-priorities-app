@@ -224,7 +224,11 @@ export class YpBaseChatBot {
   }
 
   usesMaxCompletionTokens(modelName: string) {
-    return modelName.startsWith("gpt-5");
+    return (
+      modelName === "chat-latest" ||
+      modelName.startsWith("gpt-5") ||
+      modelName.startsWith("gpt-6")
+    );
   }
 
   getStreamingChatCompletionParams(
