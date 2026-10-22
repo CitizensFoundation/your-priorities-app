@@ -1,0 +1,296 @@
+{
+  "nodes": [
+    {
+      "id": "normalize",
+      "kind": "agent",
+      "label": "Normalize records",
+      "description": "Requires imported table or document records. Produces standard jobs with stable input IDs, original text and provenance. For unfamiliar formats, add an adapter before this node; preserve IDs and every source qualification.",
+      "entrypoint": "source/normalize.ts",
+      "enabled": true,
+      "models": {},
+      "configuration": {
+        "jurisdiction": "New Jersey, USA"
+      },
+      "position": {
+        "x": 40,
+        "y": 140
+      }
+    },
+    {
+      "id": "levels",
+      "kind": "agent",
+      "label": "Split and verify job levels",
+      "description": "Requires normalize. Splits multi-level descriptions and independently checks shared duties and level-specific qualifications before any analysis. Children keep parent lineage; qualifications must not transfer between levels.",
+      "entrypoint": "source/levels.ts",
+      "enabled": true,
+      "models": {},
+      "configuration": {
+        "maxLevels": 8
+      },
+      "position": {
+        "x": 300,
+        "y": 140
+      }
+    },
+    {
+      "id": "analyze",
+      "kind": "agent",
+      "label": "Analyze requirements",
+      "description": "Requires normalize and levels. Internal tasks run in order: degrees, evidence, mandatory, licenses, barriers, consistency, readingLevel. evidence requires degrees; consistency requires degrees, evidence, mandatory, licenses and barriers. readingLevel requires degrees for the education/reading-level comparison. Other tasks read the original job independently. configuration.tasks selects tasks and automatically includes their prerequisites; omit it for all seven. For a small early experiment use tasks: [evidence] and trial --target analyze: only degrees and evidence run, after normalize and levels. Writes the original Skills First degreeAnalysis, mandatory explanations, license fields, nine consistency checks and readingLevelGradeAnalysis alongside cited task findings.",
+      "entrypoint": "source/analysis.ts",
+      "enabled": true,
+      "models": {},
+      "configuration": {},
+      "position": {
+        "x": 560,
+        "y": 140
+      }
+    },
+    {
+      "id": "licenses",
+      "kind": "agent",
+      "label": "License and degree research",
+      "description": "Optional. Requires analyzed job requirements and an approved Firecrawl binding. Independently verifies applicable license and education evidence; unresolved claims remain unknown.",
+      "entrypoint": "source/research.ts",
+      "enabled": false,
+      "models": {},
+      "configuration": {
+        "topic": "professional license and degree requirements",
+        "firecrawlBinding": "firecrawl",
+        "maxPages": 3,
+        "queriesPerRound": 2,
+        "maxSources": 4,
+        "maxFollowupRounds": 1,
+        "maxDocuments": 2,
+        "maxDocumentPages": 10,
+        "maxDocumentChars": 60000
+      },
+      "position": {
+        "x": 820,
+        "y": 140
+      }
+    },
+    {
+      "id": "education",
+      "kind": "agent",
+      "label": "Education and statute research",
+      "description": "Optional. Follows analysis and any enabled license research. Requires an approved Firecrawl binding for statutory education evidence.",
+      "entrypoint": "source/research.ts",
+      "enabled": false,
+      "models": {},
+      "configuration": {
+        "topic": "statutory education requirements and barriers",
+        "firecrawlBinding": "firecrawl",
+        "maxPages": 3,
+        "queriesPerRound": 2,
+        "maxSources": 4,
+        "maxFollowupRounds": 1,
+        "maxDocuments": 2,
+        "maxDocumentPages": 10,
+        "maxDocumentChars": 60000
+      },
+      "position": {
+        "x": 1080,
+        "y": 140
+      }
+    },
+    {
+      "id": "rewrite",
+      "kind": "agent",
+      "label": "Rewrite and validate",
+      "description": "Requires analyzed job records, plus research when enabled. Preserves original qualifications and duties, then independently reviews each proposal. Target analyze to stop before rewriting.",
+      "entrypoint": "source/rewrite.ts",
+      "enabled": true,
+      "models": {},
+      "configuration": {
+        "maxAttempts": 3
+      },
+      "position": {
+        "x": 40,
+        "y": 360
+      }
+    },
+    {
+      "id": "compare",
+      "kind": "agent",
+      "label": "Compare datasets",
+      "description": "Optional. Requires rewritten jobs and a configured reference dataset. Disabled nodes pass through their nearest enabled predecessors.",
+      "entrypoint": "source/compare.ts",
+      "enabled": false,
+      "models": {},
+      "configuration": {
+        "comparison": "reference-dataset"
+      },
+      "position": {
+        "x": 300,
+        "y": 360
+      }
+    },
+    {
+      "id": "compare-license",
+      "kind": "agent",
+      "label": "Compare license and education",
+      "description": "Optional. Compares license and education findings in the preceding job records; missing evidence remains unknown. Supply license comparison rows through configuration.reference/referenceBinding, matched by exact license type, or job.licenseComparisons. WVU and manual decisions are supplied inputs and are never invented.",
+      "entrypoint": "source/compare.ts",
+      "enabled": false,
+      "models": {},
+      "configuration": {
+        "comparison": "license-education"
+      },
+      "position": {
+        "x": 560,
+        "y": 360
+      }
+    },
+    {
+      "id": "export",
+      "kind": "agent",
+      "label": "Export results",
+      "description": "Exports the original Skills First memory JSON, 74-column master CSV, Excel workbook and Markdown. Excel includes merged master, base master, license info, legal research, documents and review/provenance sheets. Multiple research rows are preserved. Trials keep artifacts private; approved external writes include only complete, error-free jobs. Targeted runs also save internal result arrays.",
+      "entrypoint": "source/export.ts",
+      "enabled": true,
+      "models": {},
+      "configuration": {
+        "outputBindings": []
+      },
+      "position": {
+        "x": 820,
+        "y": 360
+      }
+    },
+    {
+      "id": "uploads",
+      "kind": "connector",
+      "label": "Private uploads",
+      "enabled": true,
+      "models": {},
+      "configuration": {},
+      "position": {
+        "x": 40,
+        "y": 20
+      }
+    },
+    {
+      "id": "your-priorities",
+      "kind": "connector",
+      "label": "Your Priorities group",
+      "enabled": true,
+      "models": {},
+      "configuration": {},
+      "position": {
+        "x": 250,
+        "y": 20
+      }
+    },
+    {
+      "id": "google",
+      "kind": "connector",
+      "label": "Google Docs / Sheets / Drive",
+      "enabled": true,
+      "models": {},
+      "configuration": {},
+      "position": {
+        "x": 460,
+        "y": 20
+      }
+    },
+    {
+      "id": "firecrawl",
+      "kind": "connector",
+      "label": "Firecrawl web research",
+      "enabled": true,
+      "models": {},
+      "configuration": {},
+      "position": {
+        "x": 670,
+        "y": 20
+      }
+    },
+    {
+      "id": "references",
+      "kind": "connector",
+      "label": "Reference datasets",
+      "enabled": true,
+      "models": {},
+      "configuration": {},
+      "position": {
+        "x": 880,
+        "y": 20
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "flow-1",
+      "source": "normalize",
+      "target": "levels",
+      "label": "Normalized jobs required"
+    },
+    {
+      "id": "flow-levels",
+      "source": "levels",
+      "target": "analyze",
+      "label": "Verified job levels required"
+    },
+    {
+      "id": "flow-2",
+      "source": "analyze",
+      "target": "licenses"
+    },
+    {
+      "id": "flow-3",
+      "source": "licenses",
+      "target": "education"
+    },
+    {
+      "id": "flow-4",
+      "source": "education",
+      "target": "rewrite"
+    },
+    {
+      "id": "flow-5",
+      "source": "rewrite",
+      "target": "compare"
+    },
+    {
+      "id": "flow-6",
+      "source": "compare",
+      "target": "compare-license"
+    },
+    {
+      "id": "flow-7",
+      "source": "compare-license",
+      "target": "export"
+    },
+    {
+      "id": "data-uploads",
+      "source": "uploads",
+      "target": "normalize"
+    },
+    {
+      "id": "data-your-priorities",
+      "source": "your-priorities",
+      "target": "normalize"
+    },
+    {
+      "id": "data-google",
+      "source": "google",
+      "target": "normalize"
+    },
+    {
+      "id": "data-firecrawl",
+      "source": "firecrawl",
+      "target": "licenses"
+    },
+    {
+      "id": "data-references",
+      "source": "references",
+      "target": "compare"
+    },
+    {
+      "id": "data-firecrawl-education",
+      "source": "firecrawl",
+      "target": "education"
+    }
+  ]
+}

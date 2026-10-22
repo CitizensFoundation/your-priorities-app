@@ -1,0 +1,8 @@
+FROM node:24.14.0-bookworm-slim
+WORKDIR /opt/yp-workflow
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && ln -s /opt/yp-workflow/node_modules /node_modules
+COPY build/ ./
+ENV NODE_ENV=production
+CMD ["node", "--import", "tsx", "runner/run.js"]

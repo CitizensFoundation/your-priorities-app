@@ -34,7 +34,31 @@ Initializes the service and its dependencies, including S3, image processing, an
 | GOOGLE_CLOUD_PROJECT_ID              | Google Cloud project ID for ImagenImageGenerator         |
 | S3_BUCKET                            | S3 bucket name for image storage                         |
 | CLOUDFLARE_IMAGE_PROXY_DOMAIN        | Optional Cloudflare proxy domain for public image URLs    |
-| USE_CHATGPT_IMAGE_GENERATOR          | If set, uses ChatGptImageGenerator                      |
+| OPENAI_IMAGE_MODEL_NAME             | Default OpenAI image model; defaults to `gpt-image-2.5-flare` |
+
+`OPENAI_IMAGE_MODEL_NAME` applies to default OpenAI image generation, AOI icons
+(both public and admin), and the regular image profile. Explicit `imageModel`
+options on a work package take precedence. Set the variable on both API and
+worker processes and restart them after changing it.
+
+The default AOI icon profile uses low quality and `1024x1024`; the regular image
+profile uses medium quality and `2048x1152`. If an older GPT Image model is
+configured, profile dimensions adapt to that model's supported sizes.
+
+Supported OpenAI models are `gpt-image-2.5-flare`, `gpt-image-2.5-sunburst`,
+`gpt-image-2`, `gpt-image-1.5`, and `gpt-image-1-mini`. GPT Image 2.5 models also
+support `xhigh` and `max` quality. DALL-E 3 is retired on OpenAI, and GPT Image 1
+shuts down on October 23, 2026, so neither is accepted by the OpenAI image router.
+Azure continues to use `AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME` independently.
+GPT Image 1.5 and GPT Image 1 mini are scheduled to retire on December 1, 2026;
+they are retained only for explicit compatibility overrides.
+
+```sh
+OPENAI_IMAGE_MODEL_NAME=gpt-image-2.5-flare
+```
+
+See the official [image generation guide](https://developers.openai.com/api/docs/guides/image-generation)
+and [deprecations](https://developers.openai.com/api/docs/deprecations).
 
 ---
 

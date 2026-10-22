@@ -1,0 +1,355 @@
+{
+  "core": [
+    {
+      "header": "agentId",
+      "path": "agentId",
+      "description": "agentId"
+    },
+    {
+      "header": "titleCode",
+      "path": "titleCode",
+      "description": "titleCode"
+    },
+    {
+      "header": "variant",
+      "path": "variant",
+      "description": "variant"
+    },
+    {
+      "header": "classOfService",
+      "path": "classOfService",
+      "description": "classOfService"
+    },
+    {
+      "header": "workWeek",
+      "path": "workWeek",
+      "description": "workWeek"
+    },
+    {
+      "header": "bargainUnit",
+      "path": "bargainUnit",
+      "description": "bargainUnit"
+    },
+    {
+      "header": "classCode",
+      "path": "classCode",
+      "description": "classCode"
+    },
+    {
+      "header": "salaryRange",
+      "path": "salaryRange",
+      "description": "salaryRange"
+    },
+    {
+      "header": "workMonth",
+      "path": "workMonth",
+      "description": "workMonth"
+    },
+    {
+      "header": "deptCode",
+      "path": "deptCode",
+      "description": "deptCode"
+    },
+    {
+      "header": "url",
+      "path": "url",
+      "description": "url"
+    },
+    {
+      "header": "name",
+      "path": "name",
+      "description": "The name of the job."
+    },
+    {
+      "header": "classification",
+      "path": "classification",
+      "description": "Classification of the job based on the required education level, using the unified EducationType."
+    },
+    {
+      "header": "error",
+      "path": "error",
+      "description": "HTML error, not available online"
+    },
+    {
+      "header": "multiLevelJob",
+      "path": "multiLevelJob",
+      "description": "nested job"
+    },
+    {
+      "header": "cscRevised",
+      "path": "cscRevised",
+      "description": "revised by CSC"
+    },
+    {
+      "header": "notes",
+      "path": "notes",
+      "description": "notes"
+    },
+    {
+      "header": "mainCategory",
+      "path": "occupationalCategory.mainCategory",
+      "description": "Main occupational category of the job."
+    },
+    {
+      "header": "subCategory",
+      "path": "occupationalCategory.subCategory",
+      "description": "Subcategory within the occupational category of the job."
+    },
+    {
+      "header": "needsCollegeDegree",
+      "path": "degreeAnalysis.needsCollegeDegree",
+      "description": "Indicates whether the job description includes a discussion of a college degree."
+    },
+    {
+      "header": "maximumDegreeRequirement",
+      "path": "degreeAnalysis.maximumDegreeRequirement",
+      "description": "The maximum Degree requirement found in the job description."
+    },
+    {
+      "header": "includesMultipleJobLevelsWithDifferentEducationalRequirements",
+      "path": "degreeAnalysis.includesMultipleJobLevelsWithDifferentEducationalRequirements",
+      "description": " Check if the job description includes multiple job levels with different educational requirements."
+    },
+    {
+      "header": "educationRequirements",
+      "path": "degreeAnalysis.educationRequirements",
+      "description": "Lists the education requirements found   \nEducationType: evidenceQuote\n\nEducationType\nThe type of education requirement\n\"Type1\" // \"high school degree\", \"high school degree completion\"\n\n\"Type2\" // \"college coursework\", \"study at a college\", \"study at a university\"\n\n\"Type3\" // \"associate's degree\", etc.\n\n\"Type4\" // \"bachelor's degree\", etc.\n\n\"Type5\" // \"master's degree\", etc.\n\n\"Type6\"; // \"doctoral degree\", \"Ph.D.\", etc.\nevidenceQuote\n\nThe quoted language leading to the conclusion, from \"For all job descriptions that produce 'True' except Type 1, quote the language that leads you to conclude that the correct answer is 'True.'\""
+    },
+    {
+      "header": "isDegreeMandatory",
+      "path": "degreeAnalysis.degreeRequirementStatus.isDegreeMandatory",
+      "description": "Determine if applicants can be hired only if they have obtained one of the degrees or credentials."
+    },
+    {
+      "header": "hasAlternativeQualifications",
+      "path": "degreeAnalysis.degreeRequirementStatus.hasAlternativeQualifications",
+      "description": "Determine if applicants can be hired if they satisfy alternatives not listed."
+    },
+    {
+      "header": "alternativeQualifications",
+      "path": "degreeAnalysis.degreeRequirementStatus.alternativeQualifications",
+      "description": "Determines if applicants can be hired if they satisfy alternative qualifications not listed."
+    },
+    {
+      "header": "multipleQualificationPaths",
+      "path": "degreeAnalysis.degreeRequirementStatus.multipleQualificationPaths",
+      "description": " Determine if applicants have two possible ways to qualify (degree or other qualifications)."
+    },
+    {
+      "header": "isDegreeAbsolutelyRequired",
+      "path": "degreeAnalysis.degreeRequirementStatus.isDegreeAbsolutelyRequired",
+      "description": "Indicates if a higher educational degree is absolutely required for this job."
+    },
+    {
+      "header": "substitutionPossible",
+      "path": "degreeAnalysis.degreeRequirementStatus.substitutionPossible",
+      "description": "Indicates if specific skills or other qualifications could substitute for the degree."
+    },
+    {
+      "header": "degreeRequirementExplanation",
+      "path": "degreeAnalysis.mandatoryStatusExplanations.degreeRequirementExplanation",
+      "description": "Explanation of the judgment regarding whether a higher educational degree is absolutely required."
+    },
+    {
+      "header": "bothTrueExplanation",
+      "path": "degreeAnalysis.mandatoryStatusExplanations.bothTrueExplanation",
+      "description": "Both isDegreeMandatory and hasAlternativeQualifications are True.\nExplain why you reached the same conclusion for both, relying only on the job description and your expertise."
+    },
+    {
+      "header": "bothFalseExplanation",
+      "path": "degreeAnalysis.mandatoryStatusExplanations.bothFalseExplanation",
+      "description": "Both isDegreeMandatory and hasAlternativeQualifications are False.\nExplain why you reached the same conclusion for both, relying only on the job description and your expertise."
+    },
+    {
+      "header": "isLicenseRequired",
+      "path": "degreeAnalysis.professionalLicenseRequirement.isLicenseRequired",
+      "description": "Determines if applicants can be hired only if they have obtained a professional license specified in the job description."
+    },
+    {
+      "header": "licenseType",
+      "path": "degreeAnalysis.professionalLicenseRequirement.licenseType",
+      "description": "degreeAnalysis.professionalLicenseRequirement.licenseType"
+    },
+    {
+      "header": "licenseDescription",
+      "path": "degreeAnalysis.professionalLicenseRequirement.licenseDescription",
+      "description": "Quotes the language describing any professional license requirement in the job description."
+    },
+    {
+      "header": "issuingAuthority",
+      "path": "degreeAnalysis.professionalLicenseRequirement.issuingAuthority",
+      "description": "Name of the entity that issues the professional license, if included or known."
+    },
+    {
+      "header": "includesDegreeRequirement",
+      "path": "degreeAnalysis.professionalLicenseRequirement.includesDegreeRequirement",
+      "description": "Determines if the professional license requirement includes a requirement to obtain one of the degrees or credentials."
+    },
+    {
+      "header": "barriersToNonDegreeApplicants",
+      "path": "degreeAnalysis.barriersToNonDegreeApplicants",
+      "description": "Identifies any barrier or obstacle stated, suggested, or described in the job description to hiring an applicant who does not have a college or university degree."
+    },
+    {
+      "header": "cscRevisedConsistency",
+      "path": "degreeAnalysis.validationChecks.cscRevisedConsistency",
+      "description": "degreeAnalysis.validationChecks.cscRevisedConsistency"
+    },
+    {
+      "header": "requiredAlternativeExplanationConsistency",
+      "path": "degreeAnalysis.validationChecks.requiredAlternativeExplanationConsistency",
+      "description": "degreeAnalysis.validationChecks.requiredAlternativeExplanationConsistency"
+    },
+    {
+      "header": "barriersToNonDegreeApplicantsConsistency",
+      "path": "degreeAnalysis.validationChecks.barriersToNonDegreeApplicantsConsistency",
+      "description": "degreeAnalysis.validationChecks.barriersToNonDegreeApplicantsConsistency"
+    },
+    {
+      "header": "licenseIncludesDegreeRequirementConsistency",
+      "path": "degreeAnalysis.validationChecks.licenseIncludesDegreeRequirementConsistency",
+      "description": "degreeAnalysis.validationChecks.licenseIncludesDegreeRequirementConsistency"
+    },
+    {
+      "header": "alternativesIfTrueConsistency",
+      "path": "degreeAnalysis.validationChecks.alternativesIfTrueConsistency",
+      "description": "degreeAnalysis.validationChecks.alternativesIfTrueConsistency"
+    },
+    {
+      "header": "degreeMandatoryConsistency",
+      "path": "degreeAnalysis.validationChecks.degreeMandatoryConsistency",
+      "description": "degreeAnalysis.validationChecks.degreeMandatoryConsistency"
+    },
+    {
+      "header": "alternativeQualificationsConsistency",
+      "path": "degreeAnalysis.validationChecks.alternativeQualificationsConsistency",
+      "description": "degreeAnalysis.validationChecks.alternativeQualificationsConsistency"
+    },
+    {
+      "header": "educationRequirementsConsistency",
+      "path": "degreeAnalysis.validationChecks.educationRequirementsConsistency",
+      "description": "degreeAnalysis.validationChecks.educationRequirementsConsistency"
+    },
+    {
+      "header": "needsCollegeDegreeConsistency",
+      "path": "degreeAnalysis.validationChecks.needsCollegeDegreeConsistency",
+      "description": "degreeAnalysis.validationChecks.needsCollegeDegreeConsistency"
+    },
+    {
+      "header": "difficultPassages",
+      "path": "readingLevelGradeAnalysis.difficultPassages",
+      "description": "Identify the most difficult to read and comprehend passages in the job description."
+    },
+    {
+      "header": "readabilityLevel",
+      "path": "readingLevelGradeAnalysis.readabilityLevel",
+      "description": "Based on the most difficult passages and the entire job description, what reading level must an individual have attained in order to fully comprehend the job description? Choose only from the Grade Levels listed:\n     \"No Education Requirement\",\n      \"High School\",\n      \"Some College (but no degree)\",\n      \"Associate's Degree\",\n      \"Bachelor's Degree\",\n      \"Master's or Doctoral Degree\","
+    },
+    {
+      "header": "fleschKincaidGrade",
+      "path": "readabilityAnalysisTextTSNPM.fleschKincaidGrade",
+      "description": "Flesh Kincaid score using https://www.npmjs.com/package/flesch-kincaid\nFlesch-Kincaid Grade Level Score        U.S. Grade Level Equivalent\n0 - 1        1st Grade\n1 - 2        2nd Grade\n2 - 3        3rd Grade\n3 - 4        4th Grade\n4 - 5        5th Grade\n5 - 6        6th Grade\n6 - 7        7th Grade\n7 - 8        8th Grade\n8 - 9        9th Grade (Freshman High School)\n9 - 10        10th Grade\n10 - 11        11th Grade\n11 - 12        12th Grade (Senior High School)\n12 - 13        College Freshman\n13 - 14        College Sophomore\n14 - 15        College Junior\n15 - 16        College Senior\n16 - 17        College Graduate\n17+        Postgraduate Level"
+    },
+    {
+      "header": "validationScore",
+      "path": "validationScore",
+      "description": "validationScore"
+    }
+  ],
+  "license": [
+    {
+      "header": "Skills First Licence Type",
+      "path": "licenseType"
+    },
+    {
+      "header": "Matchin WVU Profession",
+      "path": "matchingWvuProfession"
+    },
+    {
+      "header": "WVU Education Requirement",
+      "path": "wvuEducationRequirement"
+    },
+    {
+      "header": "DR Education Requirement",
+      "path": "researchEducationRequirement"
+    },
+    {
+      "header": "DR result is likely Matching to WVU ",
+      "path": "researchMatchesWvu"
+    },
+    {
+      "header": "Explanation DR compared to WVU",
+      "path": "researchComparisonExplanation"
+    },
+    {
+      "header": "Manual Minimum Education Req.",
+      "path": "manualMinimumEducationRequirement"
+    },
+    {
+      "header": "Combined Manual & DR",
+      "path": "combinedManualAndResearch"
+    },
+    {
+      "header": "DR Vs Manual Matching",
+      "path": "researchMatchesManual"
+    },
+    {
+      "header": "WVU VS Deepresearch requiring manual review",
+      "path": "requiresManualReview"
+    },
+    {
+      "header": "Recommended Action",
+      "path": "recommendedAction"
+    },
+    {
+      "header": "Source link",
+      "path": "sourceUrl"
+    },
+    {
+      "header": "Notes",
+      "path": "notes"
+    }
+  ],
+  "legal": [
+    {
+      "header": "Job Title",
+      "path": "jobTitle"
+    },
+    {
+      "header": "Stated Degree Requirement",
+      "path": "statedDegreeRequirement"
+    },
+    {
+      "header": "Degree Requirement Type",
+      "path": "degreeRequirementType"
+    },
+    {
+      "header": "Type Of Official Document",
+      "path": "typeOfOfficialDocument"
+    },
+    {
+      "header": "Match Type For Job Title",
+      "path": "matchTypeForJobTitle"
+    },
+    {
+      "header": "Type Of Degree Requirement",
+      "path": "typeOfDegreeRequirement"
+    },
+    {
+      "header": "Mandatory Degree Requirement Status",
+      "path": "mandatoryDegreeRequirementStatus"
+    },
+    {
+      "header": "Reasoning",
+      "path": "reasoning"
+    },
+    {
+      "header": "Source Url",
+      "path": "sourceUrl"
+    },
+    {
+      "header": "Title Code",
+      "path": "titleCode"
+    }
+  ]
+}

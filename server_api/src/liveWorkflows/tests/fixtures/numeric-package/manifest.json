@@ -1,0 +1,1 @@
+{"id":"numeric-fixture","name":"Numeric contract fixture","version":"1.0.0","runtime":"yp-live-workflow-v1","sdkVersion":1,"instructions":"AGENTS.md","graph":"graph.json","inputSchema":"schemas/input.json","outputSchema":"schemas/output.json"}

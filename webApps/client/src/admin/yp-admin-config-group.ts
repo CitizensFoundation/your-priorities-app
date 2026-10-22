@@ -142,10 +142,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   registrationQuestionsJsonError: boolean = false;
 
   groupTypeOptions = [
-    "ideaGenerationGroupType",
-    "allOurIdeasGroupType",
-    "htmlContentGroupType",
-    "policySynthAgentsWorkflow",
+    { label: "ideaGenerationGroupType", value: 0 },
+    { label: "allOurIdeasGroupType", value: 1 },
+    { label: "htmlContentGroupType", value: 2 },
+    { label: "policySynthAgentsWorkflow", value: 3 },
+    { label: "Live Workflow", value: 5 },
   ];
 
   static GroupType = {
@@ -153,6 +154,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     allOurIdeas: 1,
     htmlContent: 2,
     policySynthAgentsWorkflow: 3,
+    liveWorkflow: 5,
   };
 
   constructor() {
@@ -247,8 +249,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   _setGroupType(event: CustomEvent) {
     const index = (event.target as MdOutlinedSelect).selectedIndex;
-    this.groupTypeIndex = index;
-    this.group.configuration.groupType = index;
+    this.groupTypeIndex = this.groupTypeOptions[index].value;
+    this.group.configuration.groupType = this.groupTypeIndex;
+    if (this.groupTypeIndex === 5) void import("../live-workflows/yp-live-workflow-admin.js");
     this._configChanged();
     this.configTabs = this.setupConfigTabs();
     this.requestUpdate();
@@ -262,9 +265,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         @change="${this._setGroupType}"
       >
         ${this.groupTypeOptions.map(
-          (typeOption: any, index: any) => html`
-            <md-select-option ?selected="${this.groupTypeIndex == index}"
-              >${this.t(typeOption)}</md-select-option
+          (typeOption) => html`
+            <md-select-option .value=${String(typeOption.value)} ?selected="${this.groupTypeIndex == typeOption.value}"
+              >${typeOption.value === 5 ? typeOption.label : this.t(typeOption.label)}</md-select-option
             >
           `
         )}
@@ -273,6 +276,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   override renderBeforeTabPages() {
+    if (this.groupTypeIndex === 5 && this.group?.id > 0) {
+      void import("../live-workflows/yp-live-workflow-admin.js");
+      return html`<yp-live-workflow-admin .groupId=${this.group.id}></yp-live-workflow-admin>`;
+    }
     return this.group?.id && this.group.configuration.actAsLinkToCommunityId
       ? html`<div class="layout horizontal allGroupMenus">
           <a href="/group/${this.group.id}" target="_blank">
@@ -513,7 +520,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         ).allOurIdeas!.earl!.question!.name;
       }
 
-      this.groupTypeIndex = this.group.configuration.groupType || 0;
+      this.groupTypeIndex = Number(this.group.configuration.groupType) || 0;
 
       this.endorsementButtons = this.group.configuration.endorsementButtons;
 

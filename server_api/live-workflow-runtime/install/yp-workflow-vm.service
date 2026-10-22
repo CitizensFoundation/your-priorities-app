@@ -1,0 +1,24 @@
+[Unit]
+Description=Your Priorities workflow VM coordinator
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=yp-workflow
+Group=yp-workflow
+SupplementaryGroups=docker
+WorkingDirectory=/opt/yp-live-workflow-runtime
+EnvironmentFile=/etc/yp-live-workflow/vm.env
+UMask=0077
+ExecStartPre=/usr/bin/node build/vm/readiness.js vm
+ExecStart=/usr/bin/node build/vm/cli.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=90
+# Docker access is intentional. Do not put this host process in a restrictive
+# systemd mount namespace that hides the paths it asks Docker to mount.
+
+[Install]
+WantedBy=multi-user.target

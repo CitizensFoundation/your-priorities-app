@@ -18,6 +18,10 @@ constructor(
 
 Initializes a new instance of `ExplainAnswersAssistant`.
 
+The model defaults to `chat-latest`. Set `AOI_MODEL_NAME` to change the shared AOI
+text model, or `AOI_EXPLAIN_ANSWERS_MODEL_NAME` to override only explanations.
+Restart the API process after changing either environment variable.
+
 ### Parameters
 
 | Name         | Type                          | Description                                                                 |
@@ -33,7 +37,7 @@ Initializes a new instance of `ExplainAnswersAssistant`.
 | Name         | Type         | Description                                                                 |
 |--------------|--------------|-----------------------------------------------------------------------------|
 | openaiClient | `OpenAI`     | Instance of the OpenAI API client.                                          |
-| modelName    | `string`     | Name of the OpenAI model to use (default: `"gpt-4o"`).                      |
+| llmModel     | `string`     | Name of the OpenAI model to use (default: `"chat-latest"`).                 |
 | maxTokens    | `number`     | Maximum number of tokens for the model's response (default: `4000`).        |
 | temperature  | `number`     | Sampling temperature for the model (default: `0.8`).                        |
 | languageName | `string`     | The language in which the assistant will answer.                            |

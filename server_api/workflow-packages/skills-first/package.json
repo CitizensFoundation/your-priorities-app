@@ -1,0 +1,13 @@
+{
+  "name": "@yrpri/workflow-skills-first",
+  "version": "1.4.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "flesch-kincaid": "^2.0.1",
+    "syllable": "^5.0.1"
+  }
+}

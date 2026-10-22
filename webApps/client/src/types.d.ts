@@ -930,6 +930,8 @@ type YpAiGenerateImageQuality =
   | "low"
   | "medium"
   | "high"
+  | "xhigh"
+  | "max"
   | "standard"
   | "hd";
 

@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src/liveWorkflows",
+    "outDir": "./live-workflow-runtime/build",
+    "target": "ES2022",
+    "declaration": false
+  },
+  "include": [
+    "src/liveWorkflows/vm/**/*.ts",
+    "src/liveWorkflows/contracts/**/*.ts",
+    "src/liveWorkflows/runner/**/*.ts",
+    "src/liveWorkflows/packages.ts",
+    "src/liveWorkflows/schemas.ts"
+  ],
+  "exclude": ["**/tests/**"]
+}

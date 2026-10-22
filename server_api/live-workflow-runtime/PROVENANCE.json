@@ -1,0 +1,423 @@
+{
+  "strategy": "copy, namespace rename, then custom edits",
+  "sources": {
+    "policy-synth": "6f88b65755e69248c3fa2d0f2614ca1055931c15"
+  },
+  "files": [
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/types.d.ts",
+      "target": "server_api/workflow-packages/skills-first/source/types.d.ts",
+      "sha256": "12f8903f7efaac61c613c1aac012b59ec905af2c5b4673c7b33efe2f67346c08"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/runAgents.ts",
+      "target": "server_api/workflow-packages/skills-first/source/runAgents.ts",
+      "sha256": "03b81f148a4cad53a0bc613860286b95b5917120ec96e918219603b36988f7b3"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/occupationalCategories.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/occupationalCategories.ts",
+      "sha256": "b7acb178447de14f8bec2ffebbbf3772cdbfd9e5fe793a8b254c89fe9ec17f38"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/educationTypes.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/educationTypes.ts",
+      "sha256": "b3c78b3dfc687710f222965f5ca0d95670d244006d8f9bd2135acd0708424152"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/occupationalCategories.json",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/occupationalCategories.json",
+      "sha256": "ec5d1442bdc42670b9e5f2f432f22c3a34dcf0e5034ec756e7d7713602522546"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/README.md",
+      "sha256": "bd56f3fbe10f06bf02971e1a1c80a328a4fa499b3bd2414a51043e01adc9e1a8"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/analysisAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/analysisAgentQueue.ts",
+      "sha256": "b0c5e11b8fb25cb3b36fb5b3be06b629bd56333e12ab4af4782dce1d64094659"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriteAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriteAgentQueue.ts",
+      "sha256": "718290f4937415e340158c35694305c85617f88e2121d2d7748b0c5670ba88fb"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriterAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriterAgent.ts",
+      "sha256": "b92bc195776cfa203056d3e3ba780c1dce221d1f6cc699824bf3c6e0a5f7951a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/triggerAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/triggerAgentQueue.ts",
+      "sha256": "b7298d9d88cce09f0f4c662aa46f4570fd08fa2a3e13d7e8cb7d14b8f64769c6"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/analysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/analysisAgent.ts",
+      "sha256": "d27ff37cc9ca78e3e47028889871e3492f70905a0f09de1b969641219362d8f5"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/rewriterMasterAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/rewriterMasterAgent.ts",
+      "sha256": "7fd1dd5c2a9b9fb1f7f29818a1cb83a4120c2cfbdd9c711e51ad207583cda4ed"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/differenceAnalysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/differenceAnalysisAgent.ts",
+      "sha256": "78ae3ead0302af4f3ad4d7e76de2bd9917670254b83356560e5234a0abe224c7"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/docExporter.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/docExporter.ts",
+      "sha256": "bb0ef8c5435c6ba5b8e6b81f107a564fc0fe46309ff8ba8a3a46914861df22a6"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/parallelCheckAgents.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/parallelCheckAgents.ts",
+      "sha256": "cb38c9c95651a7dc1fcba2cd6fea2831d6b4d18db510b3b9ea89991f3aa5e031"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/README.md",
+      "sha256": "f04925464db2b088a6165c97c57cdb6639e213cac0914c3f9f731f4365736687"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/rewriteSubAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/rewriteSubAgent.ts",
+      "sha256": "8a96f784a13c6a2d8434845666da88f3988392cf060326046d382ad4a4478f30"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/rewriting/bucketAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/rewriting/bucketAgent.ts",
+      "sha256": "75c7d25fef1d63aa50e0a0deed2be973ede16d0d3efe9f8e12ea6a59c03ce920"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/README.md",
+      "sha256": "755976e3ee14fe4006d9a61098e571d9a9bc75e0ae227006af8649ca730d67a8"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareLicenseEducationQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareLicenseEducationQueue.ts",
+      "sha256": "99b5b4aca823e7d7fc2da39df4c8bc5b575db06ae42c0a053027902915e95952"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareAgentQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareAgentQueue.ts",
+      "sha256": "4c53debda031344e59105c64433d8c3c4d7571fdd7688d4fa6df1a4e68afdaee"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareSheets.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareSheets.ts",
+      "sha256": "15e64d116e018d2cffd3c8d76bd43fdd39d4fab3ab85f75e3413332346df2a8f"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/evals/compareLicenseEducation.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/evals/compareLicenseEducation.ts",
+      "sha256": "2fbab316318e27f095a6abaec0da690aac474558de1d3df0d4fffdb93a76cc60"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/exports/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/exports/README.md",
+      "sha256": "df5a5c4d5549feb65871f32d34f8a93e3bc0bd51141c4660594e082ea8883a22"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/exports/sheetsExport.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/exports/sheetsExport.ts",
+      "sha256": "8ec300bef7d8e426d3427346eed8f9375f89547a5d96c928c5fb6cfae7673843"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/deduplicateManyToOne.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/deduplicateManyToOne.ts",
+      "sha256": "aa56726535f8ba3cd371ef83cc7014b88f7a056a04b43392ee03be801eb90583"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/webPageScanner.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/webPageScanner.ts",
+      "sha256": "2a37dbdba5bb71977c72458d360db3dc73b69836bc3bd8b12c0ae6745cf1eb0f"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/webPageContentRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/webPageContentRanker.ts",
+      "sha256": "47dbb8049181b828289d6c27df9fa4095a1f807dd6213d34868f43d2a19379f7"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/README.md",
+      "sha256": "9b5a40f3dcad0c44b0a80e8af0c94a9006e3425efd4be26cd263023a630d85d8"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/deduplicateByKeys.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/deduplicateByKeys.ts",
+      "sha256": "a200eadc218646fbfe137fc8da7b92f0a0adf4834f5a544989fabac36f9fb971"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchResultsRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchResultsRanker.ts",
+      "sha256": "f82dd30e4c66243023cd371afaeb285d04e13670a7900f2a7a8e3b9c419d9024"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/baseResearchAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/baseResearchAgent.ts",
+      "sha256": "5e73d507eb265861ad46921434370d45c908a3ff55817d200bb28856d56dfbf3"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchWeb.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchWeb.ts",
+      "sha256": "20fa773f341aaace591dad504aa2bc84797d325f63594b948ab4e4bedb525c67"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/deduplicateObjects.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/deduplicateObjects.ts",
+      "sha256": "f8de5240b8e8584103c2ad42af04fba22be82ff949d7e7eb2f30c0ab5288ed23"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchQueriesRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchQueriesRanker.ts",
+      "sha256": "6b5e528fefd59267f068788cde2496a23dda90e568f51a7349919c85149fd52a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/deepResearch/searchQueriesGenerator.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/deepResearch/searchQueriesGenerator.ts",
+      "sha256": "a92615c23f9db33f66fc8df6e9755df413f9179ac85df8249a7684c557b37511"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/imports/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/imports/README.md",
+      "sha256": "10ee658ae14893efba6627c94fdbafb7851e0a639c1e06c30d8f65b3d044c204"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/imports/sheetsImport.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/imports/sheetsImport.ts",
+      "sha256": "45e7448cd44240eebf91bf6f4ff1dd9b009969ba93fa43bbe197e5140a0a8351"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/imports/exampleImport.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/imports/exampleImport.ts",
+      "sha256": "fb6ab6b3e9d38ba6cc6c9bff17a4886697c9585dc7474dda304d024050b9e50b"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/multiLevel/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/multiLevel/README.md",
+      "sha256": "edef888b152f211cf58ae2e9ae6808963f6178ebe30f5c8b875c00aba37814e2"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/multiLevel/splitMultiLevelAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/multiLevel/splitMultiLevelAgent.ts",
+      "sha256": "bdbd1b84ef3e4fc1aefd2aa540e87cf6a58b93139e1ed3b16a145c1466f79b87"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/multiLevel/multiLevelAnalysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/multiLevel/multiLevelAnalysisAgent.ts",
+      "sha256": "fbd65fd7fa222a8757f839d981abbe769a0ab36d4c04e73306924d7985adee99"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/authorativeSourceFinder.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/authorativeSourceFinder.ts",
+      "sha256": "e8c8fb18a73690983aa35b69a7867335857a9e967d652db0d9c8c83d64633507"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/requirementsExtractor.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/requirementsExtractor.ts",
+      "sha256": "9207964d8925dad755264c3193d142b5f6d07a29496eb359dea86ff6aae08894"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/licenceAnalysisQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/licenceAnalysisQueue.ts",
+      "sha256": "57bb30c34a732942f305b3969d5fb288b79719b1aca5fc21fe4168fcb6192de5"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/importSheet.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/importSheet.ts",
+      "sha256": "66cd95fdcac26ed3b0758ed5920475619c9b9dcf056c34428795bb3d4102b2b4"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/README.md",
+      "sha256": "ecc7634a4f58262e0fc45add8daefbf71ca3b136408b861ffd87786ddd93c9bf"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/exportSheet.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/exportSheet.ts",
+      "sha256": "746fa112e2dc20a883ac61fbc20440ffd88a31d18fdc240240e2e459a5d58052"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/rankResults.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/rankResults.ts",
+      "sha256": "1cd225fe1c53ec1d2250add4b46a1010a683d2ac260a7ffd28a439b381752017"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/requirementAnalyzer.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/requirementAnalyzer.ts",
+      "sha256": "11d4e64ee6a6d2320485aa6d3ea6104a1d52aecc7f02078998ca4b5263b1c2fb"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/firecrawlExtractor.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/firecrawlExtractor.ts",
+      "sha256": "34a0ad1a5e76201a667b410a149fb42e004b9f8e32f61c6196dd0a2983bc6c4a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/licenceAnalysisAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/licenceAnalysisAgent.ts",
+      "sha256": "470fe0e9a2a954faef1771b3604117ec6a9305ac39b269566121e39729afce21"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/licenceDegrees/licenceDeepResearch.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/licenceDegrees/licenceDeepResearch.ts",
+      "sha256": "57d32548397aefd9fad1b247cf87ecbf05736ae76883af8ab838c4835dce1b3c"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/dataConsistency.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/dataConsistency.ts",
+      "sha256": "d3535d31f2e837882241e609b5f19dbda421b009265be111e523e5ab84631553"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/README.md",
+      "sha256": "025e953b5ae8a40ec0c35d7d15b25e3079e18f7d1b9d2f73b79045baa1c86639"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/readabilityAnalysisFleshKncaid.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/readabilityAnalysisFleshKncaid.ts",
+      "sha256": "540037181ad068869ea32bfc90d349d3b3962385bf412ff6c9f6380aa8587a76"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/identifyBarriers.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/identifyBarriers.ts",
+      "sha256": "5bea1ff90412f0894c16d8d6e6c6e76fa687b56f4a326303b0c6a5e7b101d76b"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/determineStatus.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/determineStatus.ts",
+      "sha256": "e8815819e030cf1b51fef0a0aed29ee93e99f43ae17f365cf8d494b8a486fad0"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/additionalRequirements.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/additionalRequirements.ts",
+      "sha256": "415f76fc2341ea61192ffc0113bdd7e2a84e3fa21a7fe6802f0a57d4daea2fe2"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/readingLevelAnalysis.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/readingLevelAnalysis.ts",
+      "sha256": "f22cede8bea3fd30e205ec391053ced2a358738156ee3790596cb3f0253f7a89"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/reviewEvidenceAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/reviewEvidenceAgent.ts",
+      "sha256": "3b13963c4c2bf90732e14032c8451253038f30281bddc30922185b4255cfcdad"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/jobDescriptions/reviewAgents/mantatoryStatus.ts",
+      "target": "server_api/workflow-packages/skills-first/source/jobDescriptions/reviewAgents/mantatoryStatus.ts",
+      "sha256": "8b96ccc87220842920923ada984013c7ce0ff755253c934f411e078b2b0abf4a"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationRequirementsQueue.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationRequirementsQueue.ts",
+      "sha256": "27fbe36e7031d284aeb3f2b88714fb9ae11f71fe19e1f72b8568c6833340d1db"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationRequirementAnalyzer.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationRequirementAnalyzer.ts",
+      "sha256": "5f200a13a35fb5ef15dd219ed6ea71f8aee859e05a3f4255d5332d100f8221cc"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationRequirementsBarrierDeepResearchAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationRequirementsBarrierDeepResearchAgent.ts",
+      "sha256": "ec0de858738da106394c71c085c13eff0f3463193e156eb000e2ad1e3316475c"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/types.d.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/types.d.ts",
+      "sha256": "634d27b98cde9b594b80f18d01b06e08caea00d247e9dc9120f33c85204cbd75"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/README.md",
+      "sha256": "5ed7d34047a04f9bd77c1cdd2066b1706583e21baa5890662c6a015e96b8f681"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/jobTitleDeepResearch.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/jobTitleDeepResearch.ts",
+      "sha256": "c8c4132db49f03a8d48a73f301eb5c3fb9e6fe74a02bfbadd1a185885a3abbac"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/educationExportSheet.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/educationExportSheet.ts",
+      "sha256": "82f23f326fec6f1359137758f1d07c7f32ad6aa7d444efad2e377df8ef4f2a70"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/processAndScanStatuesAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/processAndScanStatuesAgent.ts",
+      "sha256": "b7d96201739090c8f82a3ed4c0aacf85e6673ac6164ed388d914745151e87e57"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/deduplicateManyToOne.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/deduplicateManyToOne.ts",
+      "sha256": "aa56726535f8ba3cd371ef83cc7014b88f7a056a04b43392ee03be801eb90583"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/webPageScanner.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/webPageScanner.ts",
+      "sha256": "3904e2c92e6f88b1216987aa103ae64281fe25d146cc333a388dfe3ee0723970"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/webPageContentRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/webPageContentRanker.ts",
+      "sha256": "47dbb8049181b828289d6c27df9fa4095a1f807dd6213d34868f43d2a19379f7"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/README.md",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/README.md",
+      "sha256": "e2b38088a9c30892fc8dc188a0098273c8e9366d76af51347e37b219f103ea6b"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/deduplicateByKeys.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/deduplicateByKeys.ts",
+      "sha256": "a200eadc218646fbfe137fc8da7b92f0a0adf4834f5a544989fabac36f9fb971"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchResultsRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchResultsRanker.ts",
+      "sha256": "eaba7534654557cd1113b5627dcdf30647a25181d35a52470ac54216eb98fab3"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/baseResearchAgent.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/baseResearchAgent.ts",
+      "sha256": "58c02213973e5714333b82eb5d7226a3f46479e20be350f63bf315d07e5cec85"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchWeb.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchWeb.ts",
+      "sha256": "20fa773f341aaace591dad504aa2bc84797d325f63594b948ab4e4bedb525c67"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/deduplicateObjects.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/deduplicateObjects.ts",
+      "sha256": "f8de5240b8e8584103c2ad42af04fba22be82ff949d7e7eb2f30c0ab5288ed23"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchQueriesRanker.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchQueriesRanker.ts",
+      "sha256": "7d5915c39c7e9a8cb51473e7cd803c2a1a9b8a2ec6a6ef7cf400b67539cd6682"
+    },
+    {
+      "source": "policy-synth/projects/skillsFirst/agents/src/legalResearch/deepResearch/searchQueriesGenerator.ts",
+      "target": "server_api/workflow-packages/skills-first/source/legalResearch/deepResearch/searchQueriesGenerator.ts",
+      "sha256": "d8b871a54580f92fa26edf89df1cebc8e7ffd2a4452a61622787485b0e4061ea"
+    }
+  ],
+  "imageAdaptation": {
+    "profile": "lean development tools with Sysbox and inner Docker",
+    "preserved": "Codex 0.146.0 source, patch behavior, bwrap/V8 checksums and generated protocol",
+    "changes": [
+      "Multi-stage Node 24 Debian image; omit science, GPU, R and browser toolchains",
+      "Compile and run all four copied patch test selections for the musl target",
+      "Suppress the musl wrapper dynamic interpreter and assert static PIE at build time",
+      "Use Your Priorities patch names and binary verification marker"
+    ]
+  }
+}

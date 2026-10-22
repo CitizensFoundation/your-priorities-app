@@ -9,7 +9,7 @@ import log from "../../../utils/loggerTs.js";
 import imageModelConfig from "./imageModelConfig.cjs";
 
 const {
-  defaultOpenAiImageModel,
+  getDefaultImageModelForProvider,
   getDefaultImageQualityForOptions,
   getDefaultImageSizeForOptions,
 } = imageModelConfig;
@@ -24,17 +24,16 @@ export class ChatGptImageGenerator implements IImageGenerator {
   }
 
   /**
-   * Generates an image URL from a prompt using OpenAI's gpt-image-1 model.
-   * The returned link remains live for ~60 minutes – be sure to download
-   * or cache it right away in the calling service.
+   * Generates a PNG data URI using the configured OpenAI GPT Image model.
    */
   async generateImageUrl(
     prompt: string,
     type: YpAiGenerateImageTypes = "logo",
-    options?: YpImageGenerationOptions
+    options?: YpImageGenerationOptions,
   ): Promise<string | undefined> {
     const client = new OpenAI({ apiKey: this.openAiKey });
-    const model = options?.imageModel || defaultOpenAiImageModel;
+    const model =
+      options?.imageModel || getDefaultImageModelForProvider("openai");
 
     const size =
       options?.imageSize ||
@@ -58,13 +57,9 @@ export class ChatGptImageGenerator implements IImageGenerator {
         const res = await client.images.generate({
           model,
           prompt: finalPrompt,
-          quality: quality as "auto" | "low" | "medium" | "high",
+          quality: quality as OpenAI.Images.ImageGenerateParams["quality"],
           n: 1,
-          size: size as
-            | "auto"
-            | "1024x1024"
-            | "1536x1024"
-            | "1024x1536",
+          size: size as OpenAI.Images.ImageGenerateParams["size"],
         });
 
         log.info("res", JSON.stringify(res, null, 2));
@@ -80,7 +75,7 @@ export class ChatGptImageGenerator implements IImageGenerator {
         if (retryCount >= this.maxRetryCount) {
           log.error(
             `ChatGptImageGenerator failed after ${retryCount} attempts`,
-            err
+            err,
           );
           return undefined;
         }

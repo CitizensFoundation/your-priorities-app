@@ -1,0 +1,35 @@
+{
+  "id": "skills-first",
+  "name": "Skills First",
+  "assistantName": "Skills First Assistant",
+  "version": "1.4.1",
+  "runtime": "yp-live-workflow-v1",
+  "sdkVersion": 1,
+  "modelRoles": [
+    "default",
+    "review"
+  ],
+  "instructions": "AGENTS.md",
+  "graph": "graph.json",
+  "entrypoints": [
+    "normalize.ts",
+    "levels.ts",
+    "analysis.ts",
+    "research.ts",
+    "research.ts",
+    "rewrite.ts",
+    "compare.ts",
+    "compare.ts",
+    "export.ts"
+  ],
+  "connectors": [
+    "uploads",
+    "your-priorities",
+    "google-sheets",
+    "google-docs",
+    "google-drive",
+    "firecrawl"
+  ],
+  "inputSchema": "schemas/input.json",
+  "outputSchema": "schemas/output.json"
+}

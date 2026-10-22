@@ -1,0 +1,29 @@
+{
+  "name": "@yrpri/live-workflow-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node build/vm/cli.js",
+    "check": "node build/vm/readiness.js vm"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "8.3.0",
+    "@openai/codex": "0.146.0",
+    "@types/node": "26.6.4",
+    "ajv": "8.20.0",
+    "cheerio": "1.2.0",
+    "csv-parse": "7.0.3",
+    "flesch-kincaid": "2.0.1",
+    "jsonrepair": "3.12.0",
+    "mammoth": "1.13.0",
+    "node-pty": "1.1.0",
+    "pdf-parse": "2.4.5",
+    "simple-git": "4.0.2",
+    "syllable": "5.0.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "ws": "8.22.0",
+    "zod": "4.6.5"
+  }
+}

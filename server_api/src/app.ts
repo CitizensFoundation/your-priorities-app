@@ -133,6 +133,7 @@ import WebSocket, { WebSocketServer } from "ws";
 import { RedisClientType } from "@redis/client";
 import { Op } from "sequelize";
 import { WebSocketsManager } from "./webSockets.js";
+import type { LiveWorkflowsController } from "./liveWorkflows/controller.js";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -154,6 +155,7 @@ export class YourPrioritiesApi {
   public redisClient!: RedisClientType;
   public wsClients: Map<string, WebSocket>;
   public webSocketsManager!: WebSocketsManager;
+  private liveWorkflows?: LiveWorkflowsController;
 
   constructor(port: number | undefined = undefined) {
     log.debug("YourPrioritiesApi constructor");
@@ -685,6 +687,11 @@ export class YourPrioritiesApi {
 
   async initializeEsControllers() {
     log.info("Initializing ES controllers");
+    if (process.env.YP_LIVE_WORKFLOW_ENABLED === "true") {
+      const { createLiveWorkflowsController } = await import("./liveWorkflows/controller.js");
+      this.liveWorkflows = await createLiveWorkflowsController();
+      this.app.use(this.liveWorkflows.path, this.liveWorkflows.router);
+    }
 
     const { AllOurIdeasController } = await import(
       "./controllers/allOurIdeas.js"
@@ -1295,7 +1302,8 @@ export class YourPrioritiesApi {
       this.webSocketsManager = new WebSocketsManager(
         this.wsClients,
         this.redisClient,
-        server
+        server,
+        (socket, request) => this.liveWorkflows?.acceptVmConnection(socket, request) ?? false
       );
       log.debug("WebSocketsManager created");
       await this.webSocketsManager.listen();

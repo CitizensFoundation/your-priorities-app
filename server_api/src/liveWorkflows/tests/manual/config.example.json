@@ -1,0 +1,9 @@
+{
+  "codexModel": "gpt-6-luna",
+  "processingModel": "gpt-6-luna",
+  "codexReasoningEffort": "max",
+  "processingReasoningEffort": "max",
+  "codexServiceTier": "regular",
+  "processingServiceTier": "regular",
+  "trialBudgetMicros": 2000000
+}
