@@ -2,7 +2,6 @@ import { directive } from 'lit/directive.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { AsyncDirective } from 'lit/async-directive.js';
 import { marked } from 'marked';
-import sanitizeHTML from 'sanitize-html';
 import { YpBaseElement } from '../yp-base-element.js';
 marked.setOptions({
   // Enable table support
@@ -68,13 +67,6 @@ export class MarkdownDirective extends AsyncDirective {
 
   private sanitizeHTMLWithOptions(rawHTML: string, options: Options): string {
     return rawHTML;
-    /*   const allowedTags = options.includeImages
-      ? [...sanitizeHTML.defaults.allowedTags, "img"]
-      : sanitizeHTML.defaults.allowedTags;
-    const allowedClasses: sanitizeHTML.IOptions["allowedClasses"] = options.includeCodeBlockClassNames
-      ? { code: ["*"] }
-      : {};
-    return sanitizeHTML(rawHTML, { allowedTags, allowedClasses });*/
   }
 
   private closeCodeBlockIfNeeded(rawMarkdown: string): string {

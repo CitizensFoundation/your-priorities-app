@@ -2,8 +2,36 @@ import { LitElement, css, html, nothing, type PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { marked } from "marked";
-import sanitizeHtml from "sanitize-html";
+import createDOMPurify from "dompurify";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
+
+// Keep workflow-specific hooks separate from other consumers of DOMPurify.
+const messageSanitizer = createDOMPurify();
+messageSanitizer.addHook("uponSanitizeAttribute", (node, attribute) => {
+  if (node.nodeName !== "A") {
+    attribute.keepAttr = false;
+    return;
+  }
+  if (attribute.attrName !== "href") return;
+  // Preserve relative download links, but disallow protocol-relative URLs and
+  // schemes other than HTTP(S) and mailto, including encoded/control characters.
+  const href = attribute.attrValue.replace(/[\u0000-\u0020\u007f-\u009f]/g, "");
+  try {
+    attribute.keepAttr =
+      !/^[\\/]{2}/.test(href) &&
+      ["http:", "https:", "mailto:"].includes(
+        new URL(href, "https://workflow.invalid/").protocol,
+      );
+  } catch {
+    attribute.keepAttr = false;
+  }
+});
+messageSanitizer.addHook("afterSanitizeAttributes", (node) => {
+  if (node.nodeName === "A") {
+    node.setAttribute("target", "_blank");
+    node.setAttribute("rel", "noopener noreferrer");
+  }
+});
 
 @customElement("yp-live-workflow-message")
 export class YpLiveWorkflowMessage extends LitElement {
@@ -225,10 +253,10 @@ export class YpLiveWorkflowMessage extends LitElement {
     this.formatted = undefined;
     if (this.messageRole === "assistant") {
       // Model output may contain untrusted document text. Never render raw HTML or images.
-      this.formatted = sanitizeHtml(
+      this.formatted = messageSanitizer.sanitize(
         marked.parse(this.text, { gfm: true, breaks: true }),
         {
-          allowedTags: [
+          ALLOWED_TAGS: [
             "p",
             "br",
             "strong",
@@ -252,19 +280,9 @@ export class YpLiveWorkflowMessage extends LitElement {
             "th",
             "td",
           ],
-          allowedAttributes: { a: ["href", "title", "target", "rel"] },
-          allowedSchemes: ["http", "https", "mailto"],
-          allowProtocolRelative: false,
-          transformTags: {
-            a: (_tag, attributes) => ({
-              tagName: "a",
-              attribs: {
-                ...attributes,
-                target: "_blank",
-                rel: "noopener noreferrer",
-              },
-            }),
-          },
+          ALLOWED_ATTR: ["href", "title"],
+          ALLOW_ARIA_ATTR: false,
+          ALLOW_DATA_ATTR: false,
         },
       );
     }

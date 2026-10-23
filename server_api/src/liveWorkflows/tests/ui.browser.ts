@@ -886,6 +886,70 @@ test("agent popup preserves edits during live refresh and rejects stale draft sa
     data.requests.filter((r: any) => r.url.endsWith("/graph")),
   ).toHaveLength(0);
 });
+test("chat sanitization preserves Markdown and safe links with ESM dependencies", async ({
+  page,
+  request,
+}) => {
+  await request.post("/__fixture/chat-message", {
+    data: {
+      text: [
+        "## Sanitizer regression",
+        "**Strong** and *emphasis* and ~~removed~~.",
+        "- First record\n- Second record",
+        "```html\n<script>window.chatXss = true</script>\n```",
+        "| Job | Result |\n| --- | --- |\n| Clerk | Reviewed |",
+        '[Download](/api/live-workflows/groups/1/assets/result/download "Results") [Mail](mailto:review@example.com) [Source](https://example.com/source)',
+        '<a href="http://example.com" target="_self" rel="opener" onclick="window.chatXss = true">HTTP source</a>',
+        '<a href="//example.com">Protocol relative</a>',
+        '<a href="\\\\example.com">Backslash relative</a>',
+        '<a href="&#47;&#47;example.com">Encoded relative</a>',
+        '<a href="ftp://example.com/file">FTP</a>',
+        '<a href="data:text/html,unsafe">Data URL</a>',
+        '<a href="jav&#x61;script:alert(1)">Encoded script</a>',
+        '<a href="java&#x09;script:alert(1)">Control character script</a>',
+        '<p id="clobber" class="unexpected" style="display:none" data-secret="value" aria-label="fake">Plain paragraph</p>',
+        '<script>window.chatXss = true</script><img src="/missing" onerror="window.chatXss = true"><iframe src="/missing"></iframe><svg onload="window.chatXss = true"></svg><math><mtext>unexpected math</mtext></math>',
+      ].join("\n\n"),
+    },
+  });
+  const reply = page
+    .locator("yp-live-workflow-message .markdown")
+    .filter({ hasText: "Sanitizer regression" });
+  await expect(reply.locator("h2")).toHaveText("Sanitizer regression");
+  await expect(reply.locator("strong")).toHaveText("Strong");
+  await expect(reply.locator("em")).toHaveText("emphasis");
+  await expect(reply.locator("del")).toHaveText("removed");
+  await expect(reply.locator("li")).toHaveCount(2);
+  await expect(reply.locator("pre code")).toContainText("<script>");
+  await expect(reply.locator("table tbody td")).toHaveText(["Clerk", "Reviewed"]);
+  const safeLinks = [
+    ["Download", "/api/live-workflows/groups/1/assets/result/download"],
+    ["Mail", "mailto:review@example.com"],
+    ["Source", "https://example.com/source"],
+    ["HTTP source", "http://example.com"],
+  ];
+  for (const [name, href] of safeLinks) {
+    const link = reply.getByRole("link", { name, exact: true });
+    await expect(link).toHaveAttribute("href", href);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  }
+  await expect(reply.getByRole("link", { name: "Download" })).toHaveAttribute(
+    "title",
+    "Results",
+  );
+  await expect(reply.locator("a[href]")).toHaveCount(safeLinks.length);
+  await expect(reply.locator("a")).toHaveCount(11);
+  await expect(
+    reply.locator(
+      "script, img, iframe, svg, math, [onclick], [onerror], [id], [class], [style], [data-secret], [aria-label]",
+    ),
+  ).toHaveCount(0);
+  expect(
+    await page.evaluate(() => Reflect.get(globalThis, "chatXss")),
+  ).toBeUndefined();
+});
+
 test("chat uses the signed-in profile and safely formats Codex replies", async ({
   page,
   request,
