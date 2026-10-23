@@ -1,0 +1,23 @@
+[
+    {
+        "id": "preferred-degree",
+        "name": "Community Workshop Coordinator",
+        "text": "Schedule community workshops and keep attendance records. A bachelor's degree is preferred, not required. Applicants may qualify with two years of workshop coordination experience instead of a degree. Keep participant contact details confidential.",
+        "jurisdiction": "New Jersey, USA",
+        "source": "Fictional manual-test record"
+    },
+    {
+        "id": "two-levels",
+        "name": "Records Technician I and II",
+        "text": "Both levels maintain the records inventory and protect confidential records. Records Technician I: No college degree is required. One year of records support experience is required. Records Technician II: A bachelor's degree in information management is required. Three years of records management experience is required. Level II also supervises the records team.",
+        "jurisdiction": "New Jersey, USA",
+        "source": "Fictional manual-test record"
+    },
+    {
+        "id": "missing-evidence",
+        "name": "Archive Assistant",
+        "text": "Label archive boxes, record shelf locations, and help visitors locate public documents. The source description does not state education, experience, or professional license requirements.",
+        "jurisdiction": "New Jersey, USA",
+        "source": "Fictional manual-test record"
+    }
+]

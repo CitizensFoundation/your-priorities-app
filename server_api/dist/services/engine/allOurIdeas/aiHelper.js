@@ -2,12 +2,18 @@ import { OpenAI } from "openai";
 import log from "../../../utils/loggerTs.js";
 export class AiHelper {
     usesMaxCompletionTokens(modelName) {
-        return modelName.startsWith("gpt-5");
+        return (modelName === "chat-latest" ||
+            modelName.startsWith("gpt-5") ||
+            modelName.startsWith("gpt-6"));
     }
     constructor(wsClientSocket = undefined) {
         this.modelName = "gpt-4o";
-        this.answerIdeasModelName = "gpt-5.3-chat-latest";
-        this.analysisModelName = "gpt-5.3-chat-latest";
+        this.answerIdeasModelName = process.env.AOI_ANSWER_IDEAS_MODEL_NAME ||
+            process.env.AOI_MODEL_NAME ||
+            "chat-latest";
+        this.analysisModelName = process.env.AOI_ANALYSIS_MODEL_NAME ||
+            process.env.AOI_MODEL_NAME ||
+            "chat-latest";
         this.maxTokens = 2048;
         this.temperature = 0.7;
         this.cacheExpireTime = 60 * 60;

@@ -1,0 +1,238 @@
+import { readFile, mkdir, writeFile, rename } from "node:fs/promises";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { AsyncLocalStorage } from "node:async_hooks";
+import { resultChunks } from "./resultChunks.js";
+import { createHash } from "node:crypto";
+import { socketRequest, stableRequestId } from "./socketClient.js";
+import { stratifiedSample } from "./inputs.js";
+import { orderedAgents } from "../graph.js";
+export { orderedAgents } from "../graph.js";
+import { modelJson } from "./modelJson.js";
+import { readPackage } from "../packages.js";
+import { packageValidators, validateData } from "./packageContract.js";
+import { stageChunks } from "./stageOutput.js";
+export async function runPackage(options) {
+    const { run } = options;
+    const snapshot = await readPackage(options.root);
+    if (snapshot.hash !== run.sourceHash)
+        throw new Error("Package source no longer matches the approved run");
+    const validators = packageValidators(snapshot.files);
+    validateData(validators.input, options.inputs, "Input");
+    const send = options.request ??
+        ((route, data) => socketRequest(options.socket, route, data));
+    const initial = run.reuse && run.sample
+        ? run.sample.recordIds.map((id) => {
+            const row = options.inputs.find((row) => row &&
+                typeof row === "object" &&
+                !Array.isArray(row) &&
+                row.id === id);
+            if (!row)
+                throw new Error("The reused sample no longer matches the inputs");
+            return row;
+        })
+        : run.mode === "trial"
+            ? stratifiedSample(options.inputs, run.inputCount)
+            : options.inputs;
+    const scope = new AsyncLocalStorage();
+    let current = initial;
+    const sampleRows = initial;
+    const lengths = (rows) => {
+        let min = Infinity, max = 0;
+        for (const row of rows) {
+            const n = JSON.stringify(row).length;
+            min = Math.min(min, n);
+            max = Math.max(max, n);
+        }
+        return [Number.isFinite(min) ? min : 0, max];
+    };
+    const sample = run.mode === "trial"
+        ? {
+            recordIds: sampleRows.map((row, i) => String(row.id ?? `row:${i}`)),
+            populationCount: options.inputs.length,
+            populationLengthRange: lengths(options.inputs),
+            sampleLengthRange: lengths(sampleRows),
+        }
+        : undefined;
+    await mkdir(options.output, { recursive: true });
+    const outputs = new Map();
+    for (const node of orderedAgents(run.graph)) {
+        if (!run.nodeIds.includes(node.id))
+            continue;
+        const checkpointDirectory = path.join(options.output, "checkpoints", node.id);
+        await mkdir(checkpointDirectory, { recursive: true });
+        const fileFor = (key) => path.join(checkpointDirectory, `${createHash("sha256").update(key).digest("hex")}.json`);
+        const requestId = (key) => stableRequestId(`${run.id}:${node.id}:${key}`);
+        const context = {
+            withRecord: (id, work) => scope.run(id, work),
+            nodeId: node.id,
+            mode: run.mode,
+            configuration: {
+                ...node.configuration,
+                concurrency: Math.max(1, Math.min(Number(node.configuration.concurrency ?? 2), run.concurrency ?? 2)),
+            },
+            model: async (key, system, input, role = "default") => {
+                const result = await send("/model", {
+                    id: requestId(key),
+                    ...(scope.getStore() ? { recordId: scope.getStore() } : {}),
+                    nodeId: node.id,
+                    role,
+                    system,
+                    input,
+                });
+                return modelJson(result.content);
+            },
+            connector: (key, binding, operation, input) => send("/connector", {
+                id: requestId(key),
+                ...(scope.getStore() ? { recordId: scope.getStore() } : {}),
+                nodeId: node.id,
+                binding,
+                operation,
+                input,
+            }),
+            progress: async (processed, total, child, failedRecords, message) => {
+                await send("/progress", {
+                    nodeId: node.id,
+                    processed,
+                    total,
+                    child: child ?? null,
+                    ...(failedRecords === undefined ? {} : { failedRecords }),
+                    ...(message === undefined ? {} : { message: message.slice(0, 1000) }),
+                });
+            },
+            checkpoint: async (key, value) => {
+                const file = fileFor(key), temp = `${file}.tmp`;
+                await writeFile(temp, JSON.stringify(value), {
+                    mode: 0o600,
+                    flush: true,
+                });
+                await rename(temp, file);
+            },
+            restore: async (key) => {
+                try {
+                    return JSON.parse(await readFile(fileFor(key), "utf8"));
+                }
+                catch (error) {
+                    if (error.code === "ENOENT")
+                        return undefined;
+                    throw error;
+                }
+            },
+            artifact: async (name, content, contentType) => {
+                await send("/artifact", {
+                    nodeId: node.id,
+                    name,
+                    content,
+                    contentType,
+                    id: requestId(`artifact:${name}`),
+                });
+            },
+            cancelled: async () => (await send("/status", {})).status !== "running",
+        };
+        if (await context.cancelled())
+            throw new Error("Run is paused or cancelled");
+        // For a branch, each agent receives the actual outputs of its nearest enabled upstream agents.
+        const ancestors = (id, seen = new Set()) => {
+            if (seen.has(id))
+                return [];
+            seen.add(id);
+            return run.graph.edges
+                .filter((e) => e.target === id)
+                .flatMap((e) => outputs.has(e.source) ? [e.source] : ancestors(e.source, seen));
+        };
+        const upstream = [...new Set(ancestors(node.id))];
+        const input = upstream.length > 1
+            ? Object.fromEntries(upstream.map((id) => [id, outputs.get(id)]))
+            : upstream.length === 1
+                ? outputs.get(upstream[0])
+                : initial;
+        await send("/progress", {
+            nodeId: node.id,
+            processed: 0,
+            total: Array.isArray(input) ? input.length : run.inputCount,
+            upstream,
+            ...(outputs.size === 0 && sample ? { sample } : {}),
+        });
+        const reused = run.reuse?.nodeIds.includes(node.id);
+        const completed = reused
+            ? options.reusedOutputs?.[node.id]
+            : await context.restore("__node_output");
+        if (reused && completed === undefined)
+            throw new Error(`Missing verified reused output for ${node.id}`);
+        if (completed !== undefined)
+            current = completed;
+        else {
+            const target = path.resolve(options.root, node.entrypoint);
+            if (!target.startsWith(`${path.resolve(options.root)}/source/`))
+                throw new Error("Unsafe agent entrypoint");
+            const module = (await import(pathToFileURL(target).href));
+            if (typeof module.run !== "function")
+                throw new Error(`Agent ${node.id} must export run(context,input)`);
+            current = await module.run(context, input);
+            await context.checkpoint("__node_output", current);
+        }
+        outputs.set(node.id, current);
+        let stageOutput;
+        if (run.nodeFingerprints && !reused) {
+            const saved = stageChunks(current);
+            const assetIds = [];
+            for (const [part, content] of saved.chunks.entries()) {
+                const asset = await send("/artifact", {
+                    nodeId: node.id,
+                    id: requestId(`stage:${part}`),
+                    name: `stage-${node.id}-${part}.json.part`,
+                    content,
+                    contentType: "text/plain",
+                    stagePart: { part, parts: saved.chunks.length },
+                });
+                assetIds.push(asset.id);
+            }
+            stageOutput = { checksum: saved.checksum, assetIds };
+        }
+        await send("/progress", {
+            nodeId: node.id,
+            processed: Array.isArray(input) ? input.length : run.inputCount,
+            total: Array.isArray(input) ? input.length : run.inputCount,
+            outputCount: Array.isArray(current) ? current.length : undefined,
+            complete: true,
+            ...(stageOutput ? { stageOutput } : {}),
+            ...(reused
+                ? {
+                    message: `Reused completed output from ${run.mode} ${run.reuse.runId.slice(0, 8)} · no new calls`,
+                }
+                : {}),
+        });
+    }
+    if (orderedAgents(run.graph).every((n) => run.nodeIds.includes(n.id)))
+        validateData(validators.output, current, "Output");
+    const lastNode = [...outputs.keys()].at(-1);
+    if (lastNode) {
+        const chunks = resultChunks(current);
+        for (const [part, content] of chunks.entries()) {
+            await send("/artifact", {
+                nodeId: lastNode,
+                id: stableRequestId(`${run.id}:results:${part}`),
+                name: `results-${part}.json`,
+                content,
+                contentType: "application/json",
+                resultPart: part,
+            });
+        }
+    }
+    await writeFile(path.join(options.output, "completed.json"), JSON.stringify({ runId: run.id, nodeIds: [...outputs.keys()] }), { flush: true });
+}
+if (process.argv[1] &&
+    import.meta.url === pathToFileURL(process.argv[1]).href) {
+    const run = JSON.parse(await readFile("/run-data/run.json", "utf8"));
+    const inputs = JSON.parse(await readFile("/run-data/inputs.json", "utf8"));
+    await runPackage({
+        root: "/package",
+        output: "/output",
+        socket: "/gateway/control.sock",
+        run,
+        inputs,
+        reusedOutputs: run.reuse
+            ? JSON.parse(await readFile("/run-data/reused.json", "utf8"))
+            : undefined,
+    });
+}

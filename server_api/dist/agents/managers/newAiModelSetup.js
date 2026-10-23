@@ -12,6 +12,7 @@ import { PsAgentConnectorClass } from "@policysynth/agents/dbModels/agentConnect
 import { PsAgentRegistry } from "@policysynth/agents/dbModels/agentRegistry.js";
 import { PsAiModelSize, PsAiModelType, } from "@policysynth/agents/aiModelTypes.js";
 import log from "../../utils/loggerTs.js";
+import { openAiGpt6Models } from "./openAiGpt6Models.js";
 // List of models that need to be initialized/associated
 const psModels = {
     PsAgentClass,
@@ -1510,105 +1511,22 @@ export class NewAiModelSetup {
                 log.debug(`OpenAI model already exists: ${gpt56Model.name}`);
             }
         }
-        const openAiGpt6Models = [
-            {
-                name: "GPT-6 Astra",
-                model: "gpt-6-astra",
-                modelSize: PsAiModelSize.Large,
-                inputPrice: 10,
-                cachedInputPrice: 1,
-                outputPrice: 50,
-            },
-            {
-                name: "GPT-6 Sol",
-                model: "gpt-6-sol",
-                modelSize: PsAiModelSize.Large,
-                inputPrice: 2,
-                cachedInputPrice: 0.2,
-                outputPrice: 10,
-            },
-            {
-                // https://developers.openai.com/api/docs/models/gpt-6.1-sol
-                name: "GPT-6.1 Sol",
-                model: "gpt-6.1-sol",
-                modelSize: PsAiModelSize.Large,
-                inputPrice: 2,
-                cachedInputPrice: 0.1,
-                outputPrice: 10,
-            },
-            {
-                name: "GPT-6 Luna",
-                model: "gpt-6-luna",
-                modelSize: PsAiModelSize.Small,
-                inputPrice: 0.1,
-                cachedInputPrice: 0.01,
-                outputPrice: 0.5,
-            },
-        ];
-        const gpt6ServiceTiers = [
-            { nameSuffix: "", modelSuffix: "", priceMultiplier: 1 },
-            {
-                nameSuffix: " Priority",
-                modelSuffix: "-priority",
-                inferenceType: "priority",
-                priceMultiplier: 2,
-            },
-            {
-                nameSuffix: " Flex",
-                modelSuffix: "-flex",
-                inferenceType: "flex",
-                priceMultiplier: 0.5,
-            },
-        ];
-        for (const gpt6Model of openAiGpt6Models) {
-            for (const tier of gpt6ServiceTiers) {
-                const name = `${gpt6Model.name}${tier.nameSuffix}`;
-                const existingModel = await PsAiModel.findOne({ where: { name } });
-                const inputPrice = gpt6Model.inputPrice * tier.priceMultiplier;
-                const cachedInputPrice = gpt6Model.cachedInputPrice * tier.priceMultiplier;
-                const outputPrice = gpt6Model.outputPrice * tier.priceMultiplier;
-                const configuration = {
-                    type: PsAiModelType.TextReasoning,
-                    modelSize: gpt6Model.modelSize,
-                    provider: "openai",
-                    ...(tier.inferenceType
-                        ? { inferenceType: tier.inferenceType }
-                        : {}),
-                    prices: {
-                        costPerThousandWebSearches: 10,
-                        costInTokensPerMillion: inputPrice,
-                        costOutTokensPerMillion: outputPrice,
-                        costInCachedContextTokensPerMillion: cachedInputPrice,
-                        cacheWriteInputCostMultiplier: 1.25,
-                        longContextTokenThreshold: 272000,
-                        longContextCostInTokensPerMillion: inputPrice * 2,
-                        longContextCostInCachedContextTokensPerMillion: cachedInputPrice * 2,
-                        longContextCostOutTokensPerMillion: outputPrice * 1.5,
-                        regionalProcessingMargin: 10,
-                        currency: "USD",
-                    },
-                    maxTokensOut: 128000,
-                    maxContextTokens: 1050000,
-                    defaultTemperature: 0.7,
-                    model: `${gpt6Model.model}${tier.modelSuffix}`,
-                    ...(tier.inferenceType ? { apiModel: gpt6Model.model } : {}),
-                    active: true,
-                };
-                if (!existingModel) {
-                    await PsAiModel.create({
-                        name,
-                        organization_id: 1,
-                        user_id: userId,
-                        configuration,
-                    });
-                    log.info(`Created OpenAI model: ${name}`);
-                }
-                else {
-                    existingModel.set("configuration", configuration);
-                    existingModel.changed("configuration", true);
-                    await existingModel.save();
-                    log.debug(`OpenAI model already exists: ${name}`);
-                }
+        for (const { name, configuration } of openAiGpt6Models()) {
+            const existingModel = await PsAiModel.findOne({ where: { name } });
+            if (!existingModel) {
+                await PsAiModel.create({
+                    name,
+                    organization_id: 1,
+                    user_id: userId,
+                    configuration,
+                });
+                log.info(`Created OpenAI model: ${name}`);
+            }
+            else {
+                existingModel.set("configuration", configuration);
+                existingModel.changed("configuration", true);
+                await existingModel.save();
+                log.debug(`OpenAI model already exists: ${name}`);
             }
         }
     }

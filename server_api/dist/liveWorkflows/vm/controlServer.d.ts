@@ -1,0 +1,35 @@
+import { ArtifactCollector } from "./artifacts/artifactCollector.js";
+import { CodexAdapter } from "./codex/codexAdapter.js";
+import { type VmSessionEventSink } from "./commands/sessionStartCommandHandler.js";
+import { VmCommandRouter, type VmCommandHandler } from "./commands/vmCommandRouter.js";
+import { DatasetManager } from "./datasets/datasetManager.js";
+import { DockerRuntimeManager } from "./docker/dockerRuntimeManager.js";
+import { MetricsReporter } from "./metrics/metricsReporter.js";
+import { AuxTerminalBridge } from "./terminal/auxTerminalBridge.js";
+import type { WorkspaceManager } from "./workspace/workspaceManager.js";
+export type VmAgentControlServer = {
+    baseUrl: string;
+    close(): Promise<void>;
+};
+export type StartVmAgentControlServerOptions = {
+    host: string;
+    port: number;
+    token: string;
+    baseUrl?: string;
+    workspaceManager: WorkspaceManager;
+    workspaceRoot?: string;
+    datasetsHotRoot?: string;
+    codexAdapter?: CodexAdapter;
+    datasetManager?: DatasetManager;
+    artifactCollector?: ArtifactCollector;
+    dockerRuntime?: DockerRuntimeManager;
+    auxTerminalBridge?: AuxTerminalBridge;
+    archiveRoot?: string;
+    metricsReporter?: MetricsReporter;
+    sessionEventSink?: VmSessionEventSink;
+    commandHandlers?: VmCommandHandler[];
+    commandRouter?: VmCommandRouter;
+    now?: () => Date;
+};
+export declare function startVmAgentControlServer(options: StartVmAgentControlServerOptions): Promise<VmAgentControlServer>;
+export declare function createDefaultVmCommandRouter(workspaceManager: WorkspaceManager, codexAdapter: CodexAdapter, dockerRuntime: DockerRuntimeManager, artifactCollector: ArtifactCollector, auxTerminalBridge: AuxTerminalBridge, sessionEventSink?: VmSessionEventSink, commandHandlers?: VmCommandHandler[], datasetManager?: DatasetManager, workspaceRoot?: string): VmCommandRouter;

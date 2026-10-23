@@ -1,0 +1,16 @@
+[
+    {
+        "id": "manual-library-assistant",
+        "name": "Library Program Assistant",
+        "text": "Help residents register for library programs. Schedule rooms, maintain attendance spreadsheets, and prepare accessible event notices. Explain program information clearly and respectfully to visitors. Work with colleagues to resolve scheduling problems. A bachelor's degree is preferred; equivalent experience from employment, volunteering, or community activities is welcome. Applicants should demonstrate organization, basic spreadsheet skills, and clear communication. Training on the library's booking system is provided.",
+        "jurisdiction": "New Jersey, USA",
+        "source": "Fictional job description for the Skills First manual test; not a real vacancy."
+    },
+    {
+        "id": "manual-it-support",
+        "name": "IT Support Technician",
+        "text": "Help staff troubleshoot laptops, printers, and common office software. Record support requests and explain solutions in plain language. Set up user accounts using approved security procedures and escalate access issues to the security team. Maintain an accurate equipment inventory. An associate degree in computing is preferred. Equivalent practical experience, including self-directed projects, is accepted. Applicants must demonstrate systematic troubleshooting, careful record keeping, and respectful customer service. Role-specific training is provided.",
+        "jurisdiction": "New Jersey, USA",
+        "source": "Fictional job description for the Skills First manual test; not a real vacancy."
+    }
+]

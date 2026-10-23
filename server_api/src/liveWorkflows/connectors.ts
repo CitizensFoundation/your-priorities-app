@@ -1,4 +1,5 @@
-import { JWT } from "google-auth-library";
+// Share the Google APIs clients' auth class; OpenAI's peer uses Google Auth 10.
+import { JWT } from "googleapis-common";
 import { sheets_v4 } from "googleapis/build/src/apis/sheets/v4.js";
 import { docs_v1 } from "googleapis/build/src/apis/docs/v1.js";
 import { drive_v3 } from "googleapis/build/src/apis/drive/v3.js";

@@ -13,7 +13,9 @@ export class ExplainAnswersAssistant extends YpBaseChatBot {
             tls: tlsOptions,
         });
         super(wsClientId, wsClients, redisConnection, `${YpBaseChatBot.redisMemoryKeyPrefix}-${uuidv4()}-explain-answers-assistant`);
-        this.llmModel = "gpt-5.3-chat-latest";
+        this.llmModel = process.env.AOI_EXPLAIN_ANSWERS_MODEL_NAME ||
+            process.env.AOI_MODEL_NAME ||
+            "chat-latest";
         this.maxTokens = 4000;
         this.temperature = 0.8;
         this.explainConversation = async (chatLog) => {

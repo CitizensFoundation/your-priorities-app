@@ -2,7 +2,7 @@
 import { OpenAI } from "openai";
 import log from "../../../utils/loggerTs.js";
 import imageModelConfig from "./imageModelConfig.cjs";
-const { defaultOpenAiImageModel, getDefaultImageQualityForOptions, getDefaultImageSizeForOptions, } = imageModelConfig;
+const { getDefaultImageModelForProvider, getDefaultImageQualityForOptions, getDefaultImageSizeForOptions, } = imageModelConfig;
 export class ChatGptImageGenerator {
     constructor(openAiKey) {
         this.maxRetryCount = 3;
@@ -10,13 +10,11 @@ export class ChatGptImageGenerator {
         this.openAiKey = openAiKey;
     }
     /**
-     * Generates an image URL from a prompt using OpenAI's gpt-image-1 model.
-     * The returned link remains live for ~60 minutes – be sure to download
-     * or cache it right away in the calling service.
+     * Generates a PNG data URI using the configured OpenAI GPT Image model.
      */
     async generateImageUrl(prompt, type = "logo", options) {
         const client = new OpenAI({ apiKey: this.openAiKey });
-        const model = options?.imageModel || defaultOpenAiImageModel;
+        const model = options?.imageModel || getDefaultImageModelForProvider("openai");
         const size = options?.imageSize ||
             getDefaultImageSizeForOptions("openai", model, type) ||
             "1536x1024";

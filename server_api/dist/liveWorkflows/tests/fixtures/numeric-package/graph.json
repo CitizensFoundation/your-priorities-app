@@ -1,0 +1,1 @@
+{ "nodes": [{ "id": "sum", "kind": "agent", "label": "Sum values", "entrypoint": "source/sum.ts", "enabled": true, "models": {}, "configuration": {}, "position": { "x": 0, "y": 0 } }], "edges": [] }

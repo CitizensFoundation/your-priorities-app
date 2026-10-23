@@ -1,4 +1,4 @@
-export const defaultOpenAiImageModel: "gpt-image-2";
+export const defaultOpenAiImageModel: "gpt-image-2.5-flare";
 export const defaultImagenImageModel: "imagen-4.0-generate-001";
 export const defaultGptImage2LandscapeSize: "2048x1152";
 export const defaultAoiIconProfileName: "aoiIcon";
@@ -6,18 +6,17 @@ export const defaultRegularAiImageProfileName: "regularAiImage";
 export const imageProviders: string[];
 export namespace imageGenerationProfiles {
     namespace aoiIcon {
-        let imageProvider: string;
-        let imageModel: string;
-        let imageSize: string;
-        let imageQuality: string;
-        let imageType: string;
-        let generationContexts: string[];
+        export let imageProvider: string;
+        export { defaultOpenAiImageModel as imageModel };
+        export let imageSize: string;
+        export let imageQuality: string;
+        export let imageType: string;
+        export let generationContexts: string[];
     }
     namespace regularAiImage {
         let imageProvider_1: string;
         export { imageProvider_1 as imageProvider };
-        let imageModel_1: string;
-        export { imageModel_1 as imageModel };
+        export { defaultOpenAiImageModel as imageModel };
         export { defaultGptImage2LandscapeSize as imageSize };
         let imageQuality_1: string;
         export { imageQuality_1 as imageQuality };
@@ -28,7 +27,7 @@ export namespace imageGenerationProfiles {
     }
 }
 export const openAiGptImageModels: string[];
-export const openAiDalleImageModels: string[];
+export const openAiDalleImageModels: any[];
 export const imagenImageModels: string[];
 export const imagenAspectRatios: string[];
 export const imagenResolutionAspectRatios: {

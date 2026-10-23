@@ -1,0 +1,24 @@
+[
+    {
+        "export_ref": "HR-104",
+        "vacancy_card": {
+            "display_heading": "Museum Visitor Assistant",
+            "day_to_day": ["Welcome visitors and explain museum opening hours.", "Record daily visitor counts."],
+            "entry_rules": ["No college degree is required.", "Six months of customer service experience is required."],
+            "nice_to_have": ["Experience working in a museum is preferred, not required."]
+        },
+        "location_note": "New Jersey, USA",
+        "export_metadata": { "batch": "example-47", "internal_sort": 8 }
+    },
+    {
+        "export_ref": "HR-009",
+        "export_metadata": { "internal_sort": 2, "batch": "example-47" },
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "entry_rules": ["A bachelor's degree in accounting is required.", "Two years of accounting experience is required."],
+            "nice_to_have": ["Experience with nonprofit accounts is preferred, not required."],
+            "display_heading": "Accounts Analyst",
+            "day_to_day": ["Reconcile monthly accounts and prepare financial reports.", "Protect confidential financial records."]
+        }
+    }
+]

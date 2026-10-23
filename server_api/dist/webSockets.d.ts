@@ -1,4 +1,4 @@
-import { Server as HttpServer } from "http";
+import { IncomingMessage, Server as HttpServer } from "http";
 import { RedisClientType } from "@redis/client";
 import { WebSocketServer, WebSocket } from "ws";
 /**
@@ -8,11 +8,12 @@ import { WebSocketServer, WebSocket } from "ws";
  *    so that only one server "owns" a given clientId at a time.
  */
 export declare class WebSocketsManager {
+    private readonly acceptConnection?;
     wsClients: Map<string, WebSocket>;
     ws: WebSocketServer;
     redisClient: RedisClientType;
     private pingInterval;
-    constructor(wsClients: Map<string, WebSocket>, redisClient: RedisClientType, server: HttpServer);
+    constructor(wsClients: Map<string, WebSocket>, redisClient: RedisClientType, server: HttpServer, acceptConnection?: ((socket: WebSocket, request: IncomingMessage) => boolean) | undefined);
     /**
      * Main entry point to start listening for connections
      * and initialize Redis pub/sub, heartbeat, etc.

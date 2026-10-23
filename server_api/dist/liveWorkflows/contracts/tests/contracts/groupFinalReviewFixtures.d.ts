@@ -1,0 +1,5 @@
+import { type GroupFinalReviewEditorialPromptTemplateReferences, type GroupFinalReviewPromptTemplateReferences, type GroupFinalReviewReviewerRunningResult, type GroupFinalReviewReviewerSessionStartingResult } from "../../index.js";
+export declare function groupFinalReviewEditorialPromptTemplateReferencesFixture(): GroupFinalReviewEditorialPromptTemplateReferences;
+export declare function groupFinalReviewPromptTemplateReferencesFixture(): GroupFinalReviewPromptTemplateReferences;
+export declare function groupFinalReviewReviewerSessionStartingFixture(overrides?: Partial<Omit<GroupFinalReviewReviewerSessionStartingResult, "phase">>): GroupFinalReviewReviewerSessionStartingResult;
+export declare function groupFinalReviewReviewerRunningFixture(overrides?: Partial<Omit<GroupFinalReviewReviewerRunningResult, "phase">>): GroupFinalReviewReviewerRunningResult;

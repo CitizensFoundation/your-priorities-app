@@ -1,0 +1,169 @@
+[
+    {
+        "export_ref": "BATCH-101",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Museum Visitor Assistant",
+            "day_to_day": [
+                "Welcome visitors and explain museum opening hours.",
+                "Record daily visitor counts."
+            ],
+            "entry_rules": [
+                "No college degree is required.",
+                "Six months of customer service experience is required."
+            ],
+            "nice_to_have": [
+                "Experience working in a museum is preferred, not required."
+            ]
+        }
+    },
+    {
+        "export_ref": "BATCH-102",
+        "vacancy_card": {
+            "nice_to_have": [
+                "Experience with nonprofit accounts is preferred, not required."
+            ],
+            "entry_rules": [
+                "A bachelor's degree in accounting is required.",
+                "Two years of accounting experience is required."
+            ],
+            "display_heading": "Accounts Analyst",
+            "day_to_day": [
+                "Reconcile monthly accounts and prepare financial reports.",
+                "Protect confidential financial records."
+            ]
+        },
+        "location_note": "New Jersey, USA"
+    },
+    {
+        "export_ref": "BATCH-103",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Workshop Coordinator",
+            "day_to_day": [
+                "Arrange public workshops and maintain the booking calendar.",
+                "Explain registration steps to participants."
+            ],
+            "entry_rules": [
+                "Applicants may qualify with two years of workshop coordination experience instead of a degree."
+            ],
+            "nice_to_have": ["A bachelor's degree is preferred, not required."]
+        }
+    },
+    {
+        "export_ref": "BATCH-104",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Records Clerk",
+            "day_to_day": [
+                "Maintain the records inventory and protect confidential records."
+            ],
+            "entry_rules": [
+                "A high school diploma or equivalent is required.",
+                "One year of office support experience is required."
+            ],
+            "nice_to_have": []
+        }
+    },
+    {
+        "export_ref": "BATCH-105",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Community Data Assistant",
+            "day_to_day": [
+                "Enter survey responses into the project database.",
+                "Check records for missing fields and report errors to the supervisor.",
+                "This posting does not state education, experience or licensing requirements."
+            ],
+            "entry_rules": [],
+            "nice_to_have": []
+        }
+    },
+    {
+        "export_ref": "BATCH-106",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Facilities Electrician",
+            "day_to_day": [
+                "Inspect building electrical equipment and record maintenance work.",
+                "Follow the written site safety procedures."
+            ],
+            "entry_rules": [
+                "An active New Jersey electrical contractor license is required.",
+                "This posting does not specify a college degree requirement."
+            ],
+            "nice_to_have": [
+                "Experience maintaining public buildings is preferred, not required."
+            ]
+        }
+    },
+    {
+        "export_ref": "BATCH-107",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Library Program Assistant",
+            "day_to_day": [
+                "Prepare materials for library events.",
+                "Help visitors find registration information and keep attendance records."
+            ],
+            "entry_rules": [
+                "No college degree is required.",
+                "Applicants must demonstrate clear written communication in a work sample."
+            ],
+            "nice_to_have": [
+                "Volunteer experience organizing community events is welcomed."
+            ]
+        }
+    },
+    {
+        "export_ref": "BATCH-108",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "IT Support Technician",
+            "day_to_day": [
+                "Respond to help desk tickets and document troubleshooting steps.",
+                "Help colleagues set up approved office software."
+            ],
+            "entry_rules": [
+                "Applicants must have either an associate degree in information technology or two years of help desk experience."
+            ],
+            "nice_to_have": ["A support certification is preferred, not required."]
+        }
+    },
+    {
+        "export_ref": "BATCH-109",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Research Librarian",
+            "day_to_day": [
+                "Answer research enquiries and maintain the reference collection.",
+                "Explain how to evaluate public information sources."
+            ],
+            "entry_rules": [
+                "A master's degree in library science is required.",
+                "One year of reference library experience is required."
+            ],
+            "nice_to_have": [
+                "Experience with local history collections is preferred, not required."
+            ]
+        }
+    },
+    {
+        "export_ref": "BATCH-110",
+        "location_note": "New Jersey, USA",
+        "vacancy_card": {
+            "display_heading": "Parks Maintenance Worker",
+            "day_to_day": [
+                "Maintain footpaths and collect litter in public parks.",
+                "Report damaged equipment and keep a daily work log."
+            ],
+            "entry_rules": [
+                "No college degree is required.",
+                "Six months of grounds maintenance experience is required."
+            ],
+            "nice_to_have": [
+                "Experience using hand tools is preferred, not required."
+            ]
+        }
+    }
+]

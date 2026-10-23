@@ -34,6 +34,7 @@ interface DeclaredYpModels {
     PointQuality: ModelStatic<PointQualityInstance>;
     PointRevision: ModelStatic<PointRevisionInstance>;
     Post: ModelStatic<PostInstance>;
+    PostRevision: ModelStatic<ModelInstance<YpPostRevision>>;
     PostStatusChange: ModelStatic<PostStatusChangeInstance>;
     Organization: ModelStatic<OrganizationInstance>;
     Rating: ModelStatic<RatingInstance>;

@@ -1,0 +1,58 @@
+{
+    "generatedFrom": "@openai/codex@0.146.0",
+    "generatedCommand": "codex app-server generate-json-schema --out <dir>",
+    "transport": "stdio://",
+    "schemaFiles": [
+        "codex_app_server_protocol.schemas.json",
+        "codex_app_server_protocol.v2.schemas.json"
+    ],
+    "selectedClientRequests": [
+        "initialize",
+        "account/login/start",
+        "account/login/cancel",
+        "account/read",
+        "account/rateLimits/read",
+        "thread/start",
+        "thread/resume",
+        "thread/settings/update",
+        "thread/fork",
+        "thread/inject_items",
+        "turn/start",
+        "turn/steer",
+        "turn/interrupt",
+        "review/start"
+    ],
+    "selectedClientNotifications": [
+        "initialized"
+    ],
+    "selectedServerNotifications": [
+        "thread/started",
+        "thread/status/changed",
+        "thread/closed",
+        "turn/started",
+        "turn/plan/updated",
+        "turn/diff/updated",
+        "item/started",
+        "item/completed",
+        "item/agentMessage/delta",
+        "item/commandExecution/outputDelta",
+        "item/commandExecution/terminalInteraction",
+        "item/fileChange/outputDelta",
+        "serverRequest/resolved",
+        "turn/completed",
+        "thread/tokenUsage/updated",
+        "account/rateLimits/updated",
+        "error"
+    ],
+    "selectedServerRequests": [
+        "item/commandExecution/requestApproval",
+        "item/fileChange/requestApproval",
+        "item/permissions/requestApproval",
+        "item/tool/requestUserInput"
+    ],
+    "syntheticLiveWorkflowNotifications": [
+        "yp-live-workflow/codexChatGptAuthInvalid",
+        "yp-live-workflow/usageRouting/switched",
+        "yp-live-workflow/usageRouting/unavailable"
+    ]
+}

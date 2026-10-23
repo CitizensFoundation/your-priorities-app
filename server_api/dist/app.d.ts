@@ -22,6 +22,7 @@ export declare class YourPrioritiesApi {
     redisClient: RedisClientType;
     wsClients: Map<string, WebSocket>;
     webSocketsManager: WebSocketsManager;
+    private liveWorkflows?;
     constructor(port?: number | undefined);
     initialize(): Promise<void>;
     setupNewWebAppVersionHandling(): void;

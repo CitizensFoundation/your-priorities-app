@@ -8,7 +8,8 @@ import log from "./utils/loggerTs.js";
  *    so that only one server "owns" a given clientId at a time.
  */
 export class WebSocketsManager {
-    constructor(wsClients, redisClient, server) {
+    constructor(wsClients, redisClient, server, acceptConnection) {
+        this.acceptConnection = acceptConnection;
         // Ping/pong heartbeat interval
         this.pingInterval = null;
         this.wsClients = wsClients;
@@ -24,6 +25,8 @@ export class WebSocketsManager {
         this.startPingCheck();
         // Convert to async so we can 'await' inside
         this.ws.on("connection", async (ws, req) => {
+            if (this.acceptConnection?.(ws, req))
+                return;
             // 1) Extract ?clientId= from the URL or generate a new one
             const url = new URL(req.url ?? "", "http://dummy");
             let clientId = url.searchParams.get("clientId") || "";

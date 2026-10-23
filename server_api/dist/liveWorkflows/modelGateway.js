@@ -1,0 +1,208 @@
+import { z } from "zod";
+import { partitionModelInputUsage } from "@policysynth/agents/base/modelUsageAccounting.js";
+import { BudgetService } from "./budget.js";
+import { generateOpenAiProcessing } from "./openAiProcessing.js";
+import { ConflictError, ValidationError } from "./services/errors.js";
+import { json, tokenCost, fingerprint } from "./schemas.js";
+import { processingModelDefinitions, } from "./modelCatalog.js";
+export const modelRequestSchema = z
+    .object({
+    id: z.string().uuid(),
+    runId: z.string().uuid(),
+    recordId: z.string().min(1).max(600).optional(),
+    nodeId: z.string().min(1).max(128),
+    role: z.string().max(80).default("default"),
+    system: z.string().max(250000),
+    input: json,
+})
+    .strict();
+function requireCompleteResult(result) {
+    if (result &&
+        typeof result === "object" &&
+        !Array.isArray(result) &&
+        result.incompleteReason)
+        throw new ConflictError(result.incompleteReason === "max_output_tokens"
+            ? "The processing model reached its output-token limit. Usage was recorded; the response is incomplete. Increase token headroom and request a new trial; this request will not be repeated."
+            : "The processing model did not complete its response. Usage was recorded. Review the saved request before starting a new trial.", "model_response_incomplete");
+    return result;
+}
+export class ModelGateway {
+    constructor(store, definitionJson, generate = generateWithProvider) {
+        this.store = store;
+        this.generate = generate;
+        this.definitions = processingModelDefinitions(definitionJson);
+        this.budget = new BudgetService(store);
+    }
+    catalog() {
+        return this.definitions.map(({ keyEnv, ...model }) => model);
+    }
+    async call(groupId, value) {
+        const request = modelRequestSchema.parse(value);
+        const run = await this.store.transact(groupId, (tx) => tx.get("run", request.runId));
+        const node = run?.graph.nodes.find((n) => n.id === request.nodeId);
+        if (!run || !node)
+            throw new ValidationError("Unknown run node");
+        const modelId = node.models[request.role] ?? node.models.default;
+        const model = this.definitions.find((m) => m.id === modelId);
+        if (!model)
+            throw new ConflictError("Select a processing model with configured prices before running");
+        if (node.reasoningEffort &&
+            (model.provider !== "openai" || !model.reasoning))
+            throw new ValidationError("An explicit reasoning effort requires an OpenAI reasoning model for every selected role");
+        const effectiveModel = node.reasoningEffort
+            ? { ...model, reasoningEffort: node.reasoningEffort }
+            : model;
+        if (this.generate === generateWithProvider)
+            validateProviderEnvironment(model);
+        const approvedModels = await this.store.transact(groupId, (tx) => tx.get("run-models", request.runId));
+        const publicModel = this.catalog().find((m) => m.id === model.id);
+        if (!approvedModels ||
+            fingerprint(approvedModels.find((m) => m.id === model.id) ?? null) !==
+                fingerprint(publicModel))
+            throw new ConflictError("Model pricing changed after approval; create a new estimate");
+        const input = JSON.stringify(request.input);
+        // A conservative byte bound for text tokenization, plus role/protocol overhead.
+        // No built-in tools, media, hidden context, or unbounded output are enabled.
+        const inputBound = Buffer.byteLength(input + request.system, "utf8") + 1024;
+        if (inputBound + model.maxOutputTokens > model.contextTokens)
+            throw new ValidationError("Input exceeds this model's configured context bound; split the record first");
+        const maximumMicros = tokenCost(inputBound, Math.max(model.inputMicrosPerMillion, model.cachedInputMicrosPerMillion ?? model.inputMicrosPerMillion, model.cacheWriteInputMicrosPerMillion ?? model.inputMicrosPerMillion)) + tokenCost(model.maxOutputTokens, model.outputMicrosPerMillion);
+        const { reservation, cached } = await this.budget.reserve(groupId, {
+            ...request,
+            maximumMicros,
+            request: { ...request, model: effectiveModel },
+            description: `Model ${model.id}`,
+        });
+        if (cached)
+            return requireCompleteResult(reservation.result ?? null);
+        try {
+            const reply = await this.generate(effectiveModel, request.system, input);
+            const usage = partitionModelInputUsage(reply.tokensIn, reply.cachedInTokens, reply.cacheWriteInTokens);
+            const prices = model.inferenceType === "priority" &&
+                reply.appliedServiceTier === "default"
+                ? (model.standardPrices ?? model)
+                : model;
+            const actualMicros = tokenCost(usage.tokenInCount, prices.inputMicrosPerMillion) +
+                tokenCost(usage.tokenInCachedContextCount, prices.cachedInputMicrosPerMillion ?? prices.inputMicrosPerMillion) +
+                tokenCost(usage.tokenInCacheWriteCount, prices.cacheWriteInputMicrosPerMillion ??
+                    prices.inputMicrosPerMillion) +
+                tokenCost(reply.tokensOut, prices.outputMicrosPerMillion);
+            // Bill even when generated JSON is invalid; the package can explicitly repair it.
+            const result = {
+                content: reply.content,
+                tokensIn: reply.tokensIn,
+                tokensOut: reply.tokensOut,
+                costMicros: actualMicros,
+                requestedServiceTier: model.inferenceType ?? "default",
+                appliedServiceTier: reply.appliedServiceTier ?? null,
+                ...(reply.providerResponseId
+                    ? { providerResponseId: reply.providerResponseId }
+                    : {}),
+                ...(reply.incompleteReason
+                    ? { incompleteReason: reply.incompleteReason }
+                    : {}),
+            };
+            await this.budget.settle(groupId, request.id, actualMicros, result);
+            return requireCompleteResult(result);
+        }
+        catch (error) {
+            await this.budget.unknown(groupId, request.id);
+            throw error;
+        }
+    }
+}
+/** Policy Synth's application-wide overrides must not change an approved billing identity. */
+export function validateProviderEnvironment(model, env = process.env) {
+    if (!env[model.keyEnv])
+        throw new ConflictError(`Processing credential is not configured for ${model.provider}`);
+    if (model.provider !== "openai")
+        return;
+    if ((env.AZURE_OPENAI_KEY && env.AZURE_ENDPOINT && env.AZURE_DEPLOYMENT_NAME) ||
+        (env.PS_AGENT_OVERRIDE_OPENAI_API_KEY &&
+            env.PS_AGENT_OVERRIDE_OPENAI_API_KEY !== env[model.keyEnv]) ||
+        env.OPENAI_BASE_URL ||
+        env.OPENAI_ENFORCE_EU_REGION === "true")
+        throw new ConflictError("Global OpenAI transport or credential overrides conflict with workflow pricing. Run the workflow API with its configured provider credentials and endpoint.");
+}
+async function generateWithProvider(model, system, input) {
+    const apiKey = process.env[model.keyEnv];
+    if (!apiKey)
+        throw new Error(`Processing credential is not configured for ${model.provider}`);
+    if (model.provider === "openai")
+        return generateOpenAiProcessing(model, apiKey, system, input);
+    // Single HTTP attempts: SDK automatic retries would bypass individual reservations.
+    if (model.provider === "anthropic") {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            signal: AbortSignal.timeout(180000),
+            headers: {
+                "content-type": "application/json",
+                "x-api-key": apiKey,
+                "anthropic-version": "2023-06-01",
+            },
+            body: JSON.stringify({
+                model: model.id,
+                max_tokens: model.maxOutputTokens,
+                system,
+                messages: [{ role: "user", content: input }],
+            }),
+        });
+        if (!response.ok)
+            throw new Error(`Anthropic request failed (${response.status})`);
+        const reply = z
+            .object({
+            content: z.array(z.object({ type: z.string(), text: z.string().optional() })),
+            usage: z.object({
+                input_tokens: z.number().int(),
+                output_tokens: z.number().int(),
+            }),
+        })
+            .parse(await response.json());
+        return {
+            content: reply.content.map((c) => c.text ?? "").join(""),
+            tokensIn: reply.usage.input_tokens,
+            tokensOut: reply.usage.output_tokens,
+        };
+    }
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model.id)}:generateContent`, {
+        method: "POST",
+        signal: AbortSignal.timeout(180000),
+        headers: {
+            "content-type": "application/json",
+            "x-goog-api-key": apiKey,
+        },
+        body: JSON.stringify({
+            systemInstruction: { parts: [{ text: system }] },
+            contents: [{ role: "user", parts: [{ text: input }] }],
+            generationConfig: {
+                maxOutputTokens: model.maxOutputTokens,
+                responseMimeType: "application/json",
+            },
+        }),
+    });
+    if (!response.ok)
+        throw new Error(`Google model request failed (${response.status})`);
+    const reply = z
+        .object({
+        candidates: z.array(z.object({
+            content: z.object({
+                parts: z.array(z.object({ text: z.string().optional() })),
+            }),
+        })),
+        usageMetadata: z.object({
+            promptTokenCount: z.number().int(),
+            candidatesTokenCount: z.number().int(),
+            thoughtsTokenCount: z.number().int().optional(),
+            cachedContentTokenCount: z.number().int().optional(),
+        }),
+    })
+        .parse(await response.json());
+    return {
+        content: reply.candidates[0]?.content.parts.map((p) => p.text ?? "").join("") ??
+            "",
+        tokensIn: reply.usageMetadata.promptTokenCount,
+        tokensOut: reply.usageMetadata.candidatesTokenCount +
+            (reply.usageMetadata.thoughtsTokenCount ?? 0),
+        cachedInTokens: reply.usageMetadata.cachedContentTokenCount,
+    };
+}

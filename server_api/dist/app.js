@@ -607,6 +607,11 @@ export class YourPrioritiesApi {
     }
     async initializeEsControllers() {
         log.info("Initializing ES controllers");
+        if (process.env.YP_LIVE_WORKFLOW_ENABLED === "true") {
+            const { createLiveWorkflowsController } = await import("./liveWorkflows/controller.js");
+            this.liveWorkflows = await createLiveWorkflowsController();
+            this.app.use(this.liveWorkflows.path, this.liveWorkflows.router);
+        }
         const { AllOurIdeasController } = await import("./controllers/allOurIdeas.js");
         log.info("Initializing ES controllers 2 " + this.wsClients);
         const aoiController = new AllOurIdeasController(this.wsClients);
@@ -1023,7 +1028,7 @@ export class YourPrioritiesApi {
             log.info("Starting Your Priorities Platform API Server");
             const server = await this.setupHttpsServer();
             log.debug("Server created");
-            this.webSocketsManager = new WebSocketsManager(this.wsClients, this.redisClient, server);
+            this.webSocketsManager = new WebSocketsManager(this.wsClients, this.redisClient, server, (socket, request) => this.liveWorkflows?.acceptVmConnection(socket, request) ?? false);
             log.debug("WebSocketsManager created");
             await this.webSocketsManager.listen();
         }

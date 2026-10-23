@@ -27,11 +27,13 @@ const withEnv = (updates, fn) => {
         }
     }
 };
-test("image generation options default to OpenAI gpt-image-2", () => {
-    const options = normalizeImageGenerationOptions(undefined, undefined);
-    assert.deepEqual(options, {
-        imageProvider: "openai",
-        imageModel: "gpt-image-2",
+test("image generation options default to OpenAI GPT Image 2.5 Flare", () => {
+    withEnv({ OPENAI_IMAGE_MODEL_NAME: undefined }, () => {
+        const options = normalizeImageGenerationOptions(undefined, undefined);
+        assert.deepEqual(options, {
+            imageProvider: "openai",
+            imageModel: "gpt-image-2.5-flare",
+        });
     });
 });
 test("image generation options default Imagen to Imagen 4 GA", () => {
@@ -71,29 +73,34 @@ test("image generation options allow gpt-image-2 custom size and quality", () =>
         imageQuality: "low",
     });
 });
-test("image generation profile maps AOI icons to low quality GPT Image 2", () => {
-    const options = normalizeImageGenerationProfileOptions("aoiIcon", "aoiIconAdmin", "icon");
-    assert.deepEqual(options, {
-        imageProvider: "openai",
-        imageModel: "gpt-image-2",
-        imageSize: "1024x1024",
-        imageQuality: "low",
-        imageGenerationProfile: "aoiIcon",
+test("image generation profile maps AOI icons to low quality GPT Image 2.5 Flare", () => {
+    withEnv({ OPENAI_IMAGE_MODEL_NAME: undefined }, () => {
+        const options = normalizeImageGenerationProfileOptions("aoiIcon", "aoiIconAdmin", "icon");
+        assert.deepEqual(options, {
+            imageProvider: "openai",
+            imageModel: "gpt-image-2.5-flare",
+            imageSize: "1024x1024",
+            imageQuality: "low",
+            imageGenerationProfile: "aoiIcon",
+        });
     });
 });
-test("image generation profile maps regular images to medium landscape GPT Image 2", () => {
-    const options = normalizeImageGenerationProfileOptions("regularAiImage", "regularAiImage", "logo");
-    assert.deepEqual(options, {
-        imageProvider: "openai",
-        imageModel: "gpt-image-2",
-        imageSize: "2048x1152",
-        imageQuality: "medium",
-        imageGenerationProfile: "regularAiImage",
+test("image generation profile maps regular images to medium landscape GPT Image 2.5 Flare", () => {
+    withEnv({ OPENAI_IMAGE_MODEL_NAME: undefined }, () => {
+        const options = normalizeImageGenerationProfileOptions("regularAiImage", "regularAiImage", "logo");
+        assert.deepEqual(options, {
+            imageProvider: "openai",
+            imageModel: "gpt-image-2.5-flare",
+            imageSize: "2048x1152",
+            imageQuality: "medium",
+            imageGenerationProfile: "regularAiImage",
+        });
     });
 });
 test("image generation profiles reject context and type mismatches", () => {
     assert.equal(normalizeImageGenerationProfileOptions("regularAiImage", "aoiIconAdmin", "icon").error, "Image generation profile regularAiImage is not allowed for aoiIconAdmin");
-    assert.equal(normalizeImageGenerationProfileOptions("aoiIcon", "aoiIconAdmin", "logo").error, "Image generation profile aoiIcon only supports icon images");
+    assert.equal(normalizeImageGenerationProfileOptions("aoiIcon", "aoiIconAdmin", "logo")
+        .error, "Image generation profile aoiIcon only supports icon images");
 });
 test("image generation options reject invalid gpt-image-2 custom sizes", () => {
     const nonMultipleSizeOptions = normalizeImageGenerationOptions("openai", "gpt-image-2", "2049x1152", "high");
@@ -103,25 +110,52 @@ test("image generation options reject invalid gpt-image-2 custom sizes", () => {
     const tooLargeOptions = normalizeImageGenerationOptions("openai", "gpt-image-2", "3840x3840", "high");
     assert.equal(tooLargeOptions.error, "Unsupported image size for gpt-image-2: 3840x3840");
 });
-test("image generation options still allow DALL-E 3 through OpenAI", () => {
-    const options = normalizeImageGenerationOptions("openai", "dall-e-3");
-    assert.deepEqual(options, {
-        imageProvider: "openai",
-        imageModel: "dall-e-3",
+test("image generation options reject retired OpenAI image models", () => {
+    for (const model of ["dall-e-3", "gpt-image-1"]) {
+        assert.equal(normalizeImageGenerationOptions("openai", model).error, `Unsupported image model for openai: ${model}`);
+    }
+});
+test("GPT Image 2.5 variants accept custom sizes and extended quality", () => {
+    for (const model of ["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"]) {
+        for (const quality of ["low", "medium", "high", "xhigh", "max"]) {
+            assert.deepEqual(normalizeImageGenerationOptions("openai", model, "2048x1152", quality), {
+                imageProvider: "openai",
+                imageModel: model,
+                imageSize: "2048x1152",
+                imageQuality: quality,
+            });
+        }
+        assert.equal(normalizeImageGenerationOptions("openai", model, "2049x1152").error, `Unsupported image size for ${model}: 2049x1152`);
+    }
+    assert.equal(normalizeImageGenerationOptions("openai", "gpt-image-2", undefined, "max")
+        .error, "Unsupported image quality for gpt-image-2: max");
+});
+test("OpenAI image model env override reaches default options and both profiles", () => {
+    withEnv({ OPENAI_IMAGE_MODEL_NAME: "gpt-image-2.5-sunburst" }, () => {
+        assert.equal(normalizeImageGenerationOptions(undefined, undefined).imageModel, "gpt-image-2.5-sunburst");
+        for (const context of ["aoiIconPublic", "aoiIconAdmin", "regularAiImage"]) {
+            const options = normalizeImageGenerationProfileOptions(undefined, context);
+            assert.equal(options.error, undefined);
+            assert.equal(options.imageModel, "gpt-image-2.5-sunburst");
+            assert.equal(options.imageQuality, context === "regularAiImage" ? "medium" : "low");
+            assert.equal(options.imageSize, context === "regularAiImage" ? "2048x1152" : "1024x1024");
+        }
+        assert.equal(normalizeImageGenerationOptions("openai", "gpt-image-2").imageModel, "gpt-image-2");
     });
 });
-test("image generation options allow DALL-E 3 size and quality", () => {
-    const options = normalizeImageGenerationOptions("openai", "dall-e-3", "1792x1024", "hd");
-    assert.deepEqual(options, {
-        imageProvider: "openai",
-        imageModel: "dall-e-3",
-        imageSize: "1792x1024",
-        imageQuality: "hd",
+test("image model env overrides adapt profile sizes for older GPT Image models", () => {
+    withEnv({ OPENAI_IMAGE_MODEL_NAME: "gpt-image-1.5" }, () => {
+        const options = normalizeImageGenerationProfileOptions(undefined, "regularAiImage");
+        assert.equal(options.error, undefined);
+        assert.equal(options.imageModel, "gpt-image-1.5");
+        assert.equal(options.imageSize, "1536x1024");
     });
 });
-test("image generation options reject GPT quality for DALL-E 3", () => {
-    const options = normalizeImageGenerationOptions("openai", "dall-e-3", "1792x1024", "high");
-    assert.equal(options.error, "Unsupported image quality for dall-e-3: high");
+test("invalid image model env overrides fail validation", () => {
+    withEnv({ OPENAI_IMAGE_MODEL_NAME: "not-a-model" }, () => {
+        assert.equal(normalizeImageGenerationOptions(undefined, undefined).error, "Unsupported image model for openai: not-a-model");
+        assert.equal(normalizeImageGenerationProfileOptions(undefined, "aoiIconAdmin").error, "Unsupported image model for openai: not-a-model");
+    });
 });
 test("image generation options reject unsupported OpenAI image models", () => {
     const options = normalizeImageGenerationOptions("openai", "not-a-model");
@@ -134,6 +168,13 @@ test("image generation options allow configured Azure OpenAI deployment", () => 
             imageProvider: "azureOpenai",
             imageModel: "dalle-deployment",
         });
+        assert.deepEqual(normalizeImageGenerationOptions("azureOpenai", "dalle-deployment", "1792x1024", "hd"), {
+            imageProvider: "azureOpenai",
+            imageModel: "dalle-deployment",
+            imageSize: "1792x1024",
+            imageQuality: "hd",
+        });
+        assert.equal(normalizeImageGenerationOptions("azureOpenai", "dalle-deployment", "1792x1024", "high").error, "Unsupported image quality for dalle-deployment: high");
     });
 });
 test("image generation options reject unconfigured Flux models", () => {
