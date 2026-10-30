@@ -21,7 +21,7 @@ test("reasoning effort reaches the bounded provider adapter from the immutable r
   const { store } = await fixture();
   const model = {
     ...builtinProcessingModels("fast").find(
-      (item) => item.id === "gpt-6-luna",
+      (item) => item.id === "gpt-6-luna-priority",
     )!,
     keyEnv: "YP_TEST_REASONING_KEY",
   };
@@ -49,6 +49,7 @@ test("reasoning effort reaches the bounded provider adapter from the immutable r
     async (url: string | URL | Request, init?: RequestInit) => {
       assert.equal(String(url), "https://api.openai.com/v1/responses");
       const body = JSON.parse(String(init?.body));
+      assert.equal(body.model, "gpt-6-luna");
       efforts.push(body.reasoning.effort);
       assert.equal(body.max_output_tokens, 65536);
       assert.equal(body.service_tier, "priority");
@@ -129,7 +130,7 @@ test("the actual OpenAI transport makes only one attempt on an ambiguous connect
 test("a priority reservation settles standard prices when the provider reports a downgrade", async () => {
   const { store } = await fixture();
   const model = builtinProcessingModels("fast").find(
-    (item) => item.id === "gpt-6-luna",
+    (item) => item.id === "gpt-6-luna-priority",
   )!;
   const gateway = new ModelGateway(
     store,

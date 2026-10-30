@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { WorkflowService } from "../workflowService.js";
 import { ModelGateway } from "../modelGateway.js";
+import { builtinProcessingModels } from "../modelCatalog.js";
 import type { ConnectorService } from "../connectors.js";
 import type { VmBrokerRegistry } from "../services/vmBrokerRegistry.js";
 import { HostDirectory, SecretBox } from "../secrets.js";
@@ -735,6 +736,59 @@ test("model changes apply to future runs while prior selections, default reasoni
     [savedModel],
   );
 });
+test("changing OpenAI service tiers requires a fresh trial and freezes each run's priced variant", async () => {
+  const f = await approvalFixture();
+  f.service.models.definitions.push(...builtinProcessingModels("all"));
+  const selectTier = async (id: string) => {
+    const state = await f.store.transact(1, async (tx) => tx.state);
+    const graph = structuredClone(state.graph);
+    graph.nodes[0].models.default = id;
+    await f.service.updateGraph(1, f.actor, graph, state.revision);
+  };
+  await selectTier("gpt-6-luna-flex");
+  const flexTrial = await f.finishTrial();
+  const approvedFlex = await f.service.draftRun(1, f.actor, "bulk", [
+    f.asset.id,
+  ]);
+  const savedFlex = structuredClone(flexTrial.modelCatalog![0]);
+  assert.equal(savedFlex.id, "gpt-6-luna-flex");
+  assert.equal(savedFlex.apiModel, "gpt-6-luna");
+  assert.equal(savedFlex.inferenceType, "flex");
+  assert.equal(savedFlex.outputMicrosPerMillion, 250_000);
+
+  await selectTier("gpt-6-luna-priority");
+  await assert.rejects(
+    f.service.draftRun(1, f.actor, "bulk", [f.asset.id]),
+    /successful trial/,
+  );
+  await assert.rejects(
+    f.service.startRun(1, f.actor, approvedFlex.id, 20_000_000),
+    /changed/,
+  );
+  const priorityTrial = await f.finishTrial();
+  assert.equal(priorityTrial.modelCatalog![0].id, "gpt-6-luna-priority");
+  assert.equal(priorityTrial.modelCatalog![0].apiModel, "gpt-6-luna");
+  assert.equal(priorityTrial.modelCatalog![0].inferenceType, "priority");
+  assert.equal(
+    priorityTrial.modelCatalog![0].outputMicrosPerMillion,
+    1_000_000,
+  );
+  assert.notEqual(priorityTrial.fingerprint, flexTrial.fingerprint);
+  const bulk = await f.service.draftRun(1, f.actor, "bulk", [f.asset.id]);
+  assert.equal(bulk.estimate?.trialRunId, priorityTrial.id);
+
+  const snapshot = await f.service.snapshot(1, f.actor);
+  assert.deepEqual(
+    snapshot.runs.find((run) => run.id === flexTrial.id)!.modelCatalog,
+    [savedFlex],
+  );
+  assert.equal(
+    snapshot.runs.find((run) => run.id === flexTrial.id)!.graph.nodes[0].models
+      .default,
+    savedFlex.id,
+  );
+});
+
 test("new input versions require a fresh trial while existing approvals retain the original inputs", async () => {
   const f = await approvalFixture();
   await f.finishTrial();

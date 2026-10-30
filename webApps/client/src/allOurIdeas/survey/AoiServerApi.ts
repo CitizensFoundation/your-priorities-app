@@ -30,12 +30,15 @@ export class AoiServerApi extends YpServerApi {
     wsClientId: string,
     analysisIndex: number,
     analysisTypeIndex: number,
-    languageName: string
-  ): AoiAnalysisResponse {
+    languageName: string,
+    requestId?: string
+  ): Promise<AoiAnalysisResponse | null> {
+    const query = new URLSearchParams({ languageName });
+    if (requestId) query.set("requestId", requestId);
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${groupId}/questions/${wsClientId}/${analysisIndex}/${analysisTypeIndex}/analysis?languageName=${languageName}`
-    ) as unknown as AoiAnalysisResponse;
+        `/${groupId}/questions/${wsClientId}/${analysisIndex}/${analysisTypeIndex}/analysis?${query}`
+    ) as Promise<AoiAnalysisResponse | null>;
   }
 
   async checkLogin() {

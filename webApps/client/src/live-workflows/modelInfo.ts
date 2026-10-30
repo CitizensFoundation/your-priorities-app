@@ -6,6 +6,13 @@ export function modelReasoning(node: YpWorkflowNode, model?: YpWorkflowModel) {
   return model.reasoning ? "Provider default" : "No reasoning setting";
 }
 
+export function modelServiceTier(model?: YpWorkflowModel) {
+  if (!model) return "Tier not recorded";
+  if (model.inferenceType === "flex") return "Flex";
+  if (model.inferenceType === "priority") return "Priority";
+  return "Standard";
+}
+
 export function agentModelRoles(node: YpWorkflowNode, roles: string[] = []) {
   return [...new Set(["default", ...roles, ...Object.keys(node.models)])];
 }

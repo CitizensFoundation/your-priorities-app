@@ -6,6 +6,7 @@ import {
   agentModelRoles,
   modelReasoning,
   modelRoleLabel,
+  modelServiceTier,
 } from "./modelInfo.js";
 import "./yp-live-workflow-graph.js";
 import "./yp-live-workflow-admin.js";
@@ -1637,15 +1638,24 @@ ${this.quota ||
                               (${editor.runId ? "saved model" : "unavailable"})
                             </option>`
                           : nothing}
-                        ${catalog.map(
-                          (item) =>
-                            html`<option
-                              value=${item.id}
-                              ?selected=${id === item.id}
-                            >
-                              ${item.label} · ${item.id}
-                            </option>`,
-                        )}
+                        ${["Standard", "Flex", "Priority"].map((tier) => {
+                          const models = catalog.filter(
+                            (item) => modelServiceTier(item) === tier,
+                          );
+                          return models.length
+                            ? html`<optgroup label=${tier}>
+                                ${models.map(
+                                  (item) =>
+                                    html`<option
+                                      value=${item.id}
+                                      ?selected=${id === item.id}
+                                    >
+                                      ${item.label} · ${item.id}
+                                    </option>`,
+                                )}
+                              </optgroup>`
+                            : nothing;
+                        })}
                       </select></label
                     >
                     <span class="model-note"
@@ -1657,14 +1667,20 @@ ${this.quota ||
                       ? html`<span class="model-note"
                           >${dollars(model.inputMicrosPerMillion)} input /
                           ${dollars(model.outputMicrosPerMillion)} output per 1M
-                          tokens${model.inferenceType
-                            ? ` · ${model.inferenceType}`
-                            : ""}</span
+                          tokens · ${modelServiceTier(model)}</span
                         >`
                       : nothing}
                   </div>`;
                 })}
               </div>
+              ${catalog.some((model) => model.inferenceType)
+                ? html`<small>
+                    OpenAI Flex costs less but may take longer or be temporarily
+                    unavailable. Priority prioritizes requests at a higher
+                    price. Flex requests are never automatically retried at
+                    Standard prices.
+                  </small>`
+                : nothing}
               <label
                 >Agent reasoning effort<select
                   name="reasoningEffort"
@@ -1869,7 +1885,8 @@ ${this.quota ||
                                 ? html`<small
                                     >${dollars(model.inputMicrosPerMillion)} in
                                     / ${dollars(model.outputMicrosPerMillion)}
-                                    out per 1M · ${model.priceVersion}</small
+                                    out per 1M · ${modelServiceTier(model)} ·
+                                    ${model.priceVersion}</small
                                   >`
                                 : nothing}
                             </div>`;

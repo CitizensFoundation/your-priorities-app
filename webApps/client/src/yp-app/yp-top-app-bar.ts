@@ -76,6 +76,10 @@ export class YpTopAppBar extends YpBaseElement {
   private _boundOnMyDomainsLoaded = this._onMyDomainsLoaded.bind(this);
 
   get computedBreadcrumbs() {
+    if (this.hideBreadcrumbs) {
+      return [];
+    }
+
     const domain = this.domain;
     if (!domain) {
       return this.breadcrumbs;

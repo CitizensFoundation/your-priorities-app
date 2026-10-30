@@ -146,6 +146,11 @@ test("assistant controls discover capabilities, save independently, and persist 
   await expect(model).toHaveValue("test-codex");
   await expect(effort).toHaveValue("max");
   await expect(speed).toHaveValue("regular");
+  expect(
+    await speed
+      .locator("option")
+      .evaluateAll((options) => options.map((option) => option.value)),
+  ).toEqual(["regular", "fast"]);
   await controls
     .getByRole("button", { name: "Load models", exact: true })
     .click();
@@ -777,6 +782,147 @@ test("agent model popup edits only the draft and keeps model history across runs
   await dialog.getByRole("button", { name: "Close agent settings" }).click();
   await expect(analyze).toBeFocused();
 });
+test("agent model choices expose seeded Flex and Priority prices and persist each role independently", async ({
+  page,
+  request,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  const analyze = page
+    .locator("yp-live-workflow-graph")
+    .getByRole("group", { name: "Live workflow agents and data connections" })
+    .getByRole("button", { name: "Analyze requirements", exact: true });
+  await page
+    .getByRole("combobox", { name: "Display", exact: true })
+    .selectOption("draft");
+  await analyze.click();
+  const dialog = page.getByRole("dialog", {
+    name: "Analyze requirements",
+    exact: true,
+  });
+  const processing = dialog.getByRole("combobox", {
+    name: "Processing model",
+    exact: true,
+  });
+  const review = dialog.getByRole("combobox", {
+    name: "Review model",
+    exact: true,
+  });
+  expect(
+    await processing
+      .locator("optgroup")
+      .evaluateAll((groups) => groups.map((group) => group.label)),
+  ).toEqual(["Standard", "Flex", "Priority"]);
+  await expect(processing.locator("optgroup[label=Flex] option")).toHaveCount(
+    4,
+  );
+  await expect(
+    processing.locator("optgroup[label=Priority] option"),
+  ).toHaveCount(4);
+  await processing.selectOption("gpt-6-luna-flex");
+  await review.selectOption("gpt-6-luna-priority");
+  await expect(dialog).toContainText(
+    "$0.05 input / $0.25 output per 1M tokens · Flex",
+  );
+  await expect(dialog).toContainText(
+    "$0.20 input / $1.00 output per 1M tokens · Priority",
+  );
+  await expect(dialog).toContainText(
+    "never automatically retried at Standard prices",
+  );
+  await page.screenshot({
+    path: "/tmp/yp-workflow-agent-service-tiers.png",
+    fullPage: true,
+  });
+  await dialog
+    .getByRole("button", { name: "Save agent settings", exact: true })
+    .click();
+  await expect(dialog).toHaveCount(0);
+  const { snapshot } = await (await request.get("/__fixture")).json();
+  expect(
+    snapshot.workspace.graph.nodes.find(
+      (node: YpWorkflowNode) => node.id === "analyze",
+    ).models,
+  ).toEqual({ default: "gpt-6-luna-flex", review: "gpt-6-luna-priority" });
+  expect(
+    snapshot.runs[0].graph.nodes.find(
+      (node: YpWorkflowNode) => node.id === "analyze",
+    ).models.default,
+  ).toBe("fixture-model");
+  expect(snapshot.workspace.config.codexModel).toBe("test-codex");
+  await page.reload();
+  await page
+    .getByRole("combobox", { name: "Display", exact: true })
+    .selectOption("draft");
+  await analyze.click();
+  await expect(processing).toHaveValue("gpt-6-luna-flex");
+  await expect(review).toHaveValue("gpt-6-luna-priority");
+  const history = dialog.getByRole("region", { name: "Model history" });
+  await history.getByRole("button", { name: /33333333/ }).click();
+  await expect(processing).toHaveValue("fixture-model");
+  await expect(processing).toBeDisabled();
+  await expect(history).toContainText("Standard");
+});
+
+test("saved run inspectors and results show the original model tiers and prices", async ({
+  page,
+}) => {
+  await page.route("**/api/live-workflows/groups/1", async (route) => {
+    const response = await route.fetch();
+    const snapshot = (await response.json()) as YpWorkflowSnapshot;
+    const run = snapshot.runs[0];
+    run.graph.nodes.find((node) => node.id === "analyze")!.models = {
+      default: "gpt-6-luna-flex",
+      review: "gpt-6-luna-priority",
+    };
+    const models = snapshot.models.filter(
+      (model) => model.apiModel === "gpt-6-luna",
+    );
+    run.modelCatalog!.push(...structuredClone(models));
+    for (const model of models) model.outputMicrosPerMillion = 99_000_000;
+    await route.fulfill({ response, json: snapshot });
+  });
+  await page.reload();
+  await page
+    .locator("yp-live-workflow-graph")
+    .getByRole("group", { name: "Live workflow agents and data connections" })
+    .getByRole("button", { name: "Analyze requirements", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog", {
+    name: "Analyze requirements",
+    exact: true,
+  });
+  await expect(
+    dialog.getByRole("combobox", { name: "Processing model", exact: true }),
+  ).toBeDisabled();
+  await expect(dialog).toContainText(
+    "$0.05 input / $0.25 output per 1M tokens · Flex",
+  );
+  await expect(dialog).toContainText(
+    "$0.20 input / $1.00 output per 1M tokens · Priority",
+  );
+  const history = dialog
+    .getByRole("region", { name: "Model history" })
+    .getByRole("row")
+    .filter({ hasText: "33333333" });
+  await expect(history).toContainText("Flex");
+  await expect(history).toContainText("Priority");
+  await expect(history).not.toContainText("99.00");
+  await dialog.getByRole("button", { name: "Close agent settings" }).click();
+  await page.getByRole("button", { name: "Results", exact: true }).click();
+  await page.getByText("Models by agent", { exact: true }).click();
+  const rows = page.locator("yp-live-workflow-results").getByRole("row");
+  await expect(
+    rows
+      .filter({ hasText: "gpt-6-luna-flex" })
+      .getByRole("cell", { name: "Flex", exact: true }),
+  ).toBeVisible();
+  await expect(
+    rows
+      .filter({ hasText: "gpt-6-luna-priority" })
+      .getByRole("cell", { name: "Priority", exact: true }),
+  ).toBeVisible();
+});
+
 test("bulk reuse controls keep the original inputs and require a separate estimate and approval", async ({
   page,
 }) => {
@@ -921,7 +1067,10 @@ test("chat sanitization preserves Markdown and safe links with ESM dependencies"
   await expect(reply.locator("del")).toHaveText("removed");
   await expect(reply.locator("li")).toHaveCount(2);
   await expect(reply.locator("pre code")).toContainText("<script>");
-  await expect(reply.locator("table tbody td")).toHaveText(["Clerk", "Reviewed"]);
+  await expect(reply.locator("table tbody td")).toHaveText([
+    "Clerk",
+    "Reviewed",
+  ]);
   const safeLinks = [
     ["Download", "/api/live-workflows/groups/1/assets/result/download"],
     ["Mail", "mailto:review@example.com"],

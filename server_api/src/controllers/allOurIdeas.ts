@@ -765,6 +765,18 @@ export class AllOurIdeasController {
     );
 
     try {
+      const requestId = req.query.requestId;
+      if (
+        requestId !== undefined &&
+        (typeof requestId !== "string" || !/^[A-Za-z0-9_-]{1,64}$/.test(requestId))
+      ) {
+        res.status(400).send("Invalid analysis request ID");
+        return;
+      }
+      const streamToken = `aoi-analysis-${analysisIndex}-${analysisTypeIndex}${
+        requestId ? `-${requestId}` : ""
+      }`;
+
       const group = await Group.findOne({ where: { id: groupId } });
       if (!group) {
         res.status(404).send("Group not found");
@@ -779,33 +791,6 @@ export class AllOurIdeasController {
 
       const questionId = aoiConfig.earl.question_id;
 
-      const showParams = {
-        with_prompt: "true",
-        with_appearance: "true",
-        with_visitor_stats: "true",
-        visitor_identifier: req.session.id,
-      };
-
-      const questionResponse = await fetch(
-        `${PAIRWISE_API_HOST}/questions/${questionId}.json?${new URLSearchParams(
-          showParams
-        ).toString()}`,
-        {
-          method: "GET",
-          headers: defaultHeader,
-        }
-      );
-
-      if (!questionResponse.ok) {
-        throw new Error("Failed to fetch question for analysis");
-      }
-
-      const question = (await questionResponse.json()) as AoiQuestionData;
-
-      // Additional logic adapted from Ruby for fetching and sorting choices
-      log.info(
-        `@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`
-      );
       const analysisConfig =
         group.configuration.allOurIdeas.earl.configuration.analysis_config;
       log.info(`@analysisConfig is ${analysisConfig}.`);
@@ -824,11 +809,24 @@ export class AllOurIdeasController {
       const perPage = Math.abs(ideasIdsRange);
       log.info(`Per page: ${perPage}`);
 
-      const totalActiveChoices =
-        question.choices_count - question.inactive_choices_count;
-
-      const offset =
-        ideasIdsRange < 0 ? Math.max(totalActiveChoices - perPage, 0) : 0;
+      let offset = 0;
+      if (ideasIdsRange < 0) {
+        // Only bottom-answer analyses need counts to calculate their offset.
+        // Fetch metadata without creating a voting prompt or visitor appearance.
+        const questionResponse = await fetch(
+          `${PAIRWISE_API_HOST}/questions/${questionId}.json`,
+          { method: "GET", headers: defaultHeader }
+        );
+        if (!questionResponse.ok) {
+          throw new Error(
+            `Pairwise question ${questionId} fetch for analysis failed: HTTP ${questionResponse.status} ${questionResponse.statusText}`
+          );
+        }
+        const question = (await questionResponse.json()) as AoiQuestionData;
+        const totalActiveChoices =
+          question.choices_count - question.inactive_choices_count;
+        offset = Math.max(totalActiveChoices - perPage, 0);
+      }
       log.info(`Offset: ${offset}`);
 
       const choicesResponse = await fetch(
@@ -837,6 +835,11 @@ export class AllOurIdeasController {
           headers: defaultAuthHeader,
         }
       );
+      if (!choicesResponse.ok) {
+        throw new Error(
+          `Pairwise choices for question ${questionId} fetch for analysis failed: HTTP ${choicesResponse.status} ${choicesResponse.statusText}`
+        );
+      }
       const choices = (await choicesResponse.json()) as AoiChoiceData[];
 
       for (const choice of choices) {
@@ -895,7 +898,7 @@ export class AllOurIdeasController {
           usedLanguageName,
           topOrBottomText,
           analysisType.label,
-          `aoi-analysis-${analysisIndex}-${analysisTypeIndex}`
+          streamToken
         );
       }
 

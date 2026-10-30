@@ -278,11 +278,12 @@ interface YpWorkflowStageOutput {
 }
 interface YpWorkflowModel {
   id: string;
+  apiModel?: string;
   label: string;
   provider: "openai" | "anthropic" | "google";
   reasoning?: boolean;
   reasoningEffort?: YpWorkflowReasoningEffort;
-  inferenceType?: "priority";
+  inferenceType?: "priority" | "flex";
   standardPrices?: Pick<
     YpWorkflowModel,
     | "inputMicrosPerMillion"

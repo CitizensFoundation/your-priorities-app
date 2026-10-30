@@ -64,8 +64,6 @@ export abstract class YpStreamingLlmScrolling extends YpStreamingLlmBase {
       setTimeout(() => {
         this.programmaticScroll = false;
       }, 100);
-    } else {
-      console.error("User scrolled, not scrolling down");
     }
   }
 

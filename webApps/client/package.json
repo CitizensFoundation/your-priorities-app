@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.136",
+  "version": "9.0.138",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
@@ -109,7 +109,8 @@
   },
   "scripts": {
     "copyInLocalAgents": "cp -R ../../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
-    "prepublishOnly": "npm pack && node repack",
+    "build:package": "tsc",
+    "prepack": "npm run build:package && npm run test:esm && npm run test:aoi && npm run test:navigation && npm run test:release",
     "publish_live": "npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm pack && node repack && node publish.js http://localhost:4873",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js && npm run analyze -- --exclude dist && rimraf ../../server_api/webAppsDist/client/dist && cp -r dist/ ../../server_api/webAppsDist/client/",
@@ -125,7 +126,10 @@
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
     "serve": "wds --watch",
     "serve:prod": "MODE=prod npm run serve",
-    "test": "npm run test:esm && npm run test:dev && npm run test:prod",
+    "test": "npm run test:esm && npm run test:aoi && npm run test:navigation && npm run test:release && npm run test:dev && npm run test:prod",
+    "test:release": "node --experimental-strip-types --test --test-isolation=none test/release-lifecycle.test.ts",
+    "test:navigation": "node --experimental-strip-types --test --test-isolation=none test/top-app-bar-navigation.test.ts",
+    "test:aoi": "node --experimental-strip-types --test --test-isolation=none test/aoi-streaming-analysis.test.ts",
     "test:esm": "node --experimental-strip-types --test --test-isolation=none test/live-workflow-esm.test.ts",
     "test:dev": "wtr",
     "test:watch": "wtr --watch",

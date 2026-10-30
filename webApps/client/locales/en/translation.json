@@ -196,6 +196,7 @@
   "questionName": "Question to ask",
   "closeAndGenerateIconInBackground": "Close and generate icon in background",
   "rankedOrderInfo": "These are the rank-ordered responses based on public voting",
+  "Retry": "Retry",
   "aiAnalysisInfo": "This is an automatically generated analysis of answers and votes by AI",
   "socialMediaCreateInfo": "Name, description and logo image will be used when sharing on social media",
   "generateAnswersInfo": "Questions require a minimum of 3 characters. Provide at least 6 seed answers below, one per line, with a 140-character limit each.",

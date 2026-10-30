@@ -15,6 +15,7 @@ import { workspace, run as runFixture } from "./memoryStore.js";
 import { skillsFirstPackage } from "../packages.js";
 import { packageManifest } from "../runner/packageContract.js";
 import { assistantSettings, workflowModelDefaults } from "../modelDefaults.js";
+import { builtinProcessingModels } from "../modelCatalog.js";
 
 const temp = await mkdtemp(path.join(os.tmpdir(), "yp-live-ui-"));
 const entry = fileURLToPath(
@@ -121,6 +122,9 @@ const alternativeModel: YpWorkflowModel = {
   inputMicrosPerMillion: 3_000_000,
   outputMicrosPerMillion: 9_000_000,
 };
+const tierModels = builtinProcessingModels("all").map(
+  ({ keyEnv, ...model }) => model,
+);
 run.modelCatalog = [structuredClone(model)];
 const comparison = {
   ...structuredClone(run),
@@ -183,7 +187,7 @@ const snapshot = (): YpWorkflowSnapshot => ({
       status: proposalStatus,
     },
   ],
-  models: [model, alternativeModel],
+  models: [model, alternativeModel, ...tierModels],
   hosts: [{ id: state.config.hostId, name: "Fixture VM", connected: true }],
   permissions: member
     ? { userId: 20, admin: false, operate: false }

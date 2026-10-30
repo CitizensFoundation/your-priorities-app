@@ -167,7 +167,8 @@ test("manual Codex and agent selections default independently and get prices fro
     { codexServiceTier: "fast", processingServiceTier: "fast" },
     models,
   );
-  assert.equal(fast.processingModel.id, "gpt-6-luna");
+  assert.equal(fast.processingModel.id, "gpt-6-luna-priority");
+  assert.equal(fast.processingModel.apiModel, "gpt-6-luna");
   assert.equal(fast.processingModel.inferenceType, "priority");
   assert.equal(
     fast.processingModel.outputMicrosPerMillion,
@@ -179,6 +180,29 @@ test("manual Codex and agent selections default independently and get prices fro
   );
   assert.equal(fast.codexReasoningEffort, "max");
   assert.equal(fast.processingReasoningEffort, "max");
+  const flex = resolveManualConfig({ processingServiceTier: "flex" });
+  assert.equal(flex.processingModel.id, "gpt-6-luna-flex");
+  assert.equal(flex.processingModel.apiModel, "gpt-6-luna");
+  assert.equal(flex.processingModel.inferenceType, "flex");
+  assert.equal(
+    flex.processingModel.outputMicrosPerMillion,
+    defaults.processingModel.outputMicrosPerMillion / 2,
+  );
+  assert.equal(flex.codexServiceTier, "regular");
+  assert.equal(
+    resolveManualConfig({ processingModel: "gpt-6-luna-flex" })
+      .processingServiceTier,
+    "flex",
+  );
+  assert.throws(() => resolveManualConfig({ codexServiceTier: "flex" }));
+  assert.throws(
+    () =>
+      resolveManualConfig({
+        processingServiceTier: "fast",
+        comparisonProcessingModel: "gpt-6-luna-priority",
+      }),
+    /different processing models/,
+  );
   assert.equal(
     resolveManualConfig({ codexServiceTier: "fast" }).processingServiceTier,
     "regular",

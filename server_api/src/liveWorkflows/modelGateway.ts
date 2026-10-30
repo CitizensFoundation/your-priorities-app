@@ -39,13 +39,19 @@ function requireCompleteResult(result: YpWorkflowJson): YpWorkflowJson {
     typeof result === "object" &&
     !Array.isArray(result) &&
     result.incompleteReason
-  )
+  ) {
+    if (result.incompleteReason === "flex_rate_limited")
+      throw new ConflictError(
+        "OpenAI rejected the Flex request because of capacity or rate limits. No usage was charged. Retry in a new run later, or explicitly select another model tier.",
+        "model_flex_unavailable",
+      );
     throw new ConflictError(
       result.incompleteReason === "max_output_tokens"
         ? "The processing model reached its output-token limit. Usage was recorded; the response is incomplete. Increase token headroom and request a new trial; this request will not be repeated."
         : "The processing model did not complete its response. Usage was recorded. Review the saved request before starting a new trial.",
       "model_response_incomplete",
     );
+  }
   return result;
 }
 export class ModelGateway {
@@ -111,15 +117,28 @@ export class ModelGateway {
       throw new ValidationError(
         "Input exceeds this model's configured context bound; split the record first",
       );
+    // Include the standard tariff in the reservation, even for Flex. The served
+    // tier is authoritative for settlement; we never retry at a different tier.
+    const tariffs = [
+      model,
+      ...(model.standardPrices ? [model.standardPrices] : []),
+    ];
     const maximumMicros =
       tokenCost(
         inputBound,
         Math.max(
-          model.inputMicrosPerMillion,
-          model.cachedInputMicrosPerMillion ?? model.inputMicrosPerMillion,
-          model.cacheWriteInputMicrosPerMillion ?? model.inputMicrosPerMillion,
+          ...tariffs.flatMap((prices) => [
+            prices.inputMicrosPerMillion,
+            prices.cachedInputMicrosPerMillion ?? prices.inputMicrosPerMillion,
+            prices.cacheWriteInputMicrosPerMillion ??
+              prices.inputMicrosPerMillion,
+          ]),
         ),
-      ) + tokenCost(model.maxOutputTokens, model.outputMicrosPerMillion);
+      ) +
+      tokenCost(
+        model.maxOutputTokens,
+        Math.max(...tariffs.map((prices) => prices.outputMicrosPerMillion)),
+      );
     const { reservation, cached } = await this.budget.reserve(groupId, {
       ...request,
       maximumMicros,
@@ -135,8 +154,7 @@ export class ModelGateway {
         reply.cacheWriteInTokens,
       );
       const prices =
-        model.inferenceType === "priority" &&
-        reply.appliedServiceTier === "default"
+        model.inferenceType && reply.appliedServiceTier === "default"
           ? (model.standardPrices ?? model)
           : model;
       const actualMicros =
@@ -220,7 +238,7 @@ async function generateWithProvider(
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: model.id,
+        model: model.apiModel ?? model.id,
         max_tokens: model.maxOutputTokens,
         system,
         messages: [{ role: "user", content: input }],
@@ -246,7 +264,7 @@ async function generateWithProvider(
     };
   }
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model.id)}:generateContent`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model.apiModel ?? model.id)}:generateContent`,
     {
       method: "POST",
       signal: AbortSignal.timeout(180_000),

@@ -10,8 +10,8 @@ test("browser comparison has independent priced models and rejects missing or du
     processingServiceTier: "fast",
   });
   assert.equal(config.codexModel, "gpt-6-luna");
-  assert.equal(config.processingModel.id, "gpt-6-luna");
-  assert.equal(config.comparisonProcessingModel?.id, "gpt-6-sol");
+  assert.equal(config.processingModel.id, "gpt-6-luna-priority");
+  assert.equal(config.comparisonProcessingModel?.id, "gpt-6-sol-priority");
   assert.equal(config.comparisonProcessingModel?.inferenceType, "priority");
   assert.ok(
     config.comparisonProcessingModel!.outputMicrosPerMillion >

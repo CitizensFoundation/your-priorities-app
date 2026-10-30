@@ -1,7 +1,11 @@
 import { LitElement, html, css, nothing, type PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { LiveWorkflowApi, dollars } from "./api.js";
-import { modelReasoning, modelRoleLabel } from "./modelInfo.js";
+import {
+  modelReasoning,
+  modelRoleLabel,
+  modelServiceTier,
+} from "./modelInfo.js";
 
 @customElement("yp-live-workflow-results")
 export class YpLiveWorkflowResults extends LitElement {
@@ -210,6 +214,7 @@ export class YpLiveWorkflowResults extends LitElement {
                 <th scope="col">Agent</th>
                 <th scope="col">Role</th>
                 <th scope="col">Model</th>
+                <th scope="col">Tier</th>
                 <th scope="col">Reasoning</th>
               </tr>
             </thead>
@@ -223,6 +228,11 @@ export class YpLiveWorkflowResults extends LitElement {
                         <td>${node.label}</td>
                         <td>${modelRoleLabel(role)}</td>
                         <td>${id}</td>
+                        <td>
+                          ${modelServiceTier(
+                            run.modelCatalog?.find((model) => model.id === id),
+                          )}
+                        </td>
                         <td>
                           ${modelReasoning(
                             node,

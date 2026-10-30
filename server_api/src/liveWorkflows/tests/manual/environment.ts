@@ -96,7 +96,9 @@ export const manualConfigSchema = z
     processingModel: configured.default(workflowModelDefaults.processingModel),
     comparisonProcessingModel: configured.optional(),
     codexServiceTier: z.enum(["regular", "fast"]).default("regular"),
-    processingServiceTier: z.enum(["regular", "fast"]).default("regular"),
+    processingServiceTier: z
+      .enum(["regular", "fast", "flex"])
+      .default("regular"),
     codexReasoningEffort: reasoningEffortSchema.default(
       workflowModelDefaults.codexReasoningEffort,
     ),
@@ -115,7 +117,7 @@ export const manualConfigSchema = z
 export interface ManualConfig {
   codexModel: string;
   codexServiceTier: "regular" | "fast";
-  processingServiceTier: "regular" | "fast";
+  processingServiceTier: "regular" | "fast" | "flex";
   codexReasoningEffort: YpWorkflowReasoningEffort;
   processingReasoningEffort: YpWorkflowReasoningEffort;
   processingModel: ModelDefinition;
@@ -129,11 +131,13 @@ export function resolveManualConfig(
 ): ManualConfig {
   const config = manualConfigSchema.parse(value);
   const catalog =
-    config.processingServiceTier === "fast"
-      ? builtinProcessingModels("fast")
+    config.processingServiceTier !== "regular"
+      ? builtinProcessingModels(config.processingServiceTier)
       : definitions;
   const resolve = (id: string) => {
-    const model = catalog.find((entry) => entry.id === id);
+    const model =
+      catalog.find((entry) => entry.id === id) ??
+      catalog.find((entry) => entry.apiModel === id);
     if (
       !model ||
       model.provider !== "openai" ||
@@ -155,14 +159,20 @@ export function resolveManualConfig(
     };
   };
   const { comparisonProcessingModel, ...base } = config;
-  if (comparisonProcessingModel === config.processingModel)
+  const processingModel = resolve(config.processingModel);
+  const comparison = comparisonProcessingModel
+    ? resolve(comparisonProcessingModel)
+    : undefined;
+  if (comparison?.id === processingModel.id)
     throw new Error("Choose two different processing models for comparison");
   return {
     ...base,
-    processingModel: resolve(config.processingModel),
-    ...(comparisonProcessingModel
-      ? { comparisonProcessingModel: resolve(comparisonProcessingModel) }
-      : {}),
+    processingServiceTier:
+      processingModel.inferenceType === "priority"
+        ? "fast"
+        : (processingModel.inferenceType ?? "regular"),
+    processingModel,
+    ...(comparison ? { comparisonProcessingModel: comparison } : {}),
   };
 }
 export async function readManualConfig(

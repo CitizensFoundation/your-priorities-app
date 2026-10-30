@@ -43,11 +43,22 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
   @property({ type: Array })
   selectedChoices: AoiChoiceData[] = [];
 
+  @property({ type: Boolean })
+  analysisError = false;
+
   serverApi!: AoiServerApi;
   haveStartedStreaming = false;
+  private analysisRequestId: string | undefined;
+  private analysisSocket: WebSocket | null = null;
+  private readonly onAnalysisWebSocketOpened = () => {
+    this.analysisSocket = this.ws;
+    void this.streamAnalysis();
+  };
 
   get analysisStreamToken() {
-    return `aoi-analysis-${this.analysisIndex}-${this.analysisTypeIndex}`;
+    return this.analysisRequestId
+      ? `aoi-analysis-${this.analysisIndex}-${this.analysisTypeIndex}-${this.analysisRequestId}`
+      : undefined;
   }
 
   get normalizedAnalysis() {
@@ -61,38 +72,78 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
 
   override async connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("yp-ws-opened", this.streamAnalysis);
+    this.addEventListener("yp-ws-opened", this.onAnalysisWebSocketOpened);
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.removeEventListener("yp-ws-opened", this.streamAnalysis);
+    this.removeEventListener("yp-ws-opened", this.onAnalysisWebSocketOpened);
+    this.analysisSocket = null;
+  }
+
+  private createAnalysisRequestId(): string {
+    const cryptoApi = globalThis.crypto;
+    if (typeof cryptoApi?.randomUUID === "function") return cryptoApi.randomUUID();
+
+    const bytes = new Uint8Array(16);
+    cryptoApi.getRandomValues(bytes);
+    return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
   }
 
   async streamAnalysis() {
-    if (this.haveStartedStreaming) return;
+    const socket = this.ws;
+    // Wait for the client-ID handshake on this exact shared connection.
+    if (
+      this.haveStartedStreaming ||
+      !socket ||
+      socket !== this.analysisSocket ||
+      socket.readyState !== WebSocket.OPEN ||
+      !this.wsClientId
+    ) {
+      return;
+    }
+
     this.haveStartedStreaming = true;
-    const { cachedAnalysis, selectedChoices } =
-      await this.serverApi.getSurveyAnalysis(
+    let requestId: string | undefined;
+    try {
+      this.analysisRequestId = undefined;
+      requestId = this.createAnalysisRequestId();
+      this.analysisRequestId = requestId;
+      if (this.analysisError) this.analysis = "";
+      this.analysisError = false;
+
+      const response = await this.serverApi.getSurveyAnalysis(
         this.groupId,
         this.wsClientId,
         this.analysisIndex,
         this.analysisTypeIndex,
-        YpLanguages.getEnglishName(this.language) || ""
+        YpLanguages.getEnglishName(this.language) || "",
+        requestId
       );
 
-    if (cachedAnalysis) {
-      this.analysis = cachedAnalysis;
-    }
+      if (requestId !== this.analysisRequestId) return;
+      if (!response || !Array.isArray(response.selectedChoices)) {
+        throw new Error("No analysis response received");
+      }
 
-    this.selectedChoices = selectedChoices;
+      if (response.cachedAnalysis) {
+        this.analysis = response.cachedAnalysis;
+      }
+      this.selectedChoices = response.selectedChoices;
+    } catch (error) {
+      if (requestId !== undefined && requestId !== this.analysisRequestId) return;
+      this.haveStartedStreaming = false;
+      this.isStreaming = false;
+      this.analysisError = true;
+      console.warn("Unable to load survey analysis", error);
+    }
   }
 
   override async onMessage(event: MessageEvent) {
     const data = JSON.parse(event.data) as YpAssistantMessage;
     if (
       data.sender === "assistant" &&
-      data.uniqueToken !== this.analysisStreamToken
+      (!this.analysisStreamToken || data.uniqueToken !== this.analysisStreamToken)
     ) {
       return;
     }
@@ -136,10 +187,10 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
         this.isStreaming = true;
         break;
       case "moderation_error":
-        //TODO
-        break;
       case "error":
         this.isStreaming = false;
+        this.haveStartedStreaming = false;
+        this.analysisError = true;
         break;
       case "end":
         this.isStreaming = false;
@@ -222,6 +273,12 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
 
   override render() {
     return html`<div class="content layout vertical">
+      ${this.analysisError
+        ? html`<div role="alert">${this.t("An error occurred")}</div>
+            <md-text-button @click=${this.streamAnalysis}>
+              ${this.t("Retry")}
+            </md-text-button>`
+        : ""}
       ${this.selectedChoices.map((result, index) =>
         this.renderChoice(index, result)
       )}

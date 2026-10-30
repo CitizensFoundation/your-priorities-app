@@ -82,19 +82,37 @@ export async function generateOpenAiProcessing(
     maxRetries: 0,
     timeout: workflowProviderTimeoutMs,
   });
-  const response = await client.responses.create({
-    model: model.id,
-    store: false,
-    stream: false,
-    input: [
-      { role: "system", content: system },
-      { role: "user", content: input },
-    ],
-    max_output_tokens: model.maxOutputTokens,
-    ...(model.reasoning
-      ? { reasoning: { effort: model.reasoningEffort ?? "max" } }
-      : {}),
-    service_tier: model.inferenceType ?? "default",
-  });
+  const response = await client.responses
+    .create({
+      model: model.apiModel ?? model.id,
+      store: false,
+      stream: false,
+      input: [
+        { role: "system", content: system },
+        { role: "user", content: input },
+      ],
+      max_output_tokens: model.maxOutputTokens,
+      ...(model.reasoning
+        ? { reasoning: { effort: model.reasoningEffort ?? "max" } }
+        : {}),
+      service_tier: model.inferenceType ?? "default",
+    })
+    .catch((error: unknown) => {
+      // Flex capacity/rate-limit rejections are not billed. Do not leave a paid
+      // reservation unknown, or silently retry at the more expensive standard tier.
+      if (
+        model.inferenceType === "flex" &&
+        error instanceof OpenAI.RateLimitError
+      )
+        return null;
+      throw error;
+    });
+  if (!response)
+    return {
+      content: "",
+      tokensIn: 0,
+      tokensOut: 0,
+      incompleteReason: "flex_rate_limited",
+    } satisfies ProviderReply;
   return openAiProcessingReply(response);
 }

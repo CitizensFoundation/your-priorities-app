@@ -13,13 +13,14 @@ const modelPrices = z.object({
 export const processingModelSchema = z
   .object({
     id: z.string().min(1),
+    apiModel: z.string().min(1).optional(),
     label: z.string(),
     provider: z.enum(["openai", "anthropic", "google"]),
     reasoning: z.boolean().optional(),
     reasoningEffort: reasoningEffortSchema.optional(),
     ...modelPrices.shape,
-    inferenceType: z.enum(["priority"]).optional(),
-    // A priority request may be served and billed at the standard tier.
+    inferenceType: z.enum(["priority", "flex"]).optional(),
+    // Keep the standard tariff available if the provider reports that it served that tier.
     standardPrices: modelPrices.optional(),
     maxOutputTokens: z.number().int().min(256).max(128000),
     contextTokens: z.number().int().min(1024).max(2_000_000),
@@ -34,29 +35,14 @@ export const processingModelSchema = z
       context.addIssue({
         code: "custom",
         message:
-          "Priority models require OpenAI routing and standard fallback prices",
+          "Tiered models require OpenAI routing and standard fallback prices",
       });
-    if (model.standardPrices)
-      for (const key of Object.keys(modelPrices.shape) as (keyof z.infer<
-        typeof modelPrices
-      >)[]) {
-        if (
-          (model.standardPrices[key] ??
-            model.standardPrices.inputMicrosPerMillion) >
-          (model[key] ?? model.inputMicrosPerMillion)
-        )
-          context.addIssue({
-            code: "custom",
-            message:
-              "Standard fallback prices must fit the priority reservation",
-          });
-      }
   });
 export type ModelDefinition = z.infer<typeof processingModelSchema>;
 
 /** Use exactly the prices NewAiModelSetup seeds, without opening the application DB. */
 export function builtinProcessingModels(
-  tier: "regular" | "fast" = "regular",
+  tier: "regular" | "fast" | "flex" | "all" = "regular",
 ): ModelDefinition[] {
   const configurations = openAiGpt6Models();
   const pricesFor = (prices: PsAiModelConfiguration["prices"]) => {
@@ -73,10 +59,13 @@ export function builtinProcessingModels(
     };
   };
   return configurations
-    .filter(({ configuration }) =>
-      tier === "fast"
-        ? configuration.inferenceType === "priority"
-        : !configuration.inferenceType,
+    .filter(
+      ({ configuration }) =>
+        tier === "all" ||
+        (tier === "regular"
+          ? !configuration.inferenceType
+          : configuration.inferenceType ===
+            (tier === "fast" ? "priority" : tier)),
     )
     .map(({ name, configuration }) => {
       const prices = configuration.prices;
@@ -86,15 +75,16 @@ export function builtinProcessingModels(
           entry.model === apiModel && !entry.inferenceType,
       )!;
       return processingModelSchema.parse({
-        id: apiModel,
+        id: configuration.model,
         label: name,
         provider: configuration.provider,
         reasoning: true,
         reasoningEffort: workflowModelDefaults.processingReasoningEffort,
         ...pricesFor(prices),
-        ...(tier === "fast"
+        ...(configuration.inferenceType
           ? {
-              inferenceType: "priority",
+              apiModel,
+              inferenceType: configuration.inferenceType,
               standardPrices: pricesFor(standard.configuration.prices),
             }
           : {}),
@@ -121,7 +111,7 @@ export function processingModelDefinitions(
     .array(processingModelSchema)
     .parse(
       definitionJson === undefined
-        ? builtinProcessingModels()
+        ? builtinProcessingModels("all")
         : JSON.parse(definitionJson),
     );
   if (new Set(definitions.map((model) => model.id)).size !== definitions.length)
