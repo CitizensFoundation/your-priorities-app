@@ -84,7 +84,7 @@ export class YpGenerateAiImage extends YpBaseElement {
       : undefined;
     const nextDateText =
       nextDate && !Number.isNaN(nextDate.getTime())
-        ? new Intl.DateTimeFormat(window.appGlobals.locale || undefined, {
+        ? new Intl.DateTimeFormat(window.appGlobals.locale?.replace(/_/g, "-") || undefined, {
             dateStyle: "medium",
             timeStyle: "short",
           }).format(nextDate)

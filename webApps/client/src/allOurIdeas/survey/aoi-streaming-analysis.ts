@@ -62,7 +62,8 @@ export class AoiStreamingAnalysis extends YpStreamingLlmScrolling  {
   }
 
   get normalizedAnalysis() {
-    return this.analysis.replace(/([^\n])\s*(#{1,6}\s+)/g, "$1\n\n$2");
+    // Keep existing heading markers intact when separating headings from prose.
+    return this.analysis.replace(/([^\n#])\s*(#{1,6}\s+)/g, "$1\n\n$2");
   }
 
   constructor() {

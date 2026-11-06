@@ -1,4 +1,3 @@
-import { method } from 'lodash-es';
 import { YpServerApiBase } from './YpServerApiBase.js';
 
 export class YpServerApi extends YpServerApiBase {

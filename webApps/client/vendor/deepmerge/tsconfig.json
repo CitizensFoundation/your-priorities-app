@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "declaration": true,
+    "noEmitOnError": true,
+    "types": [],
+    "outDir": "lib"
+  },
+  "files": ["index.cts"]
+}

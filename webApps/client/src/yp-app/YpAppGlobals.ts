@@ -221,21 +221,36 @@ export class YpAppGlobals extends YpCodeBase {
     this.activity("view", "audioLong", audioId);
   }
 
+  private normalizeLocale(locale: unknown): string | undefined {
+    // Locale values become URL path segments. Keep the underscore form used by
+    // the bundled translations, but reject URL syntax before storing or loading it.
+    if (
+      typeof locale !== "string" ||
+      locale.length > 128 ||
+      locale !== locale.trim() ||
+      !/^[a-z]{2,8}(?:[-_][a-z0-9]{1,8})*$/i.test(locale)
+    ) {
+      return undefined;
+    }
+    return locale.replace(/-/g, "_").toLowerCase();
+  }
+
   changeLocaleIfNeededAfterWait(locale: string, force: boolean) {
+    const normalizedLocale = this.normalizeLocale(locale);
     if (
       window.appGlobals.haveLoadedLanguages === true &&
-      locale &&
-      this.language != locale
+      normalizedLocale &&
+      this.language != normalizedLocale
     ) {
-      if (force || !localStorage.getItem("yp-user-locale")) {
-        i18next.changeLanguage(locale, () => {
+      if (force || !this.normalizeLocale(localStorage.getItem("yp-user-locale"))) {
+        i18next.changeLanguage(normalizedLocale, () => {
           //TODO: Fix moment
           //moment.locale([locale, 'en']);
-          this.language = locale;
-          this.locale = locale;
-          this.updateDocumentLanguage(locale);
-          this.fireGlobal("yp-language-loaded", { language: locale });
-          this.fireGlobal("language-loaded", { language: locale });
+          this.language = normalizedLocale;
+          this.locale = normalizedLocale;
+          this.updateDocumentLanguage(normalizedLocale);
+          this.fireGlobal("yp-language-loaded", { language: normalizedLocale });
+          this.fireGlobal("language-loaded", { language: normalizedLocale });
         });
       }
     }
@@ -269,6 +284,7 @@ export class YpAppGlobals extends YpCodeBase {
   }
 
   changeLocaleIfNeeded(locale: string, force = false) {
+    if (!this.normalizeLocale(locale)) return;
     if (window.appGlobals.haveLoadedLanguages) {
       this.changeLocaleIfNeededAfterWait(locale, force);
     } else {
@@ -403,21 +419,14 @@ export class YpAppGlobals extends YpCodeBase {
       defaultLocale = localeByTld[tld] || "en";
     }
 
-    const storedLocale = localStorage.getItem("yp-user-locale");
+    const storedLocale = this.normalizeLocale(localStorage.getItem("yp-user-locale"));
     if (storedLocale) {
       defaultLocale = storedLocale;
     }
 
-    let localeFromUrl: string | undefined;
-
-    if (
-      window.appGlobals.originalQueryParameters &&
-      window.appGlobals.originalQueryParameters["locale"]
-    ) {
-      localeFromUrl = window.appGlobals.originalQueryParameters[
-        "locale"
-      ] as string;
-    }
+    const localeFromUrl = this.normalizeLocale(
+      window.appGlobals.originalQueryParameters?.["locale"]
+    );
 
     if (
       window.appGlobals.originalQueryParameters &&
@@ -428,12 +437,10 @@ export class YpAppGlobals extends YpCodeBase {
       }, 2500);
     }
 
-    if (localeFromUrl && localeFromUrl.length > 1) {
+    if (localeFromUrl) {
       defaultLocale = localeFromUrl;
       localStorage.setItem("yp-user-locale", localeFromUrl);
     }
-
-    defaultLocale = defaultLocale.replace("-", "_").toLowerCase();
 
     const localesFolder =
       typeof __LOCALES_DIR__ !== "undefined" ? __LOCALES_DIR__ : "locales";

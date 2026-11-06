@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "../..",
+    "baseUrl": "../..",
+    "paths": {
+      // The pure entry exports the same helpers, but its declarations omit waitUntil.
+      "@open-wc/testing/pure": ["node_modules/@open-wc/testing/index.d.ts"],
+      "@web/test-runner-commands": ["node_modules/@web/test-runner-commands/browser/commands.d.ts"]
+    },
+    "types": ["node", "mocha"]
+  },
+  "include": [
+    "./*.ts",
+    "../../src/**/*.d.ts",
+    "../../node_modules/@policysynth/agents/agents.d.ts",
+    "../../node_modules/@policysynth/agents/connectors.d.ts",
+    "../../node_modules/@policysynth/agents/streamingLlms.d.ts",
+    "../../node_modules/@policysynth/agents/validation.d.ts"
+  ]
+}

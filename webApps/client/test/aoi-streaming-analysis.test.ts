@@ -65,6 +65,13 @@ function createAnalysis({ cryptoApi = { randomUUID }, ready = true }: { cryptoAp
   return element;
 }
 
+test("analysis formatting preserves heading levels and separates headings joined to prose", () => {
+  const element = createAnalysis();
+  element.analysis = "## Community priorities\n\n### Safer crossings\n\nResidents want safer streets.## Next steps";
+  assert.equal(element.normalizedAnalysis,
+    "## Community priorities\n\n### Safer crossings\n\nResidents want safer streets.\n\n## Next steps");
+});
+
 test("an HTTP failure is handled and a retry can load cached analysis", async () => {
   const element = createAnalysis();
   element.serverApi.getSurveyAnalysis = async () => null;
